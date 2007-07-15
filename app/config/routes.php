@@ -43,4 +43,7 @@
  * developement.
  */
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
+	
+	Router::connect('/login/', array('controller' => 'logins', 'action' => 'login'));
+	Router::connect('/register/', array('controller' => 'logins', 'action' => 'register'));
 ?>
