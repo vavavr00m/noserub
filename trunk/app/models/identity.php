@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id:$ */
  
-class Login extends AppModel {
+class Identity extends AppModel {
     var $hasMany = array('Contact', 'Account');
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.\_]+$/')),
@@ -14,7 +14,7 @@ class Login extends AppModel {
         );
     
     function validatePasswd2($value, $params = array()) {
-        if($this->data['Login']['passwd'] !==$value) {
+        if($this->data['Identity']['passwd'] !==$value) {
             return false;
         } else {
             return true;
@@ -30,8 +30,8 @@ class Login extends AppModel {
      */
     function validateUniqueUsername($value, $params = array()) {
         $this->recursive = 0;
-        $this->expects('Login');
-        if($this->findCount(array('Login.username = "' . $value . '"')) > 0) {
+        $this->expects('Identity');
+        if($this->findCount(array('Identity.username = "' . $value . '"')) > 0) {
             return false;
         } else {
             return true;
@@ -47,10 +47,10 @@ class Login extends AppModel {
      */
     public function check($data) {
         $this->recursive = 0;
-        $this->expects('Login');
-        return $this->find(array('Login.hash' => '',
-                                 'Login.username = "'. $data['Login']['username'] .'"', 
-                                 'Login.password' => md5($data['Login']['password'])));
+        $this->expects('Identity');
+        return $this->find(array('Identity.hash' => '',
+                                 'Identity.username = "'. $data['Identity']['username'] .'"', 
+                                 'Identity.password' => md5($data['Identity']['password'])));
     }
     
     /**
@@ -62,8 +62,8 @@ class Login extends AppModel {
      */
     public function register($data) {
         $this->create();
-        $data['Login']['password'] = md5($data['Login']['passwd']);
-        $data['Login']['hash'] = md5(time().$data['Login']['username']);
+        $data['Identity']['password'] = md5($data['Identity']['passwd']);
+        $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
         $saveable = array('username', 'password', 'email', 'hash', 'created', 'modified');
         if(!$this->save($data, true, $saveable)) {
             return false;
@@ -72,11 +72,13 @@ class Login extends AppModel {
         # send out verification mail
         $msg  = 'Welcome to NoseRub!' . "\n\n";
         $msg .= 'please click here to verify you email address:' ."\n";
-        $msg .= FULL_BASE_URL . '/verify/' . $data['Login']['username'] . '/' . $data['Login']['hash'] . '/' . "\n\n";
+        $msg .= FULL_BASE_URL . '/verify/' . $data['Identity']['username'] . '/' . $data['Identity']['hash'] . '/' . "\n\n";
         $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
         $msg .= 'Thanks!';
         
-        mail($data['Login']['email'], 'Your NoseRub registration', $msg, 'From: info@noserub.com');
+        if(!mail($data['Identity']['email'], 'Your NoseRub registration', $msg, 'From: info@noserub.com')) {
+            LogError('verify mail could not be sent: '.$data['Identity']['email']);
+        }
         
         return true;
     }
@@ -91,11 +93,11 @@ class Login extends AppModel {
     function verify($username, $hash) {
         # check, if there is a username with that hash
         $this->recursive = 0;
-        $this->expects = array('Login');
-        $login = $this->find(array('Login.username' => $username, 'Login.hash' => $hash));
-        if($username && $hash && $login) {
-            # update the login
-            $this->id = $login['Login']['id'];
+        $this->expects = array('Identity');
+        $identity = $this->find(array('Identity.username' => $username, 'Identity.hash' => $hash));
+        if($username && $hash && $identity) {
+            # update the identity
+            $this->id = $identity['Identity']['id'];
             return $this->saveField('hash', '');
         } else {
             return false;

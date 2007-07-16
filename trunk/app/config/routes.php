@@ -44,9 +44,12 @@
  */
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	
-	Router::connect('/login/', array('controller' => 'logins', 'action' => 'login'));
-	Router::connect('/register/', array('controller' => 'logins', 'action' => 'register'));
-	Router::connect('/register/thanks/', array('controller' => 'logins', 'action' => 'register_thanks'));
-	Router::connect('/verify/:username/:hash/', array('controller' => 'logins', 'action' => 'verify'));
+	Router::connect('/login/', array('controller' => 'identities', 'action' => 'login'));
+	Router::connect('/logout/', array('controller' => 'identities', 'action' => 'logout'));
+	Router::connect('/register/', array('controller' => 'identities', 'action' => 'register'));
+	Router::connect('/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+	Router::connect('/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
+    
+    Router::connect('/noserub/:username/', array('controller' => 'identities', 'action' => 'index'));
     
 ?>

@@ -1,9 +1,25 @@
 <?php
 /* SVN FILE: $Id:$ */
  
-class LoginsController extends AppController {
-    var $uses = array('Login');
+class IdentitiesController extends AppController {
+    var $uses = array('Identity');
     var $helpers = array('form');
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function index() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        if($username && $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user. for the moment, all identities are privat
+            $this->redirect('/');
+            exit;
+        }
+    }
     
     /**
      * Method description
@@ -14,11 +30,11 @@ class LoginsController extends AppController {
      */
     function login() {
         if(!empty($this->data)) {
-            $login = $this->Login->check($this->data);
-            if($login) {
-                $this->Session->write('Login.id',       $login['Login']['id']);
-                $this->Session->write('Login.username', $login['Login']['username']);
-                $this->redirect('/noserub/' . urlencode(strtolower($login['Login']['username'])) . '/');
+            $identity = $this->Identity->check($this->data);
+            if($identity) {
+                $this->Session->write('Identity.id',       $identity['Identity']['id']);
+                $this->Session->write('Identity.username', $identity['Identity']['username']);
+                $this->redirect('/noserub/' . urlencode(strtolower($identity['Identity']['username'])) . '/');
                 exit;
             } else {
                 $this->set('form_error', 'Login nicht möglich');
@@ -33,9 +49,22 @@ class LoginsController extends AppController {
      * @return 
      * @access 
      */
+    function logout() {
+        $this->Session->delete('Identity');
+        $this->redirect('/');
+        exit;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function register() {
         if(!empty($this->data)) {
-            if($this->Login->register($this->data)) {
+            if($this->Identity->register($this->data)) {
                 $this->redirect('/register/thanks/');
                 exit;
             }
@@ -53,7 +82,7 @@ class LoginsController extends AppController {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $hash     = isset($this->params['hash'])     ? $this->params['hash']     : '';
         
-        $this->set('verify_ok', $this->Login->verify($username, $hash));
+        $this->set('verify_ok', $this->Identity->verify($username, $hash));
     }
     
     /**
