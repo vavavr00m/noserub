@@ -2,8 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Login extends AppModel {
-    var $hasMany = array('Identity');
-    
+    var $hasMany = array('Contact', 'Account');
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.\_]+$/')),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
