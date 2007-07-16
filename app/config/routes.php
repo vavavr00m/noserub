@@ -46,4 +46,7 @@
 	
 	Router::connect('/login/', array('controller' => 'logins', 'action' => 'login'));
 	Router::connect('/register/', array('controller' => 'logins', 'action' => 'register'));
+	Router::connect('/register/thanks/', array('controller' => 'logins', 'action' => 'register_thanks'));
+	Router::connect('/verify/:username/:hash/', array('controller' => 'logins', 'action' => 'verify'));
+    
 ?>

@@ -36,9 +36,33 @@ class LoginsController extends AppController {
     function register() {
         if(!empty($this->data)) {
             if($this->Login->register($this->data)) {
-                $this->redirect('/login/');
+                $this->redirect('/register/thanks/');
                 exit;
             }
         }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function verify() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $hash     = isset($this->params['hash'])     ? $this->params['hash']     : '';
+        
+        $this->set('verify_ok', $this->Login->verify($username, $hash));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function register_thanks() {
     }
 }
