@@ -28,6 +28,20 @@
         <?php echo $this->renderElement('css'); ?>
     </head>
     <body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
-    <?php echo $content_for_layout?>
+        <div id="banner">
+            <div id="header">
+                <a id="logo" href="/"><img src="/chrome/site/ormigo_banner.png" alt="" />NoseRub</a>
+                <hr />
+            </div>
+            <?php echo $this->renderElement('metanav'); ?>
+        </div>
+        <?php echo $this->renderElement('mainnav'); ?>
+        
+        <div id="main">
+            <?php echo $this->renderElement('subnav'); ?>
+            <div id="content">
+                <?php echo $content_for_layout?>
+            </div>
+        </div>
    </body>
 </html>
