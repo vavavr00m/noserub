@@ -52,4 +52,10 @@
     
     Router::connect('/noserub/:username/', array('controller' => 'identities', 'action' => 'index'));
     
+    Router::connect('/noserub/:username/account/add/', array('controller' => 'accounts', 'action' => 'add'));
+    Router::connect('/noserub/:username/account/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+    
+    Router::connect('/noserub/:username/contact/add/', array('controller' => 'contacts', 'action' => 'add'));
+    Router::connect('/noserub/:username/contact/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
+    Router::connect('/noserub/:username/contact/*/account/add/', array('controller' => 'accounts', 'action' => 'add'));
 ?>

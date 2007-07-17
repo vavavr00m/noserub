@@ -13,12 +13,22 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        if($username && $username != $this->Session->read('Identity.username')) {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
             # this is not the logged in user. for the moment, all identities are privat
             $this->redirect('/');
             exit;
         }
+        
+        $this->Identity->recursive = 2;
+        $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Contact',
+                                 'Account.Account', 'Account.Service',
+                                 'Service.Service',
+                                 'Contact.Contact', 'Contact.WithIdentity',
+                                 'WithIdentity.WithIdentity');
+        $this->set('data', $this->Identity->findByUsername($username));
     }
     
     /**
