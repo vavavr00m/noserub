@@ -50,6 +50,12 @@ class Service extends AppModel {
             case 2: # del.icio.us
                 return 'http://del.icio.us/rss/'.$username;
                 
+            case 3: # ipernity.com
+                return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
+                
+            case 4: # 23hq.com
+                return 'http://www.23hq.com/rss/'.$username;
+                
             default: 
                 return false;
         }

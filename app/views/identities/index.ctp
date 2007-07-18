@@ -13,7 +13,7 @@
                 <tr>
                     <td><?php echo $item['username']; ?></td>
                     <td><?php echo $item['Service']['name']; ?></td>
-                    <td><a href="/noserub/<?php echo $session->read('Identity.username'); ?>/account/<?php echo $item['id']; ?>/delete/">Delete</a></td>
+                    <td><a href="/noserub/<?php echo $session->read('Identity.username'); ?>/account/<?php echo $item['id']; ?>/delete/">Delete Account</a></td>
                 </tr>
             <?php }
         } ?>
@@ -37,7 +37,7 @@
                     <td><a href="/noserub/<?php echo $item['WithIdentity']['username']; ?>/"><?php echo $item['WithIdentity']['username']; ?></a></td>
                     <td><?php echo $item['WithIdentity']['password'] == '' ? 'self' : 'NoseRub'; ?></td>
                     <td>
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contact/<?php echo $item['id']; ?>/delete">Delete</a>
+                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contact/<?php echo $item['id']; ?>/delete">Delete Contact</a> | 
                         <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contact/<?php echo $item['WithIdentity']['id']; ?>/account/add/">Add Account</a>
                     </td>
                 </tr>
