@@ -66,6 +66,9 @@ class Service extends AppModel {
                     return false;
                 }
                 
+            case 6: # Pownce
+                return 'http://pownce.com/feeds/public/'.$username.'/';
+                
             default: 
                 return false;
         }
