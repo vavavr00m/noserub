@@ -10,6 +10,7 @@
 <?php } ?>
 <form id="AccountAddForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
+        <label for="AccountServiceId">Service</label>
         <?php 
             echo $form->select('Account.service_id', $services, null, null, false); 
         ?>
@@ -19,6 +20,10 @@
                                     'required' => 'You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots',
                                     'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only'))); 
         ?>
-        <?php echo $form->submit('Add'); ?>
+        <?php if($this->action == 'add') {
+            echo $form->submit('Add');
+        } else {
+            echo $form->submit('Save');
+        } ?>
     </fieldset>
 <?php echo $form->end(); ?>

@@ -46,4 +46,5 @@
 
 require_once 'noserub.php';
 
+define('NOSERUB_VALID_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
 ?>

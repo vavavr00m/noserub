@@ -4,7 +4,7 @@
 class Identity extends AppModel {
     var $hasMany = array('Contact', 'Account');
     var $validate = array(
-            'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.\_]+$/')),
+            'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
                                 'required' => VALID_NOT_EMPTY),
             'email'    => array('mail'     => VALID_EMAIL,
@@ -46,10 +46,15 @@ class Identity extends AppModel {
      * @access 
      */
     public function check($data) {
+        $username = $data['Identity']['username'];
+        if(strpos($username, '@' . NOSERUB_DOMAIN) === false) {
+            # user can log in with <USERNAME> and <USERNAME>@<NOSERUB_DOMAIN>
+            $username = $username . '@' . NOSERUB_DOMAIN;
+        }
         $this->recursive = 0;
         $this->expects('Identity');
         return $this->find(array('Identity.hash' => '',
-                                 'Identity.username = "'. $data['Identity']['username'] .'"', 
+                                 'Identity.username = "'. $username .'"', 
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
@@ -62,6 +67,7 @@ class Identity extends AppModel {
      */
     public function register($data) {
         $this->create();
+        $data['Identity']['username'] = $data['Identity']['username'] . '@' . NOSERUB_DOMAIN;
         $data['Identity']['password'] = md5($data['Identity']['passwd']);
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
         $saveable = array('username', 'password', 'email', 'hash', 'created', 'modified');

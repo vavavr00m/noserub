@@ -5,6 +5,29 @@ class AccountsController extends AppController {
     var $uses = array('Account');
     var $helpers = array('form');
     
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function index() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user. for the moment, all identities are privat
+            $this->redirect('/');
+            exit;
+        }
+        
+        $this->Account->recursive = 1;
+        $this->Account->expects('Account.Account', 'Account.Service', 'Service.ervice');
+        $this->set('data', $this->Account->findAllByIdentity_id($identity_id));
+    }
+    
     /**
      * Method description
      *
@@ -53,11 +76,55 @@ class AccountsController extends AppController {
             }
             $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/noserub/' . $username . '/');
+                $this->redirect('/noserub/' . $username . '/accounts/');
                 exit;
             }
         }
         $this->set('services', $this->Account->Service->getSelect('all'));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function edit($account_id) {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        # get the account
+        $this->Account->recursive = 0;
+        $this->Account->expects('Account');
+        $data = $this->Account->find(array('id' => $account_id, 'identity_id' => $identity_id));
+        if(!$data) {
+            # the account for this identity could not be found
+            $this->redirect('/');
+            exit;
+        }
+        
+        if(!$this->data) {
+            $this->data = $data;
+        } else {
+            # the form was submitted
+            $this->Account->id = $account_id;
+            $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
+            $saveable = array('modified', 'service_id', 'username', 'feedurl');
+            if($this->Account->save($this->data, true, $saveable)) {
+                $this->redirect('/noserub/' . $username . '/accounts/');
+                exit;
+            }
+        }
+        
+        $this->set('services', $this->Account->Service->getSelect('all'));
+        $this->render('add');
     }
     
     /**
@@ -86,7 +153,7 @@ class AccountsController extends AppController {
             $this->Account->delete();
         }
         
-        $this->redirect('/noserub/' . $username . '/');
+        $this->redirect('/noserub/' . $username . '/accounts/');
         exit;
     }
 }
