@@ -41,8 +41,8 @@ class Service extends AppModel {
                 # we need to read the page first in order to access
                 # the user id without need to access the API
                 $content = file_get_contents('http://www.flickr.com/photos/'.$username.'/');
-                if(preg_match('/photos_public.gne\?id=([0-9]*)@N00/i', $content, $matches)) {
-                    return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'@N00&lang=en-us&format=rss_200';
+                if(preg_match('/photos_public.gne\?id=([0-9a-z@]*)&amp;amp;/i', $content, $matches)) {
+                    return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'&lang=en-us&format=rss_200';
                 } else {
                     return false;
                 }
@@ -55,6 +55,16 @@ class Service extends AppModel {
                 
             case 4: # 23hq.com
                 return 'http://www.23hq.com/rss/'.$username;
+                
+            case 5: # Twitter
+                # we need to reed the page first in order to
+                # access the rss-feed
+                $content = file_get_contents('http://twitter.com/'.$username);
+                if(preg_match('/http:\/\/twitter\.com\/statuses\/user_timeline\/([0-9]*)\.rss/i', $content, $matches)) {
+                    return 'http://twitter.com/statuses/user_timeline/'.$matches[1].'.rss';
+                } else {
+                    return false;
+                }
                 
             default: 
                 return false;
