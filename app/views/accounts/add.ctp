@@ -11,13 +11,13 @@
 <form id="AccountAddForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
         <?php 
+            echo $form->select('Account.service_id', $services, null, null, false); 
+        ?>
+        <?php 
             echo $form->input('Account.username', 
                               array('error' => array(
                                     'required' => 'You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots',
                                     'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only'))); 
-        ?>
-        <?php 
-            echo $form->select('Account.service_id', $services, null, null, false); 
         ?>
         <?php echo $form->submit('Add'); ?>
     </fieldset>
