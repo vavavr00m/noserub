@@ -52,10 +52,15 @@
     
     Router::connect('/noserub/:username/', array('controller' => 'identities', 'action' => 'index'));
     
-    Router::connect('/noserub/:username/account/add/', array('controller' => 'accounts', 'action' => 'add'));
-    Router::connect('/noserub/:username/account/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+    Router::connect('/noserub/:username/network/', array('controller' => 'contacts', 'action' => 'network'));
+
+    Router::connect('/noserub/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
+    Router::connect('/noserub/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
+    Router::connect('/noserub/:username/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+    Router::connect('/noserub/:username/accounts/', array('controller' => 'accounts', 'action' => 'index'));
     
-    Router::connect('/noserub/:username/contact/add/', array('controller' => 'contacts', 'action' => 'add'));
-    Router::connect('/noserub/:username/contact/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
-    Router::connect('/noserub/:username/contact/*/account/add/', array('controller' => 'accounts', 'action' => 'add'));
-?>
+    Router::connect('/noserub/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
+    Router::connect('/noserub/:username/contacts/*/edit/', array('controller' => 'contacts', 'action' => 'edit'));
+    Router::connect('/noserub/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
+    Router::connect('/noserub/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
+    Router::connect('/noserub/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
