@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id */
+/* SVN FILE: $Id$ */
 
 /**
  * Domain name, under which the noserub-server can be accessed
