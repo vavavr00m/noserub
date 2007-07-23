@@ -3,7 +3,6 @@
  
 class Account extends AppModel {
     var $belongsTo = array('Identity', 'Service');
-    #var $hasOne = array('Service');
     
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.\_]+$/')),

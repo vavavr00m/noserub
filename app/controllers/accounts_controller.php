@@ -74,7 +74,10 @@ class AccountsController extends AppController {
                 # create account for logged in identity
                 $this->data['Account']['identity_id'] = $identity_id;
             }
-            $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
+            if($this->data['Account']['service_id'] != 7) {
+                # only look into getting the feed, when service is not "blog"
+                $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
+            }
             if($this->Account->save($this->data, true, $saveable)) {
                 $this->redirect('/noserub/' . $username . '/accounts/');
                 exit;

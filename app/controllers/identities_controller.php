@@ -42,9 +42,10 @@ class IdentitiesController extends AppController {
         if(!empty($this->data)) {
             $identity = $this->Identity->check($this->data);
             if($identity) {
+                $username = $this->Identity->splitUsername($identity['Identity']['username']);
                 $this->Session->write('Identity.id',       $identity['Identity']['id']);
-                $this->Session->write('Identity.username', $identity['Identity']['username']);
-                $this->redirect('/noserub/' . urlencode(strtolower($identity['Identity']['username'])) . '/');
+                $this->Session->write('Identity.username', $username['username']);
+                $this->redirect('/noserub/' . urlencode(strtolower($username['username'])) . '/');
                 exit;
             } else {
                 $this->set('form_error', 'Login nicht möglich');
