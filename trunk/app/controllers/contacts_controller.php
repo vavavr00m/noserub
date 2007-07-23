@@ -83,6 +83,7 @@ class ContactsController extends AppController {
      * @access 
      */
     function network() {
+        $filter      = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $identity_id = $this->Session->read('Identity.id');
         
@@ -91,55 +92,45 @@ class ContactsController extends AppController {
             $this->redirect('/');
             exit;
         }
-        
+
+        # sanitize filter
+        switch($filter) {
+            case 'photo':
+            case 'link':
+            case 'text':
+                $filter = $filter; 
+                break;
+            
+            default: 
+                $filter = false;
+        }
         # get all contact identities and their services
         $this->Contact->recursive = 3;
         $this->Contact->expects('Contact.WithIdentity', 
-                                'WithIdentity.WithIdentity','WithIdentity.Account',
-                                'Account.Account', 'Account.Service',
-                                'Service.Service');
+                                'WithIdentity.Account',
+                                'Account.Service');
         $data = $this->Contact->findAllByIdentityId($identity_id);
-        
-        # now get all feedurls
-        $feedurls = array();
+
+        $items = array();
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
-                $feedurls[] = $account['feedurl'];
+                if(!$filter || $account['Service']['type'] == $filter) {
+                    $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feedurl']);
+                    # add some identity info
+                    foreach($new_items as $key => $value) {
+                        $new_items[$key]['username'] = $contact['WithIdentity']['username'];
+                    }
+                    $items = array_merge($items, $new_items);
+                }
             }
-        }
-        
-        # get all data from the feeds
-        vendor('simplepie/simplepie');
-        $first_items = array();
+        }        
 
-        // Let's go through the array, feed by feed, and store the items we want.
-        foreach ($feedurls as $url) {
-            // Use the long syntax
-            $feed = new SimplePie();
-            $feed->set_feed_url($url);
-            $feed->init();
-
-        	// How many items per feed should we try to grab?
-        	$items_per_feed = 5;
-
-        	// As long as we're not trying to grab more items than the feed has, go through them one by one and add them to the array.
-        	for($x = 0; $x < $feed->get_item_quantity($items_per_feed); $x++) {
-        		$first_items[] = $feed->get_item($x);
-        	}
-
-            // We're done with this feed, so let's release some memory.
-            unset($feed);
-        }
-        
-        
-
-        // Now we can sort $first_items with our custom sorting function.
-        usort($first_items, "sort_items");
-        
-        
-        $this->set('data', $first_items);
+        usort($items, 'sort_items');
+                
+        $this->set('data', $items);
+        $this->set('filter', $filter);
     }
 }
 function sort_items($a, $b) {
-	return SimplePie::sort_items($a, $b);
+	return $a['datetime'] < $b['datetime'];
 }

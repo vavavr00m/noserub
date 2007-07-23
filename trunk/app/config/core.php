@@ -116,7 +116,7 @@
  * Session time out time (in seconds).
  * Actual value depends on CAKE_SECURITY setting.
  */
-	define('CAKE_SESSION_TIMEOUT', '120');
+	define('CAKE_SESSION_TIMEOUT', '360');
 /**
  * Uncomment the define below to use CakePHP admin routes.
  *

@@ -52,7 +52,7 @@
     
     Router::connect('/noserub/:username/', array('controller' => 'identities', 'action' => 'index'));
     
-    Router::connect('/noserub/:username/network/', array('controller' => 'contacts', 'action' => 'network'));
+    Router::connect('/noserub/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 
     Router::connect('/noserub/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/noserub/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));

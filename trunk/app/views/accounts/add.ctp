@@ -20,6 +20,14 @@
                                     'required' => 'You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots',
                                     'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only'))); 
         ?>
+        <?php 
+            echo $form->input('Account.feedurl', 
+                              array('error' => array(
+                                    'content'  => 'Pleas enter a valid URL'))); 
+        ?>
+        <p>
+            <em>Feedurl will be ignored, when Service is not <strong>Blog</strong>!</em>
+        </p>
         <?php if($this->action == 'add') {
             echo $form->submit('Add');
         } else {

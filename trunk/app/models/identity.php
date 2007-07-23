@@ -109,4 +109,42 @@ class Identity extends AppModel {
             return false;
         }
     }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function splitUsername($username) {
+        $username_domain = split('@', $username);
+        $username_namespace = split(':', $username_domain[0]);
+        
+        return array('username'  => $username_namespace[0],
+                     'namespace' => isset($username_namespace[1]) ? $username_namespace[1] : '',
+                     'domain'    => $username_domain[1]);
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function afterFind($data) {
+        if(is_array($data)) {
+            foreach($data as $key => $item) {
+                if(isset($item['WithIdentity']['username'])) {
+                    $username = $this->splitUsername($item['WithIdentity']['username']);
+                    $item['WithIdentity']['username']  = $username['username'];
+                    $item['WithIdentity']['namespace'] = $username['namespace'];
+                    $item['WithIdentity']['domain']    = $username['domain'];
+                    $data[$key] = $item;
+                }
+            }
+        }
+        return $data;
+    }
 }
