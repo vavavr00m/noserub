@@ -121,9 +121,20 @@ class Identity extends AppModel {
         $username_domain = split('@', $username);
         $username_namespace = split(':', $username_domain[0]);
         
-        return array('username'  => $username_namespace[0],
-                     'namespace' => isset($username_namespace[1]) ? $username_namespace[1] : '',
-                     'domain'    => $username_domain[1]);
+        
+        $result = array('full_username' => $username,
+                        'username'      => $username_namespace[0],
+                        'namespace'     => isset($username_namespace[1]) ? $username_namespace[1] : '',
+                        'domain'        => $username_domain[1]);
+    
+        $url = 'http://' . $result['domain'] . '/noserub/' . $result['username'];
+        if($result['namespace']) {
+            $url .= '@' . $result['namespace'];
+        }
+
+        $result['url'] = $url;
+        
+        return $result;
     }
     
     /**

@@ -50,7 +50,7 @@ class ContactsController extends AppController {
             if($this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
                 # create the username with the special namespace
-                $identity_username = $this->data['Contact']['username'] . ':' . $username;
+                $identity_username = $this->data['Contact']['username'] . ':' . $username . '@' . NOSERUB_DOMAIN;
                 # check, if this is unique
                 $this->Contact->Identity->recursive = 0;
                 $this->Contact->Identity->expects('Contact');

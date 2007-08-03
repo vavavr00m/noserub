@@ -1,0 +1,1 @@
+CREATE TABLE `schema_info` (`value` INT NOT NULL) TYPE = MYISAM;
