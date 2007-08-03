@@ -13,22 +13,42 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $namespace = '';
+        $username  = isset($this->params['username']) ? $this->params['username'] : '';
+        if(strpos($username, '@') !== false) {
+            # this is a username with a namespace: <username>@<namespace>
+            # we need to change that to the internal name: <username>:<namespace>@<domain>
+            $username_namespace = split('@', $username);
+            $username  = join(':', $username_namespace);
+            $namespace = $username_namespace[1];
+        }
+        $session_identity_id       = $this->Session->read('Identity.id');
+        $session_identity_username = $this->Session->read('Identity.username');
         
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user. for the moment, all identities are privat
-            $this->redirect('/');
-            exit;
+        if($namespace !== '' && $namespace != $session_identity_username) {
+            # don't display local contacts to anyone else, but the owner
+            $data = null;
+        } else {
+            $this->Identity->recursive = 2;
+            $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Contact',
+                                     'Account.Account', 'Account.Service',
+                                     'Service.Service',
+                                     'Contact.Contact', 'Contact.WithIdentity',
+                                     'WithIdentity.WithIdentity');
+            $data = $this->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
         }
         
-        $this->Identity->recursive = 2;
-        $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Contact',
-                                 'Account.Account', 'Account.Service',
-                                 'Service.Service',
-                                 'Contact.Contact', 'Contact.WithIdentity',
-                                 'WithIdentity.WithIdentity');
-        $this->set('data', $this->Identity->findByUsername($username));
+        if($data) {
+            # expand all identities (domain, namespace, url)
+            $data['Identity'] = array_merge($data['Identity'], $this->Identity->splitUsername($data['Identity']['username']));
+            foreach($data['Contact'] as $key => $contact) {
+                $data['Contact'][$key]['WithIdentity'] = array_merge($contact['WithIdentity'], $this->Identity->splitUsername($contact['WithIdentity']['username']));
+            }
+        }
+        $this->set('data', $data);
+        $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
+        $this->set('session_identity_username', isset($session_identity_username) ? $session_identity_username : '');
+        $this->set('namespace', $namespace);
     }
     
     /**
