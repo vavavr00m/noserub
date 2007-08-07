@@ -45,6 +45,7 @@ class IdentitiesController extends AppController {
                 $data['Contact'][$key]['WithIdentity'] = array_merge($contact['WithIdentity'], $this->Identity->splitUsername($contact['WithIdentity']['username']));
             }
         }
+
         $this->set('data', $data);
         $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
         $this->set('session_identity_username', isset($session_identity_username) ? $session_identity_username : '');

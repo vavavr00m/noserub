@@ -24,7 +24,9 @@ class ContactsController extends AppController {
         
         $this->Contact->recursive = 1;
         $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+        
         $this->set('data', $this->Contact->findAllByIdentityId($identity_id));
+        
     }
     
     /**
@@ -115,7 +117,7 @@ class ContactsController extends AppController {
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(!$filter || $account['Service']['type'] == $filter) {
-                    $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feedurl']);
+                    $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
                     # add some identity info
                     foreach($new_items as $key => $value) {
                         $new_items[$key]['username'] = $contact['WithIdentity']['username'];

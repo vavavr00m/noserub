@@ -11,7 +11,7 @@
         <?php if(!empty($data)) {
             foreach($data as $item) { ?>
                 <tr>
-                    <td><a href="/noserub/<?php echo $item['WithIdentity']['username']; ?>/"><?php echo $item['WithIdentity']['username']; ?></a></td>
+                    <td><a href="<?php echo $item['WithIdentity']['url']; ?>/"><?php echo $item['WithIdentity']['username']; ?></a></td>
                     <td><?php echo $item['WithIdentity']['password'] == '' ? 'self' : 'NoseRub'; ?></td>
                     <td>
                         <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['Contact']['id']; ?>/delete">Delete Contact</a> | 

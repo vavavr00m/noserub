@@ -35,7 +35,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function username2Feed($username, $service_id) {
+    function getFeedUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
                 # we need to read the page first in order to access
@@ -142,7 +142,7 @@ class Service extends AppModel {
      */
     function contentFromFlickr($feeditem) {
         $raw_content = $feeditem->get_content();
-        if(preg_match('/<a href="http:\/\/www.flickr.com\/photos.*<\/a>/i', $raw_content, $matches)) {
+        if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {
             $content = str_replace('_m.jpg', '_s.jpg', $matches[0]);
             $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
             return $content;
@@ -188,5 +188,37 @@ class Service extends AppModel {
      */
     function contentFromTwitter($feeditem) {
         return $feeditem->get_content();
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getAccountUrl($account_id, $username) {
+        switch($account_id) {
+            case 1: # flickr
+                return 'http://www.flickr.com/photos/'.$username.'/';
+                
+            case 2: # del.icio.us
+                return 'http://del.icio.us/'.$username;
+                
+            case 3: # ipernity
+                return 'http://ipernity.com/doc/'.$username.'/home/photo';
+            
+            case 4: # 23hq
+                return 'http://www.23hq.com/'.$username;
+
+            case 5: # twitter.com
+                return 'http://twitter.com/'.$username;
+                
+            case 6: # pownce
+                return 'http://pownce.com/'.$username.'/';
+                
+        default:
+            return '';
+        }
     }
 }

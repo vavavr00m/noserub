@@ -64,7 +64,7 @@ class AccountsController extends AppController {
         }
         if($this->data) {
             $this->Account->create();
-            $saveable = array('identity_id', 'service_id', 'username', 'feedurl', 'created', 'modified');
+            $saveable = array('identity_id', 'service_id', 'username', 'account_url', 'feed_url', 'created', 'modified');
             $with_identity_id = $this->Session->read('add_with_identity_id');
             if($this->Session->check('add_account_with_identity_id')) {
                 # create account for contact identity
@@ -76,7 +76,10 @@ class AccountsController extends AppController {
             }
             if($this->data['Account']['service_id'] != 7) {
                 # only look into getting the feed, when service is not "blog"
-                $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
+                $service_id = $this->data['Account']['service_id'];
+                $username   = $this->data['Account']['username'];
+                $this->data['Account']['feed_url']    = $this->Account->Service->getFeedUrl($service_id, $username);
+                $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $username);
             }
             if($this->Account->save($this->data, true, $saveable)) {
                 $this->redirect('/noserub/' . $username . '/accounts/');
