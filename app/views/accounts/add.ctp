@@ -21,12 +21,17 @@
                                     'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only'))); 
         ?>
         <?php 
-            echo $form->input('Account.feedurl', 
+            echo $form->input('Account.account_url', 
+                              array('error' => array(
+                                    'content'  => 'Pleas enter a valid URL'))); 
+        ?>
+        <?php 
+            echo $form->input('Account.feed_url', 
                               array('error' => array(
                                     'content'  => 'Pleas enter a valid URL'))); 
         ?>
         <p>
-            <em>Feedurl will be ignored, when Service is not <strong>Blog</strong>!</em>
+            <em>Feed-Url and Service-Url will be ignored, when Service is not <strong>Blog</strong>!</em>
         </p>
         <?php if($this->action == 'add') {
             echo $form->submit('Add');

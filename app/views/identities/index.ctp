@@ -4,6 +4,7 @@
         Either this account does not exist, or it is only available for the user who created it.
     </p>
 <?php } else { ?>
+<?php echo $this->renderElement('foaf'); ?>
     <h1>Accounts</h1>
     <table class="listing">
         <tr>
@@ -14,8 +15,8 @@
         <?php foreach($data['Account'] as $account) { ?>
             <tr>
                 <td><?php echo $account['username']; ?></td>
-                <td><?php echo $account['feedurl']; ?></td>
-                <td><?php echo $account['Service']['name']; ?></td>
+                <td><?php echo $account['feed_url']; ?></td>
+                <td><a href="<?php echo $account['account_url']; ?>"><?php echo $account['Service']['name']; ?></a></td>
             </tr>
         <?php } ?>
     </table>
@@ -34,7 +35,7 @@
                 continue;
             } ?>
             <tr>
-                <td><a href="<?php echo $contact['WithIdentity']['url']; ?>"><?php echo $contact['WithIdentity']['full_username']; ?></a></td>
+                <td><a href="<?php echo $contact['WithIdentity']['url']; ?>"><?php echo $contact['WithIdentity']['username']; ?></a></td>
             </tr>
         <?php } ?>
     </table>

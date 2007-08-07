@@ -119,8 +119,7 @@ class Identity extends AppModel {
      */
     function splitUsername($username) {
         $username_domain = split('@', $username);
-        $username_namespace = split(':', $username_domain[0]);
-        
+        $username_namespace = split(':', $username_domain[0]);        
         
         $result = array('full_username' => $username,
                         'username'      => $username_namespace[0],
@@ -133,7 +132,7 @@ class Identity extends AppModel {
         }
 
         $result['url'] = $url;
-        
+
         return $result;
     }
     
@@ -152,6 +151,7 @@ class Identity extends AppModel {
                     $item['WithIdentity']['username']  = $username['username'];
                     $item['WithIdentity']['namespace'] = $username['namespace'];
                     $item['WithIdentity']['domain']    = $username['domain'];
+                    $item['WithIdentity']['url']       = $username['url'];
                     $data[$key] = $item;
                 }
             }
