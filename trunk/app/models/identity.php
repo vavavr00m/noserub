@@ -124,7 +124,7 @@ class Identity extends AppModel {
         $result = array('full_username' => $username,
                         'username'      => $username_namespace[0],
                         'namespace'     => isset($username_namespace[1]) ? $username_namespace[1] : '',
-                        'domain'        => $username_domain[1]);
+                        'domain'        => isset($username_domain[1])    ? $username_domain[1]    : '');
     
         $url = 'http://' . $result['domain'] . '/noserub/' . $result['username'];
         if($result['namespace']) {
@@ -146,16 +146,77 @@ class Identity extends AppModel {
     function afterFind($data) {
         if(is_array($data)) {
             foreach($data as $key => $item) {
-                if(isset($item['WithIdentity']['username'])) {
-                    $username = $this->splitUsername($item['WithIdentity']['username']);
-                    $item['WithIdentity']['username']  = $username['username'];
-                    $item['WithIdentity']['namespace'] = $username['namespace'];
-                    $item['WithIdentity']['domain']    = $username['domain'];
-                    $item['WithIdentity']['url']       = $username['url'];
-                    $data[$key] = $item;
+                $checkModels = array('WithIdentity', 'Identity');
+                foreach($checkModels as $modelName) {
+                    if(isset($item[$modelName]['username'])) {
+                        $username = $this->splitUsername($item[$modelName]['username']);
+                        $item[$modelName]['full_username'] = $username['full_username'];
+                        $item[$modelName]['username']      = $username['username'];
+                        $item[$modelName]['namespace']     = $username['namespace'];
+                        $item[$modelName]['domain']        = $username['domain'];
+                        $item[$modelName]['url']           = $username['url'];
+                        $data[$key] = $item;
+                    }
                 }
             }
         }
         return $data;
+    }
+    
+    /**
+     * Opens the NoseRub page and parses the FOAF data
+     * This is not a real FOAF-Paser, but rather a lame excuse...
+     * Please also see /app/views/elements/foaf.ctp for another hack within
+     * the FOAF data.
+     *
+     * @param string $url complete url of the NoseRub page that should be parsed  
+     * @return array with information about the accounts and blogs from that page
+     * @access 
+     */
+    function parseNoseRubPage($url) {
+        $content = file_get_contents($url);
+        if(!$content) {
+            return false;
+        }
+        preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
+        preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
+        preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
+        preg_match_all('/<foaf:weblog rdf:resource="(.*)".*rdf:feed="(.*)".*\/>/i', $content, $blogs);
+        
+        /*
+        echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
+        echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
+        echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
+        echo 'BLOGS<pre>'; print_r($blogs); echo '</pre>';
+        */
+        
+        $result = array();
+        
+        if(is_array($accounts)) {
+            # gather all account data
+            foreach($accounts[1] as $idx => $account_url) {
+                $account = array();
+                $account['account_url'] = $account_url;
+                $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
+                $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
+                $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
+                $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
+                $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
+                $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
+                
+                $result[] = $account; 
+            }
+            # gather all blog data
+            foreach($blogs[1] as $idx => $blog_url) {
+                $blog = array();
+                $blog['account_url']     = $blog_url;
+                $blog['feed_ur']         = isset($blogs[2][$idx]) ? $blogs[2][$idx] : '';
+                $blog['service_id']      = 7;
+                $blog['service_type_id'] = 3;
+                $result[] = $blog;
+            }
+        }
+        
+        return $result;
     }
 }

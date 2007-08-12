@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Account extends AppModel {
-    var $belongsTo = array('Identity', 'Service');
+    var $belongsTo = array('Identity', 'Service', 'ServiceType');
     
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.\_]+$/')),

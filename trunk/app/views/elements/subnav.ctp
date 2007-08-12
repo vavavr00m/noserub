@@ -10,7 +10,7 @@
             <h2>My Network Navigation</h2>
             <ul>
                 <li class="first"><a href="<?php echo $noserub_url; ?>/network/all/">All</a></li>
-                <li><a href="<?php echo $noserub_url; ?>/network/photo/">Photo</a></li>  
+                <li><a href="<?php echo $noserub_url; ?>/network/media/">Media</a></li>  
                 <li><a href="<?php echo $noserub_url; ?>/network/link/">Links</a></li>
                 <li><a href="<?php echo $noserub_url; ?>/network/text/">Text</a></li>     
             </ul>
@@ -20,7 +20,7 @@
             <h2>My NoseRub Navigation</h2>
             <ul>
                 <li class="first">All</li>
-                <li><a href="<?php echo $noserub_url; ?>/photo/">Photo</a></li>  
+                <li><a href="<?php echo $noserub_url; ?>/media/">Media</a></li>  
                 <li><a href="<?php echo $noserub_url; ?>/link/">Links</a></li>
                 <li><a href="<?php echo $noserub_url; ?>/text/">Text</a></li>     
             </ul>

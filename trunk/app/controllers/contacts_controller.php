@@ -50,26 +50,54 @@ class ContactsController extends AppController {
         if($this->data) {
             $this->Contact->data = $this->data;
             if($this->Contact->validates()) {
-                # we now need to create a new identity and a new contact
-                # create the username with the special namespace
-                $identity_username = $this->data['Contact']['username'] . ':' . $username . '@' . NOSERUB_DOMAIN;
-                # check, if this is unique
-                $this->Contact->Identity->recursive = 0;
-                $this->Contact->Identity->expects('Contact');
-                if($this->Contact->Identity->findCount(array('username' => $identity_username)) == 0) {
-                    $this->Contact->Identity->create();
-                    $identity = array('username' => $identity_username);
-                    $saveable = array('username');
-                    # no validation, as we have no password.
-                    if($this->Contact->Identity->save($identity, false, $saveable)) {
-                        # create the contact now
-                        $this->Contact->create();
-                        $contact = array('identity_id'      => $identity_id,
-                                         'with_identity_id' => $this->Contact->Identity->id);
-                        $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                        if($this->Contact->save($contact, true, $saveable)) {
-                            $this->redirect('/noserub/' . $username . '/contacts/');
-                            exit;
+                # check, wether this should be a local contact or a real noserub contact
+                $splitusername = $this->Contact->Identity->splitUsername($this->data['Contact']['username']);
+                if(!empty($splitusername['domain'])) {
+                    # this is a real noserub contact
+                    $identity_username = $this->data['Contact']['username'];
+                    # see, if we already have it
+                    $identity = $this->Contact->Identity->findByUsername($identity_username);
+                    if(!$identity) {
+                        $this->Contact->Identity->create();
+                        $identity = array('username' => $identity_username);
+                        $saveable = array('username');
+                        $this->Contact->Identity->save($identity, false, $saveable);
+                        $new_identity_id = $this->Contact->Identity->id;
+                    } else {
+                        $new_identity_id = $identity['Identity']['id'];
+                    }
+                    
+                    # now create the contact relationship
+                    $this->Contact->create();
+                    $contact = array('identity_id'      => $identity_id,
+                                     'with_identity_id' => $new_identity_id);
+                    $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+                    if($this->Contact->save($contact, true, $saveable)) {
+                        $this->redirect('/noserub/' . $username . '/contacts/');
+                        exit;
+                    }
+                } else {
+                    # we now need to create a new identity and a new contact
+                    # create the username with the special namespace
+                    $identity_username = $this->data['Contact']['username'] . ':' . $username . '@' . NOSERUB_DOMAIN;
+                    # check, if this is unique
+                    $this->Contact->Identity->recursive = 0;
+                    $this->Contact->Identity->expects('Contact');
+                    if($this->Contact->Identity->findCount(array('username' => $identity_username)) == 0) {
+                        $this->Contact->Identity->create();
+                        $identity = array('username' => $identity_username);
+                        $saveable = array('username');
+                        # no validation, as we have no password.
+                        if($this->Contact->Identity->save($identity, false, $saveable)) {
+                            # create the contact now
+                            $this->Contact->create();
+                            $contact = array('identity_id'      => $identity_id,
+                                             'with_identity_id' => $this->Contact->Identity->id);
+                            $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+                            if($this->Contact->save($contact, true, $saveable)) {
+                                $this->redirect('/noserub/' . $username . '/contacts/');
+                                exit;
+                            }
                         }
                     }
                 }
@@ -97,7 +125,7 @@ class ContactsController extends AppController {
 
         # sanitize filter
         switch($filter) {
-            case 'photo':
+            case 'media':
             case 'link':
             case 'text':
                 $filter = $filter; 
@@ -110,13 +138,14 @@ class ContactsController extends AppController {
         $this->Contact->recursive = 3;
         $this->Contact->expects('Contact.WithIdentity', 
                                 'WithIdentity.Account',
-                                'Account.Service');
+                                'Account.Service',
+                                'Account.ServiceType');
         $data = $this->Contact->findAllByIdentityId($identity_id);
 
         $items = array();
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
-                if(!$filter || $account['Service']['type'] == $filter) {
+                if(!$filter || $account['ServiceType']['token'] == $filter) {
                     $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
                     # add some identity info
                     foreach($new_items as $key => $value) {

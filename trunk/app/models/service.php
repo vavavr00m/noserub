@@ -3,6 +3,7 @@
  
 class Service extends AppModel {
     var $hasMany = array('Account');
+    var $belongsTo = array('ServiceType');
 
     /**
      * Method description
@@ -26,6 +27,30 @@ class Service extends AppModel {
         }
         
         return $services;
+    }
+    
+    /**
+     * Used by Identity::parseNoseRubPage()
+     *
+     * @param  
+     * @return array with feed_url, service_id and service_type_id
+     * @access 
+     */
+    function getInfo($service_url, $username) {
+        # get service
+        $this->recursive = 0;
+        $this->expects('Service');
+        $service = $this->findByUrl($service_url);
+        
+        $result = array();
+        if($service) {
+            $service_id = $service['Service']['id'];
+            $result['service_id']      = $service_id;
+            $result['service_type_id'] = $service['Service']['service_type_id'];
+            $result['feed_url']        = $this->getFeedUrl($service_id, $username); 
+        }
+        
+        return $result;
     }
     
     /**
@@ -69,6 +94,9 @@ class Service extends AppModel {
             case 6: # Pownce
                 return 'http://pownce.com/feeds/public/'.$username.'/';
                 
+            case 9: # Upcoming
+                return 'http://badge.upcoming.yahoo.com/v1/?badge_type=user&badge_size=med&badge_styling=2&badge_venue=0&date_format_type=intl_slash&id='.$username;
+                
             default: 
                 return false;
         }
@@ -85,6 +113,10 @@ class Service extends AppModel {
      * @access 
      */
     function feed2array($service_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
+        if($service_id == 9) {
+            # upcoming has no feed
+            return $this->contentFromUpcoming($feedurl, $items_per_feed);
+        }
         vendor('simplepie/simplepie');
         $max_age = date('Y-m-d H:i:s', strtotime($items_max_age));
         $items = array();
@@ -197,6 +229,38 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromUpcoming($feedurl, $items_per_feed) {
+        $content = file_get_contents($feedurl);
+        
+        preg_match_all('/<div class="upb_date"><span class="upb_text">(.*)<\/span>/isU', $content, $dates);
+        preg_match_all('/<span class="upb_title upb_text">(.*)<\/span>/isU', $content, $events);
+
+        $result = array();
+        if(count($dates[1]) == count($dates[1])) {
+            foreach($dates[1] as $idx => $date) {
+                $norm_date = substr($date, 6, 4) . '-' . substr($date, 3, 2) . '-' . substr($date, 0, 2) . ' 12:00:00';
+                if(preg_match('/<a href="(.*)">/i', $events[1][$idx], $matches)) {
+                    $link = $matches[1];
+                } else {
+                    $link = '';
+                }
+                $result[] = array(
+                    'datetime' => $norm_date,
+                    'link'     => $link,
+                    'content'  => $events[1][$idx]);
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($account_id, $username) {
         switch($account_id) {
             case 1: # flickr
@@ -216,9 +280,12 @@ class Service extends AppModel {
                 
             case 6: # pownce
                 return 'http://pownce.com/'.$username.'/';
+            
+            case 9: # upcoming
+                return 'http://upcoming.yahoo.com/user/'.$username.'/';
                 
-        default:
-            return '';
+            default:
+                return '';
         }
     }
 }

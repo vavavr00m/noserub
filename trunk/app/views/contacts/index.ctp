@@ -11,11 +11,17 @@
         <?php if(!empty($data)) {
             foreach($data as $item) { ?>
                 <tr>
-                    <td><a href="<?php echo $item['WithIdentity']['url']; ?>/"><?php echo $item['WithIdentity']['username']; ?></a></td>
-                    <td><?php echo $item['WithIdentity']['password'] == '' ? 'self' : 'NoseRub'; ?></td>
                     <td>
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['Contact']['id']; ?>/delete">Delete Contact</a> | 
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['WithIdentity']['id']; ?>/accounts/add/">Add Account</a>
+                        <a href="<?php echo $item['WithIdentity']['url']; ?>/">
+                            <?php echo $item['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $item['WithIdentity']['username'] : $item['WithIdentity']['full_username']; ?>
+                        </a>
+                    </td>
+                    <td><?php echo $item['WithIdentity']['namespace'] == $session->read('Identity.username') ? 'Local' : 'NoseRub'; ?></td>
+                    <td>
+                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['Contact']['id']; ?>/delete">Remove Contact</a>
+                        <?php if($item['WithIdentity']['namespace'] == $session->read('Identity.username')) { ?>
+                             | <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['WithIdentity']['id']; ?>/accounts/add/">Add Account</a>
+                        <?php } ?>
                     </td>
                 </tr>
             <?php }
