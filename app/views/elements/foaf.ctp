@@ -1,3 +1,14 @@
+<?php
+    # this is no valid FOAF! I added 'rdf:feed="..."' to 'foaf_weblog'.
+    # I know that this is bad, and I could get the feed through SimplePie
+    # when I just process the blog url. But that might not always work, or
+    # be the feed that the user entered for his/her own blog. There seem to be
+    # some solutions for this (see http://209.85.135.104/search?q=cache:Vfi1Vusn5x8J:rdfweb.org/pipermail/rdfweb-dev/2004-February/012548.html+foaf+weblog+rss&hl=en&ct=clnk&cd=1)
+    # but that would require at least a real rdf parser which I currently don't have.
+    # so, in the meantime, I rather use a slightly corrupt FOAF instead of an own rdf solution
+    # for exchanging the NoseRub data.
+?>
+<!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
          xmlns:foaf="http://xmlns.com/foaf/0.1/" 
@@ -6,7 +17,7 @@
 
 <?php foreach($data['Account'] as $account) { ?>
     <?php if($account['service_id'] == 7) { ?>
-        <foaf:weblog rdf:resource="<?php echo $account['account_url']; ?>"/>
+        <foaf:weblog rdf:resource="<?php echo $account['account_url']; ?>" rdf:feed="<?php echo $account['feed_url']; ?>"/>
     <?php } else { ?>
         <foaf:holdsAccount>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
@@ -16,7 +27,7 @@
     <?php } ?>
 <?php } ?>
 </rdf:RDF>	
-
+-->
 <?php
 /*
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rel="http://purl.org/vocab/relationship/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">

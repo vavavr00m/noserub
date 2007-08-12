@@ -1,7 +1,7 @@
 <h1>Add new Account</h1>
 <?php if(isset($with_identity)) { ?>
     <p>
-        Your're about to add a new account for your contact <strong><?php $with_identity['Identity']['username']; ?></strong>
+        Your're about to add a new account for your contact <strong><?php echo $with_identity['Identity']['username']; ?></strong>
     </p>
 <?php } else { ?>
     <p>

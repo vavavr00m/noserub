@@ -44,6 +44,7 @@
  */
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	
+	Router::connect('/sandbox/', array('controller' => 'identities', 'action' => 'sandbox'));
 	Router::connect('/login/', array('controller' => 'identities', 'action' => 'login'));
 	Router::connect('/logout/', array('controller' => 'identities', 'action' => 'logout'));
 	Router::connect('/register/', array('controller' => 'identities', 'action' => 'register'));
@@ -64,3 +65,5 @@
     Router::connect('/noserub/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
     Router::connect('/noserub/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/noserub/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
+    
+    Router::connect('/jobs/:admin_hash/synchronize/:username', array('controller' => 'accounts', 'action' => 'synchronize'));

@@ -38,13 +38,13 @@ class AccountsController extends AppController {
     function add($with_identity_id = null) {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $identity_id = $this->Session->read('Identity.id');
-        
+
         if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
             # this is not the logged in user
             $this->redirect('/');
             exit;
         }
-
+        
         if($with_identity_id !== null) {
             $this->Session->delete('add_account_with_identity_id');
             # test, if the logged in identity has this
@@ -59,7 +59,15 @@ class AccountsController extends AppController {
             }
             $this->Account->Identity->recursive = 0;
             $this->Account->Identity->expects = array('Identity');
-            $this->set('with_identity', $this->Account->Identity->findById($with_identity_id));
+            $with_identity = $this->Account->Identity->findById($with_identity_id);
+
+            if($with_identity['Identity']['namespace'] != $username) {
+                # this user is not a local one, so no accounts can be added
+                $this->redirect('/noserub/' . $username . '/contacts/');
+                exit;
+            }
+            
+            $this->set('with_identity', $with_identity);
             $this->Session->write('add_account_with_identity_id', $with_identity_id);
         }
         if($this->data) {
@@ -160,6 +168,42 @@ class AccountsController extends AppController {
         }
         
         $this->redirect('/noserub/' . $username . '/accounts/');
+        exit;
+    }
+    
+    /**
+     * Synchronizes the given identity from another server
+     * to this local NoseRub instance
+     *
+     * @param  string admin_hash (through $this->params)
+     * @param  string username (through $this->params)
+     * @return 
+     * @access 
+     */
+    function synchronize() {
+        $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
+        $username   = isset($this->params['username'])   ? $this->Account->Identity->splitUsername($this->params['username']) : array();
+        
+        if($admin_hash != NOSERUB_ADMIN_HASH ||
+           empty($username) ||
+           $username['domain'] == NOSERUB_DOMAIN ||
+           $username['namespace'] != '') {
+            # there is nothing to do for us here
+            return false;
+        }
+        
+        # see, if we can find the identity locally
+        $this->Account->Identity->recursive = 0;
+        $this->Account->Identity->expects('Identity');
+        $identity = $this->Account->Identity->findByUsername($username['full_username']);
+        if(!$identity) {
+            # we could not find it, so we don't do anything
+            return false;
+        }
+        
+        # get the data from the remote server
+        $data = $this->Account->Identity->parseNoseRubPage($username['url']);
+        echo '<pre>'; print_r($data); echo '</pre>';
         exit;
     }
 }

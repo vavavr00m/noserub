@@ -29,8 +29,10 @@
             <li<?php echo $class_accounts;?>><a href="<?php echo $noserub_url; ?>/accounts/">Accounts</a></li>
             <li<?php echo $class_contacts;?>><a href="<?php echo $noserub_url; ?>/contacts/">Contacts</a></li>
             <li<?php echo $class_settings;?>><a href="<?php echo $noserub_url; ?>/settings/">Settings</a></li>
-        <?php } else { ?>
-            <li<?php echo $class_register;?>><a href="/register/">Register</a></li>
-        <?php } ?>
+        <?php } else {
+            if(NOSERUB_REGISTRATION_TYPE == 'all') { ?>
+                <li<?php echo $class_register;?>><a href="/register/">Register</a></li>
+            <?php }
+        } ?>
     </ul>
 </div>

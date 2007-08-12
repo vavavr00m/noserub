@@ -35,7 +35,7 @@
                 continue;
             } ?>
             <tr>
-                <td><a href="<?php echo $contact['WithIdentity']['url']; ?>"><?php echo $contact['WithIdentity']['username']; ?></a></td>
+                <td><a href="<?php echo $contact['WithIdentity']['url']; ?>"><?php echo $contact['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $contact['WithIdentity']['username'] : $contact['WithIdentity']['full_username']; ?></a></td>
             </tr>
         <?php } ?>
     </table>
