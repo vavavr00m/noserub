@@ -1,1 +1,1 @@
-<link rel="stylesheet" href="<?php echo NOSERUB_URL_PREFIX; ?>/css/noserub.css" type="text/css" />
+<?php echo $html->css('noserub'); ?>

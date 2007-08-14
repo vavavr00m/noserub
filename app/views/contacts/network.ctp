@@ -3,7 +3,7 @@
     <?php foreach($data as $item) { ?>
         <div style="float:left;padding:10px;">
             <?php echo $item['content']; ?><br />
-            <a href="<?php echo $item['link']; ?>"><?php echo $item['username']; ?></a>
+            <?php echo $html->link($item['username'], $item['link']); ?>
         </div>
     <?php } ?>
 <? } else { ?>
@@ -11,7 +11,7 @@
     <?php foreach($data as $item) { ?>
         <li><?php 
                 echo $item['datetime'] . ': ' . $item['username'] . ' => ';
-                echo '<a href="'.$item['link'].'">[+]</a> ';
+                echo $html->link('[+]', $item['link']);
             echo $item['content']; 
         ?></li>
     <?php } ?>

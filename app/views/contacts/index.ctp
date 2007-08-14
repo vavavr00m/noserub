@@ -12,15 +12,14 @@
             foreach($data as $item) { ?>
                 <tr>
                     <td>
-                        <a href="<?php echo $item['WithIdentity']['url']; ?>/">
-                            <?php echo $item['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $item['WithIdentity']['username'] : $item['WithIdentity']['full_username']; ?>
-                        </a>
+                        <?php echo $html->link($item['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $item['WithIdentity']['username'] : $item['WithIdentity']['full_username'], 
+                                               $item['WithIdentity']['url']); ?>
                     </td>
                     <td><?php echo $item['WithIdentity']['namespace'] == $session->read('Identity.username') ? 'Local' : 'NoseRub'; ?></td>
                     <td>
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['Contact']['id']; ?>/delete">Remove Contact</a>
+                        <?php echo $html->link('Remove Contact', '/' . $session->read('Identity.username') . '/contacts/' . $item['Contact']['id'] . '/delete'); ?>
                         <?php if($item['WithIdentity']['namespace'] == $session->read('Identity.username')) { ?>
-                             | <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/<?php echo $item['WithIdentity']['id']; ?>/accounts/add/">Add Account</a>
+                            | <?php echo $html->link('Add Account', '/' . $session->read('Identity.username') . '/contacts/' . $item['WithIdentity']['id'] . '/accounts/add/'); ?>
                         <?php } ?>
                     </td>
                 </tr>
@@ -28,4 +27,4 @@
         } ?>
     </tbody>
 </table>
-<a href="/noserub/<?php echo $session->read('Identity.username'); ?>/contacts/add/">Add new contact</a>
+<?php echo $html->link('Add new contact', '/' . $session->read('Identity.username') . '/contacts/add/'); ?>
