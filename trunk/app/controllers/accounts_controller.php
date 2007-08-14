@@ -180,7 +180,7 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function synchronize() {
+    function jobs_sync() {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         $username   = isset($this->params['username'])   ? $this->Account->Identity->splitUsername($this->params['username']) : array();
         
@@ -203,7 +203,11 @@ class AccountsController extends AppController {
         
         # get the data from the remote server
         $data = $this->Account->Identity->parseNoseRubPage($username['url']);
-        echo '<pre>'; print_r($data); echo '</pre>';
+        
+        # update all accounts for that identity
+        $this->Account->update($identity['Identity']['id'], $data);
+
+        echo 'done';
         exit;
     }
 }
