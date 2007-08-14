@@ -66,4 +66,4 @@
     Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
     
-    Router::connect('/jobs/:admin_hash/synchronize/:username', array('controller' => 'accounts', 'action' => 'synchronize'));
+    Router::connect('/jobs/:admin_hash/sync/:username', array('controller' => 'accounts', 'action' => 'jobs_sync'));
