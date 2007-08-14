@@ -63,7 +63,7 @@ class AccountsController extends AppController {
 
             if($with_identity['Identity']['namespace'] != $username) {
                 # this user is not a local one, so no accounts can be added
-                $this->redirect('/noserub/' . $username . '/contacts/');
+                $this->redirect('/' . $username . '/contacts/');
                 exit;
             }
             
@@ -90,7 +90,7 @@ class AccountsController extends AppController {
                 $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $username);
             }
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/noserub/' . $username . '/accounts/');
+                $this->redirect('/' . $username . '/accounts/');
                 exit;
             }
         }
@@ -132,7 +132,7 @@ class AccountsController extends AppController {
             $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
             $saveable = array('modified', 'service_id', 'username', 'feedurl');
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/noserub/' . $username . '/accounts/');
+                $this->redirect('/' . $username . '/accounts/');
                 exit;
             }
         }
