@@ -1,6 +1,6 @@
 <?php
     $uri = $_SERVER['REQUEST_URI'];
-    $noserub_url = NOSERUB_URL_PREFIX . '/' . $session->read('Identity.username');
+    $noserub_url = '/' . $session->read('Identity.username');
     $class_accounts = '';
     $class_network  = '';
     $class_contacts = '';
@@ -22,16 +22,16 @@
 ?>
 <div id="mainnav" class="nav">
     <ul>
-        <li<?php echo $class_home;?>><a href="<?php echo NOSERUB_URL_PREFIX; ?>/">NoseRub</a></li>
+        <li<?php echo $class_home;?>><?php echo $html->link('Noserub', '/'); ?></li>
         <?php if($session->check('Identity.id')) { ?>
-            <li<?php echo $class_noserub;?>><a href="<?php echo $noserub_url; ?>/">My NoseRub</a></li>
-            <li<?php echo $class_network;?>><a href="<?php echo $noserub_url; ?>/network/">Network</a></li>
-            <li<?php echo $class_accounts;?>><a href="<?php echo $noserub_url; ?>/accounts/">Accounts</a></li>
-            <li<?php echo $class_contacts;?>><a href="<?php echo $noserub_url; ?>/contacts/">Contacts</a></li>
-            <li<?php echo $class_settings;?>><a href="<?php echo $noserub_url; ?>/settings/">Settings</a></li>
+            <li<?php echo $class_noserub;?>><?php echo $html->link('My NoseRub', $noserub_url . '/'); ?></li>
+            <li<?php echo $class_network;?>><?php echo $html->link('Network', $noserub_url . '/network/'); ?></li>
+            <li<?php echo $class_accounts;?>><?php echo $html->link('Accounts', $noserub_url . '/accounts/'); ?></li>
+            <li<?php echo $class_contacts;?>><?php echo $html->link('Contacts', $noserub_url . '/contacts/'); ?></li>
+            <li<?php echo $class_settings;?>><?php echo $html->link('Settings', $noserub_url . '/settings/'); ?></li>
         <?php } else {
             if(NOSERUB_REGISTRATION_TYPE == 'all') { ?>
-                <li<?php echo $class_register;?>><a href="<?php echo NOSERUB_URL_PREFIX; ?>/register/">Register</a></li>
+                <li<?php echo $class_register;?>><?php echo $html->link('Register', '/register/'); ?></li>
             <?php }
         } ?>
     </ul>

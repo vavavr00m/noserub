@@ -14,13 +14,13 @@
                     <td><?php echo $item['Account']['username']; ?></td>
                     <td><?php echo $item['Service']['name']; ?></td>
                     <td>
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/accounts/<?php echo $item['Account']['id']; ?>/edit/">Edit Account</a>
+                        <?php echo $html->link('Edit Account', '/' . $session->read('Identity.username') . '/accounts/'.  $item['Account']['id'] . '/edit/'); ?>
                         |
-                        <a href="/noserub/<?php echo $session->read('Identity.username'); ?>/accounts/<?php echo $item['Account']['id']; ?>/delete/">Delete Account</a>
+                        <?php echo $html->link('Delete Account', '/' . $session->read('Identity.username') . '/accounts/'.  $item['Account']['id'] . '/delete/'); ?>
                     </td>
                 </tr>
             <?php }
         } ?>
     </tbody>
 </table>
-<a href="/noserub/<?php echo $session->read('Identity.username'); ?>/accounts/add/">Add new account</a>
+<?php echo $html->link('Add new account', '/' . $session->read('Identity.username') . '/accounts/add'); ?>

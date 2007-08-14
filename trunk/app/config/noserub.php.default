@@ -7,18 +7,6 @@
 define('NOSERUB_DOMAIN', '');
 
 /**
- * the name of the subdirectory, where
- * noserub is installed on your server:
- * http://myserver.com/noserub/
- * you should not change that, because other
- * noserub servers will look at that place
- * for account information:
- * john.doe@myserver.com => http://myserver.com/noserub/john.doe
- * @name NOSERUB_URL_PREFIX
- */
-define('NOSERUB_URL_PREFIX', '/noserub');
-
-/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities

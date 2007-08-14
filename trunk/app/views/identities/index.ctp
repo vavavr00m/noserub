@@ -16,12 +16,12 @@
             <tr>
                 <td><?php echo $account['username']; ?></td>
                 <td><?php echo $account['feed_url']; ?></td>
-                <td><a href="<?php echo $account['account_url']; ?>"><?php echo $account['Service']['name']; ?></a></td>
+                <td><?php echo $html->link($account['Service']['name'], $account['account_url']); ?></a></td>
             </tr>
         <?php } ?>
     </table>
     <?php if($session_identity_id == $data['Identity']['id']) { ?>
-        <a href="http://noserub/noserub/<?php echo $data['Identity']['username']; ?>/accounts/add/">Add new account</a>
+        <?php echo $html->link('Add new account', '/' . $data['Identity']['username'] . '/accounts/add/'); ?>
     <?php } ?>
 
     <h1>Contacts</h1>
@@ -35,7 +35,10 @@
                 continue;
             } ?>
             <tr>
-                <td><a href="<?php echo $contact['WithIdentity']['url']; ?>"><?php echo $contact['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $contact['WithIdentity']['username'] : $contact['WithIdentity']['full_username']; ?></a></td>
+                <td>
+                    <?php echo $html->link($contact['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $contact['WithIdentity']['username'] : $contact['WithIdentity']['full_username'],
+                                           $contact['WithIdentity']['url']); ?>
+                </td>
             </tr>
         <?php } ?>
     </table>
