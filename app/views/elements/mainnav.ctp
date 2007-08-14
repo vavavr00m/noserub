@@ -1,6 +1,6 @@
 <?php
     $uri = $_SERVER['REQUEST_URI'];
-    $noserub_url = '/noserub/' . $session->read('Identity.username');
+    $noserub_url = NOSERUB_URL_PREFIX . '/' . $session->read('Identity.username');
     $class_accounts = '';
     $class_network  = '';
     $class_contacts = '';
@@ -22,7 +22,7 @@
 ?>
 <div id="mainnav" class="nav">
     <ul>
-        <li<?php echo $class_home;?>><a href="/">NoseRub</a></li>
+        <li<?php echo $class_home;?>><a href="<?php echo NOSERUB_URL_PREFIX; ?>/">NoseRub</a></li>
         <?php if($session->check('Identity.id')) { ?>
             <li<?php echo $class_noserub;?>><a href="<?php echo $noserub_url; ?>/">My NoseRub</a></li>
             <li<?php echo $class_network;?>><a href="<?php echo $noserub_url; ?>/network/">Network</a></li>
@@ -31,7 +31,7 @@
             <li<?php echo $class_settings;?>><a href="<?php echo $noserub_url; ?>/settings/">Settings</a></li>
         <?php } else {
             if(NOSERUB_REGISTRATION_TYPE == 'all') { ?>
-                <li<?php echo $class_register;?>><a href="/register/">Register</a></li>
+                <li<?php echo $class_register;?>><a href="<?php echo NOSERUB_URL_PREFIX; ?>/register/">Register</a></li>
             <?php }
         } ?>
     </ul>
