@@ -167,7 +167,7 @@ class AccountsController extends AppController {
             $this->Account->delete();
         }
         
-        $this->redirect('/noserub/' . $username . '/accounts/');
+        $this->redirect('/' . $username . '/accounts/');
         exit;
     }
     
