@@ -1,12 +1,10 @@
 <?php
-/* $Id$ $id$ $ID$ $Revision$ */
-
 /**
  * Domain name, under which the noserub-server can be accessed
  * Example: http://<NOSERUB_DOMAIN>/
  * @name NOSERUB_DOMAIN
  */
-define('NOSERUB_DOMAIN', 'server1');
+define('NOSERUB_DOMAIN', '');
 
 /**
  * the name of the subdirectory, where
@@ -26,7 +24,7 @@ define('NOSERUB_URL_PREFIX', '/noserub');
  * synchronizing accounts from external identities
  * @name NOSERUB_ADMIN_HASH
  */
-define('NOSERUB_ADMIN_HASH', '74364g236ewe6rw6e');
+define('NOSERUB_ADMIN_HASH', '');
 
 /**
  * all = everyone can register
