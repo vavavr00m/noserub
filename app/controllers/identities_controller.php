@@ -5,20 +5,6 @@ class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form');
     
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function sandbox() {
-        #$this->Identity->parseNoseRubPage('http://noserub/noserub/dirk.olbertz/');
-        $result = $this->Identity->parseNoseRubPage('http://noserub/noserub/timo.derstappen/');
-        echo '<pre>'; print_r($result); echo '</pre>';
-        exit;
-    }
     /**
      * Method description
      *
@@ -116,7 +102,7 @@ class IdentitiesController extends AppController {
 
         if(!empty($this->data)) {
             if($this->Identity->register($this->data)) {
-                $this->redirect('/register/thanks/');
+                $this->redirect('/pages/register/thanks/');
                 exit;
             }
         }

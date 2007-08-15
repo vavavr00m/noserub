@@ -190,8 +190,7 @@ class AccountsController extends AppController {
            $username['domain'] == NOSERUB_DOMAIN ||
            $username['namespace'] != '') {
             # there is nothing to do for us here
-            $this->render('../elements/hash_not_valid');
-            exit;
+            return false;
         }
         
         # see, if we can find the identity locally
@@ -205,11 +204,40 @@ class AccountsController extends AppController {
         
         # get the data from the remote server
         $data = $this->Account->Identity->parseNoseRubPage($username['url']);
+        if(!$data) {
+            # no data was found!
+            return false;
+        }
         
         # update all accounts for that identity
         $this->Account->update($identity['Identity']['id'], $data);
 
-        echo 'done';
-        exit;
+        # update 'last_sync' field
+        $this->Account->Identity->id = $identity['Identity']['id'];
+        $this->Account->Identity->saveField('last_sync', date('Y-m-d H:i:s'));
+        
+        return true;
+    }
+    
+    /**
+     * sync all identities with their remote server
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function jobs_sync_all() {
+        $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
+        
+        if($admin_hash != NOSERUB_ADMIN_HASH ||
+           $admin_hash == '' ||
+           empty($username) ||
+           $username['domain'] == NOSERUB_DOMAIN ||
+           $username['namespace'] != '') {
+            # there is nothing to do for us here
+            return false;
+        }
+        
+        
     }
 }

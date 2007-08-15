@@ -29,6 +29,12 @@ class Identity extends AppModel {
      * @access 
      */
     function validateUniqueUsername($value, $params = array()) {
+        $value = strtolower($value);
+        $split_username = $this->splitUsername($value);
+        if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
+            return false;
+        }
+
         $this->recursive = 0;
         $this->expects('Identity');
         if($this->findCount(array('Identity.username = "' . $value . '"')) > 0) {
@@ -78,7 +84,7 @@ class Identity extends AppModel {
         # send out verification mail
         $msg  = 'Welcome to NoseRub!' . "\n\n";
         $msg .= 'please click here to verify you email address:' ."\n";
-        $msg .= FULL_BASE_URL . '/verify/' . $data['Identity']['username'] . '/' . $data['Identity']['hash'] . '/' . "\n\n";
+        $msg .= FULL_BASE_URL . '/pages/verify/' . $data['Identity']['username'] . '/' . $data['Identity']['hash'] . '/' . "\n\n";
         $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
         $msg .= 'Thanks!';
         
@@ -215,6 +221,8 @@ class Identity extends AppModel {
                 $blog['service_type_id'] = 3;
                 $result[] = $blog;
             }
+        } else {
+            return false;
         }
         
         return $result;

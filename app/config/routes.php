@@ -34,22 +34,18 @@
  * to use (in this case, /app/views/pages/home.thtml)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-/**
- * ...and connect the rest of 'Pages' controller's urls.
- */
-	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+
 /**
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	
-	Router::connect('/sandbox/', array('controller' => 'identities', 'action' => 'sandbox'));
-	Router::connect('/login/', array('controller' => 'identities', 'action' => 'login'));
-	Router::connect('/logout/', array('controller' => 'identities', 'action' => 'logout'));
-	Router::connect('/register/', array('controller' => 'identities', 'action' => 'register'));
-	Router::connect('/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
-	Router::connect('/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
+	Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
+	Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
+	Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
+	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+	Router::connect('/pages/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
     
     Router::connect('/:username/', array('controller' => 'identities', 'action' => 'index'));
     
@@ -66,5 +62,6 @@
     Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
     
-    Router::connect('/jobs/:admin_hash/sync/identity/:username', array('controller' => 'accounts', 'action' => 'jobs_sync'));
-    Router::connect('/system/:admin_hash/update/', array('controller' => 'admins', 'action' => 'system_update'));
+    Router::connect('/jobs/:admin_hash/sync/identity/:username/', array('controller' => 'accounts', 'action' => 'jobs_sync'));
+    Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'accounts', 'action' => 'jobs_sync_all'));
+    Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));

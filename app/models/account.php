@@ -29,4 +29,16 @@ class Account extends AppModel {
             $this->save($account, true, $saveable);
         }
     }
+    
+    /**
+     * Deletes all accounts for given identity_id
+     *
+     * @param  $identity_id for which all accounts should be removed
+     * @return 
+     * @access 
+     */
+    function deleteByIdentityId($identity_id) {
+        $identity_id = intval($identity_id);
+        return $this->execute('DELETE FROM accounts WHERE identity_id='.$identity_id);
+    }
 }
