@@ -95,8 +95,9 @@ class ContactsController extends AppController {
                     $this->Contact->Identity->expects('Contact');
                     if($this->Contact->Identity->findCount(array('username' => $identity_username)) == 0) {
                         $this->Contact->Identity->create();
-                        $identity = array('username' => $identity_username);
-                        $saveable = array('username');
+                        $identity = array('is_local' => 1,
+                                          'username' => $identity_username);
+                        $saveable = array('is_local', 'username');
                         # no validation, as we have no password.
                         if($this->Contact->Identity->save($identity, false, $saveable)) {
                             # create the contact now
