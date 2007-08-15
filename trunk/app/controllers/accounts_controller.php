@@ -202,21 +202,7 @@ class AccountsController extends AppController {
             return false;
         }
         
-        # get the data from the remote server
-        $data = $this->Account->Identity->parseNoseRubPage($username['url']);
-        if(!$data) {
-            # no data was found!
-            return false;
-        }
-        
-        # update all accounts for that identity
-        $this->Account->update($identity['Identity']['id'], $data);
-
-        # update 'last_sync' field
-        $this->Account->Identity->id = $identity['Identity']['id'];
-        $this->Account->Identity->saveField('last_sync', date('Y-m-d H:i:s'));
-        
-        return true;
+        return $this->Account->sync($identity['Identity']['id'], $username['url']);
     }
     
     /**
@@ -230,14 +216,23 @@ class AccountsController extends AppController {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
         if($admin_hash != NOSERUB_ADMIN_HASH ||
-           $admin_hash == '' ||
-           empty($username) ||
-           $username['domain'] == NOSERUB_DOMAIN ||
-           $username['namespace'] != '') {
+           $admin_hash == '') {
             # there is nothing to do for us here
             return false;
         }
         
-        
+        # get all not local identities
+        $this->Account->Identity->recursive = 0;
+        $this->Account->Identity->expects('Identity');
+        $identities = $this->Account->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
+        foreach($identities as $identity) {
+            if($identity['Identity']['domain']    != NOSERUB_DOMAIN &&
+               $identity['Identity']['namespace'] == '' &&
+               $identity['Identity'])['url']      != '') {
+                $this->Account->sync($identity['Identity']['id'], $identity['Identity']['url']);       
+            }
+        }
+
+        return true;
     }
 }
