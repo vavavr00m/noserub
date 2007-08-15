@@ -31,7 +31,7 @@
             <li<?php echo $class_settings;?>><?php echo $html->link('Settings', $noserub_url . '/settings/'); ?></li>
         <?php } else {
             if(NOSERUB_REGISTRATION_TYPE == 'all') { ?>
-                <li<?php echo $class_register;?>><?php echo $html->link('Register', '/register/'); ?></li>
+                <li<?php echo $class_register;?>><?php echo $html->link('Register', '/pages/register/'); ?></li>
             <?php }
         } ?>
     </ul>
