@@ -44,7 +44,11 @@
  */
 //EOF
 
-require_once 'noserub.php';
+if(file_exists(APP . '/config/noserub.php')) {
+    require_once 'noserub.php';
+} else {
+    die('noserub.php not found!');
+}
 
 define('NOSERUB_VALID_USERNAME', '/^[\da-zA-Z-\.\_]+@[\da-zA-Z-\.\_]+$/');
 define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
