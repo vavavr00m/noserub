@@ -57,12 +57,14 @@ class ContactsController extends AppController {
                     $identity_username = $this->data['Contact']['username'];
                     # see, if we already have it
                     $identity = $this->Contact->Identity->findByUsername($identity_username);
+                    $needs_sync = false;
                     if(!$identity) {
                         $this->Contact->Identity->create();
                         $identity = array('username' => $identity_username);
                         $saveable = array('username');
                         $this->Contact->Identity->save($identity, false, $saveable);
                         $new_identity_id = $this->Contact->Identity->id;
+                        $needs_sync = true;
                     } else {
                         $new_identity_id = $identity['Identity']['id'];
                     }
@@ -73,6 +75,10 @@ class ContactsController extends AppController {
                                      'with_identity_id' => $new_identity_id);
                     $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
                     if($this->Contact->save($contact, true, $saveable)) {
+                        # now do the synchronization, if neccessary
+                        if($needs_sync) {
+                            $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $identity_username . '/');
+                        }
                         $this->redirect('/noserub/' . $username . '/contacts/');
                         exit;
                     }
