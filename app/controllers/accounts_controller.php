@@ -185,11 +185,13 @@ class AccountsController extends AppController {
         $username   = isset($this->params['username'])   ? $this->Account->Identity->splitUsername($this->params['username']) : array();
         
         if($admin_hash != NOSERUB_ADMIN_HASH ||
+           $admin_hash == '' ||
            empty($username) ||
            $username['domain'] == NOSERUB_DOMAIN ||
            $username['namespace'] != '') {
             # there is nothing to do for us here
-            return false;
+            $this->render('../elements/hash_not_valid');
+            exit;
         }
         
         # see, if we can find the identity locally
