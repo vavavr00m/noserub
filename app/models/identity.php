@@ -73,10 +73,11 @@ class Identity extends AppModel {
      */
     public function register($data) {
         $this->create();
+        $data['Identity']['is_local'] = 1;
         $data['Identity']['username'] = $data['Identity']['username'] . '@' . NOSERUB_DOMAIN;
         $data['Identity']['password'] = md5($data['Identity']['passwd']);
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        $saveable = array('username', 'password', 'email', 'hash', 'created', 'modified');
+        $saveable = array('is_local', 'username', 'password', 'email', 'hash', 'created', 'modified');
         if(!$this->save($data, true, $saveable)) {
             return false;
         }
