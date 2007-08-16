@@ -49,7 +49,8 @@ class Account extends AppModel {
      * @return 
      * @access 
      */
-    function function sync($identity_id, $url) {
+    function sync($identity_id, $url) {
+        $this->log('sync('.$identity_id.', '.$url.')', LOG_DEBUG);
         # get the data from the remote server
         $data = $this->Identity->parseNoseRubPage($url);
         if(!$data) {

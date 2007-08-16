@@ -197,6 +197,9 @@ class AccountsController extends AppController {
         $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
         $identity = $this->Account->Identity->findByUsername($username['full_username']);
+$this->log('looking for '. $username['full_username'], LOG_DEBUG);
+$this->log(print_r($identity, 1), LOG_DEBUG);
+
         if(!$identity) {
             # we could not find it, so we don't do anything
             return false;
@@ -228,7 +231,7 @@ class AccountsController extends AppController {
         foreach($identities as $identity) {
             if($identity['Identity']['domain']    != NOSERUB_DOMAIN &&
                $identity['Identity']['namespace'] == '' &&
-               $identity['Identity'])['url']      != '') {
+               $identity['Identity']['url']       != '') {
                 $this->Account->sync($identity['Identity']['id'], $identity['Identity']['url']);       
             }
         }
