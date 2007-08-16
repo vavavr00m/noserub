@@ -30,7 +30,7 @@
     <body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
         <div id="banner">
             <div id="header">
-                <a id="logo" href="/"><img src="/chrome/site/ormigo_banner.png" alt="" />NoseRub</a>
+                <a id="logo" href="/noserub/"><img src="/chrome/site/ormigo_banner.png" alt="" />NoseRub</a>
                 <hr />
             </div>
             <?php echo $this->renderElement('metanav'); ?>
