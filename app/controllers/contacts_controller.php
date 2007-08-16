@@ -26,7 +26,6 @@ class ContactsController extends AppController {
         $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
         
         $this->set('data', $this->Contact->findAllByIdentityId($identity_id));
-        
     }
     
     /**

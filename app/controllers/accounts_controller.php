@@ -24,7 +24,7 @@ class AccountsController extends AppController {
         }
         
         $this->Account->recursive = 1;
-        $this->Account->expects('Account.Account', 'Account.Service', 'Service.ervice');
+        $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
         $this->set('data', $this->Account->findAllByIdentity_id($identity_id));
     }
     
@@ -113,7 +113,7 @@ class AccountsController extends AppController {
             $this->redirect('/');
             exit;
         }
-        
+
         # get the account
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
