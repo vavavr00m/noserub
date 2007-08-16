@@ -4,8 +4,10 @@
         Either this account does not exist, or it is only available for the user who created it.
     </p>
 <?php } else { ?>
-<?php echo $this->renderElement('foaf'); ?>
+    <?php echo $this->renderElement('foaf'); ?>
     <h1>Accounts</h1>
+    <?php echo $this->renderElement('accounts/index', array('data' => $data['Account'])); ?>
+    <!---
     <table class="listing">
         <tr>
             <th>Account</th>
@@ -20,26 +22,11 @@
             </tr>
         <?php } ?>
     </table>
+    -->
     <?php if($session_identity_id == $data['Identity']['id']) { ?>
         <?php echo $html->link('Add new account', '/' . $data['Identity']['username'] . '/accounts/add/'); ?>
     <?php } ?>
 
     <h1>Contacts</h1>
-    <table class="listing">
-        <tr>
-            <th>Name</th>
-        </tr>
-        <?php foreach($data['Contact'] as $contact) { 
-            if($contact['WithIdentity']['namespace'] != '' && $contact['identity_id'] != $session_identity_id) {
-                # do not display contacts that are only locally available
-                continue;
-            } ?>
-            <tr>
-                <td>
-                    <?php echo $html->link($contact['WithIdentity']['domain'] == NOSERUB_DOMAIN ? $contact['WithIdentity']['username'] : $contact['WithIdentity']['full_username'],
-                                           $contact['WithIdentity']['url']); ?>
-                </td>
-            </tr>
-        <?php } ?>
-    </table>
+    <?php echo $this->renderElement('contacts/index', array('data' => $data['Contact'])); ?>
 <?php } ?>
