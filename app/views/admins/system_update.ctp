@@ -3,7 +3,7 @@
     check back after each update you install, because new Defines may have
     been introduced and/or changes in the Database structure been made.
 </p>
-<h1>Defines</h1>
+<h1>Settings</h1>
     Status:
 <?php if(empty($constants)) { ?>
     <strong>OK</strong>
