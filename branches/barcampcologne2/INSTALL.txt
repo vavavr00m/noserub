@@ -1,0 +1,86 @@
+This is the installation instruction for NoseRub in PHP.
+
+
+UPDATE
+======
+If you update from a previous release, jump directly to step 4 of the
+installation process.
+
+
+INSTALL
+=======
+
+0. What do I need?
+------------------
+You need MySQL and PHP, both preferable with a version of 5 or higher. Your
+webserver (I assume Apache, never tried something else) should have
+mod_rewrite installed and made available for the directory, NoseRub is
+installed at. This is important, so that the URLs are the same on all
+servers in the NoseRub "universe".
+
+
+
+1. Download NoseRub
+-------------------
+You obviously already did that, because this file is included in the package...
+If due strange circumstances you need to know where to download NoseRub for 
+PHP, please look here:
+    http://noserub.com/code/
+
+
+
+2. Install NoseRub on your webserver
+------------------------------------
+Therefore you should just extract the archive to the document root of your
+webserver:
+    tar -zxf noserub_0.1a.tar.gz
+
+Make sure that /noserub/app/tmp is writeable by the webserver.
+
+
+
+3. Create database.php and noserub.php
+--------------------------------------
+You find 
+    database.php.default 
+and 
+    noserub.php.default 
+
+under noserub/app/config/. You should use both default files as a template 
+for you own settings:
+  cd noserub/app/config
+  cp noserub.php.default noserub.php
+  cp database.php.default database.php
+
+In database.php, please enter information to contact your database server. You
+should create a new database for NoseRub, as there are no prefixes available
+for the table names and you don't want to overwrite existing tables.
+
+In noserub.php, make sure you enter values to the two constants 
+    NOSERUB_DOMAIN
+and
+	NOSERUB_ADMIN_HASH
+	
+
+
+4. Call the update url
+----------------------
+You should now be able to call the following url:
+    http://<NOSERUB_DOMAIN>/noserub/jobs/<NOSERUB_ADMIN_HASH>/system/update
+
+If neccessary, this page will show you settings you need to make, or it will
+display database updates. Even when installing noserub for the first time, it
+is normal to see database updates.
+
+If you get a OK for Settings and the Database, you now can call
+  http://<NOSERUB_DOMAIN>/noserub/
+
+
+
+5. What now?
+------------
+Do you have questions, or just want to know more about NoseRub? Just visit the
+following sites:
+  http://noserub.com/blog    - The NoseRub Blog
+  http://noserub.com/discuss - The NoseRub Google Group
+  http://noserub.com/wiki    - The NoseRub Wiki
