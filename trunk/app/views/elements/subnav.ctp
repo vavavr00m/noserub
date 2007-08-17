@@ -1,7 +1,8 @@
 <?php
 
 $uri = $_SERVER['REQUEST_URI'];
-$noserub_url = '/' . $session->read('Identity.username');
+$username = isset($url_username) ? $url_username : $session->read('Identity.username');
+$noserub_url = '/' . $username;
 if(strpos($uri, '/accounts/') > 0 ||
    strpos($uri, '/contacts/') > 0 ||
    strpos($uri, '/settings/') > 0) {

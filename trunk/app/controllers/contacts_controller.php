@@ -211,11 +211,13 @@ class ContactsController extends AppController {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(!$filter || $account['ServiceType']['token'] == $filter) {
                     $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
-                    # add some identity info
-                    foreach($new_items as $key => $value) {
-                        $new_items[$key]['username'] = $contact['WithIdentity']['username'];
+                    if($new_items) {
+                        # add some identity info
+                        foreach($new_items as $key => $value) {
+                            $new_items[$key]['username'] = $contact['WithIdentity']['username'];
+                        }
+                        $items = array_merge($items, $new_items);
                     }
-                    $items = array_merge($items, $new_items);
                 }
             }
         }        
@@ -225,7 +227,4 @@ class ContactsController extends AppController {
         $this->set('data', $items);
         $this->set('filter', $filter);
     }
-}
-function sort_items($a, $b) {
-	return $a['datetime'] < $b['datetime'];
 }

@@ -60,6 +60,20 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function getServiceTypeId($service_id) {
+        $this->recursive = 0;
+        $this->expects('Service');
+        $service = $this->findById($service_id);
+        return isset($service['Service']['service_type_id']) ? $service['Service']['service_type_id']: 0;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getFeedUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -84,7 +98,10 @@ class Service extends AppModel {
             case 5: # Twitter
                 # we need to reed the page first in order to
                 # access the rss-feed
-                $content = file_get_contents('http://twitter.com/'.$username);
+                $content = @file_get_contents('http://twitter.com/'.$username);
+                if(!$content) {
+                    return false;
+                }
                 if(preg_match('/http:\/\/twitter\.com\/statuses\/user_timeline\/([0-9]*)\.rss/i', $content, $matches)) {
                     return 'http://twitter.com/statuses/user_timeline/'.$matches[1].'.rss';
                 } else {
@@ -113,6 +130,9 @@ class Service extends AppModel {
      * @access 
      */
     function feed2array($service_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
+        if(!$feedurl) {
+            return false;
+        }
         if($service_id == 9) {
             # upcoming has no feed
             return $this->contentFromUpcoming($feedurl, $items_per_feed);

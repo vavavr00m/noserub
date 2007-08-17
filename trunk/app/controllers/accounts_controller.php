@@ -54,7 +54,7 @@ class AccountsController extends AppController {
             if(1 != $this->Account->Identity->Contact->findCount(array('identity_id'      => $identity_id,
                                                                        'with_identity_id' => $with_identity_id))) {
                 # someone is trying to be nasty
-                #$this->redirect('/');
+                $this->redirect('/');
                 exit;
             }
             $this->Account->Identity->recursive = 0;
@@ -71,8 +71,12 @@ class AccountsController extends AppController {
             $this->Session->write('add_account_with_identity_id', $with_identity_id);
         }
         if($this->data) {
+            # get ServiceType from Service
+            $service_id = $this->data['Account']['service_id'];
+            $this->data['Account']['service_type_id'] = $this->Account->Service->getServiceTypeId($service_id);
+            
             $this->Account->create();
-            $saveable = array('identity_id', 'service_id', 'username', 'account_url', 'feed_url', 'created', 'modified');
+            $saveable = array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'feed_url', 'created', 'modified');
             $with_identity_id = $this->Session->read('add_with_identity_id');
             if($this->Session->check('add_account_with_identity_id')) {
                 # create account for contact identity
@@ -82,12 +86,11 @@ class AccountsController extends AppController {
                 # create account for logged in identity
                 $this->data['Account']['identity_id'] = $identity_id;
             }
-            if($this->data['Account']['service_id'] != 7) {
+            if($service_id != 7) {
                 # only look into getting the feed, when service is not "blog"
-                $service_id = $this->data['Account']['service_id'];
-                $username   = $this->data['Account']['username'];
-                $this->data['Account']['feed_url']    = $this->Account->Service->getFeedUrl($service_id, $username);
-                $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $username);
+                $service_username = $this->data['Account']['username'];
+                $this->data['Account']['feed_url']    = $this->Account->Service->getFeedUrl($service_id, $service_username);
+                $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $service_username);
             }
             if($this->Account->save($this->data, true, $saveable)) {
                 $this->redirect('/' . $username . '/accounts/');
@@ -129,7 +132,7 @@ class AccountsController extends AppController {
         } else {
             # the form was submitted
             $this->Account->id = $account_id;
-            $this->data['Account']['feedurl'] = $this->Account->Service->username2feed($this->data['Account']['username'], $this->data['Account']['service_id']);
+            $this->data['Account']['feedurl'] = $this->Account->Service->getFeedUrl($this->data['Account']['service_id'], $this->data['Account']['username']);
             $saveable = array('modified', 'service_id', 'username', 'feedurl');
             if($this->Account->save($this->data, true, $saveable)) {
                 $this->redirect('/' . $username . '/accounts/');
