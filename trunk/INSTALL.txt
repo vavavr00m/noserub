@@ -12,7 +12,11 @@ INSTALL
 
 0. What do I need?
 ------------------
-You need MySQL and PHP, both preferable with a version of 5 or higher.
+You need MySQL and PHP, both preferable with a version of 5 or higher. Your
+webserver (I assume Apache, never tried something else) should have
+mod_rewrite installed and made available for the directory, NoseRub is
+installed at. This is important, so that the URLs are the same on all
+servers in the NoseRub "universe".
 
 
 
@@ -31,9 +35,11 @@ Therefore you should just extract the archive to the document root of your
 webserver:
     tar -zxf noserub_0.1a.tar.gz
 
+Make sure that /noserub/app/tmp is writeable by the webserver.
 
 
-4. Create database.php and noserub.php
+
+3. Create database.php and noserub.php
 --------------------------------------
 You find 
     database.php.default 
@@ -57,7 +63,7 @@ and
 	
 
 
-5. Call the update url
+4. Call the update url
 ----------------------
 You should now be able to call the following url:
     http://<NOSERUB_DOMAIN>/noserub/jobs/<NOSERUB_ADMIN_HASH>/system/update
@@ -71,7 +77,7 @@ If you get a OK for Settings and the Database, you now can call
 
 
 
-6. What now?
+5. What now?
 ------------
 Do you have questions, or just want to know more about NoseRub? Just visit the
 following sites:
