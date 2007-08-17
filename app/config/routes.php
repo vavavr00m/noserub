@@ -46,9 +46,7 @@
 	Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
 	Router::connect('/pages/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
-    
-    Router::connect('/:username/', array('controller' => 'identities', 'action' => 'index'));
-    
+      
     Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 
     Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
@@ -61,6 +59,8 @@
     Router::connect('/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
     Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
+    
+    Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
     
     Router::connect('/jobs/:admin_hash/sync/identity/:username/', array('controller' => 'accounts', 'action' => 'jobs_sync'));
     Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'accounts', 'action' => 'jobs_sync_all'));

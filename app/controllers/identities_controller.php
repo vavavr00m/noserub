@@ -13,8 +13,22 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
-        $namespace = '';
-        $username  = isset($this->params['username']) ? $this->params['username'] : '';
+        $filter      = isset($this->params['filter'])   ? $this->params['filter']   : '';
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $namespace   = '';
+        
+        # sanitize filter
+        switch($filter) {
+            case 'media':
+            case 'link':
+            case 'text':
+                $filter = $filter; 
+                break;
+            
+            default: 
+                $filter = false;
+        }
+        
         if(strpos($username, '@') !== false) {
             # this is a username with a namespace: <username>@<namespace>
             # we need to change that to the internal name: <username>:<namespace>@<domain>
@@ -31,8 +45,9 @@ class IdentitiesController extends AppController {
         } else {
             $this->Identity->recursive = 2;
             $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Contact',
-                                     'Account.Account', 'Account.Service',
+                                     'Account.Account', 'Account.Service', 'Account.ServiceType',
                                      'Service.Service',
+                                     'ServiceType.ServiceType',
                                      'Contact.Contact', 'Contact.WithIdentity',
                                      'WithIdentity.WithIdentity');
             $data = $this->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
@@ -46,10 +61,29 @@ class IdentitiesController extends AppController {
             }
         }
 
+        # get all items for those accounts
+        $items = array();
+        foreach($data['Account'] as $account) {
+            if(!$filter || $account['ServiceType']['token'] == $filter) {
+                $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
+                if($new_items) {
+                    # add some identity info
+                    foreach($new_items as $key => $value) {
+                        $new_items[$key]['username'] = $username;
+                    }
+                    $items = array_merge($items, $new_items);
+                }
+            }
+        }
+        usort($items, 'sort_items');
+        
         $this->set('data', $data);
+        $this->set('items', $items);
         $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
         $this->set('session_identity_username', isset($session_identity_username) ? $session_identity_username : '');
+        $this->set('url_username', $username);
         $this->set('namespace', $namespace);
+        $this->set('filter', $filter);
     }
     
     /**
