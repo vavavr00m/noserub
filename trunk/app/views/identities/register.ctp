@@ -1,5 +1,5 @@
 <h1>Register</h1>
-<?php echo $form->create('Identity', array('action' => $this->action)); ?>
+<form id="IdentityRegisterForm" method="post" action="/noserub/pages/register/">
     <fieldset>
         <?php 
             echo $form->input('Identity.username', 
