@@ -192,6 +192,7 @@ class ContactsController extends AppController {
             case 'media':
             case 'link':
             case 'text':
+            case 'event':
                 $filter = $filter; 
                 break;
             
