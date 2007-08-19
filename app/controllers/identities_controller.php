@@ -64,20 +64,22 @@ class IdentitiesController extends AppController {
 
         # get all items for those accounts
         $items = array();
-        foreach($data['Account'] as $account) {
-            if(!$filter || $account['ServiceType']['token'] == $filter) {
-                $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
-                if($new_items) {
-                    # add some identity info
-                    foreach($new_items as $key => $value) {
-                        $new_items[$key]['username'] = $username;
+        if(is_array($data['Account'])) {
+            foreach($data['Account'] as $account) {
+                if(!$filter || $account['ServiceType']['token'] == $filter) {
+                    $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
+                    if($new_items) {
+                        # add some identity info
+                        foreach($new_items as $key => $value) {
+                            $new_items[$key]['username'] = $username;
+                        }
+                        $items = array_merge($items, $new_items);
                     }
-                    $items = array_merge($items, $new_items);
                 }
             }
+            usort($items, 'sort_items');
         }
-        usort($items, 'sort_items');
-        
+    
         $this->set('data', $data);
         $this->set('items', $items);
         $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
