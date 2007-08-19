@@ -15,17 +15,22 @@ class AccountsController extends AppController {
      */
     function index() {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
         
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user. for the moment, all identities are privat
+        # get identity that is displayed
+        $this->Account->Identity->recursive = 0;
+        $this->Account->Identity->expects('Identity');
+        $identity = $this->Account->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+        if(!$identity) {
+            # this identity is not here
             $this->redirect('/');
             exit;
         }
+        $this->set('identity', $identity['Identity']);
         
+        # get all accounts
         $this->Account->recursive = 1;
         $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
-        $this->set('data', $this->Account->findAllByIdentity_id($identity_id));
+        $this->set('data', $this->Account->findAllByIdentity_id($identity['Identity']['id']));
     }
     
     /**
@@ -78,12 +83,14 @@ class AccountsController extends AppController {
             $this->Account->create();
             $saveable = array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'feed_url', 'created', 'modified');
             $with_identity_id = $this->Session->read('add_with_identity_id');
+            $created_for_self = false;
             if($this->Session->check('add_account_with_identity_id')) {
                 # create account for contact identity
                 $this->data['Account']['identity_id'] = $this->Session->read('add_account_with_identity_id');
                 $this->Session->delete('add_account_with_identity_id');
             } else {
                 # create account for logged in identity
+                $created_for_self = true;
                 $this->data['Account']['identity_id'] = $identity_id;
             }
             if($service_id != 7) {
@@ -93,7 +100,11 @@ class AccountsController extends AppController {
                 $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $service_username);
             }
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/' . $username . '/accounts/');
+                if($created_for_self == true) {
+                    $this->redirect('/' . $username . '/accounts/');
+                } else {
+                    $this->redirect('/' . $username . '/contacts/');
+                }
                 exit;
             }
         }

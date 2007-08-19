@@ -5,6 +5,8 @@ $username = isset($url_username) ? $url_username : $session->read('Identity.user
 $noserub_url = '/' . $username;
 if(strpos($uri, '/accounts/') > 0 ||
    strpos($uri, '/contacts/') > 0 ||
+   strpos($uri, '/register/') > 0 ||
+   strpos($uri, '/login/') > 0 ||
    strpos($uri, '/settings/') > 0) {
        # no sub navigation
 } else if(strpos($uri, '/network/') > 0) { ?>

@@ -22,12 +22,14 @@
         ?>
         <?php 
             echo $form->input('Account.account_url', 
-                              array('error' => array(
+                              array('size' => '40',
+                                    'error' => array(
                                     'content'  => 'Pleas enter a valid URL'))); 
         ?>
         <?php 
             echo $form->input('Account.feed_url', 
-                              array('error' => array(
+                              array('size' => '40',
+                                    'error' => array(
                                     'content'  => 'Pleas enter a valid URL'))); 
         ?>
         <p>
