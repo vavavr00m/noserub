@@ -12,7 +12,9 @@ class Admin extends AppModel {
                                 'file' => 'noserub.php'),
                            'NOSERUB_REGISTRATION_TYPE' => array(
                                 'values' => array('all', 'none', 'invitation'),
-                                'file'   => 'noserub.php')
+                                'file'   => 'noserub.php'),
+                           'NOSERUB_EMAIL_FROM' => array(
+                               'file' => 'noserub.php')
                           );
     /**
      * check some constants
