@@ -24,3 +24,10 @@ define('NOSERUB_ADMIN_HASH', '');
  */
 define('NOSERUB_REGISTRATION_TYPE', 'all');
 
+/**
+ * E-Mail address, that is put into the From: header,
+ * when sending out emails.
+ *
+ * @name: NOSERUB_EMAIL_FROM
+ */
+define('NOSERUB_EMAIL_FROM', 'info@...');
