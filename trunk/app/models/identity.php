@@ -89,8 +89,10 @@ class Identity extends AppModel {
         $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
         $msg .= 'Thanks!';
         
-        if(!mail($data['Identity']['email'], 'Your NoseRub registration', $msg, 'From: info@noserub.com')) {
-            LogError('verify mail could not be sent: '.$data['Identity']['email']);
+        if(!mail($data['Identity']['email'], 'Your NoseRub registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+            $this->log('verify mail could not be sent: '.$data['Identity']['email']);
+        } else {
+            $this->log('verify mail sent to '.$data['Identity']['email'], LOG_DEBUG);
         }
         
         return true;

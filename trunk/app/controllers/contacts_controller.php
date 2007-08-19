@@ -14,18 +14,22 @@ class ContactsController extends AppController {
      */
     function index() {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
         
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user. for the moment, all identities are privat
+        # get identity of displayed user
+        $this->Contact->Identity->recursive = 0;
+        $this->Contact->Identity->expects('Identity');
+        $identity = $this->Contact->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+        if(!$identity) {
+            # identity not found
             $this->redirect('/');
             exit;
         }
+        $this->set('identity', $identity['Identity']);
         
         $this->Contact->recursive = 1;
         $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
         
-        $this->set('data', $this->Contact->findAllByIdentityId($identity_id));
+        $this->set('data', $this->Contact->findAllByIdentityId($identity['Identity']['id']));
     }
     
     /**
