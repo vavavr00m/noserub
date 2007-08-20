@@ -50,7 +50,7 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-define('NOSERUB_VALID_USERNAME', '/^[\da-zA-Z-\.\_]+@*[\da-zA-Z-\.\_]+$/');
+define('NOSERUB_VALID_USERNAME', '/^[\w.-]+@*[\w.-]+$/ism');
 define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
 
 # to exclude pages and jobs is essential here, because else, 
