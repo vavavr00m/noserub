@@ -40,6 +40,217 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
+    function add_step_1() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        # check that the user is logged in
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        # reset session
+        $this->Session->delete('Service.add.id');
+        
+        if($this->data) {
+            if($this->data['Account']['type'] == 1) {
+                # user selected a service
+                $this->Session->write('Service.add.id', $this->data['Account']['service_id']);
+                $this->redirect('/'.$username.'/accounts/add/service/');
+                exit;
+            } else {
+                # user wants to add Blog or RSS-Feed
+                $this->redirect('/'.$username.'/accounts/add/feed/');
+                exit;
+            }
+        }
+        $this->set('services', $this->Account->Service->generateList(array('id<>8'), null, null, "{n}.Service.id", "{n}.Service.name"));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function add_step_2_service() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        $service_id  = $this->Session->read('Service.add.id');
+        
+        # check that the user is logged in
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        if(!$service_id) {
+            $this->redirect('/');
+            exit;
+        }
+        
+        # reset session
+        $this->Session->delete('Service.add.data');
+        
+        if($this->data) {
+            # get title, url and preview
+            $data = $this->Account->Service->getInfoFromService($service_id, $this->data['Account']['username']);    
+            if(!$data) {
+                $this->Account->invalidate('username', 1);
+            } else {
+                $this->Session->write('Service.add.data', $data);
+                $this->redirect('/' . $username . '/accounts/add/preview/');
+                exit;
+            }
+        } else {
+            $this->data = array('Account' => array('feed_url' => 'http://')); 
+        }
+         
+        $this->Account->Service->recursive = 0;
+        $this->Account->Service->expects('Service');
+        $this->set('service', $this->Account->Service->findById($service_id));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function add_step_2_feed() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        # check that the user is logged in
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        # reset session
+        $this->Session->delete('Service.add.data');
+        
+        if($this->data) {
+            # get title, url and preview
+            $data = $this->Account->Service->getInfoFromFeed($this->data['Account']['feed_url']);    
+            if(!$data) {
+                $this->Account->invalidate('feedurl', 1);
+            } else {
+                $data['service_type_id'] = $this->data['Account']['service_type_id'];
+                $this->Session->write('Service.add.data', $data);
+                $this->redirect('/' . $username . '/accounts/add/preview/');
+                exit;
+            }
+        } else {
+            $this->data = array('Account' => array('feed_url' => 'http://')); 
+        }
+        
+        $this->set('service_types', $this->Account->ServiceType->generateList(null, null, null, "{n}.ServiceType.id", "{n}.ServiceType.name"));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function add_step_3_preview() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        # check that the user is logged in
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        $data = $this->Session->read('Service.add.data');
+        
+        if(isset($this->params['form'])) {
+            # reset session
+            $this->Session->delete('Service.add.data');
+            
+            if(isset($this->params['form']['submit'])) {
+                # save the new account
+                $data['identity_id'] = $identity_id;
+                
+                $saveable = array('identity_id', 'service_id', 'service_type_id', 
+                                  'username', 'account_url', 'feed_url', 'created', 
+                                  'modified');
+                $this->Account->create();
+                $this->Account->save($data);
+                
+                # test, if we can find friends from this account
+                $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
+                if(!empty($contacts)) {
+                    $this->Session->write('Service.add.contacts', $contacts);
+                    $this->Session->write('Service.add.account_id', $this->Account->id);
+                    $this->redirect('/' . $username . '/accounts/add/friends/');
+                    exit;
+                }
+            }
+            $this->redirect('/' . $username . '/accounts/');
+            exit;
+        }
+        $this->set('data', $data);
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function add_step_4_friends() {
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id = $this->Session->read('Identity.id');
+        
+        # check that the user is logged in
+        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
+            # this is not the logged in user
+            $this->redirect('/');
+            exit;
+        }
+        
+        if($this->data) {
+            foreach($this->data as $item) {
+                if(isset($item['action']) && $item['action'] > 0) {
+                    echo '<pre>'; print_r($item); echo '</pre>';
+                }
+            }
+            exit;
+        }
+        $this->Account->recursive = 1;
+        $this->Account->expects('Account', 'Service');
+        $this->set('account', $this->Account->findById($this->Session->read('Service.add.account_id')));
+        $this->set('data', $this->Session->read('Service.add.contacts'));
+        
+        $this->Account->Identity->Contact->recursive = 1;
+        $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
+        $data = $this->Account->Identity->Contact->findAll(array('identity_id' => $identity_id));
+        $contacts = array();
+        foreach($data as $item) {
+            $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['username'];
+        }
+        $this->set('contacts', $contacts);
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function add($with_identity_id = null) {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $identity_id = $this->Session->read('Identity.id');

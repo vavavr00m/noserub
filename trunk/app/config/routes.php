@@ -49,7 +49,11 @@
       
     Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 
-    Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
+    Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
+    Router::connect('/:username/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
+    Router::connect('/:username/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
+    Router::connect('/:username/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
+    Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
     Router::connect('/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
     Router::connect('/:username/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
     Router::connect('/:username/accounts/', array('controller' => 'accounts', 'action' => 'index'));

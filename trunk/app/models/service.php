@@ -138,24 +138,29 @@ class Service extends AppModel {
             return $this->contentFromUpcoming($feedurl, $items_per_feed);
         }
         vendor('simplepie/simplepie');
-        $max_age = date('Y-m-d H:i:s', strtotime($items_max_age));
+        $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
         $items = array();
 
         $feed = new SimplePie();
         $feed->set_cache_location(CACHE . 'simplepie');
         $feed->set_feed_url($feedurl);
         $feed->init();
+        if($feed->error()) {
+            return false;
+        }
+        
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
     		$feeditem = $feed->get_item($i);
     		# create a NoseRub item out of the feed item
     		$item = array();
     		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
-    		if($item['datetime'] < $max_age) {
+    		if($max_age && $item['datetime'] < $max_age) {
     		    # we can stop here, as we do not expect any newer items
     		    break;
     		}
     		
-    		$item['link'] = $feeditem->get_link();
+    		$item['title'] = $feeditem->get_title();
+    		$item['url'] = $feeditem->get_link();
     		
     		switch($service_id) {
     		    case 1: # flickr
@@ -266,7 +271,7 @@ class Service extends AppModel {
                 }
                 $result[] = array(
                     'datetime' => $norm_date,
-                    'link'     => $link,
+                    'url'      => $link,
                     'content'  => $events[1][$idx]);
             }
         }
@@ -281,8 +286,8 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getAccountUrl($account_id, $username) {
-        switch($account_id) {
+    function getAccountUrl($service_id, $username) {
+        switch($service_id) {
             case 1: # flickr
                 return 'http://www.flickr.com/photos/'.$username.'/';
                 
@@ -307,5 +312,137 @@ class Service extends AppModel {
             default:
                 return '';
         }
+    }
+    
+    /**
+     * get title, url and preview for rss-feed
+     *
+     * @param string $feedurl 
+     * @param int $max_items maximum number of items to fetch
+     * @return array
+     * @access 
+     */
+    function getInfoFromFeed($feed_url, $max_items = 5) {
+        vendor('simplepie/simplepie');
+        $feed = new SimplePie();
+        $feed->set_cache_location(CACHE . 'simplepie');
+        $feed->set_feed_url($feed_url);
+        @$feed->init();
+        if($feed->error()) {
+            return false;
+        }
+        
+        $data = array();
+        $data['title']       = $feed->get_title();
+        $data['account_url'] = $feed->get_link();
+        $data['feed_url']    = $feed->feed_url;
+        $data['service_id']  = 8; # any RSS-Feed
+        $data['username']    = 'RSS-Feed';
+        
+        $data['items'] = array();         
+        for($i=0; $i < $feed->get_item_quantity($max_items); $i++) {
+    		$feeditem = $feed->get_item($i);
+    		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
+    		$item['url']      = $feeditem->get_link();
+            $item['title']    = $feeditem->get_title();
+            $item['content']  = $feeditem->get_content();
+            
+            $data['items'][] = $item;
+    	}
+    	
+    	unset($feed);
+    	
+    	return $data;
+    }
+    
+    /**
+     * get service_type_id, feed_url and preview
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getInfoFromService($service_id, $username) {
+        $this->recursive = 0;
+        $this->expects('Service');
+        $service = $this->findById($service_id);
+        
+        $data = array();
+        $data['service_id']      = $service_id;
+        $data['username']        = $username;
+        $data['service_type_id'] = $service['Service']['service_type_id'];
+        $data['account_url']     = $this->getAccountUrl($service_id, $username);
+        $data['feed_url']        = $this->getFeedUrl($service_id, $username);
+        
+        $items = $this->feed2array($service_id, $data['feed_url'], 5, null);
+        
+        if(!$items) {
+            return false;
+        }
+        
+        $data['items'] = $items;
+        
+        return $data;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromService($account_id) {
+        $this->Account->recursive = 0;
+        $this->Account->expects('Account');
+        $account = $this->Account->findById($account_id);
+        switch($account['Account']['service_id']) {
+            case 1:
+                return $this->getContactsFromFlickr('http://www.flickr.com/people/' . $account['Account']['username'] . '/contacts/');
+                
+            default:
+                return array();
+        }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromFlickr($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = file_get_contents($page_url);
+            if(preg_match_all('/<td class="Who">.*<h2>(.*)<\/h2>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<a href=\"\/photos\/(.*)\/\">photos<\/a>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/class="Next">Next &gt;<\/a>/iU', $content)) {
+                    $page_url = $url . '?page='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 }

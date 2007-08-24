@@ -6,7 +6,7 @@
     <?php foreach($data as $item) { ?>
         <div style="float:left;padding:10px;">
             <?php echo $item['content']; ?><br />
-            <?php echo $html->link($item['username'], $item['link']); ?>
+            <?php echo $html->link($item['username'], $item['url']); ?>
         </div>
     <?php } ?>
 <? } else { ?>
@@ -14,7 +14,7 @@
         <?php foreach($data as $item) { ?>
             <li><?php 
                     echo $item['datetime'] . ': ' . $item['username'] . ' => ';
-                    echo $html->link('[+]', $item['link']);
+                    echo $html->link('[+]', $item['url']);
                 echo $item['content']; 
             ?></li>
         <?php } ?>
