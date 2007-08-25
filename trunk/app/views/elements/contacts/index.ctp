@@ -23,7 +23,7 @@
                         <td>
                             <?php echo $html->link('Remove Contact', '/' . $session->read('Identity.username') . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?>
                             <?php if($item['WithIdentity']['namespace'] == $session->read('Identity.username')) { ?>
-                                | <?php echo $html->link('Add Account', '/' . $session->read('Identity.username') . '/contacts/' . $item['WithIdentity']['id'] . '/accounts/add/'); ?>
+                                | <?php echo $html->link('Add Account', '/' . $item['WithIdentity']['username'] . '@' . $item['WithIdentity']['namespace'] . '/accounts/add/'); ?>
                             <?php } ?>
                         </td>
                     </tr>

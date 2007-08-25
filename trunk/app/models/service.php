@@ -400,6 +400,9 @@ class Service extends AppModel {
             case 1:
                 return $this->getContactsFromFlickr('http://www.flickr.com/people/' . $account['Account']['username'] . '/contacts/');
                 
+            case 2:
+                return $this->getContactsFromDelicious('http://del.icio.us/network/' . $account['Account']['username'] . '/');
+                
             default:
                 return array();
         }
@@ -417,8 +420,8 @@ class Service extends AppModel {
         $i = 2;
         $page_url = $url;
         do {
-            $content = file_get_contents($page_url);
-            if(preg_match_all('/<td class="Who">.*<h2>(.*)<\/h2>/simU', $content, $matches)) {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<td class="Who">.*<h2>(.*)<\/h2>/simU', $content, $matches)) {
                 # also find the usernames
                 preg_match_all('/<a href=\"\/photos\/(.*)\/\">photos<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
@@ -445,4 +448,26 @@ class Service extends AppModel {
         
         return $data;
     }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromDelicious($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<a class="uname" href="\/(.*)">.*<\/a>/iU', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        } 
+
+        return $data;
+    }
+    
 }

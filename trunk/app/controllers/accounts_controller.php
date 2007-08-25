@@ -44,15 +44,49 @@ class AccountsController extends AppController {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $identity_id = $this->Session->read('Identity.id');
         
-        # check that the user is logged in
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        # reset session
+        $this->Session->delete('Service.add.account.to.identity_id');
+        $this->Session->delete('Service.add.id');
+        
+        # only logged in users can add accounts
+        if(!$identity_id) {
+            # this user is not logged in
             $this->redirect('/');
             exit;
         }
         
-        # reset session
-        $this->Session->delete('Service.add.id');
+        # check, if logged in user may add accounts
+        
+        # get identity for which accounts should be added
+        $this->Account->Identity->recursive = 0;
+        $this->Account->Identity->expects('Identity');
+        $full_username = str_replace('@', ':', $username) . '@' . NOSERUB_DOMAIN;
+        $identity = $this->Account->Identity->findByUsername($full_username);
+        
+        if($identity['Identity']['id'] != $identity_id) {
+            # identity is not the logged in user
+            
+            # get logged in identity
+            $this->Account->Identity->recursive = 0;
+            $this->Account->Identity->expects('Identity');
+            $logged_in_identity = $this->Account->Identity->findById($identity_id);
+        
+            if(!$identity || $identity['Identity']['namespace'] != $logged_in_identity['Identity']['username']) {
+                # Identity not found, or identity's namespace does not match logged in username
+                $this->redirect('/');
+                exit;
+            }
+            
+            $this->Session->write('Service.add.account.is_logged_in_user', true);
+        }
+        
+        # save identity for which we want to add the servie
+        # into session, so we don't need to check any further
+        $this->Session->write('Service.add.account.to.identity_id', $identity['Identity']['id']);
+        
+        # also save, wether we add the account for a logged in user. this is
+        # needed to distinguish during the process (eg no import of conacts)
+        $this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $identity_id);
         
         if($this->data) {
             if($this->data['Account']['type'] == 1) {
@@ -62,6 +96,7 @@ class AccountsController extends AppController {
                 exit;
             } else {
                 # user wants to add Blog or RSS-Feed
+                $this->Session->write('Service.add.id', 8); # any rss feed
                 $this->redirect('/'.$username.'/accounts/add/feed/');
                 exit;
             }
@@ -78,17 +113,13 @@ class AccountsController extends AppController {
      */
     function add_step_2_service() {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         $service_id  = $this->Session->read('Service.add.id');
         
-        # check that the user is logged in
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
-            $this->redirect('/');
-            exit;
-        }
-        
-        if(!$service_id) {
+        # check the session vars
+        if(!$identity_id || !$service_id) {
+            # couldn't find the session vars. so either someone skipped 
+            # a step, or the user was logged out during the process
             $this->redirect('/');
             exit;
         }
@@ -103,6 +134,7 @@ class AccountsController extends AppController {
                 $this->Account->invalidate('username', 1);
             } else {
                 $this->Session->write('Service.add.data', $data);
+                $this->Session->write('Service.add.type', $data['service_type_id']);
                 $this->redirect('/' . $username . '/accounts/add/preview/');
                 exit;
             }
@@ -124,11 +156,12 @@ class AccountsController extends AppController {
      */
     function add_step_2_feed() {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         
-        # check that the user is logged in
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        # check the session vars
+        if(!$identity_id) {
+            # couldn't find the session vars. so either someone skipped 
+            # a step, or the user was logged out during the process
             $this->redirect('/');
             exit;
         }
@@ -143,6 +176,7 @@ class AccountsController extends AppController {
                 $this->Account->invalidate('feedurl', 1);
             } else {
                 $data['service_type_id'] = $this->data['Account']['service_type_id'];
+                $this->Session->write('Service.add.type', $data['service_type_id']);
                 $this->Session->write('Service.add.data', $data);
                 $this->redirect('/' . $username . '/accounts/add/preview/');
                 exit;
@@ -163,38 +197,43 @@ class AccountsController extends AppController {
      */
     function add_step_3_preview() {
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
+        $data        = $this->Session->read('Service.add.data');
         
-        # check that the user is logged in
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        # check the session vars
+        if(!$identity_id || !$data) {
+            # couldn't find the session vars. so either someone skipped 
+            # a step, or the user was logged out during the process
             $this->redirect('/');
             exit;
         }
-        
-        $data = $this->Session->read('Service.add.data');
         
         if(isset($this->params['form'])) {
             # reset session
             $this->Session->delete('Service.add.data');
             
             if(isset($this->params['form']['submit'])) {
-                # save the new account
-                $data['identity_id'] = $identity_id;
+                # check if the acccount is not already there
+                if($this->Account->findCount(array('identity_id' => $identity_id, 'feed_url' => $data['feed_url'])) == 0) {
+                    # save the new account
+                    $data['identity_id'] = $identity_id;
                 
-                $saveable = array('identity_id', 'service_id', 'service_type_id', 
-                                  'username', 'account_url', 'feed_url', 'created', 
-                                  'modified');
-                $this->Account->create();
-                $this->Account->save($data);
+                    $saveable = array('identity_id', 'service_id', 'service_type_id', 
+                                      'username', 'account_url', 'feed_url', 'created', 
+                                      'modified');
+                    $this->Account->create();
+                    $this->Account->save($data);
                 
-                # test, if we can find friends from this account
-                $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
-                if(!empty($contacts)) {
-                    $this->Session->write('Service.add.contacts', $contacts);
-                    $this->Session->write('Service.add.account_id', $this->Account->id);
-                    $this->redirect('/' . $username . '/accounts/add/friends/');
-                    exit;
+                    if($this->Session->read('Service.add.account.is_logged_in_user')) {
+                        # test, if we can find friends from this account
+                        $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
+                        if(!empty($contacts)) {
+                            $this->Session->write('Service.add.contacts', $contacts);
+                            $this->Session->write('Service.add.account_id', $this->Account->id);
+                            $this->redirect('/' . $username . '/accounts/add/friends/');
+                            exit;
+                        }
+                    }
                 }
             }
             $this->redirect('/' . $username . '/accounts/');
@@ -211,22 +250,72 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_4_friends() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $username           = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id        = $this->Session->read('Service.add.account.to.identity_id');
+        $logged_in_username = $this->Session->read('Identity.username');
         
-        # check that the user is logged in
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        # check the session vars
+        if(!$identity_id || !$logged_in_username) {
+            # couldn't find the session vars. so either someone skipped 
+            # a step, or the user was logged out during the process
             $this->redirect('/');
+            exit;
+        }
+
+        if(isset($this->params['form']['cancel'])) {
+            # we don't neet to go further
+            $this->redirect('/' . $username . '/accounts/');
             exit;
         }
         
         if($this->data) {
             foreach($this->data as $item) {
                 if(isset($item['action']) && $item['action'] > 0) {
-                    echo '<pre>'; print_r($item); echo '</pre>';
+                    # see, wether we should create a new contact, or add 
+                    # a account to an existing one
+                    if($item['action'] == 1) {
+                        # create a new identity
+                        $identity = array('is_local' => 1,
+                                          'username' => $item['contactname'] . ':' . $logged_in_username . '@' . NOSERUB_DOMAIN);
+                        # saving without validation, as we have no email and no password
+                        $this->Account->Identity->create();
+                        if(!$this->Account->Identity->save($identity, false)) {
+                            # something went wrong!
+                            LogError('AccountsController::add_step_4_friends(): could not create identity "' . $identity['username'] . '"');
+                            continue;
+                        }
+                        $new_identity_id = $this->Account->Identity->id;
+                        
+                        # now create the contact entry
+                        $contact = array('identity_id'      => $identity_id,
+                                         'with_identity_id' => $new_identity_id);
+                        $this->Account->Identity->Contact->create();
+                        if(!$this->Account->Identity->Contact->save($contact)) {
+                            # something went wrong!
+                            LogError('AccountsController::add_step_4_friends(): could not create contact');
+                            continue;
+                        }
+                        
+                        # save the new identity_id to the $item, so we can
+                        # go on with adding the account
+                        $item['contact'] = $new_identity_id;
+                    } 
+                    
+                    # add account to identity specified in $item['contact']
+                    $account_username = $item['username'];
+                    $service_id       = $this->Session->read('Service.add.id');
+                    $account = array('identity_id'     => $item['contact'],
+                                     'service_id'      => $service_id,
+                                     'service_type_id' => $this->Session->read('Service.add.type'),
+                                     'username'        => $account_username,
+                                     'account_url'     => $this->Account->Service->getAccountUrl($service_id, $account_username),
+                                     'feed_url'        => $this->Account->Service->getFeedUrl($service_id, $account_username));
+                    $this->Account->create();
+                    $this->Account->save($account);
                 }
             }
+            # we're done!
+            $this->redirect('/' . $username . '/accounts/');
             exit;
         }
         $this->Account->recursive = 1;
