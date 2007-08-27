@@ -23,6 +23,7 @@ class IdentitiesController extends AppController {
             case 'link':
             case 'text':
             case 'event':
+            case 'micropublish':
                 $filter = $filter; 
                 break;
             
@@ -52,6 +53,10 @@ class IdentitiesController extends AppController {
                                      'Contact.Contact', 'Contact.WithIdentity',
                                      'WithIdentity.WithIdentity');
             $data = $this->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+            
+            # create $about_identity for the view
+            $this->set('about_identity', $data['Identity']);
+            
         }
         
         if($data) {

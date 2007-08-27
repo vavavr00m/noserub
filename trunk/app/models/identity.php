@@ -142,6 +142,8 @@ class Identity extends AppModel {
 
         $result['url'] = $url;
 
+        $result['local_username'] = $result['username'] . ($result['namespace'] ? (':'.$result['namespace']) : '');
+        
         return $result;
     }
     
@@ -159,11 +161,12 @@ class Identity extends AppModel {
                 foreach($checkModels as $modelName) {
                     if(isset($item[$modelName]['username'])) {
                         $username = $this->splitUsername($item[$modelName]['username']);
-                        $item[$modelName]['full_username'] = $username['full_username'];
-                        $item[$modelName]['username']      = $username['username'];
-                        $item[$modelName]['namespace']     = $username['namespace'];
-                        $item[$modelName]['domain']        = $username['domain'];
-                        $item[$modelName]['url']           = $username['url'];
+                        $item[$modelName]['full_username']  = $username['full_username'];
+                        $item[$modelName]['username']       = $username['username'];
+                        $item[$modelName]['namespace']      = $username['namespace'];
+                        $item[$modelName]['domain']         = $username['domain'];
+                        $item[$modelName]['url']            = $username['url'];
+                        $item[$modelName]['local_username'] = $username['username'] . ($username['namespace'] ? (':'.$username['namespace']) : '');
                         $data[$key] = $item;
                     }
                 }

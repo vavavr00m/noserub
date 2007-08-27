@@ -25,7 +25,7 @@ class AccountsController extends AppController {
             $this->redirect('/');
             exit;
         }
-        $this->set('identity', $identity['Identity']);
+        $this->set('about_identity', $identity['Identity']);
         
         # get all accounts
         $this->Account->recursive = 1;
@@ -253,9 +253,11 @@ class AccountsController extends AppController {
         $username           = isset($this->params['username']) ? $this->params['username'] : '';
         $identity_id        = $this->Session->read('Service.add.account.to.identity_id');
         $logged_in_username = $this->Session->read('Identity.username');
+        $service_id         = $this->Session->read('Service.add.id');
+        $service_type_id    = $this->Session->read('Service.add.type');
         
         # check the session vars
-        if(!$identity_id || !$logged_in_username) {
+        if(!$identity_id || !$logged_in_username || !$service_id || !$service_type_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
             $this->redirect('/');
@@ -274,26 +276,37 @@ class AccountsController extends AppController {
                     # see, wether we should create a new contact, or add 
                     # a account to an existing one
                     if($item['action'] == 1) {
-                        # create a new identity
-                        $identity = array('is_local' => 1,
-                                          'username' => $item['contactname'] . ':' . $logged_in_username . '@' . NOSERUB_DOMAIN);
-                        # saving without validation, as we have no email and no password
-                        $this->Account->Identity->create();
-                        if(!$this->Account->Identity->save($identity, false)) {
-                            # something went wrong!
-                            LogError('AccountsController::add_step_4_friends(): could not create identity "' . $identity['username'] . '"');
-                            continue;
-                        }
-                        $new_identity_id = $this->Account->Identity->id;
+                        # first check, if the new identity is already there
+                        $new_identity_username = $item['contactname'] . ':' . $logged_in_username . '@' . NOSERUB_DOMAIN;
+                        $this->Account->Identity->recursive = 0;
+                        $this->Account->Identity->expects('Identity');
+                        $identity = $this->Account->Identity->findByUsername($new_identity_username);
+                        if(!$identity) {
+                            # create a new identity
+                            $identity = array('is_local' => 1,
+                                              'username' => $new_identity_username);
+                            # saving without validation, as we have no email and no password
+                            $this->Account->Identity->create();
+                            if(!$this->Account->Identity->save($identity, false)) {
+                                # something went wrong!
+                                LogError('AccountsController::add_step_4_friends(): could not create identity "' . $identity['username'] . '"');
+                                continue;
+                            }
+                            $new_identity_id = $this->Account->Identity->id;
                         
-                        # now create the contact entry
-                        $contact = array('identity_id'      => $identity_id,
-                                         'with_identity_id' => $new_identity_id);
-                        $this->Account->Identity->Contact->create();
-                        if(!$this->Account->Identity->Contact->save($contact)) {
-                            # something went wrong!
-                            LogError('AccountsController::add_step_4_friends(): could not create contact');
-                            continue;
+                            # now create the contact entry
+                            $contact = array('identity_id'      => $identity_id,
+                                             'with_identity_id' => $new_identity_id);
+                            $this->Account->Identity->Contact->create();
+                            if(!$this->Account->Identity->Contact->save($contact)) {
+                                # something went wrong!
+                                LogError('AccountsController::add_step_4_friends(): could not create contact');
+                                continue;
+                            }
+                        } else {
+                            # the identity already exists. we assume that the
+                            # contact is there, too.
+                            $new_identity_id = $identity['Identity']['id'];
                         }
                         
                         # save the new identity_id to the $item, so we can
@@ -303,10 +316,10 @@ class AccountsController extends AppController {
                     
                     # add account to identity specified in $item['contact']
                     $account_username = $item['username'];
-                    $service_id       = $this->Session->read('Service.add.id');
+                    
                     $account = array('identity_id'     => $item['contact'],
                                      'service_id'      => $service_id,
-                                     'service_type_id' => $this->Session->read('Service.add.type'),
+                                     'service_type_id' => $service_type_id,
                                      'username'        => $account_username,
                                      'account_url'     => $this->Account->Service->getAccountUrl($service_id, $account_username),
                                      'feed_url'        => $this->Account->Service->getFeedUrl($service_id, $account_username));
@@ -321,7 +334,37 @@ class AccountsController extends AppController {
         $this->Account->recursive = 1;
         $this->Account->expects('Account', 'Service');
         $this->set('account', $this->Account->findById($this->Session->read('Service.add.account_id')));
-        $this->set('data', $this->Session->read('Service.add.contacts'));
+
+        # get data about contacts from session
+        $data = $this->Session->read('Service.add.contacts');
+        
+        # check, if soem of these contacts already are in my local
+        # database. We therefore can remove them from the list
+        foreach($data as $username => $item) {
+            # try to find accounts with that username first
+            $this->Account->recursive = 1;
+            $this->Account->expects('Account', 'Identity');
+            $accounts = $this->Account->findAll(array('Account.username'        => $username,
+                                                      'Account.service_id'      => $service_id,
+                                                      'Account.service_type_id' => $service_type_id));
+        
+            # we might have several accounts found, because the same account 
+            # could be stored at different local identities.
+            # we also don't find those, where e. a del.icio.us RSS-Feed was
+            # added, instead of a del.icio.us account directly.
+            foreach($accounts as $account) {
+                # now see, if the identity is local to our logged
+                # in identity.
+                if($account['Identity']['namespace'] == $logged_in_username) {
+                    # found him/her
+                    unset($data[$username]);
+                    break;
+                }
+            }
+        }
+        
+        # now give the data to the view
+        $this->set('data', $data);
         
         $this->Account->Identity->Contact->recursive = 1;
         $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
@@ -332,85 +375,7 @@ class AccountsController extends AppController {
         }
         $this->set('contacts', $contacts);
     }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add($with_identity_id = null) {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
-
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
-            $this->redirect('/');
-            exit;
-        }
         
-        if($with_identity_id !== null) {
-            $this->Session->delete('add_account_with_identity_id');
-            # test, if the logged in identity has this
-            # with_identity_id as contact
-            $this->Account->Identity->Contact->recursive = 0;
-            $this->Account->Identity->Contact->expects = array('Contact');
-            if(1 != $this->Account->Identity->Contact->findCount(array('identity_id'      => $identity_id,
-                                                                       'with_identity_id' => $with_identity_id))) {
-                # someone is trying to be nasty
-                $this->redirect('/');
-                exit;
-            }
-            $this->Account->Identity->recursive = 0;
-            $this->Account->Identity->expects = array('Identity');
-            $with_identity = $this->Account->Identity->findById($with_identity_id);
-
-            if($with_identity['Identity']['namespace'] != $username) {
-                # this user is not a local one, so no accounts can be added
-                $this->redirect('/' . $username . '/contacts/');
-                exit;
-            }
-            
-            $this->set('with_identity', $with_identity);
-            $this->Session->write('add_account_with_identity_id', $with_identity_id);
-        }
-        if($this->data) {
-            # get ServiceType from Service
-            $service_id = $this->data['Account']['service_id'];
-            $this->data['Account']['service_type_id'] = $this->Account->Service->getServiceTypeId($service_id);
-            
-            $this->Account->create();
-            $saveable = array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'feed_url', 'created', 'modified');
-            $with_identity_id = $this->Session->read('add_with_identity_id');
-            $created_for_self = false;
-            if($this->Session->check('add_account_with_identity_id')) {
-                # create account for contact identity
-                $this->data['Account']['identity_id'] = $this->Session->read('add_account_with_identity_id');
-                $this->Session->delete('add_account_with_identity_id');
-            } else {
-                # create account for logged in identity
-                $created_for_self = true;
-                $this->data['Account']['identity_id'] = $identity_id;
-            }
-            if($service_id != 7) {
-                # only look into getting the feed, when service is not "blog"
-                $service_username = $this->data['Account']['username'];
-                $this->data['Account']['feed_url']    = $this->Account->Service->getFeedUrl($service_id, $service_username);
-                $this->data['Account']['account_url'] = $this->Account->Service->getAccountUrl($service_id, $service_username);
-            }
-            if($this->Account->save($this->data, true, $saveable)) {
-                if($created_for_self == true) {
-                    $this->redirect('/' . $username . '/accounts/');
-                } else {
-                    $this->redirect('/' . $username . '/contacts/');
-                }
-                exit;
-            }
-        }
-        $this->set('services', $this->Account->Service->getSelect('all'));
-    }
-    
     /**
      * Method description
      *
@@ -463,15 +428,37 @@ class AccountsController extends AppController {
      * @access 
      */
     function delete($account_id) {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
+        $username          = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity_id       = $this->Session->read('Identity.id');
+        $identity_username = $this->Session->read('Identity.username');
         
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        # check the session vars
+        if(!$username || !$identity_id || !$identity_username) {
+            # this user is not logged in
             $this->redirect('/');
             exit;
         }
         
+        if($username != $identity_username) {
+            # check, if $username belongs to the
+            # logged in identities namespace
+            $this->Account->Identity->recursive = 0;
+            $this->Account->Identity->expects('Identity');
+            $find_username = str_replace('@', ':', $username) . '@' . NOSERUB_DOMAIN;
+            $about_identity = $this->Account->Identity->findByUsername($find_username);
+            if(!$about_identity) {
+                # could not find the identity
+                $this->redirect('/');
+                exit;
+            }
+            if($about_identity['Identity']['namespace'] == $identity_username) {
+                $identity_id = $about_identity['Identity']['id'];
+            } else {
+                # logged in user is not allowed to change something
+                $this->redirect('/');
+                exit;
+            }
+        }
         # check, wether the account belongs to the identity
         $this->Account->recursive = 0;
         $this->Account->expects('Account');

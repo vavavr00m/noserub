@@ -23,7 +23,7 @@
                         <td>
                             <?php echo $html->link('Remove Contact', '/' . $session->read('Identity.username') . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?>
                             <?php if($item['WithIdentity']['namespace'] == $session->read('Identity.username')) { ?>
-                                | <?php echo $html->link('Add Account', '/' . $item['WithIdentity']['username'] . '@' . $item['WithIdentity']['namespace'] . '/accounts/add/'); ?>
+                                | <?php echo $html->link('Add Account', '/' . $item['WithIdentity']['local_username'] . '/accounts/add/'); ?>
                             <?php } ?>
                         </td>
                     </tr>
@@ -33,5 +33,5 @@
     </table>
 <?php } ?>
 <?php if($identity['id'] == $session->read('Identity.id')) {
-    echo $html->link('Add new contact', '/' . $identity['username'] . '/contacts/add/'); 
+    echo $html->link('Add new contact', '/' . $identity['local_username'] . '/contacts/add/'); 
 } ?>
