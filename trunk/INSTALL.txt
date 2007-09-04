@@ -68,7 +68,7 @@ and
 You should now be able to call the following url:
     http://<NOSERUB_DOMAIN>/noserub/jobs/<NOSERUB_ADMIN_HASH>/system/update
 
-If neccessary, this page will show you settings you need to make, or it will
+If neccessary, this page will show your settings you need to make, or it will
 display database updates. Even when installing noserub for the first time, it
 is normal to see database updates.
 
