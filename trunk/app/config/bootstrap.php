@@ -50,13 +50,13 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-define('NOSERUB_VALID_USERNAME', '/^[\w.-]+@*[\w.-]+$/ism');
-define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
+define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
+#define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
 
 # to exclude pages and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
 # just a precaution for avoiding confusions.
-define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,noserub,login,register');
+define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,noserub,auth,login,register');
 
 
 

@@ -14,7 +14,10 @@ class Admin extends AppModel {
                                 'values' => array('all', 'none', 'invitation'),
                                 'file'   => 'noserub.php'),
                            'NOSERUB_EMAIL_FROM' => array(
-                               'file' => 'noserub.php')
+                               'file' => 'noserub.php'),
+                           'NOSERUB_USE_SSL' => array(
+                               'file'   => 'noserub.php',
+                               'values' => array(true, false))
                           );
     /**
      * check some constants

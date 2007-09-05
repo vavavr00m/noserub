@@ -29,9 +29,9 @@
                             <td><?php echo $item['Service']['name']; ?></td>
                         <?php } ?>
                         <td><?php if($show_action_links) {
-                                echo $html->link('Edit Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/edit/');
+                                echo $html->link('Edit Account', '/' . $about_identity['full_username'] . '/accounts/'.  $account_id . '/edit/');
                                 echo ' | ';
-                                echo $html->link('Delete Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/delete/');
+                                echo $html->link('Delete Account', '/' . $about_identity['full_username'] . '/accounts/'.  $account_id . '/delete/');
                         } ?></td>
                     </tr>
                 <?php }
@@ -40,5 +40,5 @@
     </table>
 <?php } ?>
 <?php if($show_action_links) {
-    echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/accounts/add/'); 
+    echo $html->link('Add new account', '/' . $about_identity['full_username'] . '/accounts/add/'); 
 } ?>

@@ -18,7 +18,7 @@ class ContactsController extends AppController {
         # get identity of displayed user
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
-        $identity = $this->Contact->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+        $identity = $this->Contact->Identity->findByUsername($username);
         if(!$identity) {
             # identity not found
             $this->redirect('/');
@@ -55,7 +55,7 @@ class ContactsController extends AppController {
             if($this->Contact->validates()) {
                 # check, wether this should be a local contact or a real noserub contact
                 $splitusername = $this->Contact->Identity->splitUsername($this->data['Contact']['username']);
-                if(!empty($splitusername['domain'])) {
+                if(!$splitusername['local']) {
                     # this is a real noserub contact
                     $identity_username = $this->data['Contact']['username'];
                     # see, if we already have it
@@ -67,7 +67,7 @@ class ContactsController extends AppController {
                         $this->Contact->Identity->save($identity, false, $saveable);
                         $new_identity_id = $this->Contact->Identity->id;
                         
-                        # et user data
+                        # get user data
                         $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $identity_username . '/');
                         if($result == false) {
                             # user could not be found, so delete it
@@ -92,7 +92,7 @@ class ContactsController extends AppController {
                 } else {
                     # we now need to create a new identity and a new contact
                     # create the username with the special namespace
-                    $identity_username = $this->data['Contact']['username'] . ':' . $username . '@' . NOSERUB_DOMAIN;
+                    $identity_username = $this->data['Contact']['username'] . '@' . $username;
                     # check, if this is unique
                     $this->Contact->Identity->recursive = 0;
                     $this->Contact->Identity->expects('Contact');

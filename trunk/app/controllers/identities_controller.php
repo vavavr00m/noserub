@@ -13,9 +13,9 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
-        $filter      = isset($this->params['filter'])   ? $this->params['filter']   : '';
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $namespace   = '';
+        $filter        = isset($this->params['filter'])   ? $this->params['filter']   : '';
+        $full_username = isset($this->params['username']) ? $this->params['username'] : '';
+        $namespace     = '';
         
         # sanitize filter
         switch($filter) {
@@ -31,11 +31,9 @@ class IdentitiesController extends AppController {
                 $filter = false;
         }
         
-        if(strpos($username, '@') !== false) {
+        if(strpos($full_username, '@') !== false) {
             # this is a username with a namespace: <username>@<namespace>
-            # we need to change that to the internal name: <username>:<namespace>@<domain>
-            $username_namespace = split('@', $username);
-            $username  = join(':', $username_namespace);
+            $username_namespace = split('@', $full_username);
             $namespace = $username_namespace[1];
         }
         $session_identity_id       = $this->Session->read('Identity.id');
@@ -52,11 +50,11 @@ class IdentitiesController extends AppController {
                                      'ServiceType.ServiceType',
                                      'Contact.Contact', 'Contact.WithIdentity',
                                      'WithIdentity.WithIdentity');
-            $data = $this->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+            $data = $this->Identity->find(array('username'  => $full_username,
+                                                'is_local'  => 1));
             
             # create $about_identity for the view
             $this->set('about_identity', $data['Identity']);
-            
         }
         
         if($data) {
@@ -76,7 +74,7 @@ class IdentitiesController extends AppController {
                     if($new_items) {
                         # add some identity info
                         foreach($new_items as $key => $value) {
-                            $new_items[$key]['username'] = $username;
+                            $new_items[$key]['username'] = $full_username;
                         }
                         $items = array_merge($items, $new_items);
                     }
@@ -89,7 +87,7 @@ class IdentitiesController extends AppController {
         $this->set('items', $items);
         $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
         $this->set('session_identity_username', isset($session_identity_username) ? $session_identity_username : '');
-        $this->set('url_username', $username);
+        $this->set('url_username', $full_username);
         $this->set('namespace', $namespace);
         $this->set('filter', $filter);
     }
@@ -102,13 +100,14 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function login() {
+        $this->checkSecure();
+        
         if(!empty($this->data)) {
             $identity = $this->Identity->check($this->data);
             if($identity) {
-                $username = $this->Identity->splitUsername($identity['Identity']['username']);
                 $this->Session->write('Identity.id',       $identity['Identity']['id']);
-                $this->Session->write('Identity.username', $username['username']);
-                $this->redirect('/' . urlencode(strtolower($username['username'])) . '/');
+                $this->Session->write('Identity.username', $identity['Identity']['username']);
+                $this->redirect('/' . urlencode(strtolower($identity['Identity']['username'])) . '/');
                 exit;
             } else {
                 $this->set('form_error', 'Login nicht möglich');
@@ -137,6 +136,8 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function register() {
+        $this->checkSecure();
+        
         if(NOSERUB_REGISTRATION_TYPE != 'all') {
             $this->redirect('/');
             exit;

@@ -14,12 +14,12 @@ class AccountsController extends AppController {
      * @access 
      */
     function index() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
         
         # get identity that is displayed
         $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
-        $identity = $this->Account->Identity->findByUsername($username . '@' . NOSERUB_DOMAIN);
+        $identity = $this->Account->Identity->findByUsername($username);
         if(!$identity) {
             # this identity is not here
             $this->redirect('/');
@@ -60,8 +60,7 @@ class AccountsController extends AppController {
         # get identity for which accounts should be added
         $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
-        $full_username = str_replace('@', ':', $username) . '@' . NOSERUB_DOMAIN;
-        $identity = $this->Account->Identity->findByUsername($full_username);
+        $identity = $this->Account->Identity->findByUsername($username);
         
         if($identity['Identity']['id'] != $identity_id) {
             # identity is not the logged in user
@@ -277,7 +276,7 @@ class AccountsController extends AppController {
                     # a account to an existing one
                     if($item['action'] == 1) {
                         # first check, if the new identity is already there
-                        $new_identity_username = $item['contactname'] . ':' . $logged_in_username . '@' . NOSERUB_DOMAIN;
+                        $new_identity_username = $item['contactname'] . '@' . $logged_in_username;
                         $this->Account->Identity->recursive = 0;
                         $this->Account->Identity->expects('Identity');
                         $identity = $this->Account->Identity->findByUsername($new_identity_username);
@@ -444,8 +443,7 @@ class AccountsController extends AppController {
             # logged in identities namespace
             $this->Account->Identity->recursive = 0;
             $this->Account->Identity->expects('Identity');
-            $find_username = str_replace('@', ':', $username) . '@' . NOSERUB_DOMAIN;
-            $about_identity = $this->Account->Identity->findByUsername($find_username);
+            $about_identity = $this->Account->Identity->findByUsername($username);
             if(!$about_identity) {
                 # could not find the identity
                 $this->redirect('/');
