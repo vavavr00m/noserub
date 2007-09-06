@@ -1,18 +1,5 @@
 <?php
 /**
- * Domain name, under which the noserub-server can be accessed
- * Example: http://<NOSERUB_DOMAIN>/
- * NOSERUB_DOMAIN should _not_ contain "http://" and also no subdirectory
- * like "myserver.com/noserub". The NOSERUB_DOMAIN defines the look
- * of the NoseRub-ID. If you have "myserver.com" as NOSERUB_DOMAIN
- * and "john.doe" as username, the NoseRub-ID is "john.doe@myserver.com".
- * Under http://myserver.com/noserub/john.doe will be the profile page of
- * that user.
- * @name NOSERUB_DOMAIN
- */
-define('NOSERUB_DOMAIN', '');
-
-/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities

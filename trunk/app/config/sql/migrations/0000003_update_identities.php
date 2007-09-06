@@ -1,7 +1,9 @@
 $identities = $this->query('SELECT id, is_local, username FROM identities');
 foreach($identities as $identity) {
     if($identity['identities']['is_local'] == 0) {
-        $this->execute('UPDATE identities SET username=CONCAT("http://", username) WHERE id='.$identity['identities']['id']);
+        $username_splitted = split('@', $identity['identities']['username']);
+        $username = $username_splitted[1] . '/noserub/' . $username_splitted[0];
+        $this->execute('UPDATE identities SET username="'.$username.'" WHERE id='.$identity['identities']['id']);
     } else {
         $full_username = $identity['identities']['username'];
         $username_domain = split('@', $full_username);

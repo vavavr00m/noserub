@@ -22,8 +22,7 @@ class AccountsController extends AppController {
         $identity = $this->Account->Identity->findByUsername($username);
         if(!$identity) {
             # this identity is not here
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         $this->set('about_identity', $identity['Identity']);
         
@@ -51,8 +50,7 @@ class AccountsController extends AppController {
         # only logged in users can add accounts
         if(!$identity_id) {
             # this user is not logged in
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         # check, if logged in user may add accounts
@@ -72,8 +70,7 @@ class AccountsController extends AppController {
         
             if(!$identity || $identity['Identity']['namespace'] != $logged_in_identity['Identity']['username']) {
                 # Identity not found, or identity's namespace does not match logged in username
-                $this->redirect('/');
-                exit;
+                $this->redirect('/', null, true);
             }
             
             $this->Session->write('Service.add.account.is_logged_in_user', true);
@@ -91,13 +88,11 @@ class AccountsController extends AppController {
             if($this->data['Account']['type'] == 1) {
                 # user selected a service
                 $this->Session->write('Service.add.id', $this->data['Account']['service_id']);
-                $this->redirect('/'.$username.'/accounts/add/service/');
-                exit;
+                $this->redirect('/'.$username.'/accounts/add/service/', null, true);
             } else {
                 # user wants to add Blog or RSS-Feed
                 $this->Session->write('Service.add.id', 8); # any rss feed
-                $this->redirect('/'.$username.'/accounts/add/feed/');
-                exit;
+                $this->redirect('/'.$username.'/accounts/add/feed/', null, true);
             }
         }
         $this->set('services', $this->Account->Service->generateList(array('id<>8'), null, null, "{n}.Service.id", "{n}.Service.name"));
@@ -119,8 +114,7 @@ class AccountsController extends AppController {
         if(!$identity_id || !$service_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         # reset session
@@ -134,8 +128,7 @@ class AccountsController extends AppController {
             } else {
                 $this->Session->write('Service.add.data', $data);
                 $this->Session->write('Service.add.type', $data['service_type_id']);
-                $this->redirect('/' . $username . '/accounts/add/preview/');
-                exit;
+                $this->redirect('/' . $username . '/accounts/add/preview/', null, true);
             }
         } else {
             $this->data = array('Account' => array('feed_url' => 'http://')); 
@@ -161,8 +154,7 @@ class AccountsController extends AppController {
         if(!$identity_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         # reset session
@@ -172,13 +164,12 @@ class AccountsController extends AppController {
             # get title, url and preview
             $data = $this->Account->Service->getInfoFromFeed($this->data['Account']['feed_url']);    
             if(!$data) {
-                $this->Account->invalidate('feedurl', 1);
+                $this->Account->invalidate('feed_url', 1);
             } else {
                 $data['service_type_id'] = $this->data['Account']['service_type_id'];
                 $this->Session->write('Service.add.type', $data['service_type_id']);
                 $this->Session->write('Service.add.data', $data);
-                $this->redirect('/' . $username . '/accounts/add/preview/');
-                exit;
+                $this->redirect('/' . $username . '/accounts/add/preview/', null, true);
             }
         } else {
             $this->data = array('Account' => array('feed_url' => 'http://')); 
@@ -203,8 +194,7 @@ class AccountsController extends AppController {
         if(!$identity_id || !$data) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         if(isset($this->params['form'])) {
@@ -229,14 +219,12 @@ class AccountsController extends AppController {
                         if(!empty($contacts)) {
                             $this->Session->write('Service.add.contacts', $contacts);
                             $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $username . '/accounts/add/friends/');
-                            exit;
+                            $this->redirect('/' . $username . '/accounts/add/friends/', null, true);
                         }
                     }
                 }
             }
-            $this->redirect('/' . $username . '/accounts/');
-            exit;
+            $this->redirect('/' . $username, null, true);
         }
         $this->set('data', $data);
     }
@@ -259,14 +247,12 @@ class AccountsController extends AppController {
         if(!$identity_id || !$logged_in_username || !$service_id || !$service_type_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
 
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
-            $this->redirect('/' . $username . '/accounts/');
-            exit;
+            $this->redirect('/' . $username, null, true);
         }
         
         if($this->data) {
@@ -327,8 +313,7 @@ class AccountsController extends AppController {
                 }
             }
             # we're done!
-            $this->redirect('/' . $username . '/accounts/');
-            exit;
+            $this->redirect('/' . $username, null, true);
         }
         $this->Account->recursive = 1;
         $this->Account->expects('Account', 'Service');
@@ -388,8 +373,7 @@ class AccountsController extends AppController {
         
         if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
             # this is not the logged in user
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
 
         # get the account
@@ -398,8 +382,7 @@ class AccountsController extends AppController {
         $data = $this->Account->find(array('id' => $account_id, 'identity_id' => $identity_id));
         if(!$data) {
             # the account for this identity could not be found
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         if(!$this->data) {
@@ -410,8 +393,7 @@ class AccountsController extends AppController {
             $this->data['Account']['feedurl'] = $this->Account->Service->getFeedUrl($this->data['Account']['service_id'], $this->data['Account']['username']);
             $saveable = array('modified', 'service_id', 'username', 'feedurl');
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/' . $username . '/accounts/');
-                exit;
+                $this->redirect('/' . $username . '/accounts/', null, true);
             }
         }
         
@@ -434,8 +416,7 @@ class AccountsController extends AppController {
         # check the session vars
         if(!$username || !$identity_id || !$identity_username) {
             # this user is not logged in
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         if($username != $identity_username) {
@@ -446,15 +427,13 @@ class AccountsController extends AppController {
             $about_identity = $this->Account->Identity->findByUsername($username);
             if(!$about_identity) {
                 # could not find the identity
-                $this->redirect('/');
-                exit;
+                $this->redirect('/', null, true);
             }
             if($about_identity['Identity']['namespace'] == $identity_username) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
                 # logged in user is not allowed to change something
-                $this->redirect('/');
-                exit;
+                $this->redirect('/', null, true);
             }
         }
         # check, wether the account belongs to the identity
@@ -467,7 +446,6 @@ class AccountsController extends AppController {
         }
         
         $this->redirect('/' . $username . '/accounts/');
-        exit;
     }
     
     /**
@@ -480,14 +458,12 @@ class AccountsController extends AppController {
      * @access 
      */
     function jobs_sync() {
-        $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
-        $username   = isset($this->params['username'])   ? $this->Account->Identity->splitUsername($this->params['username']) : array();
+        $admin_hash  = isset($this->params['admin_hash'])  ? $this->params['admin_hash'] : '';
+        $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
         
         if($admin_hash != NOSERUB_ADMIN_HASH ||
            $admin_hash == '' ||
-           empty($username) ||
-           $username['domain'] == NOSERUB_DOMAIN ||
-           $username['namespace'] != '') {
+           !$identity_id) {
             # there is nothing to do for us here
             return false;
         }
@@ -495,14 +471,15 @@ class AccountsController extends AppController {
         # see, if we can find the identity locally
         $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
-        $identity = $this->Account->Identity->findByUsername($username['full_username']);
+        $identity = $this->Account->Identity->findById($identity_id);
 
-        if(!$identity) {
-            # we could not find it, so we don't do anything
+        if(!$identity || $identity['Identity']['is_local'] == 1) {
+            # we could not find it, or this is a local identity
             return false;
         }
         
-        return $this->Account->sync($identity['Identity']['id'], $username['url']);
+        $url = isset($identity['url']) ? $identity['url'] : '';
+        return $this->Account->sync($identity_id, $url);
     }
     
     /**
@@ -526,9 +503,7 @@ class AccountsController extends AppController {
         $this->Account->Identity->expects('Identity');
         $identities = $this->Account->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
         foreach($identities as $identity) {
-            if($identity['Identity']['domain']    != NOSERUB_DOMAIN &&
-               $identity['Identity']['namespace'] == '' &&
-               $identity['Identity']['url']       != '') {
+            if($identity['Identity']['url'] != '') {
                 $this->Account->sync($identity['Identity']['id'], $identity['Identity']['url']);       
             }
         }

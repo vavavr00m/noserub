@@ -179,6 +179,10 @@ class Identity extends AppModel {
      * @access 
      */
     function parseNoseRubPage($url) {
+        if(!$url) {
+            return false;
+        }
+        
         $content = file_get_contents($url);
         if(!$content) {
             return false;

@@ -21,8 +21,7 @@ class ContactsController extends AppController {
         $identity = $this->Contact->Identity->findByUsername($username);
         if(!$identity) {
             # identity not found
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         $this->set('identity', $identity['Identity']);
         
@@ -46,75 +45,79 @@ class ContactsController extends AppController {
         
         if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
             # this is not the logged in user
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
         
         if($this->data) {
             $this->Contact->data = $this->data;
-            if($this->Contact->validates()) {
-                # check, wether this should be a local contact or a real noserub contact
-                $splitusername = $this->Contact->Identity->splitUsername($this->data['Contact']['username']);
-                if(!$splitusername['local']) {
-                    # this is a real noserub contact
-                    $identity_username = $this->data['Contact']['username'];
-                    # see, if we already have it
-                    $identity = $this->Contact->Identity->findByUsername($identity_username);
-                    if(!$identity) {
-                        $this->Contact->Identity->create();
-                        $identity = array('username' => $identity_username);
-                        $saveable = array('username');
-                        $this->Contact->Identity->save($identity, false, $saveable);
-                        $new_identity_id = $this->Contact->Identity->id;
-                        
-                        # get user data
-                        $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $identity_username . '/');
-                        if($result == false) {
-                            # user could not be found, so delete it
-                            $this->Contact->Identity->delete();
-                            $this->Contact->validationErrors['username'] = 'User could not be found at target server!';
-                            $this->render();
-                            exit;
-                        }
-                    } else {
-                        $new_identity_id = $identity['Identity']['id'];
-                    }
+            # check, wether this should be a local contact or a real noserub contact
+            if(isset($this->params['form']['add'])) {
+                # this is a contact with a NoseRub-ID
+                $identity_username = $this->data['Contact']['noserub_id'];
+                # so, check, if this is really the case
+                if(strpos('/', $identity_username) === false) {
+                    $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
+                    $this->render();
+                    exit;
+                }
+               
+                # see, if we already have it
+                $identity = $this->Contact->Identity->findByUsername($identity_username);
+                if(!$identity) {
+                    $this->Contact->Identity->create();
+                    $identity = array('username' => $identity_username);
+                    $saveable = array('username');
+                    $this->Contact->Identity->save($identity, false, $saveable);
+                    $new_identity_id = $this->Contact->Identity->id;
                     
-                    # now create the contact relationship
-                    $this->Contact->create();
-                    $contact = array('identity_id'      => $identity_id,
-                                     'with_identity_id' => $new_identity_id);
-                    $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                    if($this->Contact->save($contact, true, $saveable)) {
-                        $this->redirect('/' . $username . '/contacts/');
+                    # get user data
+                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                    if($result == false) {
+                        # user could not be found, so delete it
+                        $this->Contact->Identity->delete();
+                        $this->Contact->invalidate('noserub_id', 'user_not_found');
+                        $this->render();
                         exit;
                     }
                 } else {
-                    # we now need to create a new identity and a new contact
-                    # create the username with the special namespace
-                    $identity_username = $this->data['Contact']['username'] . '@' . $username;
-                    # check, if this is unique
-                    $this->Contact->Identity->recursive = 0;
-                    $this->Contact->Identity->expects('Contact');
-                    if($this->Contact->Identity->findCount(array('username' => $identity_username)) == 0) {
-                        $this->Contact->Identity->create();
-                        $identity = array('is_local' => 1,
-                                          'username' => $identity_username);
-                        $saveable = array('is_local', 'username');
-                        # no validation, as we have no password.
-                        if($this->Contact->Identity->save($identity, false, $saveable)) {
-                            # create the contact now
-                            $this->Contact->create();
-                            $contact = array('identity_id'      => $identity_id,
-                                             'with_identity_id' => $this->Contact->Identity->id);
-                            $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                            if($this->Contact->save($contact, true, $saveable)) {
-                                $this->redirect('/' . $username . '/contacts/');
-                                exit;
-                            }
+                    $new_identity_id = $identity['Identity']['id'];
+                }
+                
+                # now create the contact relationship
+                $this->Contact->create();
+                $contact = array('identity_id'      => $identity_id,
+                                 'with_identity_id' => $new_identity_id);
+                $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+                if($this->Contact->save($contact, true, $saveable)) {
+                    $this->redirect('/' . $username . '/contacts/', null, true);
+                }
+            } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
+                # we now need to create a new identity and a new contact
+                # create the username with the special namespace
+                $identity_username = $this->data['Contact']['username'] . '@' . $username;
+                # check, if this is unique
+                $this->Contact->Identity->recursive = 0;
+                $this->Contact->Identity->expects('Contact');
+                if($this->Contact->Identity->findCount(array('username' => $identity_username)) == 0) {
+                    $this->Contact->Identity->create();
+                    $identity = array('is_local' => 1,
+                                      'username' => $identity_username);
+                    $saveable = array('is_local', 'username');
+                    # no validation, as we have no password.
+                    if($this->Contact->Identity->save($identity, false, $saveable)) {
+                        # create the contact now
+                        $this->Contact->create();
+                        $contact = array('identity_id'      => $identity_id,
+                                         'with_identity_id' => $this->Contact->Identity->id);
+                        $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+                        if($this->Contact->save($contact, true, $saveable)) {
+                            $this->redirect('/' . $username . '/contacts/', null, true);
                         }
                     }
                 }
+            } else {
+                # we should never come here
+                $this->redirect('/', null, true);
             }
         }
     }
@@ -133,8 +136,7 @@ class ContactsController extends AppController {
         
         if(!$identity_id || !$username || $username != $identity_username) {
             # this is not the logged in user
-            $this->redirect('/'.$identity_username.'/contacts/');
-            exit;
+            $this->redirect('/'.$identity_username.'/contacts/', null, true);
         }
         
         # check, if the contact belongs to the identity
@@ -145,8 +147,7 @@ class ContactsController extends AppController {
     
         if(!$contact) {
             # contact not found for logged in user
-            $this->redirect('/'.$identity_username.'/contacts/');
-            exit;
+            $this->redirect('/'.$identity_username.'/contacts/', null, true);
         }
         
         # remove this contact
@@ -169,8 +170,7 @@ class ContactsController extends AppController {
             $this->Contact->Identity->Account->deleteByIdentityId($with_identity_id);
         }
 
-        $this->redirect('/'.$identity_username.'/contacts/');
-        exit;
+        $this->redirect('/'.$identity_username.'/contacts/', null, true);
     }
     
     /**
@@ -187,8 +187,7 @@ class ContactsController extends AppController {
         
         if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
             # this is not the logged in user
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
 
         # sanitize filter

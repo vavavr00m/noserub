@@ -35,7 +35,10 @@ Therefore you should just extract the archive to the document root of your
 webserver:
     tar -zxf noserub_0.1a.tar.gz
 
-Make sure that /noserub/app/tmp is writeable by the webserver.
+Make sure that /noserub/app/tmp is writeable by the webserver. If you don't
+want to have your NoseRub installation under http://<server_name>/noserub/,
+but rather directly under http://<server_name>/, just point the document
+root of the webserver to /noserub/app/webroot/.
 
 
 
@@ -56,9 +59,7 @@ In database.php, please enter information to contact your database server. You
 should create a new database for NoseRub, as there are no prefixes available
 for the table names and you don't want to overwrite existing tables.
 
-In noserub.php, make sure you enter values to the two constants 
-    NOSERUB_DOMAIN
-and
+In noserub.php, make sure you enter a value for 
 	NOSERUB_ADMIN_HASH
 	
 
@@ -66,14 +67,20 @@ and
 4. Call the update url
 ----------------------
 You should now be able to call the following url:
-    http://<NOSERUB_DOMAIN>/noserub/jobs/<NOSERUB_ADMIN_HASH>/system/update
+    http://<server_name>/noserub/jobs/<NOSERUB_ADMIN_HASH>/system/update
+or
+    http://<server_name>/jobs/<NOSERUB_ADMIN_HASH>/system/update
+depending on how you set it up in step #2.
 
 If neccessary, this page will show your settings you need to make, or it will
 display database updates. Even when installing noserub for the first time, it
 is normal to see database updates.
 
 If you get a OK for Settings and the Database, you now can call
-  http://<NOSERUB_DOMAIN>/noserub/
+    http://<server_name>/noserub/
+or
+    http://<server_name>/
+depending on how you set it up in step #2.
 
 
 
@@ -81,6 +88,6 @@ If you get a OK for Settings and the Database, you now can call
 ------------
 Do you have questions, or just want to know more about NoseRub? Just visit the
 following sites:
+  http://noserub.com/        - The NoseRub Overview page
   http://noserub.com/blog    - The NoseRub Blog
   http://noserub.com/discuss - The NoseRub Google Group
-  http://noserub.com/wiki    - The NoseRub Wiki

@@ -107,10 +107,9 @@ class IdentitiesController extends AppController {
             if($identity) {
                 $this->Session->write('Identity.id',       $identity['Identity']['id']);
                 $this->Session->write('Identity.username', $identity['Identity']['username']);
-                $this->redirect('/' . urlencode(strtolower($identity['Identity']['username'])) . '/');
-                exit;
+                $this->redirect('/' . urlencode(strtolower($identity['Identity']['username'])) . '/', null, true);
             } else {
-                $this->set('form_error', 'Login nicht möglich');
+                $this->set('form_error', 'Login not possible');
             }
         }
     }
@@ -125,7 +124,6 @@ class IdentitiesController extends AppController {
     function logout() {
         $this->Session->delete('Identity');
         $this->redirect('/');
-        exit;
     }
     
     /**
@@ -139,14 +137,12 @@ class IdentitiesController extends AppController {
         $this->checkSecure();
         
         if(NOSERUB_REGISTRATION_TYPE != 'all') {
-            $this->redirect('/');
-            exit;
+            $this->redirect('/', null, true);
         }
 
         if(!empty($this->data)) {
             if($this->Identity->register($this->data)) {
-                $this->redirect('/pages/register/thanks/');
-                exit;
+                $this->redirect('/pages/register/thanks/', null, true);
             }
         }
     }
