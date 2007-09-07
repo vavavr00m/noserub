@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de-DE" lang="de-DE">
     <head>
         <title>NoseRub</title>
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="<?php echo FULL_BASE_URL; ?>/favicon.ico" type="image/x-icon" />
 		<link rel="author" href="mailto:info@noserub.com" title="NoseRub" rev="made" />
         <link rel="copyright" href="http://noserub/contact/" title="Copyright &amp; Contact" />
 	    <link rel="home" href="http://noserub.com" title="NoseRub [Home]" />                  
