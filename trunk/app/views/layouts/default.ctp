@@ -1,47 +1,52 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de-DE" lang="de-DE">
-    <head>
-        <title>NoseRub</title>
-        <link rel="shortcut icon" href="<?php echo FULL_BASE_URL; ?>/favicon.ico" type="image/x-icon" />
-		<link rel="author" href="mailto:info@noserub.com" title="NoseRub" rev="made" />
-        <link rel="copyright" href="http://noserub/contact/" title="Copyright &amp; Contact" />
-	    <link rel="home" href="http://noserub.com" title="NoseRub [Home]" />                  
-		<?php echo $html->charset('UTF-8')?>
-		<meta http-equiv="content-script-type" content="text/javascript" />
-		<meta http-equiv="content-language" content="de" />
-		<meta name="robots" content="index,follow" />
-		<meta name="allow-search" content="yes" />
-		<meta name="rating" content="general" />
-		<meta name="distribution" content="global" />
-		<meta name="revisit" content="14 days" />
-		<meta name="author" content="NoseRub" />
-		<meta name="publisher" content="NoseRub" />
-		<meta name="copyright" content="NoseRub, 2007" />
-		<meta name="language" content="de" />
-		<meta name="ICBM" content="50.945,6.89" />
-        <meta http-equiv="pragma" content="no-cache" />
-        <meta http-equiv="expires" content="-1" />
-        <meta http-equiv="cache-control" content="no-cache" />
-        <meta name="keywords" content="noserub,social,network,decentral,contacts,profiles,web 3.0" />
-		<meta name="description" content="NoseRub - Solutions for decentralised social network" />
-        <?php echo $this->renderElement('javascript'); ?>
-        <?php echo $this->renderElement('css'); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>NoseRub</title>
+
+<!-- Meta Tags -->
+	<?php echo $html->charset('UTF-8')?>
+	<meta http-equiv="Content-Language" content="en" />
+	<meta name="robots" content="all" />
+
+	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL; ?>/favicon.ico" />
+
+<!-- CSS -->
+	 <?php echo $this->renderElement('css'); ?>
+	                   
+<!-- JavaScript -->
+	<?php echo $this->renderElement('javascript'); ?>
+       
     </head>
-    <body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
-        <div id="banner">
-            <div id="header">
-                <?php echo $html->link('NoseRub', '/', array('id' => 'logo')); ?>
-                <hr />
-            </div>
-            <?php echo $this->renderElement('metanav'); ?>
-        </div>
-        <?php echo $this->renderElement('mainnav'); ?>
-        
-        <div id="main">
-            <?php echo $this->renderElement('subnav'); ?>
-            <div id="content">
-                <?php echo $content_for_layout?>
-            </div>
-        </div>
-   </body>
+	<body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
+	
+	<div id="top"></div>
+	<?php echo $this->renderElement('metanav'); ?>
+
+		<div id="header" class="wrapper">
+			<div id="logo">
+				<h1><a title="NoseRub" href="/">NoseRub</a></h1>
+	  		</div>
+	  	
+	  			<?php echo $this->renderElement('mainnav'); ?>
+		</div>
+		
+		<br class="clear" />
+		
+		<div id="headline">
+			<div class="wrapper">
+				<h2>Das ist die neue, richtige headline in default.ctp</h2>
+			</div>
+		</div>
+		<?php echo $this->renderElement('subnav'); ?>
+		
+		<div id="content" class="wrapper">
+            <?php echo $content_for_layout?>
+		</div>
+
+		<div id="footer" class="wrapper">
+			<p><a href="http://noserub.com"><img src="/images/footer/noserub-logo.gif" class="noserublogo" /></a> Powered by <a href="http://noserub.com">NoseRub</a></p>
+		</div>
+
+</body>
 </html>

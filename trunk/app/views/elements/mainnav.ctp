@@ -20,7 +20,7 @@
         $class_noserub  = ' class="active"';
     }
 ?>
-<div id="mainnav" class="nav">
+<div id="mainnav">
     <ul>
         <li<?php echo $class_home;?>><?php echo $html->link('Noserub', '/'); ?></li>
         <?php if($session->check('Identity.id')) { ?>

@@ -4,7 +4,7 @@
         $i = 0;
         foreach($data as $username => $name) { ?>
             <div style="float:left;margin:10px;border:1px solid;">
-                Name: <?php echo $name; ?><br />
+                Name: <strong><?php echo $name; ?></strong><br />
                 <input type="hidden" name="data[<?php echo $i; ?>][username]" value="<?php echo $username; ?>">
                 <input type="radio" name="data[<?php echo $i; ?>][action]" value="0" checked="checked">ignore<br />
                 <input type="radio" name="data[<?php echo $i; ?>][action]" value="1">create as
@@ -21,5 +21,5 @@
     } ?>
     <div style="clear:both;" />
     <?php echo $form->submit('Add contacts', array('name' => 'submit')); ?>
-    <?php echo $form->submit('Forget it', array('name' => 'cancel')); ?>
+    <?php echo $form->submit('Skip adding friends', array('name' => 'cancel')); ?>
 <?php echo $form->end(); ?>

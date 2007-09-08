@@ -10,8 +10,7 @@ if(strpos($uri, '/accounts/') > 0 ||
    strpos($uri, '/settings/') > 0) {
        # no sub navigation
 } else if(strpos($uri, '/network/') > 0) { ?>
-    <div id="ctxtnav" class="nav">
-        <h2>My Network Navigation</h2>
+    <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li class="first"><?php echo $html->link('All', $noserub_url . '/network/all/'); ?></li>
             <li class="first"><?php echo $html->link('Media', $noserub_url . '/network/media/'); ?></li>
@@ -21,8 +20,7 @@ if(strpos($uri, '/accounts/') > 0 ||
         </ul>
     </div>
 <?php } else if(strpos($uri, '/noserub/') === 0) { ?>
-    <div id="ctxtnav" class="nav">
-        <h2>My NoseRub Navigation</h2>
+    <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li><?php echo $html->link('All', $noserub_url . '/all/'); ?></li>  
             <li><?php echo $html->link('Media', $noserub_url . '/media/'); ?></li>
