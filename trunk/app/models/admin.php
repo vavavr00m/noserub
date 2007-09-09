@@ -6,7 +6,7 @@
 class Admin extends AppModel {
     var $useTable = false;
 
-    var $constants = array('NOSERUB_DOMAIN' => array(
+    var $constants = array('!NOSERUB_DOMAIN' => array(
                                 'file' => 'noserub.php'),
                            'NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
@@ -29,7 +29,12 @@ class Admin extends AppModel {
     function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
-            if(!defined($constant)) {
+            if(strpos($constant, '!') === 0) {
+                $constant = str_replace('!', '', $constant);
+                if(defined($constant)) {
+                    $out[$constant] = 'obsolete! Please remove it from '.$info['file'];
+                }
+            } else if(!defined($constant)) {
                 $out[$constant] = 'not defined! (see '.$info['file'].')';
             } else {
                 if(isset($info['values'])) {
