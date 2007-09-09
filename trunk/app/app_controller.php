@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * AppController - application wide controller
  *
