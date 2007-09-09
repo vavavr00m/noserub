@@ -39,7 +39,7 @@
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
-	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
+	Router::connect('/tests/:action/*', array('controller' => 'tests'));
 	
 	Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 	Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
