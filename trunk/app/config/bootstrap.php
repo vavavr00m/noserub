@@ -53,10 +53,10 @@ if(file_exists(APP . '/config/noserub.php')) {
 define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 #define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
 
-# to exclude pages and jobs is essential here, because else, 
+# to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
 # just a precaution for avoiding confusions.
-define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,noserub,auth,login,register');
+define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,tests,noserub,auth,login,register');
 
 
 
