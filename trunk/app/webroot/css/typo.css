@@ -1,6 +1,6 @@
 body {
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 0.69em;
+	font-size: 11px;
 }
 
 /* logo */
@@ -27,7 +27,7 @@ body {
 
 #headline h2 {
 	color: #363636;
-	font-size: 2em;
+	font-size: 20px;
 	font-weight: normal;
 	padding: 17px 0 0 0;
 	margin: 0;
@@ -49,7 +49,7 @@ body {
 /* subnavigation links */
 #subnavigation a, #subnavigation a:active, #subnavigation a:visited {
 	color: #ffffff;
-	font-size: 1.2em;
+	font-size: 11px;
 	text-decoration: none;
 	font-weight: normal;
 	border-bottom: 1px dotted #ffffff;
@@ -87,7 +87,7 @@ body {
 
 /* Navigation */
 .nav ul {
-	font-size: 0.50em;
+	font-size: 11px;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -99,7 +99,7 @@ body {
 }
 
 .subnav ul {
-	font-size: 0.50em;
+	font-size: 11pxm;
 	list-style: none;
 	margin: 0;
 	padding: 4px 0 0 10px;
