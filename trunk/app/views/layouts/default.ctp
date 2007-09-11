@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Language" content="en" />
 	<meta name="robots" content="all" />
 
-	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo NOSERUB_FULL_PATH; ?>favicon.ico" />
+	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL . Router::url('/'); ?>favicon.ico" />
 	<?php echo $scripts_for_layout; ?>
 
 <!-- CSS -->
