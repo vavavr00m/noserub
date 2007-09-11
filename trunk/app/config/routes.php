@@ -39,14 +39,12 @@
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
-	Router::connect('/tests/:action/*', array('controller' => 'tests'));
-	
 	Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 	Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
 	Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
 	Router::connect('/pages/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
-      
+	
     Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 
     Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
@@ -69,3 +67,4 @@
     Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'accounts', 'action' => 'jobs_sync'));
     Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'accounts', 'action' => 'jobs_sync_all'));
     Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
+    Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
