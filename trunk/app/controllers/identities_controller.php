@@ -3,7 +3,7 @@
  
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
-    var $helpers = array('form');
+    var $helpers = array('form', 'openid');
     
     /**
      * Method description

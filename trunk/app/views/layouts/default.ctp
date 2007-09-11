@@ -10,6 +10,7 @@
 	<meta name="robots" content="all" />
 
 	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL; ?>/favicon.ico" />
+	<?php echo $scripts_for_layout; ?>
 
 <!-- CSS -->
 	 <?php echo $this->renderElement('css'); ?>
@@ -19,7 +20,6 @@
        
     </head>
 	<body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
-	
 	<div id="top"></div>
 	<?php echo $this->renderElement('metanav'); ?>
 
