@@ -167,7 +167,7 @@ class Identity extends AppModel {
         $local_username_namespace = split('@', $local_username);
         
         # test, if this is a local contact, or not
-        $server_name = str_replace('http://', '', FULL_BASE_URL);
+        $server_name = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
         $server_name = str_replace('https://', '', $server_name);
         $local = strpos($username, $server_name) === 0;
         
