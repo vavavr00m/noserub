@@ -58,8 +58,6 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # just a precaution for avoiding confusions.
 define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,tests,noserub,auth,login,register');
 
-
-
 # this is no real data for bootstrap.php, but I figure, "functions.php" isn't
 # suitable in /app/config/ either. So, as long as I don't know what to do with
 # it, I will leave it here.

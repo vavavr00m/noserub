@@ -89,7 +89,7 @@ class Identity extends AppModel {
         # send out verification mail
         $msg  = 'Welcome to NoseRub!' . "\n\n";
         $msg .= 'please click here to verify you email address:' ."\n";
-        $msg .= FULL_BASE_URL . '/pages/verify/' . $data['Identity']['hash'] . '/' . "\n\n";
+        $msg .= NOSERUB_FULL_PATH . 'pages/verify/' . $data['Identity']['hash'] . '/' . "\n\n";
         $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
         $msg .= 'Thanks!';
         
@@ -155,7 +155,7 @@ class Identity extends AppModel {
             # just a username was given. so we assume it should
             # be for this server
             $local_username = $splitted[0];
-            $username = FULL_BASE_URL . '/' . $local_username;
+            $username = NOSERUB_FULL_PATH . $local_username;
             $username = str_replace('http://', '', $username);
             $username = str_replace('https://', '', $username);
         } else {
@@ -167,7 +167,7 @@ class Identity extends AppModel {
         $local_username_namespace = split('@', $local_username);
         
         # test, if this is a local contact, or not
-        $server_name = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
+        $server_name = str_replace('http://', '', NOSERUB_FULL_PATH);
         $server_name = str_replace('https://', '', $server_name);
         $local = strpos($username, $server_name) === 0;
         
