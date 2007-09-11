@@ -108,12 +108,18 @@ class Admin extends AppModel {
     function getCurrentMigration() {
         # check, if schema_info is there:
 		$tables = $this->execute('SHOW TABLES');
+		
 		$is_present = false;
 		foreach($tables as $table) {
-		    if(in_array('schema_info', $table['TABLE_NAMES'])) {
-		        $is_present = true;
-		        break;
-		    }
+		    foreach($table as $row) {
+		        if(in_array('schema_info', $row)) {
+		            $is_present = true;
+		            break;
+		        }
+	        }
+	        if($is_present) {
+	            break;
+	        }
 		}
 		
 		if(!$is_present) {
