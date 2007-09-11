@@ -1,4 +1,3 @@
-<h1>Add new Account - Enter feed information</h1>
 <form id="AccountAddFormStep2" method="post" action="<?php echo $this->here ?>">
     <fieldset>
         <?php echo $form->input('Account.feed_url', array('label' => 'RSS-Feed:', 

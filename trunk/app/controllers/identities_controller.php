@@ -13,9 +13,10 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
-        $filter        = isset($this->params['filter'])   ? $this->params['filter']   : '';
-        $full_username = isset($this->params['username']) ? $this->params['username'] : '';
-        $namespace     = '';
+        $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $username = $splitted['username'];
         
         # sanitize filter
         switch($filter) {
@@ -31,15 +32,9 @@ class IdentitiesController extends AppController {
                 $filter = false;
         }
         
-        if(strpos($full_username, '@') !== false) {
-            # this is a username with a namespace: <username>@<namespace>
-            $username_namespace = split('@', $full_username);
-            $namespace = $username_namespace[1];
-        }
-        $session_identity_id       = $this->Session->read('Identity.id');
-        $session_identity_username = $this->Session->read('Identity.username');
+        $session_identity = $this->Session->read('Identity');
         
-        if($namespace !== '' && $namespace != $session_identity_username) {
+        if($splitted['namespace'] !== '' && $splitted['namespace'] != $session_identity['local_username']) {
             # don't display local contacts to anyone else, but the owner
             $data = null;
         } else {
@@ -50,7 +45,7 @@ class IdentitiesController extends AppController {
                                      'ServiceType.ServiceType',
                                      'Contact.Contact', 'Contact.WithIdentity',
                                      'WithIdentity.WithIdentity');
-            $data = $this->Identity->find(array('username'  => $full_username,
+            $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1));
             
             # create $about_identity for the view
@@ -63,6 +58,14 @@ class IdentitiesController extends AppController {
             foreach($data['Contact'] as $key => $contact) {
                 $data['Contact'][$key]['WithIdentity'] = array_merge($contact['WithIdentity'], $this->Identity->splitUsername($contact['WithIdentity']['username']));
             }
+        
+            if($splitted['username'] == $session_identity['username']) {
+                $this->set('headline', 'My NoseRub page');
+            } else {
+                $this->set('headline', $splitted['local_username'] . '\'s NoseRub page');
+            }
+        } else {
+            $this->set('headline', 'Username could not be found!');
         }
 
         # get all items for those accounts
@@ -74,7 +77,7 @@ class IdentitiesController extends AppController {
                     if($new_items) {
                         # add some identity info
                         foreach($new_items as $key => $value) {
-                            $new_items[$key]['username'] = $full_username;
+                            $new_items[$key]['username'] = $username;
                         }
                         $items = array_merge($items, $new_items);
                     }
@@ -85,10 +88,7 @@ class IdentitiesController extends AppController {
     
         $this->set('data', $data);
         $this->set('items', $items);
-        $this->set('session_identity_id',       isset($session_identity_id)       ? $session_identity_id       : 0);
-        $this->set('session_identity_username', isset($session_identity_username) ? $session_identity_username : '');
-        $this->set('url_username', $full_username);
-        $this->set('namespace', $namespace);
+        $this->set('session_identity', $session_identity);
         $this->set('filter', $filter);
     }
     
@@ -105,13 +105,14 @@ class IdentitiesController extends AppController {
         if(!empty($this->data)) {
             $identity = $this->Identity->check($this->data);
             if($identity) {
-                $this->Session->write('Identity.id',       $identity['Identity']['id']);
-                $this->Session->write('Identity.username', $identity['Identity']['username']);
-                $this->redirect('/' . urlencode(strtolower($identity['Identity']['username'])) . '/', null, true);
+                $this->Session->write('Identity', $identity['Identity']);
+                $this->redirect('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/', null, true);
             } else {
                 $this->set('form_error', 'Login not possible');
             }
         }
+        
+        $this->set('headline', 'Login with existing NoseRub account');
     }
     
     /**
@@ -145,6 +146,8 @@ class IdentitiesController extends AppController {
                 $this->redirect('/pages/register/thanks/', null, true);
             }
         }
+
+        $this->set('headline', 'Register a new NoseRub account');
     }
     
     /**
@@ -155,10 +158,11 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function verify() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $hash     = isset($this->params['hash'])     ? $this->params['hash']     : '';
+        $hash = isset($this->params['hash']) ? $this->params['hash'] : '';
         
-        $this->set('verify_ok', $this->Identity->verify($username, $hash));
+        $this->set('verify_ok', $this->Identity->verify($hash));
+        
+        $this->set('headline', 'Verify your e-mail address');
     }
     
     /**
@@ -169,5 +173,6 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function register_thanks() {
+        $this->set('headline', 'Thanks for your registration!');
     }
 }

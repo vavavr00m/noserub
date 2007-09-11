@@ -1,4 +1,3 @@
-<h1>Import your contacts from <?php echo $account['Service']['name']; ?></h1>
 <form id="AccountAddFormStep4" method="post" action="<?php echo $this->here ?>">
     <?php 
         $i = 0;

@@ -43,16 +43,26 @@ class Account extends AppModel {
     }
     
     /**
-     * sync that identity with data from url
+     * sync that identity with data from username (url)
      *
      * @param  
      * @return 
      * @access 
      */
-    function sync($identity_id, $url) {
-        $this->log('sync('.$identity_id.', '.$url.')', LOG_DEBUG);
-        # get the data from the remote server
-        $data = $this->Identity->parseNoseRubPage($url);
+    function sync($identity_id, $username) {
+        $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
+        # get the data from the remote server. try https:// and
+        # http://
+        $protocols = array('https://', 'http://');
+        foreach($protocols as $protocol) {
+            $data = $this->Identity->parseNoseRubPage($protocol . $username);
+            if($data) {
+                # we had success, so we don't need to try
+                # the remaining protocol(s)
+                continue;
+            }
+        }
+        
         if(!$data) {
             # no data was found!
             return false;

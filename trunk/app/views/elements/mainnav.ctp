@@ -1,6 +1,6 @@
 <?php
     $uri = $_SERVER['REQUEST_URI'];
-    $noserub_url = '/' . $session->read('Identity.username');
+    $noserub_url = '/' . $session->read('Identity.local_username');
     $class_accounts = '';
     $class_network  = '';
     $class_contacts = '';

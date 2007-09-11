@@ -1,11 +1,10 @@
-<h1>NoseRub</h1>
 <?php if($session->check('Identity.id')) { ?>
     <ul>
         <li>
-            Go to your homepage: <?php echo $html->link(FULL_BASE_URL . '/noserub/' . $session->read('Identity.username'))?>
+            Go to your homepage: <?php echo $html->link('http://' . $session->read('Identity.username'))?>
         </li>
         <li>
-            <?php echo $html->link('Logout', '/logout/'); ?>
+            <?php echo $html->link('Logout', '/pages/logout/'); ?>
         </li>
     </ul>
 <?php } ?>

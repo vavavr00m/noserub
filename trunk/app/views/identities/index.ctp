@@ -1,12 +1,9 @@
 <?php if(!$data) { ?>
-    <h1>No Information available</h1>
     <p>
         Either this account does not exist, or it is only available for the user who created it.
     </p>
 <?php } else { ?>
     <?php $openid->serverLink('/auth', false); ?>
-    
-    <h1><?php echo $data['Identity']['username']; ?>'s NoseRub page</h1>
     
     <?php echo $this->renderElement('foaf'); ?>
 

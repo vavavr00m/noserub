@@ -1,4 +1,3 @@
-<h1>Add new Account - Preview</h1>
 <dl>
     <?php if(isset($data['title'])) { ?>
         <dt>Title</dt>

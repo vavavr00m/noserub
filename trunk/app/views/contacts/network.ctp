@@ -1,4 +1,3 @@
-<h1>Network</h1>
 <?php if($filter == 'media') { ?>
     <?php foreach($data as $item) { ?>
         <div style="float:left;padding:10px;">

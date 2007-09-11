@@ -1,4 +1,3 @@
-<h1>Login</h1>
 <?php if(isset($form_error) && !empty($form_error)) { 
     echo '<p>'. $form_error . '</p>';
 } ?>

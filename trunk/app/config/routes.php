@@ -43,7 +43,7 @@
 	Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
 	Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
-	Router::connect('/pages/verify/:username/:hash/', array('controller' => 'identities', 'action' => 'verify'));
+	Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 	
     Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 

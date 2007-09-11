@@ -1,6 +1,9 @@
 <?php
-    $show_action_links  = $about_identity['id']        == $session->read('Identity.id') ||
-                          $about_identity['namespace'] == $session->read('Identity.username');
+    $session_local_username = isset($session_identity['local_username']) ? $session_identity['local_username'] : '';
+    $session_identity_id    = isset($session_identity['id']) ? $session_identity['id'] : 0;
+    
+    $show_action_links  = $about_identity['id']        == $session_identity_id ||
+                          $about_identity['namespace'] == $session_local_username;
 ?>
 <?php if(empty($data)) { ?>
     <p>
@@ -29,9 +32,9 @@
                             <td><?php echo $item['Service']['name']; ?></td>
                         <?php } ?>
                         <td><?php if($show_action_links) {
-                                echo $html->link('Edit Account', '/' . $about_identity['full_username'] . '/accounts/'.  $account_id . '/edit/');
+                                echo $html->link('Edit Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/edit/');
                                 echo ' | ';
-                                echo $html->link('Delete Account', '/' . $about_identity['full_username'] . '/accounts/'.  $account_id . '/delete/');
+                                echo $html->link('Delete Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/delete/');
                         } ?></td>
                     </tr>
                 <?php }
@@ -40,5 +43,5 @@
     </table>
 <?php } ?>
 <?php if($show_action_links) {
-    echo $html->link('Add new account', '/' . $about_identity['full_username'] . '/accounts/add/'); 
+    echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/accounts/add/'); 
 } ?>

@@ -35,7 +35,7 @@
 		
 		<div id="headline">
 			<div class="wrapper">
-				<h2>Das ist die neue, richtige headline in default.ctp</h2>
+				<h2><?php echo isset($headline) ? $headline : 'Welcome to NoseRub'; ?></h2>
 			</div>
 		</div>
 		<?php echo $this->renderElement('subnav'); ?>

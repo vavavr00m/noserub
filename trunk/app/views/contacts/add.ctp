@@ -1,4 +1,3 @@
-<h1>Add new Contact</h1>
 <p>
     You can either enter a valid NoseRub-ID (<em>noserubserver.com/my.buddy</em>)
     or just a new username, that then will created for your access only.

@@ -85,7 +85,7 @@ class Admin extends AppModel {
         $files = scandir(APP . '/config/sql/migrations/');
         $most_recent_migration = 0;
         foreach($files as $filename) {
-            if(preg_match('/([0-9]+)_.*\.sql/i', $filename, $matches)) {
+            if(preg_match('/([0-9]+)_.*\.(sql|php)/i', $filename, $matches)) {
                 $num = intval($matches[1]);
                 if($num > $most_recent_migration) {
                     $most_recent_migration = $num;
@@ -172,8 +172,10 @@ class Admin extends AppModel {
      */
     function migrate($migrations, $current_migration, $most_recent_migration) {
         for($i=$current_migration+1; $i<=$most_recent_migration; $i++) {
-            foreach($migrations['sql'][$i]['content'] as $sql) {
-                $this->execute($sql);
+            if(isset($migrations['sql'][$i])) {
+                foreach($migrations['sql'][$i]['content'] as $sql) {
+                    $this->execute($sql);
+                }
             }
             if(isset($migrations['php'][$i]['name'])) {
                 eval($migrations['php'][$i]['content']);

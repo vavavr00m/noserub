@@ -1,4 +1,3 @@
-<h1>Register</h1>
 <form id="IdentityRegisterForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php 
