@@ -16,7 +16,7 @@
         <?php if($account['service_id'] == 8) { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
             <foaf:accountServiceHomepage rdf:resource="NoseRubServiceType:<?php echo $account['service_type_id']; ?>"/>
-            <foaf:accountName rdf:resource="<?php echo $account['feed_url']; ?>"/>
+            <foaf:accountName><?php echo $account['feed_url']; ?></foaf:accountName>
         <?php } else { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
             <foaf:accountServiceHomepage rdf:resource="<?php echo $account['Service']['url']; ?>"/>
