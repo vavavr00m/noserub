@@ -3,7 +3,8 @@
         Either this account does not exist, or it is only available for the user who created it.
     </p>
 <?php } else { ?>
-    <?php $openid->serverLink('/auth', false); ?>
+	<?php $openid->xrdsLocation('http://'.$data['Identity']['username'].'/xrds', false); ?>
+	<?php $openid->serverLink('/auth', false); ?>
     
     <?php echo $this->renderElement('foaf'); ?>
 
