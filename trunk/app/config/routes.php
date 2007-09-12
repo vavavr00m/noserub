@@ -45,6 +45,8 @@
 	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
 	Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 	
+	Router::connect('/auth/:action', array('controller' => 'auth'));
+	
     Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 
     Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
@@ -62,6 +64,8 @@
     Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
     Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
     
+    Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
+
     Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
     
     Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'accounts', 'action' => 'jobs_sync'));
