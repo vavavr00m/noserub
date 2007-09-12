@@ -230,11 +230,9 @@ class Identity extends AppModel {
         preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
         preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
         
-        /*
-        echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
-        echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
-        echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
-        */
+        #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
+        #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
+        #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
         
         $result = array();
         
@@ -245,7 +243,7 @@ class Identity extends AppModel {
                 
                 if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
                     # this is service_id 8 => any RSS-Feed
-                    $account['feed_url']    =  $account['service_url'];
+                    $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
                     $account['account_url'] =  $account_url;
                     $account['service_id']  = 8;
                     $splitted = split(':', $services[1][$idx]);
@@ -266,7 +264,7 @@ class Identity extends AppModel {
         } else {
             return false;
         }
-        $this->log(print_r($result, 1), LOG_DEBUG);
+        
         return $result;
     }
 }
