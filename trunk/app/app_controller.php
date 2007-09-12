@@ -28,4 +28,23 @@ class AppController extends Controller {
             }
         }
     }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function beforeFilter() {
+        
+        /**
+         * 	Don't you EVER remove this line else you will make the whole 
+         * 	application a swiss cheese for XSS!
+         *  We often call echo $this->here in our form actions and this would
+         *  be exactly where the injection would take place.
+         */
+        $this->here = preg_replace('/("|\')/', '”', addslashes(strip_tags($this->here)));
+    }
+    
 }

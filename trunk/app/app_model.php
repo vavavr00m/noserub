@@ -9,6 +9,76 @@
  * @subpackage models
  */
 class AppModel extends Model {
+
+    /**
+     * afterFind hook
+     * 
+     * used here to sanitize data that comes from the DB
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function afterFind($data) {
+        # de-sanitize some elements
+        if (!empty ($data)) {
+            foreach ($data as $key => $item) {
+                if (is_array($item)) {
+                    foreach ($item as $model => $attributes) {                            
+                        # de-sanitize for whatever purpose - we have to talk about this!
+                        if (is_array($attributes)) {
+                            foreach ($attributes as $fieldName => $field) {
+                                if (!is_array($field) && !empty ($field)) {
+                                    $replacements = array (
+                                        "&",
+                                        "%",
+                                        "<",
+                                        ">",
+                                        '"',
+                                        "'",
+                                        "(",
+                                        ")",
+                                        "+",
+                                        "-"
+                                    );
+                                    $patterns = array (
+                                        "/\&amp;/",
+                                        "/\&#37;/",
+                                        "/\&lt;/",
+                                        "/\&gt;/",
+                                        "/\&quot;/",
+                                        "/\&#39;/",
+                                        "/\&#40;/",
+                                        "/\&#41;/",
+                                        "/\&#43;/",
+                                        "/\&#45;/"
+                                    );
+                                    $field = preg_replace($patterns, $replacements, $field);
+                                    $data[$key][$model][$fieldName] = $field;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       
+        # not quite sure, if this is still neccessary. was copied from
+        # a cake 1.1 project
+        #
+        # fixing bug with expects and belongsTo associations
+        # probably caused by joining belongsTo associations cake doesn't reset
+        # the bindings of this associations
+        foreach ($this->belongsTo as $model => $association) {
+            $this->$model->__resetAssociations();
+        }
+		foreach ($this->hasAndBelongsToMany as $model => $association) {
+            $this->$model->__resetAssociations();
+        }
+        
+        return $data;
+    }
+    
     /**
      * Expects unbindsAll except the given models
      *
