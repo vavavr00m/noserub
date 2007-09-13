@@ -17,8 +17,28 @@ class Admin extends AppModel {
                                'file' => 'noserub.php'),
                            'NOSERUB_USE_SSL' => array(
                                'file'   => 'noserub.php',
-                               'values' => array(true, false))
+                               'values' => array(true, false)),
+                           #'NOSERUB_USE_PHPIDS' => array(
+                            #   'file'   => 'noserub.php',
+                            #   'values' => array(true, false))
                           );
+    
+    var $directories = array('tmp');
+    
+    /**
+     * checks if some directories are writeable
+     */
+    function checkWriteable() {
+        $out = array();
+        foreach($this->directories as $directory) {
+            if(!is_writeable(APP.$directory)) {
+                $out[] = APP.$directory;
+            }
+        }
+        
+        return $out;
+    }
+    
     /**
      * check some constants
      *

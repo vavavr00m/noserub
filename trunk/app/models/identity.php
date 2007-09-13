@@ -171,10 +171,11 @@ class Identity extends AppModel {
         $server_name = str_replace('https://', '', $server_name);
         $local = strpos($username, $server_name) === 0;
         
-        $result = array('username'       => $username,
-                        'local_username' => $local_username,
-                        'namespace'      => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
-                        'local'          => $local);
+        $result = array('username'        => $username,
+                        'local_username'  => $local_username,
+                        'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
+                        'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
+                        'local'           => $local);
         
         return $result;
     }

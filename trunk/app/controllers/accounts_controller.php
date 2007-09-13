@@ -283,7 +283,7 @@ class AccountsController extends AppController {
                     # a account to an existing one
                     if($item['action'] == 1) {
                         # first check, if the new identity is already there
-                        $new_identity_username = $item['contactname'] . '@' . $session_identity['local_username'];
+                        $new_identity_username = $this->Account->Identity->sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];
                         $new_splitted = $this->Account->Identity->splitUsername($new_identity_username);
                         
                         $this->Account->Identity->recursive = 0;
@@ -331,6 +331,7 @@ class AccountsController extends AppController {
                                      'username'        => $account_username,
                                      'account_url'     => $this->Account->Service->getAccountUrl($service_id, $account_username),
                                      'feed_url'        => $this->Account->Service->getFeedUrl($service_id, $account_username));
+                                     
                     $this->Account->create();
                     $this->Account->save($account);
                 }

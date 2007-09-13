@@ -13,10 +13,11 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
 	    
-	    $expected = array('username'       => $server_base . 'dirk.olbertz',
-	                      'local_username' => 'dirk.olbertz',
-	                      'namespace'      => '',
-	                      'local'          => 1);
+	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 1);
 	                      
 	    $result = $this->model->splitUsername('dirk.olbertz');
 	    $this->assertEqual($expected, $result);
@@ -26,10 +27,11 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
 	    
-	    $expected = array('username'       => $server_base . 'dirk.olbertz',
-	                      'local_username' => 'dirk.olbertz',
-	                      'namespace'      => '',
-	                      'local'          => 1);
+	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 1);
 	                      
 	    $result = $this->model->splitUsername($server_base . 'dirk.olbertz');
 	    $this->assertEqual($expected, $result);
@@ -39,30 +41,33 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
 	    
-	    $expected = array('username'       => $server_base . 'poolie@dirk.olbertz',
-	                      'local_username' => 'poolie@dirk.olbertz',
-	                      'namespace'      => 'dirk.olbertz',
-	                      'local'          => 1);
+	    $expected = array('username'        => $server_base . 'poolie@dirk.olbertz',
+	                      'local_username'  => 'poolie@dirk.olbertz',
+	                      'single_username' => 'poolie',
+	                      'namespace'       => 'dirk.olbertz',
+	                      'local'           => 1);
 	                      
 	    $result = $this->model->splitUsername('poolie@dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameExtern() {
-	    $expected = array('username'       => 'identoo.com/dirk.olbertz',
-	                      'local_username' => 'dirk.olbertz',
-	                      'namespace'      => '',
-	                      'local'          => 0);
+	    $expected = array('username'        => 'identoo.com/dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 0);
 	                      
 	    $result = $this->model->splitUsername('identoo.com/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameExternPath() {
-	    $expected = array('username'       => 'identoo.com/noserub/dirk.olbertz',
-	                      'local_username' => 'dirk.olbertz',
-	                      'namespace'      => '',
-	                      'local'          => 0);
+	    $expected = array('username'        => 'identoo.com/noserub/dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 0);
 	                      
 	    $result = $this->model->splitUsername('identoo.com/noserub/dirk.olbertz');
 	    $this->assertEqual($expected, $result);

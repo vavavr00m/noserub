@@ -3,6 +3,18 @@
     check back after each update you install, because new Defines may have
     been introduced and/or changes in the Database structure been made.
 </p>
+<h1>Directories</h1>
+    Status:
+<?php if(empty($directories)) { ?>
+    <strong>OK</strong>
+<?php } else { ?>
+    <ul> 
+        <?php foreach($directories as $directory) { ?>
+            <li><?php echo '<strong>' . $directory . '</strong>: not writeable'; ?></li>
+        <?php } ?>
+    </ul>
+<?php } ?>
+<br /><br />    
 <h1>Settings</h1>
     Status:
 <?php if(empty($constants)) { ?>
