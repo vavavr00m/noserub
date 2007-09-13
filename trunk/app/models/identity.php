@@ -180,6 +180,23 @@ class Identity extends AppModel {
     }
     
     /**
+     * Sanitizes non-namespace containing usernames.
+     * This is used eg. when adding new contacts from
+     * flickr, where usernames can be '0909ds7@N01'.
+     * There, the @ is not allowed, so I want to sanitize
+     * them, before giving them to the user as selection
+     * for using as a real contact username.
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function sanitizeUsername($username) {
+        $username = preg_replace('/[^\w\s.-]/', null, $username);
+        return $username;
+    }
+    
+    /**
      * Method description
      *
      * @param  
