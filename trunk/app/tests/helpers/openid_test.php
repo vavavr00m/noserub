@@ -1,4 +1,5 @@
 <?php
+	loadController(null);
 
 	class OpenidHelperTest extends CakeTestCase {
 		var $helper = null;
