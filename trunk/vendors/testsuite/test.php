@@ -33,6 +33,7 @@
 			exit();
 		}
 
+		setHttpHost();
 		includeCoreFiles($cakeDir);
 		executeTask($taskName, $params);
 	}
@@ -138,6 +139,19 @@
 		return $iniSetting;
 	}
 
+	function setHttpHost() {
+		$configFile = APP_PATH.'config'.DS.'test-config.php';
+		$httpHost = 'localhost';
+		
+		if (file_exists($configFile)) {
+			require($configFile);
+			$config = new TestConfig();
+			$httpHost = $config->httpHost;
+		}
+		
+		$_SERVER['HTTP_HOST'] = $httpHost;
+	}
+	
 	function showHelp() {
 		echo "Usage: php test.php app-alias [param1, ...]\n";
 	}

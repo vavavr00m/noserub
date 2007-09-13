@@ -1,6 +1,4 @@
 <?php
-	define('FULL_BASE_URL', 'http://example.com');
-
 	loadController(null);
 	
 	class OpenidHelperTest extends CakeTestCase {
