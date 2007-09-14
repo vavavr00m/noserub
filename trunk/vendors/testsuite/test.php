@@ -34,6 +34,7 @@
 		}
 
 		setHttpHost();
+		setRequestUri();
 		includeCoreFiles($cakeDir);
 		executeTask($taskName, $params);
 	}
@@ -151,6 +152,11 @@
 		}
 		
 		$_SERVER['HTTP_HOST'] = $httpHost;
+	}
+	
+	function setRequestUri() {
+		// XXX I am not sure whether this will work, it is possible that it causes unwanted side-effects...
+		$_SERVER['REQUEST_URI'] = '/';
 	}
 	
 	function showHelp() {
