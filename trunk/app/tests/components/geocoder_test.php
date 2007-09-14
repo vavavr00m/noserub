@@ -1,5 +1,4 @@
 <?php
-loadController(null);
 
 # it does not make sense to test for equality, as
 # the accuracy may change and therefore the test woul
@@ -10,6 +9,10 @@ class GeocoderComponentTestCase extends CakeTestCase {
     
 	function setUp() {
 		$this->component = new GeocoderComponent();
+	}
+	
+	function skip() {
+		$this->skipif (!NOSERUB_GOOGLE_MAPS_KEY, 'NOSERUB_GOOGLE_MAPS_KEY not set in noserub.php');
 	}
 	
 	function testGet1() {
