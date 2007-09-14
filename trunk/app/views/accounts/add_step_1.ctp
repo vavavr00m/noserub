@@ -7,6 +7,6 @@
         ?>
         Any RSS-Feed (eg. Blogs)
         
-        <?php echo $form->submit('Next step >'); ?>
+        <?php echo $form->submit('Next step'); ?>
     </fieldset>
 <?php echo $form->end(); ?>

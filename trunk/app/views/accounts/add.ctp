@@ -23,13 +23,13 @@
             echo $form->input('Account.account_url', 
                               array('size' => '40',
                                     'error' => array(
-                                    'content'  => 'Pleas enter a valid URL'))); 
+                                    'content'  => 'Please enter a valid URL'))); 
         ?>
         <?php 
             echo $form->input('Account.feed_url', 
                               array('size' => '40',
                                     'error' => array(
-                                    'content'  => 'Pleas enter a valid URL'))); 
+                                    'content'  => 'Please enter a valid URL'))); 
         ?>
         <p>
             <em>Feed-Url and Service-Url will be ignored, when Service is not <strong>Blog</strong>!</em>
