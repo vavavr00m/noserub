@@ -100,11 +100,13 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function settings() {
+    function profile_settings() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
             $this->redirect('/', null, true);
         }
         
@@ -120,6 +122,7 @@ class IdentitiesController extends AppController {
             }
             
             $saveable = array('firstname', 'lastname', 'sex', 'address', 'latitude', 'longitude', 'modified');
+            
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
         } else {
@@ -128,7 +131,52 @@ class IdentitiesController extends AppController {
             $this->data = $this->Identity->findById($session_identity['id']);
         }
         
-        $this->set('headline', 'Settings for your NoseRub page');
+        $this->set('headline', 'Settings for your NoseRub profile');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function privacy_settings() {
+        $this->set('headline', 'Your privacy settings');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function password_settings() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $this->redirect('/', null, true);
+        }
+        
+        if($this->data) {
+            $data = $this->data;
+            $data['Identity']['username'] = $splitted['username'];
+            $data['Identity']['password'] = $data['Identity']['old_passwd'];
+            if($this->Identity->check($data)) {
+                # old password is ok
+                $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
+                $this->Identity->id = $session_identity['id'];
+                $this->Identity->save($this->data, true, array('password'));
+            } else {
+                $this->Identity->invalidate('password');
+            }
+        }
+        
+        $this->set('headline', 'Change your password');
     }
     
     /**

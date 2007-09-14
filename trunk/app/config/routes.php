@@ -66,7 +66,9 @@
     
     Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
 
-    Router::connect('/:username/settings', array('controller' => 'identities', 'action' => 'settings'));
+    Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
+    Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
+    Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
     
     Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
     
