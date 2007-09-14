@@ -41,40 +41,4 @@ class Account extends AppModel {
         $identity_id = intval($identity_id);
         return $this->execute('DELETE FROM accounts WHERE identity_id='.$identity_id);
     }
-    
-    /**
-     * sync that identity with data from username (url)
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function sync($identity_id, $username) {
-        $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
-        # get the data from the remote server. try https:// and
-        # http://
-        $protocols = array('https://', 'http://');
-        foreach($protocols as $protocol) {
-            $data = $this->Identity->parseNoseRubPage($protocol . $username);
-            if($data) {
-                # we had success, so we don't need to try
-                # the remaining protocol(s)
-                continue;
-            }
-        }
-        
-        if(!$data) {
-            # no data was found!
-            return false;
-        }
-        
-        # update all accounts for that identity
-        $this->update($identity_id, $data);
-
-        # update 'last_sync' field
-        $this->Identity->id = $identity_id;
-        $this->Identity->saveField('last_sync', date('Y-m-d H:i:s'));
-        
-        return true;
-    }
 }

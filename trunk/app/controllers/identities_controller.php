@@ -214,4 +214,65 @@ class IdentitiesController extends AppController {
     function register_thanks() {
         $this->set('headline', 'Thanks for your registration!');
     }
+    
+    /**
+     * Synchronizes the given identity from another server
+     * to this local NoseRub instance
+     *
+     * @param  string admin_hash (through $this->params)
+     * @param  string username (through $this->params)
+     * @return 
+     * @access 
+     */
+    function jobs_sync() {
+        $admin_hash  = isset($this->params['admin_hash'])  ? $this->params['admin_hash'] : '';
+        $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
+        
+        if($admin_hash != NOSERUB_ADMIN_HASH ||
+           $admin_hash == '' ||
+           !$identity_id) {
+            # there is nothing to do for us here
+            return false;
+        }
+        
+        # see, if we can find the identity.
+        # it should be in our database already.
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $identity = $this->Identity->findById($identity_id);
+
+        if(!$identity || $identity['Identity']['is_local'] == 1) {
+            # we could not find it, or this is a local identity
+            return false;
+        }
+        
+        return $this->Identity->sync($identity_id, $identity['Identity']['username']);
+    }
+    
+    /**
+     * sync all identities with their remote server
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function jobs_sync_all() {
+        $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
+        
+        if($admin_hash != NOSERUB_ADMIN_HASH ||
+           $admin_hash == '') {
+            # there is nothing to do for us here
+            return false;
+        }
+        
+        # get all not local identities
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $identities = $this->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
+        foreach($identities as $identity) {
+            $this->Identity->sync($identity['Identity']['id'], $identity['Identity']['username']);       
+        }
+
+        return true;
+    }
 }

@@ -11,6 +11,24 @@
          xmlns:rel="http://purl.org/vocab/relationship/" 
          xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
 
+<?php if($data['Identity']['firstname'] != '') { ?>
+    <foaf:firstname><?php echo $data['Identity']['firstname']; ?></foaf:firstname>
+<?php } ?>
+<?php if($data['Identity']['lastname'] != '') { ?>
+    <foaf:surname><?php echo $data['Identity']['lastname']; ?></foaf:surname>
+<?php } ?>
+<?php if($data['Identity']['sex'] > 0) { ?>
+    <foaf:gender><?php echo $data['Identity']['sex'] == 1 ? 'female' : 'male'; ?></foaf:gender>
+<?php } ?>
+<?php if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude']) { ?>
+    <foaf:based_near>
+	    <geo:Point>
+            <geo:lat><?php echo $data['Identity']['latitude']; ?></geo:lat>
+            <geo:long><?php echo $data['Identity']['longitude']; ?></geo:long>
+        </geo:Point>
+    </foaf:based_near>
+<?php } ?>
+
 <?php foreach($data['Account'] as $account) { ?>
     <foaf:holdsAccount>
         <?php if($account['service_id'] == 8) { ?>

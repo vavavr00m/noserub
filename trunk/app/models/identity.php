@@ -237,22 +237,49 @@ class Identity extends AppModel {
         if(!$url) {
             return false;
         }
-        
+
         # "@" to avoid notices and warnings on not supported
         # protocol, e.g. https
         $content = @file_get_contents($url);
         if(!$content) {
             return false;
         }
+        preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
+        preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
+        preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
+        preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
+        preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
+        
         preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
         preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
         preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
         
+        #echo 'FIRSTNAME<pre>'; print_r($firstname); echo '</pre>';
+        #echo 'LASTNAME<pre>'; print_r($lastname); echo '</pre>';
+        #echo 'GENDER<pre>'; print_r($gender); echo '</pre>';
+        #echo 'LATITUDE<pre>'; print_r($latitude); echo '</pre>';
+        #echo 'LONGITUDE<pre>'; print_r($longitude); echo '</pre>';
         #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
         #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
         #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
         
-        $result = array();
+        $result = array('accounts' => array(),
+                        'identity' => array());
+        
+        $result['identity']['firstname'] = $firstname ? $firstname[1] : '';
+        $result['identity']['lastname']  = $lastname  ? $lastname[1]  : '';
+        if($gender) {
+            switch($gender[1]) {
+                case 'female': $result['identity']['sex'] = 1; break;
+                case 'male'  : $result['identity']['sex'] = 2; break;
+                default      : $result['identity']['sex'] = 0;
+            }
+        } else {
+            $result['identity']['sex'] = 0;
+        }
+        
+        $result['identity']['latitude']  = $latitude  ? $latitude[1]  : 0;
+        $result['identity']['longitude'] = $longitude ? $longitude[1] : 0;
         
         if(is_array($accounts)) {
             # gather all account data
@@ -277,12 +304,50 @@ class Identity extends AppModel {
                     $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
                 }
                 
-                $result[] = $account; 
+                $result['accounts'][] = $account; 
             }
         } else {
             return false;
         }
         
         return $result;
+    }
+    
+    /**
+     * sync that identity with data from username (url)
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function sync($identity_id, $username) {
+        $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
+        # get the data from the remote server. try https:// and
+        # http://
+        $protocols = array('https://', 'http://');
+        foreach($protocols as $protocol) {
+            $data = $this->parseNoseRubPage($protocol . $username);
+            if($data) {
+                # we had success, so we don't need to try
+                # the remaining protocol(s)
+                continue;
+            }
+        }
+        
+        if(!$data) {
+            # no data was found!
+            return false;
+        }
+        
+        # update all accounts for that identity
+        # @todo: not so nice to update another model here
+        $this->Account->update($identity_id, $data['accounts']);
+
+        # update 'last_sync' field and also identity information
+        $this->id = $identity_id;
+        $data['identity']['last_sync'] = date('Y-m-d H:i:s');
+        $this->save($data['identity']);
+        
+        return true;
     }
 }
