@@ -109,3 +109,7 @@ body {
 	display: inline;
 	padding-right: 10px;
 }
+
+dd {
+	font-weight: bold;
+}

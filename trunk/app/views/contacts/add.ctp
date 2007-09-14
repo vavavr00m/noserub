@@ -16,11 +16,13 @@
                                         'user_not_found'      => 'This user could not be found at the other server',
                                         'no_valid_noserub_id' => 'This is no valid NoseRub-ID. It must contain at least one "/"!'))); 
         ?>
-        <input type="submit" value="Add" name="add">
+        <input type="submit" value="Add" name="add" class="submitbutton">
     </fieldset>
-    <br />
-    <strong>OR</strong>
-    <br />
+    
+    <p>
+    	<strong>OR</strong>
+    <p>
+    
     <fieldset>
         <legend>Create a local contact</legend>
         <?php 
@@ -30,6 +32,6 @@
                                     'content'  => 'Valid characters: letters, numbers, underscores, dashes, dots and "@" only',
                                     'unique'   => 'The username is alreay taken'))); 
         ?>
-        <input type="submit" value="Create" name="create">
+        <input type="submit" value="Create" name="create" class="submitbutton">
     </fieldset>
 <?php echo $form->end(); ?>
