@@ -90,12 +90,6 @@ class DATABASE_CONFIG {
 		'database' => 'project_name-test',
 		'prefix' => ''
 	);
-	
-	function __construct () {
-        if(strpos($_SERVER['REQUEST_URI'], '/tests/') !== false) {
-            $this->default = $this->test;
-        }
-    }
 }
 
 ?>
