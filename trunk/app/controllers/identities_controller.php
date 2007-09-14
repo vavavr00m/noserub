@@ -4,6 +4,7 @@
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid');
+    var $components = array('geocoder');
     
     /**
      * Method description
@@ -90,6 +91,44 @@ class IdentitiesController extends AppController {
         $this->set('items', $items);
         $this->set('session_identity', $session_identity);
         $this->set('filter', $filter);
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function settings() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            $this->redirect('/', null, true);
+        }
+        
+        if($this->data) {
+            # geocode the address
+            $geolocation = $this->geocoder->get($this->data['Identity']['address']);
+            if($geolocation !== false) {
+                $this->data['Identity']['latitude']  = $geolocation['latitude'];
+                $this->data['Identity']['longitude'] = $geolocation['longitude'];
+            } else {
+                $this->data['Identity']['latitude']  = 0;
+                $this->data['Identity']['longitude'] = 0;
+            }
+            
+            $saveable = array('firstname', 'lastname', 'sex', 'address', 'latitude', 'longitude', 'modified');
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->save($this->data, false, $saveable);
+        } else {
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $this->data = $this->Identity->findById($session_identity['id']);
+        }
+        
+        $this->set('headline', 'Settings for your NoseRub page');
     }
     
     /**

@@ -30,3 +30,15 @@ define('NOSERUB_EMAIL_FROM', 'info@...');
  * pages like /pages/login/ and /pages/register/
  */
 define('NOSERUB_USE_SSL', false);
+
+/**
+ * We need a geocoder for get Latitude/Longitude for
+ * given addresses. We use GoogleMaps for it and
+ * also to display the map. You need to sign up
+ * for a GoogleMaps API Key and can do so with no cost
+ * here: http://www.google.com/apis/maps/signup.html
+ * Make sure you enter the correct URL for the server
+ * on which you want to use the API Key.
+ * If set to false, no geocoding is done.
+ */
+define('NOSERUB_GOOGLE_MAPS_KEY', false);

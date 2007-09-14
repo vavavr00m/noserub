@@ -25,8 +25,8 @@
                         </td>
                         <td><?php echo $session_local_username ==  $item['WithIdentity']['namespace'] ? 'Local' : 'NoseRub'; ?></td>
                         <td>
-                            <?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?>
                             <?php if($item['WithIdentity']['namespace'] == $session_local_username) { ?>
+                                <?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?>
                                 | <?php echo $html->link('Add Account', '/' . $item['WithIdentity']['local_username'] . '/accounts/add/'); ?>
                             <?php } ?>
                         </td>

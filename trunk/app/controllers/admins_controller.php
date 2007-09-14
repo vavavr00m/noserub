@@ -21,8 +21,8 @@ class AdminsController extends AppController {
             exit;
         }
         
-        $constants = $this->Admin->checkConstants();
-        $this->set('constants', $constants);
+        $this->set('directories', $this->Admin->checkWriteable());
+        $this->set('constants', $this->Admin->checkConstants());
         
         $database_status = $this->Admin->getDatabaseStatus();
         $this->set('database_status', $database_status);

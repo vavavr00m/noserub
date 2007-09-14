@@ -66,6 +66,8 @@
     
     Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
 
+    Router::connect('/:username/settings', array('controller' => 'identities', 'action' => 'settings'));
+    
     Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
     
     Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'accounts', 'action' => 'jobs_sync'));

@@ -18,9 +18,8 @@ class Admin extends AppModel {
                            'NOSERUB_USE_SSL' => array(
                                'file'   => 'noserub.php',
                                'values' => array(true, false)),
-                           #'NOSERUB_USE_PHPIDS' => array(
-                            #   'file'   => 'noserub.php',
-                            #   'values' => array(true, false))
+                           'NOSERUB_GOOGLE_MAPS_KEY' => array(
+                               'file' => 'noserub.php'),
                           );
     
     var $directories = array('tmp');

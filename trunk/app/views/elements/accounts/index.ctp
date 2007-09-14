@@ -3,7 +3,8 @@
     $session_identity_id    = isset($session_identity['id']) ? $session_identity['id'] : 0;
     
     $show_action_links  = $about_identity['id']        == $session_identity_id ||
-                          $about_identity['namespace'] == $session_local_username;
+                          ($session_local_username      != '' && 
+                           $about_identity['namespace'] == $session_local_username);
 ?>
 <?php if(empty($data)) { ?>
     <p>
