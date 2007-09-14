@@ -2,6 +2,7 @@
 @import url("navigation.css");
 @import url("tables.css");
 @import url("forms.css");
+@import url("messages.css");
 
 body {
 	background-color: #ffffff;
