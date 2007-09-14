@@ -34,26 +34,25 @@
     </fieldset>
     
     <fieldset>
-        <legend>E-Mail & Password</legend>
-        <p>
-            When you change your e-mail address, you will be logged out and 
-            can only log in again, when you confirm the new e-mail address by
-            clicking on the link we send to your new e-mail address.
-        </p>
+        <legend>Change password</legend>
+        <?php if(isset($paswd_error)) { ?>
+            <p>
+                <?php echo $passwd_error; ?>
+            </p>
+        <?php } ?>
         <?php 
-            echo $form->input('Identity.email', array('label' => 'E-Mail address', 
-                                                      'size'  => 32,
-                                                      'error' => 'Please enter a valid E-Mail address')); 
+            echo $form->input('Identity.old_passwd', array('type'  => 'password',
+                                                           'label' => 'Old password', 
+                                                           'error' => 'Passwords must be at least 6 characters in length')); 
         ?>
         <?php 
-        
             echo $form->input('Identity.passwd', array('type'  => 'password',
-                                                       'label' => 'Password', 
+                                                       'label' => 'New password', 
                                                        'error' => 'Passwords must be at least 6 characters in length')); 
         ?>
         <?php 
             echo $form->input('Identity.passwd2', array('type' => 'password', 
-                                                        'label' => 'Password repeated', 
+                                                        'label' => 'New password repeated', 
                                                         'error' => 'Passwords must match')); ?>
     </fieldset>
     
