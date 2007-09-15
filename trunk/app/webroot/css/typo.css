@@ -60,6 +60,11 @@ body {
 	border-bottom: 1px dotted #363636;
 }
 
+#subnavigation .active a {
+	color: #D9D7CA;
+	font-weight: bold;
+}
+
 /* metanav links */
 #metanav a, #metanav a:active, #metanav a:visited {
 	color: #999999;
