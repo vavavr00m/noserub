@@ -25,6 +25,7 @@
 	vendor('testsuite'.DS.'session');
 	vendor('testsuite'.DS.'error');
 	vendor('testsuite'.DS.'cookie');
+	vendor('testsuite'.DS.'session_helper');
 	
 	class CakeTestCase extends UnitTestCase {
 		var $fixtures = array();
