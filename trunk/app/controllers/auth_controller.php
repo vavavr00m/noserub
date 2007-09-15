@@ -1,17 +1,38 @@
 <?php
+	$pathExtra = APP.DS.'vendors'.DS.PATH_SEPARATOR.VENDORS;
+	$path = ini_get('include_path');
+	$path = $pathExtra . PATH_SEPARATOR . $path;
+	ini_set('include_path', $path);
+
+	vendor('Auth/OpenID/Server', 'Auth/OpenID/FileStore');
 
 	class AuthController extends AppController {
 		var $uses = array();
 		
 		function index() {
-			echo 'Not yet implemented';
-			exit();
+			$server = $this->__getOpenIDServer();
+			$request = $server->decodeRequest();
+			
+			if (!isset($request->mode)) {
+				$this->set('headline', 'OpenID server endpoint');
+				$this->render('server_endpoint');
+			} else {
+				echo 'Not yet implemented';
+				exit();
+			}
 		}
 		
 		function xrds() {
 			$this->layout = 'xml';
 			header('Content-type: application/xrds+xml');
 			$this->set('server', Router::url('/'.low($this->name), true));
+		}
+		
+		function __getOpenIDServer() {
+			$store = new Auth_OpenID_FileStore(TMP.'openid');
+			$server = new Auth_OpenID_Server($store);
+			
+			return $server;
 		}
 	}
 ?>
