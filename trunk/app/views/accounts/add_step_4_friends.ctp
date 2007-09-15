@@ -19,6 +19,6 @@
         $i++;
     } ?>
     <div style="clear:both;" />
-    <?php echo $form->submit('Add contacts', array('name' => 'submit')); ?>
-    <?php echo $form->submit('Skip adding friends', array('name' => 'cancel')); ?>
+    <input class="submitbutton" name="submit" type="submit" value="Add contacts"/>
+    <input class="submitbutton" name="cancel" type="submit" value="Skip adding friends"/>
 <?php echo $form->end(); ?>

@@ -22,6 +22,6 @@
     </fieldset>
     
     <fieldset>
-        <?php echo $form->submit('Save changes'); ?>
+        <input class="submitbutton" type="submit" value="Save changes"/>
     </fieldset>
-<?php echo $form->end(); ?>
+</form>

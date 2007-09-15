@@ -20,6 +20,6 @@
     </dd>
 </dl>
 <form id="AccountAddFormStep3" method="post" action="<?php echo $this->here ?>">
-    <?php echo $form->submit('OK. Save it!', array('name' => 'submit')); ?>
-    <?php echo $form->submit('Forget it', array('name' => 'cancel')); ?>
-<?php echo $form->end(); ?>
+    <input class="submitbutton" type="submit" name="submit" value="OK. Save it!"/>
+    <input class="submitbutton" type="submit" name="cancel" value="Forget it"/>
+</form>

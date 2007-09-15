@@ -19,7 +19,8 @@
         <?php 
             echo $form->input('Identity.passwd2', array('type' => 'password', 
                                                         'label' => 'Password repeated', 
-                                                        'error' => 'Passwords must match')); ?>
-        <?php echo $form->submit('Register'); ?>
+                                                        'error' => 'Passwords must match')); 
+        ?>
+        <input class="submitbutton" type="submit" value="Register"/>
     </fieldset>
-<?php echo $form->end(); ?>
+</form>

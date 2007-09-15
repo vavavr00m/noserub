@@ -5,6 +5,6 @@
     <fieldset>
         <?php echo $form->input('Identity.username'); ?>
         <?php echo $form->input('Identity.password', array('type' => 'password')); ?>
-        <?php echo $form->submit('Login'); ?>
+        <input class="submitbutton" type="submit" value="Login"/>
     </fieldset>
 <?php echo $form->end(); ?>

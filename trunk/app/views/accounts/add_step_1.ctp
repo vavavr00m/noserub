@@ -6,7 +6,8 @@
             echo $form->radio('Account.type', array(1 => '', 2 => ''), $services.'<br />');
         ?>
         Any RSS-Feed (eg. Blogs)
-        
-        <?php echo $form->submit('Next step'); ?>
+    </fieldset>
+    <fieldset>
+        <input class="submitbutton" type="submit" value="Next step"/>
     </fieldset>
 <?php echo $form->end(); ?>
