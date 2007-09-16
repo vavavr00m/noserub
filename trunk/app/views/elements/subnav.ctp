@@ -1,6 +1,6 @@
 <?php
 $uri = $_SERVER['REQUEST_URI'];
-$username = isset($url_username) ? $url_username : $session->read('Identity.local_username');
+$username = isset($about_identity['local_username']) ? $about_identity['local_username'] : $session->read('Identity.local_username');
 $noserub_url = '/' . $username . '/';
 if(isset($filter)) {
     $class_all   = ($filter == 'all' || $filter == false) ? ' class="active"' : '';
@@ -11,7 +11,8 @@ if(isset($filter)) {
     $class_event = $filter == 'event' ? ' class="active"' : '';
 }
 
-if(strpos($uri, '/accounts/') > 0 ||
+if($uri == '/' ||
+   strpos($uri, '/accounts/') > 0 ||
    strpos($uri, '/contacts/') > 0 ||
    strpos($uri, '/register/') > 0 ||
    strpos($uri, '/login/') > 0) {
@@ -41,7 +42,7 @@ if(strpos($uri, '/accounts/') > 0 ||
             <li<?php echo $class_password; ?>><?php echo $html->link('Password', $noserub_url . 'settings/password/'); ?></li>
         </ul>
     </div>
-<?php } else if(strpos($uri, $noserub_url) === 0) { ?>
+<?php } else { ?>
     <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li<?php echo $class_all;?>><?php echo $html->link('All', $noserub_url . 'all/'); ?></li>  
