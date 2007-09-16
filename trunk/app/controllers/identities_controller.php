@@ -63,6 +63,11 @@ class IdentitiesController extends AppController {
             if($splitted['username'] == $session_identity['username']) {
                 $this->set('headline', 'My NoseRub page');
             } else {
+                if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude'] != 0 &&
+                   $session_identity['latitude'] 1= 0 && $session_identity['longitude'] != 0) {
+                    $this->set('distance', $this->geocoder->distance($data['Identity']['latitude'], $data['Identity']['longitude'],
+                                                                     $session_identity['latitude'], $session_identity['longitude']));
+                }
                 $this->set('headline', $splitted['local_username'] . '\'s NoseRub page');
             }
         } else {

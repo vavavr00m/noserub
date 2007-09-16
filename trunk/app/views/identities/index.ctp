@@ -8,6 +8,11 @@
     
     <?php echo $this->renderElement('foaf'); ?>
     
+    <?php if(isset($distance)) { ?>
+        <p>
+            <?php echo $data['Identity']['local_username']; ?> lives <?php echo ceil($distance); ?> from you.
+        </p>
+    <?php } ?>
     <?php if(isset($filter) && ($filter == false || $filter == 'all')) { ?>
         <div style="float:left;margin:10px;">
             <h1>Contacts</h1>

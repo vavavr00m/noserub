@@ -41,6 +41,10 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	    $this->assertFalse($result);
 	}
 	
+	function testDistance() {
+	    $this->assertEqual(7.189, round($this->component->distance(50.740081, 7.098094, 50.788847, 7.165207), 3));
+	}
+	
 	function tearDown() {
 	    unset($this->component);
 	}
