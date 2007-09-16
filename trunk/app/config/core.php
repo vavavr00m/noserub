@@ -111,7 +111,7 @@
  * CakePHP session IDs are also regenerated between requests if
  * CAKE_SECURITY is set to 'high'.
  */
-	define('CAKE_SECURITY', 'high');
+	define('CAKE_SECURITY', 'medium');
 /**
  * Session time out time (in seconds).
  * Actual value depends on CAKE_SECURITY setting.
