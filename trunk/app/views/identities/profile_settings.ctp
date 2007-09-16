@@ -11,8 +11,8 @@
         ?>
         <label>Sex</label>
         <input type="radio" name="data[Identity][sex]" value="0"<?php echo $this->data['Identity']['sex'] == 0 ? ' checked="checked"' : ''; ?>> <span>rather not say</span>
-        <input type="radio" name="data[Identity][sex]" value="1"<?php echo $this->data['Identity']['sex'] == 1 ? 'checked="checked"' : ''; ?>> <span>female</span>
-        <input type="radio" name="data[Identity][sex]" value="2"<?php echo $this->data['Identity']['sex'] == 2 ? 'checked="checked"' : ''; ?>> <span>male</span>
+        <input type="radio" name="data[Identity][sex]" value="1"<?php echo $this->data['Identity']['sex'] == 1 ? ' checked="checked"' : ''; ?>> <span>female</span>
+        <input type="radio" name="data[Identity][sex]" value="2"<?php echo $this->data['Identity']['sex'] == 2 ? ' checked="checked"' : ''; ?>> <span>male</span>
     </fieldset>
     
     <fieldset>

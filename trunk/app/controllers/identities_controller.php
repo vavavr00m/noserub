@@ -144,6 +144,22 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function privacy_settings() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            $saveable = array('frontpage_updates');
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->save($this->data, true, $saveable);
+        }
+        
         $this->set('headline', 'Your privacy settings');
     }
     
