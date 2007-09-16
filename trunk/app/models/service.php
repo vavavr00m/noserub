@@ -446,6 +446,9 @@ class Service extends AppModel {
             case 2:
                 return $this->getContactsFromDelicious('http://del.icio.us/network/' . $account['Account']['username'] . '/');
                 
+            case 5:
+                return $this->getContactsFromTwitter('http://twitter.com/' . $account['Account']['username'] . '/');
+                
             case 10:
                 return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
 
@@ -560,4 +563,25 @@ class Service extends AppModel {
 
         return $data;
     }
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromTwitter($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        }
+
+        return $data;
+    }
+    
 }
