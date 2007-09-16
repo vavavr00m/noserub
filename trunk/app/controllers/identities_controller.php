@@ -163,6 +163,9 @@ class IdentitiesController extends AppController {
             $saveable = array('frontpage_updates');
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, true, $saveable);
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
         }
         
         $this->set('headline', 'Your privacy settings');
