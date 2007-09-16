@@ -18,7 +18,18 @@
 				$this->render('server_endpoint');
 			} else {
 				if (get_class($request) == 'Auth_OpenID_CheckIDRequest') {
-					$response = $request->answer(false);
+					if ($this->Session->check('Identity')) {
+						$identity = $this->Session->read('Identity');
+						
+						$requestIdentity = str_replace('https://', '', $request->identity);
+						$requestIdentity = str_replace('http://', '', $requestIdentity);
+						
+						$answer = ($identity['username'] == $requestIdentity) ? true : false;
+						$response = $request->answer($answer);
+					} else {
+						// TODO here we have to start the login process
+						$response = $request->answer(false);
+					}
 				} else {
 					$response = $server->handleRequest($request);
 				}
