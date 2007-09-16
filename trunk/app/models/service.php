@@ -116,7 +116,10 @@ class Service extends AppModel {
 
 			case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/videos/rss/';
-                
+
+			case 11: # Last.fm
+                return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
+              
             default: 
                 return false;
         }
@@ -185,7 +188,11 @@ class Service extends AppModel {
     		    case 10: # vimeo
     		        $item['content'] = $this->contentFromVimeo($feeditem);
     		        break;
-    		        
+
+    		    case 11: # Last.fm
+    		        $item['content'] = $this->contentFromLastfm($feeditem);
+    		        break;
+        
     		    default:
     		        $item['content'] = $feeditem->get_content();
     		}
@@ -296,7 +303,19 @@ class Service extends AppModel {
     function contentFromVimeo($feeditem) {
         return $feeditem->get_content();
     }
-    
+
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromLastfm($feeditem) {
+        return $feeditem->get_content();
+    }
+
     /**
      * Method description
      *
@@ -329,6 +348,9 @@ class Service extends AppModel {
                 
             case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/';
+
+            case 11: # Last.fm
+                return 'http://www.last.fm/user/'.$username.'/';
                 
             default:
                 return '';
@@ -426,6 +448,9 @@ class Service extends AppModel {
                 
             case 10:
                 return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
+
+            case 11:
+                return $this->getContactsFromLastfm('http://www.last.fm/user/' . $account['Account']['username'] . '/friends/');
                 
             default:
                 return array();
@@ -514,5 +539,25 @@ class Service extends AppModel {
 
         return $data;
     }
-    
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromLastfm($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        } 
+
+        return $data;
+    }
 }
