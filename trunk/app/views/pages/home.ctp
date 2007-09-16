@@ -2,7 +2,7 @@
 <p>
     <ul>
         <?php foreach($identities as $identity) { ?>
-            <li><a href="<?php echo $identity['Identity']['username']; ?>"><?php echo $identity['Identity']['local_username']; ?></a></li>
+            <li><a href="http://<?php echo $identity['Identity']['username']; ?>"><?php echo $identity['Identity']['local_username']; ?></a></li>
         <?php } ?>
     </ul>
 </p>
