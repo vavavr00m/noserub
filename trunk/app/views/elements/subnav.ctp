@@ -12,6 +12,7 @@ if(isset($filter)) {
 }
 
 if($uri == '/' ||
+   strpos($uri, '/jobs/') !== false ||
    strpos($uri, '/accounts/') > 0 ||
    strpos($uri, '/contacts/') > 0 ||
    strpos($uri, '/register/') > 0 ||

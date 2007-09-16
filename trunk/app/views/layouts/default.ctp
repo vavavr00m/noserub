@@ -1,8 +1,15 @@
+<?php
+    $app_name = defined('NOSERUB_APP_NAME') ? NOSERUB_APP_NAME : 'NoseRub';
+    $headline = isset($headline) ? $headline : 'Welcome to NoseRub';
+    $title    = $app_name . ' - ' . $headline;
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>NoseRub</title>
+	<title>
+	    <?php echo $title; ?>
+	</title>
 
 <!-- Meta Tags -->
 	<?php echo $html->charset('UTF-8')?>
@@ -35,7 +42,7 @@
 		
 		<div id="headline">
 			<div class="wrapper">
-				<h2><?php echo isset($headline) ? $headline : 'Welcome to NoseRub'; ?></h2>
+				<h2><?php echo $headline; ?></h2>
 			</div>
 		</div>
 		<?php echo $this->renderElement('subnav'); ?>

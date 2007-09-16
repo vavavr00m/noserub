@@ -20,6 +20,8 @@ class Admin extends AppModel {
                                'values' => array(true, false)),
                            'NOSERUB_GOOGLE_MAPS_KEY' => array(
                                'file' => 'noserub.php'),
+                           'NOSERUB_APP_NAME' => array(
+                               'file' => 'noserub.php')
                           );
     
     var $directories = array('tmp');

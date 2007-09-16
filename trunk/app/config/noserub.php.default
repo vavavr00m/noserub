@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * The name of this NoseRub server. This is used for the title.
+ * @name NOSERUB_APP_NAME
+ */
+define('NOSERUB_APP_NAME', 'NoseRub');
+
 /**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
