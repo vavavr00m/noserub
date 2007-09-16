@@ -17,8 +17,13 @@
 				$this->set('headline', 'OpenID server endpoint');
 				$this->render('server_endpoint');
 			} else {
-				echo 'Not yet implemented';
-				exit();
+				if (get_class($request) == 'Auth_OpenID_CheckIDRequest') {
+					$response = $request->answer(false);
+				} else {
+					$response = $server->handleRequest($request);
+				}
+
+				$this->__renderResponse($response);
 			}
 		}
 		
@@ -33,6 +38,18 @@
 			$server = new Auth_OpenID_Server($store);
 			
 			return $server;
+		}
+		
+		function __renderResponse($response) {
+			$server = $this->__getOpenIDServer();
+			$webResponse = $server->encodeResponse($response);
+		
+			if ($webResponse->code == 200) {
+				echo $webResponse->body;
+				exit;
+			}
+
+			$this->redirect($webResponse->headers['location'], null, true);
 		}
 	}
 ?>
