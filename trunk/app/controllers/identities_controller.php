@@ -237,7 +237,7 @@ class IdentitiesController extends AppController {
      */
     function logout() {
         $this->Session->delete('Identity');
-        $this->redirect('/');
+        $this->redirect($this->url->http('/'), null, true);
     }
     
     /**
