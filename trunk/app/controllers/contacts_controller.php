@@ -63,18 +63,19 @@ class ContactsController extends AppController {
             if(isset($this->params['form']['add'])) {
                 # this is a contact with a NoseRub-ID
                 $identity_username = $this->data['Contact']['noserub_id'];
+                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username);
                 # so, check, if this is really the case
-                if(strpos($identity_username, '/') === false) {
+                if(strpos($identity_username_splitted['username'], '/') === false) {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
                     exit;
                 }
                
                 # see, if we already have it
-                $identity = $this->Contact->Identity->findByUsername($identity_username);
+                $identity = $this->Contact->Identity->findByUsername($identity_username_splitted['username']);
                 if(!$identity) {
                     $this->Contact->Identity->create();
-                    $identity = array('username' => $identity_username);
+                    $identity = array('username' => $identity_username_splitted['username']);
                     $saveable = array('username');
                     $this->Contact->Identity->save($identity, false, $saveable);
                     $new_identity_id = $this->Contact->Identity->id;

@@ -73,6 +73,34 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $this->assertEqual($expected, $result);
 	}
 	
+	function testSplitUsernameWithHttp() {
+	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
+	    $server_base = str_replace('https://', '', $server_base);
+	    
+	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 1);
+	                      
+	    $result = $this->model->splitUsername('http://' . $server_base . 'dirk.olbertz');
+	    $this->assertEqual($expected, $result);
+	}
+	
+	function testSplitUsernameWithHttps() {
+	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
+	    $server_base = str_replace('https://', '', $server_base);
+	    
+	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	                      'local_username'  => 'dirk.olbertz',
+	                      'single_username' => 'dirk.olbertz',
+	                      'namespace'       => '',
+	                      'local'           => 1);
+	                      
+	    $result = $this->model->splitUsername('https://' . $server_base . 'dirk.olbertz');
+	    $this->assertEqual($expected, $result);
+	}
+	
 	# sanitizeUsername($username)
 	
 	function testSanitizeUsername() {
