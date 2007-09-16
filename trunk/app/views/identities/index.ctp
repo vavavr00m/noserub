@@ -10,7 +10,7 @@
     
     <?php if(isset($distance)) { ?>
         <p>
-            <?php echo $data['Identity']['local_username']; ?> lives <?php echo ceil($distance); ?> from you.
+            <?php echo $data['Identity']['local_username']; ?> lives <?php echo ceil($distance); ?> km from you.
         </p>
     <?php } ?>
     <?php if(isset($filter) && ($filter == false || $filter == 'all')) { ?>
