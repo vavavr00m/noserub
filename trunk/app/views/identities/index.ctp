@@ -7,17 +7,19 @@
 	<?php $openid->serverLink('/auth', false); ?>
     
     <?php echo $this->renderElement('foaf'); ?>
-
-    <div style="float:left;margin:10px;">
-        <h1>Contacts</h1>
-        <?php echo $this->renderElement('contacts/index', array('data' => $data['Contact'], 'identity' => $data['Identity'])); ?>
-    </div>
     
-    <div style="float:left;margin:10px;">
-        <h1>Accounts</h1>
-        <?php echo $this->renderElement('accounts/index', array('data' => $data['Account'], 'identity' => $data['Identity'])); ?>
-    </div>
-
+    <?php if(isset($filter) && ($filter == false || $filter == 'all')) { ?>
+        <div style="float:left;margin:10px;">
+            <h1>Contacts</h1>
+            <?php echo $this->renderElement('contacts/index', array('data' => $data['Contact'], 'identity' => $data['Identity'])); ?>
+        </div>
+    
+        <div style="float:left;margin:10px;">
+            <h1>Accounts</h1>
+            <?php echo $this->renderElement('accounts/index', array('data' => $data['Account'], 'identity' => $data['Identity'])); ?>
+        </div>
+    <?php } ?>
+    
     <div style="clear:both;margin:10px;">
         <h1>Items</h1>
         <?php echo $this->renderElement('identities/items', array('data' => $items, 'filter' => $filter)); ?>

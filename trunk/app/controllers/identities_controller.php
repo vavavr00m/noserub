@@ -4,7 +4,7 @@
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid');
-    var $components = array('geocoder');
+    var $components = array('geocoder', 'url');
     
     /**
      * Method description
@@ -101,13 +101,15 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function profile_settings() {
+        $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
-            $this->redirect('/', null, true);
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
         }
         
         if($this->data) {
@@ -153,13 +155,15 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function password_settings() {
+        $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
-            $this->redirect('/', null, true);
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
         }
         
         if($this->data) {
@@ -172,7 +176,7 @@ class IdentitiesController extends AppController {
                 $this->Identity->id = $session_identity['id'];
                 $this->Identity->save($this->data, true, array('password'));
             } else {
-                $this->Identity->invalidate('password');
+                $this->Identity->invalidate('old_passwd');
             }
         }
         
@@ -193,7 +197,8 @@ class IdentitiesController extends AppController {
             $identity = $this->Identity->check($this->data);
             if($identity) {
                 $this->Session->write('Identity', $identity['Identity']);
-                $this->redirect('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/', null, true);
+                $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                $this->redirect($url, null, true);
             } else {
                 $this->set('form_error', 'Login not possible');
             }
@@ -225,12 +230,14 @@ class IdentitiesController extends AppController {
         $this->checkSecure();
         
         if(NOSERUB_REGISTRATION_TYPE != 'all') {
-            $this->redirect('/', null, true);
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
         }
 
         if(!empty($this->data)) {
             if($this->Identity->register($this->data)) {
-                $this->redirect('/pages/register/thanks/', null, true);
+                $url = $this->url->http('/pages/register/thanks/');
+                $this->redirect($url, null, true);
             }
         }
 

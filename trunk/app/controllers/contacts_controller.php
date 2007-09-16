@@ -214,6 +214,7 @@ class ContactsController extends AppController {
             case 'link':
             case 'text':
             case 'event':
+            case 'micropublish':
                 $filter = $filter; 
                 break;
             

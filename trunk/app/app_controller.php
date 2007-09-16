@@ -36,8 +36,7 @@ class AppController extends Controller {
      * @return 
      * @access 
      */
-    function beforeFilter() {
-        
+    function beforeFilter() {         
         /**
          * 	Don't you EVER remove this line else you will make the whole 
          * 	application a swiss cheese for XSS!

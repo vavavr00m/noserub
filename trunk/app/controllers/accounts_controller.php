@@ -243,7 +243,7 @@ class AccountsController extends AppController {
                     }
                 }
             }
-            $this->redirect('/' . $splitted['local_username'], null, true);
+            $this->redirect('/', null, true);
         }
         $this->set('data', $data);
         $this->set('headline', 'Preview the data');
@@ -273,7 +273,7 @@ class AccountsController extends AppController {
 
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
-            $this->redirect('/' . $splitted['local_username'], null, true);
+            $this->redirect('/', null, true);
         }
         
         if($this->data) {
@@ -337,7 +337,7 @@ class AccountsController extends AppController {
                 }
             }
             # we're done!
-            $this->redirect('/' . $splitted['local_username'], null, true);
+            $this->redirect('/', null, true);
         }
         $this->Account->recursive = 1;
         $this->Account->expects('Account', 'Service');

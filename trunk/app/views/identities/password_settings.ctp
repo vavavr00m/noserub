@@ -8,7 +8,7 @@
         <?php 
             echo $form->input('Identity.old_passwd', array('type'  => 'password',
                                                            'label' => 'Old password', 
-                                                           'error' => 'Passwords must be at least 6 characters in length')); 
+                                                           'error' => 'Password is not correct')); 
         ?>
         <?php 
             echo $form->input('Identity.passwd', array('type'  => 'password',
