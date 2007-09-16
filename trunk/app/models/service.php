@@ -110,9 +110,12 @@ class Service extends AppModel {
                 
             case 6: # Pownce
                 return 'http://pownce.com/feeds/public/'.$username.'/';
-                
+
             case 9: # Upcoming
                 return 'http://badge.upcoming.yahoo.com/v1/?badge_type=user&badge_size=med&badge_styling=2&badge_venue=0&date_format_type=intl_slash&id='.$username;
+
+			case 10: # vimeo
+                return 'http://vimeo.com/'.$username.'/videos/rss/';
                 
             default: 
                 return false;
@@ -177,6 +180,10 @@ class Service extends AppModel {
     		        
     		    case 5: # Twitter
     		        $item['content'] = $this->contentFromTwitter($feeditem);
+    		        break;
+    		        
+    		    case 10: # vimeo
+    		        $item['content'] = $this->contentFromVimeo($feeditem);
     		        break;
     		        
     		    default:
@@ -246,7 +253,7 @@ class Service extends AppModel {
     function contentFromTwitter($feeditem) {
         return $feeditem->get_content();
     }
-    
+
     /**
      * Method description
      *
@@ -278,6 +285,17 @@ class Service extends AppModel {
         
         return $result;
     }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromVimeo($feeditem) {
+        return $feeditem->get_content();
+    }
     
     /**
      * Method description
@@ -308,6 +326,9 @@ class Service extends AppModel {
             
             case 9: # upcoming
                 return 'http://upcoming.yahoo.com/user/'.$username.'/';
+                
+            case 10: # vimeo
+                return 'http://vimeo.com/'.$username.'/';
                 
             default:
                 return '';
@@ -403,6 +424,9 @@ class Service extends AppModel {
             case 2:
                 return $this->getContactsFromDelicious('http://del.icio.us/network/' . $account['Account']['username'] . '/');
                 
+            case 10:
+                return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
+                
             default:
                 return array();
         }
@@ -460,6 +484,27 @@ class Service extends AppModel {
         $data = array();
         $content = @file_get_contents($url);
         if($content && preg_match_all('/<a class="uname" href="\/(.*)">.*<\/a>/iU', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        } 
+
+        return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromVimeo($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<span class="greyd">(.*)<\/span>/iU', $content, $matches)) {
             foreach($matches[1] as $username) {
                 if(!isset($data[$username])) {
                     $data[$username] = $username;
