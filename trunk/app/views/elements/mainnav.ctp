@@ -7,15 +7,15 @@
     $class_settings = '';
     $class_register = '';
     $class_home = '';
-    if(strpos($uri, '/accounts/') > 0) {
+    if(strpos($uri, '/accounts') > 0) {
         $class_accounts = ' class="active"';
-    } else if(strpos($uri, '/network/') > 0) {
+    } else if(strpos($uri, '/network') > 0) {
         $class_network  = ' class="active"';
-    }else if(strpos($uri, '/contacts/') > 0) {
+    }else if(strpos($uri, '/contacts') > 0) {
         $class_contacts = ' class="active"';
-    } else if(strpos($uri, '/settings/') > 0) {
+    } else if(strpos($uri, '/settings') > 0) {
         $class_settings = ' class="active"';
-    } else if(strpos($uri, '/register/') !== false) {
+    } else if(strpos($uri, '/register') !== false) {
         $class_register = ' class="active"';
     } else if(strpos($uri, $noserub_url) == 0 || $uri == '/') {
         $class_home = ' class="active"';
