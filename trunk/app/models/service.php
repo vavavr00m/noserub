@@ -379,6 +379,9 @@ class Service extends AppModel {
         $data['title']       = $feed->get_title();
         $data['account_url'] = $feed->get_link();
         $data['feed_url']    = $feed->feed_url;
+        if(!$data['account_url']) {
+            $data['account_url'] = $data['feed_url'];
+        }
         $data['service_id']  = 8; # any RSS-Feed
         $data['username']    = 'RSS-Feed';
         

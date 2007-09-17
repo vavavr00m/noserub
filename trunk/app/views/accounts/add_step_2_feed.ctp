@@ -2,6 +2,7 @@
     <fieldset>
     	<legend>Details</legend>
         <?php echo $form->input('Account.feed_url', array('label' => 'RSS-Feed:', 
+                                                          'size'  => 64,
                                                           'error' => 'The RSS-Feed could not be read.')); ?>
         <label>
         <?php echo $form->select('Account.service_type_id', $service_types, array('3'), null, null, false); ?>
