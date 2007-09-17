@@ -19,7 +19,7 @@ if($uri == '/' ||
    strpos($uri, '/register') > 0 ||
    strpos($uri, '/login') > 0) {
        # no sub navigation
-} else if(strpos($uri, '/network/') > 0) { ?>
+} else if(strpos($uri, '/network') > 0) { ?>
     <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li<?php echo $class_all;?>><?php echo $html->link('All', $noserub_url . 'network/all/'); ?></li>
@@ -30,7 +30,7 @@ if($uri == '/' ||
             <li<?php echo $class_event;?>><?php echo $html->link('Events', $noserub_url . 'network/event/'); ?></li>
         </ul>
     </div>
-<?php } else if(strpos($uri, '/settings/') > 0) {
+<?php } else if(strpos($uri, '/settings') > 0) {
     $class_profile = '';
     $class_password = strpos($uri, '/password/') > 0 ? ' class="active"' : '';
     $class_privacy  = strpos($uri, '/privacy/') > 0 ? ' class="active"' : '';
