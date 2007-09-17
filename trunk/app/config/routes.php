@@ -35,7 +35,8 @@
  * to use (in this case, /app/views/pages/home.thtml)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-
+    Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home'));
+    
 /**
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.

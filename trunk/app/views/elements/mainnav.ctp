@@ -6,8 +6,11 @@
     $class_contacts = '';
     $class_settings = '';
     $class_register = '';
+    $class_startpage = '';
     $class_home = '';
-    if(strpos($uri, '/accounts') > 0) {
+    if(strpos($uri, '/pages/home') !== false) {
+        $class_startpage = ' class="active"';
+    } else if(strpos($uri, '/accounts') > 0) {
         $class_accounts = ' class="active"';
     } else if(strpos($uri, '/network') > 0) {
         $class_network  = ' class="active"';
@@ -24,6 +27,7 @@
 <div id="mainnav">
     <ul>
         <?php if($session->check('Identity.id')) { ?>
+            <li<?php echo $class_startpage;?>><?php echo $html->link('Home', '/pages/home/'); ?></li>
             <li<?php echo $class_home;?>><?php echo $html->link('NoseRub', $noserub_url); ?></li>
             <li<?php echo $class_network;?>><?php echo $html->link('Network', $noserub_url . 'network/'); ?></li>
             <li<?php echo $class_accounts;?>><?php echo $html->link('Accounts', $noserub_url . 'accounts/'); ?></li>

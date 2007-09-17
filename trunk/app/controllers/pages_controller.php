@@ -5,15 +5,14 @@ class PagesController extends AppController {
     function display() {
         $path = func_get_args();
         if(isset($path[0]) && $path[0] == 'home') {
+            if($this->Session->check('Identity.id')) {
+                $this->redirect('/' . $this->Session->read('Identity.local_username') . '/', null, true);
+            }
             $this->home();
         }
     }
     
     function home() {
-        if($this->Session->check('Identity.id')) {
-            $this->redirect('/' . $this->Session->read('Identity.local_username') . '/', null, true);
-        }
-        
         $this->Identity->recursive = 0;
         $this->Identity->expects('Identity');
         $this->set('identities', $this->Identity->findAll(array('is_local' => 1,
