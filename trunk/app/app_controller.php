@@ -23,7 +23,7 @@ class AppController extends Controller {
         if(NOSERUB_USE_SSL) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
-                $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL . Router::url('/')) . $this->here);
+                $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
                 exit;
             }
         }
