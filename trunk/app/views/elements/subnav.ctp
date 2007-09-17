@@ -14,10 +14,10 @@ if(isset($filter)) {
 if($uri == '/' ||
    strpos($uri, '/jobs/') !== false ||
    strpos($uri, '/pages') !== false ||
-   strpos($uri, '/accounts/') > 0 ||
-   strpos($uri, '/contacts/') > 0 ||
-   strpos($uri, '/register/') > 0 ||
-   strpos($uri, '/login/') > 0) {
+   strpos($uri, '/accounts') > 0 ||
+   strpos($uri, '/contacts') > 0 ||
+   strpos($uri, '/register') > 0 ||
+   strpos($uri, '/login') > 0) {
        # no sub navigation
 } else if(strpos($uri, '/network/') > 0) { ?>
     <div id="subnavigation" class="subnav wrapper">
