@@ -377,7 +377,7 @@ class AccountsController extends AppController {
         
         $this->Account->Identity->Contact->recursive = 1;
         $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
-        $data = $this->Account->Identity->Contact->findAll(array('identity_id' => $identity_id));
+        $data = $this->Account->Identity->Contact->findAll(array('identity_id' => $identity_id), null, 'WithIdentity.username ASC');
         $contacts = array();
         foreach($data as $item) {
             $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['local_username'];
