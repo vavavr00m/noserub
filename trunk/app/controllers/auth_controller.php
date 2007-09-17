@@ -10,10 +10,10 @@
 		var $uses = array();
 		
 		function index() {
-			$server = $this->__getOpenIDServer();
-			$request = $server->decodeRequest();
-			
+			$request = $this->__getOpenIDRequest();
+
 			if (!isset($request->mode)) {
+				$this->set('filter', false);
 				$this->set('headline', 'OpenID server endpoint');
 				$this->render('server_endpoint');
 			} else {
@@ -26,9 +26,10 @@
 						
 						$answer = ($identity['username'] == $requestIdentity) ? true : false;
 						$response = $request->answer($answer);
+						// TODO add support for sreg
 					} else {
-						// TODO here we have to start the login process
-						$response = $request->answer(false);
+						$this->Session->write('Noserub.lastOpenIDRequest', $request);
+						$this->redirect('/pages/login/', null, true);
 					}
 				} else {
 					$response = $server->handleRequest($request);
@@ -42,6 +43,20 @@
 			$this->layout = 'xml';
 			header('Content-type: application/xrds+xml');
 			$this->set('server', Router::url('/'.low($this->name), true));
+		}
+		
+		function __getOpenIDRequest() {
+			$sessionKey = 'Noserub.lastOpenIDRequest';
+			
+			if ($this->Session->check($sessionKey)) {
+				$request = $this->Session->read($sessionKey);
+				$this->Session->delete($sessionKey);
+			} else {
+				$server = $this->__getOpenIDServer();
+				$request = $server->decodeRequest();
+			}
+			
+			return $request;
 		}
 		
 		function __getOpenIDServer() {

@@ -221,8 +221,12 @@ class IdentitiesController extends AppController {
             $identity = $this->Identity->check($this->data);
             if($identity) {
                 $this->Session->write('Identity', $identity['Identity']);
-                $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
-                $this->redirect($url, null, true);
+                if ($this->Session->check('Noserub.lastOpenIDRequest')) {
+                	$this->redirect('/auth', null, true);
+                } else {
+                	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                	$this->redirect($url, null, true);
+                }
             } else {
                 $this->set('form_error', 'Login not possible');
             }
