@@ -1,6 +1,6 @@
 <?php
     $app_name = defined('NOSERUB_APP_NAME') ? NOSERUB_APP_NAME : 'NoseRub';
-    $headline = isset($headline) ? $headline : 'Welcome to NoseRub';
+    $headline = isset($headline) ? $headline : 'Welcome to ' . $app_name;
     $title    = $app_name . ' - ' . $headline;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -32,7 +32,7 @@
 
 		<div id="header" class="wrapper">
 			<div id="logo">
-				<h1><a title="NoseRub" href="/">NoseRub</a></h1>
+				<h1><a title="<?php echo $app_name; ?>" href="/"><?php echo $app_name; ?></a></h1>
 	  		</div>
 	  	
 	  			<?php echo $this->renderElement('mainnav'); ?>
