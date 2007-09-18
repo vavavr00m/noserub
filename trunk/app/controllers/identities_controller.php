@@ -21,7 +21,9 @@ class IdentitiesController extends AppController {
         
         # sanitize filter
         switch($filter) {
-            case 'media':
+            case 'photo':
+            case 'video':
+            case 'audio':
             case 'link':
             case 'text':
             case 'event':

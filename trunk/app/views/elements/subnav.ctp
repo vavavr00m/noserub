@@ -4,7 +4,9 @@ $username = isset($about_identity['local_username']) ? $about_identity['local_us
 $noserub_url = '/' . $username . '/';
 if(isset($filter)) {
     $class_all   = ($filter == 'all' || $filter == false) ? ' class="active"' : '';
-    $class_media = $filter == 'media' ? ' class="active"' : '';
+    $class_photo = $filter == 'photo' ? ' class="active"' : '';
+    $class_audio = $filter == 'audio' ? ' class="active"' : '';
+    $class_video = $filter == 'video' ? ' class="active"' : '';
     $class_link  = $filter == 'link' ? ' class="active"' : '';
     $class_text  = $filter == 'text' ? ' class="active"' : '';
     $class_micro = $filter == 'micropublish' ? ' class="active"' : '';
@@ -23,7 +25,9 @@ if($uri == '/' ||
     <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li<?php echo $class_all;?>><?php echo $html->link('All', $noserub_url . 'network/all/'); ?></li>
-            <li<?php echo $class_media;?>><?php echo $html->link('Media', $noserub_url . 'network/media/'); ?></li>
+            <li<?php echo $class_photo;?>><?php echo $html->link('Photo', $noserub_url . 'network/photo/'); ?></li>
+            <li<?php echo $class_video;?>><?php echo $html->link('Video', $noserub_url . 'network/video/'); ?></li>
+            <li<?php echo $class_audio;?>><?php echo $html->link('Audio', $noserub_url . 'network/audio/'); ?></li>
             <li<?php echo $class_link;?>><?php echo $html->link('Links', $noserub_url . 'network/link/'); ?></li>
             <li<?php echo $class_text;?>><?php echo $html->link('Text', $noserub_url . 'network/text/'); ?></li>
             <li<?php echo $class_micro;?>><?php echo $html->link('Micropublish', $noserub_url . 'network/micropublish/'); ?></li>
@@ -48,7 +52,9 @@ if($uri == '/' ||
     <div id="subnavigation" class="subnav wrapper">
         <ul>
             <li<?php echo $class_all;?>><?php echo $html->link('All', $noserub_url . 'all/'); ?></li>  
-            <li<?php echo $class_media;?>><?php echo $html->link('Media', $noserub_url . 'media/'); ?></li>
+            <li<?php echo $class_photo;?>><?php echo $html->link('Photo', $noserub_url . 'photo/'); ?></li>
+            <li<?php echo $class_video;?>><?php echo $html->link('Video', $noserub_url . 'video/'); ?></li>
+            <li<?php echo $class_audio;?>><?php echo $html->link('Audio', $noserub_url . 'audio/'); ?></li>
             <li<?php echo $class_link;?>><?php echo $html->link('Links', $noserub_url . 'link/'); ?></li>  
             <li<?php echo $class_text;?>><?php echo $html->link('Text', $noserub_url . 'text/'); ?></li>  
             <li<?php echo $class_micro;?>><?php echo $html->link('Micropublish', $noserub_url . 'micropublish/'); ?></li>

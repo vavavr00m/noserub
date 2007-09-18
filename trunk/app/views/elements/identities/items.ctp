@@ -2,7 +2,7 @@
     <p>
         No items there yet.
     </p>
-<?php } else if($filter == 'media') { ?>
+<?php } else if($filter == 'photo') { ?>
     <?php foreach($data as $item) { ?>
         <div style="float:left;padding:10px;">
             <?php echo $item['content']; ?><br />
