@@ -7,6 +7,7 @@
 	vendor('Auth/OpenID/Server', 'Auth/OpenID/FileStore');
 
 	class AuthController extends AppController {
+		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
 		var $uses = array();
 		
 		function index() {
@@ -24,11 +25,16 @@
 						$requestIdentity = str_replace('https://', '', $request->identity);
 						$requestIdentity = str_replace('http://', '', $requestIdentity);
 						
-						$answer = ($identity['username'] == $requestIdentity) ? true : false;
-						$response = $request->answer($answer);
+						if ($identity['username'] == $requestIdentity) {
+							$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
+							$this->redirect('/auth/trust', null, true);
+						} else {
+							$response = $request->answer(false);
+						}
+
 						// TODO add support for sreg
 					} else {
-						$this->Session->write('Noserub.lastOpenIDRequest', $request);
+						$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
 						$this->redirect('/pages/login/', null, true);
 					}
 				} else {
@@ -39,6 +45,30 @@
 			}
 		}
 		
+		function trust() {
+			$sessionKey = self::SESSION_KEY_FOR_LAST_OPENID_REQUEST;
+			
+			if ($this->Session->check($sessionKey)) {
+				$request = $this->Session->read($sessionKey);
+				
+				if (empty($this->params['form'])) {
+					$this->set('trustRoot', $request->trust_root);
+					$this->set('identity', $request->identity);
+					$this->set('filter', false);
+					$this->set('headline', 'OpenID verification');
+				} else {
+					$this->Session->delete($sessionKey);
+					$answer = (isset($this->params['form']['Allow'])) ? true : false;
+					$response = $request->answer($answer);
+					$this->__renderResponse($response);
+				}
+			} else {
+				$this->set('filter', false);
+				$this->set('headline', 'Error');
+				$this->render('no_request');
+			}
+		}
+		
 		function xrds() {
 			$this->layout = 'xml';
 			header('Content-type: application/xrds+xml');
@@ -46,7 +76,7 @@
 		}
 		
 		function __getOpenIDRequest() {
-			$sessionKey = 'Noserub.lastOpenIDRequest';
+			$sessionKey = self::SESSION_KEY_FOR_LAST_OPENID_REQUEST;
 			
 			if ($this->Session->check($sessionKey)) {
 				$request = $this->Session->read($sessionKey);
