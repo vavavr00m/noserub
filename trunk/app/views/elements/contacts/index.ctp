@@ -31,7 +31,7 @@
                         <td><?php
                             if(($session_local_username != '' && $session_local_username == $item['WithIdentity']['namespace']) ||
                                ($session_local_username == '' && $item['WithIdentity']['namespace'] != '')) {
-                                echo 'Local';
+                                echo 'Private';
                             } else {
                                 echo 'NoseRub';
                             } 
