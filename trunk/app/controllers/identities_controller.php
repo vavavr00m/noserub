@@ -354,10 +354,25 @@ class IdentitiesController extends AppController {
         $this->Identity->recursive = 0;
         $this->Identity->expects('Identity');
         $identities = $this->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
+        $synced = array();
         foreach($identities as $identity) {
             $this->Identity->sync($identity['Identity']['id'], $identity['Identity']['username']);       
+            $synced[] = $identity['Identity']['username'];
         }
 
-        return true;
+        $this->set('data', $synced);
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function shell_sync_all() {
+        $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
+        $this->jobs_sync_all();
+        $this->render('jobs_sync_all');
     }
 }

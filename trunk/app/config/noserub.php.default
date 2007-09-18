@@ -7,6 +7,20 @@
 define('NOSERUB_APP_NAME', 'NoseRub');
 
 /**
+ * The URL, under which your NoseRub installation
+ * can be found. This could be http://myserver.com/ or
+ * http://myserver.com/stuff/
+ * Please make sure, you don't include the noserub directory.
+ * That means, when you have NoseRub installed in
+ * http://myserver.com/noserub/, you would have to enter only
+ * http://myserver.com/ here. When your installation is available
+ * directly under http://myserver.com/, just put http://myserver.com/ here.
+ * @name NOSERUB_FULL_BASE_URL
+ */
+define('NOSERUB_FULL_BASE_URL', 'http://');
+
+
+/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities

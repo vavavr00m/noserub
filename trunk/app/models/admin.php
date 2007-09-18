@@ -21,6 +21,8 @@ class Admin extends AppModel {
                            'NOSERUB_GOOGLE_MAPS_KEY' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_APP_NAME' => array(
+                               'file' => 'noserub.php'),
+                           'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php')
                           );
     

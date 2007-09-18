@@ -34,47 +34,52 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/views/pages/home.thtml)...
  */
-	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-    Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home'));
+Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home'));
     
 /**
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
-	Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
-	Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
-	Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
-	Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
-	Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
-	
-	Router::connect('/auth/:action', array('controller' => 'auth'));
-	
-    Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
+Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
+Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
+Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
+Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 
-    Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
-    Router::connect('/:username/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
-    Router::connect('/:username/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
-    Router::connect('/:username/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
-    Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
-    Router::connect('/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
-    Router::connect('/:username/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
-    Router::connect('/:username/accounts/', array('controller' => 'accounts', 'action' => 'index'));
-    
-    Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
-    Router::connect('/:username/contacts/*/edit/', array('controller' => 'contacts', 'action' => 'edit'));
-    Router::connect('/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
-    Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
-    Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
-    
-    Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
+Router::connect('/auth/:action', array('controller' => 'auth'));
 
-    Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
-    Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
-    Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
+Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
+
+Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
+Router::connect('/:username/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
+Router::connect('/:username/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
+Router::connect('/:username/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
+Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
+Router::connect('/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
+Router::connect('/:username/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+Router::connect('/:username/accounts/', array('controller' => 'accounts', 'action' => 'index'));
+
+Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
+Router::connect('/:username/contacts/*/edit/', array('controller' => 'contacts', 'action' => 'edit'));
+Router::connect('/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
+Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
+Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
+
+Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
+
+Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
+Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
+Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
+
+Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
+
+Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
+Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
+Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
+Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
     
-    Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
-    
-    Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
-    Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
-    Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
-    Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
+/**
+ * Shell routes that can only be accessed through the shell_dispatcher
+ */ 
+Router::connect('/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));

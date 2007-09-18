@@ -44,6 +44,19 @@ class AppController extends Controller {
          *  be exactly where the injection would take place.
          */
         $this->here = preg_replace('/("|\')/', '”', addslashes(strip_tags($this->here)));
+        
+        if(defined('SHELL_DISPATCHER')) {
+            $this->layout = 'shell';
+            if($this->action != '' && strpos($this->action, 'shell_') !== 0) {
+                echo 'You may not call this route from the shell.' . "\n\n";
+                exit;
+            }
+        } else {
+            if(strpos($this->action, 'shell_') === 0) {
+                echo '<h1>Error</h1><p>This route is only accessible from the shell!</p>';
+                exit;
+            }
+        }
     }
     
 }
