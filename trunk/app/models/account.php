@@ -17,7 +17,7 @@ class Account extends AppModel {
      */
     function update($identity_id, $data) {
         # remove old account data
-        $this->execute('DELETE FROM accounts WHERE identity_id='.$identity_id);
+        $this->execute('DELETE FROM ' . $this->tablePrefix . 'accounts WHERE identity_id='.$identity_id);
         
         # add the new data
         foreach($data as $account_info) {
@@ -39,6 +39,6 @@ class Account extends AppModel {
      */
     function deleteByIdentityId($identity_id) {
         $identity_id = intval($identity_id);
-        return $this->execute('DELETE FROM accounts WHERE identity_id='.$identity_id);
+        return $this->execute('DELETE FROM ' . $this->tablePrefix . 'accounts WHERE identity_id='.$identity_id);
     }
 }
