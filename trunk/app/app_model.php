@@ -10,6 +10,8 @@
  */
 class AppModel extends Model {
 
+    private $excludeSanitize = array('Feed');
+    
     /**
      * afterFind hook
      * 
@@ -21,14 +23,17 @@ class AppModel extends Model {
      */
     public function afterFind($data) {
         # de-sanitize some elements
-        if (!empty ($data)) {
+        if(!empty ($data)) {
             foreach ($data as $key => $item) {
-                if (is_array($item)) {
-                    foreach ($item as $model => $attributes) {                            
+                if(is_array($item)) {
+                    foreach ($item as $model => $attributes) {
+                        if(in_array($model, $this->excludeSanitize)) {
+                            continue;
+                        }                         
                         # de-sanitize for whatever purpose - we have to talk about this!
-                        if (is_array($attributes)) {
-                            foreach ($attributes as $fieldName => $field) {
-                                if (!is_array($field) && !empty ($field)) {
+                        if(is_array($attributes)) {
+                            foreach($attributes as $fieldName => $field) {
+                                if(!is_array($field) && !empty ($field)) {
                                     $replacements = array (
                                         "&",
                                         "%",

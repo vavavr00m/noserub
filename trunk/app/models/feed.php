@@ -56,7 +56,7 @@ class Feed extends AppModel {
             $this->id = $feed['Feed']['id'];
             $this->saveField('priority', $feed['Feed']['priority'] + 1);
         
-            $cache_data = @unserialize($feed['Feed']['content']);
+            $cache_data = unserialize($feed['Feed']['content']);
         }
         
         if(!$cache_data) {
