@@ -38,11 +38,13 @@ class Feed extends AppModel {
      * accesses the cache and returns the data. Also increases
      * the priority for that feed.
      *
-     * @param  
+     * @param  int $account_id
+     * @param  int $num_items
+     * @param  time $max_age
      * @return 
      * @access 
      */
-    function access($account_id) {
+    function access($account_id, $num_items = 5, $items_max_age = '-14 days') {
         $this->recursive = 0;
         $this->expects('Feed');
         $feed = $this->findByAccountId($account_id);
@@ -63,6 +65,18 @@ class Feed extends AppModel {
             $cache_data = array();
         }
         
-        return $cache_data;
+        # now apply the rules about max num and age
+        $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
+        $return_data = array();
+        foreach($cache_data as $item) {
+            if(count($return_data) == $num_items) {
+                break;
+            }
+            
+            if($max_age && $item['datetime'] > $max_age) {
+                $return_data[] = $item;
+            }
+        }
+        return $return_data;
     }
 }

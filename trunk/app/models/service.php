@@ -135,7 +135,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function feed2array($service_id, $feedurl, $items_per_feed = 5, $items_max_age = false) {
+    function feed2array($service_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
         if(!$feedurl) {
             return false;
         }

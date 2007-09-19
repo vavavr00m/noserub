@@ -19,7 +19,7 @@ class FeedsController extends AppController {
         $created = array();
         foreach($data as $item) {
             if(!$item['Feed']['id'] && $item['Account']['feed_url']) {
-                $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['service_id'], $item['Account']['feed_url']);
+                $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['service_id'], $item['Account']['feed_url'], 10, false);
                 $this->Feed->store($item['Account']['id'], $feed_data);
                 $created[] = $item['Account']['feed_url'];
             }
@@ -44,7 +44,7 @@ class FeedsController extends AppController {
         
         $refreshed = array();
         foreach($data as $item) {
-            $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['service_id'], $item['Account']['feed_url']);
+            $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['service_id'], $item['Account']['feed_url'], 10, false);
             $this->Feed->store($item['Account']['id'], $feed_data);
             $refreshed[] = $item['Account']['feed_url'];
         }
