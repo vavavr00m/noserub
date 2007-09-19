@@ -81,7 +81,11 @@ class IdentitiesController extends AppController {
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
                 if(!$filter || $account['ServiceType']['token'] == $filter) {
-                    $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url'], 5, false);
+                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                        $new_items = $this->Identity->Account->Feed->access($account['id']);
+                    } else {
+                        $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url'], 5, false);
+                    }
                     if($new_items) {
                         # add some identity info
                         foreach($new_items as $key => $value) {

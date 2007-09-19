@@ -4,6 +4,8 @@
 class Account extends AppModel {
     var $belongsTo = array('Identity', 'Service', 'ServiceType');
     
+    var $hasOne = array('Feed');
+    
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_]+$/')),
                                 'required' => VALID_NOT_EMPTY));
@@ -17,7 +19,7 @@ class Account extends AppModel {
      */
     function update($identity_id, $data) {
         # remove old account data
-        $this->execute('DELETE FROM ' . $this->tablePrefix . 'accounts WHERE identity_id='.$identity_id);
+        $this->deleteByIdentityId($identity_id);
         
         # add the new data
         foreach($data as $account_info) {
@@ -38,7 +40,14 @@ class Account extends AppModel {
      * @access 
      */
     function deleteByIdentityId($identity_id) {
-        $identity_id = intval($identity_id);
-        return $this->execute('DELETE FROM ' . $this->tablePrefix . 'accounts WHERE identity_id='.$identity_id);
+        $this->recursive = 0;
+        $this->expects('Account');
+        $data = $this->findAllByIdentityId($identity_id);
+        foreach($data as $item) {
+            # delete account and feed cache
+            $account_id = $item['Account']['id'];
+            $this->delete($account_id, false);
+            $this->execute('DELETE FROM ' . $this->tablePrefix . 'feeds WHERE account_id=' . $item['Account']['id']);
+        }
     }
 }

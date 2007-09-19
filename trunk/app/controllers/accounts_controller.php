@@ -232,6 +232,11 @@ class AccountsController extends AppController {
                     $this->Account->create();
                     $this->Account->save($data);
                 
+                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                        # save feed information to cache
+                        $this->Account->Feed->store($this->Account->id, $data['items']);
+                    }
+                    
                     if($this->Session->read('Service.add.account.is_logged_in_user')) {
                         # test, if we can find friends from this account
                         $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
@@ -469,6 +474,7 @@ class AccountsController extends AppController {
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();
+            $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
         }
         
         $this->redirect('/' . $splitted['local_username'] . '/accounts/');

@@ -23,7 +23,10 @@ class Admin extends AppModel {
                            'NOSERUB_APP_NAME' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
-                               'file' => 'noserub.php')
+                               'file' => 'noserub.php'),
+                           'NOSERUB_USE_FEED_CACHE' => array(
+                               'file'   => 'noserub.php',
+                               'values' => array(true, false))
                           );
     
     var $directories = array('tmp');

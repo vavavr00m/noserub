@@ -236,7 +236,11 @@ class ContactsController extends AppController {
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(!$filter || $account['ServiceType']['token'] == $filter) {
-                    $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
+                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                        $new_items = $this->Contact->Identity->Account->Feed->access($account['id']);
+                    } else {
+                        $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
+                    }
                     if($new_items) {
                         # add some identity info
                         foreach($new_items as $key => $value) {
