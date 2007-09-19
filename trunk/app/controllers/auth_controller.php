@@ -12,7 +12,7 @@
 		
 		function index() {
 			$request = $this->__getOpenIDRequest();
-
+			
 			if (!isset($request->mode)) {
 				$this->set('filter', false);
 				$this->set('headline', 'OpenID server endpoint');
@@ -31,8 +31,6 @@
 						} else {
 							$response = $request->answer(false);
 						}
-
-						// TODO add support for sreg
 					} else {
 						$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
 						$this->redirect('/pages/login/', null, true);
@@ -52,11 +50,21 @@
 				$request = $this->Session->read($sessionKey);
 				
 				if (empty($this->params['form'])) {
+					$required = array();
+					$optional = array();
+					
+					$required = explode(',', $request->message->args->get(array('http://openid.net/signon/1.0', 'sreg.required')));
+					$optional = explode(',', $request->message->args->get(array('http://openid.net/signon/1.0', 'sreg.optional')));
+
+					$this->set('required', $this->__prepareSregData($required));
+					$this->set('optional', $this->__prepareSregData($optional));
+					
 					$this->set('trustRoot', $request->trust_root);
 					$this->set('identity', $request->identity);
 					$this->set('filter', false);
 					$this->set('headline', 'OpenID verification');
 				} else {
+					// TODO sending sreg data back to the consumer
 					$this->Session->delete($sessionKey);
 					$answer = (isset($this->params['form']['Allow'])) ? true : false;
 					$response = $request->answer($answer);
@@ -94,6 +102,40 @@
 			$server = new Auth_OpenID_Server($store);
 			
 			return $server;
+		}
+		
+		function __prepareSregData($fields) {
+			$result = array();
+			$identity = $this->Session->read('Identity');
+			
+			// the fields are according to http://openid.net/specs/openid-simple-registration-extension-1_0.html
+			foreach ($fields as $field) {
+				switch ($field){
+					case 'email':
+						$result['email'] = $identity['email'];
+						break;
+					case 'fullname':
+						$result['fullname'] = $identity['firstname'] . ' ' . $identity['lastname'];
+						break;
+					case 'gender':
+						if ($identity['sex'] === '1') {
+							$result['gender'] = 'F';
+						} elseif ($identity['sex'] === '2') {
+							$result['gender'] = 'M';
+						}
+						break;
+					// these fields are not supported yet
+					case 'nickname':
+					case 'dob':
+					case 'postcode':
+					case 'country':
+					case 'language':
+					case 'timezone':
+					default:
+				}
+			}
+			
+			return $result;
 		}
 		
 		function __renderResponse($response) {
