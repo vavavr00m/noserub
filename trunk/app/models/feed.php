@@ -75,6 +75,8 @@ class Feed extends AppModel {
             
             if($max_age && $item['datetime'] > $max_age) {
                 $return_data[] = $item;
+            } else {
+                $return_data[] = $item;
             }
         }
         return $return_data;
