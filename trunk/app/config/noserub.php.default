@@ -32,7 +32,7 @@ define('NOSERUB_ADMIN_HASH', '');
  * When set to true, all feed items are fetched from
  * the database upon display. This means a faster response,
  * but may not always display the newest items. You also
- * need to install a conjob to update the feeds in the cache
+ * need to install a cronjob to update the feeds in the cache
  * on a regular base.
  */
 define('NOSERUB_USE_FEED_CACHE', true);
