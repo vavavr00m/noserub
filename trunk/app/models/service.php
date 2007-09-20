@@ -119,6 +119,9 @@ class Service extends AppModel {
 
 			case 11: # Last.fm
                 return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
+
+			case 12: # QYPE
+                return 'http://www.qype.com/people/'.$username.'/rss';
               
             default: 
                 return false;
@@ -191,6 +194,10 @@ class Service extends AppModel {
 
     		    case 11: # Last.fm
     		        $item['content'] = $this->contentFromLastfm($feeditem);
+    		        break;
+
+    		    case 12: # QYPE
+    		        $item['content'] = $this->contentFromQype($feeditem);
     		        break;
         
     		    default:
@@ -304,7 +311,6 @@ class Service extends AppModel {
         return $feeditem->get_content();
     }
 
-
     /**
      * Method description
      *
@@ -313,6 +319,17 @@ class Service extends AppModel {
      * @access 
      */
     function contentFromLastfm($feeditem) {
+        return $feeditem->get_content();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromQype($feeditem) {
         return $feeditem->get_content();
     }
 
@@ -351,7 +368,10 @@ class Service extends AppModel {
 
             case 11: # Last.fm
                 return 'http://www.last.fm/user/'.$username.'/';
-                
+
+            case 12: # QYPE
+                return 'http://www.qype.com/people/'.$username.'/';
+        
             default:
                 return '';
         }
@@ -457,6 +477,9 @@ class Service extends AppModel {
 
             case 11:
                 return $this->getContactsFromLastfm('http://www.last.fm/user/' . $account['Account']['username'] . '/friends/');
+
+            case 12:
+                return $this->getContactsFromQype('http://www.qype.com/people/' . $account['Account']['username'] . '/contacts/');
                 
             default:
                 return array();
@@ -566,6 +589,28 @@ class Service extends AppModel {
 
         return $data;
     }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromQype($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        } 
+
+        return $data;
+    }
+    
     /**
      * Method description
      *
