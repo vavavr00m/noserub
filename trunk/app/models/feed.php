@@ -30,7 +30,7 @@ class Feed extends AppModel {
         $saveable = array('account_id', 'priority', 'content', 'created', 'modified');
         $data = array('account_id' => $account_id,
                       'priority'   => 0,
-                      'content'    => serialize($cache_data));
+                      'content'    => @serialize($cache_data));
         $this->save($data);
     }
 
@@ -58,10 +58,10 @@ class Feed extends AppModel {
             $this->id = $feed['Feed']['id'];
             $this->saveField('priority', $feed['Feed']['priority'] + 1);
         
-            $cache_data = unserialize($feed['Feed']['content']);
+            $cache_data = @unserialize($feed['Feed']['content']);
         }
         
-        if(!$cache_data) {
+        if(!$cache_data || !is_array($cache_data)) {
             $cache_data = array();
         }
         
