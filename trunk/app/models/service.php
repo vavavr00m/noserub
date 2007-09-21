@@ -122,6 +122,10 @@ class Service extends AppModel {
 
 			case 12: # QYPE
                 return 'http://www.qype.com/people/'.$username.'/rss';
+
+			case 13: # Ma.gnolia
+                return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
+
               
             default: 
                 return false;
@@ -198,6 +202,10 @@ class Service extends AppModel {
 
     		    case 12: # QYPE
     		        $item['content'] = $this->contentFromQype($feeditem);
+    		        break;
+    		    
+    		    case 13: # Ma.gnolia
+    		        $item['content'] = $this->contentFromMagnolia($feeditem);
     		        break;
         
     		    default:
@@ -340,6 +348,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromMagnolia($feeditem) {
+        return $feeditem->get_content();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -371,6 +390,9 @@ class Service extends AppModel {
 
             case 12: # QYPE
                 return 'http://www.qype.com/people/'.$username.'/';
+
+            case 13: # Ma.gnolia
+                return 'http://ma.gnolia.com/people/'.$username.'/';
         
             default:
                 return '';
@@ -480,7 +502,10 @@ class Service extends AppModel {
 
             case 12:
                 return $this->getContactsFromQype('http://www.qype.com/people/' . $account['Account']['username'] . '/contacts/');
-                
+
+            case 13:
+                return $this->getContactsFromMagnolia('http://ma.gnolia.com/people/' . $account['Account']['username'] . '/contacts/');
+
             default:
                 return array();
         }
@@ -610,7 +635,28 @@ class Service extends AppModel {
 
         return $data;
     }
-    
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromMagnolia($url) {
+        $data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all('/<a href="http:\/\/ma.gnolia.com\/people\/.*" class="fn url" rel="contact" title="Visit .*">(.*)<\/a>/iU', $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        } 
+
+        return $data;
+    }
+  
     /**
      * Method description
      *
