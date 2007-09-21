@@ -32,5 +32,11 @@ noserub.fn = noserub.prototype = {
         if(this.debug === true) {
             window.console.log(msg);
         }
+    },
+    
+    Accounts_add_step_4_friends: function() {
+        $('select').change(function() {
+            $(this).parent('div').find('input[value="2"]').attr('checked', 'checked');
+        });
     }
 };
