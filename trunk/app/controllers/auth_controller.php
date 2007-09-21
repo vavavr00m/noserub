@@ -4,7 +4,7 @@
 	$path = $pathExtra . PATH_SEPARATOR . $path;
 	ini_set('include_path', $path);
 
-	vendor('Auth/OpenID/Server', 'Auth/OpenID/FileStore');
+	vendor('Auth/OpenID/Server', 'Auth/OpenID/FileStore', 'Auth/OpenID/SReg');
 
 	class AuthController extends AppController {
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
@@ -50,24 +50,24 @@
 				$request = $this->Session->read($sessionKey);
 				
 				if (empty($this->params['form'])) {
-					$required = array();
-					$optional = array();
-					
-					$required = explode(',', $request->message->args->get(array('http://openid.net/signon/1.0', 'sreg.required')));
-					$optional = explode(',', $request->message->args->get(array('http://openid.net/signon/1.0', 'sreg.optional')));
-
-					$this->set('required', $this->__prepareSregData($required));
-					$this->set('optional', $this->__prepareSregData($optional));
+					$this->set('required', $this->__prepareSRegData($this->__extractSRegData($request, 'required')));
+					$this->set('optional', $this->__prepareSRegData($this->__extractSRegData($request, 'optional')));
 					
 					$this->set('trustRoot', $request->trust_root);
 					$this->set('identity', $request->identity);
 					$this->set('filter', false);
 					$this->set('headline', 'OpenID verification');
 				} else {
-					// TODO sending sreg data back to the consumer
 					$this->Session->delete($sessionKey);
 					$answer = (isset($this->params['form']['Allow'])) ? true : false;
 					$response = $request->answer($answer);
+					
+					if ($answer) {
+						$data = am($this->__prepareSRegData($this->__extractSRegData($request, 'required')), 
+								   $this->__prepareSRegData($this->__extractSRegData($request, 'optional')));
+						
+						Auth_OpenID_sendSRegFields($request, $data, $response);
+					}
 					$this->__renderResponse($response);
 				}
 			} else {
@@ -81,6 +81,12 @@
 			$this->layout = 'xml';
 			header('Content-type: application/xrds+xml');
 			$this->set('server', Router::url('/'.low($this->name), true));
+		}
+		
+		function __extractSRegData($request, $field) {
+			$data = explode(',', $request->message->args->get(array('http://openid.net/extensions/sreg/1.1', $field)));
+			
+			return $data;
 		}
 		
 		function __getOpenIDRequest() {
@@ -104,7 +110,7 @@
 			return $server;
 		}
 		
-		function __prepareSregData($fields) {
+		function __prepareSRegData($fields) {
 			$result = array();
 			$identity = $this->Session->read('Identity');
 			
