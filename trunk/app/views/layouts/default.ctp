@@ -27,6 +27,7 @@
        
     </head>
 	<body>
+<!-- Revision $Revision$ -->
 	<div id="top"></div>
 	<?php echo $this->renderElement('metanav'); ?>
 
