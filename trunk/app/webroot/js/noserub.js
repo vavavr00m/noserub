@@ -38,5 +38,8 @@ noserub.fn = noserub.prototype = {
         $('select').change(function() {
             $(this).parent('div').find('input[value="2"]').attr('checked', 'checked');
         });
+        $(':text').focus(function() {
+            $(this).parent('div').find('input[value="1"]').attr('checked', 'checked');
+        });
     }
 };
