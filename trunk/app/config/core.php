@@ -55,6 +55,8 @@
  * In development mode, you need to click the flash message to continue.
  */
 	define('DEBUG', 1);
+	define('JS_DEBUG', false);
+	
 /**
  * Turn off or enable cache checking application-wide.
  *

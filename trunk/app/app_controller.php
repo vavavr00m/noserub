@@ -10,6 +10,8 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
+    var $helpers = array('javascript', 'html');
+    
     /**
      * Makes sure we redirect to the https url,
      * when NOSERUB_USE_SSL is used and we're not

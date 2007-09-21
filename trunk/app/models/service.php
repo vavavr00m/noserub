@@ -349,7 +349,7 @@ class Service extends AppModel {
      * @access 
      */
     function contentFromMagnolia($feeditem) {
-        return $feeditem->get_content();
+        return $feeditem->get_link();
     }
 
     /**

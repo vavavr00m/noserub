@@ -26,7 +26,7 @@
 	<?php echo $this->renderElement('javascript'); ?>
        
     </head>
-	<body class="jamal {controller:'<?php echo $this->name; ?>',action:'<?php echo $this->action; ?>'<?php echo ($session->check('User')?',session:true':''); ?>}">
+	<body>
 	<div id="top"></div>
 	<?php echo $this->renderElement('metanav'); ?>
 
