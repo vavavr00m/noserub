@@ -369,7 +369,7 @@ class AccountsController extends AppController {
             foreach($accounts as $account) {
                 # now see, if the identity is local to our logged
                 # in identity.
-                if($account['Identity']['namespace'] == $session_identity['local_username']) {
+                if($account['Identity']['username'] == $session_identity['local_username']) {
                     # found him/her
                     unset($data[$username]);
                     break;
