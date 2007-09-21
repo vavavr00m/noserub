@@ -560,17 +560,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromDelicious($url) {
-        $data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all('/<a class="uname" href="\/(.*)">.*<\/a>/iU', $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        } 
-
-        return $data;
+    	return $this->__getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
     }
 
     /**
@@ -581,17 +571,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromVimeo($url) {
-        $data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all('/<span class="greyd">(.*)<\/span>/iU', $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        } 
-
-        return $data;
+    	return $this->__getContactsFromUrl($url, '/<span class="greyd">(.*)<\/span>/iU');
     }
 
     /**
@@ -602,17 +582,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromLastfm($url) {
-        $data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all('/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU', $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        } 
-
-        return $data;
+    	return $this->__getContactsFromUrl($url, '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
     }
 
     /**
@@ -623,17 +593,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromQype($url) {
-        $data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all('/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU', $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        } 
-
-        return $data;
+    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
     }
 
     /**
@@ -644,17 +604,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromMagnolia($url) {
-        $data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all('/<a href="http:\/\/ma.gnolia.com\/people\/.*" class="fn url" rel="contact" title="Visit .*">(.*)<\/a>/iU', $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        } 
-
-        return $data;
+    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/.*" class="fn url" rel="contact" title="Visit .*">(.*)<\/a>/iU');
     }
   
     /**
@@ -665,9 +615,13 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromTwitter($url) {
-        $data = array();
+    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
+    }
+    
+    function __getContactsFromUrl($url, $pattern) {
+    	$data = array();
         $content = @file_get_contents($url);
-        if($content && preg_match_all('/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i', $content, $matches)) {
+        if($content && preg_match_all($pattern, $content, $matches)) {
             foreach($matches[1] as $username) {
                 if(!isset($data[$username])) {
                     $data[$username] = $username;
@@ -677,5 +631,4 @@ class Service extends AppModel {
 
         return $data;
     }
-    
 }
