@@ -8,6 +8,7 @@
 
 	class AuthController extends AppController {
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
+		const SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST = 'Noserub.authenticatedOpenIDRequest';
 		var $uses = array();
 		
 		function index() {
@@ -25,7 +26,7 @@
 						$requestIdentity = str_replace('http://', '', $requestIdentity);
 						
 						if ($identity['username'] == $requestIdentity) {
-							$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
+							$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
 							$this->redirect('/auth/trust', null, true);
 						} else {
 							$response = $request->answer(false);
@@ -43,7 +44,7 @@
 		}
 		
 		function trust() {
-			$sessionKey = self::SESSION_KEY_FOR_LAST_OPENID_REQUEST;
+			$sessionKey = self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST;
 			
 			if ($this->Session->check($sessionKey)) {
 				$request = $this->Session->read($sessionKey);
