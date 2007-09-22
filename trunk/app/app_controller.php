@@ -11,6 +11,7 @@
  */
 class AppController extends Controller {
     var $helpers = array('javascript', 'html');
+    var $components = array('menu');
     
     /**
      * Makes sure we redirect to the https url,
@@ -38,7 +39,9 @@ class AppController extends Controller {
      * @return 
      * @access 
      */
-    function beforeFilter() {         
+    function beforeFilter() {       
+        $this->menu->setViewData($this);  
+        
         /**
          * 	Don't you EVER remove this line else you will make the whole 
          * 	application a swiss cheese for XSS!

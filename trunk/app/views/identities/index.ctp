@@ -13,7 +13,7 @@
             <?php echo $data['Identity']['local_username']; ?> lives <?php echo ceil($distance); ?> km away from you.
         </p>
     <?php } ?>
-    <?php if(isset($filter) && ($filter == false || $filter == 'all')) { ?>
+    <?php if(isset($filter) && ($filter === false || $filter === 'all')) { ?>
         <div style="float:left;margin:10px;">
             <h1>Contacts</h1>
             <?php echo $this->renderElement('contacts/index', array('data' => $data['Contact'], 'identity' => $data['Identity'])); ?>

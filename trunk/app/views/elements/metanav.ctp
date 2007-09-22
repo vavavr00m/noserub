@@ -1,6 +1,6 @@
 <div id="metanav" class="nav wrapper">
     <ul>
-        <?php if($session->check('Identity.id')) { ?>
+        <?php if($menu['logged_in']) { ?>
             <li class="first">You are logged in as <strong><?php echo $session->read('Identity.local_username'); ?></strong></li>
             <li><?php echo $html->link('Logout', '/pages/logout/');?></li>
         <?php } else { ?>

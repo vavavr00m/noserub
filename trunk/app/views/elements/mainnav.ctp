@@ -1,43 +1,28 @@
 <?php
-    $uri = $_SERVER['REQUEST_URI'];
     $noserub_url = '/' . $session->read('Identity.local_username') . '/';
-    $class_accounts = '';
-    $class_network  = '';
-    $class_contacts = '';
-    $class_settings = '';
-    $class_register = '';
-    $class_startpage = '';
-    $class_home = '';
-    if(strpos($uri, '/pages/home') !== false) {
-        $class_startpage = ' class="active"';
-    } else if(strpos($uri, '/accounts') > 0) {
-        $class_accounts = ' class="active"';
-    } else if(strpos($uri, '/network') > 0) {
-        $class_network  = ' class="active"';
-    }else if(strpos($uri, '/contacts') > 0) {
-        $class_contacts = ' class="active"';
-    } else if(strpos($uri, '/settings') > 0) {
-        $class_settings = ' class="active"';
-    } else if(strpos($uri, '/register') !== false) {
-        $class_register = ' class="active"';
-    } else if(strpos($uri, $noserub_url) == 0 || $uri == '/') {
-        $class_home = ' class="active"';
+    
+    if($menu['logged_in']) {
+        $main_menu = array(
+            'home'     => array('Home',     '/pages/home/'),
+            'profile'  => array('NoseRub',  $noserub_url),
+            'network'  => array('Network',  $noserub_url . 'network/'),
+            'accounts' => array('Accounts', $noserub_url . 'accounts/'),
+            'contacts' => array('Contacts', $noserub_url . 'contacts/'),
+            'settings' => array('Settings', $noserub_url . 'settings/')
+        );  
+    } else {
+        $main_menu = array(
+            'home' => array('NoseRub', '/')
+        );
+        if(NOSERUB_REGISTRATION_TYPE == 'all') {
+            $main_menu['register'] = array('Register', '/pages/register/');
+        }
     }
 ?>
 <div id="mainnav">
     <ul>
-        <?php if($session->check('Identity.id')) { ?>
-            <li<?php echo $class_startpage;?>><?php echo $html->link('Home', '/pages/home/'); ?></li>
-            <li<?php echo $class_home;?>><?php echo $html->link('NoseRub', $noserub_url); ?></li>
-            <li<?php echo $class_network;?>><?php echo $html->link('Network', $noserub_url . 'network/'); ?></li>
-            <li<?php echo $class_accounts;?>><?php echo $html->link('Accounts', $noserub_url . 'accounts/'); ?></li>
-            <li<?php echo $class_contacts;?>><?php echo $html->link('Contacts', $noserub_url . 'contacts/'); ?></li>
-            <li<?php echo $class_settings;?>><?php echo $html->link('Settings', $noserub_url . 'settings/'); ?></li>
-        <?php } else { ?>
-            <li<?php echo $class_home;?>><?php echo $html->link('NoseRub', '/'); ?></li>
-            <?php if(NOSERUB_REGISTRATION_TYPE == 'all') { ?>
-                <li<?php echo $class_register;?>><?php echo $html->link('Register', '/pages/register/'); ?></li>
-            <?php }
-        } ?>
+        <?php foreach($main_menu as $token => $item) { ?>
+            <li<?php echo $menu['main'] == $token ? ' class="active"' : ''; ?>><?php echo $html->link($item[0], $item[1]); ?></li>
+        <?php } ?>
     </ul>
 </div>
