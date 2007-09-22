@@ -32,6 +32,6 @@ A site identifying as <?php echo $trustRoot; ?> has asked us for confirmation th
 	</p>
 <?php endif; ?>
 <form method="post" action="<?php echo $this->here; ?>">
-    <input class="submitbutton" type="submit" name="Allow" value="allow" />
-    <input class="submitbutton" type="submit" name="Deny" value="deny" />
+    <input class="submitbutton" type="submit" name="Allow" value="Allow" />
+    <input class="submitbutton" type="submit" name="Deny" value="Deny" />
 </form>

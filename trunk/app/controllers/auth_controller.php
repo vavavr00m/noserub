@@ -14,7 +14,6 @@
 			$request = $this->__getOpenIDRequest();
 			
 			if (!isset($request->mode)) {
-				$this->set('filter', false);
 				$this->set('headline', 'OpenID server endpoint');
 				$this->render('server_endpoint');
 			} else {
@@ -55,7 +54,6 @@
 					
 					$this->set('trustRoot', $request->trust_root);
 					$this->set('identity', $request->identity);
-					$this->set('filter', false);
 					$this->set('headline', 'OpenID verification');
 				} else {
 					$this->Session->delete($sessionKey);
@@ -71,7 +69,6 @@
 					$this->__renderResponse($response);
 				}
 			} else {
-				$this->set('filter', false);
 				$this->set('headline', 'Error');
 				$this->render('no_request');
 			}
