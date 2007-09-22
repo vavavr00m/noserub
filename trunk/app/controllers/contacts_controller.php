@@ -4,6 +4,7 @@
 class ContactsController extends AppController {
     var $uses = array('Contact');
     var $helpers = array('form');
+    var $components = array('cluster');
     
     /**
      * Method description
@@ -239,13 +240,9 @@ class ContactsController extends AppController {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Contact->Identity->Account->Feed->access($account['id']);
                     } else {
-                        $new_items = $this->Contact->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url']);
+                        $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url']);
                     }
                     if($new_items) {
-                        # add some identity info
-                        foreach($new_items as $key => $value) {
-                            $new_items[$key]['username'] = $contact['WithIdentity']['username'];
-                        }
                         $items = array_merge($items, $new_items);
                     }
                 }
@@ -253,6 +250,7 @@ class ContactsController extends AppController {
         }        
 
         usort($items, 'sort_items');
+        $items = $this->cluster->create($items);
                 
         $this->set('data', $items);
         $this->set('filter', $filter);

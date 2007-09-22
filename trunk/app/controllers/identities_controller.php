@@ -4,7 +4,7 @@
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid');
-    var $components = array('geocoder', 'url');
+    var $components = array('geocoder', 'url', 'cluster');
     
     /**
      * Method description
@@ -84,18 +84,15 @@ class IdentitiesController extends AppController {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                     } else {
-                        $new_items = $this->Identity->Account->Service->feed2array($account['service_id'], $account['feed_url'], 5, false);
+                        $new_items = $this->Identity->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
                     }
                     if($new_items) {
-                        # add some identity info
-                        foreach($new_items as $key => $value) {
-                            $new_items[$key]['username'] = $username;
-                        }
                         $items = array_merge($items, $new_items);
                     }
                 }
             }
             usort($items, 'sort_items');
+            $items = $this->cluster->create($items);
         }
     
         $this->set('data', $data);

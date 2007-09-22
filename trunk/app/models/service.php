@@ -112,7 +112,7 @@ class Service extends AppModel {
                 return 'http://pownce.com/feeds/public/'.$username.'/';
 
             case 9: # Upcoming
-                return 'http://badge.upcoming.yahoo.com/v1/?badge_type=user&badge_size=med&badge_styling=2&badge_venue=0&date_format_type=intl_slash&id='.$username;
+                return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
 
 			case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/videos/rss/';
@@ -137,21 +137,24 @@ class Service extends AppModel {
     /**
      * Method description
      *
-     * @param  $service_id id of te service, we're about to use
+     * @param  $service_id id of the service, we're about to use
+     * @param  $service_type_id of the service, we're about to use
      * @param  $feedurl the url of the feed
      * @param  $items_per_feed maximum number of items that are fetched from the feed
      * @param  $items_max_age maximum age of any item that is fetched from feed, in days
      * @return 
      * @access 
      */
-    function feed2array($service_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
+    function feed2array($username, $service_id, $service_type_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
         if(!$feedurl) {
             return false;
         }
-        if($service_id == 9) {
-            # upcoming has no feed
-            return $this->contentFromUpcoming($feedurl, $items_per_feed);
-        }
+        
+        # get info about service type
+        $this->ServiceType->id = $service_type_id;
+        $intro = $this->ServiceType->field('intro');
+        $token = $this->ServiceType->field('token');
+        
         vendor('simplepie/simplepie');
         $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
         $items = array();
@@ -174,9 +177,12 @@ class Service extends AppModel {
     		    break;
     		}
     		
-    		$item['title'] = $feeditem->get_title();
-    		$item['url'] = $feeditem->get_link();
-    		
+    		$item['title']    = $feeditem->get_title();
+    		$item['url']      = $feeditem->get_link();
+            $item['intro']    = $intro;
+            $item['type']     = $token;
+            $item['username'] = $username;
+            
     		switch($service_id) {
     		    case 1: # flickr
     		        $item['content'] = $this->contentFromFlickr($feeditem);
@@ -192,6 +198,11 @@ class Service extends AppModel {
     		        
     		    case 5: # Twitter
     		        $item['content'] = $this->contentFromTwitter($feeditem);
+    		        $item['title']   = $item['content'];
+    		        break;
+    		        
+    		    case 9: # Upcoming.org
+    		        $item['content'] = $feeditem->get_content();
     		        break;
     		        
     		    case 10: # vimeo
@@ -279,7 +290,9 @@ class Service extends AppModel {
      * @access 
      */
     function contentFromTwitter($feeditem) {
-        return $feeditem->get_content();
+        # cut off the username
+        $content = $feeditem->get_content();
+        return substr($content, strpos($content, ': ') + 2);
     }
 
     /**
@@ -470,19 +483,19 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getInfoFromService($service_id, $username) {
+    function getInfoFromService($username, $service_id, $account_username) {
         $this->recursive = 0;
         $this->expects('Service');
         $service = $this->findById($service_id);
         
         $data = array();
         $data['service_id']      = $service_id;
-        $data['username']        = $username;
+        $data['username']        = $account_username;
         $data['service_type_id'] = $service['Service']['service_type_id'];
-        $data['account_url']     = $this->getAccountUrl($service_id, $username);
-        $data['feed_url']        = $this->getFeedUrl($service_id, $username);
+        $data['account_url']     = $this->getAccountUrl($service_id, $account_username);
+        $data['feed_url']        = $this->getFeedUrl($service_id, $account_username);
         
-        $items = $this->feed2array($service_id, $data['feed_url'], 5, null);
+        $items = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
         
         if(!$items) {
             return false;

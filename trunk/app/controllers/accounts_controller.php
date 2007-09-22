@@ -134,7 +134,7 @@ class AccountsController extends AppController {
         
         if($this->data) {
             # get title, url and preview
-            $data = $this->Account->Service->getInfoFromService($service_id, $this->data['Account']['username']);    
+            $data = $this->Account->Service->getInfoFromService($splitted['username'], $service_id, $this->data['Account']['username']);    
             if(!$data) {
                 $this->Account->invalidate('username', 1);
             } else {
