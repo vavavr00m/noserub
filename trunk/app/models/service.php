@@ -126,6 +126,8 @@ class Service extends AppModel {
 			case 13: # Ma.gnolia
                 return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
 
+			case 14: # StumbleUpon
+                return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username.'';
               
             default: 
                 return false;
@@ -207,7 +209,11 @@ class Service extends AppModel {
     		    case 13: # Ma.gnolia
     		        $item['content'] = $this->contentFromMagnolia($feeditem);
     		        break;
-        
+    		    
+    		    case 14: # StumbleUpon
+    		        $item['content'] = $this->contentFromStumbleupon($feeditem);
+    		        break;
+   
     		    default:
     		        $item['content'] = $feeditem->get_content();
     		}
@@ -359,6 +365,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromStumbleupon($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -393,7 +410,10 @@ class Service extends AppModel {
 
             case 13: # Ma.gnolia
                 return 'http://ma.gnolia.com/people/'.$username.'/';
-        
+
+            case 14: # StumbleUpon
+                return 'http://'.$username.'.stumbleupon.com/';
+       
             default:
                 return '';
         }
@@ -506,6 +526,9 @@ class Service extends AppModel {
             case 13:
                 return $this->getContactsFromMagnolia('http://ma.gnolia.com/people/' . $account['Account']['username'] . '/contacts/');
 
+            case 14:
+                return $this->getContactsFromStumbleupon('http://' . $account['Account']['username'] . '.stumbleupon.com/friends/');
+
             default:
                 return array();
         }
@@ -606,7 +629,18 @@ class Service extends AppModel {
     function getContactsFromMagnolia($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/.*" class="fn url" rel="contact" title="Visit .*">(.*)<\/a>/iU');
     }
-  
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromStumbleupon($url) {
+    	return $this->__getContactsFromUrl($url, '/<dt><a href="http:\/\/.*.stumbleupon.com\/">(.*)<\/a><\/dt>/iU');
+    }
+
     /**
      * Method description
      *
