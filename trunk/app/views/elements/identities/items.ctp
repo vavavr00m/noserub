@@ -17,23 +17,29 @@
     <?php
         $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 days'));
-        foreach($data as $date => $cluster) { ?>
-            
-                <?php if($date == $today) { 
-                    echo '<h2>Today</h2>'; 
-                } else if($date == $yesterday) {
-                    echo '<h2>Yesterday</h2>';
-                } else {
-                    echo '<h3>' . $date . '</h3>';
-                } ?>
-
+        $days = 0;
+        foreach($data as $date => $cluster) {
+            $days++;
+            if($days === 6) {
+                break;
+            }
+            if($date == $today) { 
+                echo '<h2>Today</h2>'; 
+            } else if($date == $yesterday) {
+                echo '<h2>Yesterday</h2>';
+            } else {
+                echo '<h3>' . $date . '</h3>';
+            } ?>
             <ul class="networklist">
                 <?php foreach($cluster as $item) { ?>
                     <li class="<?php echo $item['type']; ?>">
                         <span class="date">
-                            <?php echo $item['datetime']; ?>
+                            <?php if($date == $today) {
+                                echo $nicetime->show($item['datetime']); 
+                            } else {
+                                echo date('H:s:i', strtotime($item['datetime'])); 
+                            } ?>
                         </span>
-                        
                         <span>
                             <?php
                                 $splitted = split('/', $item['username']);

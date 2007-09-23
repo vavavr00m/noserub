@@ -6,7 +6,7 @@ class Auth_OpenID_CheckIDRequest {}
 
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
-    var $helpers = array('form', 'openid');
+    var $helpers = array('form', 'openid', 'nicetime');
     var $components = array('geocoder', 'url', 'cluster');
     
     /**

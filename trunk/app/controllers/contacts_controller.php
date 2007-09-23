@@ -3,7 +3,7 @@
  
 class ContactsController extends AppController {
     var $uses = array('Contact');
-    var $helpers = array('form');
+    var $helpers = array('form', 'nicetime');
     var $components = array('cluster');
     
     /**
