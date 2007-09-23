@@ -27,30 +27,37 @@
     </ul>
 <?php } ?>
 <br /><br />
-<h1>Database</h1>
-Configuration:
-<?php
-    switch($database_status) {
-        case -1:
-            echo ' <strong>database.php in /app/config/ not found!</strong>'; break;
-        case  0:
-            echo ' <strong>Cannot connect to database!'; break;
-        case  1:
-            echo ' <strong>OK</strong>'; break;
-    }
-?><br /><br />
-Actual version #: <?php echo $current_migration; ?><br />
-<?php if(isset($migrations)) { ?>
-    Updating to #<?php echo $most_recent_migration; ?>:<br />
-    <ul>
-        <?php foreach($migrations['sql'] as $idx => $migration) { ?>
-            <li><?php echo $migration['name']; ?></li>
-            <?php if(isset($migrations['php'][$idx]['name'])) { ?>
-                <li><?php echo $migrations['php'][$idx]['name']; ?></li>
+<?php if(isset($database_status)) { ?>
+    <h1>Database</h1>
+    Configuration:
+    <?php
+        switch($database_status) {
+            case -1:
+                echo ' <strong>database.php in /app/config/ not found!</strong>'; break;
+            case  0:
+                echo ' <strong>Cannot connect to database!'; break;
+            case  1:
+                echo ' <strong>OK</strong>'; break;
+        }
+    ?><br /><br />
+    Actual version #: <?php echo $current_migration; ?><br />
+    <?php if(isset($migrations)) { ?>
+        Updating to #<?php echo $most_recent_migration; ?>:<br />
+        <ul>
+            <?php foreach($migrations['sql'] as $idx => $migration) { ?>
+                <li><?php echo $migration['name']; ?></li>
+                <?php if(isset($migrations['php'][$idx]['name'])) { ?>
+                    <li><?php echo $migrations['php'][$idx]['name']; ?></li>
+                <?php } ?>
             <?php } ?>
-        <?php } ?>
-    </ul>
-    <strong>Done</strong>
+        </ul>
+        <strong>Done</strong>
+    <?php } else { ?>
+        Database up-to-date.
+    <?php } ?>
 <?php } else { ?>
-    Database up-to-date.
+    <h2>Errors!</h2>
+    <p>
+        Please correct the errors above and then return to this URL, to finish the update.
+    </p>
 <?php } ?>

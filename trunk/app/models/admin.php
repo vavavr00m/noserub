@@ -68,7 +68,7 @@ class Admin extends AppModel {
                         $out[$constant] = 'value might only be: "' . join('", "', $info['values']) . '" (see '.$info['file'].')';
                     }
                 } else {
-                    if(constant($constant) == '') {
+                    if(constant($constant) === '') {
                         $out[$constant] = 'no value! (see '.$info['file'].')';
                     }
                 }
