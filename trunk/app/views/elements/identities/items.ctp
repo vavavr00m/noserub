@@ -9,7 +9,13 @@
         <?php foreach($cluster as $item) { ?>
                 <span class="photothumb">
                 <?php echo $item['content']; ?><br />
-                From <?php echo $html->link($item['username'], $item['url']); ?>
+                <?php
+                    $splitted = split('/', $item['username']);
+                    $splitted2 = split('@', $splitted[count($splitted)-1]);
+                    $username = $splitted2[0];
+                    $label = wordwrap($username, 12, '<br />', true);
+                    echo 'From ' . $html->link($label, 'http://' . $item['username']);
+                ?>
                 </span>
         <?php } ?>
     <?php } ?>
@@ -28,7 +34,7 @@
             } else if($date == $yesterday) {
                 echo '<h2>Yesterday</h2>';
             } else {
-                echo '<h3>' . $date . '</h3>';
+                echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             } ?>
             <ul class="networklist">
                 <?php foreach($cluster as $item) { ?>
@@ -37,7 +43,7 @@
                             <?php if($date == $today) {
                                 echo $nicetime->show($item['datetime']); 
                             } else {
-                                echo date('H:s:i', strtotime($item['datetime'])); 
+                                echo date('H:s', strtotime($item['datetime'])); 
                             } ?>
                         </span>
                         <span>
