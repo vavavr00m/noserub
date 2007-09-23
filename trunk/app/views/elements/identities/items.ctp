@@ -1,8 +1,8 @@
 <div id="network">
  <?php if(empty($data)) { ?>
     <p>
-        There are no updates from your social network yet.<br />
-        Why don't you add some friends?
+        There are no updates from your social network or own activity yet.<br />
+        Why don't you add some friends or some more of your own accounts?
     </p>
 <?php } else if($filter == 'photo') { ?>
     <?php foreach($data as $date => $cluster) { ?>
@@ -14,7 +14,7 @@
                     $splitted2 = split('@', $splitted[count($splitted)-1]);
                     $username = $splitted2[0];
                     $label = wordwrap($username, 12, '<br />', true);
-                    echo 'From ' . $html->link($label, 'http://' . $item['username']);
+                    echo 'From <a href="http://' . $item['username'] . '">' . $label . '</a>';
                 ?>
                 </span>
         <?php } ?>

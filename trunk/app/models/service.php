@@ -129,7 +129,7 @@ class Service extends AppModel {
 			case 14: # StumbleUpon
                 return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username.'';
 
-			case 15: # CorkÕd
+			case 15: # CorkÃ•d
                 return 'http://corkd.com/feed/journal/'.$username.'';
 
               
@@ -196,6 +196,10 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromDelicious($feeditem);
     		        break;
     		        
+    		    case 3: # ipernity
+    		        $item['content'] = $this->contentFromIpernity($feeditem);
+    		        break;
+    		        
     		    case 4: # 23hq.com
     		        $item['content'] = $this->contentFrom23hq($feeditem);
     		        break;
@@ -229,7 +233,7 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromStumbleupon($feeditem);
     		        break;
     		    
-    		    case 15: # CorkÕd
+    		    case 15: # CorkÃ•d
     		        $item['content'] = $this->contentFromCorkd($feeditem);
     		        break;
  
@@ -242,6 +246,21 @@ class Service extends AppModel {
         unset($feed);
         
         return $items;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromIpernity($feeditem) {
+        $raw_content = $feeditem->get_content();
+        if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {
+            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'t.jpg" /></a>';
+        }
+        return '';
     }
     
     /**
