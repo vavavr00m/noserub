@@ -687,8 +687,39 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromCorkd($url) {
-    	return $this->__getContactsFromUrl($url, '/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/iU');
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/Next &#8250;&#8250;<\/a>/iU', $content)) {
+                    $page_url = $url . '?page='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
+    
 
     /**
      * Method description
