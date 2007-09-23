@@ -1,4 +1,23 @@
 <div id="network">
+        
+        <?php
+        $today = date('Y-m-d');
+        $yesterday = date('Y-m-d', strtotime('-1 days'));
+        $days = 0;
+        foreach($data as $date => $cluster) {
+            $days++;
+            if($days === 6) {
+                break;
+            }
+            if($date == $today) { 
+                echo '<h2>Today</h2>'; 
+            } else if($date == $yesterday) {
+                echo '<h2>Yesterday</h2>';
+            } else {
+                echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
+            } ?>
+            
+
  <?php if(empty($data)) { ?>
     <p>
         There are no updates from your social network or own activity yet.<br />
@@ -19,23 +38,11 @@
                 </span>
         <?php } ?>
     <?php } ?>
+    
+    <br class="clear" />
+
 <? } else { ?>
-    <?php
-        $today = date('Y-m-d');
-        $yesterday = date('Y-m-d', strtotime('-1 days'));
-        $days = 0;
-        foreach($data as $date => $cluster) {
-            $days++;
-            if($days === 6) {
-                break;
-            }
-            if($date == $today) { 
-                echo '<h2>Today</h2>'; 
-            } else if($date == $yesterday) {
-                echo '<h2>Yesterday</h2>';
-            } else {
-                echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
-            } ?>
+
             <ul class="networklist">
                 <?php foreach($cluster as $item) { ?>
                     <li class="<?php echo $item['type']; ?>">
