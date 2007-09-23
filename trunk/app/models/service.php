@@ -128,6 +128,10 @@ class Service extends AppModel {
 
 			case 14: # StumbleUpon
                 return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username.'';
+
+			case 15: # CorkÕd
+                return 'http://corkd.com/feed/journal/'.$username.'';
+
               
             default: 
                 return false;
@@ -224,7 +228,11 @@ class Service extends AppModel {
     		    case 14: # StumbleUpon
     		        $item['content'] = $this->contentFromStumbleupon($feeditem);
     		        break;
-   
+    		    
+    		    case 15: # CorkÕd
+    		        $item['content'] = $this->contentFromCorkd($feeditem);
+    		        break;
+ 
     		    default:
     		        $item['content'] = $feeditem->get_content();
     		}
@@ -389,6 +397,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromCorkd($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -426,7 +445,10 @@ class Service extends AppModel {
 
             case 14: # StumbleUpon
                 return 'http://'.$username.'.stumbleupon.com/';
-       
+            
+            case 15: # Cork'd
+                return 'http://corkd.com/people/'.$username.'/';
+    
             default:
                 return '';
         }
@@ -542,6 +564,9 @@ class Service extends AppModel {
             case 14:
                 return $this->getContactsFromStumbleupon('http://' . $account['Account']['username'] . '.stumbleupon.com/friends/');
 
+            case 15:
+                return $this->getContactsFromCorkd('http://corkd.com/people/' . $account['Account']['username'] . '/buddies');
+
             default:
                 return array();
         }
@@ -652,6 +677,17 @@ class Service extends AppModel {
      */
     function getContactsFromStumbleupon($url) {
     	return $this->__getContactsFromUrl($url, '/<dt><a href="http:\/\/.*.stumbleupon.com\/">(.*)<\/a><\/dt>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromCorkd($url) {
+    	return $this->__getContactsFromUrl($url, '/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/iU');
     }
 
     /**
