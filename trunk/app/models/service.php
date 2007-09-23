@@ -129,9 +129,11 @@ class Service extends AppModel {
 			case 14: # StumbleUpon
                 return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username.'';
 
-			case 15: # CorkÕd
+			case 15: # Cork'd
                 return 'http://corkd.com/feed/journal/'.$username.'';
 
+			case 16: # Dailymotion
+                return 'http://www.dailymotion.com/rss/'.$username.'';
               
             default: 
                 return false;
@@ -233,8 +235,12 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromStumbleupon($feeditem);
     		        break;
     		    
-    		    case 15: # CorkÕd
+    		    case 15: # Cork'd
     		        $item['content'] = $this->contentFromCorkd($feeditem);
+    		        break;
+     		    
+    		    case 16: # Dailymotion
+    		        $item['content'] = $this->contentFromDailymotion($feeditem);
     		        break;
  
     		    default:
@@ -427,6 +433,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromDailymotion($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -467,6 +484,9 @@ class Service extends AppModel {
             
             case 15: # Cork'd
                 return 'http://corkd.com/people/'.$username.'/';
+
+            case 16: # Dailymotion
+                return 'http://www.dailymotion.com/'.$username.'/';
     
             default:
                 return '';
@@ -585,6 +605,9 @@ class Service extends AppModel {
 
             case 15:
                 return $this->getContactsFromCorkd('http://corkd.com/people/' . $account['Account']['username'] . '/buddies');
+
+            case 16:
+                return $this->getContactsFromDailymotion('http://www.dailymotion.com/contacts/' . $account['Account']['username'] . '');
 
             default:
                 return array();
@@ -738,7 +761,47 @@ class Service extends AppModel {
         
         return $data;
     }
-    
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromDailymotion($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<img width="80" height="80" src=".*" alt="(.*)" \/>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<img width="80" height="80" src=".*" alt="(.*)" \/>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/next&nbsp;&raquo;<\/a>/iU', $content)) {
+                    $page_url = $url . '/'.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
+    }
 
     /**
      * Method description
