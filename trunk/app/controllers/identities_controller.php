@@ -1,6 +1,9 @@
 <?php
 /* SVN FILE: $Id:$ */
- 
+
+// needed to unserialize the OpenID request data from the session to get the username
+class Auth_OpenID_CheckIDRequest {}
+
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid');
@@ -219,12 +222,13 @@ class IdentitiesController extends AppController {
      */
     function login() {
         $this->checkSecure();
+        $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
         
         if(!empty($this->data)) {
             $identity = $this->Identity->check($this->data);
             if($identity) {
                 $this->Session->write('Identity', $identity['Identity']);
-                if ($this->Session->check('Noserub.lastOpenIDRequest')) {
+                if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth', null, true);
                 } else {
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
@@ -233,6 +237,12 @@ class IdentitiesController extends AppController {
             } else {
                 $this->set('form_error', 'Login not possible');
             }
+        } else {
+        	if ($this->Session->check($sessionKeyForOpenIDRequest)) {
+        		$request = $this->Session->read($sessionKeyForOpenIDRequest);
+        		$username = str_replace(FULL_BASE_URL.'/', '', $request->identity);
+        		$this->data['Identity']['username'] = $username;
+        	}
         }
         
         $this->set('headline', 'Login with existing NoseRub account');
