@@ -66,3 +66,29 @@ img, acronym {
 	text-align: right;
 	margin-top: 5px;
 }
+
+.yourboxes {
+	float: left;
+	margin: 0 50px 20px 0;
+}
+
+/* Network */
+.date {
+	float: right;
+	color: #999999;
+}
+
+.link, .text, .photo, .audio, .video {
+	padding: 5px 20px 5px 25px;
+}
+
+.photothumb {
+	float: left;
+	border: 1px solid #ECEBE5;
+	width: 80px;
+	margin: 0 15px 15px 0;
+}
+
+.photothumb img {
+	padding: 7px 0 0 8px;
+}

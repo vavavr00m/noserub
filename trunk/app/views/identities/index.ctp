@@ -14,19 +14,21 @@
         </p>
     <?php } ?>
     <?php if(isset($filter) && ($filter === false || $filter === 'all')) { ?>
-        <div style="float:left;margin:10px;">
-            <h1>Contacts</h1>
+        <div class="yourboxes">
+            <h2>Your Contacts</h2>
             <?php echo $this->renderElement('contacts/index', array('data' => $data['Contact'], 'identity' => $data['Identity'])); ?>
         </div>
     
-        <div style="float:left;margin:10px;">
-            <h1>Accounts</h1>
+        <div class="yourboxes">
+            <h2>Your Accounts</h2>
             <?php echo $this->renderElement('accounts/index', array('data' => $data['Account'], 'identity' => $data['Identity'])); ?>
         </div>
     <?php } ?>
     
-    <div style="clear:both;margin:10px;">
-        <h1>Items</h1>
+    <br class="clear" />
+
+    <div>
+        <h2>Your social activity</h2>
         <?php echo $this->renderElement('identities/items', array('data' => $items, 'filter' => $filter)); ?>
     </div>
 <?php } ?>

@@ -1,6 +1,7 @@
 body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
+	color: #585857;
 }
 
 /* logo */
@@ -117,4 +118,74 @@ body {
 
 dd {
 	font-weight: bold;
+}
+
+/* Network */
+
+#network h2, #network h3 {
+	font-size: 12px;
+	padding: 0 0 2px 0;
+	margin: 0 0 5px 0;
+}
+
+#network h2 {
+	color: #0099cc;
+	border-bottom: 1px solid #0099cc;
+}
+
+#network h3 {
+	color: #999999;
+	border-bottom: 1px solid #999999;
+}
+
+#network ul {
+	padding: 0 0 15px 0;
+	margin: 0;
+}
+
+.networklist li {
+	border-bottom: 1px solid #ebebeb;
+	line-height: 20px;
+}
+
+.networklist li {
+	border-bottom: 1px solid #ebebeb;
+	line-height: 20px;
+	list-style: none;
+}
+
+.link {
+	background: transparent url(/images/icons/network/link.gif) no-repeat center left;
+}
+
+.text {
+	background: transparent url(/images/icons/network/text.gif) no-repeat center left;
+}
+
+.photo {
+	background: transparent url(/images/icons/network/photo.gif) no-repeat center left;
+}
+
+.audio {
+	background: transparent url(/images/icons/network/audio.gif) no-repeat center left;
+}
+
+.video {
+	background: transparent url(/images/icons/network/video.gif) no-repeat center left;
+}
+
+.micropublish {
+	background: transparent url(/images/icons/network/micropublish.gif) no-repeat center left;
+}
+
+a.external , a.external:active, a.external:visited {
+	color: #585857 !important;
+	text-decoration: none !important;
+	font-weight: bold !important;
+	border-bottom: 1px dotted #585857 !important;
+}
+
+a.external:hover {
+	color: #12a1c9 !important;
+	border-bottom: 1px dotted #12a1c9 !important;
 }
