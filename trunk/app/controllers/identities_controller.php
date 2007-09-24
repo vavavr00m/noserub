@@ -53,6 +53,21 @@ class IdentitiesController extends AppController {
                                      'WithIdentity.WithIdentity');
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1));
+
+            # get number of accounts and contacts
+            # todo: do this with queries instead of going through array
+            $this->set('num_accounts', count($data['Account']));
+            $num_private_contacts = 0;
+            $num_noserub_contacts = 0;
+            foreach($data['Contact'] as $contact) {
+                if(strpos($contact['WithIdentity']['username'], '@') === false) {
+                    $num_noserub_contacts++;
+                } else {
+                    $num_private_contacts++;
+                }
+            }
+            $this->set('num_private_contacts', $num_private_contacts);
+            $this->set('num_noserub_contacts', $num_noserub_contacts);
             
             # create $about_identity for the view
             $this->set('about_identity', $data['Identity']);
