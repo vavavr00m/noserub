@@ -256,4 +256,44 @@ class ContactsController extends AppController {
         $this->set('filter', $filter);
         $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s social network');
     }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function ad_as_contact() {
+        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted         = $this->Contact->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity) {
+            # this user is not logged in
+            $this->redirect('/', null, true);
+        }
+        
+        # get id for this username
+        $this->Contact->Identity->recursive = 0;
+        $this->Contact->Identity->expects('Identity');
+        $identity = $this->Contact->Identity->findByUsername($splitted['username'], array('Identity.id'));
+        
+        # test, if there isn't already a contact
+        $this->Contact->recursive = 0;
+        $this->Contact->expects('Contact');
+        $contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
+                                                    'with_identity_id' => $identity['Identity']['id']));
+                                           
+        if($contacts == 0) {
+            # now create the contact relationship
+            $this->Contact->create();
+            $contact = array('identity_id'      => $session_identity['id'],
+                             'with_identity_id' => $identity['Identity']['id']);
+            $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+            $this->Contact->save($contact, true, $saveable);
+        }
+        
+        $this->redirect('/' . $splitted['local_username'], null, true);
+    }
 }

@@ -52,25 +52,39 @@ class IdentitiesController extends AppController {
                                      'Contact.Contact', 'Contact.WithIdentity',
                                      'WithIdentity.WithIdentity');
             $data = $this->Identity->find(array('username'  => $username,
-                                                'is_local'  => 1));
+                                                'is_local'  => 1,
+                                                'hash'      => ''));
 
-            # get number of accounts and contacts
-            # todo: do this with queries instead of going through array
-            $this->set('num_accounts', count($data['Account']));
-            $num_private_contacts = 0;
-            $num_noserub_contacts = 0;
-            foreach($data['Contact'] as $contact) {
-                if(strpos($contact['WithIdentity']['username'], '@') === false) {
-                    $num_noserub_contacts++;
+            if($data) {
+                # get number of accounts and contacts
+                # todo: do this with queries instead of going through arra<
+                $this->set('num_accounts', count($data['Account']));
+                $num_private_contacts = 0;
+                $num_noserub_contacts = 0;
+                foreach($data['Contact'] as $contact) {
+                    if(strpos($contact['WithIdentity']['username'], '@') === false) {
+                        $num_noserub_contacts++;
+                    } else {
+                        $num_private_contacts++;
+                    }
+                }
+                $this->set('num_private_contacts', $num_private_contacts);
+                $this->set('num_noserub_contacts', $num_noserub_contacts);
+            
+                # create $about_identity for the view
+                $this->set('about_identity', $data['Identity']);
+            
+                # get the status of relationship between the two
+                if($data['Identity']['id'] == $session_identity['id']) {
+                    $this->set('relationship_status', 'self');
                 } else {
-                    $num_private_contacts++;
+                    $this->Identity->Contact->recursive = 0;
+                    $this->Identity->Contact->expects('Contact');
+                    $is_contact = 1 == $this->Identity->Contact->findCount(array('identity_id'      => $session_identity['id'],
+                                                                                 'with_identity_id' => $data['Identity']['id']));
+                    $this->set('relationship_status', $is_contact ? 'contact' : 'none');
                 }
             }
-            $this->set('num_private_contacts', $num_private_contacts);
-            $this->set('num_noserub_contacts', $num_noserub_contacts);
-            
-            # create $about_identity for the view
-            $this->set('about_identity', $data['Identity']);
         }
         
         if($data) {

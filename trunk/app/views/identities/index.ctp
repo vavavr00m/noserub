@@ -26,7 +26,17 @@
             <?php echo $data['Identity']['local_username']; ?> lives <?php echo ceil($distance); ?> km away from you.
         </p>
     <?php } ?>
-    
+    <?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
+        <p>
+            <?php
+                if($relationship_status == 'contact') {
+                    echo $data['Identity']['local_username'] . ' is a contact of yours.';
+                } else { 
+                    echo $html->link('Add ' . $data['Identity']['local_username'] . ' as your contact.', '/' . $data['Identity']['local_username'] . '/add/as/contact/');
+                }
+            ?>
+        </p>
+    <?php } ?>
     <br class="clear" />
 
     <div>
