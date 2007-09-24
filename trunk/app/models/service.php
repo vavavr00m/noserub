@@ -134,6 +134,10 @@ class Service extends AppModel {
 
 			case 16: # Dailymotion
                 return 'http://www.dailymotion.com/rss/'.$username.'';
+            
+            case 17: # Zooomr
+                return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
+
               
             default: 
                 return false;
@@ -241,6 +245,10 @@ class Service extends AppModel {
      		    
     		    case 16: # Dailymotion
     		        $item['content'] = $this->contentFromDailymotion($feeditem);
+    		        break;
+    		        
+    		    case 17: # Zooomr
+    		        $item['content'] = $this->contentFromZooomr($feeditem);
     		        break;
  
     		    default:
@@ -436,6 +444,21 @@ class Service extends AppModel {
     function contentFromDailymotion($feeditem) {
         return $feeditem->get_link();
     }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromZooomr($feeditem) {
+        $raw_content = $feeditem->get_content();
+        if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {
+            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'_s.jpg" /></a>';
+        }
+        return '';
+    }
 
     /**
      * Method description
@@ -487,7 +510,10 @@ class Service extends AppModel {
 
             case 16: # Dailymotion
                 return 'http://www.dailymotion.com/'.$username.'/';
-    
+
+            case 17: # Zooomr  
+                return 'http://www.zooomr.com/photos/'.$username.'';
+
             default:
                 return '';
         }
@@ -608,6 +634,9 @@ class Service extends AppModel {
 
             case 16:
                 return $this->getContactsFromDailymotion('http://www.dailymotion.com/contacts/' . $account['Account']['username'] . '');
+
+            case 17:
+                return $this->getContactsFromZooomr('http://www.zooomr.com/people/' . $account['Account']['username'] . '/contacts/');
 
             default:
                 return array();
@@ -801,6 +830,18 @@ class Service extends AppModel {
         } while(1);
         
         return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+
+    function getContactsFromZooomr($url) {
+    	return $this->__getContactsFromUrl($url, '/<h2>(.*)<\/h2>/iU');
     }
 
     /**
