@@ -138,7 +138,9 @@ class Service extends AppModel {
             case 17: # Zooomr
                 return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
 
-              
+            case 18: # Odeo
+                return 'http://odeo.com/profile/'.$username.'/rss.xml';
+
             default: 
                 return false;
         }
@@ -250,7 +252,11 @@ class Service extends AppModel {
     		    case 17: # Zooomr
     		        $item['content'] = $this->contentFromZooomr($feeditem);
     		        break;
- 
+     		        
+    		    case 18: # Odeo
+    		        $item['content'] = $this->contentFromOdeo($feeditem);
+    		        break;
+
     		    default:
     		        $item['content'] = $feeditem->get_content();
     		}
@@ -467,6 +473,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromOdeo($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -513,6 +530,9 @@ class Service extends AppModel {
 
             case 17: # Zooomr  
                 return 'http://www.zooomr.com/photos/'.$username.'';
+
+            case 18: # Odeo  
+                return 'http://odeo.com/profile/'.$username.'';
 
             default:
                 return '';
@@ -637,6 +657,9 @@ class Service extends AppModel {
 
             case 17:
                 return $this->getContactsFromZooomr('http://www.zooomr.com/people/' . $account['Account']['username'] . '/contacts/');
+
+            case 18:
+                return $this->getContactsFromOdeo('http://odeo.com/profile/' . $account['Account']['username'] . '/contacts/');
 
             default:
                 return array();
@@ -842,6 +865,17 @@ class Service extends AppModel {
 
     function getContactsFromZooomr($url) {
     	return $this->__getContactsFromUrl($url, '/<h2>(.*)<\/h2>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromOdeo($url) {
+    	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/.*" title="(.*)\'s Profile" rel="contact" id=".*">/iU');
     }
 
     /**
