@@ -141,6 +141,9 @@ class Service extends AppModel {
             case 18: # Odeo
                 return 'http://odeo.com/profile/'.$username.'/rss.xml';
 
+            case 19: # iLike
+                return 'http://ilike.com/user/'.$username.'/recently_played.rss';
+
             default: 
                 return false;
         }
@@ -255,6 +258,10 @@ class Service extends AppModel {
      		        
     		    case 18: # Odeo
     		        $item['content'] = $this->contentFromOdeo($feeditem);
+    		        break;
+     		        
+    		    case 19: # iLike
+    		        $item['content'] = $this->contentFromIlike($feeditem);
     		        break;
 
     		    default:
@@ -484,6 +491,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromiLike($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -533,6 +551,9 @@ class Service extends AppModel {
 
             case 18: # Odeo  
                 return 'http://odeo.com/profile/'.$username.'';
+
+            case 19: # iLike  
+                return 'http://ilike.com/user/'.$username.'';
 
             default:
                 return '';
@@ -660,6 +681,9 @@ class Service extends AppModel {
 
             case 18:
                 return $this->getContactsFromOdeo('http://odeo.com/profile/' . $account['Account']['username'] . '/contacts/');
+
+            case 19:
+                return $this->getContactsFromIlike('http://ilike.com/user/' . $account['Account']['username'] . '/friends');
 
             default:
                 return array();
@@ -876,6 +900,46 @@ class Service extends AppModel {
      */
     function getContactsFromOdeo($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/.*" title="(.*)\'s Profile" rel="contact" id=".*">/iU');
+    }
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromIlike($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<a style=".*" class="person "  href=".*" title="View (.*)\'s profile">/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<a style=".*" class="person "  href=".*" title="View (.*)\'s profile">/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                 if(preg_match('/src="\/images\/forward_arrow.gif" title="Go forward">/iU', $content)) {
+                    $page_url = $url . '?page='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**
