@@ -472,7 +472,7 @@ class AccountsController extends AppController {
         # check, wether the account belongs to the identity
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
-        if(1 == $this->Account->findCount(array('identity_id' => $identity_id,
+        if(1 == $this->Account->findCount(array('identity_id' => isset($identity_id) ? $identity_id : $session_identity['id'],
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();
