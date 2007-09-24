@@ -457,12 +457,14 @@ class AccountsController extends AppController {
             $this->Account->Identity->expects('Identity');
             $about_identity = $this->Account->Identity->findByUsername($splitted['username']);
             if(!$about_identity) {
+                echo 'could not find the identity'; exit;
                 # could not find the identity
                 $this->redirect('/', null, true);
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
+                echo 'this logged in user is not allowed to change something'; exit;
                 # this logged in user is not allowed to change something
                 $this->redirect('/', null, true);
             }
@@ -470,7 +472,7 @@ class AccountsController extends AppController {
         # check, wether the account belongs to the identity
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
-        if(1 == $this->Account->findCount(array('identity_id' => $session_identity['id'],
+        if(1 == $this->Account->findCount(array('identity_id' => $identity_id,
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();
