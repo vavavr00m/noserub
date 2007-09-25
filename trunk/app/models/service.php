@@ -147,6 +147,9 @@ class Service extends AppModel {
             case 20: # wevent
                 return 'http://wevent.org/users/'.$username.'/upcoming.rss';
 
+            case 21: # ImThere
+                return 'http://imthere.com/users/'.$username.'/events?format=rss';
+
             default: 
                 return false;
         }
@@ -269,6 +272,10 @@ class Service extends AppModel {
 
     		    case 20: # wevent
     		        $item['content'] = $this->contentFromWevent($feeditem);
+    		        break;
+
+    		    case 21: # ImThere
+    		        $item['content'] = $this->contentFromImthere($feeditem);
     		        break;
 
     		    default:
@@ -520,6 +527,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromImthere($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -575,6 +593,9 @@ class Service extends AppModel {
 
             case 20: # Wevent  
                 return 'http://wevent.org/users/'.$username.'';
+
+            case 21: # ImThere  
+                return 'http://imthere.com/users/'.$username.'';
 
             default:
                 return '';
@@ -708,6 +729,9 @@ class Service extends AppModel {
 
             case 20:
                 return $this->getContactsFromWevent('http://wevent.org/users/' . $account['Account']['username'] . '');
+
+            case 21:
+                return $this->getContactsFromImThere('http://imthere.com/users/' . $account['Account']['username'] . '/friends');
 
             default:
                 return array();
@@ -925,6 +949,7 @@ class Service extends AppModel {
     function getContactsFromOdeo($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/.*" title="(.*)\'s Profile" rel="contact" id=".*">/iU');
     }
+
     /**
      * Method description
      *
@@ -976,6 +1001,47 @@ class Service extends AppModel {
 
     function getContactsFromWevent($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="\/users\/.*" class="fn url" rel="friend">(.*)<\/a>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromImthere($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<span class="user">(.*)<\/span><\/a>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<span class="user">(.*)<\/span><\/a>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                 if(preg_match('/Next<\/a><\/li>/iU', $content)) {
+                    $page_url = $url . '?page='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**
