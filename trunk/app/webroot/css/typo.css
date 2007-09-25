@@ -174,6 +174,10 @@ dd {
 	background: transparent url(/images/icons/network/video.gif) no-repeat center left;
 }
 
+.event {
+	background: transparent url(/images/icons/network/event.gif) no-repeat center left;
+}
+
 .micropublish {
 	background: transparent url(/images/icons/network/micropublish.gif) no-repeat center left;
 }

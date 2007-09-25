@@ -144,6 +144,9 @@ class Service extends AppModel {
             case 19: # iLike
                 return 'http://ilike.com/user/'.$username.'/recently_played.rss';
 
+            case 20: # wevent
+                return 'http://wevent.org/users/'.$username.'/upcoming.rss';
+
             default: 
                 return false;
         }
@@ -262,6 +265,10 @@ class Service extends AppModel {
      		        
     		    case 19: # iLike
     		        $item['content'] = $this->contentFromIlike($feeditem);
+    		        break;
+
+    		    case 20: # wevent
+    		        $item['content'] = $this->contentFromWevent($feeditem);
     		        break;
 
     		    default:
@@ -502,6 +509,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromWevent($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -554,6 +572,9 @@ class Service extends AppModel {
 
             case 19: # iLike  
                 return 'http://ilike.com/user/'.$username.'';
+
+            case 20: # Wevent  
+                return 'http://wevent.org/users/'.$username.'';
 
             default:
                 return '';
@@ -684,6 +705,9 @@ class Service extends AppModel {
 
             case 19:
                 return $this->getContactsFromIlike('http://ilike.com/user/' . $account['Account']['username'] . '/friends');
+
+            case 20:
+                return $this->getContactsFromWevent('http://wevent.org/users/' . $account['Account']['username'] . '');
 
             default:
                 return array();
@@ -940,6 +964,18 @@ class Service extends AppModel {
         } while(1);
         
         return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+
+    function getContactsFromWevent($url) {
+    	return $this->__getContactsFromUrl($url, '/<a href="\/users\/.*" class="fn url" rel="friend">(.*)<\/a>/iU');
     }
 
     /**

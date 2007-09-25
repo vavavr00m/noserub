@@ -78,7 +78,7 @@ img, acronym {
 	color: #999999;
 }
 
-.link, .text, .photo, .audio, .video, .micropublish {
+.link, .text, .photo, .audio, .video, .event, .micropublish {
 	padding: 5px 20px 5px 25px;
 }
 
