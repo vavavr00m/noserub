@@ -150,6 +150,9 @@ class Service extends AppModel {
             case 21: # ImThere
                 return 'http://imthere.com/users/'.$username.'/events?format=rss';
 
+            case 22: # Newsvine
+                return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
+
             default: 
                 return false;
         }
@@ -276,6 +279,10 @@ class Service extends AppModel {
 
     		    case 21: # ImThere
     		        $item['content'] = $this->contentFromImthere($feeditem);
+    		        break;
+
+    		    case 22: # Newsvine
+    		        $item['content'] = $this->contentFromNewsvine($feeditem);
     		        break;
 
     		    default:
@@ -538,6 +545,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromNewsvine($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -596,6 +614,9 @@ class Service extends AppModel {
 
             case 21: # ImThere  
                 return 'http://imthere.com/users/'.$username.'';
+
+            case 22: # Newsvine  
+                return 'http://'.$username.'.newsvine.com/';
 
             default:
                 return '';
@@ -732,6 +753,9 @@ class Service extends AppModel {
 
             case 21:
                 return $this->getContactsFromImThere('http://imthere.com/users/' . $account['Account']['username'] . '/friends');
+
+            case 22:
+                return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
 
             default:
                 return array();
@@ -1026,6 +1050,48 @@ class Service extends AppModel {
                 }
                  if(preg_match('/Next<\/a><\/li>/iU', $content)) {
                     $page_url = $url . '?page='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
+    }
+
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromNewsvine($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<td><a href="http:\/\/.*.newsvine.com".*>(.*)<\/a>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<td><a href="http:\/\/.*.newsvine.com".*>(.*)<\/a>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                 if(preg_match('/title="Next 50">NEXT 50<\/a>/iU', $content)) {
+                    $page_url = $url . $i;
                     $i++;
                     if($i>1000) {
                         # just to make sure, we don't loop forever
