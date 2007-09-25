@@ -631,7 +631,8 @@ class Service extends AppModel {
      * @return array
      * @access 
      */
-    function getInfoFromFeed($feed_url, $max_items = 5) {
+    function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
+        # needed for autodiscovery of feed
         vendor('simplepie/simplepie');
         $feed = new SimplePie();
         $feed->set_cache_location(CACHE . 'simplepie');
@@ -645,25 +646,24 @@ class Service extends AppModel {
         $data['title']       = $feed->get_title();
         $data['account_url'] = $feed->get_link();
         $data['feed_url']    = $feed->feed_url;
+        
+        unset($feed);
+        
         if(!$data['account_url']) {
             $data['account_url'] = $data['feed_url'];
         }
-        $data['service_id']  = 8; # any RSS-Feed
-        $data['username']    = 'RSS-Feed';
+        $data['service_id']      = 8; # any RSS-Feed
+        $data['username']        = 'RSS-Feed';
+        $data['service_type_id'] = $service_type_id;
         
-        $data['items'] = array();         
-        for($i=0; $i < $feed->get_item_quantity($max_items); $i++) {
-    		$feeditem = $feed->get_item($i);
-    		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
-    		$item['url']      = $feeditem->get_link();
-            $item['title']    = $feeditem->get_title();
-            $item['content']  = $feeditem->get_content();
-            
-            $data['items'][] = $item;
-    	}
+        $items = $this->feed2array($username, 8, $data['service_type_id'], $data['feed_url'], 5, null);
     	
-    	unset($feed);
-    	
+    	if(!$items) {
+            return false;
+        }
+        
+        $data['items'] = $items;
+        
     	return $data;
     }
     

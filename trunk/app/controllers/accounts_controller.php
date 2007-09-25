@@ -178,7 +178,7 @@ class AccountsController extends AppController {
         
         if($this->data) {
             # get title, url and preview
-            $data = $this->Account->Service->getInfoFromFeed($this->data['Account']['feed_url']);    
+            $data = $this->Account->Service->getInfoFromFeed($splitted['username'], $this->data['Account']['service_type_id'], $this->data['Account']['feed_url']);    
             if(!$data) {
                 $this->Account->invalidate('feed_url', 1);
             } else {
@@ -231,13 +231,13 @@ class AccountsController extends AppController {
                                       'modified');
                     $this->Account->create();
                     $this->Account->save($data);
-                
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+
+                    if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         # save feed information to cache
                         $this->Account->Feed->store($this->Account->id, $data['items']);
                     }
                     
-                    if($this->Session->read('Service.add.account.is_logged_in_user')) {
+                    if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
                         # test, if we can find friends from this account
                         $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
                         if(!empty($contacts)) {
