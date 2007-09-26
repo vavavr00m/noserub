@@ -124,6 +124,36 @@ class Identity extends AppModel {
     }
     
     /**
+     * Is used, when an account is closed, so that the username
+     * remains, but every other personal data is deleted.
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function block($identity_id = null) {
+        if($identity_id === null) {
+            $identity_id = $this->id;
+        }
+        
+        $data = array('id'                => $identity_id,
+                      'password'          => '',
+                      'hash'              => '#deleted#',
+                      'email'             => '',
+                      'firstname'         => '',
+                      'lastname'          => '',
+                      'address'           => '',
+                      'latitude'          => 0,
+                      'longitude'         => 0,
+                      'birthday'          => '1900-01-01',
+                      'sex'               => 0,
+                      'frontpage_updates' => 0);
+        $saveable = array_keys($data);
+        $saveable[] = 'modified';
+        $this->save($data, false, $saveable);
+    }
+    
+    /**
      * extract single information out of a username
      * a username may have the following occurences:
      * (1) noserub.com/dirk.olbertz

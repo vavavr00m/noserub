@@ -21,9 +21,10 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile') {
 } else if($menu['main'] == 'settings') {
     $noserub_url = '/' . $username . '/settings/';
     $sub_menu = array(
-        'profile'  => array('Profile', $noserub_url . 'profile/'),
-        'privacy'  => array('Privacy', $noserub_url . 'privacy/'),
-        'password' => array('Password', $noserub_url . 'password/') 
+        'profile'  => array('Profile',  $noserub_url . 'profile/'),
+        'privacy'  => array('Privacy',  $noserub_url . 'privacy/'),
+        'password' => array('Password', $noserub_url . 'password/'),
+        'account'  => array('Delete account',  $noserub_url . 'account/') 
     );
 }
 

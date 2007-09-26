@@ -68,6 +68,11 @@ class MenuComponent extends Object {
                         $main_menu = 'settings'; 
                         $sub_menu  = 'password'; 
                         break;
+                        
+                    case 'account_settings':
+                        $main_menu = 'settings';
+                        $sub_menu  = 'account';
+                        break;
                 }
                 break;
             

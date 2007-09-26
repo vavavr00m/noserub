@@ -45,6 +45,7 @@ Router::connect('/pages/login/', array('controller' => 'identities', 'action' =>
 Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
@@ -71,6 +72,7 @@ Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xr
 
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
+Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));

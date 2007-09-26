@@ -249,6 +249,48 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
+    function account_settings() {
+        $this->checkSecure();
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            $data = $this->data;
+            $data['Identity']['username'] = $splitted['username'];
+            $data['Identity']['password'] = $data['Identity']['passwd'];
+            if($this->Identity->check($data)) {
+                if($this->data['Identity']['confirm'] == 0) {
+                    $this->set('confirm_error', 'In order to delete your account, please check the check box.');
+                } else if($this->data['Identity']['confirm'] == 1) {
+                    $identity_id = $session_identity['id'];
+                    $this->Identity->Account->deleteByIdentityId($identity_id);
+                    $this->Identity->Contact->deleteByIdentityId($identity_id, $session_identity['local_username']);
+                    $this->Identity->block($identity_id);
+                    $this->Session->delete('Identity');
+                    $this->redirect('/pages/account/deleted/', null, true);
+                }
+            } else {
+                $this->Identity->invalidate('passwd');
+            }
+        }
+        
+        $this->set('headline', 'Delete your account');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function login() {
         $this->checkSecure();
         $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
@@ -337,6 +379,17 @@ class IdentitiesController extends AppController {
      */
     function register_thanks() {
         $this->set('headline', 'Thanks for your registration!');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function account_deleted() {
+        $this->set('headline', 'Account deleted');
     }
     
     /**
