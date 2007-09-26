@@ -12,6 +12,7 @@
 		var $uses = array();
 		
 		function index() {
+                        $server  = $this->__getOpenIDServer();
 			$request = $this->__getOpenIDRequest();
 			
 			if (!isset($request->mode)) {
