@@ -12,8 +12,8 @@
 		var $uses = array();
 		
 		function index() {
-                        $server  = $this->__getOpenIDServer();
-			$request = $this->__getOpenIDRequest();
+			$server = $this->__getOpenIDServer();
+			$request = $this->__getOpenIDRequest($server);
 			
 			if (!isset($request->mode)) {
 				$this->set('headline', 'OpenID server endpoint');
@@ -49,10 +49,11 @@
 			
 			if ($this->Session->check($sessionKey)) {
 				$request = $this->Session->read($sessionKey);
+				$sregRequest = Auth_OpenID_SRegRequest::fromOpenIDRequest($request->message);
 				
 				if (empty($this->params['form'])) {
-					$this->set('required', $this->__prepareSRegData($this->__extractSRegData($request, 'required')));
-					$this->set('optional', $this->__prepareSRegData($this->__extractSRegData($request, 'optional')));
+					$this->set('required', $this->__prepareSRegData($sregRequest->required));
+					$this->set('optional', $this->__prepareSRegData($sregRequest->optional));
 					
 					$this->set('trustRoot', $request->trust_root);
 					$this->set('identity', $request->identity);
@@ -61,10 +62,10 @@
 					$this->Session->delete($sessionKey);
 					$answer = (isset($this->params['form']['Allow'])) ? true : false;
 					$response = $request->answer($answer);
-					
+
 					if ($answer) {
-						$data = am($this->__prepareSRegData($this->__extractSRegData($request, 'required')), 
-								   $this->__prepareSRegData($this->__extractSRegData($request, 'optional')));
+						$data = am($this->__prepareSRegData($sregRequest->required),
+								   $this->__prepareSRegData($sregRequest->optional));						
 						
 						Auth_OpenID_sendSRegFields($request, $data, $response);
 					}
@@ -82,20 +83,13 @@
 			$this->set('server', Router::url('/'.low($this->name), true));
 		}
 		
-		function __extractSRegData($request, $field) {
-			$data = explode(',', $request->message->args->get(array('http://openid.net/extensions/sreg/1.1', $field)));
-			
-			return $data;
-		}
-		
-		function __getOpenIDRequest() {
+		function __getOpenIDRequest($server) {
 			$sessionKey = self::SESSION_KEY_FOR_LAST_OPENID_REQUEST;
 			
 			if ($this->Session->check($sessionKey)) {
 				$request = $this->Session->read($sessionKey);
 				$this->Session->delete($sessionKey);
 			} else {
-				$server = $this->__getOpenIDServer();
 				$request = $server->decodeRequest();
 			}
 			
@@ -146,7 +140,7 @@
 		function __renderResponse($response) {
 			$server = $this->__getOpenIDServer();
 			$webResponse = $server->encodeResponse($response);
-		
+
 			if ($webResponse->code == 200) {
 				echo $webResponse->body;
 				exit;
