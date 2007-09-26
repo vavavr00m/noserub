@@ -269,8 +269,7 @@ class IdentitiesController extends AppController {
         } else {
         	if ($this->Session->check($sessionKeyForOpenIDRequest)) {
         		$request = $this->Session->read($sessionKeyForOpenIDRequest);
-        		$username = str_replace(FULL_BASE_URL.'/', '', $request->identity);
-        		$this->data['Identity']['username'] = $username;
+        		$this->data['Identity']['username'] = $request->identity;
         	}
         }
         
