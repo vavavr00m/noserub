@@ -163,14 +163,14 @@ class Service extends AppModel {
      *
      * @param  $service_id id of the service, we're about to use
      * @param  $service_type_id of the service, we're about to use
-     * @param  $feedurl the url of the feed
+     * @param  $feed_url the url of the feed
      * @param  $items_per_feed maximum number of items that are fetched from the feed
      * @param  $items_max_age maximum age of any item that is fetched from feed, in days
      * @return 
      * @access 
      */
-    function feed2array($username, $service_id, $service_type_id, $feedurl, $items_per_feed = 5, $items_max_age = '-21 days') {
-        if(!$feedurl) {
+    function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
+        if(!$feed_url) {
             return false;
         }
         
@@ -185,12 +185,13 @@ class Service extends AppModel {
 
         $feed = new SimplePie();
         $feed->set_cache_location(CACHE . 'simplepie');
-        $feed->set_feed_url($feedurl);
+        $feed->set_feed_url($feed_url);
+        $feed->set_autodiscovery_level(SIMPLEPIE_LOCATOR_NONE);
         $feed->init();
-        if($feed->error()) {
+        if($feed->error() || $feed->feed_url != $feed_url ) {
             return false;
         }
-        
+
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
     		$feeditem = $feed->get_item($i);
     		# create a NoseRub item out of the feed item
@@ -368,38 +369,6 @@ class Service extends AppModel {
         # cut off the username
         $content = $feeditem->get_content();
         return substr($content, strpos($content, ': ') + 2);
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function contentFromUpcoming($feedurl, $items_per_feed) {
-        $content = file_get_contents($feedurl);
-        
-        preg_match_all('/<div class="upb_date"><span class="upb_text">(.*)<\/span>/isU', $content, $dates);
-        preg_match_all('/<span class="upb_title upb_text">(.*)<\/span>/isU', $content, $events);
-
-        $result = array();
-        if(count($dates[1]) == count($dates[1])) {
-            foreach($dates[1] as $idx => $date) {
-                $norm_date = substr($date, 6, 4) . '-' . substr($date, 3, 2) . '-' . substr($date, 0, 2) . ' 12:00:00';
-                if(preg_match('/<a href="(.*)">/i', $events[1][$idx], $matches)) {
-                    $link = $matches[1];
-                } else {
-                    $link = '';
-                }
-                $result[] = array(
-                    'datetime' => $norm_date,
-                    'url'      => $link,
-                    'content'  => $events[1][$idx]);
-            }
-        }
-        
-        return $result;
     }
 
     /**
@@ -626,7 +595,7 @@ class Service extends AppModel {
     /**
      * get title, url and preview for rss-feed
      *
-     * @param string $feedurl 
+     * @param string $feed_url 
      * @param int $max_items maximum number of items to fetch
      * @return array
      * @access 
@@ -637,6 +606,7 @@ class Service extends AppModel {
         $feed = new SimplePie();
         $feed->set_cache_location(CACHE . 'simplepie');
         $feed->set_feed_url($feed_url);
+        $feed->set_autodiscovery_level(SIMPLEPIE_LOCATOR_ALL);
         @$feed->init();
         if($feed->error()) {
             return false;
