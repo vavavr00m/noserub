@@ -3,6 +3,15 @@
     check back after each update you install, because new Defines may have
     been introduced and/or changes in the Database structure been made.
 </p>
+<h1>Extension</h1>
+    Status:
+<?php if(empty($extensions)) { ?>
+    <strong>OK</strong>
+<?php } else { ?>
+    <?php foreach($extensions as $extension => $reason) { ?>
+        <li><?php echo '<strong>' . $extension . '</strong>: ' . $reason; ?></li>
+    <?php } ?>
+<?php } ?>
 <h1>Directories</h1>
     Status:
 <?php if(empty($directories)) { ?>

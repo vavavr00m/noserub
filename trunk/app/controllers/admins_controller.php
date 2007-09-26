@@ -20,6 +20,9 @@ class AdminsController extends AppController {
             $this->render('../elements/hash_not_valid');
             exit;
         }
+
+        $extensions = $this->Admin->checkExtensions();
+        $this->set('extensions', $extensions);
         
         $directories = $this->Admin->checkWriteable();
         $this->set('directories', $directories);

@@ -79,6 +79,21 @@ class Admin extends AppModel {
     }
     
     /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function checkExtensions() {
+        if(function_exists('gmp_init') || function_exists('bcscale')) {
+            return array();
+        } else {
+            return array('GMP or BCMath' => 'needed for OpenID functionality');
+        }
+    }
+    
+    /**
      * Tests, wether the database is working, or not
      *
      * @param  
