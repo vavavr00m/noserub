@@ -27,9 +27,9 @@
                     $account_url = isset($item['Account']['account_url']) ? $item['Account']['account_url'] : $item['account_url'];
                     ?><tr>
                         <?php if($item['Service']['id'] == 8) { ?>
-                            <td colspan="2"><?php echo trim(str_replace('http://', '', $account_url), '/'); ?></td>
+                            <td colspan="2"><a rel="me" href="<?php echo $account_url; ?>"><?php echo trim(str_replace('http://', '', $account_url), '/'); ?></a></td>
                         <?php } else { ?>
-                            <td><?php echo $username; ?></td>
+                            <td><a rel="me" href="<?php echo $account_url; ?>"><?php echo $username; ?></a></td>
                             <td><?php echo $item['Service']['name']; ?></td>
                         <?php } ?>
                         <td><?php if($show_action_links) {
