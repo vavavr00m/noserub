@@ -11,6 +11,7 @@
          xmlns:rel="http://purl.org/vocab/relationship/" 
          xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
 
+<foaf:Person rdf:nodeID="<?php echo $data['Identity']['username']; ?>">
 <?php if($data['Identity']['firstname'] != '') { ?>
     <foaf:firstname><?php echo $data['Identity']['firstname']; ?></foaf:firstname>
 <?php } ?>
@@ -42,5 +43,16 @@
         <?php } ?>
     </foaf:holdsAccount>
 <?php } ?>
+
+<?php foreach($data['Contact'] as $contact) {
+    if(strpos($contact['WithIdentity']['username'], '@') === false) { ?>
+        <foaf:knows>
+            <foaf:Person>
+                <rdfs:seeAlso rdf:resource="http://<?php echo $contact['WithIdentity']['username']; ?>"/>
+            </foaf:Person>
+        </foaf:knows>
+    <?php } ?>
+<?php } ?>
+</foaf:Person>
 </rdf:RDF>	
 -->
