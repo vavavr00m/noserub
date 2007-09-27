@@ -14,7 +14,7 @@
 		function index() {
 			$server = $this->__getOpenIDServer();
 			$request = $this->__getOpenIDRequest($server);
-			
+
 			if (!isset($request->mode)) {
 				$this->set('headline', 'OpenID server endpoint');
 				$this->render('server_endpoint');
@@ -37,8 +37,12 @@
 							$response = $request->answer(false);
 						}
 					} else {
-						$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
-						$this->redirect('/pages/login/', null, true);
+						if ($request->immediate) {
+							$response = $request->answer(false, FULL_BASE_URL . $this->here);
+						} else {
+							$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
+							$this->redirect('/pages/login/', null, true);
+						}
 					}
 				} else {
 					$response = $server->handleRequest($request);
