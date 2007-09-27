@@ -27,8 +27,12 @@
 						$requestIdentity = str_replace('http://', '', $requestIdentity);
 						
 						if ($identity['username'] == $requestIdentity) {
-							$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
-							$this->redirect('/auth/trust', null, true);
+							if ($request->immediate) {
+								$response = $request->answer(true);
+							} else {
+								$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
+								$this->redirect('/auth/trust', null, true);
+							}
 						} else {
 							$response = $request->answer(false);
 						}
