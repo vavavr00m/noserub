@@ -81,7 +81,7 @@ class Identity extends AppModel {
         $data['Identity']['password'] = md5($data['Identity']['passwd']);
         $data['Identity']['username'] = $splitted['username'];
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        $saveable = array('is_local', 'username', 'password', 'email', 'hash', 'created', 'modified');
+        $saveable = array('is_local', 'username', 'password', 'email', 'hash', 'frontpage_updates', 'created', 'modified');
         if(!$this->save($data, true, $saveable)) {
             return false;
         }

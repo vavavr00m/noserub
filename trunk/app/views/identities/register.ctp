@@ -21,6 +21,13 @@
                                                         'label' => 'Password repeated', 
                                                         'error' => 'Passwords must match')); 
         ?>
+    </fieldset>
+    <p>
+        You can change the following privacy settings everytime you like. Just 
+        go to the Settings, once you are logged in.
+    </p>
+    <?php echo $this->renderElement('identities/privacy_settings'); ?>
+    <fieldset>
         <input class="submitbutton" type="submit" value="Register"/>
     </fieldset>
 </form>

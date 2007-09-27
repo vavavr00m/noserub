@@ -350,6 +350,9 @@ class IdentitiesController extends AppController {
                 $url = $this->url->http('/pages/register/thanks/');
                 $this->redirect($url, null, true);
             }
+        } else {
+            # set default value for this privacy setting
+            $this->data = array('Identity' => array('frontpage_updates' => 1));
         }
 
         $this->set('headline', 'Register a new NoseRub account');

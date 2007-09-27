@@ -17,6 +17,7 @@ class PagesController extends AppController {
         $this->Identity->expects('Identity');
         $this->set('identities', $this->Identity->findAll(array('is_local' => 1,
                                                                 'frontpage_updates' => 1,
+                                                                'hash' => '',
                                                                 'NOT username LIKE "%@%"'), null, 'created DESC', 10));
         $this->render('home');
     }
