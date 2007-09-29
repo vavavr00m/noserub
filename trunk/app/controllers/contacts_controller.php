@@ -264,7 +264,7 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function ad_as_contact() {
+    function add_as_contact() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
