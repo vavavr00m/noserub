@@ -129,8 +129,9 @@ class ContactsController extends AppController {
                     }
                 }
             } else {
-                # we should never come here
-                $this->redirect('/', null, true);
+                # we should never come here, unless the username doesn't validate
+            	$this->render();
+                exit;
             }
         }
         
