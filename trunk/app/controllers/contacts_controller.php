@@ -63,10 +63,10 @@ class ContactsController extends AppController {
             # check, wether this should be a local contact or a real noserub contact
             if(isset($this->params['form']['add'])) {
                 # this is a contact with a NoseRub-ID
-                $identity_username = $this->data['Contact']['noserub_id'];
+                $identity_username = trim($this->data['Contact']['noserub_id']);
                 $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username);
                 # so, check, if this is really the case
-                if(strpos($identity_username_splitted['username'], '/') === false) {
+                if(strpos($identity_username_splitted['username'], '/') === false || $identity_username === '') {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
                     exit;
