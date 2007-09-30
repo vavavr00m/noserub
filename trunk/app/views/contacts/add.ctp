@@ -15,7 +15,8 @@
                                     'size'  => 32,
                                     'error' => array(
                                         'user_not_found'      => 'This user could not be found at the other server',
-                                        'no_valid_noserub_id' => 'This is no valid NoseRub-ID. It must contain at least one "/"!'))); 
+                                        'no_valid_noserub_id' => 'This is no valid NoseRub-ID. It must contain at least one "/"!',
+                                        'own_noserub_id'      => 'You cannot add yourself as a contact.'))); 
         ?>
         <input type="submit" value="Add" name="add" class="submitbutton">
     </fieldset>

@@ -58,6 +58,7 @@ class ContactsController extends AppController {
             # this is not the logged in user
             $this->redirect('/', null, true);
         }
+        
         if($this->data) {
             $this->Contact->data = $this->data;
             # check, wether this should be a local contact or a real noserub contact
@@ -71,10 +72,19 @@ class ContactsController extends AppController {
                     $this->render();
                     exit;
                 }
-               
+                
+                # check, if this is the logged in user
+                if($session_identity['username'] == $identity_username_splitted['username'] ||
+                   'www.'.$session_identity['username'] == $identity_username_splitted['username']) {
+                    $this->Contact->invalidate('noserub_id', 'own_noserub_id');
+                    $this->render();
+                    exit;       
+                }
+                
                 # see, if we already have it
                 $identity = $this->Contact->Identity->findByUsername($identity_username_splitted['username']);
                 if(!$identity) {
+                    # no, so create the new identity
                     $this->Contact->Identity->create();
                     $identity = array('username' => $identity_username_splitted['username']);
                     $saveable = array('username');
@@ -279,6 +289,12 @@ class ContactsController extends AppController {
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
         $identity = $this->Contact->Identity->findByUsername($splitted['username'], array('Identity.id'));
+        
+        if($session_identity['id'] == $identity['Identity']['id']) {
+            # this is the logged in user. no reason to allow him to add
+            # himself as contact.
+            $this->redirect('/' . $splitted['local_username'], null, true);
+        }
         
         # test, if there isn't already a contact
         $this->Contact->recursive = 0;

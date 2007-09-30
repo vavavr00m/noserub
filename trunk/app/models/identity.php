@@ -282,6 +282,8 @@ class Identity extends AppModel {
         if(!$content) {
             return false;
         }
+        
+        preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
         preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
         preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
@@ -292,6 +294,8 @@ class Identity extends AppModel {
         preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
         preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
         
+        
+        #echo 'NOSERUB-ID<pre>'; print_r($noserub_id); echo '</pre>';
         #echo 'FIRSTNAME<pre>'; print_r($firstname); echo '</pre>';
         #echo 'LASTNAME<pre>'; print_r($lastname); echo '</pre>';
         #echo 'GENDER<pre>'; print_r($gender); echo '</pre>';
@@ -300,6 +304,10 @@ class Identity extends AppModel {
         #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
         #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
         #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
+        
+        if(empty($noserub_id)) {
+            return false;
+        }
         
         $result = array('accounts' => array(),
                         'identity' => array());
