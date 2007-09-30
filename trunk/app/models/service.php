@@ -684,7 +684,10 @@ class Service extends AppModel {
                 
             case 2:
                 return $this->getContactsFromDelicious('http://del.icio.us/network/' . $account['Account']['username'] . '/');
-                
+
+            case 3:
+                return $this->getContactsFromIpernity('http://ipernity.com/user/' . $account['Account']['username'] . '/network');
+
             case 5:
                 return $this->getContactsFromTwitter('http://twitter.com/' . $account['Account']['username'] . '/');
             
@@ -785,6 +788,47 @@ class Service extends AppModel {
      */
     function getContactsFromDelicious($url) {
     	return $this->__getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromIpernity($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<span style="font-size:16px;line-height:130%">(.*)<\/span>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<span style="font-size:16px;line-height:130%">(.*)<\/span>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/>next &rarr;<\/a>/iU', $content)) {
+                    $page_url = $url . '|R58%3Bord%3D3%3Boff%3D0?r[off]='.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**
