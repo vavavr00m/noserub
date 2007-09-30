@@ -687,6 +687,9 @@ class Service extends AppModel {
                 
             case 5:
                 return $this->getContactsFromTwitter('http://twitter.com/' . $account['Account']['username'] . '/');
+            
+            case 9:
+                return $this->getContactsFromUpcoming('http://upcoming.yahoo.com/user/' . $account['Account']['username'] . '/');
                 
             case 10:
                 return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
@@ -782,6 +785,17 @@ class Service extends AppModel {
      */
     function getContactsFromDelicious($url) {
     	return $this->__getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromUpcoming($url) {
+    	return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
 
     /**
