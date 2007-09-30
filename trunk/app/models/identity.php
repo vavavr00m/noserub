@@ -223,6 +223,14 @@ class Identity extends AppModel {
      * @access 
      */
     function sanitizeUsername($username) {
+        $username = str_replace('ä', 'ae', $username);
+        $username = str_replace('ö', 'oe', $username);
+        $username = str_replace('ü', 'ue', $username);
+        $username = str_replace('ß', 'ss', $username);
+        $username = str_replace('Ä', 'Ae', $username);
+        $username = str_replace('Ö', 'Oe', $username);
+        $username = str_replace('Ü', 'Ue', $username);
+        
         $username = preg_replace('/[^\w\s.-]/', null, $username);
         return $username;
     }

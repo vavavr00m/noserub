@@ -145,6 +145,20 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $this->assertEqual($expected, $result);
 	}
 	
+	function testSanitizeUsername7() {
+	    $username = 'Pötter';
+	    $expected = 'Poetter';
+	    $result = $this->model->sanitizeUsername($username);
+	    $this->assertEqual($expected, $result);
+	}
+	
+	function testSanitizeUsername8() {
+	    $username = 'äöüßÄÖÜ';
+	    $expected = 'aeoeuessAeOeUe';
+	    $result = $this->model->sanitizeUsername($username);
+	    $this->assertEqual($expected, $result);
+	}
+	
 	function tearDown() {
 	    unset($this->model);
 	}
