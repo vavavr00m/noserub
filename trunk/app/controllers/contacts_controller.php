@@ -137,6 +137,10 @@ class ContactsController extends AppController {
                             $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
                         }
                     }
+                } else {
+                	$this->Contact->invalidate('username', 'unique');
+                    $this->render();
+                    exit;
                 }
             } else {
                 # we should never come here, unless the username doesn't validate
