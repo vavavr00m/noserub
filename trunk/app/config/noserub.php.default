@@ -72,3 +72,23 @@ define('NOSERUB_USE_SSL', false);
  * If set to false, no geocoding is done.
  */
 define('NOSERUB_GOOGLE_MAPS_KEY', false);
+
+/**
+ * For better reliability, NoseRub can store some data to
+ * a Content Delivery Network (CDN). You can enable the
+ * usage of a CDN here. Please make sure you provide
+ * access information to your CDN below.
+ */
+define('NOSERUB_USE_CDN', false);
+
+/**
+ * You need to enter this three fields, when you want to
+ * use Amazon S3 (http://s3.amazonaws.com) as CDN.
+ * The access- and secret key will be provided in the settings
+ * section of Amazon S3. You will need to craete one "Bucket"
+ * yourself. All data for this NoseRub installation will be
+ * stored in that bucket.
+ */
+define('NOSERUB_CDN_S3_ACCESS_KEY', '');
+define('NOSERUB_CDN_S3_SECRET_KEY', '');
+define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
