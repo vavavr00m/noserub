@@ -23,9 +23,7 @@
 		}
 		
 		function testServerLinkNotInline() {
-			// required because of https://trac.cakephp.org/ticket/3241
-			ClassRegistry::removeObject('view');
-			$view = new View(new AppController());
+			$view = $this->__createView();
 			$this->helper->serverLink($this->url, false);
 			$renderedLayout = $view->renderLayout('');
 			$this->assertPattern('#<head>.*?<link rel="openid.server" href="'.$this->url.'" />.*?</head>#s', $renderedLayout);
@@ -44,12 +42,25 @@
 		}
 		
 		function testXrdsLocationNotInline() {
-			// required because of https://trac.cakephp.org/ticket/3241
-			ClassRegistry::removeObject('view');
-			$view = new View(new AppController());
+			$view = $this->__createView();
 			$this->helper->xrdsLocation($this->url, false);
 			$renderedLayout = $view->renderLayout('');
 			$this->assertPattern('#<head>.*?<meta http-equiv="X-XRDS-Location" content="'.$this->url.'" />.*?</head>#si', $renderedLayout);
+		}
+		
+		function __createView() {
+			// required because of https://trac.cakephp.org/ticket/3241
+			ClassRegistry::removeObject('view');
+			
+			$view = new View(new AppController());
+        	$view->set('menu', array('main' => '',
+                      	 			 'sub'  => '',
+                      	 			 'model'     => '',
+                      	 			 'action'    => '',
+                   		 			 'filter'    => '',
+                      	 			 'logged_in' => ''));
+			
+			return $view;
 		}
 	}
 ?>
