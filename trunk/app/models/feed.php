@@ -17,6 +17,14 @@ class Feed extends AppModel {
             return;
         }
         
+        # find the newest item in cache_data
+        $date_newest_item = '2007-01-01 00:00:01';
+        foreach($cache_data as $item) {
+            if($item['datetime'] > $date_newest_item) {
+                $date_newest_item = $item['datetime'];
+            }
+        }
+        
         # check, if there already is a feed for this account in the feed
         $this->recursive = 0;
         $this->expects('Feed');
@@ -27,10 +35,11 @@ class Feed extends AppModel {
             $this->create();
         }
         
-        $saveable = array('account_id', 'priority', 'content', 'created', 'modified');
-        $data = array('account_id' => $account_id,
-                      'priority'   => 0,
-                      'content'    => @serialize($cache_data));
+        $saveable = array('account_id', 'priority', 'content', 'date_newest_item', 'created', 'modified');
+        $data = array('account_id'       => $account_id,
+                      'priority'         => 0,
+                      'content'          => @serialize($cache_data),
+                      'date_newest_item' => $date_newest_item);
         $this->save($data);
     }
 
