@@ -101,7 +101,9 @@ class ContactsController extends AppController {
                         exit;
                     }
                 } else {
-                    $new_identity_id = $identity['Identity']['id'];
+                	$this->Contact->invalidate('noserub_id', 'unique');
+                    $this->render();
+                    exit;
                 }
                 
                 # now create the contact relationship
