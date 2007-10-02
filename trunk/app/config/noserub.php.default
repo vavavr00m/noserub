@@ -85,7 +85,7 @@ define('NOSERUB_USE_CDN', false);
  * You need to enter this three fields, when you want to
  * use Amazon S3 (http://s3.amazonaws.com) as CDN.
  * The access- and secret key will be provided in the settings
- * section of Amazon S3. You will need to craete one "Bucket"
+ * section of Amazon S3. You will need to create one "Bucket"
  * yourself. All data for this NoseRub installation will be
  * stored in that bucket.
  */
