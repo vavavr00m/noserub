@@ -9,6 +9,7 @@
 	class AuthController extends AppController {
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
 		const SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST = 'Noserub.authenticatedOpenIDRequest';
+		const OPENID_ENDPOINT_URL = '/auth';
 		var $uses = array();
 		
 		function index() {
@@ -28,7 +29,7 @@
 						
 						if ($identity['username'] == $requestIdentity) {
 							if ($request->immediate) {
-								$response = $request->answer(true);
+								$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 							} else {
 								$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
 								$this->redirect('/auth/trust', null, true);
@@ -38,7 +39,7 @@
 						}
 					} else {
 						if ($request->immediate) {
-							$response = $request->answer(false, FULL_BASE_URL . $this->here);
+							$response = $request->answer(false, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 						} else {
 							$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
 							$this->redirect('/pages/login/', null, true);
@@ -69,7 +70,7 @@
 				} else {
 					$this->Session->delete($sessionKey);
 					$answer = (isset($this->params['form']['Allow'])) ? true : false;
-					$response = $request->answer($answer);
+					$response = $request->answer($answer, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 
 					if ($answer) {
 						$data = am($this->__prepareSRegData($sregRequest->required),
