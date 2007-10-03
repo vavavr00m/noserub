@@ -167,9 +167,12 @@ class Identity extends AppModel {
      * @access 
      */
     function splitUsername($username) {
-        # first, remove http:// and https://
-        $username = str_replace('http://', '', $username);
-        $username = str_replace('https://', '', $username);
+        # first, remove http://, https:// and www.
+        $username = str_ireplace('http://', '', $username);
+        $username = str_ireplace('https://', '', $username);
+        if(stripos($username, 'www.') === 0) {
+            $username = str_ireplace('www.', '', $username);
+        }
         
         # remove trailing slashes
         $username = trim($username, '/');
@@ -186,8 +189,8 @@ class Identity extends AppModel {
             # be for this server
             $local_username = $splitted[0];
             $username = FULL_BASE_URL . Router::url('/') . $local_username;
-            $username = str_replace('http://', '', $username);
-            $username = str_replace('https://', '', $username);
+            $username = str_ireplace('http://', '', $username);
+            $username = str_ireplace('https://', '', $username);
         } else {
             $local_username = array_pop($splitted);
             $username = join('/', $splitted) . '/' . $local_username;
@@ -197,10 +200,12 @@ class Identity extends AppModel {
         $local_username_namespace = split('@', $local_username);
         
         # test, if this is a local contact, or not
-        $server_name = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-        $server_name = str_replace('https://', '', $server_name);
-        $local = strpos($username, $server_name) === 0;
-        
+        $server_name = str_ireplace('http://', '', FULL_BASE_URL . Router::url('/'));
+        $server_name = str_ireplace('https://', '', $server_name);
+        if(stripos($server_name, 'www.') === 0) {
+            $server_name = str_ireplace('www.', '', $server_name);
+        }
+        $local = stripos($username, $server_name) === 0;
         $result = array('username'        => $username,
                         'local_username'  => $local_username,
                         'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
