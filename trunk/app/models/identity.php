@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Contact', 'Account');
+    var $hasMany = array('Contact', 'Account', 'OpenidSite');
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
