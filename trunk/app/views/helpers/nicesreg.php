@@ -3,6 +3,17 @@
  * Helper to format SReg data.
  */
 class NiceSRegHelper extends AppHelper {
+	var $helpers = array('Form');
+	var $supportedFields = array('gender', 'email', 'fullname');
+	
+	// TODO maybe a better name is needed?
+	public function checkboxForSupportedFields($key) {
+		if (in_array($key, $this->supportedFields)) {
+			return $this->Form->checkBox('OpenidSite.'.$key, array('checked' => true));
+		}
+		
+		return '';
+	}
 	
 	public function key($key) {
 		if ($key == 'dob') {
@@ -13,11 +24,10 @@ class NiceSRegHelper extends AppHelper {
 	}
 	
 	public function value($key, $value) {
-		$supportedFields = array('gender', 'email', 'fullname');
 		$unsupportedFields = array('nickname', 'dob', 'postcode', 'country', 'language', 'timezone');
 		$result = '(invalid)';
 		
-		if (in_array($key, $supportedFields)) {
+		if (in_array($key, $this->supportedFields)) {
 			if ($key == 'gender') {
 				if ($value == 'M') {
 					$result = 'male';
