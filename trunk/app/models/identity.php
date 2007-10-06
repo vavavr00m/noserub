@@ -37,7 +37,7 @@ class Identity extends AppModel {
 
         $this->recursive = 0;
         $this->expects('Identity');
-        if($this->findCount(array('Identity.username = "' . $value . '"')) > 0) {
+        if($this->findCount(array('Identity.username' => $value)) > 0) {
             return false;
         } else {
             return true;
