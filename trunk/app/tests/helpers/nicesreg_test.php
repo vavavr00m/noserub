@@ -13,7 +13,7 @@
 			$this->helper->Form->Html = new HtmlHelper();
 		}
 		
-		// FIXME this test will break with a newer version of CakePHP due to a bug in the actually used version!
+		// FIXME this test will break with a newer version of CakePHP due to a bug in the currently used version!
 		function testCheckboxForSupportedFields() {
 			foreach($this->supportedFields as $field) {
 				$result = $this->helper->checkboxForSupportedFields($field);		
@@ -21,6 +21,21 @@
 							'<input type="checkbox" name="data[OpenidSite]['.$field.']" type="checkbox" checked="checked" value="1" id="OpenidSite'.ucfirst($field).'" />';
 				$this->assertEqual($expected, $result);
 			}
+		}
+		
+		// FIXME this test will break with a newer version of CakePHP due to a bug in the currently used version
+		function testCheckboxForSupportedFieldsWithOpenidSiteData() {
+			$data = array('OpenidSite' => array('email' => 1));
+			$result = $this->helper->checkboxForSupportedFields('email', $data);		
+			$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
+						'<input type="checkbox" name="data[OpenidSite][email]" type="checkbox" checked="checked" value="1" id="OpenidSiteEmail" />';
+			$this->assertEqual($expected, $result);
+			
+			$data = array('OpenidSite' => array('email' => 0));
+			$result = $this->helper->checkboxForSupportedFields('email', $data);
+			$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
+						'<input type="checkbox" name="data[OpenidSite][email]" type="checkbox"  value="1" id="OpenidSiteEmail" />';
+			$this->assertEqual($expected, $result);
 		}
 		
 		function testCheckboxForSupportedFieldsWithUnsupportedFields() {

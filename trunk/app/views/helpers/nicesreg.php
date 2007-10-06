@@ -7,9 +7,15 @@ class NiceSRegHelper extends AppHelper {
 	var $supportedFields = array('gender', 'email', 'fullname');
 	
 	// TODO maybe a better name is needed?
-	public function checkboxForSupportedFields($key) {
+	public function checkboxForSupportedFields($key, $openidSiteData = false) {
 		if (in_array($key, $this->supportedFields)) {
-			return $this->Form->checkBox('OpenidSite.'.$key, array('checked' => true));
+			$checked = true;
+			
+			if ($openidSiteData) {
+				$checked = $openidSiteData['OpenidSite'][$key] ? true : false;
+			}
+
+			return $this->Form->checkBox('OpenidSite.'.$key, array('checked' => $checked));
 		}
 		
 		return '';
