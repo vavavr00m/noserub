@@ -10,7 +10,8 @@
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
 		const SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST = 'Noserub.authenticatedOpenIDRequest';
 		const OPENID_ENDPOINT_URL = '/auth';
-		var $uses = array();
+		var $uses = array('OpenidSite');
+		var $helpers = array('Nicesreg');
 		
 		function index() {
 			$server = $this->__getOpenIDServer();
@@ -58,28 +59,46 @@
 			
 			if ($this->Session->check($sessionKey)) {
 				$request = $this->Session->read($sessionKey);
-				$sregRequest = Auth_OpenID_SRegRequest::fromOpenIDRequest($request->message);
+				$sregRequest = Auth_OpenID_SRegRequest::fromOpenIDRequest($request);
+				$identity = $this->Session->read('Identity');
 				
-				if (empty($this->params['form'])) {
-					$this->set('required', $this->__prepareSRegData($sregRequest->required));
-					$this->set('optional', $this->__prepareSRegData($sregRequest->optional));
-					
-					$this->set('trustRoot', $request->trust_root);
-					$this->set('identity', $request->identity);
-					$this->set('headline', 'OpenID verification');
-				} else {
+				$this->OpenidSite->expects('OpenidSite');
+				$openidSite = $this->OpenidSite->findByIdentityIdAndUrl($identity['id'], $request->trust_root);
+
+				if (isset($openidSite['OpenidSite']['allowed']) && $openidSite['OpenidSite']['allowed']) {
 					$this->Session->delete($sessionKey);
-					$answer = (isset($this->params['form']['Allow'])) ? true : false;
+					$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
+					$this->__addSRegDataToResponse($response, $sregRequest, $openidSite);
+					
+					$this->__renderResponse($response);
+				} elseif(!empty($this->params['form'])) {
+					$this->Session->delete($sessionKey);
+					$answer = false;
+					
+					if (isset($this->params['form']['AllowForever']) || isset($this->params['form']['AllowOnce'])) {
+						$answer = true;
+						$this->data['OpenidSite']['id'] = (isset($openidSite['OpenidSite']['id'])) ? $openidSite['OpenidSite']['id'] : '';
+						$this->data['OpenidSite']['url'] = $request->trust_root;
+						$this->data['OpenidSite']['identity_id'] = $identity['id'];
+						$this->data['OpenidSite']['allowed'] = (isset($this->params['form']['AllowForever'])) ? true : false;
+						
+						$this->OpenidSite->create($this->data);
+						$this->OpenidSite->save();
+					}
+
 					$response = $request->answer($answer, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 
 					if ($answer) {
-						$data = am($this->__prepareSRegData($sregRequest->required),
-								   $this->__prepareSRegData($sregRequest->optional));						
-						
-						Auth_OpenID_sendSRegFields($request, $data, $response);
+						$this->__addSRegDataToResponse($response, $sregRequest, $this->data);
 					}
 					$this->__renderResponse($response);
-				}
+				} else {
+					if ($openidSite) {
+						$this->set('openidSite', $openidSite);
+					}
+					
+					$this->__setDataForTrustForm($request, $sregRequest);
+				}				
 			} else {
 				$this->set('headline', 'Error');
 				$this->render('no_request');
@@ -90,6 +109,14 @@
 			$this->layout = 'xml';
 			header('Content-type: application/xrds+xml');
 			$this->set('server', Router::url('/'.low($this->name), true));
+		}
+		
+		function __addSRegDataToResponse($response, $sregRequest, $fields) {
+			$data = am($this->__prepareSRegData($this->__removeUnwantedFields($sregRequest->required, $fields), true),
+					   $this->__prepareSRegData($this->__removeUnwantedFields($sregRequest->optional, $fields), true));						
+
+			$sregResponse = Auth_OpenID_SRegResponse::extractResponse($sregRequest, $data);
+			$sregResponse->toMessage($response->fields);
 		}
 		
 		function __getOpenIDRequest($server) {
@@ -112,7 +139,7 @@
 			return $server;
 		}
 		
-		function __prepareSRegData($fields) {
+		function __prepareSRegData($fields, $ignoreUnsupportedFields = false) {
 			$result = array();
 			$identity = $this->Session->read('Identity');
 			
@@ -120,16 +147,16 @@
 			foreach ($fields as $field) {
 				switch ($field){
 					case 'email':
-						$result['email'] = $identity['email'];
+						$result[$field] = $identity['email'];
 						break;
 					case 'fullname':
-						$result['fullname'] = $identity['firstname'] . ' ' . $identity['lastname'];
+						$result[$field] = $identity['firstname'] . ' ' . $identity['lastname'];
 						break;
 					case 'gender':
 						if ($identity['sex'] === '1') {
-							$result['gender'] = 'F';
+							$result[$field] = 'F';
 						} elseif ($identity['sex'] === '2') {
-							$result['gender'] = 'M';
+							$result[$field] = 'M';
 						}
 						break;
 					// these fields are not supported yet
@@ -140,6 +167,30 @@
 					case 'language':
 					case 'timezone':
 					default:
+						if (!$ignoreUnsupportedFields) {
+							$result[$field] = '';
+						}
+				}
+			}
+			
+			return $result;
+		}
+		
+		function __removeUnwantedFields($fields, $data) {
+			$result = array();
+			
+			foreach ($fields as $field) {
+				switch ($field) {
+					case 'email':
+					case 'fullname':
+					case 'gender':
+						if ($data['OpenidSite'][$field] === '1') {
+							$result[] = $field;
+						}
+						
+						break;
+					default:
+						$result[] = $field;
 				}
 			}
 			
@@ -156,6 +207,16 @@
 			}
 
 			$this->redirect($webResponse->headers['location'], null, true);
+		}
+		
+		function __setDataForTrustForm($request, $sregRequest) {
+			$this->set('required', $this->__prepareSRegData($sregRequest->required));
+			$this->set('optional', $this->__prepareSRegData($sregRequest->optional));
+			$this->set('policyUrl', $sregRequest->policy_url);
+			
+			$this->set('trustRoot', $request->trust_root);
+			$this->set('identity', $request->identity);
+			$this->set('headline', 'OpenID verification');
 		}
 	}
 ?>
