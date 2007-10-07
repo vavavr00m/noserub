@@ -20,7 +20,7 @@ class MenuComponent extends Object {
         $action = $action === null ? $controller->action : $action;
 
         $filter    = isset($controller->params['filter'])   ? $controller->params['filter']   : '';
-        $logged_in =isset($_SESSION['Identity']);
+        $logged_in = isset($_SESSION['Identity']);
         
         $main_menu = '';
         $sub_menu  = '';
@@ -76,6 +76,11 @@ class MenuComponent extends Object {
                 }
                 break;
             
+			case 'OpenidSites':
+				$main_menu = 'settings'; 
+                $sub_menu  = 'openid';
+                break;
+				
             case 'Pages':
                 switch($action) {
                     case 'display':

@@ -24,7 +24,8 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile' || $menu['main'] == 
         'profile'  => array('Profile',  $noserub_url . 'profile/'),
         'privacy'  => array('Privacy',  $noserub_url . 'privacy/'),
         'password' => array('Password', $noserub_url . 'password/'),
-        'account'  => array('Delete account',  $noserub_url . 'account/') 
+        'account'  => array('Delete account',  $noserub_url . 'account/'),
+    	'openid'   => array('OpenID', $noserub_url . 'openid/') 
     );
 }
 

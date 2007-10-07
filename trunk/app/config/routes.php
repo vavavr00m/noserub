@@ -73,6 +73,7 @@ Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xr
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
+Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
