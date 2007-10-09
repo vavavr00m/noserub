@@ -31,7 +31,7 @@ class ContactsController extends AppController {
         $this->Contact->recursive = 1;
         $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
         
-        $this->set('data', $this->Contact->findAllByIdentityId($identity['Identity']['id']));
+        $this->set('data', $this->Contact->findAllByIdentityId($identity['Identity']['id'], null, 'WithIdentity.username'));
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
