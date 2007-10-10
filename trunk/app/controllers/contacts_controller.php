@@ -102,10 +102,22 @@ class ContactsController extends AppController {
                     }
                 } else {
                     # it's already there, so we can go ahead and add it
-                	$new_identity_id = $identity['Identity']['id'];
+                	$new_identity_id = $identity['Identity']['id'];                	
                 }
                 
                 # now create the contact relationship
+                
+                # but first make sure, that this connection is not already there
+                $this->Contact->recursive = 0;
+                $this->Contact->expects('Contact');
+                $num_of_contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
+                                                                   'with_identity_id' => $new_identity_id));
+                if($num_of_contacts > 0) {
+                    $this->Contact->invalidate('noserub_id', 'unique');
+                    $this->render();
+                    exit;
+                }
+                
                 $this->Contact->create();
                 $contact = array('identity_id'      => $session_identity['id'],
                                  'with_identity_id' => $new_identity_id);
