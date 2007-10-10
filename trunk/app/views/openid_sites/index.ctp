@@ -1,5 +1,5 @@
 <form method="post" action="<?php echo $this->here; ?>">
-	<table>
+	<table class="listing">
 		<tr>
 			<th>Allowed</th>
 			<th>Url</th>
