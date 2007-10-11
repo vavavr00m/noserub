@@ -31,15 +31,13 @@
 		<?php } ?>
 		
 		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
-            <li 
             <?php
                 if($relationship_status == 'contact') {
-                    echo 'class="removecontact icon">' . $data['Identity']['local_username'] . ' is a contact of yours. <a href="#">Remove XXXX</a>';
+                    echo '<li class="removecontact icon">' . $data['Identity']['local_username'] . ' is a contact of yours. <a href="#">Remove XXXX</a></li>';
                 } else { 
-                    echo 'class="addcontact icon">' . $html->link('Add ' . $data['Identity']['local_username'] . ' as your contact.', '/' . $data['Identity']['local_username'] . '/add/as/contact/');
+                    echo '<li class="addcontact icon">' . $html->link('Add ' . $data['Identity']['local_username'] . ' as your contact.', '/' . $data['Identity']['local_username'] . '/add/as/contact/').'</li>';
                 }
             ?>
-            </li>
     <?php } ?>
     		
 	</ul>
