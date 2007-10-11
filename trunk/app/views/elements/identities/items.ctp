@@ -1,8 +1,13 @@
 <div id="network">
  <?php if(empty($data)) { ?>
     <p>
-        There are no updates from your social network or own activity yet.<br />
-        Why don't you add some friends or some more of your own accounts?
+        <?php if($menu['main'] == 'network') { ?>
+	        There are no updates from your social network yet.<br />
+	        Why don't you add some friends?
+        <?php } else { ?>
+	        There are no updates from your own activity yet.<br />
+	        Why don't you add some more of your own accounts?
+        <?php } ?>
     </p>
 <?php } else { ?>
     <?php
