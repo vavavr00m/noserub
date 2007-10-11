@@ -1,3 +1,8 @@
+h1, h2, h3, h4, h5, h6, p {
+	padding: 0;
+	margin: 0;
+}
+
 body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -146,40 +151,7 @@ dd {
 .networklist li {
 	border-bottom: 1px solid #ebebeb;
 	line-height: 20px;
-}
-
-.networklist li {
-	border-bottom: 1px solid #ebebeb;
-	line-height: 20px;
 	list-style: none;
-}
-
-.link {
-	background: transparent url(/images/icons/network/link.gif) no-repeat center left;
-}
-
-.text {
-	background: transparent url(/images/icons/network/text.gif) no-repeat center left;
-}
-
-.photo {
-	background: transparent url(/images/icons/network/photo.gif) no-repeat center left;
-}
-
-.audio {
-	background: transparent url(/images/icons/network/audio.gif) no-repeat center left;
-}
-
-.video {
-	background: transparent url(/images/icons/network/video.gif) no-repeat center left;
-}
-
-.event {
-	background: transparent url(/images/icons/network/event.gif) no-repeat center left;
-}
-
-.micropublish {
-	background: transparent url(/images/icons/network/micropublish.gif) no-repeat center left;
 }
 
 a.external , a.external:active, a.external:visited {
@@ -190,6 +162,35 @@ a.external , a.external:active, a.external:visited {
 }
 
 a.external:hover {
+	color: #12a1c9 !important;
+	border-bottom: 1px dotted #12a1c9 !important;	
+}
+
+/* profile */
+.more {
+	float: right;
+}
+
+.more a, .more a:active, .more a:visited {
+	color: #b6b6b6 !important;
+	text-decoration: none !important;
+	font-weight: normal !important;
+	border-bottom: 1px dotted #b6b6b6 !important;
+}
+
+.more a:hover {
+	color: #12a1c9 !important;
+	border-bottom: 1px dotted #12a1c9 !important;	
+}
+
+.whoissidebar a, .whoissidebar a:active, .whoissidebar a:visited {
+	color: #585858 !important;
+	text-decoration: none !important;
+	font-weight: normal !important;
+	border-bottom: 1px dotted #585858 !important;
+}
+
+.whoissidebar a:hover {
 	color: #12a1c9 !important;
 	border-bottom: 1px dotted #12a1c9 !important;	
 }

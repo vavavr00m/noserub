@@ -1,0 +1,74 @@
+/* profile */
+.bio {
+	background: transparent url(/images/icons/profile/bio.gif) no-repeat center left;
+}
+
+.destination {
+	background: transparent url(/images/icons/profile/destination.gif) no-repeat center left;
+}
+
+.addcontact {
+	background: transparent url(/images/icons/profile/add-contact.gif) no-repeat center left;
+}
+
+.removecontact {
+	background: transparent url(/images/icons/profile/remove-contact.gif) no-repeat center left;
+}
+
+/* contact */
+.contact_email {
+	background: transparent url(/images/icons/contact/email.gif) no-repeat center left;
+}
+
+.contact_jabber {
+	background: transparent url(/images/icons/contact/jabber.gif) no-repeat center left;
+}
+
+.contact_icq {
+	background: transparent url(/images/icons/contact/icq.gif) no-repeat center left;
+}
+
+.contact_yim {
+	background: transparent url(/images/icons/contact/yim.gif) no-repeat center left;
+}
+
+.contact_aim {
+	background: transparent url(/images/icons/contact/aim.gif) no-repeat center left;
+}
+
+.contact_skype {
+	background: transparent url(/images/icons/contact/skype.gif) no-repeat center left;
+}
+
+.contact_msn {
+	background: transparent url(/images/icons/contact/msn.gif) no-repeat center left;
+}
+
+/* social stream */
+.link {
+	background: transparent url(/images/icons/network/link.gif) no-repeat center left;
+}
+
+.text {
+	background: transparent url(/images/icons/network/text.gif) no-repeat center left;
+}
+
+.photo {
+	background: transparent url(/images/icons/network/photo.gif) no-repeat center left;
+}
+
+.audio {
+	background: transparent url(/images/icons/network/audio.gif) no-repeat center left;
+}
+
+.video {
+	background: transparent url(/images/icons/network/video.gif) no-repeat center left;
+}
+
+.event {
+	background: transparent url(/images/icons/network/event.gif) no-repeat center left;
+}
+
+.micropublish {
+	background: transparent url(/images/icons/network/micropublish.gif) no-repeat center left;
+}

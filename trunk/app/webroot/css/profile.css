@@ -1,0 +1,90 @@
+#profile {
+	width: 610px;
+	float: left;
+}
+
+#sidebar {
+	float: left;
+	width: 125px;
+	padding-left: 10px;
+	margin-left: 10px;
+	border-left: 1px solid #ecebe5;
+}
+
+#about {
+	margin: 0px 0px 10px 0px;
+	font-size: 11px;
+	color: #000;
+	background-image: url('/images/profile/about_bg.gif');
+	line-height: 24px;
+	padding: 0px 10px 0px 10px;
+}
+
+#whois, #photo, #addfriend {
+	float: left;
+}
+
+#addfriend {
+	float: right;
+}
+
+#whois {
+	padding: 10px 0 0 15px;
+}
+
+#sidebar h4 {
+	font-size: 11px;
+	font-weight: bold;
+	color: #12a1c9;
+	border-bottom: 1px solid #12a1c9;
+	padding: 0 0 3px 0;
+	margin: 0 0 5px 0;
+}
+
+#sidebar hr {
+	border: none;
+	padding: 10px;
+}
+
+#photo img {
+	border: 1px solid #d9d7ca;
+	padding: 10px;
+}
+
+#whois h3 {
+	font-size: 18px;
+	color: #585858;
+}
+
+#personalid {
+	font-size: 18px;
+	color: #9d9d9d;
+}
+
+#profile h4 {
+	font-size: 14px;
+	color: #585858;
+	font-weight: normal;
+	padding: 15px 0 5px 10px !important;
+}
+
+/* icons */
+#whois ul, #sidebar ul {
+	padding: 0 0 15px 0;
+	margin: 0;
+}
+
+.whoisstats li, .whoissidebar li {
+	border-bottom: 1px solid #ebebeb;
+	line-height: 20px;
+	list-style: none;
+}
+
+.icon {
+	padding: 5px 20px 5px 25px;
+}
+
+.serviceicon {
+	padding: 5px 5px 5px 0;
+	vertical-align: middle;
+}

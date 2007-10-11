@@ -1,8 +1,10 @@
 @import url("typo.css");
 @import url("navigation.css");
+@import url("profile.css");
 @import url("tables.css");
 @import url("forms.css");
 @import url("messages.css");
+@import url("icons.css");
 
 body {
 	background-color: #ffffff;
