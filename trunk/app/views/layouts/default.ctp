@@ -46,7 +46,9 @@
 				<h2><?php echo $headline; ?></h2>
 			</div>
 		</div>
-		<?php echo $this->renderElement('subnav'); ?>
+		<?php if($menu['main'] != 'profile') { 
+		    echo $this->renderElement('subnav'); 
+		} ?>
 		
 		<div id="content" class="wrapper">
             <?php echo $content_for_layout?>
