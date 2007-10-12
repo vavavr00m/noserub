@@ -56,9 +56,9 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh 
 </div>
 
     <br class="clear" />
-
     <div>
         <h4>Social activity</h4>
+        <?php echo $this->renderElement('subnav'); ?>
         <?php echo $this->renderElement('identities/items', array('data' => $items, 'filter' => $filter)); ?>
     </div>
 <?php } ?>
