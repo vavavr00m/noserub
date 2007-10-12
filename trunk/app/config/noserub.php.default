@@ -92,3 +92,13 @@ define('NOSERUB_USE_CDN', false);
 define('NOSERUB_CDN_S3_ACCESS_KEY', '');
 define('NOSERUB_CDN_S3_SECRET_KEY', '');
 define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
+
+/**
+ * Uncomment this line if you get the following error when you try 
+ * to authenticate your OpenID: "Fatal error: Define 
+ * Auth_OpenID_RAND_SOURCE as null to continue with an insecure 
+ * random number generator".
+ * You can also define your own source of randomness here if you
+ * want use a source different than /dev/urandom.
+ */
+// define('Auth_OpenID_RAND_SOURCE', null);
