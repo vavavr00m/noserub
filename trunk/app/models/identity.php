@@ -188,10 +188,12 @@ class Identity extends AppModel {
             # just a username was given. so we assume it should
             # be for this server
             $local_username = $splitted[0];
-            $username = FULL_BASE_URL . Router::url('/') . $local_username;
-            $username = str_ireplace('http://', '', $username);
-            $username = str_ireplace('https://', '', $username);
+            $servername = FULL_BASE_URL;
+            $servername = str_ireplace('http://', '', $servername);
+            $servername = str_ireplace('https://', '', $servername);
+            $username =  $servername . Router::url('/') . $local_username;
         } else {
+            $servername = $splitted[0];
             $local_username = array_pop($splitted);
             $username = join('/', $splitted) . '/' . $local_username;
         }
@@ -210,6 +212,7 @@ class Identity extends AppModel {
                         'local_username'  => $local_username,
                         'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
                         'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
+                        'servername'      => $servername,
                         'local'           => $local);
         
         return $result;
@@ -254,10 +257,11 @@ class Identity extends AppModel {
                 foreach($checkModels as $modelName) {
                     if(isset($item[$modelName]['username'])) {
                         $username = $this->splitUsername($item[$modelName]['username']);
-                        $item[$modelName]['local_username']  = $username['local_username'];
+                        $item[$modelName]['local_username'] = $username['local_username'];
                         $item[$modelName]['username']       = $username['username'];
                         $item[$modelName]['namespace']      = $username['namespace'];
                         $item[$modelName]['local']          = $username['local'];
+                        $item[$modelName]['name']           = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
                         $data[$key] = $item;
                     }
                 }

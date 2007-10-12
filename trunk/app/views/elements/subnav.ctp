@@ -30,7 +30,7 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile' || $menu['main'] == 
 }
 
 if($sub_menu) { ?>
-    <div id="subnavigation" class="subnav wrapper">
+    <div id="subnavigation" class="subnav<?php echo isset($no_wrapper) ? '' : ' wrapper'; ?>">
         <ul>
             <?php foreach($sub_menu as $token => $item) { ?>
                 <li<?php echo $menu['sub'] == $token ? ' class="active"' : ''; ?>><?php echo $html->link($item[0], $item[1]); ?></li>

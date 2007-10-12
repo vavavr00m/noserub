@@ -12,11 +12,13 @@ class IdentityModelTestCase extends CakeTestCase {
 	function testSplitUsernameLocal() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
 	    $result = $this->model->splitUsername('dirk.olbertz');
@@ -26,25 +28,29 @@ class IdentityModelTestCase extends CakeTestCase {
 	function testSplitUsernameLocalExtended() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername($server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername($server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameLocalNamespace() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'poolie@dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/poolie@dirk.olbertz',
 	                      'local_username'  => 'poolie@dirk.olbertz',
 	                      'single_username' => 'poolie',
 	                      'namespace'       => 'dirk.olbertz',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
 	    $result = $this->model->splitUsername('poolie@dirk.olbertz');
@@ -56,6 +62,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => 'identoo.com',
 	                      'local'           => 0);
 	                      
 	    $result = $this->model->splitUsername('identoo.com/dirk.olbertz');
@@ -67,6 +74,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => 'identoo.com',
 	                      'local'           => 0);
 	                      
 	    $result = $this->model->splitUsername('identoo.com/noserub/dirk.olbertz');
@@ -76,70 +84,80 @@ class IdentityModelTestCase extends CakeTestCase {
 	function testSplitUsernameWithHttp() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername('http://' . $server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername('http://' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameWithHttps() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername('https://' . $server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername('https://' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameWithWww() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername('www.' . $server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername('www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameWithHttpAndWww() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername('http://www.' . $server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername('http://www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	function testSplitUsernameWithHttpsAndWww() {
 	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
 	    $server_base = str_replace('https://', '', $server_base);
+	    $server_base = trim($server_base, '/');
 	    
-	    $expected = array('username'        => $server_base . 'dirk.olbertz',
+	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
 	                      'single_username' => 'dirk.olbertz',
 	                      'namespace'       => '',
+	                      'servername'      => $server_base,
 	                      'local'           => 1);
 	                      
-	    $result = $this->model->splitUsername('https://www.' . $server_base . 'dirk.olbertz');
+	    $result = $this->model->splitUsername('https://www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
