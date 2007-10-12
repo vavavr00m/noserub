@@ -153,6 +153,9 @@ class Service extends AppModel {
             case 22: # Newsvine
                 return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
 
+            case 23: # Slideshare
+                return 'http://www.slideshare.net/rss/user/'.$username.'';
+
             default: 
                 return false;
         }
@@ -284,6 +287,10 @@ class Service extends AppModel {
 
     		    case 22: # Newsvine
     		        $item['content'] = $this->contentFromNewsvine($feeditem);
+    		        break;
+    		        
+    		    case 23: # Slideshare
+    		        $item['content'] = $this->contentFromSlideshare($feeditem);
     		        break;
 
     		    default:
@@ -525,6 +532,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromSlideshare($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -586,6 +604,9 @@ class Service extends AppModel {
 
             case 22: # Newsvine  
                 return 'http://'.$username.'.newsvine.com/';
+                
+            case 23: # Slideshare  
+                return 'http://www.slideshare.net/'.$username.'';
 
             default:
                 return '';
@@ -732,6 +753,9 @@ class Service extends AppModel {
 
             case 22:
                 return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
+
+            case 23:
+                return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
 
             default:
                 return array();
@@ -1120,6 +1144,47 @@ class Service extends AppModel {
                 }
                  if(preg_match('/title="Next 50">NEXT 50<\/a>/iU', $content)) {
                     $page_url = $url . $i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromSlideshare($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<a href="\/(.*)" style="" title="" class="user_thumbnail_big" id="">/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<a href="\/(.*)" style="" title="" class="user_thumbnail_big" id="">/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                 if(preg_match('/class="text_float_left">Next<\/a>/iU', $content)) {
+                    $page_url = $url . '/'.$i;
                     $i++;
                     if($i>1000) {
                         # just to make sure, we don't loop forever

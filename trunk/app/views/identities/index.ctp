@@ -85,24 +85,24 @@
     
         <hr />
 
-    	<h4>On the web</h4>
-    	<ul class="whoissidebar">
-    		<li><img src="/images/icons/services/flickr.gif" height="16" width="16" alt="flickr" class="serviceicon" /> <a href="#">DEMO</a></li>
-    		<li><img src="/images/icons/services/twitter.gif" height="16" width="16" alt="twitter" class="serviceicon" /> <a href="#">DEMO</a></li>
-    	</ul>
+	<h4>On the web</h4>
+	<ul class="whoissidebar">
+		<li><img src="/images/icons/services/flickr.gif" height="16" width="16" alt="flickr" class="whoisicon" /> <a href="#">DEMO</a></li>
+		<li><img src="/images/icons/services/twitter.gif" height="16" width="16" alt="twitter" class="whoisicon" /> <a href="#">DEMO</a></li>
+	</ul>
 	
-    	<hr />
+	<hr />
 
-    	<h4>Contact</h4>
-    	<ul class="whoissidebar">
-    		<li class="contact_email icon"><a href="#">e-Mail</a></li>
-    		<li class="contact_jabber icon"><a href="xmpp:USERNAMEHERE">Jabber</a></li>
-    		<li class="contact_icq icon"><a href="http://www.icq.com/USERNAMEHERE">ICQ</a></li>
-    		<li class="contact_yim icon"><a href="http://edit.yahoo.com/config/send_webmesg?.target=USERNAMEHERE&amp;.src=pg">YIM!</a></li>
-    		<li class="contact_aim icon"><a href="aim:USERNAMEHERE">AIM</a></li>
-    		<li class="contact_skype icon"><a href="skype:USERNAMEHERE">Skype</a></li>
-    		<li class="contact_msn icon"><a href="msnim:USERNAMEHERE">MSN</a></li>
-    	</ul>
+	<h4>Contact</h4>
+	<ul class="whoissidebar">
+		<li><img src="/images/icons/contact/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="#">e-Mail</a></li>
+		<li><img src="/images/icons/contact/jabber.gif" height="16" width="16" alt="Jabber" class="whoisicon" /> <a href="xmpp:USERNAMEHERE">Jabber</a></li>
+		<li><img src="/images/icons/contact/icq.gif" height="16" width="16" alt="ICQ" class="whoisicon" /> <a href="http://www.icq.com/USERNAMEHERE">ICQ</a></li>
+		<li><img src="/images/icons/contact/yim.gif" height="16" width="16" alt="YIM!" class="whoisicon" /> <a href="http://edit.yahoo.com/config/send_webmesg?.target=USERNAMEHERE&amp;.src=pg">YIM!</a></li>
+		<li><img src="/images/icons/contact/aim.gif" height="16" width="16" alt="AIM" class="whoisicon" /> <a href="aim:USERNAMEHERE">AIM</a></li>
+		<li><img src="/images/icons/contact/skype.gif" height="16" width="16" alt="Skype" class="whoisicon" /> <a href="skype:USERNAMEHERE">Skype</a></li>
+		<li><img src="/images/icons/contact/msn.gif" height="16" width="16" alt="MSN" class="whoisicon" /> <a href="msnim:USERNAMEHERE">MSN</a></li>
+	</ul>
 	
     	<hr />
 
