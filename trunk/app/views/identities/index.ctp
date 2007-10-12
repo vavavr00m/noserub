@@ -67,14 +67,14 @@
 	
     	<span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">see all</a></span>
     	<h4>Friends</h4>
-    	<p>
+    	<p class="friendthumbs">
     		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
     		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    		<a href="#"><img src="/images/profile/avatar/noinfo-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    		<a href="#"><img src="/images/profile/avatar/noinfo-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
     		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
     		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
     	</p>
@@ -107,4 +107,5 @@
     	<hr />
 
     </div>
+
 <?php } ?>

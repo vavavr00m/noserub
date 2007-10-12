@@ -46,6 +46,10 @@
 	padding: 10px;
 }
 
+#network {
+	padding-top: 15px;
+}
+
 #photo img {
 	border: 1px solid #d9d7ca;
 	padding: 10px;
@@ -66,6 +70,10 @@
 	color: #585858;
 	font-weight: normal;
 	padding: 15px 0 5px 10px !important;
+}
+
+.friendthumbs img {
+	border: 2px solid #ECEBE5;
 }
 
 /* icons */
