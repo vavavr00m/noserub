@@ -64,7 +64,7 @@
                     $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
                     echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
                 } else { ?>
-                    <em>The User yet did not make any statement.</em>
+                    <em>The User didn't make any statement yet.</em>
                 <?php } ?>
             </p>        
         </div>

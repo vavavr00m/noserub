@@ -72,7 +72,7 @@
 	padding: 15px 0 5px 10px !important;
 }
 
-.friendthumbs img {
+.friendthumbs img, .mypicture {
 	border: 2px solid #ECEBE5;
 }
 

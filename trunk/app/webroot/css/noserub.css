@@ -89,3 +89,15 @@ img, acronym {
 .photothumb img {
 	padding: 7px 0 0 8px;
 }
+
+/* Settings */
+#settings_photo {
+	float: right;
+	width: 255px;
+	padding: 0 0 0 25px;
+	border-left: 1px solid #ECEBE5;
+}
+
+#settings_data {
+	width: 400px;
+}
