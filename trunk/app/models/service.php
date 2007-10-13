@@ -159,6 +159,9 @@ class Service extends AppModel {
             case 35: # Plazes
                 return 'http://plazes.com/users/'.$username.'/presences.atom';
 
+            case 36: # Scribd
+                return 'http://www.scribd.com/feeds/user_rss/'.$username.'';
+
             default: 
                 return false;
         }
@@ -298,6 +301,10 @@ class Service extends AppModel {
 
     		    case 35: # Plazes
     		        $item['content'] = $this->contentFromPlazes($feeditem);
+    		        break;
+
+    		    case 36: # Scribd
+    		        $item['content'] = $this->contentFromScribd($feeditem);
     		        break;
 
     		    default:
@@ -561,6 +568,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromScribd($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -656,6 +674,9 @@ class Service extends AppModel {
 
             case 35: #Plazes
             	return 'http://plazes.com/users/'.$username;
+
+            case 36: #Scribd
+            	return 'http://www.scribd.com/people/view/'.$username;
 
             default:
                 return '';
@@ -814,6 +835,9 @@ class Service extends AppModel {
 
             case 35:
                 return $this->getContactsFromPlazes('http://plazes.com/users/' . $account['Account']['username'] . ';contacts');
+
+            case 36:
+                return $this->getContactsFromScribd('http://www.scribd.com/people/friends/' . $account['Account']['username'] . '');
 
             default:
                 return array();
@@ -1300,6 +1324,18 @@ class Service extends AppModel {
         } while(1);
         
         return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+
+    function getContactsFromScribd($url) {
+    	return $this->__getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/.*">(.*)<\/a>.*<\/div>/iU');
     }
 
     /**
