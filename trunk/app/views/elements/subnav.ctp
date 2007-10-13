@@ -16,7 +16,9 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile' || $menu['main'] == 
         'link'         => array('Link',  $noserub_url . 'link/'),
         'text'         => array('Text', $noserub_url . 'text/'),
         'micropublish' => array('Micropublish', $noserub_url . 'micropublish/'),
-        'event'        => array('Events', $noserub_url . 'event/')
+        'event'        => array('Events', $noserub_url . 'event/'),
+        'document'     => array('Documents', $noserub_url . 'document/'),
+        'location'     => array('Locations', $noserub_url . 'location/')
     );    
 } else if($menu['main'] == 'settings') {
     $noserub_url = '/' . $username . '/settings/';

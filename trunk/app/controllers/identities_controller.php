@@ -31,6 +31,8 @@ class IdentitiesController extends AppController {
             case 'text':
             case 'event':
             case 'micropublish':
+            case 'document':
+            case 'location':
                 $filter = $filter; 
                 break;
             
