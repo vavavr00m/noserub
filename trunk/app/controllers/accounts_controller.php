@@ -103,9 +103,9 @@ class AccountsController extends AppController {
         $this->set('services', $this->Account->Service->generateList(array('id<>8'), null, null, "{n}.Service.id", "{n}.Service.name"));
         
         if($splitted['username'] == $session_identity['username']) {
-            $this->set('headline', 'Add existing service or RSS-Feed to your profile.');
+            $this->set('headline', 'Add existing Web-Service or RSS-Feed to your profile.');
         } else {
-            $this->set('headline', 'Add existing service or RSS-Feed to '. $splitted['local_username'] . '\'s profile.');
+            $this->set('headline', 'Add existing Web-Service or RSS-Feed to '. $splitted['local_username'] . '\'s profile.');
         }
     }
     
@@ -222,7 +222,7 @@ class AccountsController extends AppController {
             
             if(isset($this->params['form']['submit'])) {
                 # check if the acccount is not already there
-                if($this->Account->findCount(array('identity_id' => $identity_id, 'feed_url' => $data['feed_url'])) == 0) {
+                if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
                 

@@ -16,6 +16,14 @@
     </fieldset>
     
     <fieldset>
+        <legend>Make a statement</legend>
+        <p>
+            Not HTML allowed; newlines are preserved; links with http:// and https:// are automatically converted;
+        </p>
+        <?php echo $form->textarea('Identity.about', array('label' => 'About')); ?>
+    </fieldset>
+    
+    <fieldset>
         <legend>Geolocation</legend>
         <p>
             The address is used to determine the geolocation. The address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address.

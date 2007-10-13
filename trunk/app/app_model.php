@@ -68,6 +68,25 @@ class AppModel extends Model {
             }
         }
        
+       # moved from Identity Model to here, so that all the associated
+       # afterFinds could be catched, too
+        if(is_array($data)) {
+            foreach($data as $key => $item) {
+                $checkModels = array('WithIdentity', 'Identity');
+                foreach($checkModels as $modelName) {
+                    if(isset($item[$modelName]['username'])) {
+                        $username = Identity::splitUsername($item[$modelName]['username']);
+                        $item[$modelName]['local_username'] = $username['local_username'];
+                        $item[$modelName]['username']       = $username['username'];
+                        $item[$modelName]['namespace']      = $username['namespace'];
+                        $item[$modelName]['local']          = $username['local'];
+                        $item[$modelName]['name']           = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                        $data[$key] = $item;
+                    }
+                }
+            }
+        }
+        
         # not quite sure, if this is still neccessary. was copied from
         # a cake 1.1 project
         #

@@ -5,18 +5,32 @@
 <?php } else { ?>
     <?php 
         $noserub_url = 'http://' . $data['Identity']['username'];
-    ?>
-	<?php $openid->xrdsLocation($noserub_url . '/xrds', false); ?>
-	<?php $openid->serverLink('/auth', false); ?>
+        
+        $openid->xrdsLocation($noserub_url . '/xrds', false);
+        $openid->serverLink('/auth', false);
+        
+        echo $this->renderElement('foaf');
     
-    <?php echo $this->renderElement('foaf'); ?>
+        $sex = array('img' => array(0 => '/images/profile/avatar/noinfo.gif',
+                                    1 => '/images/profile/avatar/female.gif',
+                                    2 => '/images/profile/avatar/male.gif'),
+                     'img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
+                                          1 => '/images/profile/avatar/female-small.gif',
+                                          2 => '/images/profile/avatar/male-small.gif'));
+    
+        if($data['Identity']['photo']) {
+            $profile_photo = $data['Identity']['photo'];
+        } else {
+            $profile_photo = $sex['img'][$data['Identity']['sex']];
+        }
+    ?>
 
     <!-- profile -->
 
     <div id="profile">
 
         <div id="photo">
-        	<img src="/images/profile/avatar/male.gif" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
+        	<img src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
         </div>
 
         <div id="whois">
@@ -45,12 +59,14 @@
 
         <h4>About me</h4>
         <div id="about">
-        <?php switch($data['Identity']['sex']) {
-                        case  1: echo 'her'; break;
-                        case  2: echo 'his'; break;
-                        default: echo 'her/his'; break;
-                    } ?>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+            <p>
+                <?php if($data['Identity']['about']) {
+                    $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
+                    echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
+                } else { ?>
+                    <em>The User yet did not make any statement.</em>
+                <?php } ?>
+            </p>        
         </div>
 
         <br class="clear" />
@@ -65,18 +81,21 @@
 
     <div id="sidebar">
 	
-    	<span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">see all</a></span>
+	    <?php if($num_noserub_contacts > 9) { ?>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">see all</a></span>
+    	<?php } ?>
     	<h4>Friends</h4>
     	<p class="friendthumbs">
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/noinfo-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/noinfo-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
-    		<a href="#"><img src="/images/profile/avatar/male-small.gif" width="35" height="35" alt="XXXX's Picture" /></a>
+    	    <?php foreach($contacts as $item) { ?>
+    	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>">
+    	            <?php if($item['WithIdentity']['photo']) {
+                        $contact_photo = $item['WithIdentity']['photo'];
+                    } else {
+                        $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
+                    } ?>
+    	            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />
+    	        </a>
+    	    <?php } ?>
     	</p>
     	<p>
     		<a href="<?php echo $noserub_url . '/contacts/'; ?>"><strong> <?php echo $num_noserub_contacts; ?></strong> NoseRub contacts</a><br />
@@ -87,8 +106,12 @@
 
 	<h4>On the web</h4>
 	<ul class="whoissidebar">
-		<li><img src="/images/icons/services/flickr.gif" height="16" width="16" alt="flickr" class="whoisicon" /> <a href="#">DEMO</a></li>
-		<li><img src="/images/icons/services/twitter.gif" height="16" width="16" alt="twitter" class="whoisicon" /> <a href="#">DEMO</a></li>
+	    <?php foreach($accounts as $item) { ?>
+	        <li>
+	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
+	            <a href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	        </li>
+	    <?php } ?>
 	</ul>
 	
 	<hr />
@@ -96,12 +119,12 @@
 	<h4>Contact</h4>
 	<ul class="whoissidebar">
 		<li><img src="/images/icons/contact/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="#">e-Mail</a></li>
-		<li><img src="/images/icons/contact/jabber.gif" height="16" width="16" alt="Jabber" class="whoisicon" /> <a href="xmpp:USERNAMEHERE">Jabber</a></li>
-		<li><img src="/images/icons/contact/icq.gif" height="16" width="16" alt="ICQ" class="whoisicon" /> <a href="http://www.icq.com/USERNAMEHERE">ICQ</a></li>
-		<li><img src="/images/icons/contact/yim.gif" height="16" width="16" alt="YIM!" class="whoisicon" /> <a href="http://edit.yahoo.com/config/send_webmesg?.target=USERNAMEHERE&amp;.src=pg">YIM!</a></li>
-		<li><img src="/images/icons/contact/aim.gif" height="16" width="16" alt="AIM" class="whoisicon" /> <a href="aim:USERNAMEHERE">AIM</a></li>
-		<li><img src="/images/icons/contact/skype.gif" height="16" width="16" alt="Skype" class="whoisicon" /> <a href="skype:USERNAMEHERE">Skype</a></li>
-		<li><img src="/images/icons/contact/msn.gif" height="16" width="16" alt="MSN" class="whoisicon" /> <a href="msnim:USERNAMEHERE">MSN</a></li>
+		<?php foreach($communications as $item) { ?>
+	        <li>
+	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
+	            <a href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	        </li>
+	    <?php } ?>
 	</ul>
 	
     	<hr />

@@ -605,9 +605,34 @@ class Service extends AppModel {
             case 22: # Newsvine  
                 return 'http://'.$username.'.newsvine.com/';
                 
-            case 23: # Slideshare  
-                return 'http://www.slideshare.net/'.$username.'';
+            case 23: # Jabber
+            case 24: # Gtalk  
+                return 'xmpp:'.$username;
 
+            case 25: # ICQ
+                return 'http://www.icq.com/'.$username;
+                
+            case 26: # YIM
+                return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
+                
+            case 27: # AIM
+                return 'aim:goIM?screenname='.$username;
+                
+            case 28: # Skype
+                return 'skype:'.$username;
+                
+            case 29: # MSN
+                return 'msnim:'.$username;
+                
+            case 30: # Facebook
+                return 'http://www.facebook.com/profile.php?id='.$username;
+                
+            case 32: # LinkedIn
+                return 'http://www.linkedin.com/in/'.$username;
+                
+            case 33: # Xing
+                return 'https://www.xing.com/profile/'.$username;
+                
             default:
                 return '';
         }
@@ -674,13 +699,19 @@ class Service extends AppModel {
         $data['service_id']      = $service_id;
         $data['username']        = $account_username;
         $data['service_type_id'] = $service['Service']['service_type_id'];
-        $data['account_url']     = $this->getAccountUrl($service_id, $account_username);
-        $data['feed_url']        = $this->getFeedUrl($service_id, $account_username);
         
-        $items = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
+        $data['account_url'] = $this->getAccountUrl($service_id, $account_username);
         
-        if(!$items) {
-            return false;
+        if($service['Service']['has_feed'] == 1) {
+            $data['feed_url'] = $this->getFeedUrl($service_id, $account_username);
+            $items            = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
+        
+            if(!$items) {
+                return false;
+            }
+        } else {
+            $data['feed_url'] = '';
+            $items = array();
         }
         
         $data['items'] = $items;
@@ -754,8 +785,8 @@ class Service extends AppModel {
             case 22:
                 return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
 
-            case 23:
-                return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
+            #case 23:
+            #    return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
 
             default:
                 return array();

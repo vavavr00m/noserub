@@ -244,33 +244,6 @@ class Identity extends AppModel {
     }
     
     /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function afterFind($data) {
-        if(is_array($data)) {
-            foreach($data as $key => $item) {
-                $checkModels = array('WithIdentity', 'Identity');
-                foreach($checkModels as $modelName) {
-                    if(isset($item[$modelName]['username'])) {
-                        $username = $this->splitUsername($item[$modelName]['username']);
-                        $item[$modelName]['local_username'] = $username['local_username'];
-                        $item[$modelName]['username']       = $username['username'];
-                        $item[$modelName]['namespace']      = $username['namespace'];
-                        $item[$modelName]['local']          = $username['local'];
-                        $item[$modelName]['name']           = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
-                        $data[$key] = $item;
-                    }
-                }
-            }
-        }
-        return $data;
-    }
-    
-    /**
      * Opens the NoseRub page and parses the FOAF data
      * This is not a real FOAF-Paser, but rather a lame excuse...
      * Please also see /app/views/elements/foaf.ctp for another hack within

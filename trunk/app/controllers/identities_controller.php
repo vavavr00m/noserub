@@ -57,20 +57,40 @@ class IdentitiesController extends AppController {
 
             if($data) {
                 # get number of accounts and contacts
-                # todo: do this with queries instead of going through arra<
-                $this->set('num_accounts', count($data['Account']));
+                # also divide between real services and contact services like AIM
+                # and move 9 contacts to the view
+                # @todo: sort the contacts, so that the ones with last updates are shown
+                #        on top. do that with bind-/unbindModel above
+                $accounts       = array();
+                $communications = array();
+                $contacts       = array();
+                
+                foreach($data['Account'] as $account) {
+                    if($account['Service']['is_contact'] == 0) {
+                        $accounts[] = $account;
+                    } else {
+                        $communications[] = $account;
+                    }
+                }
+                $this->set('accounts', $accounts);
+                $this->set('communications', $communications);
+                
                 $num_private_contacts = 0;
                 $num_noserub_contacts = 0;
                 foreach($data['Contact'] as $contact) {
                     if(strpos($contact['WithIdentity']['username'], '@') === false) {
                         $num_noserub_contacts++;
+                        if(count($contacts) < 9) {
+                            $contacts[] = $contact;
+                        }
                     } else {
                         $num_private_contacts++;
                     }
                 }
                 $this->set('num_private_contacts', $num_private_contacts);
                 $this->set('num_noserub_contacts', $num_noserub_contacts);
-            
+                $this->set('contacts', $contacts);
+                
                 # create $about_identity for the view
                 $this->set('about_identity', $data['Identity']);
             
@@ -163,7 +183,7 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['longitude'] = 0;
             }
             
-            $saveable = array('firstname', 'lastname', 'sex', 'address', 'latitude', 'longitude', 'modified');
+            $saveable = array('firstname', 'lastname', 'about', 'sex', 'address', 'latitude', 'longitude', 'modified');
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
