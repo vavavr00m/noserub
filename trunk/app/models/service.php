@@ -153,8 +153,11 @@ class Service extends AppModel {
             case 22: # Newsvine
                 return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
 
-            case 23: # Slideshare
+            case 34: # Slideshare
                 return 'http://www.slideshare.net/rss/user/'.$username.'';
+
+            case 35: # Plazes
+                return 'http://plazes.com/users/'.$username.'/presences.atom';
 
             default: 
                 return false;
@@ -289,8 +292,12 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromNewsvine($feeditem);
     		        break;
     		        
-    		    case 23: # Slideshare
+    		    case 34: # Slideshare
     		        $item['content'] = $this->contentFromSlideshare($feeditem);
+    		        break;
+
+    		    case 35: # Plazes
+    		        $item['content'] = $this->contentFromPlazes($feeditem);
     		        break;
 
     		    default:
@@ -543,6 +550,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromPlazes($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -633,6 +651,12 @@ class Service extends AppModel {
             case 33: # Xing
                 return 'https://www.xing.com/profile/'.$username;
                 
+            case 34: #Slideshare
+            	return 'http://www.slideshare.net/'.$username;
+
+            case 35: #Plazes
+            	return 'http://plazes.com/users/'.$username;
+
             default:
                 return '';
         }
@@ -785,8 +809,11 @@ class Service extends AppModel {
             case 22:
                 return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
 
-            #case 23:
-            #    return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
+            case 34:
+                return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
+
+            case 35:
+                return $this->getContactsFromPlazes('http://plazes.com/users/' . $account['Account']['username'] . ';contacts');
 
             default:
                 return array();
@@ -1206,9 +1233,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a href="\/(.*)" style="" title="" class="user_thumbnail_big" id="">/simU', $content, $matches)) {
+            if($content && preg_match_all('/<a href=".*" style="" title="" class="blue_link_normal" id="">(.*)<\/a>/simU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<a href="\/(.*)" style="" title="" class="user_thumbnail_big" id="">/iU', $content, $usernames);
+                preg_match_all('/<a href=".*" style="" title="" class="blue_link_normal" id="">(.*)<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1216,6 +1243,47 @@ class Service extends AppModel {
                 }
                  if(preg_match('/class="text_float_left">Next<\/a>/iU', $content)) {
                     $page_url = $url . '/'.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromPlazes($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                 if(preg_match('/next<\/a><\/strong><\/p>/iU', $content)) {
+                    $page_url = $url . '?page='.$i;
                     $i++;
                     if($i>1000) {
                         # just to make sure, we don't loop forever

@@ -80,10 +80,6 @@ img, acronym {
 	color: #999999;
 }
 
-.link, .text, .photo, .audio, .video, .event, .micropublish {
-	padding: 5px 20px 5px 25px;
-}
-
 .photothumb {
 	float: left;
 	border: 1px solid #ECEBE5;

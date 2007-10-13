@@ -1,3 +1,7 @@
+.icon {
+	padding: 5px 20px 5px 25px;
+}
+
 /* profile */
 .bio {
 	background: transparent url(/images/icons/profile/bio.gif) no-repeat center left;
@@ -42,4 +46,12 @@
 
 .micropublish {
 	background: transparent url(/images/icons/network/micropublish.gif) no-repeat center left;
+}
+
+.document {
+	background: transparent url(/images/icons/network/document.gif) no-repeat center left;
+}
+
+.location {
+	background: transparent url(/images/icons/network/location.gif) no-repeat center left;
 }
