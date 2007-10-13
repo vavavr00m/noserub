@@ -109,7 +109,7 @@
 	    <?php foreach($accounts as $item) { ?>
 	        <li>
 	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-	            <a href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	            <a rel="me" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
 	        </li>
 	    <?php } ?>
 	</ul>
@@ -118,7 +118,7 @@
 
 	<h4>Contact</h4>
 	<ul class="whoissidebar">
-		<li><img src="/images/icons/contact/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="#">e-Mail</a></li>
+		<li><img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="#">e-Mail</a></li>
 		<?php foreach($communications as $item) { ?>
 	        <li>
 	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
