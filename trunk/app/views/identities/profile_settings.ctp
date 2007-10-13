@@ -1,4 +1,4 @@
-<form id="IdentitySettingsForm" method="post" action="<?php echo $this->here; ?>">
+<form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <legend>Personal data</legend>
         <?php 
@@ -13,6 +13,21 @@
         <input type="radio" name="data[Identity][sex]" value="0"<?php echo $this->data['Identity']['sex'] == 0 ? ' checked="checked"' : ''; ?>> <span>rather not say</span>
         <input type="radio" name="data[Identity][sex]" value="1"<?php echo $this->data['Identity']['sex'] == 1 ? ' checked="checked"' : ''; ?>> <span>female</span>
         <input type="radio" name="data[Identity][sex]" value="2"<?php echo $this->data['Identity']['sex'] == 2 ? ' checked="checked"' : ''; ?>> <span>male</span>
+    </fieldset>
+    
+    <fieldset>
+        <legend>Photo</legend>
+        <p>
+            Size may not exceed 150x150 pixel and 150. If you don't have a matching photo, try <a href="http://www.mypictr.com/">myPictr.com</a>.<br />
+            GIF, JPG and PNG allowed.
+        </p>
+        <?php if($this->data['Identity']['photo']) { ?>
+            <p>
+                Current photo: <img src="<?php echo FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg'); ?>" width="150" height="150" />
+            </p>
+        <?php } ?>
+        <label>Photo:</label>
+        <input type="file" name="data[Identity][photo]" />
     </fieldset>
     
     <fieldset>

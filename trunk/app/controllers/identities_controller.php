@@ -175,17 +175,95 @@ class IdentitiesController extends AppController {
         }
         
         if($this->data) {
-            # geocode the address
-            $geolocation = $this->geocoder->get($this->data['Identity']['address']);
-            if($geolocation !== false) {
-                $this->data['Identity']['latitude']  = $geolocation['latitude'];
-                $this->data['Identity']['longitude'] = $geolocation['longitude'];
+            # get identity again to check, where we have changes
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $identity = $this->Identity->findById($session_identity['id']);
+
+            # geocode the address, if neccessary
+            if($identity['Identity']['address'] != $this->data['Identity']['address'] || 
+               ($identity['Identity']['longitude'] == 0 &&
+                $identity['Identity']['latitude'] == 0)) {
+                $geolocation = $this->geocoder->get($this->data['Identity']['address']);
+                if($geolocation !== false) {
+                    $this->data['Identity']['latitude']  = $geolocation['latitude'];
+                    $this->data['Identity']['longitude'] = $geolocation['longitude'];
+                } else {
+                    $this->data['Identity']['latitude']  = 0;
+                    $this->data['Identity']['longitude'] = 0;
+                }
             } else {
-                $this->data['Identity']['latitude']  = 0;
-                $this->data['Identity']['longitude'] = 0;
+                $this->data['Identity']['latitude']  = $identity['Identity']['latitude'];
+                $this->data['Identity']['longitude'] = $identity['Identity']['longitude'];
             }
             
-            $saveable = array('firstname', 'lastname', 'about', 'sex', 'address', 'latitude', 'longitude', 'modified');
+            # save the photo, if neccessary
+            if($this->data['Identity']['photo']['error'] != 0) {
+                $this->data['Identity']['photo'] = $identity['Identity']['photo'];
+            } else {
+                $file = $this->data['Identity']['photo']['tmp_name'];
+                $imageinfo = getimagesize($file);
+                switch($imageinfo[2]) {
+                    case IMAGETYPE_GIF:
+                        $picture = imageCreateFromGIF($file);
+                        break;
+                        
+                    case IMAGETYPE_JPEG:
+                        $picture = imageCreateFromJPEG($file);
+                        break;
+                        
+                    case IMAGETYPE_PNG:
+                        $picture = imageCreateFromPNG($file);
+                        break;
+                        
+                    default:
+                        $picture = null;
+                }
+                
+                if($picture) {
+                    $filename = '';
+                    $seed = $this->data['Identity']['photo']['tmp_name'];
+                    while($filename == '') {
+                        $filename = md5($seed);
+                        # check, if this is already taken
+                        $this->Identity->recursive = 0;
+                        $this->Identity->expects('Identity');
+                        if($this->Identity->findCount(array('photo' => $filename)) > 0) {
+                            $filename = '';
+                            $seed = md5($seed . time());
+                        }
+                    }
+                    
+                    $this->data['Identity']['photo'] = $filename;
+                    $path = STATIC_DIR . 'avatars' . DS;
+                    
+                    $original_width  = $imageinfo[0];
+                    $original_height = $imageinfo[1];
+
+                    # Scaling to 150x150
+                    if($original_width==150 && $original_height==150) {
+                        # original picture
+                        imagejpeg($picture, $path . $filename . '.jpg', 100); # best quality
+                    } else {
+                        # resampling picture
+                        $resampled = imagecreatetruecolor(150, 150);
+                        imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
+                        imagejpeg($resampled, $path . $filename . '.jpg', 100); # best quality 
+                    }
+                    
+                    # Scaling to 35x35
+                    if($original_width==35 && $original_height==35) {
+                        # original picture
+                        imagejpeg($picture, $path . $filename . '-small.jpg', 100); # best quality
+                    } else {
+                        # resampling picture
+                        $resampled = imagecreatetruecolor(35, 35);
+                        imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
+                        imagejpeg($resampled, $path . $filename . '-small.jpg', 100); # best quality 
+                    }
+                }
+            }
+            $saveable = array('firstname', 'lastname', 'about', 'photo', 'sex', 'address', 'latitude', 'longitude', 'modified');
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);

@@ -19,7 +19,7 @@
                                           2 => '/images/profile/avatar/male-small.gif'));
     
         if($data['Identity']['photo']) {
-            $profile_photo = $data['Identity']['photo'];
+            $profile_photo = FULL_BASE_URL . Router::url('/static/avatars/'.$data['Identity']['photo'].'.jpg');
         } else {
             $profile_photo = $sex['img'][$data['Identity']['sex']];
         }
@@ -89,7 +89,7 @@
     	    <?php foreach($contacts as $item) { ?>
     	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>">
     	            <?php if($item['WithIdentity']['photo']) {
-                        $contact_photo = $item['WithIdentity']['photo'];
+                        $contact_photo = FULL_BASE_URL . Router::url('/static/avatars/' . $item['WithIdentity']['photo'].'-small.jpg');
                     } else {
                         $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
                     } ?>
