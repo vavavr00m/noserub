@@ -26,12 +26,12 @@ input, textarea, select {
 	margin: 0;
 	padding: 1px;
 	font-family: inherit;
+	font-size: 11px;
 	border: 1px solid #cccccc;
 }
 
 input {
 	vertical-align: middle;
-	font-size: 11px;
 }
 	
 select { padding: 0; }
@@ -62,4 +62,11 @@ span {
 	border: 1px solid #d9d7ca;
 	padding: 5px 10px 5px 10px;
 	text-align: center;
+}
+
+textarea {
+	width: 60%;
+	height: 150px;
+	line-height: 14px;
+	margin-top: 10px;
 }

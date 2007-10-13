@@ -1,0 +1,2 @@
+INSERT INTO `service_types` ( `id` , `token` , `name` , `intro` , `created` , `modified` ) VALUES ('8', 'document', 'Documents', '@user@ uploaded a document called @item@', NOW(), NOW());
+INSERT INTO `service_types` ( `id` , `token` , `name` , `intro` , `created` , `modified` ) VALUES ('9', 'location', 'Locations', '@user@ is currently at @item@', NOW(), NOW());

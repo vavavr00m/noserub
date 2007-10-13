@@ -18,7 +18,7 @@
     <fieldset>
         <legend>Make a statement</legend>
         <p>
-            Not HTML allowed; newlines are preserved; links with http:// and https:// are automatically converted;
+			HTML is not allowed; newlines are preserved; URLs with http:// and https:// will turn into links
         </p>
         <?php echo $form->textarea('Identity.about', array('label' => 'About')); ?>
     </fieldset>
