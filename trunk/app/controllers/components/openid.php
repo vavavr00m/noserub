@@ -13,12 +13,15 @@
 			$this->controller = $controller;
 		}
 		
+		/**
+		 * @throws InvalidArgumentException if an invalid OpenID was provided
+		 */
 		public function authenticate($openidUrl, $returnTo, $trustRoot, $required = array(), $optional = array()) {
 			$consumer = $this->getConsumer();
 			$authRequest = $consumer->begin($openidUrl);
 			
 			if (!$authRequest) {
-			    return false;
+			    throw new InvalidArgumentException('Invalid OpenID');
 			}
 			
 			$sregRequest = Auth_OpenID_SRegRequest::build($required, $optional);
@@ -31,8 +34,7 @@
 				$redirectUrl = $authRequest->redirectUrl($trustRoot, $returnTo);
 				
 				if (Auth_OpenID::isFailure($redirectUrl)) {
-					echo 'Could not redirect to server: '.$redirectUrl->message;
-					exit();
+					throw new Exception('Could not redirect to server: '.$redirectUrl->message);
 				} else {
 					$this->controller->redirect($redirectUrl, null, true);
 				}
@@ -41,8 +43,7 @@
 				$formHtml = $authRequest->formMarkup($trustRoot, $returnTo, false , $formId);
 				
 				if (Auth_OpenID::isFailure($formHtml)) {
-					echo 'Could not redirect to server: '.$formHtml->message;
-					exit();
+					throw new Exception('Could not redirect to server: '.$formHtml->message);
 				} else {
 					echo '<html><head><title>OpenID transaction in progress</title></head>'.
 						 "<body onload='document.getElementById(\"".$formId."\").submit()'>".
@@ -63,8 +64,7 @@
 			$storePath = TMP.'openid';
 
 			if (!file_exists($storePath) && !mkdir($storePath)) {
-			    print "Could not create the FileStore directory '$storePath'. Please check the effective permissions.";
-			    exit(0);
+			    throw new Exception('Could not create the FileStore directory '.$storePath.'. Please check the effective permissions.');
 			}
 
 			$store = new Auth_OpenID_FileStore($storePath);
