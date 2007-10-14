@@ -16,7 +16,13 @@
                                     2 => '/images/profile/avatar/male.gif'),
                      'img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
                                           1 => '/images/profile/avatar/female-small.gif',
-                                          2 => '/images/profile/avatar/male-small.gif'));
+                                          2 => '/images/profile/avatar/male-small.gif'),
+                     'he' => array(0 => 'he/she',
+                                   1 => 'she',
+                                   2 => 'he'),
+                     'him' => array(0 => 'him/her',
+                                    1 => 'her',
+                                    2 => 'him'));
     
         if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
             $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
@@ -43,18 +49,28 @@
         	<h3><?php echo $data['Identity']['name']; ?></h3>
         	<p id="personalid"><?php echo $data['Identity']['servername']; ?>/<strong><?php echo $data['Identity']['local_username']; ?></strong></p>
         	<ul class="whoisstats">
-        		<li class="bio icon"><?php echo $data['Identity']['local_username']; ?> is a XXXX and XXXX years old.</li>
-		
-        		<?php if(isset($distance)) { ?>
-        		    <li class="destination icon">XXXX lives <?php echo ceil($distance); ?> km away from you.</li>
+        	    <?php if(isset($data['Identity']['age'])) { ?>
+        		    <li class="bio icon">
+        		        <?php echo $sex['he'][$data['Identity']['sex']]; ?> is <?php echo $data['Identity']['age']; ?> years old.
+        		    </li>
+		        <?php } ?>
+        		<?php if(isset($distance) || $data['Identity']['address_shown']) {
+        		    $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+        		    if(isset($distance)) {
+        		        $label .= ceil($distance) . ' km away from you';
+        		    }
+        		    if($data['Identity']['address_shown']) {
+        		        $label .= ' in ' . $data['Identity']['address_shown'];
+        		    } ?>
+        		    <li class="destination icon"> <?php echo $label; ?></li>
         		<?php } ?>
 		
         		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
                     <?php
                         if($relationship_status == 'contact') {
-                            echo '<li class="removecontact icon">' . $data['Identity']['local_username'] . ' is a contact of yours. <a href="#">Remove XXXX</a></li>';
+                            echo '<li class="removecontact icon">' . $sex['he'][$data['Identity']['sex']] . ' is a contact of yours</li>';
                         } else { 
-                            echo '<li class="addcontact icon">' . $html->link('Add ' . $data['Identity']['local_username'] . ' as your contact.', '/' . $data['Identity']['local_username'] . '/add/as/contact/').'</li>';
+                            echo '<li class="addcontact icon">' . $html->link('Add ' . $sex['him'][$data['Identity']['sex']] . ' as your contact', '/' . $data['Identity']['local_username'] . '/add/as/contact/').'</li>';
                         }
                     ?>
                 <?php } ?>
