@@ -44,6 +44,8 @@ Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
+Router::connect('/pages/register/withopenid/', array('controller' => 'identities', 'action' => 'register_with_openid_step_1'));
+Router::connect('/pages/register/withopenid/step2', array('controller' => 'identities', 'action' => 'register_with_openid_step_2'));
 Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));

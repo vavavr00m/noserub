@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime');
-    var $components = array('geocoder', 'url', 'cluster', 'upload', 'cdn');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn');
     
     /**
      * Method description
@@ -416,6 +416,62 @@ class IdentitiesController extends AppController {
         }
 
         $this->set('headline', 'Register a new NoseRub account');
+    }
+    
+    function register_with_openid_step_1() {
+    	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
+
+    	if (!empty($this->data)) {
+    		try {
+    			$this->openid->authenticate($this->data['Identity']['openid'], 
+    											  'http://'.$_SERVER['SERVER_NAME'].'/pages/register/withopenid', 
+    											  'http://'.$_SERVER['SERVER_NAME'], 
+    											   array('email'));
+    		} catch (InvalidArgumentException $e) {
+    			$this->Identity->invalidate('openid', 'invalid_openid');
+                $this->render();
+				exit;
+    		} catch (Exception $e) {
+    			echo $e->getMessage();
+    			exit();
+    		}
+    	} else {
+    		if (count($this->params['url']) > 1) {
+    			$response = $this->openid->getResponse();
+    			
+    			if ($response->status == Auth_OpenID_CANCEL) {
+    				$this->Identity->invalidate('openid', 'verification_cancelled');
+    				$this->render();
+    				exit;
+    			} elseif ($response->status == Auth_OpenID_FAILURE) {
+    				$this->Identity->invalidate('openid', 'openid_failure');
+    				$this->set('errorMessage', $response->message);
+    				$this->render();
+    				exit;
+    			} elseif ($response->status == Auth_OpenID_SUCCESS) {
+    				$sregResponse = Auth_OpenID_SRegResponse::fromSuccessResponse($response);
+    				$sreg = $sregResponse->contents();
+    				
+    				$this->Session->write('Registration.openid', $response->identity_url);
+    				
+    				if (@$sreg['email']) {
+    					$this->Session->write('Registration.email', $sreg['email']);
+    				}
+
+    				$this->redirect('/pages/register/withopenid/step2', null, true);
+    			}
+    		}
+    	}
+    }
+    
+    function register_with_openid_step_2() {
+    	$this->set('headline', 'Register a new NoseRub account - Step 2/2');
+
+    	exit;
+    	// TODO implement this function
+    	/*if (!empty($this->data)) {
+    		$this->redirect('/pages/register/thanks/', null, true);
+    	}*/
     }
     
     /**
