@@ -197,6 +197,14 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['longitude'] = $identity['Identity']['longitude'];
             }
             
+            $path = STATIC_DIR . 'avatars' . DS;
+            
+            # check, if photo should be removed
+            if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
+                unlink($path . $identity['Identity']['photo'] . '.jpg');
+                unlink($path . $identity['Identity']['photo'] . '-small.jpg');
+                $identity['Identity']['photo'] = '';
+            }
             # save the photo, if neccessary
             if($this->data['Identity']['photo']['error'] != 0) {
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
@@ -221,6 +229,13 @@ class IdentitiesController extends AppController {
                 }
                 
                 if($picture) {
+                    # delete the old photo, if there was one
+                    if($identity['Identity']['photo']) {
+                        unlink($path . $identity['Identity']['photo'] . '.jpg');
+                        unlink($path . $identity['Identity']['photo'] . '-small.jpg');
+                    }
+                    
+                    # get random name for new photo and make sure it is unqiue
                     $filename = '';
                     $seed = $this->data['Identity']['photo']['tmp_name'];
                     while($filename == '') {
@@ -235,7 +250,6 @@ class IdentitiesController extends AppController {
                     }
                     
                     $this->data['Identity']['photo'] = $filename;
-                    $path = STATIC_DIR . 'avatars' . DS;
                     
                     $original_width  = $imageinfo[0];
                     $original_height = $imageinfo[1];

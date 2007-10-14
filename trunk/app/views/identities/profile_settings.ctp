@@ -1,23 +1,24 @@
 <form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
-        <div id="settings_photo">
+    <div id="settings_photo">
         <fieldset>
-        <legend>Photo</legend>
-          <?php if($this->data['Identity']['photo']) { ?>
+            <legend>Photo</legend>
+            <?php if($this->data['Identity']['photo']) { ?>
+                <p>
+                    <strong>Your current photo:</strong><br />
+                    <img src="<?php echo FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg'); ?>" width="150" height="150" alt="Your current photo" class="mypicture" />
+                </p>
+                <p>
+                    <input type="checkbox" name="data[Identity][remove_photo]" value="1">Remove photo
+                </p>
+            <?php } ?>
             <p>
-                <strong>Your current photo:</strong><br />
-                <img src="<?php echo FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg'); ?>" width="150" height="150" alt="Your current photo" class="mypicture" />
+                Size may not exceed 150x150 pixels. If you don't have one with the right size, try <a href="http://www.mypictr.com/">myPictr.com</a>.<br />
+                GIF, JPG and PNG allowed.
             </p>
-
-        <?php } ?>
-        
-        <p>
-            Size may not exceed 150x150 pixels. If you don't have one with the right size, try <a href="http://www.mypictr.com/">myPictr.com</a>.<br />
-            GIF, JPG and PNG allowed.
-        </p>
-        <label>Photo/Portrait:</label>
-        <input type="file" name="data[Identity][photo]" />
-        <p><input class="submitbutton" type="submit" value="Save changes"/></p>
-    </fieldset>
+            <label>Photo/Portrait:</label>
+            <input type="file" name="data[Identity][photo]" />
+            <p><input class="submitbutton" type="submit" value="Save changes"/></p>
+        </fieldset>
     </div>
     
     <div id="settings_data">
