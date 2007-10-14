@@ -17,10 +17,12 @@
 		 * @throws InvalidArgumentException if an invalid OpenID was provided
 		 */
 		public function authenticate($openidUrl, $returnTo, $trustRoot, $required = array(), $optional = array()) {
-			$consumer = $this->getConsumer();
-			$authRequest = $consumer->begin($openidUrl);
+			if (trim($openidUrl) != '') {
+				$consumer = $this->getConsumer();
+				$authRequest = $consumer->begin($openidUrl);
+			}
 			
-			if (!$authRequest) {
+			if (!isset($authRequest) || !$authRequest) {
 			    throw new InvalidArgumentException('Invalid OpenID');
 			}
 			
