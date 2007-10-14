@@ -85,20 +85,9 @@ class Identity extends AppModel {
         if(!$this->save($data, true, $saveable)) {
             return false;
         }
-        
-        # send out verification mail
-        $msg  = 'Welcome to NoseRub!' . "\n\n";
-        $msg .= 'Please click here to verify your email address:' ."\n";
-        $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $data['Identity']['hash'] . '/' . "\n\n";
-        $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
-        $msg .= 'Thanks!';
-        
-        if(!mail($data['Identity']['email'], 'Your NoseRub registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
-            $this->log('verify mail could not be sent: '.$data['Identity']['email']);
-        } else {
-            $this->log('verify mail sent to '.$data['Identity']['email'], LOG_DEBUG);
-        }
-        
+
+        $this->sendVerificationMail($data['Identity']['email'], $data['Identity']['hash']);
+
         return true;
     }
     
@@ -377,5 +366,19 @@ class Identity extends AppModel {
         $this->save($data['identity']);
         
         return true;
+    }
+    
+    private function sendVerificationMail($email, $hash) {
+    	$msg  = 'Welcome to NoseRub!' . "\n\n";
+        $msg .= 'Please click here to verify your email address:' ."\n";
+        $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
+        $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
+        $msg .= 'Thanks!';
+        
+        if(!mail($email, 'Your NoseRub registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+            $this->log('verify mail could not be sent: '.$email);
+        } else {
+            $this->log('verify mail sent to '.$email, LOG_DEBUG);
+        }
     }
 }
