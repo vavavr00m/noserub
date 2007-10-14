@@ -79,17 +79,17 @@
 
         <br class="clear" />
 
+        <?php if($data['Identity']['about']) { ?>
         <h4>About me</h4>
         <div id="about">
             <p>
                 <?php if($data['Identity']['about']) {
                     $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
                     echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
-                } else { ?>
-                    <em>The User didn't make any statement yet.</em>
-                <?php } ?>
+                } ?>
             </p>        
         </div>
+        <?php } ?>
 
         <br class="clear" />
         <div>
@@ -125,7 +125,8 @@
         </p>
     
         <hr />
-
+	
+	<?php if($accounts) { ?>
 	<h4>On the web</h4>
 	<ul class="whoissidebar">
 	    <?php foreach($accounts as $item) { ?>
@@ -137,6 +138,7 @@
 	</ul>
 	
 	<hr />
+	<?php } ?>
 
 	<h4>Contact</h4>
 	<ul class="whoissidebar">

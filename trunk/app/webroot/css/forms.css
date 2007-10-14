@@ -45,6 +45,14 @@ label {
 .geolocation {
 	float: left;
 	width: 70px;
+	color: #363636;
+}
+
+#geolocation_preview {
+	float: right;
+	border-left: 1px solid #ECEBE5;
+	padding: 0 0  10px 10px;
+	margin: 10px 0 0 10px;
 }
 
 span {

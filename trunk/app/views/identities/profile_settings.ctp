@@ -49,23 +49,28 @@
     
     <fieldset>
         <legend>Geolocation</legend>
+        <?php 
+            echo $form->input('Identity.address', array('label' => 'Address for geolocation (<strong>private</strong>)',
+                                                        'size'  => 64)); 
+        ?>
+        
+        <div id="geolocation_preview">
+        	<p class="geolocation">Latitude<br /><strong><?php echo $this->data['Identity']['latitude']; ?></strong></p>
+        	<p class="geolocation">Longitude<br /><strong><?php echo $this->data['Identity']['longitude']; ?></strong></p>
+        </div>
+
         <p>
             The address is used to determine the geolocation. This address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address.
         </p>
+       
         <?php 
-            echo $form->input('Identity.address', array('label' => 'Address for geolocation',
-                                                        'size'  => 64)); 
+            echo $form->input('Identity.address_shown', array('label' => 'Address for your profile (<strong>public</strong>)',
+                                                              'size'  => 64)); 
         ?>
         <p>
             Here you can specify, how you would like your address to be displayed. For instance: <strong>Paris, France</strong><br />
             If you leave it empty, nothing will be shown on your profile page.
         </p>
-        <?php 
-            echo $form->input('Identity.address_shown', array('label' => 'Display address as',
-                                                              'size'  => 64)); 
-        ?>
-        <p class="geolocation">Latitude<br /><strong><?php echo $this->data['Identity']['latitude']; ?></strong></p>
-        <p class="geolocation">Longitude<br /><strong><?php echo $this->data['Identity']['longitude']; ?></strong></p>
 
     </fieldset>
     
