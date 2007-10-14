@@ -69,7 +69,9 @@ class Identity extends AppModel {
      * @access 
      */
     public function register($data) {
-        # transform it to a real username
+        $isAccountWithOpenID = isset($data['Identity']['openid']);
+    	
+    	# transform it to a real username
         $splitted = $this->splitUsername($data['Identity']['username']);
         if($splitted['local'] == 0) {
             # registering here for an other server
@@ -78,10 +80,19 @@ class Identity extends AppModel {
         }
         $this->create();
         $data['Identity']['is_local'] = 1;
-        $data['Identity']['password'] = md5($data['Identity']['passwd']);
+        
+        $saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'created', 'modified');
+        
+        if (!$isAccountWithOpenID) { 
+        	$data['Identity']['password'] = md5($data['Identity']['passwd']);
+        	$saveable[] = 'password';
+        } else {
+        	$saveable[] = 'openid'; 
+        }
+        
         $data['Identity']['username'] = $splitted['username'];
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        $saveable = array('is_local', 'username', 'password', 'email', 'hash', 'frontpage_updates', 'created', 'modified');
+        
         if(!$this->save($data, true, $saveable)) {
             return false;
         }

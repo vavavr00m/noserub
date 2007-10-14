@@ -465,13 +465,27 @@ class IdentitiesController extends AppController {
     }
     
     function register_with_openid_step_2() {
+    	if (!$this->Session->check('Registration.openid')) {
+    		$this->redirect('/pages/register/withopenid', null, true);
+    	}
+    	
     	$this->set('headline', 'Register a new NoseRub account - Step 2/2');
 
-    	exit;
-    	// TODO implement this function
-    	/*if (!empty($this->data)) {
-    		$this->redirect('/pages/register/thanks/', null, true);
-    	}*/
+    	if (!empty($this->data)) {
+    		$this->data['Identity']['openid'] = $this->Session->read('Registration.openid');
+    		
+    		if($this->Identity->register($this->data)) {
+	    		$this->Session->delete('Registration.openid');
+	    		$this->Session->delete('Registration.email');
+    			$this->redirect('/pages/register/thanks/', null, true);
+            }
+    	} else {
+    		if ($this->Session->check('Registration.email')) {
+    			$this->data['Identity']['email'] = $this->Session->read('Registration.email');
+    		}
+    		
+    		$this->data['Identity']['frontpage_updates'] = 1;
+    	}
     }
     
     /**
