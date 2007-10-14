@@ -18,8 +18,14 @@
                                           1 => '/images/profile/avatar/female-small.gif',
                                           2 => '/images/profile/avatar/male-small.gif'));
     
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+
         if($data['Identity']['photo']) {
-            $profile_photo = FULL_BASE_URL . Router::url('/static/avatars/'.$data['Identity']['photo'].'.jpg');
+            $profile_photo = $static_base_url . $data['Identity']['photo'].'.jpg';
         } else {
             $profile_photo = $sex['img'][$data['Identity']['sex']];
         }
@@ -89,7 +95,7 @@
     	    <?php foreach($contacts as $item) { ?>
     	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>">
     	            <?php if($item['WithIdentity']['photo']) {
-                        $contact_photo = FULL_BASE_URL . Router::url('/static/avatars/' . $item['WithIdentity']['photo'].'-small.jpg');
+    	                $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';    	                
                     } else {
                         $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
                     } ?>

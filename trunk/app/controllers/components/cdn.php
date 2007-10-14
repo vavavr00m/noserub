@@ -46,6 +46,20 @@ class CdnComponent extends Object {
      * @return 
      * @access 
      */
+    function copyTo($from_filename, $to_filename, $mime_type = 'image/jpeg') {
+        $content = file_get_contents($from_filename);
+        if($content) {
+            $this->writeContent($to_filename, $mime_type, $content);
+        }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getBuckets() {
         return $this->s3->ListBuckets();
     }

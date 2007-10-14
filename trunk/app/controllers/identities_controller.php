@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime');
-    var $components = array('geocoder', 'url', 'cluster');
+    var $components = array('geocoder', 'url', 'cluster', 'upload', 'cdn');
     
     /**
      * Method description
@@ -201,82 +201,28 @@ class IdentitiesController extends AppController {
             
             # check, if photo should be removed
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
-                unlink($path . $identity['Identity']['photo'] . '.jpg');
-                unlink($path . $identity['Identity']['photo'] . '-small.jpg');
+                @unlink($path . $identity['Identity']['photo'] . '.jpg');
+                @unlink($path . $identity['Identity']['photo'] . '-small.jpg');
                 $identity['Identity']['photo'] = '';
             }
+            
             # save the photo, if neccessary
             if($this->data['Identity']['photo']['error'] != 0) {
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else {
-                $file = $this->data['Identity']['photo']['tmp_name'];
-                $imageinfo = getimagesize($file);
-                switch($imageinfo[2]) {
-                    case IMAGETYPE_GIF:
-                        $picture = imageCreateFromGIF($file);
-                        break;
-                        
-                    case IMAGETYPE_JPEG:
-                        $picture = imageCreateFromJPEG($file);
-                        break;
-                        
-                    case IMAGETYPE_PNG:
-                        $picture = imageCreateFromPNG($file);
-                        break;
-                        
-                    default:
-                        $picture = null;
-                }
                 
-                if($picture) {
-                    # delete the old photo, if there was one
-                    if($identity['Identity']['photo']) {
-                        unlink($path . $identity['Identity']['photo'] . '.jpg');
-                        unlink($path . $identity['Identity']['photo'] . '-small.jpg');
-                    }
-                    
-                    # get random name for new photo and make sure it is unqiue
-                    $filename = '';
-                    $seed = $this->data['Identity']['photo']['tmp_name'];
-                    while($filename == '') {
-                        $filename = md5($seed);
-                        # check, if this is already taken
-                        $this->Identity->recursive = 0;
-                        $this->Identity->expects('Identity');
-                        if($this->Identity->findCount(array('photo' => $filename)) > 0) {
-                            $filename = '';
-                            $seed = md5($seed . time());
-                        }
-                    }
-                    
+                $filename = $this->upload->add($this->data['Identity']['photo'], $identity, $path);
+                if($filename) {
                     $this->data['Identity']['photo'] = $filename;
                     
-                    $original_width  = $imageinfo[0];
-                    $original_height = $imageinfo[1];
-
-                    # Scaling to 150x150
-                    if($original_width==150 && $original_height==150) {
-                        # original picture
-                        imagejpeg($picture, $path . $filename . '.jpg', 100); # best quality
-                    } else {
-                        # resampling picture
-                        $resampled = imagecreatetruecolor(150, 150);
-                        imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-                        imagejpeg($resampled, $path . $filename . '.jpg', 100); # best quality 
-                    }
-                    
-                    # Scaling to 35x35
-                    if($original_width==35 && $original_height==35) {
-                        # original picture
-                        imagejpeg($picture, $path . $filename . '-small.jpg', 100); # best quality
-                    } else {
-                        # resampling picture
-                        $resampled = imagecreatetruecolor(35, 35);
-                        imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-                        imagejpeg($resampled, $path . $filename . '-small.jpg', 100); # best quality 
+                    if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                        # store to CDN
+                        $this->cdn->copyTo($path . $filename . '.jpg', 'avatars/'.$filename.'.jpg');
+                        $this->cdn->copyTo($path . $filename . '.jpg', 'avatars/'.$filename.'-small.jpg');
                     }
                 }
-            }
+            }   
+             
             $saveable = array('firstname', 'lastname', 'about', 'photo', 'sex', 'address', 'latitude', 'longitude', 'modified');
             
             $this->Identity->id = $session_identity['id'];
