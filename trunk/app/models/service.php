@@ -165,6 +165,9 @@ class Service extends AppModel {
             case 37: # MoodMill
                 return 'http://www.moodmill.com/rss/'.$username.'/';
 
+            case 38: # Digg
+                return 'http://digg.com/users/'.$username.'/history/favorites.rss';
+
             default: 
                 return false;
         }
@@ -312,6 +315,10 @@ class Service extends AppModel {
 
     		    case 37: # MoodMill
     		        $item['content'] = $this->contentFromMoodmill($feeditem);
+    		        break;
+
+    		    case 38: # Digg
+    		        $item['content'] = $this->contentFromDigg($feeditem);
     		        break;
 
     		    default:
@@ -597,6 +604,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromDigg($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -698,6 +716,9 @@ class Service extends AppModel {
 
             case 37: #MoodMill
             	return 'http://www.moodmill.com/citizen/'.$username;
+
+            case 38: #Digg
+            	return 'http://digg.com/users/'.$username;
 
             default:
                 return '';
@@ -862,6 +883,9 @@ class Service extends AppModel {
             
             case 37:
                 return $this->getContactsFromMoodmill('http://www.moodmill.com/citizen/' . $account['Account']['username'] . '');
+
+            case 38:
+                return $this->getContactsFromDigg('http://digg.com/users/' . $account['Account']['username'] . '/friends/view');
 
             default:
                 return array();
@@ -1372,6 +1396,47 @@ class Service extends AppModel {
 
     function getContactsFromMoodmill($url) {
     	return $this->__getContactsFromUrl($url, '/<div class="who">.*<a href=".*">(.*)<\/a>.*<\/div>/simU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromDigg($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<a class="fn" href=".*"><img class="user-image" width="48" height="48" alt=".*" src=".*" \/>(.*)<\/a>/iU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<a class="fn" href=".*"><img class="user-image" width="48" height="48" alt=".*" src=".*" \/>(.*)<\/a>/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/Next &#187;<\/a>/iU', $content)) {
+                    $page_url = $url . '/page'.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**
