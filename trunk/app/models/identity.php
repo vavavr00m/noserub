@@ -96,23 +96,19 @@ class Identity extends AppModel {
         $this->create();
         $data['Identity']['is_local'] = 1;
         
-        $saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'created', 'modified');
-        
         if (!$isAccountWithOpenID) { 
         	$data['Identity']['password'] = md5($data['Identity']['passwd']);
-        	$saveable[] = 'password';
-        } else {
-        	$saveable[] = 'openid'; 
         }
         
         $data['Identity']['username'] = $splitted['username'];
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
         
-        if(!$this->save($data, true, $saveable)) {
+        if(!$this->save($data, true, $this->getSaveableFields($isAccountWithOpenID))) {
             return false;
         }
 
-        $this->sendVerificationMail($data['Identity']['email'], $data['Identity']['hash']);
+        $msg = $this->prepareVerificationMessage($data['Identity']['hash']);
+        $this->sendVerificationMail($data['Identity']['email'], $msg);
 
         return true;
     }
@@ -394,13 +390,29 @@ class Identity extends AppModel {
         return true;
     }
     
-    private function sendVerificationMail($email, $hash) {
+    private function getSaveableFields($isAccountWithOpenID) {
+    	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'created', 'modified');
+    	
+    	if ($isAccountWithOpenID) {
+    		$saveable[] = 'openid';
+    	} else {
+    		$saveable[] = 'password';
+    	}
+    	
+    	return $saveable;
+    }
+    
+    private function prepareVerificationMessage($hash) {
     	$msg  = 'Welcome to NoseRub!' . "\n\n";
         $msg .= 'Please click here to verify your email address:' ."\n";
         $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
         $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
         $msg .= 'Thanks!';
         
+        return $msg;
+    }
+    
+    private function sendVerificationMail($email, $msg) {
         if(!mail($email, 'Your NoseRub registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
