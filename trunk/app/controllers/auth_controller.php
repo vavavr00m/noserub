@@ -27,6 +27,7 @@
 						
 						$requestIdentity = str_replace('https://', '', $request->identity);
 						$requestIdentity = str_replace('http://', '', $requestIdentity);
+						$requestIdentity = rtrim($requestIdentity, '/');
 						
 						if ($identity['username'] == $requestIdentity) {
 							if ($request->immediate) {
