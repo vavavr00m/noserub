@@ -3,12 +3,12 @@
     
     if($menu['logged_in']) {
         $main_menu = array(
-            'home'     => array('Home',     '/pages/home/'),
-            'profile'  => array('NoseRub',  $noserub_url),
-            'network'  => array('Network',  $noserub_url . 'network/'),
-            'accounts' => array('Accounts', $noserub_url . 'accounts/'),
-            'contacts' => array('Contacts', $noserub_url . 'contacts/'),
-            'settings' => array('Settings', $noserub_url . 'settings/')
+            'dashboard' => array('Dashboard', '/pages/dashboard/'),
+            'profile'   => array('NoseRub',   $noserub_url),
+            'network'   => array('Network',   $noserub_url . 'network/'),
+            'accounts'  => array('Accounts',  $noserub_url . 'accounts/'),
+            'contacts'  => array('Contacts',  $noserub_url . 'contacts/'),
+            'settings'  => array('Settings',  $noserub_url . 'settings/')
         );  
     } else {
         $main_menu = array(

@@ -35,7 +35,7 @@
  * to use (in this case, /app/views/pages/home.thtml)...
  */
 Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home'));
+Router::connect('/pages/dashboard/', array('controller' => 'pages', 'action' => 'home'));
     
 /**
  * Then we connect url '/test' to our test controller. This is helpfull in
@@ -77,6 +77,8 @@ Router::connect('/:username/settings/password/', array('controller' => 'identiti
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
+Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
+Router::connect('/:username/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));

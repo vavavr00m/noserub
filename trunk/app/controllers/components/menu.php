@@ -85,9 +85,14 @@ class MenuComponent extends Object {
                 switch($action) {
                     case 'display':
                     case 'home':
-                        $main_menu = 'home'; break;
+                        $main_menu = 'dashboard'; break;
                 }
-                break;    
+                break;
+                
+            case 'Syndications':
+                $main_menu = 'settings';
+                $sub_menu  = 'feeds';
+                break;
         }
 
         $data = array('main' => $main_menu,
