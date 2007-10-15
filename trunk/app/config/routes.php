@@ -42,6 +42,7 @@ Router::connect('/pages/home/', array('controller' => 'pages', 'action' => 'home
  * developement.
  */
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
+Router::connect('/pages/login/withopenid', array('controller' => 'identities', 'action' => 'login_with_openid'));
 Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 Router::connect('/pages/register/withopenid/', array('controller' => 'identities', 'action' => 'register_with_openid_step_1'));

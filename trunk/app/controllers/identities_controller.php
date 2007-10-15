@@ -378,6 +378,27 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Login with existing NoseRub account');
     }
     
+    function login_with_openid() {
+    	$this->set('headline', 'Login with OpenID');
+    	
+    	if (!empty($this->data)) {
+    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/login/withopenid');
+    	} else {
+    		if (count($this->params['url']) > 1) {
+    			$response = $this->getOpenIDResponseIfSuccess();
+    			$identity = $this->Identity->checkOpenID($response->identity_url);
+    			
+    			if ($identity) {
+    				$this->Session->write('Identity', $identity['Identity']);
+    				$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                	$this->redirect($url, null, true);
+    			} else {
+    				$this->set('form_error', 'Login not possible');
+    			}
+    		}
+    	}
+    }
+    
     /**
      * Method description
      *
@@ -422,43 +443,29 @@ class IdentitiesController extends AppController {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
 
     	if (!empty($this->data)) {
-    		try {
-    			$this->openid->authenticate($this->data['Identity']['openid'], 
-    											  'http://'.$_SERVER['SERVER_NAME'].'/pages/register/withopenid', 
-    											  'http://'.$_SERVER['SERVER_NAME'], 
-    											   array('email'));
-    		} catch (InvalidArgumentException $e) {
-    			$this->Identity->invalidate('openid', 'invalid_openid');
-                $this->render();
-				exit;
-    		} catch (Exception $e) {
-    			echo $e->getMessage();
-    			exit();
-    		}
+    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/register/withopenid', array('email'));
     	} else {
     		if (count($this->params['url']) > 1) {
-    			$response = $this->openid->getResponse();
+    			$response = $this->getOpenIDResponseIfSuccess();
     			
-    			if ($response->status == Auth_OpenID_CANCEL) {
-    				$this->Identity->invalidate('openid', 'verification_cancelled');
-    				$this->render();
-    				exit;
-    			} elseif ($response->status == Auth_OpenID_FAILURE) {
-    				$this->Identity->invalidate('openid', 'openid_failure');
-    				$this->set('errorMessage', $response->message);
-    				$this->render();
-    				exit;
-    			} elseif ($response->status == Auth_OpenID_SUCCESS) {
-    				$sregResponse = Auth_OpenID_SRegResponse::fromSuccessResponse($response);
+    			$identity = $this->Identity->checkOpenID($response->identity_url);
+    			
+    			if ($identity) {
+    				# already registered, so we perform a login
+    				$this->Session->write('Identity', $identity['Identity']);
+    				$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                	$this->redirect($url, null, true);
+    			} else {
+	    			$sregResponse = Auth_OpenID_SRegResponse::fromSuccessResponse($response);
     				$sreg = $sregResponse->contents();
     				
     				$this->Session->write('Registration.openid', $response->identity_url);
-    				
-    				if (@$sreg['email']) {
-    					$this->Session->write('Registration.email', $sreg['email']);
-    				}
-
-    				$this->redirect('/pages/register/withopenid/step2', null, true);
+	    				
+	    			if (@$sreg['email']) {
+	    				$this->Session->write('Registration.email', $sreg['email']);
+	    			}
+	
+	    			$this->redirect('/pages/register/withopenid/step2', null, true);
     			}
     		}
     	}
@@ -599,5 +606,39 @@ class IdentitiesController extends AppController {
         $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
+    }
+    
+    private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
+    	try {
+    		$this->openid->authenticate($openid, 
+    									'http://'.$_SERVER['SERVER_NAME'].$returnTo, 
+    									'http://'.$_SERVER['SERVER_NAME'], 
+    									$required,
+    									$optional);
+    	} catch (InvalidArgumentException $e) {
+    		$this->Identity->invalidate('openid', 'invalid_openid');
+			$this->render();
+			exit;
+    	} catch (Exception $e) {
+    		echo $e->getMessage();
+    		exit();
+    	}
+    }
+    
+    private function getOpenIDResponseIfSuccess() {
+    	$response = $this->openid->getResponse();
+    			
+    	if ($response->status == Auth_OpenID_CANCEL) {
+    		$this->Identity->invalidate('openid', 'verification_cancelled');
+    		$this->render();
+    		exit;
+    	} elseif ($response->status == Auth_OpenID_FAILURE) {
+    		$this->Identity->invalidate('openid', 'openid_failure');
+    		$this->set('errorMessage', $response->message);
+    		$this->render();
+    		exit;
+    	} elseif ($response->status == Auth_OpenID_SUCCESS) {
+    		return $response;
+    	}
     }
 }

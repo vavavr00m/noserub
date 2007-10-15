@@ -10,7 +10,8 @@ class Identity extends AppModel {
             'email'    => array('mail'     => VALID_EMAIL,
                                 'required' => VALID_NOT_EMPTY),
             'passwd'   => array('rule' => array('minLength', 6)),
-            'passwd2'  => array('rule' => 'validatePasswd2')
+            'passwd2'  => array('rule' => 'validatePasswd2'),
+    		'openid'   => array('rule' => 'validateUniqueOpenID')
         );
     
     function validatePasswd2($value, $params = array()) {
@@ -44,6 +45,14 @@ class Identity extends AppModel {
         }
     }
     
+    function validateUniqueOpenID($value, $params = array()) {
+    	if ($this->findCount(array('Identity.openid' => $value)) > 0) {
+    		return false;
+    	} else {
+    		return true;
+    	}
+    }
+    
     /**
      * Method description
      *
@@ -59,6 +68,12 @@ class Identity extends AppModel {
         return $this->find(array('Identity.hash' => '',
                                  'Identity.username = "'. $username .'"', 
                                  'Identity.password' => md5($data['Identity']['password'])));
+    }
+    
+    public function checkOpenID($openid) {
+    	$this->recursive = 0;
+    	$this->expects('Identity');
+    	return $this->find(array('Identity.hash' => '', 'Identity.openid' => $openid));
     }
     
     /**
