@@ -162,6 +162,9 @@ class Service extends AppModel {
             case 36: # Scribd
                 return 'http://www.scribd.com/feeds/user_rss/'.$username.'';
 
+            case 37: # MoodMill
+                return 'http://www.moodmill.com/rss/'.$username.'/';
+
             default: 
                 return false;
         }
@@ -305,6 +308,10 @@ class Service extends AppModel {
 
     		    case 36: # Scribd
     		        $item['content'] = $this->contentFromScribd($feeditem);
+    		        break;
+
+    		    case 37: # MoodMill
+    		        $item['content'] = $this->contentFromMoodmill($feeditem);
     		        break;
 
     		    default:
@@ -579,6 +586,17 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
+    function contentFromMoodmill($feeditem) {
+        return $feeditem->get_link();
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function getAccountUrl($service_id, $username) {
         switch($service_id) {
             case 1: # flickr
@@ -677,6 +695,9 @@ class Service extends AppModel {
 
             case 36: #Scribd
             	return 'http://www.scribd.com/people/view/'.$username;
+
+            case 37: #MoodMill
+            	return 'http://www.moodmill.com/citizen/'.$username;
 
             default:
                 return '';
@@ -838,6 +859,9 @@ class Service extends AppModel {
 
             case 36:
                 return $this->getContactsFromScribd('http://www.scribd.com/people/friends/' . $account['Account']['username'] . '');
+            
+            case 37:
+                return $this->getContactsFromMoodmill('http://www.moodmill.com/citizen/' . $account['Account']['username'] . '');
 
             default:
                 return array();
@@ -859,7 +883,7 @@ class Service extends AppModel {
             $content = @file_get_contents($page_url);
             if($content && preg_match_all('/<td class="Who">.*<h2>(.*)<\/h2>/simU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<a href=\"\/photos\/(.*)\/\">photos<\/a>/iU', $content, $usernames);
+                preg_match_all('/<h2>(.*)<\/h2>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1336,6 +1360,18 @@ class Service extends AppModel {
 
     function getContactsFromScribd($url) {
     	return $this->__getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/.*">(.*)<\/a>.*<\/div>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+
+    function getContactsFromMoodmill($url) {
+    	return $this->__getContactsFromUrl($url, '/<div class="who">.*<a href=".*">(.*)<\/a>.*<\/div>/simU');
     }
 
     /**
