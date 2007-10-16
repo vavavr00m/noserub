@@ -30,6 +30,10 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile' || $menu['main'] == 
         'password' => array('Password', $noserub_url . 'password/'),
         'account'  => array('Delete account',  $noserub_url . 'account/')
     );
+    
+    if ($session->read('Identity.openid') != '') {
+    	unset($sub_menu['password']);
+    }
 }
 
 if($sub_menu) { ?>
