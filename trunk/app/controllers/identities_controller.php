@@ -279,8 +279,8 @@ class IdentitiesController extends AppController {
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
+        if(!$session_identity || $session_identity['username'] != $splitted['username'] || isset($session_identity['openid'])) {
+            # this is not the logged in user or the user used an OpenID to register
             $url = $this->url->http('/');
             $this->redirect($url, null, true);
         }
