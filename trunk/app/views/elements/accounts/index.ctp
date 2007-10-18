@@ -30,12 +30,13 @@
                             <td colspan="2"><a rel="me" href="<?php echo $account_url; ?>"><?php echo trim(str_replace('http://', '', $account_url), '/'); ?></a></td>
                         <?php } else { ?>
                             <td><a rel="me" href="<?php echo $account_url; ?>"><?php echo $username; ?></a></td>
-                            <td><?php echo $item['Service']['name']; ?></td>
+                            <td><img src="<?php echo Router::url('/images/icons/services/'.$item['Service']['icon']); ?>" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" /> <?php echo $item['Service']['name']; ?></td>
                         <?php } ?>
                         <td><?php if($show_action_links) {
-                                echo $html->link('Edit Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/edit/');
-                                echo ' | ';
-                                echo $html->link('Delete Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/delete/');
+                        		echo '<ul>';
+                                echo '<li class="edit icon">' . $html->link('Edit Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/edit/') . '</li>';
+                                echo '<li class="delete icon">' . $html->link('Delete Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/delete/') . '</li>';
+                                echo '</ul>';
                         } ?></td>
                     </tr>
                 <?php }
@@ -44,5 +45,7 @@
     </table>
 <?php } ?>
 <?php if($show_action_links) {
-    echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/accounts/add/'); 
+	echo '<p class="infotext">';
+	echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/accounts/add/', array('class' => 'addmore'));
+	echo '</p>';
 } ?>

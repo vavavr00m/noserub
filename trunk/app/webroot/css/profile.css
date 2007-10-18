@@ -72,8 +72,12 @@
 	padding: 15px 0 5px 10px !important;
 }
 
-.friendthumbs img, .mypicture {
+.friendthumbs img, .mypicture, .avatar {
 	border: 2px solid #ECEBE5;
+}
+
+.morefriends {
+	padding-top: 5px;
 }
 
 /* icons */

@@ -29,6 +29,13 @@ img, acronym {
 	float: left;
 }
 
+.space {
+	border: 0;
+	color: #EBEBEB;
+	background-color: #EBEBEB;
+	height: 1px;
+}
+
 #top {
 	height: 5px;
 	background-color: #12a1c9;

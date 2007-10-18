@@ -91,12 +91,16 @@ textarea {
 
 #SyndicationAddForm img {
 	vertical-align: middle;
-	padding: 0 5px 0 5px;
+	margin: 0 5px 0 5px;
 }
 
 #SyndicationAddForm hr {
 	border: 0;
-	color: #D9D7CA;
-	background-color: #D9D7CA;
+	color: #12A1C9;
+	background-color: #12A1C9;
 	height: 1px;
+}
+
+.accounts_of_contact {
+	padding-left: 20px !important;
 }

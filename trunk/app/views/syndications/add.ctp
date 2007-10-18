@@ -42,7 +42,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                         $contact_photo = $sex['img-small'][$contact['WithIdentity']['sex']];
                     }
                 ?>
-                <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" />
+                <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" class="avatar" />
             </p>
             <p class="left">
                 <?php echo $contact['WithIdentity']['firstname']; ?> <?php echo $contact['WithIdentity']['lastname']; ?><br />

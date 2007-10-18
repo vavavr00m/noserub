@@ -8,11 +8,11 @@
                     <img src="<?php echo FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg'); ?>" width="150" height="150" alt="Your current photo" class="mypicture" />
                 </p>
                 <p>
-                    <input type="checkbox" name="data[Identity][remove_photo]" value="1">Remove photo
+                    <input type="checkbox" name="data[Identity][remove_photo]" value="1"> Remove photo
                 </p>
             <?php } ?>
             <p>
-                Size may not exceed 150x150 pixels. If you don't have one with the right size, try <a target="_blank" href="http://mypictr.com/?size=150x150">myPictr.com</a>.<br />
+                Size may not exceed 150x150 pixels. If you don't have one with the right size, try <a href="http://mypictr.com/?size=150x150">myPictr.com</a>.<br />
                 GIF, JPG and PNG allowed.
             </p>
             <label>Photo/Portrait:</label>

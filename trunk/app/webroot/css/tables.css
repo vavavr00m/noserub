@@ -41,3 +41,12 @@ table.listing tbody tr { border-top: 1px solid #ddd }
 table.listing tbody tr.even { background-color: #fcfcfc }
 table.listing tbody tr.odd { background-color: #f7f7f7 }
 table.listing tbody tr:hover { background: #eed !important }
+
+table.listing ul {
+	padding: 0;
+	margin: 0;
+}
+
+table.listing li {
+	list-style: none;
+}

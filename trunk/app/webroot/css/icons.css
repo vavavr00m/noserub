@@ -55,3 +55,13 @@
 .location {
 	background: transparent url(/images/icons/network/location.gif) no-repeat center left;
 }
+
+/* portal */
+
+.edit {
+	background: transparent url(/images/icons/portal/edit.gif) no-repeat center left;
+}
+
+.delete {
+	background: transparent url(/images/icons/portal/delete.gif) no-repeat center left;
+}

@@ -1,18 +1,23 @@
-<p>
+<p class="infotext">
     You can create Feeds from your own social activities or those of friends in your network. This feeds then can be used by your RSS-Reader or you can integrate it on your website to show everyone, what you did in the last couple of hours and days.
 </p>
+
+<hr class="space" />
+
 <h2>Your feeds</h2>
 <?php if(!$data) { ?>
-    <p>
-        You yet did not create a feed.
+    <p class="infotext">
+        You did not create any feeds yet.
     </p>
 <?php } else { ?>
     <table class="listing">
+        <thead>
         <tr>
             <th>Name</th>
             <th>Links</th>
             <th></th>
         </tr>
+        </thead>
         <?php foreach($data as $item) { ?>
             <tr>
                 <td><?php echo $item['Syndication']['name']; ?></td>
@@ -27,4 +32,7 @@
         <?php } ?>
     </table>
 <?php } ?>
-<a href="<?php echo Router::url('/' . $session_identity['local_username'] . '/settings/feeds/add/'); ?>">Create new Feed</a>
+
+<p class="infotext">
+<a href="<?php echo Router::url('/' . $session_identity['local_username'] . '/settings/feeds/add/'); ?>" class="addmore">Create a new Feed</a>
+</p>

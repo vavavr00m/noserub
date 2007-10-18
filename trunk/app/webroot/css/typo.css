@@ -198,3 +198,10 @@ a.external:hover {
 	color: #12a1c9 !important;
 	border-bottom: 1px dotted #12a1c9 !important;	
 }
+
+/* misc */
+
+.addmore {
+	background: transparent url(/images/icons/portal/more.gif) no-repeat center right;
+	padding: 5px 20px 5px 0;
+}

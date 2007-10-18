@@ -119,7 +119,7 @@
     	        </a>
     	    <?php } ?>
     	</p>
-    	<p>
+    	<p class="morefriends">
     		<a href="<?php echo $noserub_url . '/contacts/'; ?>"><strong> <?php echo $num_noserub_contacts; ?></strong> NoseRub contacts</a><br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
         </p>
