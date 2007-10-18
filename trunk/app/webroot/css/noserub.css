@@ -25,6 +25,10 @@ img, acronym {
 	float: right;
 }
 
+.left {
+	float: left;
+}
+
 #top {
 	height: 5px;
 	background-color: #12a1c9;

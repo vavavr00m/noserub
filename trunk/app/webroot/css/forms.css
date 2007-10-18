@@ -78,3 +78,25 @@ textarea {
 	line-height: 14px;
 	margin-top: 10px;
 }
+
+#SyndicationAddForm ul {
+	padding: 0px;
+}
+
+#SyndicationAddForm li {
+	list-style: none;
+	border-bottom: 1px solid #EBEBEB;
+	padding: 5px;
+}
+
+#SyndicationAddForm img {
+	vertical-align: middle;
+	padding: 0 5px 0 5px;
+}
+
+#SyndicationAddForm hr {
+	border: 0;
+	color: #D9D7CA;
+	background-color: #D9D7CA;
+	height: 1px;
+}

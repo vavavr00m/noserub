@@ -55,7 +55,7 @@
 		</div>
 
 		<div id="footer" class="wrapper">
-			<p><a href="http://noserub.com"><img src="/images/footer/noserub-logo.gif" class="noserublogo" /></a> Powered by <a href="http://noserub.com">NoseRub</a></p>
+			<p><a href="http://noserub.com"><img src="/images/footer/noserub-logo.gif" class="noserublogo" alt="NoseRub Logo" /></a> Powered by <a href="http://noserub.com">NoseRub</a></p>
 		</div>
 
 </body>
