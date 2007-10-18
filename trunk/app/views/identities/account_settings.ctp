@@ -13,9 +13,13 @@
         <?php } ?>
         <?php echo $form->checkbox('Identity.confirm'); ?>&nbsp;<strong>Yes, please delete my account.</strong>
         <?php 
-            echo $form->input('Identity.passwd', array('type'  => 'password',
-                                                       'label' => 'Password', 
-                                                       'error' => 'You need to enter your password to confirm the complete deletion of your account.')); 
+            $openid = $session->read('Identity.openid');
+        	# if the user registered with an OpenID then there is no password available and so we don't show the password field
+            if (!isset($openid)) {
+        		echo $form->input('Identity.passwd', array('type'  => 'password',
+                	                                       'label' => 'Password', 
+                    	                                   'error' => 'You need to enter your password to confirm the complete deletion of your account.'));
+            } 
         ?>
     </fieldset>
     

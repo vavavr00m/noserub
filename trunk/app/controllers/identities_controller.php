@@ -323,21 +323,17 @@ class IdentitiesController extends AppController {
         
         if($this->data) {
             $data = $this->data;
-            $data['Identity']['username'] = $splitted['username'];
-            $data['Identity']['password'] = $data['Identity']['passwd'];
-            if($this->Identity->check($data)) {
-                if($this->data['Identity']['confirm'] == 0) {
-                    $this->set('confirm_error', 'In order to delete your account, please check the check box.');
-                } else if($this->data['Identity']['confirm'] == 1) {
-                    $identity_id = $session_identity['id'];
-                    $this->Identity->Account->deleteByIdentityId($identity_id);
-                    $this->Identity->Contact->deleteByIdentityId($identity_id, $session_identity['local_username']);
-                    $this->Identity->block($identity_id);
-                    $this->Session->delete('Identity');
-                    $this->redirect('/pages/account/deleted/', null, true);
-                }
+            
+            if (!isset($session_identity['openid'])) {
+	            $data['Identity']['username'] = $splitted['username'];
+	            $data['Identity']['password'] = $data['Identity']['passwd'];
+	            if($this->Identity->check($data)) {
+	            	$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
+	            } else {
+	                $this->Identity->invalidate('passwd');
+	            }
             } else {
-                $this->Identity->invalidate('passwd');
+				$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
             }
         }
         
@@ -623,6 +619,19 @@ class IdentitiesController extends AppController {
     		echo $e->getMessage();
     		exit();
     	}
+    }
+    
+    private function deleteAccount($identity, $confirm) {
+    	if($confirm == 0) {
+			$this->set('confirm_error', 'In order to delete your account, please check the check box.');
+		} else if($confirm == 1) {
+			$identityId = $identity['id'];
+			$this->Identity->Account->deleteByIdentityId($identityId);
+			$this->Identity->Contact->deleteByIdentityId($identityId, $identity['local_username']);
+			$this->Identity->block($identityId);
+			$this->Session->delete('Identity');
+			$this->redirect('/pages/account/deleted/', null, true);
+		}
     }
     
     private function getOpenIDResponseIfSuccess() {
