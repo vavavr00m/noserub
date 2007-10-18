@@ -244,6 +244,10 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromTwitter($feeditem);
     		        $item['title']   = $item['content'];
     		        break;
+    		    
+    		   	case 6: # Pownce
+    		        $item['content'] = $this->contentFromPownce($feeditem);
+    		        break;
     		        
     		    case 9: # Upcoming.org
     		        $item['content'] = $feeditem->get_content();
@@ -404,6 +408,17 @@ class Service extends AppModel {
         # cut off the username
         $content = $feeditem->get_content();
         return substr($content, strpos($content, ': ') + 2);
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function contentFromPownce($feeditem) {
+        return $feeditem->get_content();
     }
 
     /**
@@ -829,6 +844,9 @@ class Service extends AppModel {
 
             case 5:
                 return $this->getContactsFromTwitter('http://twitter.com/' . $account['Account']['username'] . '/');
+                
+            case 6:
+                return $this->getContactsFromPownce('http://pownce.com/' . $account['Account']['username'] . '/friends/');
             
             case 9:
                 return $this->getContactsFromUpcoming('http://upcoming.yahoo.com/user/' . $account['Account']['username'] . '/');
@@ -994,6 +1012,47 @@ class Service extends AppModel {
      */
     function getContactsFromUpcoming($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+    }
+
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function getContactsFromPownce($url) {
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<div class="user-name">username: (.*)<\/div>/simU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<div class="user-name">username: (.*)<\/div>/simU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/Next Page &#187;<\/a>/iU', $content)) {
+                    $page_url = $url . 'page/'.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**

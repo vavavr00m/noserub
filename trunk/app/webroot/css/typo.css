@@ -199,6 +199,10 @@ a.external:hover {
 	border-bottom: 1px dotted #12a1c9 !important;	
 }
 
+.friendthumbs a {
+	border-bottom: none !important;
+}
+
 /* misc */
 
 .addmore {
