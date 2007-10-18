@@ -1,3 +1,14 @@
+<?php
+$sex = array('img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
+                                  1 => '/images/profile/avatar/female-small.gif',
+                                  2 => '/images/profile/avatar/male-small.gif'));
+
+if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+} else {
+    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+}
+?>
 <form id="SyndicationAddForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <legend>Select a name. This is just visible for you and should help you to organize your feeds.</legend>
@@ -24,7 +35,14 @@
             <?php if(empty($contact['WithIdentity']['Account'])) { continue; } ?>
             
             <p class="left">
-                <img src="/images/profile/avatar/female-small.gif" width="35" height="35" alt="poolbabe's Picture" />
+                <?php
+                    if($contact['WithIdentity']['photo']) {
+                        $contact_photo = $static_base_url . $contact['WithIdentity']['photo'].'.jpg';
+                    } else {
+                        $contact_photo = $sex['img-small'][$contact['WithIdentity']['sex']];
+                    }
+                ?>
+                <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" />
             </p>
             <p class="left">
                 <?php echo $contact['WithIdentity']['firstname']; ?> <?php echo $contact['WithIdentity']['lastname']; ?><br />
@@ -33,7 +51,7 @@
             <br class="clear" />
             <ul>
                 <li>
-                    <input class="check_all" type="checkbox" name="data[Syndication][Account][]" value="XXXXXXXXXXXXXXXXXXX" />
+                    <input class="check_all" type="checkbox" name="data[Syndication][Account][]" value="-1" />
                     All feeds of <?php echo $contact['WithIdentity']['username']; ?>
                 </li>
                 <li><a class="specify" href="#">Specify the feeds</a> +</li>
