@@ -2,8 +2,53 @@
  
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
-    var $helpers = array('form', 'html');
+    var $helpers = array('form', 'html', 'nicetime');
     var $components = array('url');
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function feed($url) {
+        $extension = '';
+        $hash = '';
+        if(preg_match('/(.*)\.([0-9a-zA-Z]*)$/', $url, $match) == 1) {
+            $extension = strtolower($match[2]);
+            $hash = $match[1];
+        }
+        
+        if($extension) {
+            $this->layout = 'feed_'.$extension;
+            
+            # find syndication
+            $this->Syndication->recursive = 1;
+            $this->Syndication->expects('Syndication', 'Account', 'Identity');
+            $data = $this->Syndication->findByHash($hash);
+
+            # get all items for those accounts
+            $items = array();
+            if(is_array($data['Account'])) {
+                foreach($data['Account'] as $account) {
+                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                        $new_items = $this->Syndication->Account->Feed->access($account['id'], 5, false);
+                    } else {
+                        $new_items = $this->Syndication->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
+                    }
+                    if($new_items) {
+                        $items = array_merge($items, $new_items);
+                    }
+                }
+                usort($items, 'sort_items');
+            }
+            
+            $this->set('syndication_name', $data['Syndication']['name']);
+            $this->set('identity', $data['Identity']);
+            $this->set('data', $items);
+        }
+    }
     
     /**
      * Method description
