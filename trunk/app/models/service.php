@@ -923,9 +923,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<td class="Who">.*<h2>(.*)<\/h2>/simU', $content, $matches)) {
+            if($content && preg_match_all('/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<h2>(.*)<\/h2>/iU', $content, $usernames);
+                preg_match_all('/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -975,9 +975,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<span style="font-size:16px;line-height:130%">(.*)<\/span>/simU', $content, $matches)) {
+            if($content && preg_match_all('/<a href="\/user\/(.*)">Profile<\/a>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<span style="font-size:16px;line-height:130%">(.*)<\/span>/iU', $content, $usernames);
+                preg_match_all('/<a href="\/user\/(.*)">Profile<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1013,6 +1013,12 @@ class Service extends AppModel {
     function getContactsFromUpcoming($url) {
     	return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
+    
+    /*
+    function getContactsFromUpcoming($url) {
+    return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+    }
+    */
 
     /**
      * Method description
@@ -1063,7 +1069,37 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromVimeo($url) {
-    	return $this->__getContactsFromUrl($url, '/<span class="greyd">(.*)<\/span>/iU');
+        $data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all('/<div id="contact_(.*)">/iU', $content, $matches)) {
+                # also find the usernames
+                preg_match_all('/<div id="contact_(.*)">/iU', $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match('/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', $content)) {
+                    $page_url = $url . 'sort:date/page:'.$i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
+        return $data;
     }
 
     /**
@@ -1096,7 +1132,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromMagnolia($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/.*" class="fn url" rel="contact" title="Visit .*">(.*)<\/a>/iU');
+    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
     }
 
     /**
@@ -1107,7 +1143,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromStumbleupon($url) {
-    	return $this->__getContactsFromUrl($url, '/<dt><a href="http:\/\/.*.stumbleupon.com\/">(.*)<\/a><\/dt>/iU');
+    	return $this->__getContactsFromUrl($url, '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
     }
 
     /**
@@ -1123,9 +1159,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/simU', $content, $matches)) {
+            if($content && preg_match_all('/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<dd class="username"><a href=".*" rel="friend">(.*)<\/a><\/dd>/iU', $content, $usernames);
+                preg_match_all('/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1201,7 +1237,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromZooomr($url) {
-    	return $this->__getContactsFromUrl($url, '/<h2>(.*)<\/h2>/iU');
+    	return $this->__getContactsFromUrl($url, '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
     }
 
     /**
@@ -1212,7 +1248,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromOdeo($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/.*" title="(.*)\'s Profile" rel="contact" id=".*">/iU');
+    	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
     }
 
     /**
@@ -1228,9 +1264,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a style=".*" class="person "  href=".*" title="View (.*)\'s profile">/simU', $content, $matches)) {
+            if($content && preg_match_all('/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/simU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<a style=".*" class="person "  href=".*" title="View (.*)\'s profile">/iU', $content, $usernames);
+                preg_match_all('/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1265,7 +1301,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromWevent($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/users\/.*" class="fn url" rel="friend">(.*)<\/a>/iU');
+    	return $this->__getContactsFromUrl($url, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
     }
 
     /**
@@ -1281,9 +1317,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<span class="user">(.*)<\/span><\/a>/simU', $content, $matches)) {
+            if($content && preg_match_all('/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<span class="user">(.*)<\/span><\/a>/iU', $content, $usernames);
+                preg_match_all('/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1323,9 +1359,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<td><a href="http:\/\/.*.newsvine.com".*>(.*)<\/a>/simU', $content, $matches)) {
+            if($content && preg_match_all('/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<td><a href="http:\/\/.*.newsvine.com".*>(.*)<\/a>/iU', $content, $usernames);
+                preg_match_all('/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1364,9 +1400,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a href=".*" style="" title="" class="blue_link_normal" id="">(.*)<\/a>/simU', $content, $matches)) {
+            if($content && preg_match_all('/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<a href=".*" style="" title="" class="blue_link_normal" id="">(.*)<\/a>/iU', $content, $usernames);
+                preg_match_all('/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
@@ -1442,7 +1478,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromScribd($url) {
-    	return $this->__getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/.*">(.*)<\/a>.*<\/div>/iU');
+    	return $this->__getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
     }
 
     /**
@@ -1454,7 +1490,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromMoodmill($url) {
-    	return $this->__getContactsFromUrl($url, '/<div class="who">.*<a href=".*">(.*)<\/a>.*<\/div>/simU');
+    	return $this->__getContactsFromUrl($url, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
     }
 
     /**
@@ -1470,9 +1506,9 @@ class Service extends AppModel {
         $page_url = $url;
         do {
             $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a class="fn" href=".*"><img class="user-image" width="48" height="48" alt=".*" src=".*" \/>(.*)<\/a>/iU', $content, $matches)) {
+            if($content && preg_match_all('/<a class="fn" href="\/users\/(.*)">/iU', $content, $matches)) {
                 # also find the usernames
-                preg_match_all('/<a class="fn" href=".*"><img class="user-image" width="48" height="48" alt=".*" src=".*" \/>(.*)<\/a>/iU', $content, $usernames);
+                preg_match_all('/<a class="fn" href="\/users\/(.*)">/iU', $content, $usernames);
                 foreach($usernames[1] as $idx => $username) {
                     if(!isset($data[$username])) {
                         $data[$username] = $matches[1][$idx];
