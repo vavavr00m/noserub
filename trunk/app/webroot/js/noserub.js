@@ -41,5 +41,26 @@ noserub.fn = noserub.prototype = {
         $(':text').focus(function() {
             $(this).parent('div').find('input[value="1"]').attr('checked', 'checked');
         });
+    },
+    
+    Syndications_add: function() {
+        $('.accounts_of_contact').hide();
+        
+        $(':checkbox.check_all').change(function() {
+            if($(this).attr('checked') == true) {
+                $(this).parent().parent().next('.accounts_of_contact').find(':checkbox').attr({checked: true});
+            }
+        });
+        
+        $('.accounts_of_contact').find(':checkbox').change(function() {
+            if($(this).attr('checked') != true) {
+                $(this).parent().parent().prev().find(':checkbox.check_all').attr({checked: false});
+            }
+        });
+        
+        $('a.specify').click(function(e) {
+            e.preventDefault();
+            $(this).parent().parent().next('.accounts_of_contact').toggle();
+        });
     }
 };
