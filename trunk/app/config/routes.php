@@ -78,6 +78,7 @@ Router::connect('/:username/settings/privacy/', array('controller' => 'identitie
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
+Router::connect('/:username/settings/feeds/:syndication_id/delete/', array('controller' => 'syndications', 'action' => 'delete'));
 Router::connect('/:username/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 

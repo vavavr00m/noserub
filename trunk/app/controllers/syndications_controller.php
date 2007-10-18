@@ -3,6 +3,7 @@
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
     var $helpers = array('form', 'html');
+    var $components = array('url');
     
     /**
      * Method description
@@ -38,6 +39,37 @@ class SyndicationsController extends AppController {
      * @return 
      * @access 
      */
+    function delete() {
+        $username       = isset($this->params['username'])       ? $this->params['username']       : '';
+        $syndication_id = isset($this->params['syndication_id']) ? $this->params['syndication_id'] :  0;
+        $splitted = $this->Syndication->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username'] ||
+           $syndication_id == 0) {
+            # this is not the logged in user, or invalid syndication_id
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        # check, if the syndication_id belongs to the logged in user
+        $this->Syndication->recursive = 0;
+        $this->Syndication->expects('Syndication');
+        if(1 == $this->Syndication->findCount(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
+            # everything ok, we can delete now...
+            $this->Syndication->delete($syndication_id);
+            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
+        	$this->redirect($url, null, true);
+        }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function add() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Syndication->Identity->splitUsername($username);
@@ -50,21 +82,66 @@ class SyndicationsController extends AppController {
         }
         
         if($this->data) {
-            echo '<pre>'; print_r($this->data); echo '</pre>';
-            exit;
-        }
-        
-        # get all accounts from this user, that have feeds
-        $this->Syndication->Account->recursive = 1;
-        $this->Syndication->Account->expects('Account', 'Service');
-        $this->set('accounts', $this->Syndication->Account->findAll(array('Account.identity_id' => $session_identity['id'],
-                                                                          'Account.feed_url <> ""')));
+            $valid_accounts = $this->Session->read('Syndication.add.valid_accounts');
+            
+            if($this->data['Syndication']['name'] != '') {
+                # get all accounts, that should be added to the syndication
+                $accounts = isset($this->data['Syndication']['Account']) ? $this->data['Syndication']['Account'] : array();
+                if(isset($this->data['Syndication']['Contact'])) {
+                    foreach($this->data['Syndication']['Contact'] as $contact) {
+                        foreach($contact['Account'] as $item) {
+                            $accounts[] = $item;
+                        }
+                    }
+                }
+                
+                # make sure, no "forbidden" accounts were entered through the form
+                $new_accounts = array();
+                for($i=0; $i<count($accounts); $i++) {
+                    if(in_array($accounts[$i], $valid_accounts, true)) {
+                        $new_accounts[] = $accounts[$i];
+                    }
+                }
+                
+                # create the new syndication
+                $data = array('Syndication' => array('name'        => $this->data['Syndication']['name'],
+                                                     'identity_id' => $session_identity['id'],
+                                                     'hash'        => md5(time().$this->data['Syndication']['name'])),
+                              'Account' => array('Account' => $new_accounts));
+                $this->Syndication->create();
+                $this->Syndication->save($data);
+            } 
+                        
+            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
+        	$this->redirect($url, null, true);
+        } else {
+            # get all accounts from this user, that have feeds
+            $this->Syndication->Account->recursive = 1;
+            $this->Syndication->Account->expects('Account', 'Service');
+            $accounts = $this->Syndication->Account->findAll(array('Account.identity_id' => $session_identity['id'],
+                                                                   'Account.feed_url <> ""'));
+            $this->set('accounts', $accounts);
 
-        # get all accounts from this users contacts
-        $this->Syndication->Identity->Contact->recursive = 3;
-        $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
-                                                       'WithIdentity.Account.Service');
-        $this->set('contacts', $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']));
+            # get all accounts from this users contacts
+            $this->Syndication->Identity->Contact->recursive = 3;
+            $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
+                                                           'WithIdentity.Account.Service');
+            $contacts = $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']);
+            $this->set('contacts', $contacts);
+            
+            # gather all accounts that the user may add to a syndication 
+            # and save it in the session
+            $valid_accounts = array();
+            foreach($accounts as $item) {
+                $valid_accounts[] = $item['Account']['id'];
+            }
+            foreach($contacts as $contact) {
+                foreach($contact['WithIdentity']['Account'] as $item) {
+                    $valid_accounts[] = $item['id'];
+                }
+            }
+            $this->Session->write('Syndication.add.valid_accounts', $valid_accounts);
+        }
         
         $this->set('headline', 'Add new Feed');
     }

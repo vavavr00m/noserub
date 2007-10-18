@@ -51,7 +51,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
             <br class="clear" />
             <ul>
                 <li>
-                    <input class="check_all" type="checkbox" name="data[Syndication][Account][]" value="-1" />
+                    <input class="check_all" type="checkbox" name="dummy" value="-1" />
                     All feeds of <?php echo $contact['WithIdentity']['username']; ?>
                 </li>
                 <li><a class="specify" href="#">Specify the feeds</a> +</li>
