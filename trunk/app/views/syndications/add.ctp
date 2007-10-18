@@ -39,9 +39,10 @@
             <input type="checkbox" name="data[Syndication][Account][]" value="XXXXXXXXXXXXXXXXXXX" />
             All feeds of <?php echo $contact['WithIdentity']['username']; ?>
             </li>
-            
             <li><a href="#">Specify the feeds</a> +</li>
+			</ul>
 
+			<ul id="SyndicationServices">
             <?php foreach($contact['WithIdentity']['Account'] as $item) { ?>
                 <li>
                 <input type="checkbox" name="data[Syndication][Contact][<?php echo $contact['Contact']['with_identity_id']; ?>][Account][]" value="<?php echo $item['id']; ?>"/>
