@@ -35,7 +35,7 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	}
 	
 	function testGet3() {
-	    $address = 'fabelstadt';
+	    $address = 'an unknown stadt';
 	    
 	    $result = $this->component->get($address);
 	    $this->assertFalse($result);
