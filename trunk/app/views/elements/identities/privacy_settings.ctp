@@ -1,6 +1,6 @@
 <fieldset>
     <legend>Updates</legend>
-    <p>
+    <p class="infotext">
         We want to show not logged in users, what is going on inside. 
         So, if you give us your permisson, we will show your updates
         there for everyone.

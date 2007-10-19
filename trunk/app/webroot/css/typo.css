@@ -171,6 +171,13 @@ a.external:hover {
 }
 
 /* profile */
+.vcard h4 {
+	font-size: 14px;
+	color: #585858;
+	font-weight: normal;
+	padding: 15px 0 5px 10px !important;
+}
+
 .more {
 	float: right;
 }
@@ -201,6 +208,17 @@ a.external:hover {
 
 .friendthumbs a {
 	border-bottom: none !important;
+}
+
+#whois h3 a, #whois h3 a:active, #whois h3 a:visited  {
+	font-size: 18px;
+	color: #585858;
+	border: none;
+}
+
+#personalid {
+	font-size: 18px;
+	color: #9d9d9d;
 }
 
 /* misc */

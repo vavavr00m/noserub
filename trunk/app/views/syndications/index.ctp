@@ -34,7 +34,9 @@
                     <a href="<?php echo $feed_url . $item['Syndication']['hash']; ?>.js">JSON</a>
                 </td>
                 <td>
-                    <?php echo $html->link('Delete', '/' . $session_identity['local_username'] . '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/'); ?>
+                	<ul>
+                   		<li class="delete icon"><?php echo $html->link('Delete', '/' . $session_identity['local_username'] . '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/'); ?></li>
+                   	</ul>
                 </td>
             </tr>
         <?php } ?>

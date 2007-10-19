@@ -38,16 +38,18 @@
     ?>
 
     <!-- profile -->
-
-    <div id="profile">
+	
+    <div id="hcard-<?php echo $data['Identity']['local_username']; ?>" class="vcard">
 
         <div id="photo">
         	<img src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
         </div>
 
         <div id="whois">
-        	<h3><?php echo $data['Identity']['name']; ?></h3>
-        	<p id="personalid"><?php echo $data['Identity']['servername']; ?>/<strong><?php echo $data['Identity']['local_username']; ?></strong></p>
+        	<h3><a href="<?php echo $noserub_url; ?>" class="fn url"><?php echo $data['Identity']['name']; ?></a></h3>
+        	<p id="personalid">
+        		<?php echo $data['Identity']['servername']; ?>/<strong><?php echo $data['Identity']['local_username']; ?></strong>
+        	</p>
         	<ul class="whoisstats">
         	    <?php if(isset($data['Identity']['age'])) { ?>
         		    <li class="bio icon">
@@ -82,7 +84,7 @@
         <?php if($data['Identity']['about']) { ?>
         <h4>About me</h4>
         <div id="about">
-            <p>
+            <p class="summary">
                 <?php if($data['Identity']['about']) {
                     $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
                     echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
@@ -109,7 +111,7 @@
     	<h4>Friends</h4>
     	<p class="friendthumbs">
     	    <?php foreach($contacts as $item) { ?>
-    	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>">
+    	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>" rel="friend">
     	            <?php if($item['WithIdentity']['photo']) {
     	                $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';    	                
                     } else {
@@ -132,7 +134,7 @@
 	    <?php foreach($accounts as $item) { ?>
 	        <li>
 	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-	            <a rel="me" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	            <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
 	        </li>
 	    <?php } ?>
 	</ul>
@@ -146,7 +148,7 @@
 		<?php foreach($communications as $item) { ?>
 	        <li>
 	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-	            <a href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	            <a class="url" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
 	        </li>
 	    <?php } ?>
 	</ul>
