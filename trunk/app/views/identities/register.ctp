@@ -1,3 +1,7 @@
+<p>
+If you have an <img src="/images/openid_small.gif" alt="OpenID logo" /> OpenID, please follow this 
+<?php echo $html->link('link', '/pages/register/withopenid'); ?> to register a new NoseRub account.
+</p>
 <form id="IdentityRegisterForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php 
