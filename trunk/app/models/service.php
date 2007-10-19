@@ -343,7 +343,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromIpernity($feeditem) {
+    private function contentFromIpernity($feeditem) {
         $raw_content = $feeditem->get_content();
         if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {
             return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'t.jpg" /></a>';
@@ -358,7 +358,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromFlickr($feeditem) {
+    private function contentFromFlickr($feeditem) {
         $raw_content = $feeditem->get_content();
         if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {
             $content = str_replace('_m.jpg', '_s.jpg', $matches[0]);
@@ -375,7 +375,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromDelicious($feeditem) {
+    private function contentFromDelicious($feeditem) {
         return $feeditem->get_link();
     }
     
@@ -386,7 +386,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFrom23hq($feeditem) {
+    private function contentFrom23hq($feeditem) {
         $raw_content = $feeditem->get_content();
         #<a href="http://www.23hq.com/DonDahlmann/photo/2204674
         if(preg_match('/<a href="http:\/\/www.23hq.com\/.*\/photo\/.*<\/a>/iU', $raw_content, $matches)) {
@@ -404,7 +404,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromTwitter($feeditem) {
+    private function contentFromTwitter($feeditem) {
         # cut off the username
         $content = $feeditem->get_content();
         return substr($content, strpos($content, ': ') + 2);
@@ -417,7 +417,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromPownce($feeditem) {
+    private function contentFromPownce($feeditem) {
         return $feeditem->get_content();
     }
 
@@ -428,7 +428,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromVimeo($feeditem) {
+    private function contentFromVimeo($feeditem) {
         return $feeditem->get_content();
     }
 
@@ -439,7 +439,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromLastfm($feeditem) {
+    private function contentFromLastfm($feeditem) {
         return $feeditem->get_content();
     }
 
@@ -450,7 +450,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromQype($feeditem) {
+    private function contentFromQype($feeditem) {
         return $feeditem->get_content();
     }
 
@@ -461,7 +461,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromMagnolia($feeditem) {
+    private function contentFromMagnolia($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -472,7 +472,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromStumbleupon($feeditem) {
+    private function contentFromStumbleupon($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -483,7 +483,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromCorkd($feeditem) {
+    private function contentFromCorkd($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -494,7 +494,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromDailymotion($feeditem) {
+    private function contentFromDailymotion($feeditem) {
         return $feeditem->get_link();
     }
     
@@ -505,7 +505,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromZooomr($feeditem) {
+    private function contentFromZooomr($feeditem) {
         $raw_content = $feeditem->get_content();
         if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {
             return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'_s.jpg" /></a>';
@@ -520,7 +520,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromOdeo($feeditem) {
+    private function contentFromOdeo($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -531,7 +531,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromiLike($feeditem) {
+    private function contentFromiLike($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -542,7 +542,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromWevent($feeditem) {
+    private function contentFromWevent($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -553,7 +553,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromImthere($feeditem) {
+    private function contentFromImthere($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -564,7 +564,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromNewsvine($feeditem) {
+    private function contentFromNewsvine($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -575,7 +575,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromSlideshare($feeditem) {
+    private function contentFromSlideshare($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -586,7 +586,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromPlazes($feeditem) {
+    private function contentFromPlazes($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -597,7 +597,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromScribd($feeditem) {
+    private function contentFromScribd($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -608,7 +608,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromMoodmill($feeditem) {
+    private function contentFromMoodmill($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -619,7 +619,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function contentFromDigg($feeditem) {
+    private function contentFromDigg($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -917,7 +917,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromFlickr($url) {
+    private function getContactsFromFlickr($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -958,7 +958,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromDelicious($url) {
+    private function getContactsFromDelicious($url) {
     	return $this->getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
     }
 
@@ -969,7 +969,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromIpernity($url) {
+    private function getContactsFromIpernity($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1010,12 +1010,12 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromUpcoming($url) {
+    private function getContactsFromUpcoming($url) {
     	return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
     
     /*
-    function getContactsFromUpcoming($url) {
+    private function getContactsFromUpcoming($url) {
     return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
     */
@@ -1027,7 +1027,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromPownce($url) {
+    private function getContactsFromPownce($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1068,7 +1068,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromVimeo($url) {
+    private function getContactsFromVimeo($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1109,7 +1109,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromLastfm($url) {
+    private function getContactsFromLastfm($url) {
     	return $this->getContactsFromUrl($url, '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
     }
 
@@ -1120,7 +1120,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromQype($url) {
+    private function getContactsFromQype($url) {
     	return $this->getContactsFromUrl($url, '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
     }
 
@@ -1131,7 +1131,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromMagnolia($url) {
+    private function getContactsFromMagnolia($url) {
     	return $this->getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
     }
 
@@ -1142,7 +1142,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromStumbleupon($url) {
+    private function getContactsFromStumbleupon($url) {
     	return $this->getContactsFromUrl($url, '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
     }
 
@@ -1153,7 +1153,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromCorkd($url) {
+    private function getContactsFromCorkd($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1194,7 +1194,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromDailymotion($url) {
+    private function getContactsFromDailymotion($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1236,7 +1236,7 @@ class Service extends AppModel {
      * @access 
      */
 
-    function getContactsFromZooomr($url) {
+    private function getContactsFromZooomr($url) {
     	return $this->getContactsFromUrl($url, '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
     }
 
@@ -1247,7 +1247,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromOdeo($url) {
+    private function getContactsFromOdeo($url) {
     	return $this->getContactsFromUrl($url, '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
     }
 
@@ -1258,7 +1258,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromIlike($url) {
+    private function getContactsFromIlike($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1300,7 +1300,7 @@ class Service extends AppModel {
      * @access 
      */
 
-    function getContactsFromWevent($url) {
+    private function getContactsFromWevent($url) {
     	return $this->getContactsFromUrl($url, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
     }
 
@@ -1311,7 +1311,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromImthere($url) {
+    private function getContactsFromImthere($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1353,7 +1353,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromNewsvine($url) {
+    private function getContactsFromNewsvine($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1394,7 +1394,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromSlideshare($url) {
+    private function getContactsFromSlideshare($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1435,7 +1435,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromPlazes($url) {
+    private function getContactsFromPlazes($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1477,7 +1477,7 @@ class Service extends AppModel {
      * @access 
      */
 
-    function getContactsFromScribd($url) {
+    private function getContactsFromScribd($url) {
     	return $this->getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
     }
 
@@ -1489,7 +1489,7 @@ class Service extends AppModel {
      * @access 
      */
 
-    function getContactsFromMoodmill($url) {
+    private function getContactsFromMoodmill($url) {
     	return $this->getContactsFromUrl($url, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
     }
 
@@ -1500,7 +1500,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromDigg($url) {
+    private function getContactsFromDigg($url) {
         $data = array();
         $i = 2;
         $page_url = $url;
@@ -1541,7 +1541,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromTwitter($url) {
+    private function getContactsFromTwitter($url) {
     	return $this->getContactsFromUrl($url, '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
     }
     
