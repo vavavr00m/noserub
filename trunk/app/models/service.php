@@ -959,7 +959,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromDelicious($url) {
-    	return $this->__getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
     }
 
     /**
@@ -1011,12 +1011,12 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromUpcoming($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
     
     /*
     function getContactsFromUpcoming($url) {
-    return $this->__getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+    return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
     }
     */
 
@@ -1110,7 +1110,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromLastfm($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
     }
 
     /**
@@ -1121,7 +1121,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromQype($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
     }
 
     /**
@@ -1132,7 +1132,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromMagnolia($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
     }
 
     /**
@@ -1143,7 +1143,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromStumbleupon($url) {
-    	return $this->__getContactsFromUrl($url, '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
+    	return $this->getContactsFromUrl($url, '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
     }
 
     /**
@@ -1237,7 +1237,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromZooomr($url) {
-    	return $this->__getContactsFromUrl($url, '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
+    	return $this->getContactsFromUrl($url, '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
     }
 
     /**
@@ -1248,7 +1248,7 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromOdeo($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
     }
 
     /**
@@ -1301,7 +1301,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromWevent($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
+    	return $this->getContactsFromUrl($url, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
     }
 
     /**
@@ -1478,7 +1478,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromScribd($url) {
-    	return $this->__getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
+    	return $this->getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
     }
 
     /**
@@ -1490,7 +1490,7 @@ class Service extends AppModel {
      */
 
     function getContactsFromMoodmill($url) {
-    	return $this->__getContactsFromUrl($url, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
+    	return $this->getContactsFromUrl($url, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
     }
 
     /**
@@ -1542,10 +1542,10 @@ class Service extends AppModel {
      * @access 
      */
     function getContactsFromTwitter($url) {
-    	return $this->__getContactsFromUrl($url, '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
+    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
     }
     
-    function __getContactsFromUrl($url, $pattern) {
+    private function getContactsFromUrl($url, $pattern) {
     	$data = array();
         $content = @file_get_contents($url);
         if($content && preg_match_all($pattern, $content, $matches)) {
