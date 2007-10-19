@@ -3,7 +3,7 @@
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
     var $helpers = array('form', 'html', 'nicetime');
-    var $components = array('url');
+    var $components = array('url', 'cdn');
     
     /**
      * Method description
@@ -13,6 +13,7 @@ class SyndicationsController extends AppController {
      * @access 
      */
     function feed($url) {
+        $feed_types = array('rss' => 'text/xml', 'js' => 'text/javascript');
         $extension = '';
         $hash = '';
         if(preg_match('/(.*)\.([0-9a-zA-Z]*)$/', $url, $match) == 1) {
@@ -20,8 +21,11 @@ class SyndicationsController extends AppController {
             $hash = $match[1];
         }
         
-        if($extension) {
-            $this->layout = 'feed_'.$extension;
+        if($extension && isset($feed_types[$extension])) {
+            # if we use the CDN for this, we will redirect directly to there
+            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301', true);
+            }
             
             # find syndication
             $this->Syndication->recursive = 1;
@@ -47,6 +51,23 @@ class SyndicationsController extends AppController {
             $this->set('syndication_name', $data['Syndication']['name']);
             $this->set('identity', $data['Identity']);
             $this->set('data', $items);
+
+            # decide, wether to render the feed directly,
+            # or uploading it to the CDN.
+            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                foreach($feed_types as $feed_type => $mime_type) {
+                    ob_start();                
+                    $this->layout = 'feed_'.$feed_type;
+                    $this->render('feed');
+                    $content = ob_get_contents();
+                    $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
+                    ob_end_clean();
+                }
+                exit;
+            } else {
+                # just render it
+                $this->layout = 'feed_'.$extension;
+            }
         }
     }
     
