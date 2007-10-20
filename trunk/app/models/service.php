@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(5);
+    private $migratedServices = array(5, 20, 36, 37);
 
     /**
      * Method description
@@ -139,9 +139,6 @@ class Service extends AppModel {
             case 19: # iLike
                 return 'http://ilike.com/user/'.$username.'/recently_played.rss';
 
-            case 20: # wevent
-                return 'http://wevent.org/users/'.$username.'/upcoming.rss';
-
             case 21: # ImThere
                 return 'http://imthere.com/users/'.$username.'/events?format=rss';
 
@@ -153,12 +150,6 @@ class Service extends AppModel {
 
             case 35: # Plazes
                 return 'http://plazes.com/users/'.$username.'/presences.atom';
-
-            case 36: # Scribd
-                return 'http://www.scribd.com/feeds/user_rss/'.$username.'';
-
-            case 37: # MoodMill
-                return 'http://www.moodmill.com/rss/'.$username.'/';
 
             case 38: # Digg
                 return 'http://digg.com/users/'.$username.'/history/favorites.rss';
@@ -293,10 +284,6 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromIlike($feeditem);
     		        break;
 
-    		    case 20: # wevent
-    		        $item['content'] = $this->contentFromWevent($feeditem);
-    		        break;
-
     		    case 21: # ImThere
     		        $item['content'] = $this->contentFromImthere($feeditem);
     		        break;
@@ -311,14 +298,6 @@ class Service extends AppModel {
 
     		    case 35: # Plazes
     		        $item['content'] = $this->contentFromPlazes($feeditem);
-    		        break;
-
-    		    case 36: # Scribd
-    		        $item['content'] = $this->contentFromScribd($feeditem);
-    		        break;
-
-    		    case 37: # MoodMill
-    		        $item['content'] = $this->contentFromMoodmill($feeditem);
     		        break;
 
     		    case 38: # Digg
@@ -529,17 +508,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromWevent($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function contentFromImthere($feeditem) {
         return $feeditem->get_link();
     }
@@ -574,28 +542,6 @@ class Service extends AppModel {
      * @access 
      */
     private function contentFromPlazes($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromScribd($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromMoodmill($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -673,9 +619,6 @@ class Service extends AppModel {
             case 19: # iLike  
                 return 'http://ilike.com/user/'.$username.'';
 
-            case 20: # Wevent  
-                return 'http://wevent.org/users/'.$username.'';
-
             case 21: # ImThere  
                 return 'http://imthere.com/users/'.$username.'';
 
@@ -715,12 +658,6 @@ class Service extends AppModel {
 
             case 35: #Plazes
             	return 'http://plazes.com/users/'.$username;
-
-            case 36: #Scribd
-            	return 'http://www.scribd.com/people/view/'.$username;
-
-            case 37: #MoodMill
-            	return 'http://www.moodmill.com/citizen/'.$username;
 
             case 38: #Digg
             	return 'http://digg.com/users/'.$username;
@@ -876,9 +813,6 @@ class Service extends AppModel {
             case 19:
                 return $this->getContactsFromIlike('http://ilike.com/user/' . $account['Account']['username'] . '/friends');
 
-            case 20:
-                return $this->getContactsFromWevent('http://wevent.org/users/' . $account['Account']['username'] . '');
-
             case 21:
                 return $this->getContactsFromImThere('http://imthere.com/users/' . $account['Account']['username'] . '/friends');
 
@@ -890,12 +824,6 @@ class Service extends AppModel {
 
             case 35:
                 return $this->getContactsFromPlazes('http://plazes.com/users/' . $account['Account']['username'] . ';contacts');
-
-            case 36:
-                return $this->getContactsFromScribd('http://www.scribd.com/people/friends/' . $account['Account']['username'] . '');
-            
-            case 37:
-                return $this->getContactsFromMoodmill('http://www.moodmill.com/citizen/' . $account['Account']['username'] . '');
 
             case 38:
                 return $this->getContactsFromDigg('http://digg.com/users/' . $account['Account']['username'] . '/friends/view');
@@ -1294,18 +1222,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-
-    private function getContactsFromWevent($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function getContactsFromImthere($url) {
         $data = array();
         $i = 2;
@@ -1471,30 +1387,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-
-    private function getContactsFromScribd($url) {
-    	return $this->getContactsFromUrl($url, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-
-    private function getContactsFromMoodmill($url) {
-    	return $this->getContactsFromUrl($url, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function getContactsFromDigg($url) {
         $data = array();
         $i = 2;
@@ -1550,6 +1442,12 @@ class Service extends AppModel {
     	switch ($service_id) {
     		case 5: 
     			return new TwitterService();
+    		case 20:
+    			return new WeventService();
+    		case 36:
+    			return new ScribdService();
+    		case 37:
+    			return new MoodmillService();
     	}
     }
 }
@@ -1578,7 +1476,46 @@ interface IService {
 	function getFeedUrl($username);
 }
 
+class MoodmillService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.moodmill.com/citizen/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://www.moodmill.com/citizen/' . $username, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.moodmill.com/rss/'.$username.'/';
+	}
+}
+
+class ScribdService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.scribd.com/people/view/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://www.scribd.com/people/friends/' . $username, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.scribd.com/feeds/user_rss/'.$username;
+	}
+}
+
 class TwitterService implements IService {
+	
 	function getAccountUrl($username) {
 		return 'http://twitter.com/'.$username;
 	}
@@ -1605,5 +1542,24 @@ class TwitterService implements IService {
         } else {
         	return false;
         }
+	}
+}
+
+class WeventService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://wevent.org/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://wevent.org/users/' . $username, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
 	}
 }
