@@ -14,8 +14,8 @@
 		var $helpers = array('Nicesreg');
 		
 		function index() {
-			$server = $this->__getOpenIDServer();
-			$request = $this->__getOpenIDRequest($server);
+			$server = $this->getOpenIDServer();
+			$request = $this->getOpenIDRequest($server);
 
 			if (!isset($request->mode)) {
 				$this->set('headline', 'OpenID server endpoint');
@@ -51,7 +51,7 @@
 					$response = $server->handleRequest($request);
 				}
 
-				$this->__renderResponse($response);
+				$this->renderResponse($response);
 			}
 		}
 		
@@ -69,9 +69,9 @@
 				if (isset($openidSite['OpenidSite']['allowed']) && $openidSite['OpenidSite']['allowed']) {
 					$this->Session->delete($sessionKey);
 					$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
-					$this->__addSRegDataToResponse($response, $sregRequest, $openidSite);
+					$this->addSRegDataToResponse($response, $sregRequest, $openidSite);
 					
-					$this->__renderResponse($response);
+					$this->renderResponse($response);
 				} elseif(!empty($this->params['form'])) {
 					$this->Session->delete($sessionKey);
 					$answer = false;
@@ -90,15 +90,15 @@
 					$response = $request->answer($answer, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 
 					if ($answer) {
-						$this->__addSRegDataToResponse($response, $sregRequest, $this->data);
+						$this->addSRegDataToResponse($response, $sregRequest, $this->data);
 					}
-					$this->__renderResponse($response);
+					$this->renderResponse($response);
 				} else {
 					if ($openidSite) {
 						$this->set('openidSite', $openidSite);
 					}
 					
-					$this->__setDataForTrustForm($request, $sregRequest);
+					$this->setDataForTrustForm($request, $sregRequest);
 				}				
 			} else {
 				$this->set('headline', 'Error');
@@ -112,15 +112,15 @@
 			$this->set('server', Router::url('/'.low($this->name), true));
 		}
 		
-		function __addSRegDataToResponse($response, $sregRequest, $fields) {
-			$data = am($this->__prepareSRegData($this->__removeUnwantedFields($sregRequest->required, $fields), true),
-					   $this->__prepareSRegData($this->__removeUnwantedFields($sregRequest->optional, $fields), true));						
+		private function addSRegDataToResponse($response, $sregRequest, $fields) {
+			$data = am($this->prepareSRegData($this->removeUnwantedFields($sregRequest->required, $fields), true),
+					   $this->prepareSRegData($this->removeUnwantedFields($sregRequest->optional, $fields), true));						
 
 			$sregResponse = Auth_OpenID_SRegResponse::extractResponse($sregRequest, $data);
 			$sregResponse->toMessage($response->fields);
 		}
 		
-		function __getOpenIDRequest($server) {
+		private function getOpenIDRequest($server) {
 			$sessionKey = self::SESSION_KEY_FOR_LAST_OPENID_REQUEST;
 			
 			if ($this->Session->check($sessionKey)) {
@@ -133,14 +133,14 @@
 			return $request;
 		}
 		
-		function __getOpenIDServer() {
+		private function getOpenIDServer() {
 			$store = new Auth_OpenID_FileStore(TMP.'openid');
 			$server = new Auth_OpenID_Server($store);
 			
 			return $server;
 		}
 		
-		function __prepareSRegData($fields, $ignoreUnsupportedFields = false) {
+		private function prepareSRegData($fields, $ignoreUnsupportedFields = false) {
 			$result = array();
 			$identity = $this->Session->read('Identity');
 			
@@ -177,7 +177,7 @@
 			return $result;
 		}
 		
-		function __removeUnwantedFields($fields, $data) {
+		private function removeUnwantedFields($fields, $data) {
 			$result = array();
 			
 			foreach ($fields as $field) {
@@ -198,8 +198,8 @@
 			return $result;
 		}
 		
-		function __renderResponse($response) {
-			$server = $this->__getOpenIDServer();
+		private function renderResponse($response) {
+			$server = $this->getOpenIDServer();
 			$webResponse = $server->encodeResponse($response);
 
 			if ($webResponse->code == 200) {
@@ -210,9 +210,9 @@
 			$this->redirect($webResponse->headers['location'], null, true);
 		}
 		
-		function __setDataForTrustForm($request, $sregRequest) {
-			$this->set('required', $this->__prepareSRegData($sregRequest->required));
-			$this->set('optional', $this->__prepareSRegData($sregRequest->optional));
+		private function setDataForTrustForm($request, $sregRequest) {
+			$this->set('required', $this->prepareSRegData($sregRequest->required));
+			$this->set('optional', $this->prepareSRegData($sregRequest->optional));
 			$this->set('policyUrl', $sregRequest->policy_url);
 			
 			$this->set('trustRoot', $request->trust_root);
