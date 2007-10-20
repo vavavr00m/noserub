@@ -4,6 +4,8 @@
 class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
+    // TODO remove this variable as soon as all services are migrated to the new structure
+    private $migratedServices = array(5);
 
     /**
      * Method description
@@ -75,7 +77,13 @@ class Service extends AppModel {
      * @access 
      */
     function getFeedUrl($service_id, $username) {
-        switch($service_id) {
+        // TODO remove this handling as soon as all services are migrated to the new structure
+        if (in_array($service_id, $this->migratedServices)) {
+    		$service = $this->getService($service_id);
+        	return $service->getFeedUrl($username);
+        }
+        	
+    	switch($service_id) {
             case 1: # flickr
                 # we need to read the page first in order to access
                 # the user id without need to access the API
@@ -94,19 +102,6 @@ class Service extends AppModel {
                 
             case 4: # 23hq.com
                 return 'http://www.23hq.com/rss/'.$username;
-                
-            case 5: # Twitter
-                # we need to reed the page first in order to
-                # access the rss-feed
-                $content = @file_get_contents('http://twitter.com/'.$username);
-                if(!$content) {
-                    return false;
-                }
-                if(preg_match('/http:\/\/twitter\.com\/statuses\/user_timeline\/([0-9]*)\.rss/i', $content, $matches)) {
-                    return 'http://twitter.com/statuses/user_timeline/'.$matches[1].'.rss';
-                } else {
-                    return false;
-                }
                 
             case 6: # Pownce
                 return 'http://pownce.com/feeds/public/'.$username.'/';
@@ -223,6 +218,16 @@ class Service extends AppModel {
             $item['type']     = $token;
             $item['username'] = $username;
             
+            // TODO remove this handling as soon as all services are migrated
+            if (in_array($service_id, $this->migratedServices)) {
+            	$service = $this->getService($service_id);
+            	$item['content'] = $service->getContent($feeditem);
+            	
+            	if ($service instanceof TwitterService) {
+            		$item['title']   = $item['content'];
+            	}
+            }
+            
     		switch($service_id) {
     		    case 1: # flickr
     		        $item['content'] = $this->contentFromFlickr($feeditem);
@@ -238,11 +243,6 @@ class Service extends AppModel {
     		        
     		    case 4: # 23hq.com
     		        $item['content'] = $this->contentFrom23hq($feeditem);
-    		        break;
-    		        
-    		    case 5: # Twitter
-    		        $item['content'] = $this->contentFromTwitter($feeditem);
-    		        $item['title']   = $item['content'];
     		        break;
     		    
     		   	case 6: # Pownce
@@ -395,19 +395,6 @@ class Service extends AppModel {
             return $content;
         }
         return '';
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromTwitter($feeditem) {
-        # cut off the username
-        $content = $feeditem->get_content();
-        return substr($content, strpos($content, ': ') + 2);
     }
 
     /**
@@ -631,6 +618,12 @@ class Service extends AppModel {
      * @access 
      */
     function getAccountUrl($service_id, $username) {
+	    // TODO remove this handling as soon as all services are migrated to the new structure
+        if (in_array($service_id, $this->migratedServices)) {
+    		$service = $this->getService($service_id);
+        	return $service->getAccountUrl($username);
+        }
+    	
         switch($service_id) {
             case 1: # flickr
                 return 'http://www.flickr.com/photos/'.$username.'/';
@@ -643,9 +636,6 @@ class Service extends AppModel {
             
             case 4: # 23hq
                 return 'http://www.23hq.com/'.$username;
-
-            case 5: # twitter.com
-                return 'http://twitter.com/'.$username;
                 
             case 6: # pownce
                 return 'http://pownce.com/'.$username.'/';
@@ -832,6 +822,14 @@ class Service extends AppModel {
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
         $account = $this->Account->findById($account_id);
+        
+	    // TODO remove this handling as soon as all services are migrated to the new structure
+        if (in_array($account['Account']['service_id'], $this->migratedServices)) {
+    		$service = $this->getService($account['Account']['service_id']);
+        	return $service->getContacts($account['Account']['username']);
+        }
+        
+        
         switch($account['Account']['service_id']) {
             case 1:
                 return $this->getContactsFromFlickr('http://www.flickr.com/people/' . $account['Account']['username'] . '/contacts/');
@@ -841,9 +839,6 @@ class Service extends AppModel {
 
             case 3:
                 return $this->getContactsFromIpernity('http://ipernity.com/user/' . $account['Account']['username'] . '/network');
-
-            case 5:
-                return $this->getContactsFromTwitter('http://twitter.com/' . $account['Account']['username'] . '/');
                 
             case 6:
                 return $this->getContactsFromPownce('http://pownce.com/' . $account['Account']['username'] . '/friends/');
@@ -1533,17 +1528,6 @@ class Service extends AppModel {
         
         return $data;
     }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromTwitter($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
-    }
     
     private function getContactsFromUrl($url, $pattern) {
     	$data = array();
@@ -1558,4 +1542,68 @@ class Service extends AppModel {
 
         return $data;
     }
+    
+    /**
+     * Factory method to create services
+     */
+    private function getService($service_id) {
+    	switch ($service_id) {
+    		case 5: 
+    			return new TwitterService();
+    	}
+    }
+}
+
+class ContactExtractor {
+	// TODO a better name for this function?
+	static function getContactsFromUrl($url, $pattern) {
+		$data = array();
+        $content = @file_get_contents($url);
+        if($content && preg_match_all($pattern, $content, $matches)) {
+            foreach($matches[1] as $username) {
+                if(!isset($data[$username])) {
+                    $data[$username] = $username;
+                }
+            }
+        }
+
+        return $data;
+	}
+}
+
+interface IService {
+	function getAccountUrl($username);
+	function getContacts($username);
+	function getContent($feeditem);
+	function getFeedUrl($username);
+}
+
+class TwitterService implements IService {
+	function getAccountUrl($username) {
+		return 'http://twitter.com/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://twitter.com/' . $username . '/', '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
+	}
+	
+	function getContent($feeditem) {
+		# cut off the username
+		$content = $feeditem->get_content();
+        return substr($content, strpos($content, ': ') + 2);
+	}
+	
+	function getFeedUrl($username) {
+		# we need to reed the page first in order to
+        # access the rss-feed
+        $content = @file_get_contents('http://twitter.com/'.$username);
+        if(!$content) {
+        	return false;
+        }
+        if(preg_match('/http:\/\/twitter\.com\/statuses\/user_timeline\/([0-9]*)\.rss/i', $content, $matches)) {
+        	return 'http://twitter.com/statuses/user_timeline/'.$matches[1].'.rss';
+        } else {
+        	return false;
+        }
+	}
 }
