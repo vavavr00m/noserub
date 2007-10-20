@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(5, 20, 36, 37);
+    private $migratedServices = array(5, 14, 17, 18, 20, 36, 37);
 
     /**
      * Method description
@@ -121,20 +121,11 @@ class Service extends AppModel {
 			case 13: # Ma.gnolia
                 return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
 
-			case 14: # StumbleUpon
-                return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username.'';
-
 			case 15: # Cork'd
                 return 'http://corkd.com/feed/journal/'.$username.'';
 
 			case 16: # Dailymotion
                 return 'http://www.dailymotion.com/rss/'.$username.'';
-            
-            case 17: # Zooomr
-                return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
-
-            case 18: # Odeo
-                return 'http://odeo.com/profile/'.$username.'/rss.xml';
 
             case 19: # iLike
                 return 'http://ilike.com/user/'.$username.'/recently_played.rss';
@@ -260,24 +251,12 @@ class Service extends AppModel {
     		        $item['content'] = $this->contentFromMagnolia($feeditem);
     		        break;
     		    
-    		    case 14: # StumbleUpon
-    		        $item['content'] = $this->contentFromStumbleupon($feeditem);
-    		        break;
-    		    
     		    case 15: # Cork'd
     		        $item['content'] = $this->contentFromCorkd($feeditem);
     		        break;
      		    
     		    case 16: # Dailymotion
     		        $item['content'] = $this->contentFromDailymotion($feeditem);
-    		        break;
-    		        
-    		    case 17: # Zooomr
-    		        $item['content'] = $this->contentFromZooomr($feeditem);
-    		        break;
-     		        
-    		    case 18: # Odeo
-    		        $item['content'] = $this->contentFromOdeo($feeditem);
     		        break;
      		        
     		    case 19: # iLike
@@ -438,17 +417,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromStumbleupon($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function contentFromCorkd($feeditem) {
         return $feeditem->get_link();
     }
@@ -461,32 +429,6 @@ class Service extends AppModel {
      * @access 
      */
     private function contentFromDailymotion($feeditem) {
-        return $feeditem->get_link();
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromZooomr($feeditem) {
-        $raw_content = $feeditem->get_content();
-        if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {
-            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'_s.jpg" /></a>';
-        }
-        return '';
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromOdeo($feeditem) {
         return $feeditem->get_link();
     }
 
@@ -600,21 +542,12 @@ class Service extends AppModel {
 
             case 13: # Ma.gnolia
                 return 'http://ma.gnolia.com/people/'.$username.'/';
-
-            case 14: # StumbleUpon
-                return 'http://'.$username.'.stumbleupon.com/';
             
             case 15: # Cork'd
                 return 'http://corkd.com/people/'.$username.'/';
 
             case 16: # Dailymotion
                 return 'http://www.dailymotion.com/'.$username.'/';
-
-            case 17: # Zooomr  
-                return 'http://www.zooomr.com/photos/'.$username.'';
-
-            case 18: # Odeo  
-                return 'http://odeo.com/profile/'.$username.'';
 
             case 19: # iLike  
                 return 'http://ilike.com/user/'.$username.'';
@@ -795,20 +728,11 @@ class Service extends AppModel {
             case 13:
                 return $this->getContactsFromMagnolia('http://ma.gnolia.com/people/' . $account['Account']['username'] . '/contacts/');
 
-            case 14:
-                return $this->getContactsFromStumbleupon('http://' . $account['Account']['username'] . '.stumbleupon.com/friends/');
-
             case 15:
                 return $this->getContactsFromCorkd('http://corkd.com/people/' . $account['Account']['username'] . '/buddies');
 
             case 16:
                 return $this->getContactsFromDailymotion('http://www.dailymotion.com/contacts/' . $account['Account']['username'] . '');
-
-            case 17:
-                return $this->getContactsFromZooomr('http://www.zooomr.com/people/' . $account['Account']['username'] . '/contacts/');
-
-            case 18:
-                return $this->getContactsFromOdeo('http://odeo.com/profile/' . $account['Account']['username'] . '/contacts/');
 
             case 19:
                 return $this->getContactsFromIlike('http://ilike.com/user/' . $account['Account']['username'] . '/friends');
@@ -1065,17 +989,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function getContactsFromStumbleupon($url) {
-    	return $this->getContactsFromUrl($url, '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function getContactsFromCorkd($url) {
         $data = array();
         $i = 2;
@@ -1149,29 +1062,6 @@ class Service extends AppModel {
         } while(1);
         
         return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-
-    private function getContactsFromZooomr($url) {
-    	return $this->getContactsFromUrl($url, '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromOdeo($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
     }
 
     /**
@@ -1442,6 +1332,12 @@ class Service extends AppModel {
     	switch ($service_id) {
     		case 5: 
     			return new TwitterService();
+    		case 14:
+    			return new StumbleuponService();
+    		case 17:
+    			return new ZooomrService();
+    		case 18:
+    			return new OdeoService();
     		case 20:
     			return new WeventService();
     		case 36:
@@ -1495,6 +1391,25 @@ class MoodmillService implements IService {
 	}
 }
 
+class OdeoService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://odeo.com/profile/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://odeo.com/profile/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://odeo.com/profile/'.$username.'/rss.xml';
+	}
+}
+
 class ScribdService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1511,6 +1426,25 @@ class ScribdService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.scribd.com/feeds/user_rss/'.$username;
+	}
+}
+
+class StumbleuponService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.stumbleupon.com/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username;
 	}
 }
 
@@ -1561,5 +1495,28 @@ class WeventService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
+	}
+}
+
+class ZooomrService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.zooomr.com/photos/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://www.zooomr.com/people/' . $username . '/contacts/', '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
+	}
+	
+	function getContent($feeditem) {
+		$raw_content = $feeditem->get_content();
+        if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {
+            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'_s.jpg" /></a>';
+        }
+        return '';
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
 	}
 }
