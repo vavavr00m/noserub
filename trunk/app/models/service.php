@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(5, 14, 17, 18, 20, 36, 37);
+    private $migratedServices = array(5, 11, 12, 13, 14, 17, 18, 20, 36, 37);
 
     /**
      * Method description
@@ -111,15 +111,6 @@ class Service extends AppModel {
 
 			case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/videos/rss/';
-
-			case 11: # Last.fm
-                return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
-
-			case 12: # QYPE
-                return 'http://www.qype.com/people/'.$username.'/rss';
-
-			case 13: # Ma.gnolia
-                return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
 
 			case 15: # Cork'd
                 return 'http://corkd.com/feed/journal/'.$username.'';
@@ -237,18 +228,6 @@ class Service extends AppModel {
     		        
     		    case 10: # vimeo
     		        $item['content'] = $this->contentFromVimeo($feeditem);
-    		        break;
-
-    		    case 11: # Last.fm
-    		        $item['content'] = $this->contentFromLastfm($feeditem);
-    		        break;
-
-    		    case 12: # QYPE
-    		        $item['content'] = $this->contentFromQype($feeditem);
-    		        break;
-    		    
-    		    case 13: # Ma.gnolia
-    		        $item['content'] = $this->contentFromMagnolia($feeditem);
     		        break;
     		    
     		    case 15: # Cork'd
@@ -384,39 +363,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromLastfm($feeditem) {
-        return $feeditem->get_content();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromQype($feeditem) {
-        return $feeditem->get_content();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromMagnolia($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     private function contentFromCorkd($feeditem) {
         return $feeditem->get_link();
     }
@@ -533,15 +479,6 @@ class Service extends AppModel {
                 
             case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/';
-
-            case 11: # Last.fm
-                return 'http://www.last.fm/user/'.$username.'/';
-
-            case 12: # QYPE
-                return 'http://www.qype.com/people/'.$username.'/';
-
-            case 13: # Ma.gnolia
-                return 'http://ma.gnolia.com/people/'.$username.'/';
             
             case 15: # Cork'd
                 return 'http://corkd.com/people/'.$username.'/';
@@ -718,15 +655,6 @@ class Service extends AppModel {
                 
             case 10:
                 return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
-
-            case 11:
-                return $this->getContactsFromLastfm('http://www.last.fm/user/' . $account['Account']['username'] . '/friends/');
-
-            case 12:
-                return $this->getContactsFromQype('http://www.qype.com/people/' . $account['Account']['username'] . '/contacts/');
-
-            case 13:
-                return $this->getContactsFromMagnolia('http://ma.gnolia.com/people/' . $account['Account']['username'] . '/contacts/');
 
             case 15:
                 return $this->getContactsFromCorkd('http://corkd.com/people/' . $account['Account']['username'] . '/buddies');
@@ -947,39 +875,6 @@ class Service extends AppModel {
         } while(1);
         
         return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromLastfm($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromQype($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromMagnolia($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
     }
 
     /**
@@ -1332,6 +1227,12 @@ class Service extends AppModel {
     	switch ($service_id) {
     		case 5: 
     			return new TwitterService();
+    		case 11:
+    			return new LastfmService();
+    		case 12:
+    			return new QypeService();
+    		case 13:
+    			return new MagnoliaService();
     		case 14:
     			return new StumbleuponService();
     		case 17:
@@ -1372,6 +1273,44 @@ interface IService {
 	function getFeedUrl($username);
 }
 
+class LastfmService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.last.fm/user/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://www.last.fm/user/' . $username . '/friends/', '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
+	}
+}
+
+class MagnoliaService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://ma.gnolia.com/people/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://ma.gnolia.com/people/' . $username . '/contacts/', '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
+	}
+}
+
 class MoodmillService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1407,6 +1346,25 @@ class OdeoService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://odeo.com/profile/'.$username.'/rss.xml';
+	}
+}
+
+class QypeService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.qype.com/people/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://www.qype.com/people/' . $username . '/contacts/', '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.qype.com/people/'.$username.'/rss';
 	}
 }
 
