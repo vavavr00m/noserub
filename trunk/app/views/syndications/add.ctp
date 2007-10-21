@@ -37,7 +37,12 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
             <p class="left">
                 <?php
                     if($contact['WithIdentity']['photo']) {
-                        $contact_photo = $static_base_url . $contact['WithIdentity']['photo'].'.jpg';
+                        if(strpos($contact['WithIdentity']['photo'], 'http://') === 0 ||
+                           strpos($contact['WithIdentity']['photo'], 'http://') === 0) {
+                            $contact_photo = str_replace('.jpg', '-small.jpg', $contact['WithIdentity']['photo']);
+                        } else {
+                            $contact_photo = $static_base_url . $contact['WithIdentity']['photo'].'-small.jpg';
+                        }
                     } else {
                         $contact_photo = $sex['img-small'][$contact['WithIdentity']['sex']];
                     }
