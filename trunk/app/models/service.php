@@ -4,8 +4,6 @@
 class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
-    // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(1, 2, 3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
 
     /**
      * Method description
@@ -77,19 +75,13 @@ class Service extends AppModel {
      * @access 
      */
     function getFeedUrl($service_id, $username) {
-        // TODO remove this handling as soon as all services are migrated to the new structure
-        if (in_array($service_id, $this->migratedServices)) {
-    		$service = $this->getService($service_id);
-        	return $service->getFeedUrl($username);
+    	$service = $this->getService($service_id);
+		
+    	if ($service) {
+    		return $service->getFeedUrl($username);
         }
-        	
-    	switch($service_id) {
-            case 4: # 23hq.com
-                return 'http://www.23hq.com/rss/'.$username;
-
-            default: 
-                return false;
-        }
+                
+        return false;
     }
     
     /**
@@ -142,48 +134,24 @@ class Service extends AppModel {
             $item['type']     = $token;
             $item['username'] = $username;
             
-            // TODO remove this handling as soon as all services are migrated
-            if (in_array($service_id, $this->migratedServices)) {
-            	$service = $this->getService($service_id);
+            $service = $this->getService($service_id);
+
+            if ($service) {
             	$item['content'] = $service->getContent($feeditem);
             	
             	if ($service instanceof TwitterService) {
             		$item['title']   = $item['content'];
             	}
+            } else {
+            	$item['content'] = $feeditem->get_content();
             }
             
-    		switch($service_id) {
-    		    case 4: # 23hq.com
-    		        $item['content'] = $this->contentFrom23hq($feeditem);
-    		        break;
-
-    		    default:
-    		        $item['content'] = $feeditem->get_content();
-    		}
     		$items[] = $item; 
     	}
 
         unset($feed);
         
         return $items;
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFrom23hq($feeditem) {
-        $raw_content = $feeditem->get_content();
-        #<a href="http://www.23hq.com/DonDahlmann/photo/2204674
-        if(preg_match('/<a href="http:\/\/www.23hq.com\/.*\/photo\/.*<\/a>/iU', $raw_content, $matches)) {
-            $content = str_replace('standard', 'quad100', $matches[0]);
-            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
-            return $content;
-        }
-        return '';
     }
 
     /**
@@ -194,47 +162,13 @@ class Service extends AppModel {
      * @access 
      */
     function getAccountUrl($service_id, $username) {
-	    // TODO remove this handling as soon as all services are migrated to the new structure
-        if (in_array($service_id, $this->migratedServices)) {
-    		$service = $this->getService($service_id);
-        	return $service->getAccountUrl($username);
+    	$service = $this->getService($service_id);
+
+    	if ($service) {
+    		return $service->getAccountUrl($username);
         }
     	
-        switch($service_id) {
-            case 4: # 23hq
-                return 'http://www.23hq.com/'.$username;
-                
-            case 23: # Jabber
-            case 24: # Gtalk  
-                return 'xmpp:'.$username;
-
-            case 25: # ICQ
-                return 'http://www.icq.com/'.$username;
-                
-            case 26: # YIM
-                return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
-                
-            case 27: # AIM
-                return 'aim:goIM?screenname='.$username;
-                
-            case 28: # Skype
-                return 'skype:'.$username;
-                
-            case 29: # MSN
-                return 'msnim:'.$username;
-                
-            case 30: # Facebook
-                return 'http://www.facebook.com/profile.php?id='.$username;
-                
-            case 32: # LinkedIn
-                return 'http://www.linkedin.com/in/'.$username;
-                
-            case 33: # Xing
-                return 'https://www.xing.com/profile/'.$username;
-
-            default:
-                return '';
-        }
+        return '';
     }
     
     /**
@@ -330,17 +264,13 @@ class Service extends AppModel {
         $this->Account->expects('Account');
         $account = $this->Account->findById($account_id);
         
-	    // TODO remove this handling as soon as all services are migrated to the new structure
-        if (in_array($account['Account']['service_id'], $this->migratedServices)) {
-    		$service = $this->getService($account['Account']['service_id']);
-        	return $service->getContacts($account['Account']['username']);
+    	$service = $this->getService($account['Account']['service_id']);
+
+    	if ($service) {
+    		return $service->getContacts($account['Account']['username']);
         }
         
-        
-        switch($account['Account']['service_id']) {
-            default:
-                return array();
-        }
+        return array();
     }
         
     /**
@@ -354,6 +284,8 @@ class Service extends AppModel {
     			return new DeliciousService();
     		case 3:
     			return new IpernityService();
+    		case 4:
+    			return new _23hqService();
     		case 5: 
     			return new TwitterService();
     		case 6:
@@ -386,6 +318,26 @@ class Service extends AppModel {
     			return new ImthereService();
     		case 22:
     			return new NewsvineService();
+    		case 23:
+    			return new JabberService();
+    		case 24:
+    			return new GtalkService();
+    		case 25:
+    			return new IcqService();
+    		case 26:
+    			return new YimService();
+    		case 27:
+    			return new AimService();
+    		case 28:
+    			return new SkypeService();
+    		case 29:
+    			return new MsnService();
+    		case 30:
+    			return new FacebookService();
+    		case 32:
+    			return new LinkedinService();
+    		case 33:
+    			return new XingService();
     		case 34:
     			return new SlideshareService();
     		case 35:
@@ -396,6 +348,8 @@ class Service extends AppModel {
     			return new MoodmillService();
     		case 38:
     			return new DiggService();
+    		default:
+    			return false;
     	}
     }
 }
@@ -457,6 +411,59 @@ interface IService {
 	function getContacts($username);
 	function getContent($feeditem);
 	function getFeedUrl($username);
+}
+
+/**
+ * This class is provided as a convenience for easily creating services by extending this class 
+ * and overriding only the methods of interest.
+ */
+abstract class ServiceAdapter implements IService {
+	
+	function getAccountUrl($username) {
+		return '';
+	}
+	
+	function getContacts($username) {
+		return array();
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return false;
+	}
+}
+
+// class name starts with '_' as it is not allowed to use a number as first character
+class _23hqService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.23hq.com/'.$username;
+	}
+	
+	function getContent($feeditem) {
+		$raw_content = $feeditem->get_content();
+        #<a href="http://www.23hq.com/DonDahlmann/photo/2204674
+        if(preg_match('/<a href="http:\/\/www.23hq.com\/.*\/photo\/.*<\/a>/iU', $raw_content, $matches)) {
+            $content = str_replace('standard', 'quad100', $matches[0]);
+            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
+            return $content;
+        }
+        return '';
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.23hq.com/rss/'.$username;
+	}
+}
+
+class AimService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'aim:goIM?screenname='.$username;
+	}
 }
 
 class CorkdService implements IService {
@@ -535,6 +542,13 @@ class DiggService implements IService {
 	}
 }
 
+class FacebookService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.facebook.com/profile.php?id='.$username;
+	}
+}
+
 class FlickrService implements IService {
 	
 	function getAccountUrl($username) {
@@ -564,6 +578,20 @@ class FlickrService implements IService {
         } else {
         	return false;
         }
+	}
+}
+
+class GtalkService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'xmpp:'.$username;
+	}
+}
+
+class IcqService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.icq.com/'.$username;
 	}
 }
 
@@ -628,6 +656,13 @@ class IpernityService implements IService {
 	}
 }
 
+class JabberService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'xmpp:'.$username;
+	}
+}
+
 class LastfmService implements IService {
 	
 	function getAccountUrl($username) {
@@ -644,6 +679,13 @@ class LastfmService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
+	}
+}
+
+class LinkedinService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.linkedin.com/in/'.$username;
 	}
 }
 
@@ -682,6 +724,13 @@ class MoodmillService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.moodmill.com/rss/'.$username.'/';
+	}
+}
+
+class MsnService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'msnim:'.$username;
 	}
 }
 
@@ -796,6 +845,13 @@ class ScribdService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.scribd.com/feeds/user_rss/'.$username;
+	}
+}
+
+class SkypeService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'skype:'.$username;
 	}
 }
 
@@ -922,6 +978,20 @@ class WeventService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
+	}
+}
+
+class XingService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'https://www.xing.com/profile/'.$username;
+	}
+}
+
+class YimService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
 	}
 }
 
