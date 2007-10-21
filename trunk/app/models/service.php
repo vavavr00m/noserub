@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 20, 34, 35, 36, 37, 38);
+    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
 
     /**
      * Method description
@@ -112,15 +112,6 @@ class Service extends AppModel {
 			case 16: # Dailymotion
                 return 'http://www.dailymotion.com/rss/'.$username.'';
 
-            case 19: # iLike
-                return 'http://ilike.com/user/'.$username.'/recently_played.rss';
-
-            case 21: # ImThere
-                return 'http://imthere.com/users/'.$username.'/events?format=rss';
-
-            case 22: # Newsvine
-                return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
-
             default: 
                 return false;
         }
@@ -213,18 +204,6 @@ class Service extends AppModel {
      		    
     		    case 16: # Dailymotion
     		        $item['content'] = $this->contentFromDailymotion($feeditem);
-    		        break;
-     		        
-    		    case 19: # iLike
-    		        $item['content'] = $this->contentFromIlike($feeditem);
-    		        break;
-
-    		    case 21: # ImThere
-    		        $item['content'] = $this->contentFromImthere($feeditem);
-    		        break;
-
-    		    case 22: # Newsvine
-    		        $item['content'] = $this->contentFromNewsvine($feeditem);
     		        break;
 
     		    default:
@@ -339,39 +318,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromiLike($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromImthere($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromNewsvine($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     function getAccountUrl($service_id, $username) {
 	    // TODO remove this handling as soon as all services are migrated to the new structure
         if (in_array($service_id, $this->migratedServices)) {
@@ -400,15 +346,6 @@ class Service extends AppModel {
 
             case 16: # Dailymotion
                 return 'http://www.dailymotion.com/'.$username.'/';
-
-            case 19: # iLike  
-                return 'http://ilike.com/user/'.$username.'';
-
-            case 21: # ImThere  
-                return 'http://imthere.com/users/'.$username.'';
-
-            case 22: # Newsvine  
-                return 'http://'.$username.'.newsvine.com/';
                 
             case 23: # Jabber
             case 24: # Gtalk  
@@ -561,15 +498,6 @@ class Service extends AppModel {
 
             case 16:
                 return $this->getContactsFromDailymotion('http://www.dailymotion.com/contacts/' . $account['Account']['username'] . '');
-
-            case 19:
-                return $this->getContactsFromIlike('http://ilike.com/user/' . $account['Account']['username'] . '/friends');
-
-            case 21:
-                return $this->getContactsFromImThere('http://imthere.com/users/' . $account['Account']['username'] . '/friends');
-
-            case 22:
-                return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
 
             default:
                 return array();
@@ -821,130 +749,6 @@ class Service extends AppModel {
         
         return $data;
     }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromIlike($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/simU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                 if(preg_match('/src="\/images\/forward_arrow.gif" title="Go forward">/iU', $content)) {
-                    $page_url = $url . '?page='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromImthere($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                 if(preg_match('/Next<\/a><\/li>/iU', $content)) {
-                    $page_url = $url . '?page='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromNewsvine($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                 if(preg_match('/title="Next 50">NEXT 50<\/a>/iU', $content)) {
-                    $page_url = $url . $i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
     
     /**
      * Factory method to create services
@@ -969,8 +773,14 @@ class Service extends AppModel {
     			return new ZooomrService();
     		case 18:
     			return new OdeoService();
+    		case 19:
+    			return new IlikeService();
     		case 20:
     			return new WeventService();
+    		case 21:
+    			return new ImthereService();
+    		case 22:
+    			return new NewsvineService();
     		case 34:
     			return new SlideshareService();
     		case 35:
@@ -1082,6 +892,44 @@ class DiggService implements IService {
 	}
 }
 
+class IlikeService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://ilike.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://ilike.com/user/' . $username . '/friends', '/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/simU', '/src="\/images\/forward_arrow.gif" title="Go forward">/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://ilike.com/user/'.$username.'/recently_played.rss';
+	}
+}
+
+class ImthereService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://imthere.com/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://imthere.com/users/' . $username . '/friends', '/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', '/Next<\/a><\/li>/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://imthere.com/users/'.$username.'/events?format=rss';
+	}
+}
+
 class LastfmService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1136,6 +984,25 @@ class MoodmillService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.moodmill.com/rss/'.$username.'/';
+	}
+}
+
+class NewsvineService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.newsvine.com/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.newsvine.com/?more=Friends&si=', '/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', '/title="Next 50">NEXT 50<\/a>/iU', '');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
 	}
 }
 
