@@ -11,12 +11,12 @@
         
         echo $this->renderElement('foaf');
     
-        $sex = array('img' => array(0 => '/images/profile/avatar/noinfo.gif',
-                                    1 => '/images/profile/avatar/female.gif',
-                                    2 => '/images/profile/avatar/male.gif'),
-                     'img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
-                                          1 => '/images/profile/avatar/female-small.gif',
-                                          2 => '/images/profile/avatar/male-small.gif'),
+        $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
+                                    1 => Router::url('/images/profile/avatar/female.gif'),
+                                    2 => Router::url('/images/profile/avatar/male.gif')),
+                     'img-small' => array(0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
+                                          1 => Router::url('/images/profile/avatar/female-small.gif'),
+                                          2 => Router::url('/images/profile/avatar/male-small.gif')),
                      'he' => array(0 => 'he/she',
                                    1 => 'she',
                                    2 => 'he'),
