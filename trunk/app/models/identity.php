@@ -275,7 +275,7 @@ class Identity extends AppModel {
         if(!$content) {
             return false;
         }
-        echo $url.'<br />';
+
         preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
         preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
@@ -314,9 +314,9 @@ class Identity extends AppModel {
         $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
         if($gender) {
             switch($gender[1]) {
-                case 'female': $result['identity']['sex'] = 1; break;
-                case 'male'  : $result['identity']['sex'] = 2; break;
-                default      : $result['identity']['sex'] = 0;
+                case 'female': $result['Identity']['sex'] = 1; break;
+                case 'male'  : $result['Identity']['sex'] = 2; break;
+                default      : $result['Identity']['sex'] = 0;
             }
         } else {
             $result['identity']['sex'] = 0;
