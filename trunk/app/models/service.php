@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(5, 11, 12, 13, 14, 17, 18, 20, 36, 37);
+    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 20, 36, 37);
 
     /**
      * Method description
@@ -94,9 +94,6 @@ class Service extends AppModel {
                     return false;
                 }
                 
-            case 2: # del.icio.us
-                return 'http://del.icio.us/rss/'.$username;
-                
             case 3: # ipernity.com
                 return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
                 
@@ -105,9 +102,6 @@ class Service extends AppModel {
                 
             case 6: # Pownce
                 return 'http://pownce.com/feeds/public/'.$username.'/';
-
-            case 9: # Upcoming
-                return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
 
 			case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/videos/rss/';
@@ -205,10 +199,6 @@ class Service extends AppModel {
     		    case 1: # flickr
     		        $item['content'] = $this->contentFromFlickr($feeditem);
     		        break;
-    		    
-    		    case 2: # del.icio.us
-    		        $item['content'] = $this->contentFromDelicious($feeditem);
-    		        break;
     		        
     		    case 3: # ipernity
     		        $item['content'] = $this->contentFromIpernity($feeditem);
@@ -220,10 +210,6 @@ class Service extends AppModel {
     		    
     		   	case 6: # Pownce
     		        $item['content'] = $this->contentFromPownce($feeditem);
-    		        break;
-    		        
-    		    case 9: # Upcoming.org
-    		        $item['content'] = $feeditem->get_content();
     		        break;
     		        
     		    case 10: # vimeo
@@ -303,17 +289,6 @@ class Service extends AppModel {
             return $content;
         }
         return '';
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromDelicious($feeditem) {
-        return $feeditem->get_link();
     }
     
     /**
@@ -462,9 +437,6 @@ class Service extends AppModel {
             case 1: # flickr
                 return 'http://www.flickr.com/photos/'.$username.'/';
                 
-            case 2: # del.icio.us
-                return 'http://del.icio.us/'.$username;
-                
             case 3: # ipernity
                 return 'http://ipernity.com/doc/'.$username.'/home/photo';
             
@@ -473,9 +445,6 @@ class Service extends AppModel {
                 
             case 6: # pownce
                 return 'http://pownce.com/'.$username.'/';
-            
-            case 9: # upcoming
-                return 'http://upcoming.yahoo.com/user/'.$username.'/';
                 
             case 10: # vimeo
                 return 'http://vimeo.com/'.$username.'/';
@@ -640,18 +609,12 @@ class Service extends AppModel {
         switch($account['Account']['service_id']) {
             case 1:
                 return $this->getContactsFromFlickr('http://www.flickr.com/people/' . $account['Account']['username'] . '/contacts/');
-                
-            case 2:
-                return $this->getContactsFromDelicious('http://del.icio.us/network/' . $account['Account']['username'] . '/');
 
             case 3:
                 return $this->getContactsFromIpernity('http://ipernity.com/user/' . $account['Account']['username'] . '/network');
                 
             case 6:
                 return $this->getContactsFromPownce('http://pownce.com/' . $account['Account']['username'] . '/friends/');
-            
-            case 9:
-                return $this->getContactsFromUpcoming('http://upcoming.yahoo.com/user/' . $account['Account']['username'] . '/');
                 
             case 10:
                 return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
@@ -725,17 +688,6 @@ class Service extends AppModel {
         
         return $data;
     }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromDelicious($url) {
-    	return $this->getContactsFromUrl($url, '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
-    }
 
     /**
      * Method description
@@ -777,23 +729,6 @@ class Service extends AppModel {
         
         return $data;
     }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromUpcoming($url) {
-    	return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
-    }
-    
-    /*
-    private function getContactsFromUpcoming($url) {
-    return $this->getContactsFromUrl($url, '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
-    }
-    */
 
     /**
      * Method description
@@ -1206,27 +1141,17 @@ class Service extends AppModel {
         return $data;
     }
     
-    private function getContactsFromUrl($url, $pattern) {
-    	$data = array();
-        $content = @file_get_contents($url);
-        if($content && preg_match_all($pattern, $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        }
-
-        return $data;
-    }
-    
     /**
      * Factory method to create services
      */
     private function getService($service_id) {
     	switch ($service_id) {
+    		case 2:
+    			return new DeliciousService();
     		case 5: 
     			return new TwitterService();
+    		case 9:
+    			return new UpcomingService();
     		case 11:
     			return new LastfmService();
     		case 12:
@@ -1271,6 +1196,25 @@ interface IService {
 	function getContacts($username);
 	function getContent($feeditem);
 	function getFeedUrl($username);
+}
+
+class DeliciousService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://del.icio.us/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://del.icio.us/network/' . $username . '/', '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://del.icio.us/rss/'.$username;
+	}
 }
 
 class LastfmService implements IService {
@@ -1434,6 +1378,25 @@ class TwitterService implements IService {
         } else {
         	return false;
         }
+	}
+}
+
+class UpcomingService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://upcoming.yahoo.com/user/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromUrl('http://upcoming.yahoo.com/user/' . $username . '/', '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
 	}
 }
 
