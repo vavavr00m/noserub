@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(2, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
+    private $migratedServices = array(1, 2, 3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
 
     /**
      * Method description
@@ -84,24 +84,8 @@ class Service extends AppModel {
         }
         	
     	switch($service_id) {
-            case 1: # flickr
-                # we need to read the page first in order to access
-                # the user id without need to access the API
-                $content = file_get_contents('http://www.flickr.com/photos/'.$username.'/');
-                if(preg_match('/photos_public.gne\?id=(.*)&amp;/i', $content, $matches)) {
-                    return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'&lang=en-us&format=rss_200';
-                } else {
-                    return false;
-                }
-                
-            case 3: # ipernity.com
-                return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
-                
             case 4: # 23hq.com
                 return 'http://www.23hq.com/rss/'.$username;
-                
-            case 6: # Pownce
-                return 'http://pownce.com/feeds/public/'.$username.'/';
 
             default: 
                 return false;
@@ -169,20 +153,8 @@ class Service extends AppModel {
             }
             
     		switch($service_id) {
-    		    case 1: # flickr
-    		        $item['content'] = $this->contentFromFlickr($feeditem);
-    		        break;
-    		        
-    		    case 3: # ipernity
-    		        $item['content'] = $this->contentFromIpernity($feeditem);
-    		        break;
-    		        
     		    case 4: # 23hq.com
     		        $item['content'] = $this->contentFrom23hq($feeditem);
-    		        break;
-    		    
-    		   	case 6: # Pownce
-    		        $item['content'] = $this->contentFromPownce($feeditem);
     		        break;
 
     		    default:
@@ -194,38 +166,6 @@ class Service extends AppModel {
         unset($feed);
         
         return $items;
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromIpernity($feeditem) {
-        $raw_content = $feeditem->get_content();
-        if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {
-            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'t.jpg" /></a>';
-        }
-        return '';
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromFlickr($feeditem) {
-        $raw_content = $feeditem->get_content();
-        if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {
-            $content = str_replace('_m.jpg', '_s.jpg', $matches[0]);
-            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
-            return $content;
-        }
-        return '';
     }
     
     /**
@@ -253,17 +193,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromPownce($feeditem) {
-        return $feeditem->get_content();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     function getAccountUrl($service_id, $username) {
 	    // TODO remove this handling as soon as all services are migrated to the new structure
         if (in_array($service_id, $this->migratedServices)) {
@@ -272,17 +201,8 @@ class Service extends AppModel {
         }
     	
         switch($service_id) {
-            case 1: # flickr
-                return 'http://www.flickr.com/photos/'.$username.'/';
-                
-            case 3: # ipernity
-                return 'http://ipernity.com/doc/'.$username.'/home/photo';
-            
             case 4: # 23hq
                 return 'http://www.23hq.com/'.$username;
-                
-            case 6: # pownce
-                return 'http://pownce.com/'.$username.'/';
                 
             case 23: # Jabber
             case 24: # Gtalk  
@@ -418,152 +338,26 @@ class Service extends AppModel {
         
         
         switch($account['Account']['service_id']) {
-            case 1:
-                return $this->getContactsFromFlickr('http://www.flickr.com/people/' . $account['Account']['username'] . '/contacts/');
-
-            case 3:
-                return $this->getContactsFromIpernity('http://ipernity.com/user/' . $account['Account']['username'] . '/network');
-                
-            case 6:
-                return $this->getContactsFromPownce('http://pownce.com/' . $account['Account']['username'] . '/friends/');
-
             default:
                 return array();
         }
     }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromFlickr($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/class="Next">Next &gt;<\/a>/iU', $content)) {
-                    $page_url = $url . '?page='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
         
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromIpernity($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a href="\/user\/(.*)">Profile<\/a>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<a href="\/user\/(.*)">Profile<\/a>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/>next &rarr;<\/a>/iU', $content)) {
-                    $page_url = $url . '|R58%3Bord%3D3%3Boff%3D0?r[off]='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromPownce($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<div class="user-name">username: (.*)<\/div>/simU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<div class="user-name">username: (.*)<\/div>/simU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/Next Page &#187;<\/a>/iU', $content)) {
-                    $page_url = $url . 'page/'.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-    
     /**
      * Factory method to create services
      */
     private function getService($service_id) {
     	switch ($service_id) {
+    		case 1:
+    			return new FlickrService();
     		case 2:
     			return new DeliciousService();
+    		case 3:
+    			return new IpernityService();
     		case 5: 
     			return new TwitterService();
+    		case 6:
+    			return new PownceService();
     		case 9:
     			return new UpcomingService();
     		case 10:
@@ -741,6 +535,38 @@ class DiggService implements IService {
 	}
 }
 
+class FlickrService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.flickr.com/photos/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.flickr.com/people/' . $username . '/contacts/', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		$raw_content = $feeditem->get_content();
+        if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {
+            $content = str_replace('_m.jpg', '_s.jpg', $matches[0]);
+            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
+            return $content;
+        }
+        return '';
+	}
+	
+	function getFeedUrl($username) {
+		# we need to read the page first in order to access
+        # the user id without need to access the API
+        $content = file_get_contents('http://www.flickr.com/photos/'.$username.'/');
+        if(preg_match('/photos_public.gne\?id=(.*)&amp;/i', $content, $matches)) {
+        	return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'&lang=en-us&format=rss_200';
+        } else {
+        	return false;
+        }
+	}
+}
+
 class IlikeService implements IService {
 	
 	function getAccountUrl($username) {
@@ -776,6 +602,29 @@ class ImthereService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://imthere.com/users/'.$username.'/events?format=rss';
+	}
+}
+
+class IpernityService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://ipernity.com/doc/'.$username.'/home/photo';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://ipernity.com/user/' . $username . '/network', '/<a href="\/user\/(.*)">Profile<\/a>/iU', '/>next &rarr;<\/a>/iU', '|R58%3Bord%3D3%3Boff%3D0?r[off]=');
+	}
+	
+	function getContent($feeditem) {
+		$raw_content = $feeditem->get_content();
+        if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {
+            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'t.jpg" /></a>';
+        }
+        return '';
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
 	}
 }
 
@@ -890,6 +739,25 @@ class PlazesService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://plazes.com/users/'.$username.'/presences.atom';
+	}
+}
+
+class PownceService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://pownce.com/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://pownce.com/' . $username . '/friends/', '/<div class="user-name">username: (.*)<\/div>/simU', '/Next Page &#187;<\/a>/iU', 'page/');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://pownce.com/feeds/public/'.$username.'/';
 	}
 }
 
