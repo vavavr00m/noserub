@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
+    private $migratedServices = array(2, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 38);
 
     /**
      * Method description
@@ -103,15 +103,6 @@ class Service extends AppModel {
             case 6: # Pownce
                 return 'http://pownce.com/feeds/public/'.$username.'/';
 
-			case 10: # vimeo
-                return 'http://vimeo.com/'.$username.'/videos/rss/';
-
-			case 15: # Cork'd
-                return 'http://corkd.com/feed/journal/'.$username.'';
-
-			case 16: # Dailymotion
-                return 'http://www.dailymotion.com/rss/'.$username.'';
-
             default: 
                 return false;
         }
@@ -193,18 +184,6 @@ class Service extends AppModel {
     		   	case 6: # Pownce
     		        $item['content'] = $this->contentFromPownce($feeditem);
     		        break;
-    		        
-    		    case 10: # vimeo
-    		        $item['content'] = $this->contentFromVimeo($feeditem);
-    		        break;
-    		    
-    		    case 15: # Cork'd
-    		        $item['content'] = $this->contentFromCorkd($feeditem);
-    		        break;
-     		    
-    		    case 16: # Dailymotion
-    		        $item['content'] = $this->contentFromDailymotion($feeditem);
-    		        break;
 
     		    default:
     		        $item['content'] = $feeditem->get_content();
@@ -285,39 +264,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromVimeo($feeditem) {
-        return $feeditem->get_content();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromCorkd($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromDailymotion($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     function getAccountUrl($service_id, $username) {
 	    // TODO remove this handling as soon as all services are migrated to the new structure
         if (in_array($service_id, $this->migratedServices)) {
@@ -337,15 +283,6 @@ class Service extends AppModel {
                 
             case 6: # pownce
                 return 'http://pownce.com/'.$username.'/';
-                
-            case 10: # vimeo
-                return 'http://vimeo.com/'.$username.'/';
-            
-            case 15: # Cork'd
-                return 'http://corkd.com/people/'.$username.'/';
-
-            case 16: # Dailymotion
-                return 'http://www.dailymotion.com/'.$username.'/';
                 
             case 23: # Jabber
             case 24: # Gtalk  
@@ -489,15 +426,6 @@ class Service extends AppModel {
                 
             case 6:
                 return $this->getContactsFromPownce('http://pownce.com/' . $account['Account']['username'] . '/friends/');
-                
-            case 10:
-                return $this->getContactsFromVimeo('http://vimeo.com/' . $account['Account']['username'] . '/contacts/');
-
-            case 15:
-                return $this->getContactsFromCorkd('http://corkd.com/people/' . $account['Account']['username'] . '/buddies');
-
-            case 16:
-                return $this->getContactsFromDailymotion('http://www.dailymotion.com/contacts/' . $account['Account']['username'] . '');
 
             default:
                 return array();
@@ -626,129 +554,6 @@ class Service extends AppModel {
         
         return $data;
     }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromVimeo($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<div id="contact_(.*)">/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<div id="contact_(.*)">/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', $content)) {
-                    $page_url = $url . 'sort:date/page:'.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromCorkd($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/Next &#8250;&#8250;<\/a>/iU', $content)) {
-                    $page_url = $url . '?page='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromDailymotion($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<img width="80" height="80" src=".*" alt="(.*)" \/>/simU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<img width="80" height="80" src=".*" alt="(.*)" \/>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/next&nbsp;&raquo;<\/a>/iU', $content)) {
-                    $page_url = $url . '/'.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
     
     /**
      * Factory method to create services
@@ -761,6 +566,8 @@ class Service extends AppModel {
     			return new TwitterService();
     		case 9:
     			return new UpcomingService();
+    		case 10:
+    			return new VimeoService();
     		case 11:
     			return new LastfmService();
     		case 12:
@@ -769,6 +576,10 @@ class Service extends AppModel {
     			return new MagnoliaService();
     		case 14:
     			return new StumbleuponService();
+    		case 15:
+    			return new CorkdService();
+    		case 16:
+    			return new DailymotionService();
     		case 17:
     			return new ZooomrService();
     		case 18:
@@ -852,6 +663,44 @@ interface IService {
 	function getContacts($username);
 	function getContent($feeditem);
 	function getFeedUrl($username);
+}
+
+class CorkdService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://corkd.com/people/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://corkd.com/people/' . $username . '/buddies', '/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', '/Next &#8250;&#8250;<\/a>/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://corkd.com/feed/journal/'.$username;
+	}
+}
+
+class DailymotionService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.dailymotion.com/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.dailymotion.com/contacts/' . $username, '/<img width="80" height="80" src=".*" alt="(.*)" \/>/simU', '/next&nbsp;&raquo;<\/a>/iU', '/');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.dailymotion.com/rss/'.$username;
+	}
 }
 
 class DeliciousService implements IService {
@@ -1167,6 +1016,25 @@ class UpcomingService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
+	}
+}
+
+class VimeoService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://vimeo.com/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://vimeo.com/' . $username . '/contacts/', '/<div id="contact_(.*)">/iU', '/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', 'sort:date/page:');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://vimeo.com/'.$username.'/videos/rss/';
 	}
 }
 
