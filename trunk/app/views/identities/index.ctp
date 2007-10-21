@@ -119,10 +119,10 @@
     	    <?php foreach($contacts as $item) { ?>
     	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>" rel="friend">
     	            <?php if($item['WithIdentity']['photo']) {
-    	                if(strpos($data['WithIdentity']['photo'], 'http://') === 0 ||
-                           strpos($data['WithIdentity']['photo'], 'https://') === 0) {
+    	                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
+                           strpos($item['WithIdentity']['photo'], 'https://') === 0) {
                             # contains a complete path, eg. from not local identities
-                            $photo_url = $data['WithIdentity']['photo'];
+                            $photo_url = $item['WithIdentity']['photo'];
                             $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
     	                } else {
     	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';
