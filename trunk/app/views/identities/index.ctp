@@ -31,7 +31,13 @@
         }
 
         if($data['Identity']['photo']) {
-            $profile_photo = $static_base_url . $data['Identity']['photo'].'.jpg';
+            if(strpos($data['Identity']['photo'], 'http://') === 0 ||
+               strpos($data['Identity']['photo'], 'https://') === 0) {
+                   # contains a complete path, eg. from not local identities
+                   $profile_photo = $data['Identity']['photo'];
+               } else {
+                   $profile_photo = $static_base_url . $data['Identity']['photo'].'.jpg';
+               }
         } else {
             $profile_photo = $sex['img'][$data['Identity']['sex']];
         }
@@ -113,7 +119,14 @@
     	    <?php foreach($contacts as $item) { ?>
     	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>" rel="friend">
     	            <?php if($item['WithIdentity']['photo']) {
-    	                $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';    	                
+    	                if(strpos($data['WithIdentity']['photo'], 'http://') === 0 ||
+                           strpos($data['WithIdentity']['photo'], 'https://') === 0) {
+                            # contains a complete path, eg. from not local identities
+                            $photo_url = $data['WithIdentity']['photo'];
+                            $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
+    	                } else {
+    	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';
+    	                }	                
                     } else {
                         $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
                     } ?>
