@@ -5,7 +5,7 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
     // TODO remove this variable as soon as all services are migrated to the new structure
-    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 20, 36, 37);
+    private $migratedServices = array(2, 5, 9, 11, 12, 13, 14, 17, 18, 20, 34, 35, 36, 37, 38);
 
     /**
      * Method description
@@ -121,15 +121,6 @@ class Service extends AppModel {
             case 22: # Newsvine
                 return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
 
-            case 34: # Slideshare
-                return 'http://www.slideshare.net/rss/user/'.$username.'';
-
-            case 35: # Plazes
-                return 'http://plazes.com/users/'.$username.'/presences.atom';
-
-            case 38: # Digg
-                return 'http://digg.com/users/'.$username.'/history/favorites.rss';
-
             default: 
                 return false;
         }
@@ -234,18 +225,6 @@ class Service extends AppModel {
 
     		    case 22: # Newsvine
     		        $item['content'] = $this->contentFromNewsvine($feeditem);
-    		        break;
-    		        
-    		    case 34: # Slideshare
-    		        $item['content'] = $this->contentFromSlideshare($feeditem);
-    		        break;
-
-    		    case 35: # Plazes
-    		        $item['content'] = $this->contentFromPlazes($feeditem);
-    		        break;
-
-    		    case 38: # Digg
-    		        $item['content'] = $this->contentFromDigg($feeditem);
     		        break;
 
     		    default:
@@ -393,39 +372,6 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    private function contentFromSlideshare($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromPlazes($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function contentFromDigg($feeditem) {
-        return $feeditem->get_link();
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     function getAccountUrl($service_id, $username) {
 	    // TODO remove this handling as soon as all services are migrated to the new structure
         if (in_array($service_id, $this->migratedServices)) {
@@ -491,15 +437,6 @@ class Service extends AppModel {
                 
             case 33: # Xing
                 return 'https://www.xing.com/profile/'.$username;
-                
-            case 34: #Slideshare
-            	return 'http://www.slideshare.net/'.$username;
-
-            case 35: #Plazes
-            	return 'http://plazes.com/users/'.$username;
-
-            case 38: #Digg
-            	return 'http://digg.com/users/'.$username;
 
             default:
                 return '';
@@ -633,15 +570,6 @@ class Service extends AppModel {
 
             case 22:
                 return $this->getContactsFromNewsvine('http://' . $account['Account']['username'] . '.newsvine.com/?more=Friends&si=');
-
-            case 34:
-                return $this->getContactsFromSlideshare('http://www.slideshare.net/' . $account['Account']['username'] . '/contacts');
-
-            case 35:
-                return $this->getContactsFromPlazes('http://plazes.com/users/' . $account['Account']['username'] . ';contacts');
-
-            case 38:
-                return $this->getContactsFromDigg('http://digg.com/users/' . $account['Account']['username'] . '/friends/view');
 
             default:
                 return array();
@@ -1017,129 +945,6 @@ class Service extends AppModel {
         
         return $data;
     }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromSlideshare($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                 if(preg_match('/class="text_float_left">Next<\/a>/iU', $content)) {
-                    $page_url = $url . '/'.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromPlazes($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                 if(preg_match('/next<\/a><\/strong><\/p>/iU', $content)) {
-                    $page_url = $url . '?page='.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
-
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    private function getContactsFromDigg($url) {
-        $data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = @file_get_contents($page_url);
-            if($content && preg_match_all('/<a class="fn" href="\/users\/(.*)">/iU', $content, $matches)) {
-                # also find the usernames
-                preg_match_all('/<a class="fn" href="\/users\/(.*)">/iU', $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match('/Next &#187;<\/a>/iU', $content)) {
-                    $page_url = $url . '/page'.$i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-    }
     
     /**
      * Factory method to create services
@@ -1166,17 +971,23 @@ class Service extends AppModel {
     			return new OdeoService();
     		case 20:
     			return new WeventService();
+    		case 34:
+    			return new SlideshareService();
+    		case 35:
+    			return new PlazesService();
     		case 36:
     			return new ScribdService();
     		case 37:
     			return new MoodmillService();
+    		case 38:
+    			return new DiggService();
     	}
     }
 }
 
 class ContactExtractor {
-	// TODO a better name for this function?
-	static function getContactsFromUrl($url, $pattern) {
+
+	static function getContactsFromSinglePage($url, $pattern) {
 		$data = array();
         $content = @file_get_contents($url);
         if($content && preg_match_all($pattern, $content, $matches)) {
@@ -1187,6 +998,41 @@ class ContactExtractor {
             }
         }
 
+        return $data;
+	}
+	
+	// TODO better names for the parameters
+	static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
+		$data = array();
+        $i = 2;
+        $page_url = $url;
+        do {
+            $content = @file_get_contents($page_url);
+            if($content && preg_match_all($pattern, $content, $matches)) {
+                # also find the usernames
+                preg_match_all($pattern, $content, $usernames);
+                foreach($usernames[1] as $idx => $username) {
+                    if(!isset($data[$username])) {
+                        $data[$username] = $matches[1][$idx];
+                    }
+                }
+                if(preg_match($secondPattern, $content)) {
+                    $page_url = $url . $urlPart . $i;
+                    $i++;
+                    if($i>1000) {
+                        # just to make sure, we don't loop forever
+                        break;
+                    }
+                } else {
+                    # no "next" button found
+                    break;
+                }
+            } else {
+                # no friends found
+                break;
+            }
+        } while(1);
+        
         return $data;
 	}
 }
@@ -1205,7 +1051,7 @@ class DeliciousService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://del.icio.us/network/' . $username . '/', '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://del.icio.us/network/' . $username . '/', '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1217,6 +1063,25 @@ class DeliciousService implements IService {
 	}
 }
 
+class DiggService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://digg.com/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://digg.com/users/' . $username . '/friends/view', '/<a class="fn" href="\/users\/(.*)">/iU', '/Next &#187;<\/a>/iU', '/page');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
+	}
+}
+
 class LastfmService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1224,7 +1089,7 @@ class LastfmService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://www.last.fm/user/' . $username . '/friends/', '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://www.last.fm/user/' . $username . '/friends/', '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1243,7 +1108,7 @@ class MagnoliaService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://ma.gnolia.com/people/' . $username . '/contacts/', '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://ma.gnolia.com/people/' . $username . '/contacts/', '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1262,7 +1127,7 @@ class MoodmillService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://www.moodmill.com/citizen/' . $username, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
+		return ContactExtractor::getContactsFromSinglePage('http://www.moodmill.com/citizen/' . $username, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
 	}
 	
 	function getContent($feeditem) {
@@ -1281,7 +1146,7 @@ class OdeoService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://odeo.com/profile/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://odeo.com/profile/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1293,6 +1158,25 @@ class OdeoService implements IService {
 	}
 }
 
+class PlazesService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://plazes.com/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://plazes.com/users/' . $username . ';contacts', '/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', '/next<\/a><\/strong><\/p>/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://plazes.com/users/'.$username.'/presences.atom';
+	}
+}
+
 class QypeService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1300,7 +1184,7 @@ class QypeService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://www.qype.com/people/' . $username . '/contacts/', '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://www.qype.com/people/' . $username . '/contacts/', '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1319,7 +1203,7 @@ class ScribdService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://www.scribd.com/people/friends/' . $username, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://www.scribd.com/people/friends/' . $username, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1331,6 +1215,25 @@ class ScribdService implements IService {
 	}
 }
 
+class SlideshareService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.slideshare.net/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.slideshare.net/' . $username . '/contacts', '/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', '/class="text_float_left">Next<\/a>/iU', '/');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.slideshare.net/rss/user/'.$username;
+	}
+}
+
 class StumbleuponService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1338,7 +1241,7 @@ class StumbleuponService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1357,7 +1260,7 @@ class TwitterService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://twitter.com/' . $username . '/', '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
+		return ContactExtractor::getContactsFromSinglePage('http://twitter.com/' . $username . '/', '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
 	}
 	
 	function getContent($feeditem) {
@@ -1388,7 +1291,7 @@ class UpcomingService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://upcoming.yahoo.com/user/' . $username . '/', '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://upcoming.yahoo.com/user/' . $username . '/', '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1407,7 +1310,7 @@ class WeventService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://wevent.org/users/' . $username, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://wevent.org/users/' . $username, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
 	}
 	
 	function getContent($feeditem) {
@@ -1426,7 +1329,7 @@ class ZooomrService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromUrl('http://www.zooomr.com/people/' . $username . '/contacts/', '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
+		return ContactExtractor::getContactsFromSinglePage('http://www.zooomr.com/people/' . $username . '/contacts/', '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
 	}
 	
 	function getContent($feeditem) {
