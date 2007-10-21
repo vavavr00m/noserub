@@ -209,16 +209,15 @@ class IdentitiesController extends AppController {
             # save the photo, if neccessary
             if($this->data['Identity']['photo']['error'] != 0) {
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
-            } else {
-                
+            } else {                
                 $filename = $this->upload->add($this->data['Identity']['photo'], $identity, $path);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
                     
                     if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                         # store to CDN
-                        $this->cdn->copyTo($path . $filename . '.jpg', 'avatars/'.$filename.'.jpg');
-                        $this->cdn->copyTo($path . $filename . '.jpg', 'avatars/'.$filename.'-small.jpg');
+                        $this->cdn->copyTo($path . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
+                        $this->cdn->copyTo($path . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
                     }
                 }
             }   

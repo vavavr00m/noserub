@@ -36,7 +36,7 @@
                    # contains a complete path, eg. from not local identities
                    $profile_photo = $data['Identity']['photo'];
                } else {
-                   $profile_photo = $static_base_url . $data['Identity']['photo'].'.jpg';
+                   $profile_photo = $static_base_url . $data['Identity']['photo'] . '.jpg';
                }
         } else {
             $profile_photo = $sex['img'][$data['Identity']['sex']];
