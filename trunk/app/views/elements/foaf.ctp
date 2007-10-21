@@ -29,7 +29,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     <foaf:gender><?php echo $data['Identity']['sex'] == 1 ? 'female' : 'male'; ?></foaf:gender>
 <?php } ?>
 <?php if($data['Identity']['photo'] != '') { ?>
-    <foaf:img><?php echo $static_base_url . $data['Identity']['photo']; ?></foaf:img>
+    <foaf:img><?php echo $static_base_url . $data['Identity']['photo']; ?>.jpg</foaf:img>
 <?php } ?>
 <?php if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude']) { ?>
     <foaf:based_near>
