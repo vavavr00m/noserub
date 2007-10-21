@@ -275,14 +275,16 @@ class Identity extends AppModel {
         if(!$content) {
             return false;
         }
-        
+        echo $url.'<br />';
         preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
         preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
         preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
+        preg_match('/<foaf:img>(.*)<\/foaf:img>/i', $content, $photo);
+        preg_match('/<foaf:address>(.*)<\/foaf:address>/i', $content, $address);
         preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
         preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
-        
+        preg_match('/<foaf:about><!\[CDATA\[(.*)\]\]><\/foaf:about>/ims', $content, $about);
         preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
         preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
         preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
@@ -292,8 +294,11 @@ class Identity extends AppModel {
         #echo 'FIRSTNAME<pre>'; print_r($firstname); echo '</pre>';
         #echo 'LASTNAME<pre>'; print_r($lastname); echo '</pre>';
         #echo 'GENDER<pre>'; print_r($gender); echo '</pre>';
+        #echo 'PHOTO<pre>'; print_r($photo); echo '</pre>';
+        #echo 'ADDRESS<pre>'; print_r($address); echo '</pre>';
         #echo 'LATITUDE<pre>'; print_r($latitude); echo '</pre>';
         #echo 'LONGITUDE<pre>'; print_r($longitude); echo '</pre>';
+        #echo 'ABOUT<pre>'; print_r($about); echo '</pre>';
         #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
         #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
         #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
@@ -303,10 +308,10 @@ class Identity extends AppModel {
         }
         
         $result = array('accounts' => array(),
-                        'identity' => array());
+                        'Identity' => array());
         
-        $result['identity']['firstname'] = $firstname ? $firstname[1] : '';
-        $result['identity']['lastname']  = $lastname  ? $lastname[1]  : '';
+        $result['Identity']['firstname'] = $firstname ? $firstname[1] : '';
+        $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
         if($gender) {
             switch($gender[1]) {
                 case 'female': $result['identity']['sex'] = 1; break;
@@ -316,9 +321,11 @@ class Identity extends AppModel {
         } else {
             $result['identity']['sex'] = 0;
         }
-        
-        $result['identity']['latitude']  = $latitude  ? $latitude[1]  : 0;
-        $result['identity']['longitude'] = $longitude ? $longitude[1] : 0;
+        $result['Identity']['photo']         = $photo     ? $photo[1]     : '';
+        $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
+        $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
+        $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
+        $result['Identity']['about']         = $about     ? html_entity_decode($about, ENT_COMPAT, 'UTF-8') : '';
         
         if(is_array($accounts)) {
             # gather all account data
@@ -384,8 +391,8 @@ class Identity extends AppModel {
 
         # update 'last_sync' field and also identity information
         $this->id = $identity_id;
-        $data['identity']['last_sync'] = date('Y-m-d H:i:s');
-        $this->save($data['identity']);
+        $data['Identity']['last_sync'] = date('Y-m-d H:i:s');
+        $this->save($data['Identity']);
         
         return true;
     }

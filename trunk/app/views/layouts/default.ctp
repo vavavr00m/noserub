@@ -51,7 +51,7 @@
 		} ?>
 		
 		<div id="content" class="wrapper">
-            <?php echo $content_for_layout?>
+            <?php echo $content_for_layout; ?>
 		</div>
 
 		<div id="footer" class="wrapper">

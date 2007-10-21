@@ -86,7 +86,6 @@ Router::connect('/:username/settings/*', array('controller' => 'identities', 'ac
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
 
-Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));

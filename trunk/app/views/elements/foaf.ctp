@@ -3,6 +3,13 @@
     # in order to be able to just store simple RSS-Feeds (service_id = 8),
     # I just leave empty foaf:accountName and use foaf:OnlineAccount and
     # foaf:accountServiceHomepage to store feed_url and account_url
+
+if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+} else {
+    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+}
+    
 ?>
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -21,6 +28,9 @@
 <?php if($data['Identity']['sex'] > 0) { ?>
     <foaf:gender><?php echo $data['Identity']['sex'] == 1 ? 'female' : 'male'; ?></foaf:gender>
 <?php } ?>
+<?php if($data['Identity']['photo'] != '') { ?>
+    <foaf:img><?php echo $static_base_url . $data['Identity']['photo']; ?></foaf:img>
+<?php } ?>
 <?php if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude']) { ?>
     <foaf:based_near>
 	    <geo:Point>
@@ -29,7 +39,12 @@
         </geo:Point>
     </foaf:based_near>
 <?php } ?>
-
+<?php if($data['Identity']['address_shown'] != '') { ?>
+    <foaf:address><?php echo $data['Identity']['address_shown']; ?></foaf:address>
+<?php } ?>
+<?php if($data['Identity']['about'] != '') { ?>
+    <foaf:about><![CDATA[<?php echo htmlentities($data['Identity']['about'], ENT_COMPAT, 'UTF-8'); ?>]]></foaf:about>
+<?php } ?>
 <?php foreach($data['Account'] as $account) { ?>
     <foaf:holdsAccount>
         <?php if($account['service_id'] == 8) { ?>
