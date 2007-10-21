@@ -325,7 +325,7 @@ class Identity extends AppModel {
         $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
         $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
         $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
-        $result['Identity']['about']         = $about     ? html_entity_decode($about, ENT_COMPAT, 'UTF-8') : '';
+        $result['Identity']['about']         = $about     ? html_entity_decode($about[1], ENT_COMPAT, 'UTF-8') : '';
         
         if(is_array($accounts)) {
             # gather all account data
