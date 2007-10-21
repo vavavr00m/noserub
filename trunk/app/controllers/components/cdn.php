@@ -9,10 +9,10 @@ vendor('s3/s3.class');
 class CdnComponent extends Object {
 
     public function __construct() {
-        $this->key_id = NOSERUB_CDN_S3_ACCESS_KEY;
-        $this->secret_key = NOSERUB_CDN_S3_SECRET_KEY;
+        $this->key_id = defined('NOSERUB_CDN_S3_ACCESS_KEY') ? NOSERUB_CDN_S3_ACCESS_KEY : '';
+        $this->secret_key = defined('NOSERUB_CDN_S3_SECRET_KEY') ? NOSERUB_CDN_S3_SECRET_KEY : '';
         $this->s3 = new AmazonS3($this->key_id, $this->secret_key);
-        $this->bucket_name = NOSERUB_CDN_S3_BUCKET;
+        $this->bucket_name = defined('NOSERUB_CDN_S3_BUCKET') ? NOSERUB_CDN_S3_BUCKET : '';
     }
     
     public function setBucket($new_name) {
