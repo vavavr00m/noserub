@@ -40,7 +40,7 @@ class SyndicationsController extends AppController {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Syndication->Account->Feed->access($account['id'], 5, false);
                     } else {
-                        $new_items = $this->Syndication->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
+                        $new_items = $this->Syndication->Account->Service->feed2array($data['Identity']['local_username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
                     }
                     if($new_items) {
                         $items = array_merge($items, $new_items);
@@ -205,6 +205,7 @@ class SyndicationsController extends AppController {
             $this->Syndication->Identity->Contact->recursive = 3;
             $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
                                                            'WithIdentity.Account.Service');
+            $this->Syndication->Identity->bindModel(array('hasMany' => array('Account' => array('conditions' => array('Account.feed_url <> ""')))));
             $contacts = $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']);
             $this->set('contacts', $contacts);
             
