@@ -31,6 +31,7 @@ class CdnComponentTestCase extends CakeTestCase {
 	            $object->Get();
 	            $data = $object->GetData();
 	            $this->assertTrue($data == $content);
+	            #$this->component->delete($path);
 	            $object->Delete();
                 $found = true;
 	        }

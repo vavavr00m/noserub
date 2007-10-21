@@ -41,7 +41,7 @@ class FeedsController extends AppController {
         # I do this like this and not through a LIMIT of 250, because
         # then more than one task could run at once, without doing any harm
         for($i=0; $i<250; $i++) {
-            # now two refresh's within 30 minutes
+            # no two refresh's within 30 minutes
             $last_refresh = date('Y-m-d H:i:s', strtotime('-30 minutes'));
             
             $this->Feed->recursive = 2;

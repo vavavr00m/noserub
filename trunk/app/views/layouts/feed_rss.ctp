@@ -1,4 +1,10 @@
-<?php echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
+<?php 
+
+$now = date('D, d M Y H:i:s T');
+
+echo '<?xml version="1.0" encoding="UTF-8"?>'; 
+
+?>
 <!-- generator="NoseRub" -->
 <rss version="2.0" 
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -10,14 +16,14 @@
 	    <title><?php echo $syndication_name; ?> - NoseRub Feed</title>
 	    <link>http://<?php echo $identity['username']; ?></link>
 	    <description><?php echo $syndication_name; ?> - NoseRub Feed</description>
-	    <pubDate>Mon, 17 Sep 2007 20:14:49 +0000</pubDate>
+	    <pubDate><?php echo $now; ?></pubDate>
 	    <generator>http://noserub.com/</generator>
 	    <language>en</language>
 	    <?php foreach($data as $item) { ?>
 	        <item>
 		        <title><?php echo $item['title']; ?></title>
 		        <link><?php echo $item['url']; ?></link>
-		        <pubDate>Mon, 17 Sep 2007 20:14:49 +0000</pubDate>
+		        <pubDate><?php echo date('D, d M Y H:i:s T', strtotime($item['datetime'])); ?></pubDate>
 		        <dc:creator>http://<?php echo $item['username']; ?></dc:creator>
                 <description><![CDATA[<?php echo substr(strip_tags($item['content']), 0, 255); ?> [...]]]></description>
                 <content:encoded><![CDATA[<?php echo strip_tags($item['content']); ?>]]></content:encoded>

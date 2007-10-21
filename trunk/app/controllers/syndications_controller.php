@@ -12,7 +12,7 @@ class SyndicationsController extends AppController {
      * @return 
      * @access 
      */
-    function feed($url) {
+    function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
         $feed_types = array('rss' => 'text/xml', 'js' => 'text/javascript');
         $extension = '';
         $hash = '';
@@ -22,8 +22,9 @@ class SyndicationsController extends AppController {
         }
         
         if($extension && isset($feed_types[$extension])) {
-            # if we use the CDN for this, we will redirect directly to there
-            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            # if we use the CDN for this, we will redirect directly to there,
+            # but only, if this is not an internal call
+            if(!$internal_call && defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                 $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301', true);
             }
             
@@ -55,15 +56,22 @@ class SyndicationsController extends AppController {
             # decide, wether to render the feed directly,
             # or uploading it to the CDN.
             if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-                foreach($feed_types as $feed_type => $mime_type) {
-                    ob_start();                
-                    $this->layout = 'feed_'.$feed_type;
-                    $this->render('feed');
-                    $content = ob_get_contents();
-                    $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
-                    ob_end_clean();
-                }
-                exit;
+                # check, if the items are new enough, so we need
+                # to do an upload
+                $datetime_newest_item = isset($items[0]['datetime']) ? $items[0]['datetime'] : '2007-10-01';
+                if($datetime_newest_item > $datetime_last_upload) {
+                    # we need to upload
+                    foreach($feed_types as $feed_type => $mime_type) {
+                        ob_start();                
+                        $this->layout = 'feed_' . $feed_type;
+                        $this->render('feed');
+                        $content = ob_get_contents();
+                        $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
+                        ob_end_clean();
+                    }                
+                    return true;
+                } 
+                return false;
             } else {
                 # just render it
                 $this->layout = 'feed_'.$extension;
@@ -176,6 +184,11 @@ class SyndicationsController extends AppController {
                               'Account' => array('Account' => $new_accounts));
                 $this->Syndication->create();
                 $this->Syndication->save($data);
+                
+                # no also create it initially, if we use a CDN
+                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                    $this->feed($data['Syndication']['hash'].'.rss', true);
+                }
             } 
                         
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
@@ -210,5 +223,59 @@ class SyndicationsController extends AppController {
         }
         
         $this->set('headline', 'Add new Feed');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function shell_upload() {
+        $uploaded = array();
+
+        if(!defined('NOSERUB_USE_CDN') || !NOSERUB_USE_CDN) {
+            # we don't need to do any upload
+            $this->set('data', $uploaded);
+            $this->render();
+            exit;
+        }
+        
+        # I do this like this and not through a LIMIT of 250, because
+        # then more than one task could run at once, without doing any harm
+        for($i=0; $i<250; $i++) {
+            # no two refresh's within 14 minutes
+            $last_upload = date('Y-m-d H:i:s', strtotime('-15 minutes'));
+            
+            $this->Syndication->recursive = 0;
+            $this->Syndication->expects('Syndication');
+            $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.modified ASC, Syndication.modified DESC', 1);
+            foreach($data as $item) {
+                # save the old last_update timestamp
+                $datetime_last_upload = $item['Syndication']['last_upload'];
+                
+                # set the last_upload right now, so a parallel running task
+                # would not get it, while we are uploading the data
+                $this->Syndication->id = $item['Syndication']['id'];
+                $this->Syndication->saveField('last_upload', date('Y-m-d H:i:s'));
+                
+                # call the internal method
+                # it's not important which feed_type we want, as all
+                # available will be created and being uploaded
+                if($this->feed($item['Syndication']['hash'].'.rss', true, $datetime_last_upload)) {
+                    $uploaded[] = $item['Syndication']['hash'];
+                } else {
+                    # in this case, we need to set the old timestamp again. because it could
+                    # happen, that a rss feed is updated some time after now, but with an item
+                    # older than now.
+                    $this->Syndication->id = $item['Syndication']['id'];
+                    $this->Syndication->saveField('last_upload', $datetime_last_upload);
+                }
+            }
+        }
+        $this->layout = 'shell';
+        $this->set('uploaded', $uploaded);
+        $this->render();
     }
 }

@@ -64,6 +64,18 @@ class CdnComponent extends Object {
         return $this->s3->ListBuckets();
     }
     
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function delete($filename) {
+        $s3object = new S3Object($filename, $this->bucket_name, $this->key_id, $this->secret_key);
+        $s3object->Delete();
+    }
+    
     private $bucket_name;
     private $s3;
     private $key_id;

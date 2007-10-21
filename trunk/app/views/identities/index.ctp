@@ -151,6 +151,9 @@
 	        </li>
 	    <?php } ?>
 	</ul>
+    <p class="infotext">
+        <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+    </p>
 	
 	<hr />
 	<?php } ?>
@@ -165,8 +168,11 @@
 	        </li>
 	    <?php } ?>
 	</ul>
-	
-    	<hr />
+	<p class="infotext">
+        <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+    </p>
+    
+    <hr />
 
     </div>
 
