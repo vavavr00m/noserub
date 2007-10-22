@@ -153,7 +153,7 @@
 	    </ul>
 	    <?php if(isset($session_identity)) { ?>
             <p class="infotext">
-                <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+                <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
             </p>
 	    <?php } ?>
 	    <hr />
@@ -171,7 +171,7 @@
 	</ul>
 	<?php if(isset($session_identity)) { ?>
 	    <p class="infotext">
-            <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+            <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />
