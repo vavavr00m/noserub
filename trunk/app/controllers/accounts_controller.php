@@ -93,11 +93,11 @@ class AccountsController extends AppController {
             if($this->data['Account']['type'] == 1) {
                 # user selected a service
                 $this->Session->write('Service.add.id', $this->data['Account']['service_id']);
-                $this->redirect('/'.$splitted['local_username'].'/accounts/add/service/', null, true);
+                $this->redirect('/'.$splitted['local_username'].'/settings/accounts/add/service/', null, true);
             } else {
                 # user wants to add Blog or RSS-Feed
                 $this->Session->write('Service.add.id', 8); # any rss feed
-                $this->redirect('/'.$splitted['local_username'].'/accounts/add/feed/', null, true);
+                $this->redirect('/'.$splitted['local_username'].'/settings/accounts/add/feed/', null, true);
             }
         }
         $this->set('services', $this->Account->Service->generateList(array('id<>8'), null, null, "{n}.Service.id", "{n}.Service.name"));
@@ -140,7 +140,7 @@ class AccountsController extends AppController {
             } else {
                 $this->Session->write('Service.add.data', $data);
                 $this->Session->write('Service.add.type', $data['service_type_id']);
-                $this->redirect('/' . $splitted['local_username'] . '/accounts/add/preview/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
             }
         } else {
             $this->data = array('Account' => array('feed_url' => 'http://')); 
@@ -185,7 +185,7 @@ class AccountsController extends AppController {
                 $data['service_type_id'] = $this->data['Account']['service_type_id'];
                 $this->Session->write('Service.add.type', $data['service_type_id']);
                 $this->Session->write('Service.add.data', $data);
-                $this->redirect('/' . $splitted['local_username'] . '/accounts/add/preview/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
             }
         } else {
             $this->data = array('Account' => array('feed_url' => 'http://')); 
@@ -243,7 +243,7 @@ class AccountsController extends AppController {
                         if(!empty($contacts)) {
                             $this->Session->write('Service.add.contacts', $contacts);
                             $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/accounts/add/friends/', null, true);
+                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/', null, true);
                         }
                     }
                 }
@@ -424,7 +424,7 @@ class AccountsController extends AppController {
             $this->data['Account']['feedurl'] = $this->Account->Service->getFeedUrl($this->data['Account']['service_id'], $this->data['Account']['username']);
             $saveable = array('modified', 'service_id', 'username', 'feedurl');
             if($this->Account->save($this->data, true, $saveable)) {
-                $this->redirect('/' . $username . '/accounts/', null, true);
+                $this->redirect('/' . $username . '/settings/accounts/', null, true);
             }
         }
         
@@ -479,6 +479,6 @@ class AccountsController extends AppController {
             $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
         }
         
-        $this->redirect('/' . $splitted['local_username'] . '/accounts/');
+        $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');
     }
 }

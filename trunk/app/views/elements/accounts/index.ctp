@@ -34,8 +34,8 @@
                         <?php } ?>
                         <td><?php if($show_action_links) {
                         		echo '<ul>';
-                                echo '<li class="edit icon">' . $html->link('Edit Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/edit/') . '</li>';
-                                echo '<li class="delete icon">' . $html->link('Delete Account', '/' . $about_identity['local_username'] . '/accounts/'.  $account_id . '/delete/') . '</li>';
+                                echo '<li class="edit icon">' . $html->link('Edit Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/edit/') . '</li>';
+                                echo '<li class="delete icon">' . $html->link('Delete Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/delete/') . '</li>';
                                 echo '</ul>';
                         } ?></td>
                     </tr>
@@ -44,8 +44,8 @@
         </tbody>
     </table>
 <?php } ?>
-<?php if($show_action_links) {
-	echo '<p class="infotext">';
-	echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/accounts/add/', array('class' => 'addmore'));
-	echo '</p>';
-} ?>
+<?php if($show_action_links) { ?>
+	<p class="infotext">
+	    <?php echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+	</p>
+<?php } ?>

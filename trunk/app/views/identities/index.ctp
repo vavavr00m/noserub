@@ -142,21 +142,21 @@
         <hr />
 	
 	<?php if($accounts) { ?>
-	<h4>On the web</h4>
-	<ul class="whoissidebar">
-	    <?php foreach($accounts as $item) { ?>
-	        <li>
-	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-	            <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
-	        </li>
+	    <h4>On the web</h4>
+	    <ul class="whoissidebar">
+	        <?php foreach($accounts as $item) { ?>
+	            <li>
+	                <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
+	                <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	            </li>
+	        <?php } ?>
+	    </ul>
+	    <?php if(isset($session_identity)) { ?>
+            <p class="infotext">
+                <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+            </p>
 	    <?php } ?>
-	</ul>
-		<?php if (isset($session_identity['local_username'])) { ?>
-	    <p class="infotext">
-	        <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
-	    </p>
-		<?php } ?>
-	<hr />
+	    <hr />
 	<?php } ?>
 
 	<h4>Contact</h4>
@@ -169,11 +169,11 @@
 	        </li>
 	    <?php } ?>
 	</ul>
-		<?php if (isset($session_identity['local_username'])) { ?>
-		<p class="infotext">
-	        <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
-	    </p>
-	    <?php } ?>
+	<?php if(isset($session_identity)) { ?>
+	    <p class="infotext">
+            <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/accounts/add/', array('class' => 'addmore')); ?>
+        </p>
+    <?php } ?>
     <hr />
 
     </div>

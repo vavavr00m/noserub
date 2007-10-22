@@ -3,19 +3,17 @@
     
     if($menu['logged_in']) {
         $main_menu = array(
-            'dashboard' => array('Dashboard', '/pages/dashboard/'),
-            'profile'   => array('My Profile',   $noserub_url),
-            'network'   => array('Network',   $noserub_url . 'network/'),
-            'contacts'  => array('Contacts',  $noserub_url . 'contacts/'),
-            'accounts'  => array('Your Social Activity',  $noserub_url . 'accounts/'),
-            'settings'  => array('Settings',  $noserub_url . 'settings/')
+            'network'     => array('Social Graph', '/pages/social_graph/'),
+            'my_profile'  => array('My Profile',   $noserub_url),
+            'my_contacts' => array('My Contacts',   $noserub_url . '/contacts/'),
+            'settings'    => array('Settings',  $noserub_url . 'settings/')
         );  
     } else {
         $main_menu = array(
-            'home' => array('Home', '/')
+            'social_graph' => array('Social Graph', '/')
         );
         if(NOSERUB_REGISTRATION_TYPE == 'all') {
-            $main_menu['register'] = array('Register', '/pages/register/');
+            $main_menu['register'] = array('Add me!', '/pages/register/');
         }
     }
 ?>

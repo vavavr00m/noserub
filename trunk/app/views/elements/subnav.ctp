@@ -3,7 +3,7 @@ $username = isset($about_identity['local_username']) ? $about_identity['local_us
 
 $sub_menu = null;
 
-if($menu['main'] == 'network' || $menu['main'] == 'profile') {
+if($menu['main'] == 'network' || $menu['main'] == 'my_profile') {
     $noserub_url = '/' . $username . '/';
     if($menu['main'] == 'network') {
         $noserub_url .= 'network/';
@@ -24,6 +24,7 @@ if($menu['main'] == 'network' || $menu['main'] == 'profile') {
     $noserub_url = '/' . $username . '/settings/';
     $sub_menu = array(
         'profile'  => array('Profile',  $noserub_url . 'profile/'),
+        'accounts' => array('Accounts', $noserub_url . 'accounts/'),
         'privacy'  => array('Privacy',  $noserub_url . 'privacy/'),
         'feeds'    => array('Feeds',    $noserub_url . 'feeds/'),
         'openid'   => array('OpenID',   $noserub_url . 'openid/'),

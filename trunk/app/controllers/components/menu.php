@@ -26,10 +26,8 @@ class MenuComponent extends Object {
         $sub_menu  = '';
         switch($model) {
             case 'Accounts':
-                switch($action) {
-                    case 'index':
-                        $main_menu = 'accounts'; break;                        
-                }
+                $main_menu = 'settings';
+                $sub_menu = 'accounts';
                 break;
 
             case 'Contacts':
@@ -39,8 +37,8 @@ class MenuComponent extends Object {
                         $sub_menu  = $filter == '' ? 'all' : $filter;
                         break;
 
-                    case 'index':
-                        $main_menu = 'contacts'; break;
+                    default:
+                        $main_menu = 'my_contacts'; break;
                 }
                 break;
                 
@@ -50,7 +48,7 @@ class MenuComponent extends Object {
                         $main_menu = 'register'; break;
                         
                     case 'index':
-                        $main_menu = 'profile'; 
+                        $main_menu = 'my_profile'; 
                         $sub_menu  = $filter == '' ? 'all' : $filter;
                         break;
                         

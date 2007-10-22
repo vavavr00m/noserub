@@ -54,34 +54,33 @@ Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'act
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
-
-Router::connect('/:username/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
-Router::connect('/:username/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
-Router::connect('/:username/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
-Router::connect('/:username/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
-Router::connect('/:username/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
-Router::connect('/:username/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
-Router::connect('/:username/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
-Router::connect('/:username/accounts/', array('controller' => 'accounts', 'action' => 'index'));
-
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/*/edit/', array('controller' => 'contacts', 'action' => 'edit'));
 Router::connect('/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
 Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
 Router::connect('/:username/add/as/contact/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
-
 Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
-
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
+
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
 Router::connect('/:username/settings/feeds/:syndication_id/delete/', array('controller' => 'syndications', 'action' => 'delete'));
 Router::connect('/:username/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
+
+Router::connect('/:username/settings/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
+Router::connect('/:username/settings/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
+Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
+Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
+Router::connect('/:username/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
+Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
+Router::connect('/:username/settings/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
+
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
