@@ -117,7 +117,7 @@ class IdentitiesController extends AppController {
             }
         
             if($splitted['username'] == $session_identity['username']) {
-                $this->set('headline', 'My NoseRub page');
+                $this->set('headline', 'My NoseRub Profile');
             } else {
                 if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude'] != 0 &&
                    $session_identity['latitude'] != 0 && $session_identity['longitude'] != 0) {
@@ -232,7 +232,7 @@ class IdentitiesController extends AppController {
             $this->data = $this->Identity->findById($session_identity['id']);
         }
         
-        $this->set('headline', 'Settings for your NoseRub profile');
+        $this->set('headline', 'Settings for my NoseRub Account');
     }
     
     /**

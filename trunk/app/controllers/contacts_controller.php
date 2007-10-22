@@ -35,7 +35,7 @@ class ContactsController extends AppController {
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
-            $this->set('headline', 'Your contacts');
+            $this->set('headline', 'My contacts');
         } else {
             $this->set('headline', $splitted['username'] . '\'s contacts');
         }
