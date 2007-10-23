@@ -3,14 +3,14 @@
     
     if($menu['logged_in']) {
         $main_menu = array(
-            'network'     => array('Social Graph', '/pages/social_graph/'),
-            'my_profile'  => array('My Profile',   $noserub_url),
-            'my_contacts' => array('My Contacts',   $noserub_url . '/contacts/'),
-            'settings'    => array('Settings',  $noserub_url . 'settings/')
+            'social_stream' => array('Social Stream', '/'),
+            'my_profile'    => array('My Profile',   $noserub_url),
+            'my_contacts'   => array('My Contacts',   $noserub_url . '/contacts/'),
+            'settings'      => array('Settings',  $noserub_url . 'settings/')
         );  
     } else {
         $main_menu = array(
-            'social_graph' => array('Social Graph', '/')
+            'social_stream' => array('Social Stream', '/')
         );
         if(NOSERUB_REGISTRATION_TYPE == 'all') {
             $main_menu['register'] = array('Add me!', '/pages/register/');

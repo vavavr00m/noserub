@@ -83,7 +83,7 @@ class MenuComponent extends Object {
                 switch($action) {
                     case 'display':
                     case 'home':
-                        $main_menu = 'dashboard'; break;
+                        $main_menu = 'social_stream'; break;
                 }
                 break;
                 

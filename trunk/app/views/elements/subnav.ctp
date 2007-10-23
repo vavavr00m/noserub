@@ -3,7 +3,7 @@ $username = isset($about_identity['local_username']) ? $about_identity['local_us
 
 $sub_menu = null;
 
-if($menu['main'] == 'network' || $menu['main'] == 'my_profile') {
+if($menu['main'] == 'social_stream' || $menu['main'] == 'my_profile') {
     $noserub_url = '/' . $username . '/';
     if($menu['main'] == 'network') {
         $noserub_url .= 'network/';
