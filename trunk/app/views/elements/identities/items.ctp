@@ -43,7 +43,7 @@
             <?php } else { ?>
                 <ul class="networklist">
                     <?php foreach($cluster as $item) { ?>
-                        <li class="<?php echo $item['type']; ?> icon">
+                        <li class="<?php echo $item['type'] == 'photo' ? 'photos' : $item['type']; ?> icon">
                             <span class="date">
                                 <?php if($date == $today) {
                                     echo $nicetime->show($item['datetime']); 
