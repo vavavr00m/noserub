@@ -46,7 +46,7 @@ class Identity extends AppModel {
     }
     
     function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->findCount(array('Identity.openid' => $value)) > 0) {
+    	if ($this->findCount(array('Identity.openid' => $value, 'Identity.hash' => '<> #deleted#')) > 0) {
     		return false;
     	} else {
     		return true;
@@ -402,6 +402,7 @@ class Identity extends AppModel {
     	
     	if ($isAccountWithOpenID) {
     		$saveable[] = 'openid';
+    		$saveable[] = 'openid_server_url';
     	} else {
     		$saveable[] = 'password';
     	}

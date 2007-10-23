@@ -442,7 +442,7 @@ class IdentitiesController extends AppController {
     	} else {
     		if (count($this->params['url']) > 1) {
     			$response = $this->getOpenIDResponseIfSuccess();
-    			
+
     			$identity = $this->Identity->checkOpenID($response->identity_url);
     			
     			if ($identity) {
@@ -455,7 +455,8 @@ class IdentitiesController extends AppController {
     				$sreg = $sregResponse->contents();
     				
     				$this->Session->write('Registration.openid', $response->identity_url);
-	    				
+					$this->Session->write('Registration.openid_server_url', $response->endpoint->server_url);
+    				
 	    			if (@$sreg['email']) {
 	    				$this->Session->write('Registration.email', $sreg['email']);
 	    			}
@@ -475,9 +476,11 @@ class IdentitiesController extends AppController {
 
     	if (!empty($this->data)) {
     		$this->data['Identity']['openid'] = $this->Session->read('Registration.openid');
+    		$this->data['Identity']['openid_server_url'] = $this->Session->read('Registration.openid_server_url');
     		
     		if($this->Identity->register($this->data)) {
 	    		$this->Session->delete('Registration.openid');
+	    		$this->Session->delete('Registration.openid_server_url');
 	    		$this->Session->delete('Registration.email');
     			$this->redirect('/pages/register/thanks/', null, true);
             }
