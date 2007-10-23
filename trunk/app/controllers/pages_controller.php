@@ -1,7 +1,8 @@
 <?php
 class PagesController extends AppController {
-    var $uses = array('Identity');
+    var $uses       = array('Identity');
     var $components = array('cluster');
+    var $helpers    = array('nicetime');
     
     function display() {
         $this->socialStream();
@@ -57,7 +58,7 @@ class PagesController extends AppController {
                         if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                             $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                         } else {
-                            $new_items = $this->Identity->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
+                            $new_items = $this->Identity->Account->Service->feed2array($identity['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
                         }
                         if($new_items) {
                             $items = array_merge($items, $new_items);
