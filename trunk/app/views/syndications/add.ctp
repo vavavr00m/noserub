@@ -65,8 +65,8 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 			<ul class="accounts_of_contact">
                 <?php foreach($contact['WithIdentity']['Account'] as $item) { ?>
                     <li>
-                        <input type="checkbox" name="data[Syndication][Contact][<?php echo $contact['Contact']['with_identity_id']; ?>][Account][]" value="<?php echo $item['id']; ?>"/>
-                        <img src="<?php echo Router::url('/images/icons/services/'.$item['Service']['icon']); ?>" alt="<?php echo $item['Service']['name']; ?>" /> <strong><?php echo $item['Service']['name']; ?>:</strong> <?php echo $item['account_url']; ?>
+                        <input type="checkbox" name="data[Syndication][Contact][<?php echo $contact['Contact']['with_identity_id']; ?>][Account][]" value="<?php echo $item['Account']['id']; ?>"/>
+                        <img src="<?php echo Router::url('/images/icons/services/'.$item['Service']['icon']); ?>" alt="<?php echo $item['Service']['name']; ?>" /> <strong><?php echo $item['Service']['name']; ?>:</strong> <?php echo $item['Account']['account_url']; ?>
                     </li>
                 <?php } ?>
             </ul>

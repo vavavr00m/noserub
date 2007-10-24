@@ -157,7 +157,6 @@ class SyndicationsController extends AppController {
         
         if($this->data) {
             $valid_accounts = $this->Session->read('Syndication.add.valid_accounts');
-            
             if($this->data['Syndication']['name'] != '') {
                 # get all accounts, that should be added to the syndication
                 $accounts = isset($this->data['Syndication']['Account']) ? $this->data['Syndication']['Account'] : array();
@@ -168,7 +167,7 @@ class SyndicationsController extends AppController {
                         }
                     }
                 }
-                
+
                 # make sure, no "forbidden" accounts were entered through the form
                 $new_accounts = array();
                 for($i=0; $i<count($accounts); $i++) {
@@ -176,7 +175,7 @@ class SyndicationsController extends AppController {
                         $new_accounts[] = $accounts[$i];
                     }
                 }
-                
+
                 # create the new syndication
                 $data = array('Syndication' => array('name'        => $this->data['Syndication']['name'],
                                                      'identity_id' => $session_identity['id'],
@@ -202,11 +201,18 @@ class SyndicationsController extends AppController {
             $this->set('accounts', $accounts);
 
             # get all accounts from this users contacts
-            $this->Syndication->Identity->Contact->recursive = 3;
+            $this->Syndication->Identity->Contact->recursive = 1;
             $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
                                                            'WithIdentity.Account.Service');
-            $this->Syndication->Identity->bindModel(array('hasMany' => array('Account' => array('conditions' => array('Account.feed_url <> ""')))));
+           
             $contacts = $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']);
+            
+            # now go through all contacts to get accounts and services
+            foreach($contacts as $key => $value) {
+                $this->Syndication->Account->recursive = 1;
+                $this->Syndication->Account->expects('Account', 'Service');
+                $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->findAll(array('identity_id' => $value['WithIdentity']['id'], 'feed_url != ""')); 
+            }
             $this->set('contacts', $contacts);
             
             # gather all accounts that the user may add to a syndication 
@@ -217,7 +223,7 @@ class SyndicationsController extends AppController {
             }
             foreach($contacts as $contact) {
                 foreach($contact['WithIdentity']['Account'] as $item) {
-                    $valid_accounts[] = $item['id'];
+                    $valid_accounts[] = $item['Account']['id'];
                 }
             }
             $this->Session->write('Syndication.add.valid_accounts', $valid_accounts);

@@ -25,8 +25,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		        <link><?php echo $item['url']; ?></link>
 		        <pubDate><?php echo date('D, d M Y H:i:s T', strtotime($item['datetime'])); ?></pubDate>
 		        <dc:creator>http://<?php echo $item['username']; ?></dc:creator>
-                <description><![CDATA[<?php echo substr(strip_tags($item['content']), 0, 255); ?> [...]]]></description>
-                <content:encoded><![CDATA[<?php echo strip_tags($item['content']); ?>]]></content:encoded>
+                <description><![CDATA[<?php echo substr($item['content'], 0, 255); ?><?php echo strlen($item['content']) > 255 ? ' [...]' : ''; ?>]]></description>
+                <content:encoded><![CDATA[<?php echo $item['content']; ?>]]></content:encoded>
 		    </item>
         <?php } ?>
 	</channel>
