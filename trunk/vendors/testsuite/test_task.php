@@ -291,7 +291,8 @@
 		}
 		
 		function __loadControllers() {
-			loadControllers();
+			// FIXME calling this function breaks the test suite!!!
+			//loadControllers();
 		}
 		
 		function __loadModels() {

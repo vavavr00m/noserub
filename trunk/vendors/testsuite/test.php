@@ -104,9 +104,9 @@
 	}
 
 	function includeCoreFiles($cakePath) {
-	    require(CORE_PATH.'app'.DS.'config'.DS.'core.php');
 		require($cakePath.'basics.php');
 		require($cakePath.'config'.DS.'paths.php');
+		uses('cache');
 	}
 
 	function isHelpParam($param) {

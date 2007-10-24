@@ -12,29 +12,27 @@
 			$this->helper->Form = new FormHelper();
 			$this->helper->Form->Html = new HtmlHelper();
 		}
-		
-		// FIXME this test will break with a newer version of CakePHP due to a bug in the currently used version!
+
 		function testCheckboxForSupportedFields() {
 			foreach($this->supportedFields as $field) {
 				$result = $this->helper->checkboxForSupportedFields($field);		
 				$expected = '<input type="hidden" name="data[OpenidSite]['.$field.']" value="0" id="OpenidSite'.ucfirst($field).'_" />' .
-							'<input type="checkbox" name="data[OpenidSite]['.$field.']" type="checkbox" checked="checked" value="1" id="OpenidSite'.ucfirst($field).'" />';
+							'<input type="checkbox" name="data[OpenidSite]['.$field.']" checked="checked" value="1" id="OpenidSite'.ucfirst($field).'" />';
 				$this->assertEqual($expected, $result);
 			}
 		}
 		
-		// FIXME this test will break with a newer version of CakePHP due to a bug in the currently used version
 		function testCheckboxForSupportedFieldsWithOpenidSiteData() {
 			$data = array('OpenidSite' => array('email' => 1));
 			$result = $this->helper->checkboxForSupportedFields('email', $data);		
 			$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
-						'<input type="checkbox" name="data[OpenidSite][email]" type="checkbox" checked="checked" value="1" id="OpenidSiteEmail" />';
+						'<input type="checkbox" name="data[OpenidSite][email]" checked="checked" value="1" id="OpenidSiteEmail" />';
 			$this->assertEqual($expected, $result);
-			
+			// FIXME this assert will probably fail in later releases due to an additional space in front of [value="1"]
 			$data = array('OpenidSite' => array('email' => 0));
 			$result = $this->helper->checkboxForSupportedFields('email', $data);
 			$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
-						'<input type="checkbox" name="data[OpenidSite][email]" type="checkbox"  value="1" id="OpenidSiteEmail" />';
+						'<input type="checkbox" name="data[OpenidSite][email]"  value="1" id="OpenidSiteEmail" />';
 			$this->assertEqual($expected, $result);
 		}
 		
