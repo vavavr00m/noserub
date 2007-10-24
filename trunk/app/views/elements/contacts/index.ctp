@@ -49,10 +49,10 @@
             	            <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards">
             	            	<dt>
             	            		<a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
-            	            		<img class="photo" src="<?php echo $contact_photo; ?>" width="80" height="80" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />
+            	            		<img class="photo" src="<?php echo $contact_photo; ?>" width="80" height="80" alt="<?php echo $item['WithIdentity']['single_username']; ?>'s Picture" />
             	            		</a>
             	            	</dt>                       			
-                       			<dt><a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>"><?php echo $item['WithIdentity']['local_username']; ?></a></dt>
+                       			<dt><a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>"><?php echo $item['WithIdentity']['single_username']; ?></a></dt>
                        			
                        			<dd class="fn"><?php echo $item['WithIdentity']['name']; ?></dd>
 
