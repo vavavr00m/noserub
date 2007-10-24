@@ -57,6 +57,20 @@ class IdentitiesController extends AppController {
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
             if($data) {
+                # get the status of relationship between the logged in
+                # user and the profile we're watching
+                $relationship_status = '';
+                if($data['Identity']['id'] == $session_identity['id']) {
+                    $relationship_status = 'self';
+                } else {
+                    $this->Identity->Contact->recursive = 0;
+                    $this->Identity->Contact->expects('Contact');
+                    $is_contact = 1 == $this->Identity->Contact->findCount(array('identity_id'      => $session_identity['id'],
+                                                                                 'with_identity_id' => $data['Identity']['id']));
+                    $relationship_status = $is_contact ? 'contact' : 'none';
+                }
+                $this->set('relationship_status', $relationship_status);
+                
                 # get number of accounts and contacts
                 # also divide between real services and contact services like AIM
                 # and move 9 contacts to the view
@@ -86,6 +100,11 @@ class IdentitiesController extends AppController {
                         }
                     } else {
                         $num_private_contacts++;
+                        if($relationship_status == 'self') {
+                            if(count($contacts) < 9) {
+                                $contacts[] = $contact;
+                            }
+                        }
                     }
                 }
                 $this->set('num_private_contacts', $num_private_contacts);
@@ -94,17 +113,6 @@ class IdentitiesController extends AppController {
                 
                 # create $about_identity for the view
                 $this->set('about_identity', $data['Identity']);
-            
-                # get the status of relationship between the two
-                if($data['Identity']['id'] == $session_identity['id']) {
-                    $this->set('relationship_status', 'self');
-                } else {
-                    $this->Identity->Contact->recursive = 0;
-                    $this->Identity->Contact->expects('Contact');
-                    $is_contact = 1 == $this->Identity->Contact->findCount(array('identity_id'      => $session_identity['id'],
-                                                                                 'with_identity_id' => $data['Identity']['id']));
-                    $this->set('relationship_status', $is_contact ? 'contact' : 'none');
-                }
             }
         }
         
