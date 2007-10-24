@@ -47,7 +47,7 @@
                                 $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
                             } ?>
             	            
-            	            <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>">
+            	            <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards">
             	            	<dt>
             	            		<a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
             	            		<img class="photo" src="<?php echo $contact_photo; ?>" width="80" height="80" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />

@@ -81,7 +81,7 @@
 }
 
 /* contacts */
-dl {
+.vcards dl {
 	border: 1px solid #D9D7CA;
 	background-color: #ffffff;
 	padding: 10px;
@@ -92,17 +92,17 @@ dl {
 	line-height: 16px;
 }
 
-dt {
+.vcards dt {
 	
 }
 
-dt img {
+.vcards dt img {
 	border: 1px solid #ECEBE5;
 	float: left;
 	margin-right: 10px;
 }
 
-dd {
+.vcards dd {
 	margin: 0;
 	padding: 0;
 }
