@@ -46,7 +46,7 @@
 				<h2><?php echo $headline; ?></h2>
 			</div>
 		</div>
-		<?php if($menu['main'] != 'my_profile' && $menu['main'] != 'social_stream') { 
+		<?php if($menu['main'] != 'my_profile' && $menu['main'] != 'social_stream' && $menu['main'] != 'network') { 
 		    echo $this->renderElement('subnav'); 
 		} ?>
 		

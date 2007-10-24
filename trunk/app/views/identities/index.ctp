@@ -135,8 +135,12 @@
     	    <?php } ?>
     	</p>
     	<p class="morefriends">
-    		<a href="<?php echo $noserub_url . '/contacts/'; ?>"><strong> <?php echo $num_noserub_contacts; ?></strong> NoseRub contacts</a><br />
+    		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
+    		<?php if(($relationship_status == 'self' && ($num_noserub_contacts+$num_private_contacts > 0)) || 
+    		         ($num_noserub_contacts > 0)) { ?>
+    		    <a href="<?php echo $noserub_url . '/network/'; ?>">Contact's Social Stream</a>
+    		<?php } ?>
         </p>
     
         <hr />

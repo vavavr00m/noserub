@@ -233,11 +233,6 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
-            $this->redirect('/', null, true);
-        }
-
         # sanitize filter
         switch($filter) {
             case 'photo':
@@ -255,22 +250,43 @@ class ContactsController extends AppController {
             default: 
                 $filter = false;
         }
-        # get all contact identities and their services
-        $this->Contact->recursive = 3;
-        $this->Contact->expects('Contact.WithIdentity', 
-                                'WithIdentity.Account',
-                                'Account.Service',
-                                'Account.ServiceType');
-        $data = $this->Contact->findAllByIdentityId($session_identity['id']);
+        
+        $this->Contact->Identity->recursive = 0;
+        $this->Contact->Identity->expects('Identity');
+        $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
+        $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
+        
+        # get all contacts
+        $this->Contact->recursive = 1;
+        $this->Contact->expects('Contact', 'Contact.WithIdentity');
+        if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
+            # this is my network, so I can show every contact
+            $data = $this->Contact->findAllByIdentityId($session_identity['id']);
+        } else {
+            # this is someone elses network, so I show only the noserub contacts
+            $data = $this->Contact->findAll(array('Contact.identity_id' => $about_identity['id'],
+                                                  'WithIdentity.username NOT LIKE "%@%"'));
+        }
+
+        # we need to go through all this now and get Accounts and Services
+        # also save all contacts
+        $contacts = array();
+        foreach($data as $key => $value) {
+            $contacts[] = $value['WithIdentity'];
+            $this->Contact->Identity->Account->recursive = 1;
+            $this->Contact->Identity->Account->expects('Account.Acount', 'Account.Service', 'Account.ServiceType');
+            $accounts = $this->Contact->Identity->Account->findAllByIdentityId($value['WithIdentity']['id']);
+            $data[$key]['WithIdentity']['Account'] = $accounts;
+        }
 
         $items = array();
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(!$filter || $account['ServiceType']['token'] == $filter) {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Contact->Identity->Account->Feed->access($account['id']);
+                        $new_items = $this->Contact->Identity->Account->Feed->access($account['Account']['id']);
                     } else {
-                        $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url']);
+                        $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['Account']['service_id'], $account['Account']['service_type_id'], $account['Account']['feed_url']);
                     }
                     if($new_items) {
                         $items = array_merge($items, $new_items);
@@ -282,9 +298,14 @@ class ContactsController extends AppController {
         usort($items, 'sort_items');
         $items = $this->cluster->create($items);
                 
-        $this->set('data', $items);
+        $this->set('items', $items);
+        $this->set('identities', $contacts);
         $this->set('filter', $filter);
-        $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s social network');
+        $this->set('about_identity', $about_identity);
+        $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
+        
+        $this->render('../identities/social_stream');
+        exit;
     }
     
     /**

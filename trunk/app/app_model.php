@@ -67,7 +67,7 @@ class AppModel extends Model {
                 }
             }
         }
-        
+/*
         # not quite sure, if this is still neccessary. was copied from
         # a cake 1.1 project
         #
@@ -80,7 +80,7 @@ class AppModel extends Model {
 		foreach ($this->hasAndBelongsToMany as $model => $association) {
             $this->$model->__resetAssociations();
         }
-        
+*/        
         return $data;
     }
     
