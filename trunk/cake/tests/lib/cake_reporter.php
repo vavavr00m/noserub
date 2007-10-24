@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_reporter.php 4451 2007-02-05 05:32:30Z phpnut $ */
+/* SVN FILE: $Id: cake_reporter.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -39,7 +39,7 @@ class CakeHtmlReporter extends HtmlReporter {
  *    by a web browser.
  *    @access public
  */
-	function CakeHtmlReporter($characterSet = 'ISO-8859-1') {
+	function CakeHtmlReporter($characterSet = 'UTF-8') {
 		parent::HtmlReporter($characterSet);
 	}
 /**
@@ -50,7 +50,7 @@ class CakeHtmlReporter extends HtmlReporter {
  */
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
-		$baseUrl = BASE_URL;
+		$baseUrl = BASE;
 		print "<h2>$testName</h2>\n";
 		flush();
 	}

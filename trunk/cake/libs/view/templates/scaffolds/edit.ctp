@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: edit.ctp 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: edit.ctp 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,53 +18,39 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.scaffolds
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 5318 $
+ * @version			$Revision: 5875 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-06-20 11:01:21 +0200 (Wed, 20 Jun 2007) $
+ * @lastmodified	$Date: 2007-10-22 19:25:51 -0500 (Mon, 22 Oct 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $singularVar;?>">
+<div class="<?php echo $this->action ?> <?php echo $singularVar;?>">
 <?php echo $form->create($modelClass);?>
-	<fieldset>
- 		<legend><?php echo  Inflector::humanize($this->action).' '. $singularHumanName;?></legend>
-<?php
-		foreach ($fields as $field) {
-			if ($this->action == 'add' && $field['name'] == $primaryKey) {
-				continue;
-			} elseif (!in_array($field['name'], array('created', 'modified', 'updated'))) {
-				echo "\t\t".$form->input($field['name'])."\n";
-			}
-		}
-		foreach ($hasAndBelongsToMany as $assocName => $assocData) {
-			echo "\t\t".$form->input($assocName)."\n";
-		}
-?>
-	</fieldset>
+<?php echo $form->inputs(null, array('created', 'modified', 'updated'));?>
 <?php
 	echo $form->end(__('Submit', true));
 ?>
-</div>
-<div class="actions">
-	<ul>
-<?php if ($this->action != 'add'):?>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
-<?php endif;?>
-		<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
-<?php
-		foreach ($foreignKeys as $field => $value) {
-			$otherModelClass = $value['1'];
-			if ($otherModelClass != $modelClass) {
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				$otherSingularName = Inflector::variable($otherModelClass);
-				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li>".$html->link(__('List', true).' '.$otherPluralHumanName, array('controller'=> $otherControllerPath, 'action'=>'index'))."</li>\n";
-				echo "\t\t<li>".$html->link(__('New', true).' '.$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'add'))."</li>\n";
+	<div class="actions">
+		<ul>
+	<?php if ($this->action != 'add'):?>
+			<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
+	<?php endif;?>
+			<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
+	<?php
+			foreach ($foreignKeys as $field => $value) {
+				$otherModelClass = $value['1'];
+				if ($otherModelClass != $modelClass) {
+					$otherModelKey = Inflector::underscore($otherModelClass);
+					$otherControllerName = Inflector::pluralize($otherModelClass);
+					$otherControllerPath = Inflector::underscore($otherControllerName);
+					$otherSingularName = Inflector::variable($otherModelClass);
+					$otherPluralHumanName = Inflector::humanize($otherControllerPath);
+					$otherSingularHumanName = Inflector::humanize($otherModelKey);
+					echo "\t\t<li>".$html->link(__('List', true).' '.$otherPluralHumanName, array('controller'=> $otherControllerPath, 'action'=>'index'))."</li>\n";
+					echo "\t\t<li>".$html->link(__('New', true).' '.$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'add'))."</li>\n";
+				}
 			}
-		}
-?>
-	</ul>
+	?>
+		</ul>
+	</div>
 </div>

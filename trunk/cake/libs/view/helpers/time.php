@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: time.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: time.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * Time Helper class file.
@@ -198,7 +198,7 @@ class TimeHelper extends AppHelper {
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
  *
  * @param string $date_string Datetime string to be represented as a Unix timestamp
- * @return int Unix timestamp
+ * @return integer Unix timestamp
  */
 	function toUnix($date_string) {
 		$ret = strtotime($date_string);
@@ -327,7 +327,7 @@ class TimeHelper extends AppHelper {
  *
  * @param mixed $timeInterval the numeric value with space then time type. Example of valid types: 6 hours, 2 days, 1 minute.
  * @param mixed $date_string the datestring or unix timestamp to compare
- * @return boolean
+ * @return bool
  */
 	function wasWithinLast($timeInterval, $date_string) {
 		$date = $this->fromString($date_string);
@@ -413,7 +413,7 @@ class TimeHelper extends AppHelper {
 		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
 		return $return;
 	}
-	
+
 	function format($format = 'd-m-Y', $date) {
 		return date($format, $this->fromString($date));
 	}

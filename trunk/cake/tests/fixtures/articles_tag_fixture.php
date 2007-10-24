@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: articles_tag_fixture.php 4696 2007-03-27 05:17:49Z phpnut $ */
+/* SVN FILE: $Id: articles_tag_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -37,8 +37,8 @@ class ArticlesTagFixture extends CakeTestFixture {
 	var $fields = array(
 		'article_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'integer', 'null' => false),
+		'indexes' => array('UNIQUE_TAG' => array('column'=> array('article_id', 'tag_id'), 'unique'=>1))
 	);
-	var $primaryKey = array('article_id', 'tag_id');
 	var $records = array(
 		array('article_id' => 1, 'tag_id' => 1),
 		array('article_id' => 1, 'tag_id' => 2),

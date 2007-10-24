@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: view.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * The View Tasks handles creating and updating view files.
  *
@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('controller'.DS.'controller');
 /**
  * Task class for creating and updating view files.
  *
@@ -37,42 +38,48 @@ class ViewTask extends Shell {
  * Tasks to be loaded by this Task
  *
  * @var array
+ * @access public
  */
 	var $tasks = array('Project', 'Controller');
 /**
- * name of the controller being used
+ * Name of the controller being used
  *
  * @var string
+ * @access public
  */
 	var $controllerName = null;
 /**
- * path to controller to put views
+ * Path to controller to put views
  *
  * @var string
+ * @access public
  */
 	var $controllerPath = null;
 /**
- * the template file to use
+ * The template file to use
  *
  * @var string
+ * @access public
  */
 	var $template = null;
 /**
  * Actions to use for scaffolding
  *
  * @var array
+ * @access public
  */
 	var $scaffoldActions = array('index', 'view', 'add', 'edit');
 /**
  * Override initialize
  *
- * @return void
+ * @access public
  */
-	function initialize() {}
+	function initialize() {
+	}
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		if (empty($this->args)) {
@@ -103,11 +110,7 @@ class ViewTask extends Shell {
 			} else {
 				$vars = $this->__loadController();
 				if ($vars) {
-					$protected = array( 'object', low($this->controllerName. 'Controller'), 'controller', 'appcontroller',
-						'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
-						'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
-						'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
-
+					$protected = array_map('strtolower', get_class_methods('appcontroller'));
 					$classVars = get_class_vars($this->controllerName . 'Controller');
 					if (array_key_exists('scaffold', $classVars)) {
 						$methods = $this->scaffoldActions;
@@ -116,8 +119,9 @@ class ViewTask extends Shell {
 					}
 					$adminDelete = null;
 
-					if (defined('CAKE_ADMIN')) {
-						$adminDelete = CAKE_ADMIN.'_delete';
+					$adminRoute = Configure::read('Routing.admin');
+					if (!empty($adminRoute)) {
+						$adminDelete = $adminRoute.'_delete';
 					}
 					foreach ($methods as $method) {
 						if ($method{0} != '_' && !in_array(low($method), am($protected, array('delete', $adminDelete)))) {
@@ -133,7 +137,6 @@ class ViewTask extends Shell {
  * Handles interactive baking
  *
  * @access private
- * @return void
  */
 	function __interactive() {
 		$this->hr();
@@ -164,17 +167,15 @@ class ViewTask extends Shell {
 		}
 
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
-
+			$actions = $this->scaffoldActions;
 			if ($admin) {
-				foreach ($this->scaffoldActions as $action) {
-					$this->scaffoldActions[] = $admin . $action;
+				foreach ($actions as $action) {
+					$actions[] = $admin . $action;
 				}
 			}
 			$vars = $this->__loadController();
-
 			if ($vars) {
-				foreach ($this->scaffoldActions as $action) {
+				foreach ($actions as $action) {
 					$content = $this->getContent($action, $vars);
 					$this->bake($action, $content);
 				}
@@ -215,14 +216,15 @@ class ViewTask extends Shell {
  *	'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
  *	'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  *
- * @access private
  * @return array Returns an variables to be made available to a view template
+ * @access private
  */
 	function __loadController() {
 		if (!$this->controllerName) {
 			$this->err('could not find the controller');
 		}
 
+		$controllerClassName = $this->controllerName . 'Controller';
 		if (!class_exists($this->controllerName . 'Controller') && !loadController($this->controllerName)) {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 			$shortPath = $this->shortPath($file);
@@ -230,7 +232,6 @@ class ViewTask extends Shell {
 			exit();
 		}
 
-		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj = & new $controllerClassName();
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
@@ -256,9 +257,10 @@ class ViewTask extends Shell {
 /**
  * Assembles and writes bakes the view file.
  *
- * @param string $action
- * @param string $content
- * @return bool
+ * @param string $action Action to bake
+ * @param string $content Content to write
+ * @return boolean Success
+ * @access public
  */
 	function bake($action, $content = '') {
 		if ($content === true) {
@@ -283,6 +285,7 @@ class ViewTask extends Shell {
  * @param string $template file to use
  * @param array $vars passed for use in templates
  * @return string content from template
+ * @access public
  */
 	function getContent($template = null, $vars = null) {
 		if (!$template) {
@@ -290,10 +293,10 @@ class ViewTask extends Shell {
 		}
 		$action = $template;
 
-		if (defined('CAKE_ADMIN') && strpos($template, CAKE_ADMIN) !== false) {
-			$template = str_replace(CAKE_ADMIN.'_', '', $template);
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
+			$template = str_replace($adminRoute.'_', '', $template);
 		}
-
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
 			$template = 'form';
@@ -309,7 +312,6 @@ class ViewTask extends Shell {
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
-
 		if ($loaded) {
 			extract($vars);
 			ob_start();
@@ -318,14 +320,13 @@ class ViewTask extends Shell {
 			$content = ob_get_clean();
 			return $content;
 		}
-
 		$this->err('Template for '. $template .' could not be found');
 		return false;
 	}
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->hr();

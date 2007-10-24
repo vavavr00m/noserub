@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_db2.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: dbo_db2.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * IBM DB2 for DBO
  *
@@ -28,7 +28,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * IBM DB2 for DBO
  *
@@ -159,21 +158,26 @@ class DboDb2 extends DboSource {
 		// get result from db
 		$result = db2_exec($this->connection, $sql);
 
-		// build table/column map for this result
-		$map = array();
-		$num_fields = db2_num_fields($result);
-		$index = 0;
-		$j = 0;
+		if(!is_bool($result)){
+			// build table/column map for this result
+			$map = array();
+			$num_fields = db2_num_fields($result);
+			$index = 0;
+			$j = 0;
+			$offset = 0;
 
-		while ($j < $num_fields) {
-			$columnName = strtolower(db2_field_name($result, $j));
-			$tableName = substr($sql, 0, strpos($sql, '.' . $columnName));
-			$tableName = substr($tableName, strrpos($tableName, ' ') + 1);
-			$map[$index++] = array($tableName, $columnName);
-			$j++;
+			while ($j < $num_fields) {
+				$columnName = strtolower(db2_field_name($result, $j));
+				$tmp = strpos($sql, '.' . $columnName, $offset);
+				$tableName = substr($sql, $offset, ($tmp-$offset));
+				$tableName = substr($tableName, strrpos($tableName, ' ') + 1);
+				$map[$index++] = array($tableName, $columnName);
+				$j++;
+				$offset = strpos($sql, ' ', $tmp);
+			}
+
+			$this->_resultMap[$result] = $map;
 		}
-
-		$this->_resultMap[$result] = $map;
 
 		return $result;
 	}
@@ -216,9 +220,8 @@ class DboDb2 extends DboSource {
 		$result = db2_columns($this->connection, '', '', strtoupper($this->fullTableName($model)));
 
 		while (db2_fetch_row($result)) {
-			$fields[] = array(
-				'name' => strtolower(db2_result($result, 'COLUMN_NAME')),
-				'type' => db2_result($result, 'TYPE_NAME'),
+			$fields[strtolower(db2_result($result, 'COLUMN_NAME'))] = array(
+				'type' => strtolower(db2_result($result, 'TYPE_NAME')),
 				'null' => db2_result($result, 'NULLABLE'),
 				'default' => db2_result($result, 'COLUMN_DEF'));
 		}
@@ -386,7 +389,7 @@ class DboDb2 extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -398,7 +401,7 @@ class DboDb2 extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -423,8 +426,8 @@ class DboDb2 extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
+ * @param integer $limit Limit of results returned
+ * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	function limit($limit, $offset = null) {

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sqlite.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: dbo_sqlite.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * SQLite layer for DBO
@@ -160,8 +160,7 @@ class DboSqlite extends DboSource {
 		$result = $this->fetchAll('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
 
 		foreach ($result as $column) {
-			$fields[] = array(
-				'name' => $column[0]['name'],
+			$fields[$column[0]['name']] = array(
 				'type' => $this->column($column[0]['type']),
 				'null' => ! $column[0]['notnull'],
 				'default' => $column[0]['dflt_value']
@@ -262,7 +261,7 @@ class DboSqlite extends DboSource {
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -274,7 +273,7 @@ class DboSqlite extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -375,8 +374,8 @@ class DboSqlite extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
+ * @param integer $limit Limit of results returned
+ * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	function limit ($limit, $offset = null) {
@@ -393,6 +392,18 @@ class DboSqlite extends DboSource {
 		}
 		return null;
 	}
+/**
+ * Inserts multiple values into a join table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$count = count($values);
+		for ($x = 0; $x < $count; $x++) {
+			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		}
+	}
 }
-
 ?>

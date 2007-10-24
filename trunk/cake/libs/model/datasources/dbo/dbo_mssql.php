@@ -1,6 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mssql.php 5318 2007-06-20 09:01:21Z phpnut $ */
-
+/* SVN FILE: $Id: dbo_mssql.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * MS SQL layer for DBO
  *
@@ -100,13 +99,15 @@ class DboMssql extends DboSource {
  * @param array $config Configuration data from app/config/databases.php
  * @return boolean True if connected successfully, false on error
  */
-	function __construct($config) {
-		if (!function_exists('mssql_min_message_severity')) {
-			trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_ERROR);
+	function __construct($config, $autoConnect = true) {
+		if ($autoConnect) {
+			if (!function_exists('mssql_min_message_severity')) {
+				trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_WARNING);
+			}
+			mssql_min_message_severity(15);
+			mssql_min_error_severity(2);
 		}
-		mssql_min_message_severity(15);
-		mssql_min_error_severity(2);
-		return parent::__construct($config);
+		return parent::__construct($config, $autoConnect);
 	}
 /**
  * Connects to the database using options in the given configuration array.
@@ -248,6 +249,10 @@ class DboMssql extends DboSource {
 				}
 			break;
 		}
+
+		if (in_array($column, array('integer', 'float')) && is_numeric($data)) {
+			return $data;
+		}
 		return "'" . $data . "'";
 	}
 /**
@@ -354,7 +359,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (strpos('changed database', low($error)) !== false) {
+			if (strpos(low($error), 'changed database') === false) {
 				return $error;
 			}
 		}
@@ -364,7 +369,7 @@ class DboMssql extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -376,7 +381,7 @@ class DboMssql extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -397,8 +402,8 @@ class DboMssql extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
+ * @param integer $limit Limit of results returned
+ * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	function limit($limit, $offset = null) {
@@ -575,16 +580,19 @@ class DboMssql extends DboSource {
 			return false;
 		}
 	}
-
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}', '{BOOLEAN}', '{UTF_8}');
-
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned', 'FULLTEXT',
-		'enum (\'true\', \'false\') NOT NULL default \'true\'', '/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-
-		$query = trim(r($search, $replace, $schema));
-		return $query;
+/**
+ * Inserts multiple values into a join table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$count = count($values);
+		for ($x = 0; $x < $count; $x++) {
+			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		}
 	}
-}
 
+}
 ?>

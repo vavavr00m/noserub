@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.ctp 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: form.ctp 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,16 +18,16 @@
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
  * @since			CakePHP(tm) v 1.2.0.5234
- * @version			$Revision: 5422 $
+ * @version			$Revision: 5811 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-07-09 07:23:06 +0200 (Mon, 09 Jul 2007) $
+ * @lastmodified	$Date: 2007-10-20 01:39:14 -0500 (Sat, 20 Oct 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <div class="<?php echo $singularVar;?>">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php __('".Inflector::humanize($action)."');?> <?php __('{$singularHumanName}');?>";?></legend>
+ 		<legend><?php echo "<?php echo sprintf(__('".Inflector::humanize($action)." %s', true), __('{$singularHumanName}', true));?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
@@ -38,7 +38,7 @@
 			}
 		}
 		foreach ($hasAndBelongsToMany as $assocName => $assocData) {
-			echo "\t\techo \$form->input('{$assocName}');\n";
+			echo "\t\t echo \$form->input('{$assocName}');\n";
 		}
 		echo "\t?>\n";
 ?>
@@ -50,9 +50,9 @@
 <div class="actions">
 	<ul>
 <?php if ($action != 'add'):?>
-		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, __('Are you sure you want to delete', true).' #' . \$form->value('{$modelClass}.{$primaryKey}')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?', true), \$form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
 <?php endif;?>
-		<li><?php echo "<?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
+		<li><?php echo "<?php echo \$html->link(sprintf(__('List %s', true), __('{$pluralHumanName}', true)), array('action'=>'index'));?>";?></li>
 <?php
 		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -63,8 +63,8 @@
 				$otherSingularName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s', true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>

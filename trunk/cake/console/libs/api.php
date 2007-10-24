@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: api.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: api.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * API shell to get CakePHP core method signatures.
  *
@@ -38,6 +38,7 @@ class ApiShell extends Shell {
  * Map between short name for paths and real paths.
  *
  * @var array
+ * @access public
  */
 	var $paths = array();
 /**
@@ -108,7 +109,7 @@ class ApiShell extends Shell {
 
 			if ($File->exists()) {
 				if (!class_exists($class)) {
-					include($File->getFullPath());
+					include($File->pwd());
 				}
 				if (class_exists($class)) {
 					break;
@@ -223,6 +224,7 @@ class ApiShell extends Shell {
 				loadComponent(null);
 				break;
 			case 'helper':
+				uses('view'.DS.'helper');
 				loadHelper(null);
 				break;
 			case 'model':

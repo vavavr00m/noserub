@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: object.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -115,7 +115,7 @@ class Object {
  * API for logging events.
  *
  * @param string $msg Log message
- * @param int $type Error type constant. Defined in app/config/core.php.
+ * @param integer $type Error type constant. Defined in app/config/core.php.
  * @access public
  */
 	function log($msg, $type = LOG_ERROR) {
@@ -236,7 +236,11 @@ class Object {
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
-					loadModel(Inflector::classify($key));
+					if(strpos($key, '_behavior')) {
+						loadBehavior(Inflector::classify(str_replace('_behavior', '', $key)));
+					} else {
+						loadModel(Inflector::classify($key));
+					}
 				}
 				unset($vars);
 				$vars = unserialize(${$name});

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: javascript.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: javascript.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * Javascript Helper class file.
@@ -105,8 +105,8 @@ class JavascriptHelper extends AppHelper {
 
 		if (!empty($script)) {
 			$this->_cachedEvents[] = $script;
+			return null;
 		}
-
 		return $this->tags['javascriptend'];
 	}
 /**
@@ -182,7 +182,6 @@ class JavascriptHelper extends AppHelper {
  * @return boolean true on success
  */
 	function event($object, $event, $observer = null, $useCapture = false) {
-
 		if ($useCapture == true) {
 			$useCapture = 'true';
 		} else {

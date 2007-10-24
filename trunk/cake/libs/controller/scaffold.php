@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: scaffold.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: scaffold.php 5847 2007-10-22 03:39:01Z phpnut $ */
 /**
  * Scaffold.
  *
@@ -41,7 +41,8 @@ class Scaffold extends Object {
 /**
  * Controller object
  *
- * @var Controller
+ * @var object
+ * @access public
  */
 	var $controller = null;
 /**
@@ -62,12 +63,14 @@ class Scaffold extends Object {
  * Name of current model this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $model = null;
 /**
  * Path to View.
  *
- * @var string Path to View
+ * @var string
+ * @access public
  */
 	var $viewPath;
 /**
@@ -94,12 +97,14 @@ class Scaffold extends Object {
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var array
+ * @access public
  */
 	var $ext = '.ctp';
 /**
  * Sub-directory for this view file.
  *
  * @var string
+ * @access public
  */
 	var $subDir = null;
 /**
@@ -107,31 +112,21 @@ class Scaffold extends Object {
  *
  * @link http://wiki.cakephp.org/docs:plugins
  * @var string
+ * @access public
  */
 	var $plugin = null;
-/**
- * Controller URL-generation data
- *
- * @var mixed
- */
-	var $namedArgs = null;
-/**
- * Controller URL-generation data
- *
- * @var string
- */
-	var $argSeparator = null;
 /**
  * List of variables to collect from the associated controller
  *
  * @var array
- * @access protected
+ * @access private
  */
-	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'cacheAction');
 /**
  * Title HTML element for current scaffolded view
  *
  * @var string
+ * @access public
  */
 	var $scaffoldTitle = null;
 /**
@@ -200,7 +195,7 @@ class Scaffold extends Object {
 /**
  * Renders a view action of scaffolded model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return A rendered view of a row from Models database table
  * @access private
  */
@@ -227,7 +222,7 @@ class Scaffold extends Object {
 /**
  * Renders index action of scaffolded model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return A rendered view listing rows from Models database table
  * @access private
  */
@@ -243,8 +238,7 @@ class Scaffold extends Object {
 /**
  * Renders an add or edit action for scaffolded model.
  *
- * @param array $params
- * @param string $params add or edit
+ * @param string $action Action (add or edit)
  * @return A rendered view with a form to edit or add a record in the Models database table
  * @access private
  */
@@ -254,8 +248,8 @@ class Scaffold extends Object {
 /**
  * Saves or updates the scaffolded model.
  *
- * @param array $params
- * @param string $type create or update
+ * @param array $params Parameters for scaffolding
+ * @param string $action create or update
  * @return success on save/update, add/edit form if data is empty or error if save or update fails
  * @access private
  */
@@ -268,14 +262,14 @@ class Scaffold extends Object {
 		}
 
 		if ($this->controller->_beforeScaffold($action)) {
-			if ($action == 'edit' && !isset($params['pass'][0])) {
+			if ($action == 'edit' && (!isset($params['pass'][0]) || !$this->ScaffoldModel->exists())) {
 				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-					$this->controller->Session->setFlash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)));
+					$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+					return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
 				}
-			} elseif($action == 'edit') {
+			} elseif ($action == 'edit') {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			}
 
@@ -313,9 +307,14 @@ class Scaffold extends Object {
 					$this->controller->data = $this->ScaffoldModel->create();
 				}
 			}
-			$associations = am($this->ScaffoldModel->belongsTo, $this->ScaffoldModel->hasAndBelongsToMany);
-			foreach ($associations as $assocName => $assocData) {
-				$this->controller->set(Inflector::pluralize(Inflector::variable($assocName)), $this->ScaffoldModel->{$assocName}->generateList());
+
+			foreach ($this->ScaffoldModel->belongsTo as $assocName => $assocData) {
+				$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $assocData['foreignKey'])));
+				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->generateList());
+			}
+			foreach ($this->ScaffoldModel->hasAndBelongsToMany as $assocName => $assocData) {
+				$varName = Inflector::variable(Inflector::pluralize($assocName));
+				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->generateList());
 			}
 
 			return $this->__scaffoldForm($formAction);
@@ -327,7 +326,7 @@ class Scaffold extends Object {
 /**
  * Performs a delete on given scaffolded Model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return success on delete error if delete fails
  * @access private
  */
@@ -365,9 +364,10 @@ class Scaffold extends Object {
 		}
 	}
 /**
- * Enter description here...
+ * Show a scaffold error
  *
- * @return error
+ * @return A rendered view showing the error
+ * @access private
  */
 	function __scaffoldError() {
 		$pathToViewFile = '';
@@ -394,25 +394,24 @@ class Scaffold extends Object {
  * </code>
  * is placed in the controller's class definition.
  *
- * @param string $url
- * @param string $controller_class
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @since Cake v 0.10.0.172
  * @access private
  */
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 
+        $admin = Configure::read('Routing.admin');
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
-			} elseif (defined('CAKE_ADMIN') && $this->scaffoldActions == CAKE_ADMIN) {
-				$this->scaffoldActions = array(CAKE_ADMIN .'_index', CAKE_ADMIN .'_list', CAKE_ADMIN .'_view', CAKE_ADMIN .'_add', CAKE_ADMIN .'_create', CAKE_ADMIN .'_edit', CAKE_ADMIN .'_update', CAKE_ADMIN .'_delete');
+			} elseif (!empty($admin) && $this->scaffoldActions === $admin) {
+				$this->scaffoldActions = array($admin .'_index', $admin .'_list', $admin .'_view', $admin .'_add', $admin .'_create', $admin .'_edit', $admin .'_update', $admin .'_delete');
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				if (defined('CAKE_ADMIN')) {
-					$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
+				if (!empty($admin)) {
+					$params['action'] = str_replace($admin . '_', '', $params['action']);
 				}
 				switch($params['action']) {
 					case 'index':
@@ -494,19 +493,19 @@ class Scaffold extends Object {
 		foreach ($paths->viewPaths as $path) {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
 			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			}
 		}
-		if($action === 'add') {
+		if ($action === 'add') {
 			$action = 'edit';
 		}
 		return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.ctp';

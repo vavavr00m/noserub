@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: acl.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: acl.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -40,8 +40,7 @@ class AclShell extends Shell {
  * @var object
  * @access public
  */
-	var $acl;
-/**
+	var $Acl;
 /**
  * Contains arguments parsed from the command line.
  *
@@ -75,14 +74,14 @@ class AclShell extends Shell {
 			$this->dataSource = $this->params['datasource'];
 		}
 
-		if (ACL_CLASSNAME != 'DB_ACL') {
+		if (Configure::read('Acl.classname') != 'DB_ACL') {
 			$out = "--------------------------------------------------\n";
 			$out .= __("Error: Your current Cake configuration is set to", true) . "\n";
 			$out .= __("an ACL implementation other than DB. Please change", true) . "\n";
 			$out .= __("your core config to reflect your decision to use", true) . "\n";
 			$out .= __("DB_ACL before attempting to use this script", true) . ".\n";
 			$out .= "--------------------------------------------------\n";
-			$out .= sprintf(__("Current ACL Classname: %s", true), ACL_CLASSNAME) . "\n";
+			$out .= sprintf(__("Current ACL Classname: %s", true), Configure::read('Acl.classname')) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
 			exit();
@@ -238,6 +237,7 @@ class AclShell extends Shell {
 		//add existence checks for nodes involved
 		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
 		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+
 		if ($this->Acl->allow($aro, $aco, $this->args[2])) {
 			$this->out(__("Permission granted.", true), true);
 		}
@@ -284,27 +284,32 @@ class AclShell extends Shell {
 		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
 		if (empty($nodes)) {
-			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
+			if(isset($this->args[1])) {
+				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
+			} elseif (isset($this->args[0])) {
+				$this->error(sprintf(__("%s not found", true), $this->args[0]), __("No tree returned.", true));
+			}
 		}
 		$this->out($class . " tree:");
 		$this->hr();
-		$nodeCount = count($nodes);
-		$right = $left = array();
-		for ($i = 0; $i < $nodeCount; $i++) {
-			$count = 0;
-			$right[$i] = $nodes[$i][$class]['rght'];
-			$left[$i] = $nodes[$i][$class]['lft'];
-			if (isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {
-				array_pop($left);
-				$count = count($left);
+		$stack = array();
+		$last  = null;
+		foreach ($nodes as $n) {
+			$stack[] = $n;
+			if (!empty($last)) {
+				$end = end($stack);
+				if ($end[$class]['rght'] > $last) {
+					foreach ($stack as $k => $v) {
+						$end = end($stack);
+                        if ($v[$class]['rght'] < $end[$class]['rght']) {
+                            unset($stack[$k]);
+                        }
+                    }
+				}
 			}
-			if (isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
-				array_pop($right);
-				$count = count($right);
-			}
-
-			$this->out(str_repeat('  ', $count) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
-			$right[] = $nodes[$i][$class]['rght'];
+			$last   = $n[$class]['rght'];
+			$count  = count($stack);
+			$this->out(str_repeat('  ', $count) . "[" . $n[$class]['id'] . "]" . $n[$class]['alias']."\n");
 		}
 		$this->hr();
 	}
@@ -363,7 +368,6 @@ class AclShell extends Shell {
 
 		$this->out("\n" . __("Done.", true), true);
 	}
-
 /**
  * Show help screen.
  *
@@ -448,7 +452,7 @@ class AclShell extends Shell {
  * Checks that given node exists
  *
  * @param string $type Node type (ARO/ACO)
- * @param int $id Node id
+ * @param integer $id Node id
  * @return boolean Success
  * @access public
  */

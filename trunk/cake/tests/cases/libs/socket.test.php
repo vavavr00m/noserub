@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: socket.test.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: socket.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -58,7 +58,7 @@ class SocketTest extends UnitTestCase {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 		$this->assertTrue($this->Socket->write($request));
 	}
-	
+
 	function tearDown() {
 		unset($this->Socket);
 	}

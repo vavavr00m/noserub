@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: view.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * Methods for displaying presentation data in the view.
@@ -129,7 +129,7 @@ class View extends Object {
  * Variables for the view
  *
  * @var array
- * @access private
+ * @access public
  */
 	var $viewVars = array();
 /**
@@ -142,8 +142,8 @@ class View extends Object {
 /**
  * Title HTML element of this View.
  *
- * @var boolean
- * @access private
+ * @var string
+ * @access public
  */
 	var $pageTitle = false;
 /**
@@ -181,25 +181,18 @@ class View extends Object {
  * @access public
  */
 	var $autoLayout = true;
-
 /**
  * Array of parameter data
  *
  * @var array Parameter data
  */
-	var $params;
+	var $params = array();
 /**
  * True when the view has been rendered.
  *
  * @var boolean
  */
 	var $hasRendered = null;
-/**
- * Reference to the Controller for this view.
- *
- * @var Controller
- */
-	var $controller = null;
 /**
  * Array of loaded view helpers.
  *
@@ -209,7 +202,7 @@ class View extends Object {
 /**
  * File extension. Defaults to Cake's template ".ctp".
  *
- * @var array
+ * @var string
  */
 	var $ext = '.ctp';
 /**
@@ -219,13 +212,13 @@ class View extends Object {
  */
 	var $subDir = null;
 /**
- * Enter description here... Themes. New in Cake RC4.
+ * Theme name.
  *
- * @var array
+ * @var string
  */
 	var $themeWeb = null;
 /**
- * Plugin name. A Plugin is a sub-application. New in Cake RC4.
+ * Plugin name. A Plugin is a sub-application.
  *
  * @link http://manual.cakephp.org/chapter/plugins
  * @var string
@@ -252,24 +245,12 @@ class View extends Object {
  */
 	var $passedArgs = array();
 /**
- * Controller URL-generation data
- *
- * @var mixed
- */
-	var $namedArgs = array();
-/**
- * Controller URL-generation data
- *
- * @var string
- */
-	var $argSeparator = null;
-/**
  * List of variables to collect from the associated controller
  *
  * @var array
  * @access protected
  */
-	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'cacheAction');
 /**
  * List of generated DOM UUIDs
  *
@@ -281,7 +262,7 @@ class View extends Object {
  *
  * @return View
  */
-	function __construct(&$controller) {
+	function __construct(&$controller, $register = true) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -297,7 +278,9 @@ class View extends Object {
 			);
 		}
 		parent::__construct();
-		ClassRegistry::addObject('view', $this);
+		if($register) {
+			ClassRegistry::addObject('view', $this);
+		}
 	}
 
 /**
@@ -342,7 +325,7 @@ class View extends Object {
 			if ($out !== false) {
 				if ($this->layout && $this->autoLayout) {
 					$out = $this->renderLayout($out);
-					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 						$replace = array('<cake:nocache>', '</cake:nocache>');
 						$out = str_replace($replace, '', $out);
 					}
@@ -376,9 +359,9 @@ class View extends Object {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
 			$this->pluginPaths = array(
-									VIEWS . $this->pluginPath,
-									APP . $this->pluginPath . 'views' . DS,
-								);
+				VIEWS . $this->pluginPath,
+				APP . $this->pluginPath . 'views' . DS,
+			);
 		}
 
 		$paths = Configure::getInstance();
@@ -395,7 +378,11 @@ class View extends Object {
 			}
 		}
 
-		if (!is_null($file)) {
+		if (is_null($file)) {
+			$file = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . $name. '.ctp');
+		}
+
+		if ($file) {
 			$params = array_merge_recursive($params, $this->loaded);
 			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		}
@@ -420,24 +407,30 @@ class View extends Object {
  * @access public
  */
 	function element($name, $params = array()) {
-		if (in_array('cache', array_keys($params))) {
+		if (isset($params['cache'])) {
 			$expires = '+1 day';
-			if ($params['cache'] !== true) {
+			$key = null;
+			if (is_array($params['cache'])) {
+				$expires = $params['cache']['time'];
+				$key = convertSlash($params['cache']['key']);
+			} elseif ($params['cache'] !== true) {
 				$expires = $params['cache'];
+				$key = implode('_', array_keys($params));
 			}
 			if ($expires) {
 				$plugin = null;
 				if (isset($params['plugin'])) {
-					$plugin = $params['plugin'];
+					$plugin = $params['plugin'].'_';
 				}
-				$cacheFile = 'element_' . $plugin .'_' . convertSlash($name);
+				$cacheFile = 'element_' . $key .'_'. $plugin . convertSlash($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
-				if ($cache) {
+
+				if (is_string($cache)) {
 					return $cache;
 				} else {
 					$element = $this->renderElement($name, $params);
-               cache('views' . DS . $cacheFile, $element, $expires);
-               return $element;
+               		cache('views' . DS . $cacheFile, $element, $expires);
+               		return $element;
 				}
 			}
 		}
@@ -452,8 +445,9 @@ class View extends Object {
 	function renderLayout($content_for_layout) {
 		$layout_fn = $this->_getLayoutFileName();
 
-		if (Configure::read() > 2 && $this->controller != null) {
-			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->controller), false);
+		if (Configure::read() > 2 && isset($this->viewVars['cakeDebug'])) {
+			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->viewVars['cakeDebug']), false);
+			unset($this->viewVars['cakeDebug']);
 		} else {
 			$debug = '';
 		}
@@ -496,11 +490,11 @@ class View extends Object {
 			}
 		} else {
 			return $this->cakeError('missingLayout', array(
-					array(
-						'layout' => $this->layout,
-						'file' => $layout_fn,
-						'base' => $this->base
-					)
+				array(
+					'layout' => $this->layout,
+					'file' => $layout_fn,
+					'base' => $this->base
+				)
 			));
 		}
 	}
@@ -532,7 +526,6 @@ class View extends Object {
  *
  * @param string $name
  * @param string $content
- * @return void
  * @access public
  */
 	function addScript($name, $content = null) {
@@ -600,7 +593,7 @@ class View extends Object {
 /**
  * Displays an error page to the user. Uses layouts/error.ctp to render the page.
  *
- * @param int $code HTTP Error code (for instance: 404)
+ * @param integer $code HTTP Error code (for instance: 404)
  * @param string $name Name of the error (for instance: Not Found)
  * @param string $message Error message as a web page
  */
@@ -786,7 +779,7 @@ class View extends Object {
 
 		$out = ob_get_clean();
 
-		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
 
@@ -853,7 +846,7 @@ class View extends Object {
 				$camelBackedHelper = Inflector::variable($helper);
 				${$camelBackedHelper} =& new $helperCn();
 
-				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin', 'namedArgs', 'argSeparator');
+				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
 				$c = count($vars);
 				for ($j = 0; $j < $c; $j++) {
 					${$camelBackedHelper}->{$vars[$j]} = $this->{$vars[$j]};
@@ -877,7 +870,6 @@ class View extends Object {
  *
  * @param string $filename the cache file to include
  * @param string $timeStart the page render start time
- * @return void
  */
 	function renderCache($filename, $timeStart) {
 		ob_start();
@@ -936,14 +928,16 @@ class View extends Object {
 			}
 
 			if (strpos($action, 'missingView') === false) {
-				return $this->cakeError('missingView', array(
-											array('className' => $this->name,
-												'action' => $this->action,
-												'file' => $viewFileName,
-												'base' => $this->base)));
+				return $this->cakeError('missingView', array(array(
+					'className' => $this->name,
+					'action' => $this->action,
+					'file' => $viewFileName,
+					'base' => $this->base
+				)));
 				exit();
 			}
 		}
 	}
 }
+
 ?>

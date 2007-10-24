@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: bake.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: bake.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -35,9 +35,18 @@
  * @subpackage	cake.cake.console.libs
  */
 class BakeShell extends Shell {
-
+/**
+ * Contains tasks to load and instantiate
+ *
+ * @var array
+ * @access public
+ */
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
-
+/**
+ * Override main() to handle action
+ *
+ * @access public
+ */
 	function main() {
 
 		if (!is_dir(CONFIGS)) {
@@ -51,13 +60,18 @@ class BakeShell extends Shell {
 		}
 		$this->out('Interactive Bake Shell');
 		$this->hr();
+		$this->out('[D]atabase Configuration');
 		$this->out('[M]odel');
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
+		$this->out('[P]roject');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C', 'Q')));
+		$classToBake = strtoupper($this->in('What would you like to Bake?', array('D', 'M', 'V', 'C', 'P', 'Q')));
 		switch($classToBake) {
+			case 'D':
+				$this->DbConfig->execute();
+				break;
 			case 'M':
 				$this->Model->execute();
 				break;
@@ -67,11 +81,14 @@ class BakeShell extends Shell {
 			case 'C':
 				$this->Controller->execute();
 				break;
+			case 'P':
+				$this->Project->execute();
+				break;
 			case 'Q':
 				exit(0);
 				break;
 			default:
-				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
+				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.');
 		}
 		$this->hr();
 		$this->main();
@@ -79,7 +96,7 @@ class BakeShell extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->out('CakePHP Bake:');

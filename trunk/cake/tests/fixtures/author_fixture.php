@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: author_fixture.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: author_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class AuthorFixture extends CakeTestFixture {
 	var $name = 'Author';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'user' => array('type' => 'string', 'null' => false),
 		'password' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',

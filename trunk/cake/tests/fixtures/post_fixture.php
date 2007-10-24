@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: post_fixture.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: post_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class PostFixture extends CakeTestFixture {
 	var $name = 'Post';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'author_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
 		'body' => 'text',

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: header.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: header.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -32,7 +32,7 @@
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
 		<title>CakePHP Test Suite v 1.2.0.0</title>
-		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>/css/cake.generic.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>css/cake.generic.css" />
 		<style>
 			h3 {font-size: 150%}
 			a {font-size: 120%}

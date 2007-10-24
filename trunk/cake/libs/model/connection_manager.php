@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: connection_manager.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: connection_manager.php 5811 2007-10-20 06:39:14Z phpnut $ */
 
 /**
  * Short description for file.
@@ -112,6 +112,15 @@ class ConnectionManager extends Object {
 		}
 
 		return $_this->_dataSources[$name];
+	}
+/**
+ * Gets the list of available DataSource connections
+ *
+ * @return array
+ */
+	function sourceList() {
+		$_this =& ConnectionManager::getInstance();
+		return array_keys($_this->_dataSources);
 	}
 /**
  * Gets a DataSource name from an object reference
@@ -234,7 +243,7 @@ class ConnectionManager extends Object {
  *
  */
 	function __destruct() {
-		if (CAKE_SESSION_SAVE == 'database' && function_exists('session_write_close')) {
+		if (Configure::read('Session.save') == 'database' && function_exists('session_write_close')) {
 			session_write_close();
 		}
 	}

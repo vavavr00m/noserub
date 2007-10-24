@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: number_tree_fixture.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: number_tree_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Tree behavior class.
  *
@@ -36,11 +36,11 @@
  */
 class NumberTreeFixture extends CakeTestFixture {
 	var $name = 'NumberTree';
-	var $fields = array ('id' => array (
-				'type' => 'integer','key' => 'primary'),
+	var $fields = array (	'id' => array (
+				'type' => 'integer','key' => 'primary', 'extra'=> 'auto_increment'),
 				'name' => array ('type' => 'string','null' => false),
 				'parent_id' => 'integer',
-					'lft' => array ('type' => 'integer','null' => false),
-					'rght' => array ('type' => 'integer','null' => false));
+				'lft' => array ('type' => 'integer','null' => false),
+				'rght' => array ('type' => 'integer','null' => false));
 }
 ?>

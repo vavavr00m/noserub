@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: index.ctp 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: index.ctp 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,14 +18,21 @@
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
  * @since			CakePHP(tm) v 1.2.0.5234
- * @version			$Revision: 5318 $
+ * @version			$Revision: 5811 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-06-20 11:01:21 +0200 (Wed, 20 Jun 2007) $
+ * @lastmodified	$Date: 2007-10-20 01:39:14 -0500 (Sat, 20 Oct 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <div class="<?php echo $pluralVar;?>">
 <h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
+<p>
+<?php echo "<?php
+echo \$paginator->counter(array(
+'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+));
+?>";?>
+</p>
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php  foreach ($fields as $field):?>
@@ -57,16 +64,16 @@ foreach (\${$pluralVar} as \${$singularVar}):
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$otherPrimaryKey = $otherModelObj->primaryKey;
 				$otherDisplayField = $otherModelObj->displayField;
-				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
 			} else {
-				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}']?>\n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t</td>\n";
 			}
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
 		echo "\t\t\t<?php echo \$html->link(__('View', true), array('action'=>'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 	 	echo "\t\t\t<?php echo \$html->link(__('Edit', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete', true).' #' . \${$singularVar}['{$modelClass}']['{$primaryKey}']); ?>\n";
+	 	echo "\t\t\t<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -81,7 +88,7 @@ echo "<?php endforeach; ?>\n";
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo "<?php echo \$html->link(__('New', true).' '.__('{$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action'=>'add')); ?>";?></li>
 <?php
 		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -92,8 +99,8 @@ echo "<?php endforeach; ?>\n";
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s',  true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>

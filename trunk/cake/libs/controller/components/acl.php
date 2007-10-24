@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: acl.php 5425 2007-07-09 05:57:03Z phpnut $ */
+/* SVN FILE: $Id: acl.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Access Control List factory class.
  *
@@ -35,146 +35,162 @@
  * @subpackage	cake.cake.libs.controller.components
  */
 class AclComponent extends Object {
-
-	var $_instance = null;
-
-	var $name = ACL_CLASSNAME;
+/**
+ * Instance of an ACL class
+ *
+ * @var object
+ * @access protected
+ */
+	var $_Instance = null;
 /**
  * Constructor. Will return an instance of the correct ACL class.
  *
  */
-	function startup(&$controller) {
-		$this->getACL();
+	function __construct() {
+		$name = Configure::read('Acl.classname');
+		if (!class_exists($name)) {
+			if (loadComponent($name)) {
+				if (strpos($name, '.') !== false) {
+					list($plugin, $name) = explode('.', $name);
+				}
+				$name .= 'Component';
+			} else {
+				trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
+			}
+		}
+		$this->_Instance =& new $name();
+		$this->_Instance->initialize($this);
 	}
 /**
- * Static function used to gain an instance of the correct ACL class.
+ * Startup is not used
  *
- * @return MyACL
+ * @param object $controller Controller using this component
+ * @return boolean Proceed with component usage (true), or fail (false)
+ * @access public
  */
-	function &getACL() {
-		if ($this->_instance == null) {
-			$name = $this->name;
-			if(!class_exists($name)) {
-				if(loadComponent($name)) {
-					if (strpos($name, '.') !== false) {
-						list($plugin, $name) = explode('.', $name);
-					}
-					$name .= 'Component';
-				} else {
-					trigger_error(__(sprintf('Could not find %s.', $name), true), E_USER_WARNING);
-				}
-			}
-			$this->_instance =& new $name();
-			$this->_instance->initialize($this);
-		}
-		return $this->_instance;
+	function startup(&$controller) {
+		return true;
 	}
 /**
  * Empty class defintion, to be overridden in subclasses.
  *
+ * @access protected
  */
 	function _initACL() {
 	}
 /**
  * Pass-thru function for ACL check instance.
  *
- * @param string $aro
- * @param string $aco
- * @param string $action : default = *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function check($aro, $aco, $action = "*") {
-		return $this->_instance->check($aro, $aco, $action);
+		return $this->_Instance->check($aro, $aco, $action);
 	}
 /**
  * Pass-thru function for ACL allow instance.
  *
- * @param string $aro
- * @param string $aco
- * @param string $action : default = *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function allow($aro, $aco, $action = "*") {
-		return $this->_instance->allow($aro, $aco, $action);
+		return $this->_Instance->allow($aro, $aco, $action);
 	}
 /**
  * Pass-thru function for ACL deny instance.
  *
- * @param string $aro
- * @param string $aco
- * @param string $action : default = *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function deny($aro, $aco, $action = "*") {
-		return $this->_instance->deny($aro, $aco, $action);
+		return $this->_Instance->deny($aro, $aco, $action);
 	}
 /**
  * Pass-thru function for ACL inherit instance.
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function inherit($aro, $aco, $action = "*") {
-		return $this->_instance->inherit($aro, $aco, $action);
+		return $this->_Instance->inherit($aro, $aco, $action);
 	}
 /**
  * Pass-thru function for ACL grant instance.
  *
- * @param string $aro
- * @param string $aco
- * @param string $action : default = *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function grant($aro, $aco, $action = "*") {
-		return $this->_instance->grant($aro, $aco, $action);
+		return $this->_Instance->grant($aro, $aco, $action);
 	}
 /**
  * Pass-thru function for ACL grant instance.
  *
- * @param string $aro
- * @param string $aco
- * @param string $action : default = *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function revoke($aro, $aco, $action = "*") {
-		return $this->_instance->revoke($aro, $aco, $action);
+		return $this->_Instance->revoke($aro, $aco, $action);
 	}
 /**
  * Sets the current ARO instance to object from getAro
  *
- * @param string $id
- * @return boolean
+ * @param string $id ID of ARO
+ * @return boolean Success
+ * @access public
  */
 	function setAro($id) {
-		return $this->Aro = $this->_instance->getAro($id);
+		return $this->Aro = $this->_Instance->getAro($id);
 	}
 /**
 * Sets the current ACO instance to object from getAco
  *
- * @param string $id
- * @return boolean
+ * @param string $id ID of ACO
+ * @return boolean Success
+ * @access public
  */
 	function setAco($id) {
-		return $this->Aco = $this->_instance->getAco($id);
+		return $this->Aco = $this->_Instance->getAco($id);
 	}
 /**
  * Pass-thru function for ACL getAro instance
  * that gets an ARO object from the given id or alias
  *
- * @param string $id
- * @return Aro
+ * @param string $id ARO id
+ * @return object ARO
+ * @access public
  */
 	function getAro($id) {
-		return $this->_instance->getAro($id);
+		return $this->_Instance->getAro($id);
 	}
 /**
  * Pass-thru function for ACL getAco instance.
  * that gets an ACO object from the given id or alias
  *
- * @param string $id
- * @return Aco
+ * @param string $id ACO id
+ * @return object ACO
+ * @access public
  */
 	function getAco($id) {
-		return $this->_instance->getAco($id);
+		return $this->_Instance->getAco($id);
 	}
 }
 /**
@@ -189,7 +205,6 @@ class AclBase extends Object {
 /**
  * This class should never be instantiated, just subclassed.
  *
- * @return AclBase
  */
 	function __construct() {
 		if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase")) {
@@ -200,16 +215,18 @@ class AclBase extends Object {
 /**
  * Empty method to be overridden in subclasses
  *
- * @param unknown_type $aro
- * @param unknown_type $aco
- * @param string $action
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @access public
  */
 	function check($aro, $aco, $action = "*") {
 	}
 /**
  * Empty method to be overridden in subclasses
  *
- * @param unknown_type $component
+ * @param object $component Component
+ * @access public
  */
 	function initialize(&$component) {
 	}
@@ -222,37 +239,35 @@ class AclBase extends Object {
  */
 class DB_ACL extends AclBase {
 /**
- * Enter description here...
+ * Constructor
  *
  */
 	function __construct() {
-		uses('model' . DS . 'db_acl');
 		parent::__construct();
+		uses('model' . DS . 'db_acl');
 		$this->Aro =& new Aro();
 		$this->Aco =& new Aco();
 	}
 /**
  * Enter description here...
  *
- * @param unknown_type $aro
- * @param unknown_type $aco
- * @param unknown_type $action
- * @return unknown
+ * @param object $component
+ * @access public
  */
 	function initialize(&$component) {
-		$component->Aro =& $this->Aro;
-		$component->Aco =& $this->Aco;
+		$component->Aro = $this->Aro;
+		$component->Aco = $this->Aco;
 	}
 /**
- * Enter description here...
+ * Checks if the given $aro has access to action $action in $aco
  *
- * @param unknown_type $aro
- * @param unknown_type $aco
- * @param unknown_type $action
- * @return unknown
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $action Action (defaults to *)
+ * @return boolean Success (true if ARO has access to action in ACO, false otherwise)
+ * @access public
  */
 	function check($aro, $aco, $action = "*") {
-
 		if ($aro == null || $aco == null) {
 			return false;
 		}
@@ -279,29 +294,32 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
-		for ($i = count($aroPath) - 1; $i >= 0; $i--) {
-			$perms = $this->Aro->Permission->findAll(
-				array(
-					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
-					'Permission.aco_id' => $acoPath->extract('{n}.Aco.id')
-				),
-				null, array('Aco.lft' => 'desc'), null, null, 0
-			);
+		$inherited = array();
+		for ($i = 0 ; $i < count($aroPath); $i++) {
+			$perms = $this->Aro->Permission->findAll(array(
+						$this->Aro->Permission->name . '.aro_id' => $aroPath[$i][$this->Aro->name]['id'],
+						$this->Aro->Permission->name . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->name . '.id')),
+						null, array($this->Aco->name . '.lft' => 'desc'), null, null, 0);
 
 			if (empty($perms)) {
 				continue;
 			} else {
-				foreach (Set::extract($perms, '{n}.Permission') as $perm) {
+				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->name) as $perm) {
 					if ($action == '*') {
-						// ARO must be cleared for ALL ACO actions
+
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {
-								if ($perm[$key] != 1) {
+								if ($perm[$key] == -1) {
 									return false;
+								} elseif ($perm[$key] == 1) {
+									$inherited[$key] = 1;
 								}
 							}
 						}
-						return true;
+						if (count($inherited) === count($permKeys)) {
+							return true;
+						}
+
 					} else {
 						switch($perm['_' . $action]) {
 							case -1:
@@ -320,9 +338,14 @@ class DB_ACL extends AclBase {
 		return false;
 	}
 /**
- * Allow
+ * Allow $aro to have access to action $actions in $aco
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $actions Action (defaults to *)
+ * @param integer $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
+ * @return boolean Success
+ * @access public
  */
 	function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
@@ -335,7 +358,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if (isset($perms[0])) {
-			$save = $perms[0]['Permission'];
+			$save = $perms[0][$this->Aro->Permission->name];
 		}
 
 		if ($actions == "*") {
@@ -347,7 +370,6 @@ class DB_ACL extends AclBase {
 		} else {
 			if (!is_array($actions)) {
 				$actions = array('_' . $actions);
-				$actions = am($permKeys, $actions);
 			}
 			if (is_array($actions)) {
 				foreach ($actions as $action) {
@@ -365,69 +387,68 @@ class DB_ACL extends AclBase {
 		$save['aco_id'] = $perms['aco'];
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
-			$save['id'] = $perms['link'][0]['Permission']['id'];
+			$save['id'] = $perms['link'][0][$this->Aro->Permission->name]['id'];
 		}
 		$this->Aro->Permission->create($save);
 		return $this->Aro->Permission->save();
 	}
 /**
- * Deny
+ * Deny access for $aro to action $action in $aco
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $actions Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function deny($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, -1);
 	}
 /**
- * Inherit
+ * Let access for $aro to action $action in $aco be inherited
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $actions Action (defaults to *)
+ * @return boolean Success
+ * @access public
  */
 	function inherit($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, 0);
 	}
 /**
- * Allow alias
+ * Allow $aro to have access to action $actions in $aco
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $actions Action (defaults to *)
+ * @return boolean Success
+ * @see allow()
+ * @access public
  */
 	function grant($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action);
 	}
 /**
- * Deny alias
+ * Deny access for $aro to action $action in $aco
  *
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $actions Action (defaults to *)
+ * @return boolean Success
+ * @see deny()
+ * @access public
  */
 	function revoke($aro, $aco, $action = "*") {
 		return $this->deny($aro, $aco, $action);
 	}
 /**
- * Private method
- *
- */
-	function &__getObject($id = null, $object) {
-		if ($id == null) {
-			trigger_error(__('Null id provided in DB_ACL::get', true) . $object, E_USER_WARNING);
-			return null;
-		}
-
-		if (is_numeric($id)) {
-			$conditions = array("{$object}.foreign_key" => $id);
-		} else {
-			$conditions = array("{$object}.alias" => $id);
-		}
-
-		$tmp = $this->{$object}->find($conditions);
-		$this->{$object}->id = $tmp[$object]['id'];
-		return $this->{$object};
-	}
-/**
  * Get an array of access-control links between the given Aro and Aco
  *
- * @param mixed $aro
- * @param mixed $aco
- * @return array
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @return array Indexed array with: 'aro', 'aco' and 'link'
+ * @access public
  */
 	function getAclLink($aro, $aco) {
 		$obj = array();
@@ -439,19 +460,20 @@ class DB_ACL extends AclBase {
 		}
 
 		return array(
-			'aro' => Set::extract($obj, 'Aro.0.Aro.id'),
-			'aco'  => Set::extract($obj, 'Aco.0.Aco.id'),
+			'aro' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
+			'aco'  => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id'),
 			'link' => $this->Aro->Permission->findAll(array(
-				'Permission.aro_id' => Set::extract($obj, 'Aro.0.Aro.id'),
-				'Permission.aco_id' => Set::extract($obj, 'Aco.0.Aco.id')
+				$this->Aro->Permission->name . '.aro_id' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
+				$this->Aro->Permission->name . '.aco_id' => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id')
 			))
 		);
 	}
 /**
- * Enter description here...
+ * Get the keys used in an ACO
  *
- * @param unknown_type $keys
- * @return unknown
+ * @param array $keys Permission model info
+ * @return array ACO keys
+ * @access protected
  */
 	function _getAcoKeys($keys) {
 		$newKeys = array();
@@ -474,6 +496,9 @@ class DB_ACL extends AclBase {
 class INI_ACL extends AclBase {
 /**
  * Array with configuration, parsed from ini file
+ *
+ * @var array
+ * @access public
  */
 	var $config = null;
 /**
@@ -486,9 +511,11 @@ class INI_ACL extends AclBase {
  * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
  * Looks at the acl.ini.php file for permissions (see instructions in /config/acl.ini.php).
  *
- * @param string $aro
- * @param string $aco
- * @return boolean
+ * @param string $aro ARO
+ * @param string $aco ACO
+ * @param string $aco_action Action
+ * @return boolean Success
+ * @access public
  */
 	function check($aro, $aco, $aco_action = null) {
 		if ($this->config == null) {
@@ -540,8 +567,9 @@ class INI_ACL extends AclBase {
 /**
  * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
  *
- * @param string $fileName
- * @return array
+ * @param string $fileName File
+ * @return array INI section structure
+ * @access public
  */
 	function readConfigFile($fileName) {
 		$fileLineArray = file($fileName);
@@ -581,20 +609,16 @@ class INI_ACL extends AclBase {
 /**
  * Removes trailing spaces on all array elements (to prepare for searching)
  *
- * @param array $array
- * @return array
+ * @param array $array Array to trim
+ * @return array Trimmed array
+ * @access public
  */
 	function arrayTrim($array) {
-		foreach ($array as $element) {
-			$element = trim($element);
+		foreach ($array as $key => $value) {
+			$array[$key] = trim($value);
 		}
-
-		//Adding this element keeps array_search from returning 0:
-		//0 is the first key, which may be correct, but 0 is interpreted as false.
-		//Adding this element makes all the keys be positive integers.
 		array_unshift($array, "");
 		return $array;
 	}
 }
-
 ?>

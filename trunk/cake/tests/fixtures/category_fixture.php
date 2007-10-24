@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: category_fixture.php 4696 2007-03-27 05:17:49Z phpnut $ */
+/* SVN FILE: $Id: category_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class CategoryFixture extends CakeTestFixture {
 	var $name = 'Category';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'parent_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',

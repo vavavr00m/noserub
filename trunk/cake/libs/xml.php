@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xml.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: xml.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * XML handling for Cake.
@@ -314,7 +314,7 @@ class XMLNode extends Object {
 /**
  * Returns true if this structure has child nodes.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function hasChildren() {
@@ -645,22 +645,22 @@ class XML extends XMLNode {
 		return $data;
 	}
 /**
- * If DEBUG is on, this method echoes an error message.
+ * If debug mode is on, this method echoes an error message.
  *
  * @param string $msg Error message
- * @param int $code Error code
- * @param int $line Line in file
+ * @param integer $code Error code
+ * @param integer $line Line in file
  * @access public
  */
 	function error($msg, $code = 0, $line = 0) {
-		if (DEBUG) {
+		if (Configure::read('debug')) {
 			echo $msg . " " . $code . " " . $line;
 		}
 	}
 /**
  * Returns a string with a textual description of the error code, or FALSE if no description was found.
  *
- * @param int $code Error code
+ * @param integer $code Error code
  * @return string Error message
  * @access public
  */

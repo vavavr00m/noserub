@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.test.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: email.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Series of tests for email component.
  *
@@ -49,8 +49,9 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testBadSmtpSend() {
-		if(@fsockopen('localhost', 25)) {
+		if (@fsockopen('localhost', 25)) {
 			$this->Controller->Email->smtpOptions['host'] = 'blah';
+            $this->Controller->Email->delivery = 'smtp';
 			$this->assertFalse($this->Controller->Email->send('Should not work'));
 		} else {
 			$this->skipUnless(@fsockopen('localhost', 25), 'Must be able to connect to localhost port 25');
@@ -58,7 +59,7 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testSmtpSend() {
-		if(@fsockopen('localhost', 25)) {
+		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
 			$this->Controller->Email->reset();
 			$this->Controller->Email->to = 'chartjes@localhost';

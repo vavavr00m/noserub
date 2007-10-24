@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: behavior.php 4605 2007-03-09 23:26:37Z phpnut $ */
+/* SVN FILE: $Id: behavior.php 5811 2007-10-20 06:39:14Z phpnut $ */
 
 /**
  * Model behaviors base class.
@@ -63,6 +63,8 @@ class ModelBehavior extends Object {
 	function beforeFind(&$model, $query) { }
 
 	function afterFind(&$model, $results, $primary) { }
+
+	function beforeValidate(&$model) { }
 
 	function beforeSave(&$model) { }
 

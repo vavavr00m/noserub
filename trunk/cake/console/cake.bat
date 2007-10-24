@@ -17,9 +17,9 @@
 :: @package			cake
 :: @subpackage		cake.cake.console
 :: @since			CakePHP(tm) v 1.2.0.5012
-:: @version			$Revision: 5318 $
+:: @version			$Revision: 5811 $
 :: @modifiedby		$LastChangedBy: phpnut $
-:: @lastmodified	$Date: 2007-06-20 11:01:21 +0200 (Wed, 20 Jun 2007) $
+:: @lastmodified	$Date: 2007-10-20 01:39:14 -0500 (Sat, 20 Oct 2007) $
 :: @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -32,6 +32,6 @@
 SET app=%0
 SET lib=%~dp0
 
-php -q "%lib%cake.php" %* -working "%CD%\"
+php -q "%lib%cake.php" -working "%CD%" %*
 
 echo.

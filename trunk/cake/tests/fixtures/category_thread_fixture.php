@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: category_thread_fixture.php 4718 2007-03-31 17:34:42Z phpnut $ */
+/* SVN FILE: $Id: category_thread_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class CategoryThreadFixture extends CakeTestFixture {
 	var $name = 'CategoryThread';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'parent_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',

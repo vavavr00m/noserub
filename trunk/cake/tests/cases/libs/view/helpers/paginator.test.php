@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: paginator.test.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: paginator.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -81,11 +81,20 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->params['paging']['Article']['nextPage'] = true;
 	}
 
+	function testDisabledLink() {
+		$this->Paginator->params['paging']['Article']['nextPage'] = false;
+		$this->Paginator->params['paging']['Article']['page'] = 1;
+		$result = $this->Paginator->next('Next', array(), true);
+		$expected = '<div>Next</div>';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testSortLinks() {
 		Router::reload();
+		Router::parse('/');
 		Router::setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0, 'webservices' => null),
-			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('title');
@@ -97,6 +106,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
+	}
+
+	function testUrlGeneration() {
+		$result = $this->Paginator->sort('controller');
+		$this->assertPattern('/\/page:1\//', $result);
+		$this->assertPattern('/\/sort:controller\//', $result);
 	}
 
 	function tearDown() {

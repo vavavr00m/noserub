@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: html.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: html.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Html Helper class file.
  *
@@ -36,7 +36,6 @@ class HtmlHelper extends AppHelper {
 /*************************************************************************
  * Public variables
  *************************************************************************/
-
 /**#@+
  * @access public
  */
@@ -51,21 +50,21 @@ class HtmlHelper extends AppHelper {
 		'mailto' => '<a href="mailto:%s" %s>%s</a>',
 		'form' => '<form %s>',
 		'formend' => '</form>',
-		'input' => '<input name="data[%s][%s]" %s/>',
-		'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
-		'hidden' => '<input type="hidden" name="data[%s][%s]" %s/>',
-		'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
-		'checkbox' => '<input type="checkbox" name="data[%s][%s]" %s/>',
-		'radio' => '<input type="radio" name="data[%s][%s]" id="%s" %s />%s',
-		'selectstart' => '<select name="data[%s][%s]"%s>',
-		'selectmultiplestart' => '<select name="data[%s][%s][]"%s>',
+		'input' => '<input name="%s" %s/>',
+		'textarea' => '<textarea name="%s" %s>%s</textarea>',
+		'hidden' => '<input type="hidden" name="%s" %s/>',
+		'textarea' => '<textarea name="%s" %s>%s</textarea>',
+		'checkbox' => '<input type="checkbox" name="%s" %s/>',
+		'radio' => '<input type="radio" name="%s" id="%s" %s />%s',
+		'selectstart' => '<select name="%s"%s>',
+		'selectmultiplestart' => '<select name="%s[]"%s>',
 		'selectempty' => '<option value=""%s>&nbsp;</option>',
 		'selectoption' => '<option value="%s"%s>%s</option>',
 		'selectend' => '</select>',
 		'optiongroup' => '<optgroup label="%s"%s>',
 		'optiongroupend' => '</optgroup>',
-		'password' => '<input type="password" name="data[%s][%s]" %s/>',
-		'file' => '<input type="file" name="data[%s][%s]" %s/>',
+		'password' => '<input type="password" name="%s" %s/>',
+		'file' => '<input type="file" name="%s" %s/>',
 		'file_no_model' => '<input type="file" name="%s" %s/>',
 		'submit' => '<input type="submit" %s/>',
 		'submitimage' => '<input type="image" src="%s" %s/>',
@@ -86,7 +85,10 @@ class HtmlHelper extends AppHelper {
 		'legend' => '<legend>%s</legend>',
 		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
 		'style' => '<style type="text/css"%s>%s</style>',
-		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />'
+		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
+		'ul' => '<ul%s>%s</ul>',
+		'ol' => '<ol%s>%s</ol>',
+		'li' => '<li%s>%s</li>'
 	);
 /**
  * Base URL
@@ -151,9 +153,9 @@ class HtmlHelper extends AppHelper {
  * Adds a link to the breadcrumbs array.
  *
  * @param string $name Text for link
- * @param string $link URL for link
+ * @param string $link URL for link (if empty it won't be a link)
  */
-	function addCrumb($name, $link) {
+	function addCrumb($name, $link = null) {
 		$this->_crumbs[] = array($name, $link);
 	}
 /**
@@ -281,9 +283,9 @@ class HtmlHelper extends AppHelper {
 		} elseif (isset($htmlAttributes['default'])) {
 			if ($htmlAttributes['default'] == false) {
 				if (isset($htmlAttributes['onclick'])) {
-					$htmlAttributes['onclick'] .= ' return false;';
+					$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
 				} else {
-					$htmlAttributes['onclick'] = 'return false;';
+					$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
 				}
 				unset($htmlAttributes['default']);
 			}
@@ -343,7 +345,7 @@ class HtmlHelper extends AppHelper {
 			$out[] = $key.':'.$value.';';
 		}
 		if ($inline) {
-			return 'style="'.join(' ', $out).'"';
+			return join(' ', $out);
 		}
 		return join("\n", $out);
 	}
@@ -506,7 +508,49 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
+/**
+ * Build a nested list (UL/OL) out of an associative array.
+ *
+ * @param array $list Set of elements to list
+ * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
+ * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param string $tag Type of list tag to use (ol/ul)
+ * @return string The nested list
+ * @access public
+ */
+	function nestedList($list, $attributes = array(), $itemAttributes = array(), $tag = 'ul') {
+		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
+		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
+	}
+/**
+ * Internal function to build a nested list (UL/OL) out of an associative array.
+ *
+ * @param array $list Set of elements to list
+ * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
+ * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param string $tag Type of list tag to use (ol/ul)
+ * @return string The nested list element
+ * @access private
+ * @see nestedList()
+ */
+	function __nestedListItem($items, $attributes, $itemAttributes, $tag) {
+		$out = '';
 
+		$index = 1;
+		foreach($items as $key => $item) {
+			if (is_array($item)) {
+				$item = $key . $this->nestedList($item, $attributes, $itemAttributes, $tag);
+			}
+			if (isset($itemAttributes['even']) && $index % 2 == 0) {
+				$itemAttributes['class'] = $itemAttributes['even'];
+			} else if (isset($itemAttributes['odd']) && $index % 2 != 0) {
+				$itemAttributes['class'] = $itemAttributes['odd'];
+			}
+			$out .= sprintf($this->tags['li'], $this->_parseAttributes(array_diff_key($itemAttributes, array_flip(array('even', 'odd'))), null, ' ', ''), $item);
+			$index++;
+		}
+		return $out;
+	}
 /**
  * Creates a password input widget.
  *
@@ -623,10 +667,10 @@ class HtmlHelper extends AppHelper {
  * Returns value of $fieldName. False if the tag does not exist.
  *
  * @deprecated 1.2.0.5147
- * @see FormHelper::errors
+ * @see Helper::value
  */
 	function tagValue($fieldName) {
-		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see HtmlHelper::value', true), get_class($this)), E_USER_NOTICE);
+		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
 		$this->setFormTag($fieldName);
 		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: class_registry.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: class_registry.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Class collections.
  *
@@ -69,6 +69,7 @@ class ClassRegistry {
  *
  * @param string $key	Key for the object in registry
  * @param mixed $object	Object to store
+ * @return boolean True if the object was written, false if $key already exists
  * @access public
  */
 	function addObject($key, &$object) {
@@ -76,7 +77,9 @@ class ClassRegistry {
 		$key = Inflector::underscore($key);
 		if (array_key_exists($key, $_this->__objects) === false) {
 			$_this->__objects[$key] = &$object;
+			return true;
 		}
+		return false;
 	}
 /**
  * Remove object which corresponds to given key.
@@ -178,6 +181,16 @@ class ClassRegistry {
 		if (array_key_exists($key, $_this->__map)) {
 			return $_this->__map[$key];
 		}
+	}
+/**
+ * Flushes all objects from the ClassREgistry.
+ *
+ * @access public
+ */
+	function flush() {
+		$_this =& ClassRegistry::getInstance();
+		$_this->__objects = array();
+		$_this->__map = array();
 	}
 }
 ?>

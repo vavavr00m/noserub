@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: validation.test.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: validation.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -45,6 +45,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue($this->Validation->alphaNumeric('frferrf'));
 		$this->assertTrue($this->Validation->alphaNumeric('12234'));
 		$this->assertTrue($this->Validation->alphaNumeric('1w2e2r3t4y'));
+		$this->assertTrue($this->Validation->alphaNumeric('0'));
 		$this->assertFalse($this->Validation->alphaNumeric('12 234'));
 		$this->assertFalse($this->Validation->alphaNumeric('dfd 234'));
 		$this->assertFalse($this->Validation->alphaNumeric("\n"));
@@ -58,6 +59,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => 'frferrf')));
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '12234')));
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '1w2e2r3t4y')));
+		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '0')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => '12 234')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => 'dfd 234')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => "\n")));
@@ -1190,7 +1192,19 @@ class ValidationTestCase extends UnitTestCase {
 	}
 
 	function testUrl() {
+		$this->assertTrue($this->Validation->url('http://www.cakephp.org'));
+		$this->assertTrue($this->Validation->url('http://www.cakephp.org/somewhere#anchor'));
+		$this->assertTrue($this->Validation->url('http://192.168.0.1'));
+		$this->assertTrue($this->Validation->url('ftps://192.168.0.1/pub/cake'));
+		$this->assertFalse($this->Validation->url('ftp://256.168.0.1/pub/cake'));
 		$this->assertTrue($this->Validation->url('https://my.gizmoproject.com/gizmo/app?class=MySip;proc=start'));
+		$this->assertTrue($this->Validation->url('www.domain.tld'));
+		$this->assertFalse($this->Validation->url('http://w_w.micr_soft.co_m'));
+		$this->assertFalse($this->Validation->url('http://www.domain.12com'));
+		$this->assertFalse($this->Validation->url('http://www.domain.longttldnotallowed'));
+		$this->assertFalse($this->Validation->url('http://www.-invaliddomain.tld'));
+		$this->assertFalse($this->Validation->url('http://www.domain.-invalidtld'));
+		$this->assertFalse($this->Validation->url('http://www.this-domain-is-just-too-long-and-inacceptable-by-icann-rules-the-maximum-limit-of-characters-is-57.com'));
 	}
 
 	function testValidNumber() {

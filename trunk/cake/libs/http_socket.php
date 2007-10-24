@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: http_socket.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * HTTP Socket connection class.
  *
@@ -29,7 +29,7 @@ uses('socket', 'set');
 /**
  * Cake network socket connection class.
  *
- * Core base class for network communication.
+ * Core base class for HTTP network communication.
  *
  * @package		cake
  * @subpackage	cake.cake.libs

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: security.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: security.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -34,7 +34,15 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Security extends Object{
+class Security extends Object {
+
+/**
+ * Default hash method
+ *
+ * @var string
+ * @access public
+ */
+	var $hashType = null;
 /**
   * Singleton implementation to get object instance.
   *
@@ -52,13 +60,13 @@ class Security extends Object{
 /**
   * Get allowed minutes of inactivity based on security level.
   *
-  * @return int Allowed inactivity in minutes
+  * @return integer Allowed inactivity in minutes
   * @access public
   * @static
   */
 	function inactiveMins() {
 		$_this =& Security::getInstance();
-		switch(CAKE_SECURITY) {
+		switch(Configure::read('Security.level')) {
 			case 'high':
 				return 10;
 			break;
@@ -80,7 +88,10 @@ class Security extends Object{
   */
 	function generateAuthKey() {
 		$_this =& Security::getInstance();
-		return $_this->hash(uniqid(rand(), true));
+		if(!class_exists('String')) {
+			uses('string');
+		}
+		return $_this->hash(String::uuid());
 	}
 /**
  * Validate authorization hash.
@@ -103,10 +114,14 @@ class Security extends Object{
  * @access public
  * @static
  */
-	function hash($string, $type = 'sha1') {
+	function hash($string, $type = null) {
 		$_this =& Security::getInstance();
+		if (empty($type)) {
+			$type = $_this->hashType;
+		}
 		$type = strtolower($type);
-		if ($type == 'sha1') {
+
+		if ($type == 'sha1' || $type == null) {
 			if (function_exists('sha1')) {
 				$return = sha1($string);
 				return $return;
@@ -128,6 +143,19 @@ class Security extends Object{
 			$return = md5($string);
 			return $return;
 		}
+	}
+/**
+ * Sets the default hash method for the Security object.  This affects all objects using
+ * Security::hash().
+ *
+ * @param string $hash Method to use (sha1/sha256/md5)
+ * @access public
+ * @static
+ * @see Security::hash()
+ */
+	function setHash($hash) {
+		$_this =& Security::getInstance();
+		$_this->hashType = $hash;
 	}
 /**
  * Encripts/Decrypts a text using the given key.

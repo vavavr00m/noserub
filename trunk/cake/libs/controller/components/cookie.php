@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cookie.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: cookie.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -116,7 +116,7 @@ class CookieComponent extends Object {
  * @var string
  * @access protected
  */
-	var $key = CAKE_SESSION_COOKIE;
+	var $key = null;
 /**
  * Values stored in the cookie.
  *
@@ -162,6 +162,7 @@ class CookieComponent extends Object {
  * @deprecated use Controller::beforeFilter() to set the properties of the CookieComponent
  */
 	function initialize(&$controller) {
+		$this->key = Configure::read('Security.salt');
 		if (is_object($controller)) {
 			if (isset($controller->cookieName)) {
 				$this->name = $controller->cookieName;
@@ -196,7 +197,7 @@ class CookieComponent extends Object {
 		}
 	}
 /**
- * Write a value to the $_COOKIE[$config];
+ * Write a value to the $_COOKIE[$key];
  *
  * Optional [Name.], reguired key, optional $value, optional $encrypt, optional $expires
  * $this->Cookie->write('[Name.]key, $value);
@@ -207,10 +208,10 @@ class CookieComponent extends Object {
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
  *
- * @param mixed $key
- * @param mixed $value
- * @param boolean $encrypt
- * @param string $expires
+ * @param mixed $key Key for the value
+ * @param mixed $value Value
+ * @param boolean $encrypt Set to true to encrypt value, false otherwise
+ * @param string $expires Can be either Unix timestamp, or date string
  * @access public
  */
 	function write($key, $value = null, $encrypt = true, $expires = null) {
@@ -246,13 +247,13 @@ class CookieComponent extends Object {
 		}
 	}
 /**
- * Read the value of the $_COOKIE[$var];
+ * Read the value of the $_COOKIE[$key];
  *
  * Optional [Name.], reguired key
  * $this->Cookie->read(Name.key);
  *
- * @param mixed $key
- * @return string or null
+ * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
+ * @return string or null, value for specified key
  * @access public
  */
 	function read($key = null) {
@@ -267,8 +268,9 @@ class CookieComponent extends Object {
 
 		if (count($name) > 1) {
 			if (isset($this->__values[$name[0]])) {
-				$value = $this->__values[$name[0]][$name[1]];
-				return $value;
+				if(isset($this->__values[$name[0]][$name[1]])) {
+					return $this->__values[$name[0]][$name[1]];
+				}
 			}
 			return null;
 		} else {
@@ -288,7 +290,7 @@ class CookieComponent extends Object {
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
  *
- * @param string $name
+ * @param string $key Key of the value to be deleted
  * @access public
  */
 	function del($key) {
@@ -330,16 +332,15 @@ class CookieComponent extends Object {
 					unset($this->__values[$name][$key]);
 					$this->__delete("[$name][$key]");
 				}
-			} else {
-				unset($this->__values[$name]);
-				$this->__delete("[$name]");
 			}
+			unset($this->__values[$name]);
+			$this->__delete("[$name]");
 		}
 	}
 /**
  * Will allow overriding default encryption method.
  *
- * @param string $type
+ * @param string $type Encryption method
  * @access public
  * @todo NOT IMPLEMENTED
  */
@@ -356,8 +357,8 @@ class CookieComponent extends Object {
  * CookieComponent::write(string, string, boolean, 8400);
  * CookieComponent::write(string, string, boolean, '5 Days');
  *
- * @param mixed $expires
- * @return integer
+ * @param mixed $expires Can be either Unix timestamp, or date string
+ * @return int Unix timestamp
  * @access private
  */
 	function __expire($expires = null) {
@@ -375,8 +376,8 @@ class CookieComponent extends Object {
 /**
  * Set cookie
  *
- * @param string $name
- * @param string $value
+ * @param string $name Name for cookie
+ * @param string $value Value for cookie
  * @access private
  */
 	function __write($name, $value) {
@@ -391,7 +392,7 @@ class CookieComponent extends Object {
 /**
  * Sets a cookie expire time to remove cookie value
  *
- * @param string $name
+ * @param string $name Name of cookie
  * @access private
  */
 	function __delete($name) {
@@ -400,8 +401,8 @@ class CookieComponent extends Object {
 /**
   * Encrypts $value using var $type method in Security class
   *
-  * @param string $value
-  * @return encrypted string
+  * @param string $value Value to encrypt
+  * @return string encrypted string
   * @access private
   */
 	 function __encrypt($value) {
@@ -418,8 +419,8 @@ class CookieComponent extends Object {
 /**
  * Decrypts $value using var $type method in Security class
  *
- * @param string $values
- * @return decrypted string
+ * @param array $values Values to decrypt
+ * @return string decrypted string
  * @access private
  */
 	function __decrypt($values) {
@@ -455,8 +456,8 @@ class CookieComponent extends Object {
  * Creates an array from the $name parameter which allows the dot notation
  * similar to one used by Session and Configure classes
  *
- * @param string $name
- * @return array
+ * @param string $name Name with or without dot notation
+ * @return array Extracted names
  * @access private
  */
 	function __cookieVarNames($name) {
@@ -472,8 +473,8 @@ class CookieComponent extends Object {
 /**
  * Implode method to keep keys are multidimensional arrays
  *
- * @param array $array
- * @return string
+ * @param array $array Map of key and values
+ * @return string String in the form key1|value1,key2|value2
  * @access private
  */
 	function __implode($array) {
@@ -486,8 +487,8 @@ class CookieComponent extends Object {
 /**
  * Explode method to return array from string set in CookieComponent::__implode()
  *
- * @param string $string
- * @return array
+ * @param string $string String in the form key1|value1,key2|value2
+ * @return array Map of key and values
  * @access private
  */
 	function __explode($string) {

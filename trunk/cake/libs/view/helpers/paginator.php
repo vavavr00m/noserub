@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: paginator.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: paginator.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Pagination Helper class file.
  *
@@ -87,7 +87,6 @@ class PaginatorHelper extends AppHelper {
  *
  * @param  mixed $options Default options for pagination links. If a string is supplied - it
  *                        is used as the DOM id element to update. See #options for list of keys.
- * @return void
  */
 	function options($options = array()) {
 		if (is_string($options)) {
@@ -178,7 +177,6 @@ class PaginatorHelper extends AppHelper {
 		} else {
 			return 'asc';
 		}
-		return null;
 	}
 /**
  * Generates a "previous" link for a set of paged records
@@ -254,7 +252,7 @@ class PaginatorHelper extends AppHelper {
 			$urlOption = $options['url'];
 			unset($options['url']);
 		}
-		$url = am(array_filter(Set::diff($paging['options'], $paging['defaults'])), $urlOption, $url);
+		$url = am(array_filter(Set::diff(am($paging['defaults'], $paging['options']), $paging['defaults'])), $urlOption, $url);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
@@ -267,7 +265,7 @@ class PaginatorHelper extends AppHelper {
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
 		$url = am(array('page' => $this->current($model)), $url);
-		return $this->{$obj}->link($title, $url, $options);
+		return $this->{$obj}->link($title, Set::filter($url, true), $options);
 	}
 /**
  * Protected method for generating prev/next links
@@ -306,7 +304,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the first page
  *
- * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name.  Uses the default if none is specified.
  * @return boolean True if the result set is not at the first page.
  */
 	function hasPrev($model = null) {
@@ -315,7 +313,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the last page
  *
- * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @param string $model Optional model name.  Uses the default if none is specified.
  * @return boolean True if the result set is not at the last page.
  */
 	function hasNext($model = null) {
@@ -471,16 +469,19 @@ class PaginatorHelper extends AppHelper {
 			for ($i = $start; $i < $end; $i++) {
 				$out .= $this->link($i, array('page' => $i), $options) . $separator;
 			}
-			
+
 			if ($end != $params['page']) {
 				$out .= $this->link($i, array('page' => $end), $options);
 			}
 		} else {
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					$out .= $i . $separator;
+					$out .= $i;
 				} else {
-					$out .= $this->link($i, array('page' => $i), $options) . $separator;
+					$out .= $this->link($i, array('page' => $i), $options);
+				}
+				if($i != $params['pageCount']) {
+					$out .= $separator;
 				}
 			}
 		}

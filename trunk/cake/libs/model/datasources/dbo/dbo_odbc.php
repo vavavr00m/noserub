@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_odbc.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: dbo_odbc.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * ODBC for DBO
@@ -154,10 +154,6 @@ class DboOdbc extends DboSource{
 			array_push($tables, odbc_result($result, "TABLE_NAME"));
 		}
 
-		foreach ( $tables as $t ) {
-			echo "$t\n";
-		}
-
 		parent::listSources($tables);
 		return $tables;
 	}
@@ -174,23 +170,19 @@ class DboOdbc extends DboSource{
 				return $cache;
 		}
 
-		$fields=array();
-		$sql='SELECT * FROM ' . $this->fullTableName($model) . ' LIMIT 1';
-		$result=odbc_exec($this->connection, $sql);
+		$fields = array();
+		$sql = 'SELECT * FROM ' . $this->fullTableName($model);
+		$result = odbc_exec($this->connection, $sql);
 
-		$count=odbc_num_fields($result);
+		$count = odbc_num_fields($result);
 
 		for ($i = 1; $i <= $count; $i++) {
 				$cols[$i - 1] = odbc_field_name($result, $i);
 		}
 
 		foreach ($cols as $column) {
-				$type
-				= odbc_field_type(
-					odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)),
-					1);
-				array_push($fields, array('name' => $column,
-												'type' => $type));
+			$type = odbc_field_type(odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)), 1);
+			$fields[$column] = array('type' => $type);
 		}
 
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
@@ -202,7 +194,7 @@ class DboOdbc extends DboSource{
 				return '*';
 		}
 
-		$pos=strpos($data, '`');
+		$pos = strpos($data, '`');
 
 		if ($pos === false) {
 				$data = '' . str_replace('.', '.', $data) . '';
@@ -336,7 +328,7 @@ class DboOdbc extends DboSource{
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -350,7 +342,7 @@ class DboOdbc extends DboSource{
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -440,27 +432,6 @@ class DboOdbc extends DboSource{
 		} else {
 				return false;
 		}
-	}
-
-	function buildSchemaQuery($schema) {
-		$search=array('{AUTOINCREMENT}',
-					'{PRIMARY}',
-					'{UNSIGNED}',
-					'{FULLTEXT}',
-					'{FULLTEXT_MYSQL}',
-					'{BOOLEAN}',
-					'{UTF_8}');
-
-		$replace=array('int(11) not null auto_increment',
-					'primary key',
-					'unsigned',
-					'FULLTEXT',
-					'FULLTEXT',
-					'enum (\'true\', \'false\') NOT NULL default \'true\'',
-					'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-
-		$query=trim(str_replace($search, $replace, $schema));
-		return $query;
 	}
 }
 ?>

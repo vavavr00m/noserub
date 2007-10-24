@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: sanitize.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: sanitize.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Washes strings from unwanted noise.
  *
@@ -71,10 +71,13 @@ class Sanitize{
  * @static
  */
 	function escape($string, $connection = 'default') {
-		$db = ConnectionManager::getDataSource($connection);
-		$value = substr($db->value($string), 1);
-		$value = substr($value, 0, -1);
-		return $value;
+		$db =& ConnectionManager::getDataSource($connection);
+		if (is_numeric($string)) {
+			return $string;
+		}
+		$string = substr($db->value($string), 1);
+		$string = substr($string, 0, -1);
+		return $string;
 	}
 /**
  * Returns given string safe for display as HTML. Renders entities.
@@ -161,44 +164,69 @@ class Sanitize{
 		return $str;
 	}
 /**
- * Sanitizes given array or value for safe input.
+ * Sanitizes given array or value for safe input. Use the options to specify
+ * the connection to use, and what filters should be applied (with a boolean
+ * value). Valid filters: odd_spaces, encode, dollar, carriage, unicode,
+ * escape, backslash.
  *
  * @param mixed $data Data to sanitize
- * @param string $connection DB connection being used
+ * @param mixed $options If string, DB connection being used, otherwise set of options
  * @return mixed Sanitized data
  * @access public
  * @static
  */
-	function clean($data, $connection = 'default') {
+	function clean($data, $options = array()) {
 		if (empty($data)) {
 			return $data;
 		}
 
+		if (is_string($options)) {
+			$options = array('connection' => $options);
+		} else if (!is_array($options)) {
+			$options = array();
+		}
+
+		$options = am(array(
+			'connection' => 'default',
+			'odd_spaces' => true,
+			'encode' => true,
+			'dollar' => true,
+			'carriage' => true,
+			'unicode' => true,
+			'escape' => true,
+			'backslash' => true
+		), $options);
+
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {
-				$data[$key] = Sanitize::clean($val, $connection);
+				$data[$key] = Sanitize::clean($val, $options);
 			}
 			return $data;
 		} else {
-			//Replace odd spaces with safe ones
-			$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
-			//Encode any HTML to entities.
-			$val = Sanitize::html($val);
+			if ($options['odd_spaces']) {
+				$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+			}
+			if ($options['encode']) {
+				$val = Sanitize::html($val);
+			}
+			if ($options['dollar']) {
+				$val = str_replace("\\\$", "$", $val);
+			}
+			if ($options['carriage']) {
+				$val = str_replace("\r", "", $val);
+			}
 
-			//Double-check special chars and remove carriage returns
-			//For increased SQL security
-			$val = preg_replace("/\\\$/", "$", $val);
-			$val = preg_replace("/\r/", "", $val);
 			$val = str_replace("'", "'", str_replace("!", "!", $val));
 
-			//Allow unicode (?)
-			$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
-
-			// Escape for DB output
-			$val = Sanitize::escape($val, $connection);
-
-			//Swap user-inputted backslashes (?)
-			$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+			if ($options['unicode']) {
+				$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
+			}
+			if ($options['escape']) {
+				$val = Sanitize::escape($val, $options['connection']);
+			}
+			if ($options['backslash']) {
+				$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+			}
 			return $val;
 		}
 	}

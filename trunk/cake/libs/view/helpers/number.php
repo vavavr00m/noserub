@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: number.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: number.php 5811 2007-10-20 06:39:14Z phpnut $ */
 
 /**
  * Number Helper.
@@ -100,18 +100,18 @@ class NumberHelper extends AppHelper {
 			$places = $options;
 		}
 
-		$seperators = array(',', '.', '-', ':');
+		$separators = array(',', '.', '-', ':');
 
 		$before = null;
-		if (is_string($options) && !in_array( $options, $seperators)) {
+		if (is_string($options) && !in_array($options, $separators)) {
 			$before = $options;
 		}
-		$seperator = ',';
-		if (!is_array($options) && in_array( $options, $seperators)) {
-			$seperator = $options;
+		$separator = ',';
+		if (!is_array($options) && in_array($options, $separators)) {
+			$separator = $options;
 		}
 		$decimals = '.';
-		if(!is_array($options) && in_array( $options, $seperators)) {
+		if (!is_array($options) && in_array($options, $separators)) {
 			$decimals = $options;
 		}
 		$escape = true;
@@ -130,14 +130,14 @@ class NumberHelper extends AppHelper {
 				unset($options['before']);
 			}
 
-			if(isset($options['decimals'])) {
+			if (isset($options['decimals'])) {
 				$decimals = $options['decimals'];
 				unset($options['decimals']);
 			}
 
-			if (isset($options['seperator'])) {
-				$seperator = $options['seperator'];
-				unset($options['seperator']);
+			if (isset($options['separator'])) {
+				$separator = $options['separator'];
+				unset($options['separator']);
 			}
 		}
 
@@ -145,7 +145,7 @@ class NumberHelper extends AppHelper {
 			$before = h($before);
 		}
 
-		return $before . number_format ($number, $places, $decimals, $seperator);
+		return $before . number_format ($number, $places, $decimals, $separator);
 	}
 /**
  * Formats a number into a currency format.
@@ -159,7 +159,7 @@ class NumberHelper extends AppHelper {
 
 		switch ($currency) {
 			case "EUR":
-				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#8364;', 'seperator'=>'.', 'decimals'=>','));
+				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#8364;', 'separator'=>'.', 'decimals'=>','));
 			break;
 			case "GBP":
 				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#163;'));

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: folder.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: folder.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Convenience class for handling directories.
  *
@@ -60,7 +60,7 @@ class Folder extends Object{
  * @var boolean
  * @access public
  */
-	var $mode = 0755;
+	var $mode = '0755';
 /**
  * holds messages from last method.
  *
@@ -76,6 +76,20 @@ class Folder extends Object{
  */
 	var $__errors = false;
 /**
+ * holds array of complete directory paths.
+ *
+ * @var array
+ * @access private
+ */
+	var $__directories;
+/**
+ * holds array of complete file paths.
+ *
+ * @var array
+ * @access private
+ */
+	var $__files;
+/**
  * Constructor.
  *
  * @param string $path Path to folder
@@ -87,13 +101,14 @@ class Folder extends Object{
 		if (empty($path)) {
 			$path = TMP;
 		}
-
 		if ($mode) {
 			$this->mode = intval($mode, 8);
 		}
-
 		if (!file_exists($path) && $create == true) {
 			$this->create($path, $this->mode);
+		}
+		if (!$this->isAbsolute($path)) {
+			$path = realpath($path);
 		}
 		$this->cd($path);
 	}
@@ -115,9 +130,6 @@ class Folder extends Object{
  */
 	function cd($path) {
 		$path = $this->realpath($path);
-		if (!$this->isAbsolute($path)) {
-			$path = $this->addPathElement($this->path, $path);
-		}
 		if (is_dir($path) && file_exists($path)) {
 			return $this->path = $path;
 		}
@@ -135,18 +147,18 @@ class Folder extends Object{
 	function read($sort = true, $exceptions = false) {
 		$dirs = $files = array();
 		$dir = opendir($this->path);
-		if ($dir) {
+		if ($dir !== false) {
 			while (false !== ($n = readdir($dir))) {
 				$item = false;
 				if (is_array($exceptions)) {
 					if (!in_array($n, $exceptions)) {
 						$item = $n;
 					}
-				} elseif ((!preg_match('#^\.+$#', $n) && $exceptions == false) || ($exceptions == true && !preg_match('#^\.(.*)$#', $n))) {
+				} elseif ((!preg_match('/^\\.+$/', $n) && $exceptions == false) || ($exceptions == true && !preg_match('/^\\.(.*)$/', $n))) {
 					$item = $n;
 				}
 
-				if ($item) {
+				if ($item !== false) {
 					if (is_dir($this->addPathElement($this->path, $item))) {
 						$dirs[] = $item;
 					} else {
@@ -170,8 +182,8 @@ class Folder extends Object{
  * @return array Files that match given pattern
  * @access public
  */
-	function find($regexp_pattern = '.*') {
-		$data = $this->ls();
+	function find($regexp_pattern = '.*', $sort = false) {
+		$data = $this->read($sort);
 
 		if (!is_array($data)) {
 			return array();
@@ -194,9 +206,9 @@ class Folder extends Object{
  * @return array Files matching $pattern
  * @access public
  */
-	function findRecursive($pattern = '.*') {
+	function findRecursive($pattern = '.*', $sort = false) {
 		$startsOn = $this->path;
-		$out = $this->_findRecursive($pattern);
+		$out = $this->_findRecursive($pattern, $sort);
 		$this->cd($startsOn);
 		return $out;
 	}
@@ -207,8 +219,8 @@ class Folder extends Object{
  * @return array Files matching pattern
  * @access private
  */
-	function _findRecursive($pattern) {
-		list($dirs, $files) = $this->ls();
+	function _findRecursive($pattern, $sort = false) {
+		list($dirs, $files) = $this->read($sort);
 
 		$found = array();
 		foreach ($files as $file) {
@@ -232,7 +244,7 @@ class Folder extends Object{
  * @static
  */
 	function isWindowsPath($path) {
-		if (preg_match('#^[A-Z]:\\\#i', $path)) {
+		if (preg_match('/^[A-Z]:\\\\/i', $path)) {
 			return true;
 		}
 		return false;
@@ -241,12 +253,12 @@ class Folder extends Object{
  * Returns true if given $path is an absolute path.
  *
  * @param string $path Path to check
- * @return boolean
+ * @return bool
  * @access public
  * @static
  */
 	function isAbsolute($path) {
-		$match = preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
+		$match = preg_match('/^\\//', $path) || preg_match('/^[A-Z]:\\\\/i', $path);
 		return $match;
 	}
 /**
@@ -258,7 +270,7 @@ class Folder extends Object{
  * @static
  */
 	function isSlashTerm($path) {
-		if (preg_match('#[\\\/]$#', $path)) {
+		if (preg_match('/[\/\\\]$/', $path)) {
 			return true;
 		}
 		return false;
@@ -320,33 +332,28 @@ class Folder extends Object{
 /**
  * Returns true if the File is in a given CakePath.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function inCakePath($path = '') {
 		$dir = substr($this->slashTerm(ROOT), 0, -1);
-		$newdir = $this->slashTerm($dir . $path);
+		$newdir = $dir . $path;
 		return $this->inPath($newdir);
 	 }
 /**
  * Returns true if the File is in given path.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function inPath($path = '', $reverse = false) {
-		if (!$this->isAbsolute($path)) {
-			$path = $this->addPathElement($this->path, $path);
-		}
-		$path = $this->realpath($path);
-		$dir = substr($this->slashTerm($path), 0, -1);
-
+		$dir = $this->slashTerm($path);
+		$current = $this->slashTerm($this->pwd());
 		if (!$reverse) {
-			$return = preg_match('/^' . preg_quote($this->slashTerm($dir), '/') . '(.*)/', $this->slashTerm($this->pwd()));
+			$return = preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
 		} else {
-			$return = preg_match('/^' . preg_quote($this->slashTerm($this->pwd()), '/') . '(.*)/', $this->slashTerm($dir));
+			$return = preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
 		}
-
 		if ($return == 1) {
 			return true;
 		} else {
@@ -357,67 +364,108 @@ class Folder extends Object{
  * Change the mode on a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
- * @return bool Returns TRUE on success, FALSE on failure
+ * @param integer $mode octal value 0755
+ * @param boolean $recursive chmod recursively
+ * @param array $exceptions array of files, directories to skip
+ * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */
-	function chmod($path, $mode = false, $exceptions = false) {
+ 	function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
+ 		if (!$mode) {
+ 			$mode = $this->mode;
+ 		}
 
-		if (!$mode) {
-			$mode = $this->mode;
+ 		if ($recursive === false && is_dir($path)) {
+ 				if (chmod($path, intval($mode, 8))) {
+ 					$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
+ 					return true;
+ 				} else {
+ 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
+ 					return false;
+ 				}
+ 		}
+
+ 		if (is_dir($path)) {
+ 			list($paths) = $this->tree($path);
+
+ 			foreach ($paths as $key => $fullpath) {
+ 				$check = explode(DS, $fullpath);
+ 				$count = count($check);
+
+ 				if (in_array($check[$count - 1], $exceptions)) {
+ 					continue;
+ 				}
+
+ 				if (chmod($fullpath, intval($mode, 8))) {
+ 					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
+ 				} else {
+ 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+ 				}
+ 			}
+ 			if (empty($this->__errors)) {
+ 				return true;
+ 			}
+ 		}
+ 		return false;
+ 	}
+/**
+ * Returns an array of nested directories and files in each directory
+ *
+ * @param string $path the directory path to build the tree from
+ * @param = boolean $hidden return hidden files and directories
+ * @return mixed array of nested directories and files in each directory
+ * @access public
+ */
+	function tree($path, $hidden = true) {
+		$path = rtrim($path, DS);
+		$this->__files = array();
+		$this->__directories = array($path);
+		$directories = array();
+
+		while (count($this->__directories)) {
+			$dir = array_pop($this->__directories);
+			$this->__tree($dir, $hidden);
+			array_push($directories, $dir);
+
 		}
-
+        $return = array($directories, $this->__files);
+        return $return;
+	}
+/**
+ * Private method to list directories and files in each directory
+ *
+ * @param string $path
+ * @param = boolean $hidden
+ * @access private
+ */
+	function __tree($path, $hidden) {
 		if (is_dir($path)) {
-			return chmod($path, intval($mode, 8));
-		}
+			$dirHandle = @opendir($path);
 
-		$dir = opendir($path);
-		if ($dir) {
-			while (false !== ($n = readdir($dir))) {
-				$item = false;
-				if (is_array($exceptions)) {
-					if (!in_array($n, $exceptions)) {
-						$item = $n;
-					}
-				} elseif ((!preg_match('#^\.+$#', $n) && $exceptions == false) || ($exceptions == true && !preg_match('#^\.(.*)$#', $n))) {
-					$item = $n;
+			while (false !== ($item = @readdir($dirHandle))) {
+				$found = false;
+
+				if (($hidden === true && $item != '.' && $item != '..') || ($hidden === false && !preg_match('/^\\.(.*)$/', $item))) {
+					$found = $path . DS . $item;
 				}
 
-				if ($item) {
-					$fullpath = $this->addPathElement($path, $item);
-					if (!is_dir($fullpath)) {
-						if (chmod($fullpath, intval($mode, 8))) {
-							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
-							return true;
-						} else {
-							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
-							return false;
-						}
+				if ($found !== false) {
+					if (is_dir($found)) {
+						array_push($this->__directories, $found);
 					} else {
-						if ($this->chmod($fullpath, $mode)) {
-							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
-							return true;
-						} else {
-							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
-							return false;
-						}
+						array_push($this->__files, $found);
 					}
 				}
 			}
-			closedir($dir);
 		}
-
-		if (chmod($path, intval($mode, 8))) {
-			$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
-			return true;
-		} else {
-			return false;
-		}
+		closedir($dirHandle);
 	}
 /**
  * Create a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
- * @return bool Returns TRUE on success, FALSE on failure
+ * @param integer $mode octal value 0755
+ * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */
 	function create($pathname, $mode = false) {
@@ -529,7 +577,7 @@ class Folder extends Object{
  * Recursive directory copy.
  *
  * @param array $options (to, from, chmod, skip)
- * @return boolean
+ * @return bool
  * @access public
  */
 	function copy($options = array()) {
@@ -690,6 +738,9 @@ class Folder extends Object{
 	function realpath($path) {
 		$path = trim($path);
 		if (strpos($path, '..') === false) {
+			if (!$this->isAbsolute($path)) {
+				$path = $this->addPathElement($this->path, $path);
+			}
 			return $path;
 		}
 		$parts = explode(DS, $path);

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: default.ctp 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: default.ctp 5847 2007-10-22 03:39:01Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
@@ -16,11 +16,11 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs.view.templates.pages
+ * @subpackage		cake.cake.libs.view.templates.layouts
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 5318 $
+ * @version			$Revision: 5847 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-06-20 11:01:21 +0200 (Wed, 20 Jun 2007) $
+ * @lastmodified	$Date: 2007-10-21 22:39:01 -0500 (Sun, 21 Oct 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
@@ -28,7 +28,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>
-		CakePHP: the rapid development php framework:
+		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout;?>
 	</title>
 
@@ -37,11 +37,12 @@
 	<link rel="icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
 	<?php echo $html->css('cake.generic');?>
+	<?php echo $scripts_for_layout;?>
 </head>
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $html->link('CakePHP: the rapid development php framework', 'http://cakephp.org');?></h1>
+			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org');?></h1>
 		</div>
 		<div id="content">
 			<?php
@@ -55,7 +56,7 @@
 		</div>
 		<div id="footer">
 			<?php echo $html->link(
-							$html->image('cake.power.png', array('alt'=>"CakePHP: the rapid development php framework", 'border'=>"0")),
+							$html->image('cake.power.gif', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
 							'http://www.cakephp.org/',
 							array('target'=>'_new'), null, false
 						);

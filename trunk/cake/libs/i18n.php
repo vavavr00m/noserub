@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: i18n.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: i18n.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -27,8 +27,8 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
-  * Included libraries.
-  */
+ * Included libraries.
+ */
 uses('l10n');
 /**
  * Short description for file.
@@ -43,16 +43,9 @@ class I18n extends Object {
  * Instance of the I10n class for localization
  *
  * @var object
- * @access private
- */
-	var $__l10n = null;
-/**
- * The locale for current translation
- *
- * @var string
  * @access public
  */
-	var $locale = null;
+	var $l10n = null;
 /**
  * Translation strings for a specific domain read from the .mo or .po files
  *
@@ -86,7 +79,13 @@ class I18n extends Object {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new I18n();
-			$instance[0]->__l10n =& new L10n();
+			$instance[0]->l10n =& new L10n();
+
+			$language = Configure::read('Config.language');
+			if ($language === null && !empty($_SESSION['Config']['language'])) {
+				$language = $_SESSION['Config']['language'];
+			}
+			$instance[0]->l10n->get($language);
 		}
 		return $instance[0];
 	}
@@ -106,16 +105,6 @@ class I18n extends Object {
 	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
-
-		if ($_this->__l10n->found === false) {
-			$language = Configure::read('Config.language');
-
-			if ($language === null && !empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			}
-			$_this->__l10n->get($language);
-			$_this->locale = $_this->__l10n->locale;
-		}
 
 		if (is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
@@ -168,7 +157,7 @@ class I18n extends Object {
 			return($plural);
 		}
 		return($singular);
-    }
+	}
 /**
  * Attempts to find the plural form of a string.
  *
@@ -215,7 +204,7 @@ class I18n extends Object {
 
 		switch ($type) {
 			case -1:
-				return   (0);
+				return (0);
 			case 1:
 				if ($n != 1) {
 					return (1);
@@ -227,7 +216,7 @@ class I18n extends Object {
 				}
 				return (0);
 			case 7:
-				return   ($n);
+				return ($n);
 			case 21:
 				if (($n % 10 == 1) && ($n % 100 != 11)) {
 					return (0);
@@ -316,17 +305,17 @@ class I18n extends Object {
 		}
 
 		foreach ($searchPath as $directory) {
-			foreach ($_this->__l10n->languagePath as $lang) {
+			foreach ($_this->l10n->languagePath as $lang) {
 				$file = $directory . DS . $lang . DS . $_this->category . DS . $domain;
 				$default = APP . 'locale'. DS . $lang . DS . $_this->category . DS . 'default';
 				$core = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale'. DS . $lang . DS . $_this->category . DS . 'core';
 
-				if (file_exists($fn = "$file.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				if (file_exists($fn = "$file.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$default.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				} elseif (file_exists($fn = "$default.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
 				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
@@ -337,8 +326,8 @@ class I18n extends Object {
 					$_this->__loadPo($f, $domain);
 					$_this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$core.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				} elseif (file_exists($fn = "$core.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
 				} elseif (file_exists($fn = "$core.po") && ($f = fopen($fn, "r"))) {
@@ -376,8 +365,7 @@ class I18n extends Object {
  */
 	function __loadMo($file, $domain) {
 		$_this =& I18n::getInstance();
-		$data = fread($file, 1<<20);
-		fclose($file);
+		$data = file_get_contents($file);
 
 		if ($data) {
 			$header = substr($data, 0, 20);

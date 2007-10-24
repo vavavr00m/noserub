@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_adodb.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: dbo_adodb.php 5875 2007-10-23 00:25:51Z phpnut $ */
 
 /**
  * AdoDB layer for DBO.
@@ -221,8 +221,9 @@ class DboAdodb extends DboSource {
 		$cols = $this->_adodb->MetaColumns($this->fullTableName($model, false));
 
 		foreach ($cols as $column) {
-			$fields[] = array('name' => $column->name,
-									'type' => $this->column($column->type));
+			$fields[$column->name] = array(
+										'type' => $this->column($column->type)
+									);
 		}
 
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
@@ -239,7 +240,7 @@ class DboAdodb extends DboSource {
 /**
  * Returns number of affected rows in previous database operation, or false if no previous operation exists.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		return $this->_adodb->Affected_Rows();
@@ -247,7 +248,7 @@ class DboAdodb extends DboSource {
 /**
  * Returns number of rows in previous resultset, or false if no previous resultset exists.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		return $this->_result ? $this->_result->RecordCount() : false;
@@ -266,8 +267,8 @@ class DboAdodb extends DboSource {
 /**
  * Returns a LIMIT statement in the correct format for the particular database.
  *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
+ * @param integer $limit Limit of results returned
+ * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  * @todo Please change output string to whatever select your database accepts. adodb doesn't allow us to get the correct limit string out of it.
  */
@@ -331,14 +332,12 @@ class DboAdodb extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields(&$model, $alias, $fields) {
+	function fields(&$model, $alias = null, $fields = null, $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->name;
 		}
 
-		if (is_array($fields)) {
-				$fields = $fields;
-		} else {
+		if (!is_array($fields)) {
 			if ($fields != null) {
 				if (strpos($fields, ',')) {
 					$fields = explode(',', $fields);
@@ -421,6 +420,18 @@ class DboAdodb extends DboSource {
 			return false;
 		}
 	}
+/**
+ * Inserts multiple values into a join table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$count = count($values);
+		for ($x = 0; $x < $count; $x++) {
+			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		}
+	}
 }
-
 ?>

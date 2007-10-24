@@ -20,7 +20,7 @@
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision: 5118 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-05-18 19:19:53 +0200 (Fri, 18 May 2007) $
+ * @lastmodified	$Date: 2007-05-18 12:19:53 -0500 (Fri, 18 May 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>

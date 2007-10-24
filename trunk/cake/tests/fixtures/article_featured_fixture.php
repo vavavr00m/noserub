@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: article_featured_fixture.php 4925 2007-04-29 09:46:55Z phpnut $ */
+/* SVN FILE: $Id: article_featured_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class ArticleFeaturedFixture extends CakeTestFixture {
 	var $name = 'ArticleFeatured';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'user_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
 		'body' => 'text',

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: aros_aco_fixture.php 4925 2007-04-29 09:46:55Z phpnut $ */
+/* SVN FILE: $Id: aros_aco_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -35,7 +35,7 @@
 class ArosAcoFixture extends CakeTestFixture {
 	var $name = 'ArosAco';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'aro_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
 		'aco_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
 		'_create' => array('type' => 'string', 'length' => 2, 'null' => false, 'default' => '0'),

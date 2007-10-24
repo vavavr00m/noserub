@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sybase.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: dbo_sybase.php 5875 2007-10-23 00:25:51Z phpnut $ */
 /**
  * Sybase layer for DBO
  *
@@ -170,7 +170,9 @@ class DboSybase extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[] = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type']), 'null' => $column[0]['Null']);
+				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']),
+														'null' => $column[0]['Null']
+													);
 			}
 		}
 
@@ -269,7 +271,7 @@ class DboSybase extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -281,7 +283,7 @@ class DboSybase extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result and is_resource($this->_result)) {
@@ -378,19 +380,17 @@ class DboSybase extends DboSource {
 		}
 	}
 /**
- * Enter description here...
+ * Inserts multiple values into a join table
  *
- * @param unknown_type $schema
- *  @return unknown
+ * @param string $table
+ * @param string $fields
+ * @param array $values
  */
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-						'{FULLTEXT_SYBASE}', '{BOOLEAN}', '{UTF_8}');
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
-						'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
-						'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-		$query = trim(r($search, $replace, $schema));
-		return $query;
+	function insertMulti($table, $fields, $values) {
+		$count = count($values);
+		for ($x = 0; $x < $count; $x++) {
+			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		}
 	}
 }
 ?>

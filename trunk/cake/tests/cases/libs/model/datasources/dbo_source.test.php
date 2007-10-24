@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_source.test.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: dbo_source.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -1393,6 +1393,20 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions('DATEDIFF(NOW(),Article.published) < 1 && Article.live=1');
 		$expected = " WHERE DATEDIFF(NOW(),`Article`.`published`) < 1 && `Article`.`live`=1";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions('file = "index.html"');
+		$expected = ' WHERE file = "index.html"';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions("file = 'index.html'");
+		$expected = " WHERE file = 'index.html'";
+		$this->assertEqual($result, $expected);
+
+		$letter = $letter = 'd.a';
+		$conditions = array('Company.name' => 'like '.$letter.'%');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `Company`.`name` like  'd.a%'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testQuotesInStringConditions() {
@@ -1614,6 +1628,15 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions($conditions);
 		$expected = " WHERE NOT ((`Listing`.`expiration` BETWEEN  '1' AND '100')) AND ((`Listing`.`title` LIKE  '%term%') OR (`Listing`.`description` LIKE  '%term%')) AND ((`Listing`.`title` LIKE  '%term_2%') OR (`Listing`.`description` LIKE  '%term_2%'))";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
+		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`))  =  'blah'";
+		$this->assertEqual($result, $expected);
+
+		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76) ";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testMixedConditionsParsing() {
@@ -1631,6 +1654,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions($conditions);
 		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*5\s+AND\s+`Thread`.`buyer_id`\s*=\s*14\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
 	}
+
 	function testFieldParsing() {
 		$result = $this->db->fields($this->model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
@@ -1706,6 +1730,10 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->fields($this->model, null, 'field1, field2, field3, count(*), name');
 		$expected = array('`TestModel`.`field1`', '`TestModel`.`field2`', '`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, array('dayofyear(now())'));
+		$expected = array('dayofyear(now())');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -2012,7 +2040,16 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->order(array(array("title")));
 		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order("Dealer.id = 7 desc, Dealer.id = 3 desc, Dealer.title asc");
+		$expected = " ORDER BY Dealer`.`id` = 7 desc,  Dealer`.`id` = 3 desc,  `Dealer`.`title` asc";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->order(array("Page.name"=>"='test' DESC"));
+		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*='test'\s+DESC\s*$/", $result);
+
+		$result = $this->db->order("Page.name = 'view' DESC");
+		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*=\s*'view'\s+DESC\s*$/", $result);
 	}
 }
-
 ?>
