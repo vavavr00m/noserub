@@ -117,11 +117,11 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_2_service() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted    = $this->Account->Identity->splitUsername($username);
         $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         $service_id  = $this->Session->read('Service.add.id');
-        
+
         # check the session vars
         if(!$identity_id || !$service_id) {
             # couldn't find the session vars. so either someone skipped 
@@ -162,7 +162,7 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_2_feed() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted    = $this->Account->Identity->splitUsername($username);
         $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         
@@ -216,10 +216,10 @@ class AccountsController extends AppController {
             $this->redirect('/', null, true);
         }
         
-        if(isset($this->params['form'])) {
+        if (!empty($this->params['form'])) {
             # reset session
             $this->Session->delete('Service.add.data');
-            
+
             if(isset($this->params['form']['submit'])) {
                 # check if the acccount is not already there
                 if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
