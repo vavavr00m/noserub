@@ -3,7 +3,7 @@
     
     if($menu['logged_in']) {
         $main_menu = array(
-            'social_stream' => array('Social Stream', '/'),
+            'social_stream' => array('Social Stream', '/social_stream/'),
             'my_profile'    => array('My Profile',   $noserub_url),
             'my_contacts'   => array('My Contacts',   $noserub_url . '/contacts/'),
             'settings'      => array('Settings',  $noserub_url . 'settings/')

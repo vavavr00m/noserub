@@ -56,7 +56,7 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
 # just a precaution for avoiding confusions.
-define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,tests,noserub,auth,login,register');
+define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,tests,noserub,auth,login,register,social_stream');
 
 /**
  * Static files directory

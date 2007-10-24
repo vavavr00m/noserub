@@ -51,6 +51,10 @@ class MenuComponent extends Object {
                         $main_menu = 'my_profile'; 
                         $sub_menu  = $filter == '' ? 'all' : $filter;
                         break;
+                    
+                    case 'social_stream':
+                        $main_menu = 'social_stream';
+                        break;
                         
                     case 'profile_settings':
                         $main_menu = 'settings'; 
@@ -79,14 +83,6 @@ class MenuComponent extends Object {
                 $sub_menu  = 'openid';
                 break;
 				
-            case 'Pages':
-                switch($action) {
-                    case 'display':
-                    case 'home':
-                        $main_menu = 'social_stream'; break;
-                }
-                break;
-                
             case 'Syndications':
                 $main_menu = 'settings';
                 $sub_menu  = 'feeds';

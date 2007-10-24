@@ -5,8 +5,8 @@ $sub_menu = null;
 
 if($menu['main'] == 'social_stream' || $menu['main'] == 'my_profile') {
     $noserub_url = '/' . $username . '/';
-    if($menu['main'] == 'network') {
-        $noserub_url .= 'network/';
+    if($menu['main'] == 'social_stream') {
+        $noserub_url = '/social_stream/';
     } 
     $sub_menu = array(
         'all'          => array('All', $noserub_url . 'all/'),

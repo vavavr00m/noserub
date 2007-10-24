@@ -141,7 +141,6 @@
     
         <hr />
 	
-	<?php if($accounts) { ?>
 	    <h4>On the web</h4>
 	    <ul class="whoissidebar">
 	        <?php foreach($accounts as $item) { ?>
@@ -157,7 +156,6 @@
             </p>
 	    <?php } ?>
 	    <hr />
-	<?php } ?>
 
 	<h4>Contact</h4>
 	<ul class="whoissidebar">

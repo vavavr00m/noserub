@@ -35,7 +35,7 @@
  * to use (in this case, /app/views/pages/home.thtml)...
  */
 Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-Router::connect('/pages/dashboard/', array('controller' => 'pages', 'action' => 'home'));
+Router::connect('/social_stream/:filter/', array('controller' => 'identities', 'action' => 'social_stream'));
     
 /**
  * Then we connect url '/test' to our test controller. This is helpfull in
