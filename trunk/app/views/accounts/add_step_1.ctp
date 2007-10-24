@@ -3,7 +3,7 @@
     	<legend>Add service</legend>
         <?php
             $selects = 'Service: ' . $form->select('Account.service_id', $services, null, null, false); 
-            echo $form->radio('Account.type', array(1 => '', 2 => ''), $selects.'<br />');
+            echo $form->radio('Account.type', array(1 => '', 2 => ''), array('label' => false, 'separator' => $selects.'<br />'));
         ?>
         Any RSS-Feed (eg. Blogs)
     </fieldset>
