@@ -60,6 +60,44 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
+    function afterFind($data) {
+        # moved from Identity Model to here, so that all the associated
+        # afterFinds could be catched, too
+        if(is_array($data)) {
+            if(isset($data['username'])) {
+                $username = Identity::splitUsername($data['username']);
+                $data['local_username'] = $username['local_username'];
+                $data['username']       = $username['username'];
+                $data['namespace']      = $username['namespace'];
+                $data['local']          = $username['local'];
+                $data['name']           = trim($data['firstname'] . ' ' . $data['lastname']);
+            } else {
+                foreach($data as $key => $item) {
+                    $checkModels = array('WithIdentity', 'Identity');
+                    foreach($checkModels as $modelName) {
+                        if(isset($item[$modelName]['username'])) {
+                            $username = Identity::splitUsername($item[$modelName]['username']);
+                            $item[$modelName]['local_username'] = $username['local_username'];
+                            $item[$modelName]['username']       = $username['username'];
+                            $item[$modelName]['namespace']      = $username['namespace'];
+                            $item[$modelName]['local']          = $username['local'];
+                            $item[$modelName]['name']           = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                            $data[$key] = $item;
+                        }
+                    }
+                }
+            }
+        }
+    
+        return $data;
+    }
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     public function check($data) {
         $splitted = $this->splitUsername($data['Identity']['username']);
         $username = $splitted['username'];

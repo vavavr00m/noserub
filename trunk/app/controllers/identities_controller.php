@@ -56,7 +56,6 @@ class IdentitiesController extends AppController {
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
-
             if($data) {
                 # get number of accounts and contacts
                 # also divide between real services and contact services like AIM
