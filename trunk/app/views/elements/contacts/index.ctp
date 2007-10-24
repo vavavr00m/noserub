@@ -38,10 +38,9 @@
             	                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
                                    strpos($item['WithIdentity']['photo'], 'https://') === 0) {
                                     # contains a complete path, eg. from not local identities
-                                    $photo_url = $item['WithIdentity']['photo'];
-                                    $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
+                                    $contact_photo = $item['WithIdentity']['photo'];
             	                } else {
-            	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';
+            	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'.jpg';
             	                }	                
                             } else {
                                 $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
