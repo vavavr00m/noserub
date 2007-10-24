@@ -54,7 +54,7 @@
         <div id="whois">
         	<h3><a href="<?php echo $noserub_url; ?>" class="fn url"><?php echo $data['Identity']['name']; ?></a></h3>
         	<p id="personalid">
-        		<?php echo $data['Identity']['servername']; ?>/<strong><?php echo $data['Identity']['local_username']; ?></strong>
+        		<?php echo $data['Identity']['servername']; ?>/<strong class="nickname"><?php echo $data['Identity']['local_username']; ?></strong>
         	</p>
         	<ul class="whoisstats">
         	    <?php if(isset($data['Identity']['age'])) { ?>
@@ -152,8 +152,8 @@
 	        <?php } ?>
 	    </ul>
 	    <?php if(isset($session_identity)) { ?>
-            <p class="infotext">
-                <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+            <p>
+                <?php echo $html->link('Add new service', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
             </p>
 	    <?php } ?>
 	    <hr />
@@ -170,8 +170,8 @@
 	    <?php } ?>
 	</ul>
 	<?php if(isset($session_identity)) { ?>
-	    <p class="infotext">
-            <?php echo $html->link('Add new', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+	    <p>
+            <?php echo $html->link('Add new service', '/' . $session_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />

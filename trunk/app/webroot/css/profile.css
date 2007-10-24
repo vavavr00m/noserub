@@ -65,7 +65,7 @@
 
 /* icons */
 #whois ul, #sidebar ul {
-	padding: 0 0 15px 0;
+	padding: 0 0 5px 0;
 	margin: 0;
 }
 
@@ -78,4 +78,35 @@
 .whoisicon  {
 	padding: 5px 5px 5px 0;
 	vertical-align: middle;
+}
+
+/* contacts */
+dl {
+	border: 1px solid #D9D7CA;
+	background-color: #ffffff;
+	padding: 10px;
+	float: left;
+	margin-right: 10px;
+	height: 85px;
+	width: 220px;
+	line-height: 16px;
+}
+
+dt {
+	
+}
+
+dt img {
+	border: 1px solid #ECEBE5;
+	float: left;
+	margin-right: 10px;
+}
+
+dd {
+	margin: 0;
+	padding: 0;
+}
+
+.contact_option {
+	margin-top: 5px;
 }

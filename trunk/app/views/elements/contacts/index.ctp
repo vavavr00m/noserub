@@ -27,15 +27,6 @@
             No contacts yet.
         </p>
 <?php } else { ?>
-    <table class="listing">
-        <thead>
-            <tr>
-                <th>Contact</th>
-                <th>Type</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
             <?php if(!empty($data)) {
                 foreach($data as $item) { 
                     if($item['WithIdentity']['namespace'] != '' && $session_local_username != $item['WithIdentity']['namespace']) {
@@ -43,8 +34,6 @@
                         continue;
                     }
                     ?>
-                    <tr>
-                        <td>
                             <?php if($item['WithIdentity']['photo']) {
             	                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
                                    strpos($item['WithIdentity']['photo'], 'https://') === 0) {
@@ -55,37 +44,51 @@
             	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';
             	                }	                
                             } else {
-                                $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
+                                $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
                             } ?>
-            	            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />            	            
-                            <?php echo $html->link($item['WithIdentity']['local_username'], 'http://' . $item['WithIdentity']['username']); ?>
-                        </td>
-                        <td><?php
+            	            
+            	            <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>">
+            	            	<dt>
+            	            		<a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
+            	            		<img class="photo" src="<?php echo $contact_photo; ?>" width="80" height="80" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />
+            	            		</a>
+            	            	</dt>                       			
+                       			<dt><a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>"><?php echo $item['WithIdentity']['local_username']; ?></a></dt>
+                       			
+                       			<dd class="fn"><?php echo $item['WithIdentity']['name']; ?></dd>
+
+                        		<!-- NoseRub or private // currently disabled // start
+                        		<dd>
+                       <?php
                             if(($session_local_username != '' && $session_local_username == $item['WithIdentity']['namespace']) ||
                                ($session_local_username == '' && $item['WithIdentity']['namespace'] != '')) {
                                 echo 'Private';
                             } else {
                                 echo 'NoseRub';
                             } 
-                        ?></td>
-                        <td>
+                        ?>
+                        		</dd>
+                        		-->
+                        		
+                        
                             <?php 
                                 $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
                                 if($identity_id == $session_identity_id && $session_identity_id != 0) { ?>
-                                <?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?>
+                                <dd class="contact_option"><?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete'); ?></dd>
                             <?php } ?>
                             <?php if($session_local_username != '' && $item['WithIdentity']['namespace'] == $session_local_username) { ?>
-                                | <?php echo $html->link('Add Account', '/' . $item['WithIdentity']['local_username'] . '/accounts/add/'); ?>
+                            	<dd><?php echo $html->link('Add Service', '/' . $item['WithIdentity']['local_username'] . '/accounts/add/'); ?></dd>
                             <?php } ?>
-                        </td>
-                    </tr>
+
+							</dl>
                 <?php }
             } ?>
-        </tbody>
-    </table>
+
+
 <?php } ?>
 <?php if($identity['id'] == $session_identity_id) { ?>
-    <p class="infotext">
+	<br class="clear" />
+    <p>
         <?php echo $html->link('Add new contact', '/' . $identity['local_username'] . '/contacts/add/', array('class' => 'addmore')); ?>
     </p>
 <?php } ?>
