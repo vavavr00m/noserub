@@ -89,11 +89,17 @@ class Admin extends AppModel {
      * @access 
      */
     function checkExtensions() {
-        if(function_exists('gmp_init') || function_exists('bcscale')) {
-            return array();
-        } else {
-            return array('GMP or BCMath' => 'needed for OpenID functionality');
+        $result = array();
+    	
+    	if (!extension_loaded('gd')) {
+        	$result = am($result, array('GD' => 'needed for image handling')); 
         }
+    	
+        if (!(function_exists('gmp_init') || function_exists('bcscale'))) {
+        	$result = am($result, array('GMP or BCMath' => 'needed for OpenID functionality'));
+        }
+        
+        return $result;
     }
     
     /**

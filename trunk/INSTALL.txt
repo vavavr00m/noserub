@@ -13,8 +13,8 @@ INSTALL
 0. What do I need?
 ------------------
 You need MySQL and PHP 5. MySQL 5 is strongly advised. PHP 5 must have 
-enabled either the GMP extension or the Bcmath extension. Your
-webserver (I assume Apache, never tried something else) should have
+enabled either the GMP extension or the Bcmath extension plus the GD extension. 
+Your webserver (I assume Apache, never tried something else) should have
 mod_rewrite installed and made available for the directory, NoseRub is
 installed at. This is important, so that the URLs are the same on all
 servers in the NoseRub "universe".
@@ -34,7 +34,7 @@ PHP, please look here:
 ------------------------------------
 Therefore you should just extract the archive to the document root of your
 webserver:
-    tar -zxf noserub_0.1a.tar.gz
+    tar -zxf noserub_0.4.tar.gz
 
 Make sure that /noserub/app/tmp is writeable by the webserver. If you don't
 want to have your NoseRub installation under http://<server_name>/noserub/,
