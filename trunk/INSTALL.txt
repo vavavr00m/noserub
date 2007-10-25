@@ -36,10 +36,10 @@ Therefore you should just extract the archive to the document root of your
 webserver:
     tar -zxf noserub_0.4.tar.gz
 
-Make sure that /noserub/app/tmp is writeable by the webserver. If you don't
-want to have your NoseRub installation under http://<server_name>/noserub/,
-but rather directly under http://<server_name>/, just point the document
-root of the webserver to /noserub/app/webroot/.
+Make sure that /noserub/app/tmp and /noserub/app/webroot/static/avatars are 
+writeable by the webserver. If you don't want to have your NoseRub installation 
+under http://<server_name>/noserub/, but rather directly under http://<server_name>/, 
+just point the document root of the webserver to /noserub/app/webroot/.
 
 
 
