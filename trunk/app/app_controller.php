@@ -12,6 +12,7 @@
 class AppController extends Controller {
     var $helpers = array('javascript', 'html');
     var $components = array('menu');
+    var $uses = array('Identity');
     
     /**
      * Makes sure we redirect to the https url,
@@ -40,6 +41,7 @@ class AppController extends Controller {
      * @access 
      */
     function beforeFilter() {       
+        # set menu data
         $this->menu->setViewData($this);  
         
         /**
@@ -62,6 +64,11 @@ class AppController extends Controller {
                 exit;
             }
         }
+    }
+    
+    public function beforeRender() {
+        # set new security_token
+        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
     }
     
 }

@@ -93,6 +93,43 @@ class Identity extends AppModel {
     
         return $data;
     }
+    
+    /**
+     * Updates the security token for given $identity_id
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function updateSecurityToken($identity_id) {
+        if($identity_id) {
+            $this->id = $identity_id;
+            $security_token = md5($identity_id.time());
+            $this->saveField('security_token', $security_token);
+            
+            return $security_token;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function checkSecurityToken($identity_id, $security_token) {
+        if($identity_id && $security_token) {
+            $this->id = $identity_id;
+            $db_security_token = $this->field('security_token');
+            return $db_security_token == $security_token;
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Method description
      *

@@ -5,4 +5,8 @@ class PagesController extends AppController {
     function display() {
         $this->redirect('/social_stream/', null, true);
     }
+    
+    function security_check() {
+        $this->set('headline', 'There was a security problem');
+    }
 }

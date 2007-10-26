@@ -50,13 +50,14 @@ Router::connect('/pages/register/withopenid/step2', array('controller' => 'ident
 Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
+Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/*/edit/', array('controller' => 'contacts', 'action' => 'edit'));
-Router::connect('/:username/contacts/*/delete/', array('controller' => 'contacts', 'action' => 'delete'));
+Router::connect('/:username/contacts/:contact_id/delete/:security_token', array('controller' => 'contacts', 'action' => 'delete'));
 Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
 Router::connect('/:username/add/as/contact/', array('controller' => 'contacts', 'action' => 'add_as_contact'));

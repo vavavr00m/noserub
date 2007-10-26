@@ -176,7 +176,9 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function delete($contact_id) {
+    function delete() {
+        $contact_id        = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
+        $security_token    = isset($this->params['security_token']) ? $this->params['security_token'] : '';
         $username          = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted          = $this->Contact->Identity->splitUsername($username);
         $session_identity  = $this->Session->read('Identity');
@@ -184,6 +186,11 @@ class ContactsController extends AppController {
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+        }
+        
+        # check the security token
+        if(!$this->Contact->Identity->checkSecurityToken($session_identity['id'], $security_token)) {
+            $this->redirect('/pages/security_check/', null, true);
         }
         
         # check, if the contact belongs to the identity
