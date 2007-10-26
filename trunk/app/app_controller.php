@@ -66,6 +66,23 @@ class AppController extends Controller {
         }
     }
     
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function ensureSecurityToken() {
+        $session_identity_id = $this->Session->read('Identity.id');
+        $security_token      = isset($this->params['security_token']) ? $this->params['security_token'] : '';
+        # @todo: also check POST parameters
+        
+        if(!$this->Identity->checkSecurityToken($session_identity_id, $security_token)) {
+            $this->redirect('/pages/security_check/', null, true);
+        }
+    }
+    
     public function beforeRender() {
         # set new security_token
         $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));

@@ -60,7 +60,7 @@ Router::connect('/:username/contacts/*/edit/', array('controller' => 'contacts',
 Router::connect('/:username/contacts/:contact_id/delete/:security_token', array('controller' => 'contacts', 'action' => 'delete'));
 Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
-Router::connect('/:username/add/as/contact/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
+Router::connect('/:username/add/as/contact/:security_token/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
 Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 
