@@ -329,6 +329,7 @@ class Identity extends AppModel {
         $username = str_replace('Ä', 'Ae', $username);
         $username = str_replace('Ö', 'Oe', $username);
         $username = str_replace('Ü', 'Ue', $username);
+        $username = str_replace(' ', '-',  $username);
         
         $username = preg_replace('/[^\w\s.-]/', null, $username);
         return $username;

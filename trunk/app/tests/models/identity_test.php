@@ -219,6 +219,13 @@ class IdentityModelTestCase extends CakeTestCase {
 	    $this->assertEqual($expected, $result);
 	}
 	
+	function testSanitizeUsername9() {
+	    $username = 'kein leerzeichen erlaubt';
+	    $expected = 'kein-leerzeichen-erlaubt';
+	    $result = $this->model->sanitizeUsername($username);
+	    $this->assertEqual($expected, $result);
+	}
+	
 	function tearDown() {
 	    unset($this->model);
 	}
