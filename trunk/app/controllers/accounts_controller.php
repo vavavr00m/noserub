@@ -100,7 +100,7 @@ class AccountsController extends AppController {
                 $this->redirect('/'.$splitted['local_username'].'/settings/accounts/add/feed/', null, true);
             }
         }
-        $this->set('services', $this->Account->Service->generateList(array('id<>8'), null, null, "{n}.Service.id", "{n}.Service.name"));
+        $this->set('services', $this->Account->Service->generateList(array('id<>8'), 'Service.name', null, "{n}.Service.id", "{n}.Service.name"));
         
         if($splitted['username'] == $session_identity['username']) {
             $this->set('headline', 'Add existing Web-Service or RSS-Feed to your profile.');
