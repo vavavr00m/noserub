@@ -397,21 +397,12 @@ class IdentitiesController extends AppController {
             $url = $this->url->http('/');
             $this->redirect($url, null, true);
         }
-        
+
         if($this->data) {
-            $data = $this->data;
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
             
-            if (!isset($session_identity['openid'])) {
-	            $data['Identity']['username'] = $splitted['username'];
-	            $data['Identity']['password'] = $data['Identity']['passwd'];
-	            if($this->Identity->check($data)) {
-	            	$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
-	            } else {
-	                $this->Identity->invalidate('passwd');
-	            }
-            } else {
-				$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
-            }
+			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
         }
         
         $this->set('headline', 'Delete your account');

@@ -16,16 +16,8 @@
         <div class="input">
         <label>Delete Account</label>
         <?php echo $form->checkbox('Identity.confirm'); ?> <span><strong>Yes, please delete my account.</strong></span>
-        <?php 
-            $openid = $session->read('Identity.openid');
-        	# if the user registered with an OpenID then there is no password available and so we don't show the password field
-            if (!isset($openid)) {
-        		echo $form->input('Identity.passwd', array('type'  => 'password',
-                	                                       'label' => 'Password', 
-                    	                                   'error' => 'You need to enter your password to confirm the complete deletion of your account.'));
-            } 
-        ?>
         </div>
+        <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     </fieldset>
     
     <fieldset>

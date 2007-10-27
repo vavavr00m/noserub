@@ -238,7 +238,8 @@ class Identity extends AppModel {
                       'longitude'         => 0,
                       'birthday'          => '1900-01-01',
                       'sex'               => 0,
-                      'frontpage_updates' => 0);
+                      'frontpage_updates' => 0,
+                      'security_token'    => '');
         $saveable = array_keys($data);
         $saveable[] = 'modified';
         $this->save($data, false, $saveable);
