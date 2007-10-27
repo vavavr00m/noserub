@@ -253,6 +253,9 @@ class IdentitiesController extends AppController {
         }
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             # get identity again to check, where we have changes
             $this->Identity->recursive = 0;
             $this->Identity->expects('Identity');
@@ -332,6 +335,9 @@ class IdentitiesController extends AppController {
         }
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             $saveable = array('frontpage_updates');
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, true, $saveable);
@@ -363,6 +369,9 @@ class IdentitiesController extends AppController {
         }
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             $data = $this->data;
             $data['Identity']['username'] = $splitted['username'];
             $data['Identity']['password'] = $data['Identity']['old_passwd'];

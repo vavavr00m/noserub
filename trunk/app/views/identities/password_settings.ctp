@@ -19,6 +19,7 @@
             echo $form->input('Identity.passwd2', array('type' => 'password', 
                                                         'label' => 'New password repeated', 
                                                         'error' => 'Passwords must match')); ?>
+        <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     </fieldset>
     
     <fieldset>
