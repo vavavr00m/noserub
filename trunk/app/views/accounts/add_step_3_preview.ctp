@@ -22,6 +22,7 @@
     <?php } ?>
 </dl>
 <form id="AccountAddFormStep3" method="post" action="<?php echo $this->here ?>">
+    <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <input class="submitbutton" type="submit" name="submit" value="OK. Save it!"/>
     <input class="submitbutton" type="submit" name="cancel" value="Forget it"/>
 </form>

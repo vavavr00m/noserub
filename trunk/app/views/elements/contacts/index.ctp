@@ -76,6 +76,7 @@
                                 <dd class="contact_option"><?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
                             <?php } ?>
                             <?php if($session_local_username != '' && $item['WithIdentity']['namespace'] == $session_local_username) { ?>
+                            	<dd><?php echo $html->link('Manage Services', '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/'); ?></dd>
                             	<dd><?php echo $html->link('Add Service', '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/add/'); ?></dd>
                             <?php } ?>
 

@@ -1,4 +1,5 @@
 <form id="AccountAddFormStep2" method="post" action="<?php echo $this->here ?>">
+    <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
     	<legend>Details</legend>
         <?php echo $form->input('Account.username', array('label' => 'Username in '.$service['Service']['name'].':', 

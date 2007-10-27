@@ -90,6 +90,9 @@ class AccountsController extends AppController {
         $this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             if($this->data['Account']['type'] == 1) {
                 # user selected a service
                 $this->Session->write('Service.add.id', $this->data['Account']['service_id']);
@@ -133,6 +136,9 @@ class AccountsController extends AppController {
         $this->Session->delete('Service.add.data');
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             # get title, url and preview
             $data = $this->Account->Service->getInfoFromService($splitted['username'], $service_id, $this->data['Account']['username']);    
             if(!$data) {
@@ -177,6 +183,9 @@ class AccountsController extends AppController {
         $this->Session->delete('Service.add.data');
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             # get title, url and preview
             $data = $this->Account->Service->getInfoFromFeed($splitted['username'], $this->data['Account']['service_type_id'], $this->data['Account']['feed_url']);    
             if(!$data) {
@@ -204,10 +213,11 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_3_preview() {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted    = $this->Account->Identity->splitUsername($username);
-        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
-        $data        = $this->Session->read('Service.add.data');
+        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted         = $this->Account->Identity->splitUsername($username);
+        $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
+        $session_identity = $this->Session->read('Identity');
+        $data             = $this->Session->read('Service.add.data');
         
         # check the session vars
         if(!$identity_id || !$data) {
@@ -216,7 +226,10 @@ class AccountsController extends AppController {
             $this->redirect('/', null, true);
         }
         
-        if (!empty($this->params['form'])) {
+        if(!empty($this->params['form'])) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             # reset session
             $this->Session->delete('Service.add.data');
 
@@ -248,7 +261,17 @@ class AccountsController extends AppController {
                     }
                 }
             }
-            $this->redirect('/', null, true);
+            # we're done!
+            if($identity_id == $session_identity['id']) {
+                # new account for the logged in user, so we redirect to his/her account settings
+                $this->redirect('/' . $username . '/settings/accounts/', null, true);
+            } else {
+                # new account for a private contact. redirect to his/her profile
+                $this->Account->Identity->recursive = 0;
+                $this->Account->Identity->expects('Identity');
+                $account_for_identity = $this->Account->Identity->findById($identity_id);
+                $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
+            }
         }
         $this->set('data', $data);
         $this->set('headline', 'Preview the data');
@@ -282,6 +305,9 @@ class AccountsController extends AppController {
         }
         
         if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
             foreach($this->data as $item) {
                 if(isset($item['action']) && $item['action'] > 0) {
                     # see, wether we should create a new contact, or add 
@@ -342,7 +368,7 @@ class AccountsController extends AppController {
                 }
             }
             # we're done!
-            $this->redirect('/', null, true);
+            $this->redirect('/' . $username . '/settings/accounts/', null, true);
         }
         $this->Account->recursive = 1;
         $this->Account->expects('Account', 'Service');
@@ -361,7 +387,7 @@ class AccountsController extends AppController {
             $accounts = $this->Account->findAll(array('Account.username'        => $username,
                                                       'Account.service_id'      => $service_id,
                                                       'Account.service_type_id' => $service_type_id));
-        
+            
             # we might have several accounts found, because the same account 
             # could be stored at different local identities.
             # we also don't find those, where e. a del.icio.us RSS-Feed was
@@ -382,8 +408,10 @@ class AccountsController extends AppController {
         
         $this->Account->Identity->Contact->recursive = 1;
         $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
-        $data = $this->Account->Identity->Contact->findAll(array('Contact.identity_id'    => $identity_id,
-                                                                  'WithIdentity.is_local' => 1), null, 'WithIdentity.username ASC');
+        $data = $this->Account->Identity->Contact->findAll(array('Contact.identity_id'   => $identity_id,
+                                                                 'WithIdentity.is_local' => 1,
+                                                                 'WithIdentity.username LIKE "%@%"'), 
+                                                           null, 'WithIdentity.username ASC');
         $contacts = array();
         foreach($data as $item) {
             $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['local_username'];
