@@ -126,6 +126,9 @@ class SyndicationsController extends AppController {
             $this->redirect($url, null, true);
         }
         
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+        
         # check, if the syndication_id belongs to the logged in user
         $this->Syndication->recursive = 0;
         $this->Syndication->expects('Syndication');

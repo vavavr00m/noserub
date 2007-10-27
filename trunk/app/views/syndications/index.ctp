@@ -35,7 +35,7 @@
                 </td>
                 <td>
                 	<ul>
-                   		<li class="delete icon"><?php echo $html->link('Delete', '/' . $session_identity['local_username'] . '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/'); ?></li>
+                   		<li class="delete icon"><?php echo $html->link('Delete', '/' . $session_identity['local_username'] . '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/' . $security_token . '/'); ?></li>
                    	</ul>
                 </td>
             </tr>

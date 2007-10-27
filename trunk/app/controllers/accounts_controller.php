@@ -439,8 +439,9 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function delete($account_id) {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+    function delete() {
+        $account_id       = isset($this->params['account_id']) ? $this->params['account_id'] : '';
+        $username         = isset($this->params['username'])   ? $this->params['username']   : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
@@ -450,6 +451,9 @@ class AccountsController extends AppController {
             $this->redirect('/', null, true);
         }
         
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+
         if($splitted['username'] != $session_identity['username']) {
             # check, if $username belongs to the
             # logged in identities namespace

@@ -70,7 +70,7 @@ Router::connect('/:username/settings/account/', array('controller' => 'identitie
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
-Router::connect('/:username/settings/feeds/:syndication_id/delete/', array('controller' => 'syndications', 'action' => 'delete'));
+Router::connect('/:username/settings/feeds/:syndication_id/delete/:security_token/', array('controller' => 'syndications', 'action' => 'delete'));
 Router::connect('/:username/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 
 Router::connect('/:username/settings/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
@@ -79,7 +79,7 @@ Router::connect('/:username/settings/accounts/add/preview/', array('controller' 
 Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
 Router::connect('/:username/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
 Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
-Router::connect('/:username/settings/accounts/*/delete', array('controller' => 'accounts', 'action' => 'delete'));
+Router::connect('/:username/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
 Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
