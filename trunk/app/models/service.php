@@ -779,7 +779,7 @@ class PlazesService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://plazes.com/users/' . $username . ';contacts', '/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)<\/a>/simU', '/next<\/a><\/strong><\/p>/iU', '?page=');
+		return ContactExtractor::getContactsFromMultiplePages('http://plazes.com/users/' . $username . ';contacts', '/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)\s{6}<\/a>/simU', '/next<\/a><\/strong><\/p>/iU', '?page=');
 	}
 	
 	function getContent($feeditem) {
