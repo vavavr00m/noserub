@@ -16,7 +16,7 @@
 	uses('Folder');
 
 	class TestsController extends AppController {
-		var $uses = null;
+		var $uses = array();
 		
 		function index() {
 			$groupTestFileNames = listClasses(APP.'tests'.DS.'groups');
