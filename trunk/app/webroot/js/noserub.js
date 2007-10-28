@@ -26,6 +26,10 @@ noserub.fn = noserub.prototype = {
         } catch(e) {
             this.log(data.controller+'_'+data.action + '() not found!');
         }
+        
+        setTimeout(function() {
+            $('div#message.success').fadeOut('slow');
+        }, 600);
     },
     
     log: function(msg) {
