@@ -1,4 +1,5 @@
 <?php
+	loadController(null);
 
 	class NiceSRegTest extends CakeTestCase {
 		var $helper = null;
@@ -6,6 +7,10 @@
 		var $unsupportedFields = array('nickname', 'dob', 'postcode', 'country', 'language', 'timezone');
 		
 		function setUp() {
+			// putting a view object to the class registry so that the form helper works
+			ClassRegistry::removeObject('view');
+			new View(new AppController());
+			
 			$this->helper = new NiceSRegHelper();
 			loadHelper('Html');
 			loadHelper('Form');
