@@ -4,7 +4,7 @@
 class ContactsController extends AppController {
     var $uses = array('Contact');
     var $helpers = array('form', 'nicetime');
-    var $components = array('cluster');
+    var $components = array('cluster', 'filterSanitize');
     
     /**
      * Method description
@@ -237,23 +237,7 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        # sanitize filter
-        switch($filter) {
-            case 'photo':
-            case 'video':
-            case 'audio':
-            case 'link':
-            case 'text':
-            case 'event':
-            case 'micropublish':
-            case 'document':
-            case 'location':
-                $filter = $filter; 
-                break;
-            
-            default: 
-                $filter = false;
-        }
+		$filter = $this->filterSanitize->sanitize($filter);
         
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');

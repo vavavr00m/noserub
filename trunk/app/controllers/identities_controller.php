@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize');
     
     /**
      * Method description
@@ -22,23 +22,7 @@ class IdentitiesController extends AppController {
         $splitted = $this->Identity->splitUsername($username);
         $username = $splitted['username'];
         
-        # sanitize filter
-        switch($filter) {
-            case 'photo':
-            case 'video':
-            case 'audio':
-            case 'link':
-            case 'text':
-            case 'event':
-            case 'micropublish':
-            case 'document':
-            case 'location':
-                $filter = $filter; 
-                break;
-            
-            default: 
-                $filter = false;
-        }
+        $filter = $this->filterSanitize->sanitize($filter);
         
         $session_identity = $this->Session->read('Identity');
         
@@ -164,24 +148,7 @@ class IdentitiesController extends AppController {
     
     function social_stream() {
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
-        
-        # sanitize filter
-        switch($filter) {
-            case 'photo':
-            case 'video':
-            case 'audio':
-            case 'link':
-            case 'text':
-            case 'event':
-            case 'micropublish':
-            case 'document':
-            case 'location':
-                $filter = $filter; 
-                break;
-            
-            default: 
-                $filter = false;
-        }
+        $filter = $this->filterSanitize->sanitize($filter);
         
         $this->Identity->recursive = 2;
         $this->Identity->expects('Identity.Identity', 'Identity.Account', 
