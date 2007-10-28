@@ -9,7 +9,7 @@ class Account extends AppModel {
     var $hasAndBelongsToMany = array('Syndication');
     
     var $validate = array(
-            'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_]+$/')),
+            'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
     /**

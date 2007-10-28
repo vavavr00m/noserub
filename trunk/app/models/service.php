@@ -334,6 +334,8 @@ class Service extends AppModel {
     			return new MsnService();
     		case 30:
     			return new FacebookService();
+    		case 31:
+        		return new SecondlifeService();
     		case 32:
     			return new LinkedinService();
     		case 33:
@@ -846,6 +848,13 @@ class ScribdService implements IService {
 	function getFeedUrl($username) {
 		return 'http://www.scribd.com/feeds/user_rss/'.$username;
 	}
+}
+
+class SecondlifeService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return '#'.$username;
+	}	
 }
 
 class SkypeService extends ServiceAdapter {
