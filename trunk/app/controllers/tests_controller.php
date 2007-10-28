@@ -91,7 +91,6 @@
 		
 		function __executeTestTask($param1 = '', $param2 = '') {
 			putenv('display=html');
-			
 			$out = shell_exec($this->__getPHPCommand() . ' ' . VENDORS . 'testsuite' . DS . 'test.php '. $this->__getAppAlias() . ' ' . $param1 . ' ' .$param2);
 			echo $out;
 			

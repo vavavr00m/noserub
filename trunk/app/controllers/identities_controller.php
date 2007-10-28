@@ -10,7 +10,7 @@ class IdentitiesController extends AppController {
     var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize');
     
     /**
-     * Method description
+     * Displays profile page of an identity
      *
      * @param  
      * @return 
@@ -31,12 +31,10 @@ class IdentitiesController extends AppController {
             $data = null;
         } else {
             $this->Identity->recursive = 2;
-            $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Contact',
+            $this->Identity->expects('Identity.Identity', 'Identity.Account',
                                      'Account.Account', 'Account.Service', 'Account.ServiceType',
                                      'Service.Service',
-                                     'ServiceType.ServiceType',
-                                     'Contact.Contact', 'Contact.WithIdentity',
-                                     'WithIdentity.WithIdentity');
+                                     'ServiceType.ServiceType');
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
@@ -74,9 +72,14 @@ class IdentitiesController extends AppController {
                 $this->set('accounts', $accounts);
                 $this->set('communications', $communications);
                 
+                # get contacts of the displayed profile
+                $this->Identity->Contact->recursive = 1;
+                $this->Identity->Contact->expects('Contact', 'WithIdentity');
+                $all_contacts = $this->Identity->Contact->findAllByIdentityId($data['Identity']['id'], null, 'WithIdentity.last_activity DESC');
+                
                 $num_private_contacts = 0;
                 $num_noserub_contacts = 0;
-                foreach($data['Contact'] as $contact) {
+                foreach($all_contacts as $contact) {
                     if(strpos($contact['WithIdentity']['username'], '@') === false) {
                         $num_noserub_contacts++;
                         if(count($contacts) < 9) {
@@ -95,18 +98,25 @@ class IdentitiesController extends AppController {
                 $this->set('num_noserub_contacts', $num_noserub_contacts);
                 $this->set('contacts', $contacts);
                 
+                # now get all mutual contacts, when this is not the logged in user
+                if($session_identity['id'] && $data['Identity']['id'] != $session_identity['id']) {
+                    $query = 'SELECT with_identity_id FROM contacts WHERE identity_id='.$data['Identity']['id'] . ' AND with_identity_id IN (SELECT with_identity_id FROM contacts WHERE identity_id='.$session_identity['id'].')';
+                    $mutual_contacts = $this->Identity->query($query);
+                    if($mutual_contacts) {
+                        $mutual_contacts_ids = join(',', Set::extract($mutual_contacts, '{n}.contacts.with_identity_id'));
+
+                        $this->Identity->recursive = 0;
+                        $this->Identity->expects('Identity');
+                        $this->set('mutual_contacts', $this->Identity->findAll(array('Identity.id IN (' . $mutual_contacts_ids . ')'), null, 'Identity.last_activity DESC', 9));
+                    }
+                }
+                
                 # create $about_identity for the view
                 $this->set('about_identity', $data['Identity']);
             }
         }
         
         if($data) {
-            # expand all identities (domain, namespace, url)
-            $data['Identity'] = array_merge($data['Identity'], $this->Identity->splitUsername($data['Identity']['username']));
-            foreach($data['Contact'] as $key => $contact) {
-                $data['Contact'][$key]['WithIdentity'] = array_merge($contact['WithIdentity'], $this->Identity->splitUsername($contact['WithIdentity']['username']));
-            }
-        
             if($splitted['username'] == $session_identity['username']) {
                 $this->set('headline', 'My NoseRub Profile');
             } else {
@@ -137,6 +147,9 @@ class IdentitiesController extends AppController {
                 }
             }
             usort($items, 'sort_items');
+            if(isset($items[0]['datetime'])) {
+                $this->Identity->updateLastActivity($items[0]['datetime'], $data['Identity']['id']);
+            }
             $items = $this->cluster->create($items);
         }
     
@@ -146,6 +159,9 @@ class IdentitiesController extends AppController {
         $this->set('filter', $filter);
     }
     
+    /**
+     * Displays the social stream of the whole plattform.
+     */
     function social_stream() {
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
         $filter = $this->filterSanitize->sanitize($filter);
@@ -159,14 +175,12 @@ class IdentitiesController extends AppController {
                                                'is_local'  => 1,
                                                'hash'      => '',
                                                'NOT username LIKE "%@%"'),
-                                         null, null, 10);
+                                         null, 'Identity.last_activity DESC, Identity.modified DESC', 9);
 
         # extract the identities
-        
         $items      = array();
         $identities = array();
         foreach($data as $identity) {
-            
             # extract the identities
             if(count($identities) < 9) {
                 $identities[] = $identity['Identity'];
@@ -191,6 +205,14 @@ class IdentitiesController extends AppController {
         usort($items, 'sort_items');
         $items = $this->cluster->create($items);
 
+        # also get my contacts, when I'm logged in
+        $logged_in_identity_id = $this->Session->read('Identity.id');
+        if($logged_in_identity_id) {
+            $this->Identity->Contact->recursive = 1;
+            $this->Identity->Contact->expects('Contact', 'WithIdentity');
+            $contacts = $this->Identity->Contact->findAllByIdentityId($logged_in_identity_id, null, 'WithIdentity.last_activity DESC', 9);
+            $this->set('contacts', $contacts);
+        }
         $this->set('data', $data);
         $this->set('identities', $identities);
         $this->set('items', $items);

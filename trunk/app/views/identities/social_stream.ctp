@@ -28,26 +28,10 @@
         </div>
     </div>
 
-    <div id="sidebar">	
-    	<h4>Profiles</h4>
-    	<p class="friendthumbs">
-    	    <?php foreach($identities as $item) { ?>
-    	        <a href="http://<?php echo $item['username']; ?>" rel="friend">
-    	            <?php if($item['photo']) {
-    	                if(strpos($item['photo'], 'http://') === 0 ||
-                           strpos($item['photo'], 'https://') === 0) {
-                            # contains a complete path, eg. from not local identities
-                            $photo_url = $item['photo'];
-                            $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
-    	                } else {
-    	                    $contact_photo = $static_base_url . $item['photo'].'-small.jpg';
-    	                }	                
-                    } else {
-                        $contact_photo = $sex['img-small'][$item['sex']];
-                    } ?>
-    	            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" />
-    	        </a>
-    	    <?php } ?>
-    	</p>
-        <hr />
+    <div id="sidebar">
+    	<?php echo $this->renderElement('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url)); ?>
+    	<?php if($menu['logged_in'] && isset($contacts)) { ?>
+    	    <hr />
+    	    <?php echo $this->renderElement('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
+    	<?php } ?>
     </div>

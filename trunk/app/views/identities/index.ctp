@@ -111,29 +111,11 @@
 
     <div id="sidebar">
 	
-	    <?php if($num_noserub_contacts > 9) { ?>
+	    <?php if(($menu['logged_in'] && $num_noserub_contacts+$num_private_contacts > 9) ||
+	             (!$menu['logged_in'] && $num_noserub_contacts > 9)) { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">see all</a></span>
     	<?php } ?>
-    	<h4>Friends</h4>
-    	<p class="friendthumbs">
-    	    <?php foreach($contacts as $item) { ?>
-    	        <a href="http://<?php echo $item['WithIdentity']['username']; ?>" rel="friend">
-    	            <?php if($item['WithIdentity']['photo']) {
-    	                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
-                           strpos($item['WithIdentity']['photo'], 'https://') === 0) {
-                            # contains a complete path, eg. from not local identities
-                            $photo_url = $item['WithIdentity']['photo'];
-                            $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
-    	                } else {
-    	                    $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'-small.jpg';
-    	                }	                
-                    } else {
-                        $contact_photo = $sex['img-small'][$item['WithIdentity']['sex']];
-                    } ?>
-    	            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['WithIdentity']['local_username']; ?>'s Picture" />
-    	        </a>
-    	    <?php } ?>
-    	</p>
+    	<?php echo $this->renderElement('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
     	<p class="morefriends">
     		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
@@ -145,6 +127,11 @@
     
         <hr />
 	
+	    <?php if(isset($mutual_contacts)) {
+	        echo $this->renderElement('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $static_base_url));
+	        echo '<hr />';
+	    } ?>
+	    
 	    <h4>On the web</h4>
 	    <ul class="whoissidebar">
 	        <?php foreach($accounts as $item) { ?>

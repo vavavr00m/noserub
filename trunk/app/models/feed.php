@@ -41,6 +41,8 @@ class Feed extends AppModel {
                       'content'          => @serialize($cache_data),
                       'date_newest_item' => $date_newest_item);
         $this->save($data);
+        
+        return $date_newest_item;
     }
 
     /**

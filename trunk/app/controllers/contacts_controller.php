@@ -225,7 +225,7 @@ class ContactsController extends AppController {
     }
     
     /**
-     * Method description
+     * Displays the social stream of one identity. That means all his/her contact's activities.
      *
      * @param  
      * @return 

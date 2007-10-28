@@ -71,6 +71,7 @@ class Identity extends AppModel {
                 $data['username']        = $username['username'];
                 $data['namespace']       = $username['namespace'];
                 $data['local']           = $username['local'];
+                $data['servername']      = $username['servername'];
                 $data['name']            = trim($data['firstname'] . ' ' . $data['lastname']);
             } else {
                 foreach($data as $key => $item) {
@@ -83,6 +84,7 @@ class Identity extends AppModel {
                             $item[$modelName]['username']        = $username['username'];
                             $item[$modelName]['namespace']       = $username['namespace'];
                             $item[$modelName]['local']           = $username['local'];
+                            $item[$modelName]['servername']      = $username['servername'];
                             $item[$modelName]['name']            = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
                             $data[$key] = $item;
                         }
@@ -334,6 +336,26 @@ class Identity extends AppModel {
         
         $username = preg_replace('/[^\w\s.-]/', null, $username);
         return $username;
+    }
+    
+    /**
+     * if Identity.last_activity is before $datetime, idis updated in the
+     * database.
+     */
+    public function updateLastActivity($datetime, $identity_id = null) {
+        # make sure we have datetime and not only date or something like that
+        $datetime = date('Y-m-d H:i:s', strtotime($datetime));
+        
+        # get the current value
+        if($identity_id) {
+            $this->id = $identity_id;
+        }
+        
+        $last_activity = $this->field('Last_activity');
+        if($last_activity < $datetime) {
+            # set the new datetime
+            $this->saveField('last_activity', $datetime);
+        }
     }
     
     /**

@@ -20,7 +20,8 @@ class FeedsController extends AppController {
         foreach($data as $item) {
             if(!$item['Feed']['id'] && $item['Account']['feed_url']) {
                 $feed_data = $this->Feed->Account->Service->feed2array($item['Identity']['username'], $item['Account']['service_id'], $item['Account']['service_type_id'], $item['Account']['feed_url'], 10, false);
-                $this->Feed->store($item['Account']['id'], $feed_data);
+                $date_newest_item = $this->Feed->store($item['Account']['id'], $feed_data);
+                $this->Feed->Account->Identity->updateLastActivity($date_newest_item, $item['Identity']['id']);
                 $created[] = $item['Account']['feed_url'];
             }
         }
@@ -47,18 +48,22 @@ class FeedsController extends AppController {
             $this->Feed->recursive = 2;
             $this->Feed->expects('Feed.Feed', 'Feed.Account', 'Account.Account', 'Account.Identity', 'Identity.Identity');
             $data = $this->Feed->findAll(array('Feed.modified < "' . $last_refresh . '"'), null, 'Feed.modified ASC, Feed.priority DESC', 1);
+
             foreach($data as $item) {
                 # set the modified right now, so a parallel running task
                 # would not get it, while we are fetching the feed
                 $this->Feed->id = $item['Feed']['id'];
                 $this->Feed->saveField('modified', date('Y-m-d H:i:s'));
                 
-                # get the actual feed. Maximum of 10 items, but without time restriction
-                $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['Identity']['username'], $item['Account']['service_id'], $item['Account']['service_type_id'], $item['Account']['feed_url'], 10, false);
+                if($item['Account']['feed_url']) {
+                    # get the actual feed. Maximum of 10 items, but without time restriction
+                    $feed_data = $this->Feed->Account->Service->feed2array($item['Account']['Identity']['username'], $item['Account']['service_id'], $item['Account']['service_type_id'], $item['Account']['feed_url'], 10, false);
                 
-                # save it to the cache
-                $this->Feed->store($item['Account']['id'], $feed_data);
-                $refreshed[] = $item['Account']['feed_url'];
+                    # save it to the cache
+                    $date_newest_item = $this->Feed->store($item['Account']['id'], $feed_data);
+                    $this->Feed->Account->Identity->updateLastActivity($date_newest_item, $item['Account']['Identity']['id']);
+                    $refreshed[] = $item['Account']['feed_url'];
+                }
             }
         }
         $this->set('data', $refreshed);
