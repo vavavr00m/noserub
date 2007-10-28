@@ -2,10 +2,12 @@
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
     	<legend>Add service</legend>
+    	<input type="radio" name="data[Account][type]" id="type_1" id="AccountType" value="1" checked="checked" />
         <?php
-            $selects = 'Service: ' . $form->select('Account.service_id', $services, null, null, false); 
-            echo $form->radio('Account.type', array(1 => '', 2 => ''), array('label' => false, 'separator' => $selects.'<br />'));
+            echo 'Service: ' . $form->select('Account.service_id', $services, null, null, false); 
         ?>
+        <br />
+        <input type="radio" name="data[Account][type]" id="type_2" id="AccountType" value="2" />
         Any RSS-Feed (eg. Blogs)
     </fieldset>
     <fieldset>
