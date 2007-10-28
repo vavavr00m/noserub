@@ -28,10 +28,22 @@ class ContactsController extends AppController {
         }
         $this->set('identity', $identity['Identity']);
         
+        # get all noserub contacts
         $this->Contact->recursive = 1;
         $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
         
-        $this->set('data', $this->Contact->findAllByIdentityId($identity['Identity']['id'], null, 'WithIdentity.username'));
+        $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
+                                                                     'WithIdentity.username NOT LIKE "%@%"'), 
+                                                               null, 
+                                                               'WithIdentity.username ASC'));
+        # get all private contacts
+        $this->Contact->recursive = 1;
+        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+
+        $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
+                                                                     'WithIdentity.username LIKE "%@%"'), 
+                                                                     null, 
+                                                                     'WithIdentity.username ASC'));
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
