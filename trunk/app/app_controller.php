@@ -14,6 +14,12 @@ class AppController extends Controller {
     var $components = array('menu');
     var $uses = array('Identity');
     
+    function flashMessage($type, $message) {
+        $flash_messages = $this->Session->read('FlashMessages');
+        $flash_messages[$type][] = $message;
+        $this->Session->write('FlashMessages', $flash_messages);
+    }
+    
     /**
      * Makes sure we redirect to the https url,
      * when NOSERUB_USE_SSL is used and we're not
@@ -91,6 +97,10 @@ class AppController extends Controller {
     public function beforeRender() {
         # set new security_token
         $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
+    }
+    
+    public function afterFilter() {
+        $this->Session->write('FlashMessages', array());
     }
     
 }

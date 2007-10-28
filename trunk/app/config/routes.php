@@ -63,6 +63,7 @@ Router::connect('/:username/contacts/', array('controller' => 'contacts', 'actio
 Router::connect('/:username/add/as/contact/:security_token/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
 Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
+Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
 
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));

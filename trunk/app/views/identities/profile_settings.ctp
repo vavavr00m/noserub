@@ -1,3 +1,4 @@
+<?php $flashmessage->render(); ?>
 <form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <div id="settings_photo">

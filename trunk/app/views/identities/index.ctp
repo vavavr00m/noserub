@@ -87,16 +87,18 @@
 
         <br class="clear" />
 
+        <?php $flashmessage->render(); ?>
+        
         <?php if($data['Identity']['about']) { ?>
-        <h4>About me</h4>
-        <div id="about">
-            <p class="summary">
-                <?php if($data['Identity']['about']) {
-                    $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
-                    echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
-                } ?>
-            </p>        
-        </div>
+            <h4>About me</h4>
+            <div id="about">
+                <p class="summary">
+                    <?php if($data['Identity']['about']) {
+                        $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
+                        echo preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", nl2br($data['Identity']['about']));
+                    } ?>
+                </p>        
+            </div>
         <?php } ?>
 
         <br class="clear" />
@@ -150,7 +152,9 @@
 
 	<h4>Contact</h4>
 	<ul class="whoissidebar">
-		<li><img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="#">e-Mail</a></li>
+	    <?php if($about_identity['namespace'] == '' && $relationship_status != 'self') { ?>
+		    <li><img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="http://<?php echo $about_identity['username']; ?>/messages/new/">e-Mail</a></li>
+		<?php } ?>
 		<?php foreach($communications as $item) { ?>
 	        <li>
 	            <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />

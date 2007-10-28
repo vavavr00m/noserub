@@ -6,7 +6,7 @@ class Auth_OpenID_CheckIDRequest {}
 
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
-    var $helpers = array('form', 'openid', 'nicetime');
+    var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
     var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize');
     
     /**
@@ -222,6 +222,41 @@ class IdentitiesController extends AppController {
         $this->render('social_stream');
     }
     
+    function send_message() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+
+        if(!$session_identity || $splitted['namespace'] != '' || $splitted['local'] == 0) {
+            # this user is not the logged in, or this is a private
+            # contact, or not local
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        # get Identity
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $about_identity = $this->Identity->findByUsername($splitted['username']);
+        $name = empty($about_identity['Identity']['name']) ? $about_identity['Identity']['single_username'] : $about_identity['Identity']['name'];
+        $this->set('headline', 'Send a message to ' . $name);
+        
+        if($this->data) {
+            if(empty($this->data['Message']['subject'])) {
+                $this->flashMessage('alert', 'You need to specify a subject.');
+            } 
+            
+            if(empty($this->data['Message']['text'])) {
+                $this->flashMessage('alert', 'You need to specify a text.');
+            }
+
+            if(!empty($this->data['Message']['subject']) && !empty($this->data['Message']['text'])) {
+                $this->flashMessage('success', 'Message was sent to ' . $name);
+                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+            }
+        }
+    }
+    
     /**
      * Method description
      *
@@ -296,6 +331,9 @@ class IdentitiesController extends AppController {
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
+            
+            $this->flashMessage('success', 'Changes have been saved.');
+            
         } else {
             $this->Identity->recursive = 0;
             $this->Identity->expects('Identity');
@@ -330,6 +368,8 @@ class IdentitiesController extends AppController {
             $saveable = array('frontpage_updates');
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, true, $saveable);
+            
+            $this->flashMessage('success', 'Privacy settings have been saved.');
         } else {
             $this->Identity->id = $session_identity['id'];
             $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
@@ -369,8 +409,11 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
                 $this->Identity->id = $session_identity['id'];
                 $this->Identity->save($this->data, true, array('password'));
+                
+                $this->flashMessage('success', 'The new password has been saved.');
+                
             } else {
-                $this->Identity->invalidate('old_passwd');
+                $this->flashMessage('alert', 'The old password was not correct.');
             }
         }
         

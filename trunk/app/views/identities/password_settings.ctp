@@ -1,3 +1,4 @@
+<?php $flashmessage->render(); ?>
 <form id="IdentityPassowrdSettingsForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php if(isset($paswd_error)) { ?>
