@@ -54,6 +54,7 @@ class MenuComponent extends Object {
                     
                     case 'social_stream':
                         $main_menu = 'social_stream';
+                        $sub_menu  = $filter == '' ? 'all' : $filter;
                         break;
                         
                     case 'profile_settings':
