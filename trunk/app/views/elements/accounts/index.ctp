@@ -35,7 +35,7 @@
                         <td><?php if($show_action_links) {
                         		echo '<ul>';
                                 #echo '<li class="edit icon">' . $html->link('Edit Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/edit/') . '</li>';
-                                echo '<li class="delete icon">' . $html->link('Delete Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/delete/'.$security_token.'/') . '</li>';
+                                echo '<li class="delete icon">' . $html->link('Remove Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/delete/'.$security_token.'/') . '</li>';
                                 echo '</ul>';
                         } ?></td>
                     </tr>
