@@ -1,5 +1,5 @@
 <h4><?php echo $box_head; ?></h4>
-<p class="friendthumbs">
+<p>
     <?php foreach($data as $item) { ?>
         <?php if(isset($item['WithIdentity'])) {
             $item = $item['WithIdentity'];
@@ -19,7 +19,7 @@
             } else {
                 $contact_photo = $sex['img-small'][$item['sex']];
             } ?>
-            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" />
+            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
         </a>
     <?php } ?>
 </p>

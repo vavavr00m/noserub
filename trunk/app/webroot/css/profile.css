@@ -55,8 +55,12 @@
 	padding: 10px;
 }
 
-.friendthumbs img, .mypicture, .avatar {
+.internthumbs, .mypicture, .avatar {
 	border: 2px solid #ECEBE5;
+}
+
+.externthumbs {
+	border: 2px solid #c9c7ba;
 }
 
 .morefriends {
@@ -89,6 +93,10 @@
 	margin-right: 10px;
 	height: 85px;
 	line-height: 16px;
+}
+
+.externalcontact {
+	background: transparent url('/images/contacts/external-contact.gif') no-repeat center right;
 }
 
 .contacts {

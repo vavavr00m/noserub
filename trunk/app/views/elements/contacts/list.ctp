@@ -37,7 +37,8 @@ foreach($data as $item) {
     } else {
         $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
     } ?>
-        <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards <?php if($show_photo) { ?>contacts<?php } else { ?>private<?php } ?>">
+                
+        <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards <?php echo $show_photo ? 'contacts' : 'private'; ?> <?php echo $item['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">
             <?php if($show_photo) { ?>
                 <dt>
         	        <a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
@@ -59,7 +60,6 @@ foreach($data as $item) {
                 <?php if($session_local_username != '' && $item['WithIdentity']['namespace'] == $session_local_username) { ?>
                     <dd><?php echo $html->link('Manage Services', '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/'); ?></dd>
                     <dd><?php echo $html->link('Add Service', '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/add/'); ?></dd>
-                <?php } 
-            ?>
+                <?php } ?>
 		</dl>
 <?php }
