@@ -52,12 +52,10 @@ foreach($data as $item) {
    			<dd class="fn"><?php echo $item['WithIdentity']['name']; ?></dd>
 			
 			<!-- send e-Mail -->
-			<?php if($show_photo) { ?>
-			<?php if($item['WithIdentity']['local'] == 1) { ?>
-   			<dd class="sendmail">
-   			<img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $item['WithIdentity']['username']; ?>/messages/new/">Send e-Mail</a>
-   			</dd>
-   			<?php } ?>
+			<?php if($show_photo && $item['WithIdentity']['local'] == 1 && $item['WithIdentity']['allow_emails'] != 0) { ?>
+   			    <dd class="sendmail">
+   			        <img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $item['WithIdentity']['username']; ?>/messages/new/">Send e-Mail</a>
+   			    </dd>
    			<?php } ?>
 
             <?php 

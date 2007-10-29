@@ -152,7 +152,9 @@
 
 	<h4>Contact</h4>
 	<ul class="whoissidebar">
-	    <?php if($about_identity['namespace'] == '' && $relationship_status != 'self') { ?>
+	    <?php if($about_identity['namespace'] == '' && 
+	             $relationship_status != 'self' && 
+	             ($about_identity['allow_emails'] != 0 || ($about_identity['allow_emails'] == 1 && $relationship_status == 'contact'))) { ?>
 		    <li><img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="http://<?php echo $about_identity['username']; ?>/messages/new/">e-Mail</a></li>
 		<?php } ?>
 		<?php foreach($communications as $item) { ?>
