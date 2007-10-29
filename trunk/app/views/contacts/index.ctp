@@ -1,3 +1,4 @@
+<?php $flashmessage->render(); ?>
 <?php
 $session_identity_id    = isset($session_identity['id']) ? $session_identity['id'] : 0;
 

@@ -3,8 +3,7 @@
  
 class AccountsController extends AppController {
     var $uses = array('Account');
-    var $helpers = array('form');
-    
+    var $helpers = array('form', 'flashmessage');
     
     /**
      * Method description
@@ -264,12 +263,14 @@ class AccountsController extends AppController {
             # we're done!
             if($identity_id == $session_identity['id']) {
                 # new account for the logged in user, so we redirect to his/her account settings
+                $this->flashMessage('success', 'Account added.');
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             } else {
                 # new account for a private contact. redirect to his/her profile
                 $this->Account->Identity->recursive = 0;
                 $this->Account->Identity->expects('Identity');
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
+                $this->flashMessage('success', 'Account added.');
                 $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
             }
         }
@@ -301,7 +302,8 @@ class AccountsController extends AppController {
 
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
-            $this->redirect('/', null, true);
+            $this->flashMessage('success', 'Account added.');
+            $this->redirect('/' . $username . '/settings/accounts/', null, true);
         }
         
         if($this->data) {
@@ -368,6 +370,7 @@ class AccountsController extends AppController {
                 }
             }
             # we're done!
+            $this->flashMessage('success', 'Account added.');
             $this->redirect('/' . $username . '/settings/accounts/', null, true);
         }
         $this->Account->recursive = 1;
@@ -489,16 +492,16 @@ class AccountsController extends AppController {
             $this->Account->Identity->expects('Identity');
             $about_identity = $this->Account->Identity->findByUsername($splitted['username']);
             if(!$about_identity) {
-                echo 'could not find the identity'; exit;
                 # could not find the identity
-                $this->redirect('/', null, true);
+                $this->flashMessage('alert', 'Could not find the user.');
+                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
-                echo 'this logged in user is not allowed to change something'; exit;
                 # this logged in user is not allowed to change something
-                $this->redirect('/', null, true);
+                $this->flashMessage('alert', 'You may not delete this.');
+                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
             }
         }
         # check, wether the account belongs to the identity
@@ -509,6 +512,7 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             $this->Account->delete();
             $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+            $this->flashMessage('success', 'Account deleted.');
         }
         
         $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');

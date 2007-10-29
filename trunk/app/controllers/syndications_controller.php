@@ -2,7 +2,7 @@
  
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
-    var $helpers = array('form', 'html', 'nicetime');
+    var $helpers = array('form', 'html', 'nicetime', 'flashmessage');
     var $components = array('url', 'cdn');
     
     /**
@@ -135,6 +135,7 @@ class SyndicationsController extends AppController {
         if(1 == $this->Syndication->findCount(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Syndication->delete($syndication_id);
+            $this->flashMessage('success', 'Feed deleted.');
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
         	$this->redirect($url, null, true);
         }
@@ -192,7 +193,8 @@ class SyndicationsController extends AppController {
                     $this->feed($data['Syndication']['hash'].'.rss', true);
                 }
             } 
-                        
+            
+            $this->flashMessage('success', 'Feed added.');            
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
         	$this->redirect($url, null, true);
         } else {

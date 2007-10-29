@@ -3,7 +3,7 @@
  
 class ContactsController extends AppController {
     var $uses = array('Contact');
-    var $helpers = array('form', 'nicetime');
+    var $helpers = array('form', 'nicetime', 'flashmessage');
     var $components = array('cluster', 'filterSanitize');
     
     /**
@@ -138,6 +138,7 @@ class ContactsController extends AppController {
                                  'with_identity_id' => $new_identity_id);
                 $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
                 if($this->Contact->save($contact, true, $saveable)) {
+                    $this->flashMessage('success', 'Added new contact.');
                     $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
                 }
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
@@ -162,6 +163,7 @@ class ContactsController extends AppController {
                                          'with_identity_id' => $this->Contact->Identity->id);
                         $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
                         if($this->Contact->save($contact, true, $saveable)) {
+                            $this->flashMessage('success', 'Added new contact.');
                             $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
                         }
                     }
@@ -220,6 +222,7 @@ class ContactsController extends AppController {
         $with_identity_id = $contact['Contact']['with_identity_id'];
         $this->Contact->id = $contact_id;
         $this->Contact->delete();
+        $this->flashMessage('success', 'Removed the contact.');
         
         # get the other identity in order to determine, if
         # this was a local identity and therfore can be deleted
@@ -339,6 +342,7 @@ class ContactsController extends AppController {
         if($session_identity['id'] == $identity['Identity']['id']) {
             # this is the logged in user. no reason to allow him to add
             # himself as contact.
+            $this->flashMessage('alert', 'You cannot add yourself as a contact.');
             $this->redirect('/' . $splitted['local_username'], null, true);
         }
         
@@ -355,6 +359,7 @@ class ContactsController extends AppController {
                              'with_identity_id' => $identity['Identity']['id']);
             $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
             $this->Contact->save($contact, true, $saveable);
+            $this->flashMessage('success', 'Added new contact.');
         }
         
         $this->redirect('/' . $splitted['local_username'], null, true);
