@@ -26,10 +26,8 @@ noserub.fn = noserub.prototype = {
         } catch(e) {
             this.log(data.controller+'_'+data.action + '() not found!');
         }
-        
-        setTimeout(function() {
-            $('div#message.success').fadeOut('slow');
-        }, 600);
+                
+        $('div#message.success').animate({'opacity' : 0.25}, 'medium').animate({'opacity' : 1}, 'medium').animate({'opacity' : 0.5}, 'medium').animate({'opacity' : 1}, 'medium');
     },
     
     log: function(msg) {
