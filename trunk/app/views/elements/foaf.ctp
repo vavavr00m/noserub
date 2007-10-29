@@ -58,8 +58,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
         <?php } ?>
     </foaf:holdsAccount>
 <?php } ?>
-
-<?php foreach($data['Contact'] as $contact) {
+<?php foreach($contacts as $contact) {
     if(strpos($contact['WithIdentity']['username'], '@') === false) { ?>
         <foaf:knows>
             <foaf:Person>

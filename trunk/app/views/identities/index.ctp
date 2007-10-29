@@ -47,6 +47,8 @@
 	
     <div id="hcard-<?php echo $data['Identity']['local_username']; ?>" class="vcard">
 
+        <?php $flashmessage->render(); ?>
+        
         <div id="photo">
         	<img src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
         </div>
@@ -86,8 +88,6 @@
         </div>
 
         <br class="clear" />
-
-        <?php $flashmessage->render(); ?>
         
         <?php if($data['Identity']['about']) { ?>
             <h4>About me</h4>

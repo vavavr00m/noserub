@@ -240,8 +240,27 @@ class IdentitiesController extends AppController {
         $about_identity = $this->Identity->findByUsername($splitted['username']);
         $name = empty($about_identity['Identity']['name']) ? $about_identity['Identity']['single_username'] : $about_identity['Identity']['name'];
         $this->set('headline', 'Send a message to ' . $name);
+        $this->set('data', $about_identity);
         
-        if($this->data) {
+        $send_allowed = true;
+        # check the users privacy setting
+        if($about_identity['Identity']['allow_emails'] == 0) {
+            $this->flashMessage('alert', 'You may not send a message to ' . $name);
+            $send_allowed = false;
+        } else if($about_identity['Identity']['allow_emails'] == 1) {
+            # only contacts
+            $this->Identity->Contact->recursive = 0;
+            $this->Identity->Contact->expects('Contact');
+            $has_contact = $this->Identity->Contact->findCount(array('identity_id'      => $about_identity['Identity']['id'],
+                                                                     'with_identity_id' => $session_identity['id']));
+        
+            if($has_contact == 0) {
+                $this->flashMessage('alert', 'You may not send a message to ' . $name);
+                $send_allowed = false;
+            }
+        }
+        
+        if($this->data && $send_allowed) {
             if(empty($this->data['Message']['subject'])) {
                 $this->flashMessage('alert', 'You need to specify a subject.');
             } 
@@ -251,8 +270,33 @@ class IdentitiesController extends AppController {
             }
 
             if(!empty($this->data['Message']['subject']) && !empty($this->data['Message']['text'])) {
-                $this->flashMessage('success', 'Message was sent to ' . $name);
-                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                # send the mail now
+                $subject = $this->data['Message']['subject'];
+                # sanitize some characters, so no header escaping can happen
+                $clean_subject = str_replace(':', '', $subject);
+                $clean_subject = str_replace("\n", '', $clean_subject);
+                $clean_subject = str_replace("\r", '', $clean_subject);
+                $clean_subject = strip_tags($clean_subject);
+                $text    = strip_tags($this->data['Message']['text']);
+            
+                $msg  = 'Hi ' . $name . "\n\n";
+                $msg .= 'You got a message from http://' . $session_identity['username'] . '/' . "\n\n";
+                $msg .= '----------------------------------------------------------' . "\n";
+                $msg .= 'Subject: ' . $subject . "\n";
+                $msg .= 'Text:' . "\n" . $text . "\n\n";
+                $msg .= '----------------------------------------------------------' . "\n\n";
+                $msg .= 'If you want to reply to this message, go to http://' . $session_identity['username'] . '/' . "\n";
+            
+                $email = $about_identity['Identity']['email'];
+                if(!mail($email, '['. NOSERUB_APP_NAME . '] ' . $clean_subject, $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+                    $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
+                    $this->flashMessage('alert', 'Message could not be delivered to ' . $name);
+                } else {
+                    $this->log('mail sent: ' . $email . ' / ' . $clean_subject, LOG_DEBUG);
+                    $this->flashMessage('success', 'Message was sent to ' . $name);
+                    $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                
+                }
             }
         }
     }
