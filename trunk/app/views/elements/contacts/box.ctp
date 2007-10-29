@@ -1,5 +1,5 @@
 <h4><?php echo $box_head; ?></h4>
-<p>
+<p class="contactsbox">
     <?php foreach($data as $item) { ?>
         <?php if(isset($item['WithIdentity'])) {
             $item = $item['WithIdentity'];

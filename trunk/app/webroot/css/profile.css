@@ -121,3 +121,12 @@
 .contact_option {
 	margin-top: 5px;
 }
+
+.contactsbox a {
+	border: 0 !important;
+}
+
+.sendmail_icon {
+	padding: 5px 2px 5px 0;
+	vertical-align: middle;
+}

@@ -47,11 +47,19 @@ foreach($data as $item) {
         	    </dt>                     
         	<?php } ?>  			
             <dt>
-                <a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
-                    <?php echo $item['WithIdentity']['single_username']; ?>
-                </a>
+                <a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>"><?php echo $item['WithIdentity']['single_username']; ?></a>
             </dt>
    			<dd class="fn"><?php echo $item['WithIdentity']['name']; ?></dd>
+			
+			<!-- send e-Mail -->
+			<?php if($show_photo) { ?>
+			<?php if($item['WithIdentity']['local'] == 1) { ?>
+   			<dd class="sendmail">
+   			<img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="#">Send e-Mail</a>
+   			</dd>
+   			<?php } ?>
+   			<?php } ?>
+
             <?php 
                 $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
                 if($identity_id == $session_identity_id && $session_identity_id != 0) { ?>
