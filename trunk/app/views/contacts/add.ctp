@@ -1,10 +1,9 @@
-<p>
-    You can either enter a valid NoseRub-ID (<em>noserubserver.com/my.buddy</em>)
-    or just a new username, that then will created for your access only (a private contact).
+<p class="infotext">
+    You can either enter a valid NoseRub-ID (<em>noserubserver.com/MyBuddy</em>)
+    or just a new username, that then will created a private contact which is for your access only!
 </p>
-<p>
-    Whenever you have a NoseRub-ID from someone, you should use that to add
-    a new contact.
+<p class="infotext">
+    Whenever you have a NoseRub-ID from someone, you should use that to add a new contact.
 </p>
 <form id="ContactAddForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
@@ -22,7 +21,7 @@
         <input type="submit" value="Add" name="add" class="submitbutton">
     </fieldset>
     
-    <p>
+    <p class="infotext">
     	<strong>OR</strong>
     <p>
     

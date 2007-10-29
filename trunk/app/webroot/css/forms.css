@@ -24,7 +24,7 @@ legend {
 
 input, textarea, select {
 	margin: 0;
-	padding: 1px;
+	padding: 2px;
 	font-family: inherit;
 	font-size: 11px;
 	border: 1px solid #cccccc;
