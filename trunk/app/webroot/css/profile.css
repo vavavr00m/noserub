@@ -88,8 +88,15 @@
 	float: left;
 	margin-right: 10px;
 	height: 85px;
-	width: 220px;
 	line-height: 16px;
+}
+
+.contacts {
+	width: 220px;
+}
+
+.private {
+	width: 94px;
 }
 
 .vcards dt img {

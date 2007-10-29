@@ -234,6 +234,10 @@ dd a:hover {
 	border-bottom: 1px dotted #363636 !important;
 }
 
+.contactsheadline {
+	border-bottom: 1px solid #585858;
+}
+
 /* misc */
 
 .addmore {

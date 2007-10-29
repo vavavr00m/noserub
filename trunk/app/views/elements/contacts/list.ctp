@@ -37,7 +37,7 @@ foreach($data as $item) {
     } else {
         $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
     } ?>
-        <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards">
+        <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards <?php if($show_photo) { ?>contacts<?php } else { ?>private<?php } ?>">
             <?php if($show_photo) { ?>
                 <dt>
         	        <a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
