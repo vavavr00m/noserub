@@ -55,7 +55,7 @@ foreach($data as $item) {
 			<?php if($show_photo) { ?>
 			<?php if($item['WithIdentity']['local'] == 1) { ?>
    			<dd class="sendmail">
-   			<img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="#">Send e-Mail</a>
+   			<img src="/images/icons/services/email.gif" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $item['WithIdentity']['username']; ?>/messages/new/">Send e-Mail</a>
    			</dd>
    			<?php } ?>
    			<?php } ?>

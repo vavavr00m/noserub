@@ -365,7 +365,7 @@ class IdentitiesController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
             
-            $saveable = array('frontpage_updates');
+            $saveable = array('frontpage_updates', 'allow_emails');
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, true, $saveable);
             
@@ -373,6 +373,7 @@ class IdentitiesController extends AppController {
         } else {
             $this->Identity->id = $session_identity['id'];
             $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
+            $this->data['Identity']['allow_emails']      = $this->Identity->field('allow_emails');
         }
         
         $this->set('headline', 'Your privacy settings');
@@ -538,7 +539,8 @@ class IdentitiesController extends AppController {
             }
         } else {
             # set default value for this privacy setting
-            $this->data = array('Identity' => array('frontpage_updates' => 1));
+            $this->data = array('Identity' => array('frontpage_updates' => 1,
+                                                    'allow_emails'      => 2));
         }
 
         $this->set('headline', 'Register a new NoseRub account');
