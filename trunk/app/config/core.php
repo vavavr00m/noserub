@@ -141,7 +141,7 @@
  * CakePHP session IDs are also regenerated between requests if
  * CAKE_SECURITY is set to 'high'.
  */
-	Configure::write('Security.level', 'medium');
+	Configure::write('Security.level', 'low');
 /**
  * A random string used in session management.
  */
