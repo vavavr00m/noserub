@@ -28,12 +28,12 @@ if($data['Identity']['photo']) {
            $profile_photo = $static_base_url . $data['Identity']['photo'] . '.jpg';
        }
 } else {
-    $profile_photo = $sex['img'][$data['Identity']['sex']];
+    $profile_photo = $sex['img-small'][$data['Identity']['sex']];
 }
 ?>
 <div id="hcard-<?php echo $data['Identity']['local_username']; ?>" class="vcard">
 <div id="photo">
-	<img src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
+	<img src="<?php echo $profile_photo; ?>" width="35" height="35" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
 </div>
 
 <div id="whois">
@@ -47,19 +47,10 @@ if($data['Identity']['photo']) {
 		        <?php echo $sex['he'][$data['Identity']['sex']]; ?> is <?php echo $data['Identity']['age']; ?> years old.
 		    </li>
         <?php } ?>
-		<?php if(isset($distance) || $data['Identity']['address_shown']) {
-		    $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
-		    if(isset($distance)) {
-		        $label .= ceil($distance) . ' km away from you';
-		    }
-		    if($data['Identity']['address_shown']) {
-		        $label .= ' in ' . $data['Identity']['address_shown'];
-		    } ?>
-		    <li class="destination icon"> <?php echo $label; ?></li>
-		<?php } ?>
 	</ul>
 </div>
 </div>
+
 <br class="clear" />
 
 <?php $flashmessage->render(); ?>
@@ -67,9 +58,10 @@ if($data['Identity']['photo']) {
 <form id="Identity/messages/new/Form" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php echo $form->input('Message.subject', array('label' => 'Subject:', 'error' => 'You need to give the message a subject.')); ?>
-        Message:<br />
+        
+        <div class="input"><label for="MessageText">Message:</label>
         <?php echo $form->textarea('Message.text', array('columns' => 80, 'rows' => 40, 'error' => 'The message is empty.')); ?>
-        <br />
+		</div>
         <input class="submitbutton" type="submit" value="Send"/>
     </fieldset>
 </form>

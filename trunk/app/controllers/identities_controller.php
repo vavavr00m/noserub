@@ -290,10 +290,10 @@ class IdentitiesController extends AppController {
                 $email = $about_identity['Identity']['email'];
                 if(!mail($email, '['. NOSERUB_APP_NAME . '] ' . $clean_subject, $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
-                    $this->flashMessage('alert', 'Message could not be delivered to ' . $name);
+                    $this->flashMessage('alert', 'Your Message could not be delivered to ' . $name);
                 } else {
                     $this->log('mail sent: ' . $email . ' / ' . $clean_subject, LOG_DEBUG);
-                    $this->flashMessage('success', 'Message was sent to ' . $name);
+                    $this->flashMessage('success', 'Your Message was sent to ' . $name);
                     $this->redirect('/' . $splitted['local_username'] . '/', null, true);
                 
                 }

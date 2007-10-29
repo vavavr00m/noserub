@@ -38,9 +38,7 @@
 	  	
 	  			<?php echo $this->renderElement('mainnav'); ?>
 		</div>
-		
-		<br class="clear" />
-		
+	
 		<div id="headline">
 			<div class="wrapper">
 				<h2><?php echo $headline; ?></h2>

@@ -55,7 +55,14 @@ img, acronym {
 	height: 60px;
 	background-color: #ecebe5;
 	border-bottom: 5px solid #d9d7ca;
+	clear: both;
 }
+
+/* ie7 hack // start */
+*+html #headline {
+	margin-top: 34px;
+}
+/* ugly ie7 hack // end */
 
 #content {
 	padding-top: 15px;
@@ -82,6 +89,7 @@ img, acronym {
 #metanav {
 	text-align: right;
 	margin-top: 5px;
+	height: 10px;
 }
 
 .yourboxes {

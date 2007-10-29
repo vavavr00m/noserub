@@ -71,8 +71,10 @@ body {
 }
 
 #subnavigation .active a {
-	color: #D9D7CA;
+	color: #12A1C9 !important;
 	font-weight: bold;
+	background-color: #ffffff;
+	padding: 10px;
 }
 
 /* metanav links */
