@@ -557,6 +557,9 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function logout() {
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+        
         $this->Session->delete('Identity');
         $this->redirect($this->url->http('/'), null, true);
     }

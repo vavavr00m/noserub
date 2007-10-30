@@ -20,7 +20,9 @@
         
 ?>
 
-mini profile here!
+<?php if(isset($about_identity)) {
+    echo $this->renderElement('identities/mini_profile', array('data' => $about_identity));
+} ?>
 
     <div class="vcard">
         <div>

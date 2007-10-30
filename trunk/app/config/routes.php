@@ -43,7 +43,7 @@ Router::connect('/social_stream/:filter/', array('controller' => 'identities', '
  */
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/login/withopenid', array('controller' => 'identities', 'action' => 'login_with_openid'));
-Router::connect('/pages/logout/', array('controller' => 'identities', 'action' => 'logout'));
+Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
 Router::connect('/pages/register/withopenid/', array('controller' => 'identities', 'action' => 'register_with_openid_step_1'));
 Router::connect('/pages/register/withopenid/step2', array('controller' => 'identities', 'action' => 'register_with_openid_step_2'));
