@@ -38,6 +38,8 @@
     	    <hr />
     	    <?php echo $this->renderElement('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
     	<?php } ?>
-    	<hr />
-        <?php echo $this->renderElement('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $static_base_url)); ?>
+    	<?php if(isset($newbies)) { ?>
+    	    <hr />
+            <?php echo $this->renderElement('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $static_base_url)); ?>
+        <?php } ?>
     </div>
