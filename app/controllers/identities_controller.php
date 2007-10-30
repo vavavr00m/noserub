@@ -213,6 +213,15 @@ class IdentitiesController extends AppController {
             $contacts = $this->Identity->Contact->findAllByIdentityId($logged_in_identity_id, null, 'WithIdentity.last_activity DESC', 9);
             $this->set('contacts', $contacts);
         }
+        
+        # get the newbies...
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $newbies = $this->Identity->findAll(array('is_local' => 1, 
+                                                  'frontpage_updates' => 1,
+                                                  'username NOT LIKE "%@%"'), null, 'Identity.created DESC', 9);
+        $this->set('newbies', $newbies);
+        
         $this->set('data', $data);
         $this->set('identities', $identities);
         $this->set('items', $items);
