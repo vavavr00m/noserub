@@ -37,7 +37,7 @@ class ContactsController extends AppController {
                                                                null, 
                                                                'WithIdentity.username ASC'));
         # get all private contacts, if this is the logged in user
-        if(isset($session_identity['id'])) {
+        if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
             $this->Contact->recursive = 1;
             $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
 

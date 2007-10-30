@@ -346,6 +346,14 @@ class Identity extends AppModel {
         # make sure we have datetime and not only date or something like that
         $datetime = date('Y-m-d H:i:s', strtotime($datetime));
         
+        # get now
+        $now = date('Y-m-d H:i:s');
+        
+        if($datetime > $now) {
+            # don't allow "last_activity" to be in the future
+            return;
+        }
+        
         # get the current value
         if($identity_id) {
             $this->id = $identity_id;
