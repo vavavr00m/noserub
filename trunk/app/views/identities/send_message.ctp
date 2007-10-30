@@ -31,25 +31,20 @@ if($data['Identity']['photo']) {
     $profile_photo = $sex['img-small'][$data['Identity']['sex']];
 }
 ?>
+<!-- mini profile // start -->
 <div id="hcard-<?php echo $data['Identity']['local_username']; ?>" class="vcard">
 <div id="photo">
-	<img src="<?php echo $profile_photo; ?>" width="35" height="35" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
+	<a href="<?php echo $noserub_url; ?>"><img src="<?php echo $profile_photo; ?>" width="35" height="35" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" /></a>
 </div>
 
 <div id="whois">
 	<h3><a href="<?php echo $noserub_url; ?>" class="fn url"><?php echo $data['Identity']['name']; ?></a></h3>
 	<p id="personalid">
-		<?php echo $data['Identity']['servername']; ?>/<strong class="nickname"><?php echo $data['Identity']['local_username']; ?></strong>
+		<a href="<?php echo $noserub_url; ?>"><?php echo $data['Identity']['servername']; ?>/<strong class="nickname"><?php echo $data['Identity']['local_username']; ?></a></strong>
 	</p>
-	<ul class="whoisstats">
-	    <?php if(isset($data['Identity']['age'])) { ?>
-		    <li class="bio icon">
-		        <?php echo $sex['he'][$data['Identity']['sex']]; ?> is <?php echo $data['Identity']['age']; ?> years old.
-		    </li>
-        <?php } ?>
-	</ul>
 </div>
 </div>
+<!-- mini profile // end -->
 
 <br class="clear" />
 

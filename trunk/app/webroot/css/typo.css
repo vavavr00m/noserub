@@ -223,6 +223,16 @@ a.external:hover {
 	color: #9d9d9d;
 }
 
+#personalid a, #personalid a:active, #personalid a:visited{
+	font-size: 18px;
+	color: #9d9d9d;
+	border: none;
+}
+
+#photo a {
+	border: none !important;
+}
+
 /* contacts */
 dd a, dd a:active, dd a:visited {
 	color: #999999 !important;

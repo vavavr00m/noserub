@@ -20,6 +20,8 @@
         
 ?>
 
+mini profile here!
+
     <div class="vcard">
         <div>
             <h4>Social activity</h4>
