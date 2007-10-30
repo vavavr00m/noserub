@@ -512,6 +512,7 @@ class IdentitiesController extends AppController {
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth', null, true);
                 } else {
+                    $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
                 	$this->redirect($url, null, true);
                 }
@@ -540,6 +541,7 @@ class IdentitiesController extends AppController {
     			
     			if ($identity) {
     				$this->Session->write('Identity', $identity['Identity']);
+    				$this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
     				$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
                 	$this->redirect($url, null, true);
     			} else {
