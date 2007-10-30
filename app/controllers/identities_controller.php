@@ -583,6 +583,13 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function register() {
+        $session_identity = $this->Session->read('Identity');
+        if($session_identity) {
+            # this user is already logged in...
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
         $this->checkSecure();
         
         if(NOSERUB_REGISTRATION_TYPE != 'all') {
