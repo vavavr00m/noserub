@@ -1,1 +1,0 @@
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `created` , `modified` ) VALUES ('16', 'Dailymotion', 'http://dailymotion.com', '6', NOW(), NOW());

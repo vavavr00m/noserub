@@ -1,1 +1,0 @@
-    <?php echo $this->renderElement('identities/items', array('data' => $data, 'filter' => $filter)); ?>

@@ -1,1 +1,0 @@
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('36', 'Scribd', 'http://www.scribd.com/', '8', '', 'scribd.gif', '1', '0', NOW(), NOW());
