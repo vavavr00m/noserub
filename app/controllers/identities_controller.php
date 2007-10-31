@@ -219,6 +219,7 @@ class IdentitiesController extends AppController {
         $this->Identity->expects('Identity');
         $newbies = $this->Identity->findAll(array('is_local' => 1, 
                                                   'frontpage_updates' => 1,
+                                                  'hash' => '',
                                                   'username NOT LIKE "%@%"'), null, 'Identity.created DESC', 9);
         $this->set('newbies', $newbies);
         
