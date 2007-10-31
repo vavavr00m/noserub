@@ -42,64 +42,64 @@
 		}
 		
 		function all() {
-			$this->__executeTestTask();
+			$this->executeTestTask();
 		}
 		
 		function component($componentName) {
-			$this->__executeTestTask($this->action, $componentName);
+			$this->executeTestTask($this->action, $componentName);
 		}
 		
 		function components() {
-			$this->__executeTestTask($this->action);
+			$this->executeTestTask($this->action);
 		}
 		
 		function controller($controllerName) {
-			$this->__executeTestTask($this->action, $controllerName);
+			$this->executeTestTask($this->action, $controllerName);
 		}
 		
 		function controllers() {
-			$this->__executeTestTask($this->action);
+			$this->executeTestTask($this->action);
 		}
 		
 		function helper($helperName) {
-			$this->__executeTestTask($this->action, $helperName);
+			$this->executeTestTask($this->action, $helperName);
 		}
 		
 		function helpers() {
-			$this->__executeTestTask($this->action);
+			$this->executeTestTask($this->action);
 		}
 		
 		function group($groupName) {
-			$this->__executeTestTask($this->action, $groupName);
+			$this->executeTestTask($this->action, $groupName);
 		}
 		
 		function model($modelName) {
-			$this->__executeTestTask($this->action, $modelName);
+			$this->executeTestTask($this->action, $modelName);
 		}
 		
 		function models() {
-			$this->__executeTestTask($this->action);
+			$this->executeTestTask($this->action);
 		}
 		
 		function plugin($pluginName) {
-			$this->__executeTestTask($this->action, $pluginName);
+			$this->executeTestTask($this->action, $pluginName);
 		}
 		
 		function plugins() {
-			$this->__executeTestTask($this->action);
+			$this->executeTestTask($this->action);
 		}
 		
-		function __executeTestTask($param1 = '', $param2 = '') {
+		private function executeTestTask($param1 = '', $param2 = '') {
 			putenv('display=html');
-			$out = shell_exec($this->__getPHPCommand() . ' ' . VENDORS . 'testsuite' . DS . 'test.php '. $this->__getAppAlias() . ' ' . $param1 . ' ' .$param2);
+			$out = shell_exec($this->getPHPCommand() . ' ' . VENDORS . 'testsuite' . DS . 'test.php '. $this->getAppAlias() . ' ' . $param1 . ' ' .$param2);
 			echo $out;
 			
 			exit();
 		}
 		
-		function __getAppAlias() {
+		private function getAppAlias() {
 			$appAlias = '';
-			$apps = $this->__readConfigFile(VENDORS.'testsuite'.DS.'apps.ini');
+			$apps = $this->readConfigFile(VENDORS.'testsuite'.DS.'apps.ini');
 			$apps = array_flip($apps);
 			if (array_key_exists(ROOT.DS.APP_DIR, $apps)) {
 				$appAlias = $apps[ROOT.DS.APP_DIR];
@@ -108,7 +108,7 @@
 			return $appAlias;
 		}
 		
-		function __getPHPCommand() {
+		private function getPHPCommand() {
 			$phpCommand = 'php';
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				$phpCommand .= '.exe';
@@ -117,7 +117,7 @@
 			return $phpCommand;
 		}
 		
-		function __readConfigFile($fileName) {
+		private function readConfigFile($fileName) {
 			$fileLineArray = file($fileName);
 			$iniSetting = array();
 			
