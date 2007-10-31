@@ -14,6 +14,9 @@
 <hr class="space" />
 
 <h2>Your feeds</h2>
+<p class="infotext">
+<a href="<?php echo $url . '/settings/feeds/add/'; ?>" class="addmore">Create a new Feed</a>
+</p>
 <?php if(!$data) { ?>
     <p class="infotext">
         You did not create any feeds yet.
@@ -42,8 +45,7 @@
             </tr>
         <?php } ?>
     </table>
-<?php } ?>
-
 <p class="infotext">
 <a href="<?php echo $url . '/settings/feeds/add/'; ?>" class="addmore">Create a new Feed</a>
 </p>
+<?php } ?>
