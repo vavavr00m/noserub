@@ -6,11 +6,22 @@
                           ($session_local_username      != '' && 
                            $about_identity['namespace'] == $session_local_username);
 ?>
+<p class="infotext">
+    Here you can add all your own social/online activities and import friends in your network.
+</p>
+
+<hr class="space" />
+
 <?php if(empty($data)) { ?>
     <p>
         No accounts yet.
     </p>
 <?php } else {?>
+<?php if($show_action_links) { ?>
+	<p class="infotext">
+	    <?php echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+	</p>
+<?php } ?>
     <table class="listing">
         <thead>
             <tr>

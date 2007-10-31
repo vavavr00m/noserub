@@ -1,4 +1,7 @@
 <?php $flashmessage->render(); ?>
+<p class="infotext">
+    In order to change your password, you have to enter your current password and then the new one.
+</p>
 <form id="IdentityPassowrdSettingsForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php if(isset($paswd_error)) { ?>
