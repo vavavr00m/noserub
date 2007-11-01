@@ -21,6 +21,14 @@ class Identity extends AppModel {
             return true;
         }
     }
+
+    function validateUniqueOpenID($value, $params = array()) {
+    	if ($this->findCount(array('Identity.openid' => $value, 'Identity.hash' => '<> #deleted#')) > 0) {
+    		return false;
+    	} else {
+    		return true;
+    	}
+    }
     
     /**
      * validate, if the username is already taken
@@ -43,15 +51,7 @@ class Identity extends AppModel {
         } else {
             return true;
         }
-    }
-    
-    function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->findCount(array('Identity.openid' => $value, 'Identity.hash' => '<> #deleted#')) > 0) {
-    		return false;
-    	} else {
-    		return true;
-    	}
-    }
+    }    
     
     /**
      * Method description
@@ -97,123 +97,6 @@ class Identity extends AppModel {
     }
     
     /**
-     * Updates the security token for given $identity_id
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    public function updateSecurityToken($identity_id) {
-        if($identity_id) {
-            $this->id = $identity_id;
-            $security_token = md5($identity_id.time());
-            $this->saveField('security_token', $security_token);
-            
-            return $security_token;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function checkSecurityToken($identity_id, $security_token) {
-        if($identity_id && $security_token) {
-            $this->id = $identity_id;
-            $db_security_token = $this->field('security_token');
-            return $db_security_token == $security_token;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    public function check($data) {
-        $splitted = $this->splitUsername($data['Identity']['username']);
-        $username = $splitted['username'];
-        $this->recursive = 0;
-        $this->expects('Identity');
-        return $this->find(array('Identity.hash' => '',
-                                 'Identity.username = "'. $username .'"', 
-                                 'Identity.password' => md5($data['Identity']['password'])));
-    }
-    
-    public function checkOpenID($openid) {
-    	$this->recursive = 0;
-    	$this->expects('Identity');
-    	return $this->find(array('Identity.hash' => '', 'Identity.openid' => $openid));
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    public function register($data) {
-        $isAccountWithOpenID = isset($data['Identity']['openid']);
-    	
-    	# transform it to a real username
-        $splitted = $this->splitUsername($data['Identity']['username']);
-        if($splitted['local'] == 0) {
-            # registering here for an other server
-            # is not possible
-            return false;
-        }
-        $this->create();
-        $data['Identity']['is_local'] = 1;
-        
-        if (!$isAccountWithOpenID) { 
-        	$data['Identity']['password'] = md5($data['Identity']['passwd']);
-        }
-        
-        $data['Identity']['username'] = $splitted['username'];
-        $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        
-        if(!$this->save($data, true, $this->getSaveableFields($isAccountWithOpenID))) {
-            return false;
-        }
-
-        $msg = $this->prepareVerificationMessage($data['Identity']['hash']);
-        $this->sendVerificationMail($data['Identity']['email'], $msg);
-
-        return true;
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function verify($hash) {
-        # check, if there is a username with that hash
-        $this->recursive = 0;
-        $this->expects = array('Identity');
-        $identity = $this->find(array('Identity.hash' => $hash));
-        if($hash && $identity) {
-            # update the identity
-            $this->id = $identity['Identity']['id'];
-            return $this->saveField('hash', '');
-        } else {
-            return false;
-        }
-    }
-    
-    /**
      * Is used, when an account is closed, so that the username
      * remains, but every other personal data is deleted.
      *
@@ -248,122 +131,57 @@ class Identity extends AppModel {
     }
     
     /**
-     * extract single information out of a username
-     * a username may have the following occurences:
-     * (1) noserub.com/dirk.olbertz
-     * (2) dirk.olbertz (this would be a local one)
-     * (3) poolie@dirk.olbertz (this is a private, local one)
-     * (4) noserub.com/poolie@dirk.olbertz (a private, local one)
-     * (5) (1) and (4) with http:// or https://
+     * Method description
      *
      * @param  
      * @return 
      * @access 
      */
-    function splitUsername($username) {
-        # first, remove http://, https:// and www.
-        $username = str_ireplace('http://', '', $username);
-        $username = str_ireplace('https://', '', $username);
-        if(stripos($username, 'www.') === 0) {
-            $username = str_ireplace('www.', '', $username);
-        }
-        
-        # remove trailing slashes
-        $username = trim($username, '/');
-        
-        # now, we can extract the local username and the server
-        $splitted = split('/', $username);
-        if(!$splitted) {
-            # something strange happened
+    public function check($data) {
+        $splitted = $this->splitUsername($data['Identity']['username']);
+        $username = $splitted['username'];
+        $this->recursive = 0;
+        $this->expects('Identity');
+        return $this->find(array('Identity.hash' => '',
+                                 'Identity.username = "'. $username .'"', 
+                                 'Identity.password' => md5($data['Identity']['password'])));
+    }
+    
+    public function checkOpenID($openid) {
+    	$this->recursive = 0;
+    	$this->expects('Identity');
+    	return $this->find(array('Identity.hash' => '', 'Identity.openid' => $openid));
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function checkSecurityToken($identity_id, $security_token) {
+        if($identity_id && $security_token) {
+            $this->id = $identity_id;
+            $db_security_token = $this->field('security_token');
+            return $db_security_token == $security_token;
+        } else {
             return false;
         }
-        
-        if(count($splitted) == 1) {
-            # just a username was given. so we assume it should
-            # be for this server
-            $local_username = $splitted[0];
-            $servername = FULL_BASE_URL;
-            $servername = str_ireplace('http://', '', $servername);
-            $servername = str_ireplace('https://', '', $servername);
-            $username =  $servername . Router::url('/') . $local_username;
-        } else {
-            $servername = $splitted[0];
-            $local_username = array_pop($splitted);
-            $username = join('/', $splitted) . '/' . $local_username;
-        }
+    }
 
-        # test, wether we have a namespace here, or not
-        $local_username_namespace = split('@', $local_username);
-        
-        # test, if this is a local contact, or not
-        $server_name = str_ireplace('http://', '', FULL_BASE_URL . Router::url('/'));
-        $server_name = str_ireplace('https://', '', $server_name);
-        if(stripos($server_name, 'www.') === 0) {
-            $server_name = str_ireplace('www.', '', $server_name);
-        }
-        $local = stripos($username, $server_name) === 0;
-        $result = array('username'        => $username,
-                        'local_username'  => $local_username,
-                        'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
-                        'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
-                        'servername'      => $servername,
-                        'local'           => $local);
-        
-        return $result;
-    }
-    
     /**
-     * Sanitizes non-namespace containing usernames.
-     * This is used eg. when adding new contacts from
-     * flickr, where usernames can be '0909ds7@N01'.
-     * There, the @ is not allowed, so I want to sanitize
-     * them, before giving them to the user as selection
-     * for using as a real contact username.
-     *
-     * @param  
-     * @return 
-     * @access 
+     * Returns the newest identities.
      */
-    function sanitizeUsername($username) {
-        $username = str_replace('ä', 'ae', $username);
-        $username = str_replace('ö', 'oe', $username);
-        $username = str_replace('ü', 'ue', $username);
-        $username = str_replace('ß', 'ss', $username);
-        $username = str_replace('Ä', 'Ae', $username);
-        $username = str_replace('Ö', 'Oe', $username);
-        $username = str_replace('Ü', 'Ue', $username);
-        $username = str_replace(' ', '-',  $username);
+    function getNewbies($limit = 10) {
+    	$this->recursive = 0;
+        $this->expects('Identity');
+        $newbies = $this->findAll(array('is_local' => 1, 
+                                        'frontpage_updates' => 1,
+                                        'hash' => '',
+                                        'username NOT LIKE "%@%"'), null, 'Identity.created DESC', $limit);
         
-        $username = preg_replace('/[^\w\s.-]/', null, $username);
-        return $username;
-    }
-    
-    /**
-     * if Identity.last_activity is before $datetime, idis updated in the
-     * database.
-     */
-    public function updateLastActivity($datetime, $identity_id = null) {
-        # make sure we have datetime and not only date or something like that
-        $datetime = date('Y-m-d H:i:s', strtotime($datetime));
-        
-        # get now
-        $now = date('Y-m-d H:i:s');
-        
-        if($datetime > $now) {
-            # don't allow "last_activity" to be in the future
-            return;
-        }
-        
-        # get the current value
-        if($identity_id) {
-            $this->id = $identity_id;
-        }
-        
-        $last_activity = $this->field('Last_activity');
-        if($last_activity < $datetime) {
-            # set the new datetime
-            $this->saveField('last_activity', $datetime);
-        }
+        return $newbies;
     }
     
     /**
@@ -472,6 +290,182 @@ class Identity extends AppModel {
     }
     
     /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function register($data) {
+        $isAccountWithOpenID = isset($data['Identity']['openid']);
+    	
+    	# transform it to a real username
+        $splitted = $this->splitUsername($data['Identity']['username']);
+        if($splitted['local'] == 0) {
+            # registering here for an other server
+            # is not possible
+            return false;
+        }
+        $this->create();
+        $data['Identity']['is_local'] = 1;
+        
+        if (!$isAccountWithOpenID) { 
+        	$data['Identity']['password'] = md5($data['Identity']['passwd']);
+        }
+        
+        $data['Identity']['username'] = $splitted['username'];
+        $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
+        
+        if(!$this->save($data, true, $this->getSaveableFields($isAccountWithOpenID))) {
+            return false;
+        }
+
+        $msg = $this->prepareVerificationMessage($data['Identity']['hash']);
+        $this->sendVerificationMail($data['Identity']['email'], $msg);
+
+        return true;
+    }
+
+    /**
+     * Sanitizes non-namespace containing usernames.
+     * This is used eg. when adding new contacts from
+     * flickr, where usernames can be '0909ds7@N01'.
+     * There, the @ is not allowed, so I want to sanitize
+     * them, before giving them to the user as selection
+     * for using as a real contact username.
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function sanitizeUsername($username) {
+        $username = str_replace('ä', 'ae', $username);
+        $username = str_replace('ö', 'oe', $username);
+        $username = str_replace('ü', 'ue', $username);
+        $username = str_replace('ß', 'ss', $username);
+        $username = str_replace('Ä', 'Ae', $username);
+        $username = str_replace('Ö', 'Oe', $username);
+        $username = str_replace('Ü', 'Ue', $username);
+        $username = str_replace(' ', '-',  $username);
+        
+        $username = preg_replace('/[^\w\s.-]/', null, $username);
+        return $username;
+    }
+    
+    /**
+     * extract single information out of a username
+     * a username may have the following occurences:
+     * (1) noserub.com/dirk.olbertz
+     * (2) dirk.olbertz (this would be a local one)
+     * (3) poolie@dirk.olbertz (this is a private, local one)
+     * (4) noserub.com/poolie@dirk.olbertz (a private, local one)
+     * (5) (1) and (4) with http:// or https://
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function splitUsername($username) {
+        # first, remove http://, https:// and www.
+        $username = str_ireplace('http://', '', $username);
+        $username = str_ireplace('https://', '', $username);
+        if(stripos($username, 'www.') === 0) {
+            $username = str_ireplace('www.', '', $username);
+        }
+        
+        # remove trailing slashes
+        $username = trim($username, '/');
+        
+        # now, we can extract the local username and the server
+        $splitted = split('/', $username);
+        if(!$splitted) {
+            # something strange happened
+            return false;
+        }
+        
+        if(count($splitted) == 1) {
+            # just a username was given. so we assume it should
+            # be for this server
+            $local_username = $splitted[0];
+            $servername = FULL_BASE_URL;
+            $servername = str_ireplace('http://', '', $servername);
+            $servername = str_ireplace('https://', '', $servername);
+            $username =  $servername . Router::url('/') . $local_username;
+        } else {
+            $servername = $splitted[0];
+            $local_username = array_pop($splitted);
+            $username = join('/', $splitted) . '/' . $local_username;
+        }
+
+        # test, wether we have a namespace here, or not
+        $local_username_namespace = split('@', $local_username);
+        
+        # test, if this is a local contact, or not
+        $server_name = str_ireplace('http://', '', FULL_BASE_URL . Router::url('/'));
+        $server_name = str_ireplace('https://', '', $server_name);
+        if(stripos($server_name, 'www.') === 0) {
+            $server_name = str_ireplace('www.', '', $server_name);
+        }
+        $local = stripos($username, $server_name) === 0;
+        $result = array('username'        => $username,
+                        'local_username'  => $local_username,
+                        'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
+                        'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
+                        'servername'      => $servername,
+                        'local'           => $local);
+        
+        return $result;
+    }
+    
+    
+    /**
+     * if Identity.last_activity is before $datetime, idis updated in the
+     * database.
+     */
+    public function updateLastActivity($datetime, $identity_id = null) {
+        # make sure we have datetime and not only date or something like that
+        $datetime = date('Y-m-d H:i:s', strtotime($datetime));
+        
+        # get now
+        $now = date('Y-m-d H:i:s');
+        
+        if($datetime > $now) {
+            # don't allow "last_activity" to be in the future
+            return;
+        }
+        
+        # get the current value
+        if($identity_id) {
+            $this->id = $identity_id;
+        }
+        
+        $last_activity = $this->field('Last_activity');
+        if($last_activity < $datetime) {
+            # set the new datetime
+            $this->saveField('last_activity', $datetime);
+        }
+    }
+
+    /**
+     * Updates the security token for given $identity_id
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function updateSecurityToken($identity_id) {
+        if($identity_id) {
+            $this->id = $identity_id;
+            $security_token = md5($identity_id.time());
+            $this->saveField('security_token', $security_token);
+            
+            return $security_token;
+        }
+        
+        return false;
+    }
+    
+    /**
      * sync that identity with data from username (url)
      *
      * @param  
@@ -507,6 +501,27 @@ class Identity extends AppModel {
         $this->save($data['Identity']);
         
         return true;
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function verify($hash) {
+        # check, if there is a username with that hash
+        $this->recursive = 0;
+        $this->expects = array('Identity');
+        $identity = $this->find(array('Identity.hash' => $hash));
+        if($hash && $identity) {
+            # update the identity
+            $this->id = $identity['Identity']['id'];
+            return $this->saveField('hash', '');
+        } else {
+            return false;
+        }
     }
     
     private function getSaveableFields($isAccountWithOpenID) {
