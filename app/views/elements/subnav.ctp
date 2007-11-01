@@ -13,7 +13,7 @@ if($menu['main'] == 'social_stream' || $menu['main'] == 'my_profile' || $menu['m
         
     } 
     $sub_menu = array(
-        'all'          => array('All', $noserub_url . 'all/'),
+        'all'          => array('All', $noserub_url . '/'),
         'photo'        => array('Photo', $noserub_url . 'photo/'),
         'video'        => array('Video', $noserub_url . 'video/'),
         'audio'        => array('Audio', $noserub_url . 'audio/'),
