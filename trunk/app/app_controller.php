@@ -12,7 +12,19 @@
 class AppController extends Controller {
     var $helpers = array('javascript', 'html');
     var $components = array('menu');
-    var $uses = array('Identity');
+    
+    /**
+     * Never ever "use" something here, or the migrations will fail.
+     * See Issue #127
+     * http://code.google.com/p/noserub/issues/detail?id=127
+     *
+     * If you need a specific model in AppController, use "loadModel()"
+     *
+     * (Basically no models that make use of a database table may be 'used' here.
+     *  Because if you do so, Cake will complain and you have no chance of doing
+     *  the migrations in /system/update.)
+     */
+    var $uses = array(); 
     
     function flashMessage($type, $message) {
         $flash_messages = $this->Session->read('FlashMessages');
@@ -80,6 +92,10 @@ class AppController extends Controller {
      * @access 
      */
     function ensureSecurityToken() {
+        if(!isset($this->Identity)) {
+            loadModel('Identity');
+            $this->Identity = new Identity();
+        }
         $session_identity_id = $this->Session->read('Identity.id');
         if(isset($this->params['form']['security_token'])) {
             # POST
@@ -95,6 +111,10 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
+        if(!isset($this->Identity)) {
+            loadModel('Identity');
+            $this->Identity = new Identity();
+        }
         # set new security_token
         $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
     }
