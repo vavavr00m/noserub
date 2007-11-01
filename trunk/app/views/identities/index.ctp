@@ -50,7 +50,7 @@
         <?php $flashmessage->render(); ?>
         
         <div id="photo">
-        	<img src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
+        	<img class="photo" src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />
         </div>
 
         <div id="whois">
