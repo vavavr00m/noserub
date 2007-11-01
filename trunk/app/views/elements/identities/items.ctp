@@ -40,9 +40,17 @@
                     </span>
                 <?php } ?>
                 <br class="clear" />
-            <?php } else { ?>
+            <?php } else { 
+                $num_displayed = 0;
+                ?>
                 <ul class="networklist">
                     <?php foreach($cluster as $item) { ?>
+                        <?php
+                            if($num_displayed == 2) {
+                                echo '</ul>';
+                                echo '<ul class="networklist extended">';
+                            }
+                        ?>
                         <li class="<?php echo $item['type'] == 'photo' ? 'photos' : $item['type']; ?> icon">
                             <span class="date">
                                 <?php if($date == $today) {
@@ -62,6 +70,7 @@
                                 ?>
                             </span>
                         </li>
+                        <?php $num_displayed++; ?>
                     <?php } ?>
                 </ul>
             <?php } ?>
