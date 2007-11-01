@@ -98,14 +98,9 @@ class IdentitiesController extends AppController {
                 
                 # now get all mutual contacts, when this is not the logged in user
                 if($session_identity['id'] && $data['Identity']['id'] != $session_identity['id']) {
-                    $query = 'SELECT with_identity_id FROM contacts WHERE identity_id='.$data['Identity']['id'] . ' AND with_identity_id IN (SELECT with_identity_id FROM contacts WHERE identity_id='.$session_identity['id'].')';
-                    $mutual_contacts = $this->Identity->query($query);
+                	$mutual_contacts = $this->Identity->getMutualContacts($data['Identity']['id'], $session_identity['id'], 9);
                     if($mutual_contacts) {
-                        $mutual_contacts_ids = join(',', Set::extract($mutual_contacts, '{n}.contacts.with_identity_id'));
-
-                        $this->Identity->recursive = 0;
-                        $this->Identity->expects('Identity');
-                        $this->set('mutual_contacts', $this->Identity->findAll(array('Identity.id IN (' . $mutual_contacts_ids . ')'), null, 'Identity.last_activity DESC', 9));
+                    	$this->set('mutual_contacts', $mutual_contacts);
                     }
                 }
                 

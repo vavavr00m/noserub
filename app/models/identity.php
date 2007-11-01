@@ -182,9 +182,29 @@ class Identity extends AppModel {
     }
     
     /**
+     * Returns mutual contacts of two identities, or false if there are no mutual contacts.
+     */
+    function getMutualContacts($firstIdentityId, $secondIdentityId, $limit = null) {
+    	$query = 'SELECT with_identity_id FROM contacts WHERE identity_id='.$firstIdentityId . ' AND with_identity_id IN (SELECT with_identity_id FROM contacts WHERE identity_id='.$secondIdentityId.')';
+        $ids = $this->query($query);
+        
+    	if($ids) {
+			$mutualContactsIds = join(',', Set::extract($ids, '{n}.contacts.with_identity_id'));
+
+			$this->recursive = 0;
+			$this->expects('Identity');
+			$mutualContacts = $this->findAll(array('Identity.id IN (' . $mutualContactsIds . ')'), null, 'Identity.last_activity DESC', $limit);
+			
+			return $mutualContacts;
+		}
+			
+		return false;
+    }
+    
+    /**
      * Returns the newest identities.
      */
-    function getNewbies($limit = 10) {
+    function getNewbies($limit = null) {
     	$this->recursive = 0;
         $this->expects('Identity');
         $newbies = $this->findAll(array('is_local' => 1, 
