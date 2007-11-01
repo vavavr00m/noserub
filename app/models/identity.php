@@ -171,6 +171,17 @@ class Identity extends AppModel {
     }
 
     /**
+     * Returns the contacts of the specified identity, ordered by last activity.
+     */
+    function getContacts($identityId, $limit = null) {
+    	$this->Contact->recursive = 1;
+        $this->Contact->expects('Contact', 'WithIdentity');
+		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.last_activity DESC', $limit);
+		
+		return $contacts;
+    }
+    
+    /**
      * Returns the newest identities.
      */
     function getNewbies($limit = 10) {

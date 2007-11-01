@@ -73,10 +73,8 @@ class IdentitiesController extends AppController {
                 $this->set('communications', $communications);
                 
                 # get contacts of the displayed profile
-                $this->Identity->Contact->recursive = 1;
-                $this->Identity->Contact->expects('Contact', 'WithIdentity');
-                $all_contacts = $this->Identity->Contact->findAllByIdentityId($data['Identity']['id'], null, 'WithIdentity.last_activity DESC');
-                
+                $all_contacts = $this->Identity->getContacts($data['Identity']['id']);
+
                 $num_private_contacts = 0;
                 $num_noserub_contacts = 0;
                 foreach($all_contacts as $contact) {
@@ -208,10 +206,7 @@ class IdentitiesController extends AppController {
         # also get my contacts, when I'm logged in
         $logged_in_identity_id = $this->Session->read('Identity.id');
         if($logged_in_identity_id) {
-            $this->Identity->Contact->recursive = 1;
-            $this->Identity->Contact->expects('Contact', 'WithIdentity');
-            $contacts = $this->Identity->Contact->findAllByIdentityId($logged_in_identity_id, null, 'WithIdentity.last_activity DESC', 9);
-            $this->set('contacts', $contacts);
+        	$this->set('contacts', $this->Identity->getContacts($logged_in_identity_id, 9));
         }
         
         $this->set('newbies', $this->Identity->getNewbies(9));
