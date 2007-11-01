@@ -113,6 +113,12 @@ img, acronym {
 	padding: 7px 0 0 8px;
 }
 
+.moreactivites {
+	padding-bottom: 10px;
+	margin-top: -5px;
+	text-align: right;
+}
+
 /* Settings */
 #settings_photo {
 	float: right;
