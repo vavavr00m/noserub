@@ -66,9 +66,9 @@ noserub.fn = noserub.prototype = {
             $(this).parent().parent().next('.accounts_of_contact').toggle();
         });
 
-        $('a.shownetwork').click(function(e) {
+        $('a.specifynetwork').click(function(e) {
             e.preventDefault();
-            $(this).parent().parent().next('.mynetwork').toggle();
+            $('.mynetwork').toggle();
         });
     }
 };

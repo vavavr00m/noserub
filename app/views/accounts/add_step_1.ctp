@@ -8,7 +8,7 @@
         ?>
         <br />
         <input type="radio" name="data[Account][type]" id="type_2" id="AccountType" value="2" />
-        Any RSS-Feed (eg. Blogs)
+        Any Feed (RSS or Atom, eg. from Blogs)
     </fieldset>
     <fieldset>
         <input class="submitbutton" type="submit" value="Next step"/>
