@@ -442,13 +442,18 @@ class IdentitiesController extends AppController {
             $data['Identity']['username'] = $splitted['username'];
             $data['Identity']['password'] = $data['Identity']['old_passwd'];
             if($this->Identity->check($data)) {
-                # old password is ok
-                $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
-                $this->Identity->id = $session_identity['id'];
-                $this->Identity->save($this->data, true, array('password'));
+                # old password is ok, now check the new
+                if(!$data['Identity']['passwd']) {
+                    $this->flashMessage('alert', 'You need to specify a new password.');
+                } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
+                    $this->flashMessage('alert', 'The new password was not entered twice the same.');
+                } else {
+                    $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
+                    $this->Identity->id = $session_identity['id'];
+                    $this->Identity->save($this->data, true, array('password'));
                 
-                $this->flashMessage('success', 'The new password has been saved.');
-                
+                    $this->flashMessage('success', 'The new password has been saved.');
+                }
             } else {
                 $this->flashMessage('alert', 'The old password was not correct.');
             }
