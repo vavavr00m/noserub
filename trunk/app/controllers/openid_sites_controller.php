@@ -2,6 +2,7 @@
 
 	class OpenidSitesController extends AppController {
 		var $helpers = array('form');
+		var $uses = array('OpenidSite');
 		
 		function index() {
 			$this->set('headline', 'OpenID settings');
