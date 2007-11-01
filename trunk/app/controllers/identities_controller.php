@@ -168,7 +168,7 @@ class IdentitiesController extends AppController {
                                                'is_local'  => 1,
                                                'hash'      => '',
                                                'NOT username LIKE "%@%"'),
-                                         null, 'Identity.last_activity DESC, Identity.modified DESC', 9);
+                                         null, 'Identity.last_activity DESC, Identity.modified DESC', 25);
 
         # extract the identities
         $items      = array();
