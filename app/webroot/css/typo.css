@@ -150,7 +150,7 @@ dd {
 }
 
 #network ul {
-	padding: 0 0 15px 0;
+	padding: 0 0 20px 0;
 	margin: 0;
 }
 
@@ -182,13 +182,14 @@ a.external:hover {
 
 .more {
 	float: right;
+	color: #b6b6b6;
 }
 
 .more a, .more a:active, .more a:visited {
-	color: #b6b6b6 !important;
+	color: #878787 !important;
 	text-decoration: none !important;
 	font-weight: normal !important;
-	border-bottom: 1px dotted #b6b6b6 !important;
+	border-bottom: 1px dotted #878787 !important;
 }
 
 .more a:hover {
