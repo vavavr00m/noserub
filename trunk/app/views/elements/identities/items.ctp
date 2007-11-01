@@ -1,3 +1,6 @@
+<?php
+    $max_num_items_per_day = 3;
+?>
 <div id="network">
  <?php if(empty($data)) { ?>
     <p>
@@ -19,6 +22,15 @@
             if($days === 6) {
                 break;
             }
+            $num_of_activites = count($cluster);
+            echo '<span class="more">';
+            if($num_of_activites > $max_num_items_per_day) {
+                echo '<a href="#">' . $num_of_activites . ' activites</a>';
+            } else {
+                echo $num_of_activites . ' activites';
+            }
+            echo '</span>';
+            
             if($date == $today) { 
                 echo '<h2>Today</h2>'; 
             } else if($date == $yesterday) {
@@ -47,11 +59,8 @@
                 <ul class="networklist">
                     <?php foreach($cluster as $item) { ?>
                         <?php
-                            if($num_displayed == 2) {
+                            if($num_displayed == $max_num_items_per_day) {
                                 echo '</ul>';
-                                echo '<p class="moreactivites"><a class="addmore" href="#">';
-                                echo count($cluster);
-                                echo ' activites</a></p>';
                                 echo '<ul class="networklist extended">';
                             }
                         ?>

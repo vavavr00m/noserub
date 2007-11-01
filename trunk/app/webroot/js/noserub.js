@@ -70,5 +70,26 @@ noserub.fn = noserub.prototype = {
             e.preventDefault();
             $('.mynetwork').toggle();
         });
+    },
+    
+    social_stream_items: function() {
+        $('ul.extended').hide();
+        
+        $('div#network span.more a').click(function(e) {
+            e.preventDefault();
+            $(this).parent().next().next().next().toggle('medium');
+        });
+    },
+    
+    Contacts_network: function() {
+        this.social_stream_items();
+    },
+    
+    Identities_index: function() {
+        this.social_stream_items();
+    },
+    
+    Identities_social_stream: function() {
+        this.social_stream_items();
     }
 };
