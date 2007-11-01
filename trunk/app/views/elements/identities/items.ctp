@@ -1,5 +1,5 @@
 <?php
-    $max_num_items_per_day = 3;
+    $max_num_items_per_day = 10;
 ?>
 <div id="network">
  <?php if(empty($data)) { ?>
