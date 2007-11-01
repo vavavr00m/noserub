@@ -29,7 +29,16 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
         </ul>
     </fieldset>
 
-    <fieldset>
+<p class="infotext">
+	Do you want to include your networks (contacts/friends) activities too?
+	
+</p>
+<p class="infotext">
+	<a class="shownetwork addmore" href="#">Show my network</a>
+</p>
+<br />
+
+    <fieldset class="mynetwork">
         <legend>Which of your networks (contacts/friends) activities should be included?</legend>
         <?php foreach($contacts as $contact) { ?>
             <?php if(empty($contact['WithIdentity']['Account'])) { continue; } ?>
@@ -59,7 +68,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                     <input class="check_all" type="checkbox" name="dummy" value="-1" />
                     All feeds of <?php echo $contact['WithIdentity']['username']; ?>
                 </li>
-                <li><a class="specify" href="#">Specify the feeds</a> +</li>
+                <li><a class="specify addmore" href="#">Specify the feeds</a></li>
 			</ul>
 
 			<ul class="accounts_of_contact">

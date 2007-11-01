@@ -47,6 +47,7 @@ noserub.fn = noserub.prototype = {
     
     Syndications_add: function() {
         $('.accounts_of_contact').hide();
+        $('.mynetwork').hide();
         
         $(':checkbox.check_all').change(function() {
             if($(this).attr('checked') == true) {
@@ -63,6 +64,11 @@ noserub.fn = noserub.prototype = {
         $('a.specify').click(function(e) {
             e.preventDefault();
             $(this).parent().parent().next('.accounts_of_contact').toggle();
+        });
+
+        $('a.shownetwork').click(function(e) {
+            e.preventDefault();
+            $(this).parent().parent().next('.mynetwork').toggle();
         });
     }
 };
