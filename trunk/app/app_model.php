@@ -59,7 +59,7 @@ class AppModel extends Model {
                                         "/\&#45;/"
                                     );
                                     $field = preg_replace($patterns, $replacements, $field);
-                                    $data[$key][$model][$fieldName] = $field;
+                                    $data[$key][$model][$fieldName] = strip_tags($field);
                                 }
                             }
                         }

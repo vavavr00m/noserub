@@ -93,7 +93,7 @@ class Identity extends AppModel {
             }
         }
     
-        return $data;
+        return parent::afterFind($data);
     }
     
     /**
