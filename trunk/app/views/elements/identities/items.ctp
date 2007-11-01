@@ -43,11 +43,15 @@
             <?php } else { 
                 $num_displayed = 0;
                 ?>
+                
                 <ul class="networklist">
                     <?php foreach($cluster as $item) { ?>
                         <?php
                             if($num_displayed == 2) {
                                 echo '</ul>';
+                                echo '<p class="moreactivites"><a class="addmore" href="#">';
+                                echo count($cluster);
+                                echo ' activites</a></p>';
                                 echo '<ul class="networklist extended">';
                             }
                         ?>
