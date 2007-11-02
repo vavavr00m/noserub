@@ -24,12 +24,12 @@
             }
             
             if($filter != 'photo') {
-                $num_of_activites = count($cluster);
+                $num_of_activities = count($cluster);
                 echo '<span class="more">';
-                if($num_of_activites > $max_num_items_per_day) {
-                    echo '<a href="#">' . $num_of_activites . ' activites</a>';
+                if($num_of_activities > $max_num_items_per_day) {
+                    echo '<a href="#">' . $num_of_activities . ' activities</a>';
                 } else {
-                    echo $num_of_activites . ' activites';
+                    echo $num_of_activities . ' activities';
                 }
                 echo '</span>';
             }

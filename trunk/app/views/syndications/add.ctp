@@ -34,7 +34,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	
 </p>
 <p class="infotext">
-	<a class="specifynetwork addmore" href="#">Specify network activites</a>
+	<a class="specifynetwork addmore" href="#">Specify network activities</a>
 </p>
 <br />
 
