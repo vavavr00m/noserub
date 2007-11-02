@@ -262,7 +262,7 @@ class SyndicationsController extends AppController {
             
             $this->Syndication->recursive = 0;
             $this->Syndication->expects('Syndication');
-            $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.modified ASC, Syndication.modified DESC', 1);
+            $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.last_upload ASC, Syndication.modified DESC', 1);
             foreach($data as $item) {
                 # save the old last_update timestamp
                 $datetime_last_upload = $item['Syndication']['last_upload'];
