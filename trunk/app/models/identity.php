@@ -560,6 +560,7 @@ class Identity extends AppModel {
     	
     	if ($isAccountWithOpenID) {
     		$saveable[] = 'openid';
+    		$saveable[] = 'openid_identity';
     		$saveable[] = 'openid_server_url';
     	} else {
     		$saveable[] = 'password';

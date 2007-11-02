@@ -535,7 +535,7 @@ class IdentitiesController extends AppController {
     		if (count($this->params['url']) > 1) {
     			$response = $this->getOpenIDResponseIfSuccess();
     			$identity = $this->Identity->checkOpenID($response->identity_url);
-    			
+ 
     			if ($identity) {
     				$this->Session->write('Identity', $identity['Identity']);
     				$this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
@@ -620,6 +620,7 @@ class IdentitiesController extends AppController {
     				$sreg = $sregResponse->contents();
     				
     				$this->Session->write('Registration.openid', $response->identity_url);
+    				$this->Session->write('Registration.openid_identity', $response->message->getArg('http://openid.net/signon/1.0', 'identity'));
 					$this->Session->write('Registration.openid_server_url', $response->endpoint->server_url);
     				
 	    			if (@$sreg['email']) {
@@ -641,12 +642,11 @@ class IdentitiesController extends AppController {
 
     	if (!empty($this->data)) {
     		$this->data['Identity']['openid'] = $this->Session->read('Registration.openid');
+    		$this->data['Identity']['openid_identity'] = $this->Session->read('Registration.openid_identity');
     		$this->data['Identity']['openid_server_url'] = $this->Session->read('Registration.openid_server_url');
     		
     		if($this->Identity->register($this->data)) {
-	    		$this->Session->delete('Registration.openid');
-	    		$this->Session->delete('Registration.openid_server_url');
-	    		$this->Session->delete('Registration.email');
+	    		$this->removeRegistrationDataFromSession();
     			$this->redirect('/pages/register/thanks/', null, true);
             }
     	} else {
@@ -816,5 +816,12 @@ class IdentitiesController extends AppController {
     	} elseif ($response->status == Auth_OpenID_SUCCESS) {
     		return $response;
     	}
+    }
+    
+    private function removeRegistrationDataFromSession() {
+    	$this->Session->delete('Registration.openid');
+	    $this->Session->delete('Registration.openid_identity');
+	    $this->Session->delete('Registration.openid_server_url');
+	    $this->Session->delete('Registration.email');
     }
 }
