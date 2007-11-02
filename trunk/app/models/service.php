@@ -368,6 +368,10 @@ class Service extends AppModel {
     			return new ViddyouService();
     		case 47:
     			return new GadugaduService();
+    		case 48:
+    			return new DopplrService();
+    		case 49:
+    			return new OrkutService();
     		default:
     			return false;
     	}
@@ -714,6 +718,13 @@ class ViddyouService implements IService {
 	}
 }
 
+class DopplrService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.dopplr.com/traveller/'.$username;
+	}
+}
+
 class FacebookService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
@@ -948,6 +959,13 @@ class OdeoService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://odeo.com/profile/'.$username.'/rss.xml';
+	}
+}
+
+class OrkutService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'http://www.orkut.com/Profile.aspx?uid='.$username;
 	}
 }
 
