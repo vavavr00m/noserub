@@ -352,6 +352,14 @@ class Service extends AppModel {
     			return new DiggService();
     		case 39:
     			return new MisterwongService();
+    		case 40:
+    			return new FolkdService();
+    		case 41:
+    			return new RedditService();
+    		case 42:
+    			return new BluedotService();
+    		case 43:
+    			return new SimpyService();
     		default:
     			return false;
     	}
@@ -553,7 +561,7 @@ class MisterwongService implements IService {
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU', '/Next &#187;<\/a>/iU', '/page');
+		return ContactExtractor::getContactsFromSinglePage('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU');
 	}
 	
 	function getContent($feeditem) {
@@ -562,6 +570,82 @@ class MisterwongService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
+	}
+}
+
+class FolkdService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.folkd.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://www.folkd.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
+	}
+}
+
+class RedditService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://reddit.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://reddit.com/user/'.$username.'/.rss';
+	}
+}
+
+class BluedotService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://bluedot.us/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://bluedot.us/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/bluedot.us\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://bluedot.us/users/'.$username.'/rss';
+	}
+}
+
+class SimpyService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.simpy.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.simpy.com/rss/user/'.$username.'/links/';
 	}
 }
 
