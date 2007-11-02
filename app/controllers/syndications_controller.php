@@ -103,7 +103,7 @@ class SyndicationsController extends AppController {
         $this->set('data', $this->Syndication->findAllByIdentityId($session_identity['id']));
         
         $this->set('session_identity', $session_identity);
-        $this->set('headline', 'Configure Feeds from your activites and accounts');
+        $this->set('headline', 'Configure Feeds from your activities and accounts');
     }
     
     /**
