@@ -350,6 +350,8 @@ class Service extends AppModel {
     			return new MoodmillService();
     		case 38:
     			return new DiggService();
+    		case 39:
+    			return new MisterwongService();
     		default:
     			return false;
     	}
@@ -541,6 +543,25 @@ class DiggService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
+	}
+}
+
+class MisterwongService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU', '/Next &#187;<\/a>/iU', '/page');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
 	}
 }
 
