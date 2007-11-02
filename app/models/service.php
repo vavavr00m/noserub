@@ -360,6 +360,14 @@ class Service extends AppModel {
     			return new BluedotService();
     		case 43:
     			return new SimpyService();
+    		case 44:
+    			return new DeviantartService();
+    		case 45:
+    			return new ViddlerService();
+    		case 46:
+    			return new ViddyouService();
+    		case 47:
+    			return new GadugaduService();
     		default:
     			return false;
     	}
@@ -649,6 +657,63 @@ class SimpyService implements IService {
 	}
 }
 
+class DeviantartService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'deviantart.com';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://' . $username.'.deviantart.com/friends/', '/<a class="u" href="http:\/\/(.*).deviantart.com\/">/iU', '/Next Page<\/a>/iU', '?offset=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://backend.deviantart.com/rss.xml?q=gallery%3A'.$username.'+sort%3Atime&type=deviation';
+	}
+}
+
+class ViddlerService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.viddler.com/explore/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://www.viddler.com/explore/' . $username . '/friends/', '/<p><strong><a.*href="\/explore\/.*\/".*>(.*)<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.viddler.com/explore/'.$username.'/videos/feed/';
+	}
+}
+
+class ViddyouService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://viddyou.com/profile.php?user='.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://viddyou.com/profile.php?user=' . $username . '/friends/', '/next>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.viddyou.com/feed/user/'.$username.'/feed.rss';
+	}
+}
+
 class FacebookService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
@@ -685,6 +750,13 @@ class FlickrService implements IService {
         } else {
         	return false;
         }
+	}
+}
+
+class GadugaduService extends ServiceAdapter {
+	
+	function getAccountUrl($username) {
+		return 'gg:'.$username;
 	}
 }
 
