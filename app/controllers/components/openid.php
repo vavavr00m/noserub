@@ -42,8 +42,8 @@
 				}
 			} else {
 				$formId = 'openid_message';
-				$formHtml = $authRequest->formMarkup($trustRoot, $returnTo, false , $formId);
-				
+				$formHtml = $authRequest->formMarkup($trustRoot, $returnTo, false , array('id' => $formId));
+
 				if (Auth_OpenID::isFailure($formHtml)) {
 					throw new Exception('Could not redirect to server: '.$formHtml->message);
 				} else {
