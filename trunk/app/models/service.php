@@ -517,6 +517,25 @@ class BloggerdeService implements IService {
 	}
 }
 
+class BluedotService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://bluedot.us/users/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://bluedot.us/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/bluedot.us\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://bluedot.us/users/'.$username.'/rss';
+	}
+}
+
 class CorkdService implements IService {
 	
 	function getAccountUrl($username) {
@@ -574,139 +593,6 @@ class DeliciousService implements IService {
 	}
 }
 
-class DiggService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://digg.com/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://digg.com/users/' . $username . '/friends/view', '/<a class="fn" href="\/users\/(.*)">/iU', '/Next &#187;<\/a>/iU', '/page');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
-	}
-}
-
-class MisterwongService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
-	}
-}
-
-class FolkdService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.folkd.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.folkd.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
-	}
-}
-
-class LivejournalService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.livejournal.com/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.livejournal.com/tools/friendlist.bml?user=' . $username, '/lj:user=\'(.*)\'/iU', '/&gt;&gt;<\/b><\/a>/iU', '&page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://'.$username.'.livejournal.com/data/rss';
-	}
-}
-
-class RedditService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://reddit.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://reddit.com/user/'.$username.'/.rss';
-	}
-}
-
-class BluedotService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://bluedot.us/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://bluedot.us/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/bluedot.us\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://bluedot.us/users/'.$username.'/rss';
-	}
-}
-
-class SimpyService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.simpy.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.simpy.com/rss/user/'.$username.'/links/';
-	}
-}
-
 class DeviantartService implements IService {
 	
 	function getAccountUrl($username) {
@@ -726,41 +612,22 @@ class DeviantartService implements IService {
 	}
 }
 
-class ViddlerService implements IService {
+class DiggService implements IService {
 	
 	function getAccountUrl($username) {
-		return 'http://www.viddler.com/explore/'.$username.'/';
+		return 'http://digg.com/users/'.$username;
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.viddler.com/explore/' . $username . '/friends/', '/<p><strong><a.*href="\/explore\/.*\/".*>(.*)<\/a>/iU');
+		return ContactExtractor::getContactsFromMultiplePages('http://digg.com/users/' . $username . '/friends/view', '/<a class="fn" href="\/users\/(.*)">/iU', '/Next &#187;<\/a>/iU', '/page');
 	}
 	
 	function getContent($feeditem) {
-		return $feeditem->get_content();
+		return $feeditem->get_link();
 	}
 	
 	function getFeedUrl($username) {
-		return 'http://www.viddler.com/explore/'.$username.'/videos/feed/';
-	}
-}
-
-class ViddyouService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://viddyou.com/profile.php?user='.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://viddyou.com/profile.php?user=' . $username . '/friends/', '/next>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.viddyou.com/feed/user/'.$username.'/feed.rss';
+		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
 	}
 }
 
@@ -810,6 +677,25 @@ class FlickrService implements IService {
 	}
 }
 
+class FolkdService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.folkd.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://www.folkd.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
+	}
+}
+
 class GadugaduService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
@@ -830,6 +716,7 @@ class IcqService extends ServiceAdapter {
 		return 'http://www.icq.com/'.$username;
 	}
 }
+
 
 class IlikeService implements IService {
 	
@@ -951,6 +838,25 @@ class LinkedinService extends ServiceAdapter {
 	}
 }
 
+class LivejournalService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.livejournal.com/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.livejournal.com/tools/friendlist.bml?user=' . $username, '/lj:user=\'(.*)\'/iU', '/&gt;&gt;<\/b><\/a>/iU', '&page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://'.$username.'.livejournal.com/data/rss';
+	}
+}
+
 class MagnoliaService implements IService {
 	
 	function getAccountUrl($username) {
@@ -967,6 +873,25 @@ class MagnoliaService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
+	}
+}
+
+class MisterwongService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
 	}
 }
 
@@ -1098,6 +1023,25 @@ class QypeService implements IService {
 	}
 }
 
+class RedditService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://reddit.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://reddit.com/user/'.$username.'/.rss';
+	}
+}
+
 class ScribdService implements IService {
 	
 	function getAccountUrl($username) {
@@ -1122,6 +1066,25 @@ class SecondlifeService extends ServiceAdapter {
 	function getAccountUrl($username) {
 		return '#'.$username;
 	}	
+}
+
+class SimpyService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.simpy.com/user/'.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_link();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.simpy.com/rss/user/'.$username.'/links/';
+	}
 }
 
 class SkypeService extends ServiceAdapter {
@@ -1216,6 +1179,44 @@ class UpcomingService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
+	}
+}
+
+class ViddlerService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://www.viddler.com/explore/'.$username.'/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://www.viddler.com/explore/' . $username . '/friends/', '/<p><strong><a.*href="\/explore\/.*\/".*>(.*)<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.viddler.com/explore/'.$username.'/videos/feed/';
+	}
+}
+
+class ViddyouService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://viddyou.com/profile.php?user='.$username;
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://viddyou.com/profile.php?user=' . $username . '/friends/', '/next>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://www.viddyou.com/feed/user/'.$username.'/feed.rss';
 	}
 }
 
