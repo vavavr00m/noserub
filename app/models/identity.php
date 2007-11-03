@@ -147,10 +147,30 @@ class Identity extends AppModel {
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
-    public function checkOpenID($openid) {
+    public function checkOpenID($openIDResponse) {
     	$this->recursive = 0;
-    	$this->expects('Identity');
-    	return $this->find(array('Identity.hash' => '', 'Identity.openid' => $openid));
+    	$this->expects('Identity');    	
+    	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
+    	
+    	if ($identity) {
+    		$openIDIdentity = $openIDResponse->message->getArg('http://openid.net/signon/1.0', 'identity');
+    		$openIDServerUrl = $openIDResponse->endpoint->server_url;
+    		
+    		# The OpenID identity resp. the server url can change if the
+    		# user's OpenID is delegated. If that is the case we update those settings so 
+    		# we can delegate the NoseRub OpenID to the correct OpenID
+    		if ($identity['Identity']['openid_identity'] != $openIDIdentity || 
+    		    $identity['Identity']['openid_server_url'] != $openIDServerUrl) {
+
+    			$identity['Identity']['openid_identity'] = $openIDIdentity;
+    		    $identity['Identity']['openid_server_url'] = $openIDServerUrl;
+    		    $this->save($identity, false);
+    		}
+    		
+    		return $identity;
+    	}
+    	
+    	return false;
     }
     
     /**
