@@ -534,7 +534,7 @@ class IdentitiesController extends AppController {
     	} else {
     		if (count($this->params['url']) > 1) {
     			$response = $this->getOpenIDResponseIfSuccess();
-    			$identity = $this->Identity->checkOpenID($response->identity_url);
+    			$identity = $this->Identity->checkOpenID($response);
  
     			if ($identity) {
     				$this->Session->write('Identity', $identity['Identity']);
@@ -608,7 +608,7 @@ class IdentitiesController extends AppController {
     		if (count($this->params['url']) > 1) {
     			$response = $this->getOpenIDResponseIfSuccess();
 
-    			$identity = $this->Identity->checkOpenID($response->identity_url);
+    			$identity = $this->Identity->checkOpenID($response);
     			
     			if ($identity) {
     				# already registered, so we perform a login

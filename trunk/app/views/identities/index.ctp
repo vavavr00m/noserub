@@ -6,8 +6,16 @@
     <?php 
         $noserub_url = 'http://' . $data['Identity']['username'];
         
-        $openid->xrdsLocation($noserub_url . '/xrds', false);
-        $openid->serverLink('/auth', false);
+        if (isset($data['Identity']['openid'])) {
+        	# We delegate to the OpenID identity instead of the OpenID as the OpenID itself may be 
+        	# delegated and because OpenID delegation chaining is not possible our delegation 
+        	# wouldn't work.
+        	$openid->delegate($data['Identity']['openid_identity'], false);
+        	$openid->serverLink($data['Identity']['openid_server_url'], false);
+        } else {
+        	$openid->xrdsLocation($noserub_url . '/xrds', false);
+        	$openid->serverLink('/auth', false);
+        }
         
         echo $this->renderElement('foaf');
     
