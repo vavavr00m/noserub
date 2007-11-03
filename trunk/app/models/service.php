@@ -372,6 +372,14 @@ class Service extends AppModel {
     			return new DopplrService();
     		case 49:
     			return new OrkutService();
+    		case 50:
+    			return new KulandoService();
+    		case 51:
+    			return new WordpresscomService();
+    		case 52:
+    			return new BloggerdeService();
+    		case 53:
+    			return new LivejournalService();
     		default:
     			return false;
     	}
@@ -490,6 +498,25 @@ class AimService extends ServiceAdapter {
 	}
 }
 
+class BloggerdeService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.blogger.de/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'blogger.de/', '/<a href="http:\/\/(.*).blogger.de" rel=".*">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://'.$username.'.blogger.de/rss?show=all';
+	}
+}
+
 class CorkdService implements IService {
 	
 	function getAccountUrl($username) {
@@ -601,6 +628,25 @@ class FolkdService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
+	}
+}
+
+class LivejournalService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.livejournal.com/';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://www.livejournal.com/tools/friendlist.bml?user=' . $username, '/lj:user=\'(.*)\'/iU', '/&gt;&gt;<\/b><\/a>/iU', '&page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://'.$username.'.livejournal.com/data/rss';
 	}
 }
 
@@ -850,6 +896,32 @@ class JabberService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'xmpp:'.$username;
+	}
+}
+
+class KulandoService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.kulando.de';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.kulando.de', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		# we need to read the page first in order to access
+        # the user id without need to access the API
+        $content = @file_get_contents('http://'.$username.'.kulando.de/');
+        if(preg_match('/href="http:\/\/www.kulando.de\/rss.php\?blogId=(.*)&amp;profile=/i', $content, $matches)) {
+        	return 'http://www.kulando.de/rss.php?blogId='.$matches[1].'&amp;profile=rss20';
+        } else {
+        	return false;
+        }
 	}
 }
 
@@ -1182,6 +1254,25 @@ class WeventService implements IService {
 	
 	function getFeedUrl($username) {
 		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
+	}
+}
+
+class WordpresscomService implements IService {
+	
+	function getAccountUrl($username) {
+		return 'http://'.$username.'.wordpress.com';
+	}
+	
+	function getContacts($username) {
+		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'wordpress.com', '/<a href="http:\/\/(.*).wordpress.com" rel=".*">.*<\/a>/iU');
+	}
+	
+	function getContent($feeditem) {
+		return $feeditem->get_content();
+	}
+	
+	function getFeedUrl($username) {
+		return 'http://'.$username.'.wordpress.com/feed/';
 	}
 }
 
