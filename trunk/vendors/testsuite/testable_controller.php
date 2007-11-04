@@ -26,7 +26,7 @@
 		
 		function redirect($url, $status = null, $exit = false) {
 			$this->autoRender = false;
-			$this->redirectUrl = Router::url($url, false);
+			$this->redirectUrl = $url;
 			$this->redirectStatus = $status;
 		}
 		
