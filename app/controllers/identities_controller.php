@@ -167,6 +167,7 @@ class IdentitiesController extends AppController {
         $data = $this->Identity->findAll(array('frontpage_updates' => 1,
                                                'is_local'  => 1,
                                                'hash'      => '',
+        									   'NOT last_activity = "0000-00-00 00:00:00"',
                                                'NOT username LIKE "%@%"'),
                                          null, 'Identity.last_activity DESC, Identity.modified DESC', 25);
 
