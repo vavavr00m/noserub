@@ -166,7 +166,13 @@ class Identity extends AppModel {
     		    $identity['Identity']['openid_server_url'] = $openIDServerUrl;
     		    $this->save($identity, false);
     		}
-    		
+    	} else {
+    		# is it a remote user?
+    		$username = $this->splitUsername($openIDResponse->identity_url);
+    		$identity = $this->find(array('Identity.username' => $username['username']));
+    	}
+    	
+    	if ($identity) {
     		return $identity;
     	}
     	
