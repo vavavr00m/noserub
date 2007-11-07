@@ -357,7 +357,7 @@ class Service extends AppModel {
     		case 41:
     			return new RedditService();
     		case 42:
-    			return new BluedotService();
+    			return new FavesService();
     		case 43:
     			return new SimpyService();
     		case 44:
@@ -517,14 +517,14 @@ class BloggerdeService implements IService {
 	}
 }
 
-class BluedotService implements IService {
+class FavesService implements IService {
 	
 	function getAccountUrl($username) {
-		return 'http://bluedot.us/users/'.$username;
+		return 'http://faves.com/users/'.$username;
 	}
 	
 	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://bluedot.us/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/bluedot.us\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
+		return ContactExtractor::getContactsFromMultiplePages('http://faves.com/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/faves.com\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
 	}
 	
 	function getContent($feeditem) {
@@ -532,7 +532,7 @@ class BluedotService implements IService {
 	}
 	
 	function getFeedUrl($username) {
-		return 'http://bluedot.us/users/'.$username.'/rss';
+		return 'http://faves.com/users/'.$username.'/rss';
 	}
 }
 
