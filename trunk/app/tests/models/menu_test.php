@@ -32,10 +32,21 @@
 			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
 			$this->assertMenuItem($mainMenu[1], 'Add me!', false);
 		}
+
+		function testGetMainMenuWithMyProfileSelected() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index'));
+			$this->assertMenuForLocalUser($mainMenu, false, true, false, false);
+		}
 		
 		function testGetMainMenuWithSocialStreamSelected() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream'));
 			$this->assertMenuForLocalUser($mainMenu, true, false, false, false);
+		}
+
+		function testGetMainMenuWithRegisterSelected() {
+			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => 'register'));
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
+			$this->assertMenuItem($mainMenu[1], 'Add me!', true);
 		}
 		
 		function testGetMainMenuWithSettingsSelected() {

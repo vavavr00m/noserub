@@ -11,9 +11,9 @@
 
 			if (isset($options['is_local'])) {
 				if ($options['is_local'] === false) {
-					$menuItems[] = new MenuItem('My Profile', '', false);
+					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
 				} else {
-					$menuItems[] = new MenuItem('My Profile', '', false);
+					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
 					$menuItems[] = new MenuItem('My Contacts', '', false);
 					$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller, $action));
 				}
@@ -25,11 +25,27 @@
 				}
 				
 				if ($registrationType == 'all') {
-					$menuItems[] = new MenuItem('Add me!', '/pages/register/', false);
+					$menuItems[] = new MenuItem('Add me!', '/pages/register/', $this->shouldRegisterBeActivated($controller, $action));
 				}
 			}
 			
 			return $menuItems;
+		}
+		
+		private function shouldMyProfileBeActivated($controller, $action) {
+			if ($controller == 'Identities' && $action == 'index') {
+				return true;
+			}
+			
+			return false;
+		}
+		
+		private function shouldRegisterBeActivated($controller, $action) {
+			if ($controller == 'Identities' && $action == 'register') {
+				return true;
+			}
+			
+			return false;
 		}
 		
 		private function shouldSettingsBeActivated($controller, $action) {
