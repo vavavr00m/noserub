@@ -10,10 +10,7 @@
 		function testGetMainMenuForLocalUser() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true));
 			$this->assertEqual(4, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
-			$this->assertMenuItem($mainMenu[1], 'My Profile', false);
-			$this->assertMenuItem($mainMenu[2], 'My Contacts', false);
-			$this->assertMenuItem($mainMenu[3], 'Settings', false);
+			$this->assertMenuForLocalUser($mainMenu, false, false, false, false);
 		}
 		
 		function testGetMainMenuForRemoteUser() {
@@ -37,8 +34,8 @@
 		}
 		
 		function testGetMainMenuWithSocialStreamSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities'));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', true);
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream'));
+			$this->assertMenuForLocalUser($mainMenu, true, false, false, false);
 		}
 		
 		function testGetMainMenuWithSettingsSelected() {
@@ -46,8 +43,22 @@
 			
 			foreach ($controllers as $controller) {
 				$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => $controller));
-				$this->assertMenuItem($mainMenu[3], 'Settings', true);
+				$this->assertMenuForLocalUser($mainMenu, false, false, false, true);
 			}
+			
+			$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+			
+			foreach ($identityActions as $action) {
+				$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action));
+				$this->assertMenuForLocalUser($mainMenu, false, false, false, true);
+			}
+		}
+		
+		private function assertMenuForLocalUser($mainMenu, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', $socialStreamActive);
+			$this->assertMenuItem($mainMenu[1], 'My Profile', $myProfileActive);
+			$this->assertMenuItem($mainMenu[2], 'My Contacts', $myContactsActive);
+			$this->assertMenuItem($mainMenu[3], 'Settings', $settingsActive);
 		}
 		
 		private function assertMenuItem(MenuItem $menuItem, $label, $isActive) {

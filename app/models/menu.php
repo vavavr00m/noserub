@@ -5,8 +5,9 @@
 		
 		function getMainMenu($options) {
 			$controller = isset($options['controller']) ? $options['controller'] : '';
+			$action = isset($options['action']) ? $options['action'] : '';
 			
-			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $controller == 'Identities');
+			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $this->shouldSocialStreamBeActivated($controller, $action));
 
 			if (isset($options['is_local'])) {
 				if ($options['is_local'] === false) {
@@ -14,7 +15,7 @@
 				} else {
 					$menuItems[] = new MenuItem('My Profile', '', false);
 					$menuItems[] = new MenuItem('My Contacts', '', false);
-					$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller));
+					$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller, $action));
 				}
 			} else {
 				if (!isset($options['registration_type'])) {
@@ -31,10 +32,30 @@
 			return $menuItems;
 		}
 		
-		private function shouldSettingsBeActivated($controller) {
+		private function shouldSettingsBeActivated($controller, $action) {
 			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 			
-			return in_array($controller, $controllers);
+			if (in_array($controller, $controllers)) {
+				return true;
+			}
+				
+			if ($controller == 'Identities') {
+				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+					
+				if (in_array($action, $identityActions)) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		private function shouldSocialStreamBeActivated($controller, $action) {
+			if ($controller == 'Identities' && $action == 'social_stream') {
+				return true;
+			}
+			
+			return false;
 		}
 	}
 	
