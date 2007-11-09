@@ -76,6 +76,39 @@
 			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
 		}
 		
+		function testGetSubMenuWithoutMainMenu() {
+			$this->assertIdentical(array(), $this->menu->getSubMenu(array()));
+		}
+		
+		function testGetFilterSubMenu() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream', 'local_username' => 'test'));
+			$subMenu = $this->menu->getSubMenu($mainMenu);
+			$this->assertEqual(10, count($subMenu));
+			$this->assertMenuItem($subMenu[0], 'All', '', false);
+			$this->assertMenuItem($subMenu[1], 'Photo', '', false);
+			$this->assertMenuItem($subMenu[2], 'Video', '', false);
+			$this->assertMenuItem($subMenu[3], 'Audio', '', false);
+			$this->assertMenuItem($subMenu[4], 'Link', '', false);
+			$this->assertMenuItem($subMenu[5], 'Text', '', false);
+			$this->assertMenuItem($subMenu[6], 'Micropublish', '', false);
+			$this->assertMenuItem($subMenu[7], 'Events', '', false);
+			$this->assertMenuItem($subMenu[8], 'Documents', '', false);
+			$this->assertMenuItem($subMenu[9], 'Locations', '', false);
+		}
+		
+		function testGetSettingsSubMenu() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Accounts', 'local_username' => 'test'));
+			$subMenu = $this->menu->getSubMenu($mainMenu, 'testuser');
+			$this->assertEqual(7, count($subMenu));
+			$this->assertMenuItem($subMenu[0], 'Profile', '/testuser/settings/profile/', false);
+			$this->assertMenuItem($subMenu[1], 'Accounts', '/testuser/settings/accounts/', false);
+			$this->assertMenuItem($subMenu[2], 'Privacy', '/testuser/settings/privacy/', false);
+			$this->assertMenuItem($subMenu[3], 'Feeds', '/testuser/settings/feeds/', false);
+			$this->assertMenuItem($subMenu[4], 'OpenID', '/testuser/settings/openid/', false);
+			$this->assertMenuItem($subMenu[5], 'Password', '/testuser/settings/password/', false);
+			$this->assertMenuItem($subMenu[6], 'Delete account', '/testuser/settings/account/', false);
+		}
+		
 		private function assertMenuForLocalUser($mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
 			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', $socialStreamActive);
 			$this->assertMenuItem($mainMenu[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
