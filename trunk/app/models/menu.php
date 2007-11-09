@@ -4,32 +4,59 @@
 		var $useTable = false;
 		
 		function getMainMenu($options) {
+			$menuItems = array();
 			$controller = isset($options['controller']) ? $options['controller'] : '';
 			$action = isset($options['action']) ? $options['action'] : '';
 			
-			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $this->shouldSocialStreamBeActivated($controller, $action));
-
 			if (isset($options['is_local'])) {
-				if ($options['is_local'] === false) {
-					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
+				if ($options['is_local'] === true) {
+					$menuItems = $this->getMainMenuForLocalUser($controller, $action);
 				} else {
-					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
-					$menuItems[] = new MenuItem('My Contacts', '', $controller == 'Contacts');
-					$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller, $action));
+					$menuItems = $this->getMainMenuForRemoteUser($controller, $action);
 				}
 			} else {
-				if (!isset($options['registration_type'])) {
-					$registrationType = NOSERUB_REGISTRATION_TYPE;
-				} else {
-					$registrationType = $options['registration_type'];
-				}
-				
-				if ($registrationType == 'all') {
-					$menuItems[] = new MenuItem('Add me!', '/pages/register/', $this->shouldRegisterBeActivated($controller, $action));
-				}
+				$menuItems = $this->getMainMenuForAnonymousUser($controller, $action, $this->getRegistrationType($options));
 			}
 			
 			return $menuItems;
+		}
+		
+		private function getMainMenuForAnonymousUser($controller, $action, $registrationType) {
+			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $this->shouldSocialStreamBeActivated($controller, $action));
+			
+			if ($registrationType == 'all') {
+				$menuItems[] = new MenuItem('Add me!', '/pages/register/', $this->shouldRegisterBeActivated($controller, $action));
+			}
+			
+			return $menuItems;
+		}
+		
+		private function getMainMenuForLocalUser($controller, $action) {
+			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $this->shouldSocialStreamBeActivated($controller, $action));
+			$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
+			$menuItems[] = new MenuItem('My Contacts', '', $controller == 'Contacts');
+			$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller, $action));
+			
+			return $menuItems;
+		}
+		
+		private function getMainMenuForRemoteUser($controller, $action) {
+			$menuItems[] = new MenuItem('Social Stream', '/social_stream/', $this->shouldSocialStreamBeActivated($controller, $action));
+			$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
+			
+			return $menuItems;
+		}
+		
+		private function getRegistrationType($options) {
+			$registrationType = '';
+			
+			if (!isset($options['registration_type'])) {
+				$registrationType = NOSERUB_REGISTRATION_TYPE;
+			} else {
+				$registrationType = $options['registration_type'];
+			}
+			
+			return $registrationType;
 		}
 		
 		private function shouldMyProfileBeActivated($controller, $action) {
