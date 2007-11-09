@@ -7,32 +7,14 @@
 			$this->menu = new Menu();
 		}
 		
+		// local user
+		
 		function testGetMainMenuForLocalUser() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true));
 			$this->assertEqual(4, count($mainMenu));
 			$this->assertMenuForLocalUser($mainMenu, false, false, false, false);
 		}
 		
-		function testGetMainMenuForRemoteUser() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => false));
-			$this->assertEqual(2, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
-			$this->assertMenuItem($mainMenu[1], 'My Profile', false);
-		}
-		
-		function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'none'));
-			$this->assertEqual(1, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
-		}
-		
-		function testGetMainMenuForWebUsersWithRegistrationPossibility() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all'));
-			$this->assertEqual(2, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
-			$this->assertMenuItem($mainMenu[1], 'Add me!', false);
-		}
-
 		function testGetMainMenuWithMyContactsSelected() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Contacts'));
 			$this->assertMenuForLocalUser($mainMenu, false, false, true, false);
@@ -41,17 +23,6 @@
 		function testGetMainMenuWithMyProfileSelected() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index'));
 			$this->assertMenuForLocalUser($mainMenu, false, true, false, false);
-		}
-		
-		function testGetMainMenuWithSocialStreamSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream'));
-			$this->assertMenuForLocalUser($mainMenu, true, false, false, false);
-		}
-
-		function testGetMainMenuWithRegisterSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => 'register'));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
-			$this->assertMenuItem($mainMenu[1], 'Add me!', true);
 		}
 		
 		function testGetMainMenuWithSettingsSelected() {
@@ -68,6 +39,41 @@
 				$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action));
 				$this->assertMenuForLocalUser($mainMenu, false, false, false, true);
 			}
+		}
+		
+		function testGetMainMenuWithSocialStreamSelected() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream'));
+			$this->assertMenuForLocalUser($mainMenu, true, false, false, false);
+		}		
+		
+		// remote user
+		
+		function testGetMainMenuForRemoteUser() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => false));
+			$this->assertEqual(2, count($mainMenu));
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
+			$this->assertMenuItem($mainMenu[1], 'My Profile', false);
+		}
+		
+		// anonymous user
+		
+		function testGetMainMenuForWebUsersWithRegistrationPossibility() {
+			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all'));
+			$this->assertEqual(2, count($mainMenu));
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
+			$this->assertMenuItem($mainMenu[1], 'Add me!', false);
+		}
+
+		function testGetMainMenuWithRegisterSelected() {
+			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => 'register'));
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
+			$this->assertMenuItem($mainMenu[1], 'Add me!', true);
+		}
+		
+		function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
+			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'none'));
+			$this->assertEqual(1, count($mainMenu));
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', false);
 		}
 		
 		private function assertMenuForLocalUser($mainMenu, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
