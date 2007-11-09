@@ -33,6 +33,11 @@
 			$this->assertMenuItem($mainMenu[1], 'Add me!', false);
 		}
 
+		function testGetMainMenuWithMyContactsSelected() {
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Contacts'));
+			$this->assertMenuForLocalUser($mainMenu, false, false, true, false);
+		}
+		
 		function testGetMainMenuWithMyProfileSelected() {
 			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index'));
 			$this->assertMenuForLocalUser($mainMenu, false, true, false, false);

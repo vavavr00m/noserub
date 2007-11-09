@@ -14,7 +14,7 @@
 					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
 				} else {
 					$menuItems[] = new MenuItem('My Profile', '', $this->shouldMyProfileBeActivated($controller, $action));
-					$menuItems[] = new MenuItem('My Contacts', '', false);
+					$menuItems[] = new MenuItem('My Contacts', '', $controller == 'Contacts');
 					$menuItems[] = new MenuItem('Settings', '', $this->shouldSettingsBeActivated($controller, $action));
 				}
 			} else {
