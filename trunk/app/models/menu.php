@@ -21,6 +21,34 @@
 			return $menuItems;
 		}
 		
+		function getSubMenu($mainMenu, $localUsername = null) {
+			if (count($mainMenu) == 0) { 
+				return array();
+			}
+			
+			if ($mainMenu[3]->isActive()) {
+				$menuItems = $this->getSettingsSubMenu($localUsername);
+			} else {
+				$menuItems = $this->getFilterSubMenu();
+			}
+			return $menuItems;
+		}
+		
+		private function getFilterSubMenu() {
+			$menuItems[] = new MenuItem('All', '', false);
+			$menuItems[] = new MenuItem('Photo', '', false);
+			$menuItems[] = new MenuItem('Video', '', false);
+			$menuItems[] = new MenuItem('Audio', '', false);
+			$menuItems[] = new MenuItem('Link', '', false);
+			$menuItems[] = new MenuItem('Text', '', false);
+			$menuItems[] = new MenuItem('Micropublish', '', false);
+			$menuItems[] = new MenuItem('Events', '', false);
+			$menuItems[] = new MenuItem('Documents', '', false);
+			$menuItems[] = new MenuItem('Locations', '', false);
+			
+			return $menuItems;
+		}
+		
 		private function getMainMenuForAnonymousUser($controller, $action, $registrationType) {
 			$menuItems[] = new SocialStreamMenuItem($controller, $action);
 			
@@ -57,6 +85,20 @@
 			}
 			
 			return $registrationType;
+		}
+		
+		private function getSettingsSubMenu($localUsername) {
+			$link = '/' . $localUsername . '/settings/';
+			
+			$menuItems[] = new MenuItem('Profile', $link . 'profile/', false);
+			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', false);
+			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', false);
+			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', false);
+			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', false);
+			$menuItems[] = new MenuItem('Password', $link . 'password/', false);
+			$menuItems[] = new MenuItem('Delete account', $link . 'account/', false);
+			
+			return $menuItems;
 		}
 	}
 	
