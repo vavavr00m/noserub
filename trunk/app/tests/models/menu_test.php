@@ -79,16 +79,8 @@
 		function testGetFilterSubMenu() {
 			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream'));
 			$this->assertEqual(10, count($subMenu));
-			$this->assertMenuItem($subMenu[0], 'All', '', false);
-			$this->assertMenuItem($subMenu[1], 'Photo', '', false);
-			$this->assertMenuItem($subMenu[2], 'Video', '', false);
-			$this->assertMenuItem($subMenu[3], 'Audio', '', false);
-			$this->assertMenuItem($subMenu[4], 'Link', '', false);
-			$this->assertMenuItem($subMenu[5], 'Text', '', false);
-			$this->assertMenuItem($subMenu[6], 'Micropublish', '', false);
-			$this->assertMenuItem($subMenu[7], 'Events', '', false);
-			$this->assertMenuItem($subMenu[8], 'Documents', '', false);
-			$this->assertMenuItem($subMenu[9], 'Locations', '', false);
+			$filterState = new FilterState();
+			$this->assertFilterSubMenu($subMenu, '', $filterState);
 		}
 		
 		function testGetFilterSubMenuWithOneItemSelected() {
@@ -96,16 +88,8 @@
 			
 			foreach ($filters as $filter) {
 				$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream', 'filter' => $filter));
-				$this->assertMenuItem($subMenu[0], 'All', '', $filter == 'all');
-				$this->assertMenuItem($subMenu[1], 'Photo', '', $filter == 'photo');
-				$this->assertMenuItem($subMenu[2], 'Video', '', $filter == 'video');
-				$this->assertMenuItem($subMenu[3], 'Audio', '', $filter == 'audio');
-				$this->assertMenuItem($subMenu[4], 'Link', '', $filter == 'link');
-				$this->assertMenuItem($subMenu[5], 'Text', '', $filter == 'text');
-				$this->assertMenuItem($subMenu[6], 'Micropublish', '', $filter == 'micropublish');
-				$this->assertMenuItem($subMenu[7], 'Events', '', $filter == 'event');
-				$this->assertMenuItem($subMenu[8], 'Documents', '', $filter == 'document');
-				$this->assertMenuItem($subMenu[9], 'Locations', '', $filter == 'location');
+				$filterState = new FilterState($filter);
+				$this->assertFilterSubMenu($subMenu, '', $filterState);
 			}
 		}
 		
@@ -113,6 +97,18 @@
 			$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser'));
 			$this->assertEqual(7, count($subMenu));
 			$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, false, false, false, false, false);
+		}
+		
+		function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
+			$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'openid_user' => true));
+			$this->assertEqual(6, count($subMenu));
+			$link = '/testuser/settings/';
+			$this->assertMenuItem($subMenu[0], 'Profile', $link . 'profile/', false);
+			$this->assertMenuItem($subMenu[1], 'Accounts', $link . 'accounts/', false);
+			$this->assertMenuItem($subMenu[2], 'Privacy', $link . 'privacy/', false);
+			$this->assertMenuItem($subMenu[3], 'Feeds', $link . 'feeds/', false);
+			$this->assertMenuItem($subMenu[4], 'OpenID', $link . 'openid/', false);
+			$this->assertMenuItem($subMenu[5], 'Delete account', $link . 'account/', false);
 		}
 		
 		function testGetSettingsSubMenuWithOneItemSelected() {
@@ -129,6 +125,19 @@
 				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
 				$this->assertSettingsSubMenu($subMenu, 'testuser', $action == 'profile_settings', false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
 			}
+		}
+		
+		private function assertFilterSubMenu($subMenu, $urlPart, FilterState $filterState) {
+			$this->assertMenuItem($subMenu[0], 'All', '', $filterState->isAllActive());
+			$this->assertMenuItem($subMenu[1], 'Photo', '', $filterState->isPhotoActive());
+			$this->assertMenuItem($subMenu[2], 'Video', '', $filterState->isVideoActive());
+			$this->assertMenuItem($subMenu[3], 'Audio', '', $filterState->isAudioActive());
+			$this->assertMenuItem($subMenu[4], 'Link', '', $filterState->isLinkActive());
+			$this->assertMenuItem($subMenu[5], 'Text', '', $filterState->isTextActive());
+			$this->assertMenuItem($subMenu[6], 'Micropublish', '', $filterState->isMicroPublishActive());
+			$this->assertMenuItem($subMenu[7], 'Events', '', $filterState->isEventActive());
+			$this->assertMenuItem($subMenu[8], 'Documents', '', $filterState->isDocumentActive());
+			$this->assertMenuItem($subMenu[9], 'Locations', '', $filterState->isLocationActive());
 		}
 		
 		private function assertMenuForLocalUser($mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
@@ -153,6 +162,55 @@
 			$this->assertMenuItem($subMenu[4], 'OpenID', $link . 'openid/', $openidActive);
 			$this->assertMenuItem($subMenu[5], 'Password', $link . 'password/', $passwordActive);
 			$this->assertMenuItem($subMenu[6], 'Delete account', $link . 'account/', $deleteAccountActive);
+		}
+	}
+	
+	// helper class
+	class FilterState {
+		private $activeItem = '';
+		
+		function __construct($activeItem = '') {
+			$this->activeItem = $activeItem;
+		}
+		
+		function isAllActive() {
+			return ($this->activeItem == 'all');
+		}
+		
+		function isPhotoActive() {
+			return ($this->activeItem == 'photo');
+		}
+		
+		function isVideoActive() {
+			return ($this->activeItem == 'video');
+		}
+		
+		function isAudioActive() {
+			return ($this->activeItem == 'audio');
+		}
+		
+		function isTextActive() {
+			return ($this->activeItem == 'text');
+		}
+		
+		function isLinkActive() {
+			return ($this->activeItem == 'link');
+		}
+		
+		function isMicroPublishActive() {
+			return ($this->activeItem == 'micropublish');
+		}
+		
+		function isEventActive() {
+			return ($this->activeItem == 'event');
+		}
+		
+		function isDocumentActive() {
+			return ($this->activeItem == 'document');
+		}
+		
+		function isLocationActive() {
+			return ($this->activeItem == 'location');
 		}
 	}
 	
