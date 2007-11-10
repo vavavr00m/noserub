@@ -21,15 +21,15 @@
 			return $menuItems;
 		}
 		
-		function getSubMenu($mainMenu, $localUsername = null) {
-			if (count($mainMenu) == 0) { 
-				return array();
-			}
+		function getSubMenu($options) {
+			$controller = isset($options['controller']) ? $options['controller'] : '';
+			$action = isset($options['action']) ? $options['action'] : '';
 			
-			if ($mainMenu[3]->isActive()) {
-				$menuItems = $this->getSettingsSubMenu($localUsername);
-			} else {
+			if ($controller == 'Identities' && $action == 'social_stream') {
 				$menuItems = $this->getFilterSubMenu();
+			} else {
+				$localUsername = isset($options['local_username']) ? $options['local_username'] : '';
+				$menuItems = $this->getSettingsSubMenu($action, $localUsername);
 			}
 			return $menuItems;
 		}
@@ -87,16 +87,16 @@
 			return $registrationType;
 		}
 		
-		private function getSettingsSubMenu($localUsername) {
+		private function getSettingsSubMenu($action, $localUsername) {
 			$link = '/' . $localUsername . '/settings/';
 			
-			$menuItems[] = new MenuItem('Profile', $link . 'profile/', false);
+			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $action == 'profile_settings');
 			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', false);
-			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', false);
+			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', false);
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', false);
-			$menuItems[] = new MenuItem('Password', $link . 'password/', false);
-			$menuItems[] = new MenuItem('Delete account', $link . 'account/', false);
+			$menuItems[] = new MenuItem('Password', $link . 'password/', $action == 'password_settings');
+			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $action == 'account_settings');
 			
 			return $menuItems;
 		}
