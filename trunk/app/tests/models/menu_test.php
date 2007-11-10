@@ -91,6 +91,24 @@
 			$this->assertMenuItem($subMenu[9], 'Locations', '', false);
 		}
 		
+		function testGetFilterSubMenuWithOneItemSelected() {
+			$filters = array('all', 'photo', 'video', 'audio', 'link', 'text', 'micropublish', 'event', 'document', 'location');
+			
+			foreach ($filters as $filter) {
+				$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream', 'filter' => $filter));
+				$this->assertMenuItem($subMenu[0], 'All', '', $filter == 'all');
+				$this->assertMenuItem($subMenu[1], 'Photo', '', $filter == 'photo');
+				$this->assertMenuItem($subMenu[2], 'Video', '', $filter == 'video');
+				$this->assertMenuItem($subMenu[3], 'Audio', '', $filter == 'audio');
+				$this->assertMenuItem($subMenu[4], 'Link', '', $filter == 'link');
+				$this->assertMenuItem($subMenu[5], 'Text', '', $filter == 'text');
+				$this->assertMenuItem($subMenu[6], 'Micropublish', '', $filter == 'micropublish');
+				$this->assertMenuItem($subMenu[7], 'Events', '', $filter == 'event');
+				$this->assertMenuItem($subMenu[8], 'Documents', '', $filter == 'document');
+				$this->assertMenuItem($subMenu[9], 'Locations', '', $filter == 'location');
+			}
+		}
+		
 		function testGetSettingsSubMenu() {
 			$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser'));
 			$this->assertEqual(7, count($subMenu));
@@ -98,10 +116,17 @@
 		}
 		
 		function testGetSettingsSubMenuWithOneItemSelected() {
-			$actions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 			
-			foreach ($actions as $action) {
-				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'action' => $action));
+			foreach ($controllers as $controller) {
+				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'controller' => $controller));
+				$this->assertSettingsSubMenu($subMenu, 'testuser', false, $controller == 'Accounts', false, $controller == 'Syndications', $controller == 'OpenidSites', false, false);
+			}
+			
+			$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+			
+			foreach ($identityActions as $action) {
+				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
 				$this->assertSettingsSubMenu($subMenu, 'testuser', $action == 'profile_settings', false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
 			}
 		}

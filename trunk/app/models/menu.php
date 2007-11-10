@@ -26,25 +26,26 @@
 			$action = isset($options['action']) ? $options['action'] : '';
 			
 			if ($controller == 'Identities' && $action == 'social_stream') {
-				$menuItems = $this->getFilterSubMenu();
+				$filter = isset($options['filter']) ? $options['filter'] : '';
+				$menuItems = $this->getFilterSubMenu($filter);
 			} else {
 				$localUsername = isset($options['local_username']) ? $options['local_username'] : '';
-				$menuItems = $this->getSettingsSubMenu($action, $localUsername);
+				$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername);
 			}
 			return $menuItems;
 		}
 		
-		private function getFilterSubMenu() {
-			$menuItems[] = new MenuItem('All', '', false);
-			$menuItems[] = new MenuItem('Photo', '', false);
-			$menuItems[] = new MenuItem('Video', '', false);
-			$menuItems[] = new MenuItem('Audio', '', false);
-			$menuItems[] = new MenuItem('Link', '', false);
-			$menuItems[] = new MenuItem('Text', '', false);
-			$menuItems[] = new MenuItem('Micropublish', '', false);
-			$menuItems[] = new MenuItem('Events', '', false);
-			$menuItems[] = new MenuItem('Documents', '', false);
-			$menuItems[] = new MenuItem('Locations', '', false);
+		private function getFilterSubMenu($filter) {
+			$menuItems[] = new MenuItem('All', '', $filter == 'all');
+			$menuItems[] = new MenuItem('Photo', '', $filter == 'photo');
+			$menuItems[] = new MenuItem('Video', '', $filter == 'video');
+			$menuItems[] = new MenuItem('Audio', '', $filter == 'audio');
+			$menuItems[] = new MenuItem('Link', '', $filter == 'link');
+			$menuItems[] = new MenuItem('Text', '', $filter == 'text');
+			$menuItems[] = new MenuItem('Micropublish', '', $filter == 'micropublish');
+			$menuItems[] = new MenuItem('Events', '', $filter == 'event');
+			$menuItems[] = new MenuItem('Documents', '', $filter == 'document');
+			$menuItems[] = new MenuItem('Locations', '', $filter == 'location');
 			
 			return $menuItems;
 		}
@@ -87,16 +88,16 @@
 			return $registrationType;
 		}
 		
-		private function getSettingsSubMenu($action, $localUsername) {
+		private function getSettingsSubMenu($controller, $action, $localUsername) {
 			$link = '/' . $localUsername . '/settings/';
 			
-			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $action == 'profile_settings');
-			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', false);
-			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $action == 'privacy_settings');
-			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', false);
-			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', false);
-			$menuItems[] = new MenuItem('Password', $link . 'password/', $action == 'password_settings');
-			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $action == 'account_settings');
+			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
+			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', $controller == 'Accounts');
+			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
+			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
+			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
+			$menuItems[] = new MenuItem('Password', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
 			
 			return $menuItems;
 		}
