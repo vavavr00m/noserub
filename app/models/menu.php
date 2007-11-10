@@ -4,12 +4,12 @@
 		
 		function getMainMenu($options) {
 			$menuItems = array();
-			$controller = isset($options['controller']) ? $options['controller'] : '';
-			$action = isset($options['action']) ? $options['action'] : '';
+			$controller = $this->value($options, 'controller');
+			$action = $this->value($options, 'action');
 			
 			if (isset($options['is_local'])) {
 				if ($options['is_local'] === true) {
-					$localUsername = isset($options['local_username']) ? $options['local_username'] : '';
+					$localUsername = $this->value($options, 'local_username');
 					$menuItems = $this->getMainMenuForLocalUser($controller, $action, $localUsername);
 				} else {
 					$menuItems = $this->getMainMenuForRemoteUser($controller, $action);
@@ -22,15 +22,16 @@
 		}
 		
 		function getSubMenu($options) {
-			$controller = isset($options['controller']) ? $options['controller'] : '';
-			$action = isset($options['action']) ? $options['action'] : '';
+			$controller = $this->value($options, 'controller');
+			$action = $this->value($options, 'action');
 			
 			if ($controller == 'Identities' && $action == 'social_stream') {
-				$filter = isset($options['filter']) ? $options['filter'] : '';
+				$filter = $this->value($options, 'filter');
 				$menuItems = $this->getFilterSubMenu($filter);
 			} else {
-				$localUsername = isset($options['local_username']) ? $options['local_username'] : '';
-				$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername);
+				$localUsername = $this->value($options, 'local_username');
+				$isOpenIDUser = $this->value($options, 'openid_user', false);
+				$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser);
 			}
 			return $menuItems;
 		}
@@ -88,7 +89,7 @@
 			return $registrationType;
 		}
 		
-		private function getSettingsSubMenu($controller, $action, $localUsername) {
+		private function getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser) {
 			$link = '/' . $localUsername . '/settings/';
 			
 			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
@@ -96,10 +97,18 @@
 			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
-			$menuItems[] = new MenuItem('Password', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+			
+			if (!$isOpenIDUser) {
+				$menuItems[] = new MenuItem('Password', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+			}
+			
 			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
 			
 			return $menuItems;
+		}
+		
+		private function value($options, $key, $defaultValue = '') {
+			return isset($options[$key]) ? $options[$key] : $defaultValue;
 		}
 	}
 	
