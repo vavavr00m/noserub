@@ -80,7 +80,19 @@
 			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream'));
 			$this->assertEqual(10, count($subMenu));
 			$filterState = new FilterState();
-			$this->assertFilterSubMenu($subMenu, '', $filterState);
+			$this->assertFilterSubMenu($subMenu, '/social_stream/', $filterState);
+		}
+		
+		function testGetFilterSubMenuForMyProfile() {
+			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'index', 'local_username' => 'testuser'));
+			$filterState = new FilterState();
+			$this->assertFilterSubMenu($subMenu, '/testuser/', $filterState);
+		}
+		
+		function testGetFilterSubMenuForContactsNetwork() {
+			$subMenu = $this->menu->getSubMenu(array('controller' => 'Contacts', 'action' => 'network', 'local_username' => 'testuser'));
+			$filterState = new FilterState();
+			$this->assertFilterSubMenu($subMenu, '/testuser/network/', $filterState);
 		}
 		
 		function testGetFilterSubMenuWithOneItemSelected() {
@@ -89,7 +101,7 @@
 			foreach ($filters as $filter) {
 				$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream', 'filter' => $filter));
 				$filterState = new FilterState($filter);
-				$this->assertFilterSubMenu($subMenu, '', $filterState);
+				$this->assertFilterSubMenu($subMenu, '/social_stream/', $filterState);
 			}
 		}
 		
@@ -128,16 +140,16 @@
 		}
 		
 		private function assertFilterSubMenu($subMenu, $urlPart, FilterState $filterState) {
-			$this->assertMenuItem($subMenu[0], 'All', '', $filterState->isAllActive());
-			$this->assertMenuItem($subMenu[1], 'Photo', '', $filterState->isPhotoActive());
-			$this->assertMenuItem($subMenu[2], 'Video', '', $filterState->isVideoActive());
-			$this->assertMenuItem($subMenu[3], 'Audio', '', $filterState->isAudioActive());
-			$this->assertMenuItem($subMenu[4], 'Link', '', $filterState->isLinkActive());
-			$this->assertMenuItem($subMenu[5], 'Text', '', $filterState->isTextActive());
-			$this->assertMenuItem($subMenu[6], 'Micropublish', '', $filterState->isMicroPublishActive());
-			$this->assertMenuItem($subMenu[7], 'Events', '', $filterState->isEventActive());
-			$this->assertMenuItem($subMenu[8], 'Documents', '', $filterState->isDocumentActive());
-			$this->assertMenuItem($subMenu[9], 'Locations', '', $filterState->isLocationActive());
+			$this->assertMenuItem($subMenu[0], 'All', $urlPart, $filterState->isAllActive());
+			$this->assertMenuItem($subMenu[1], 'Photo', $urlPart.'photo/', $filterState->isPhotoActive());
+			$this->assertMenuItem($subMenu[2], 'Video', $urlPart.'video/', $filterState->isVideoActive());
+			$this->assertMenuItem($subMenu[3], 'Audio', $urlPart.'audio/', $filterState->isAudioActive());
+			$this->assertMenuItem($subMenu[4], 'Link', $urlPart.'link/', $filterState->isLinkActive());
+			$this->assertMenuItem($subMenu[5], 'Text', $urlPart.'text/', $filterState->isTextActive());
+			$this->assertMenuItem($subMenu[6], 'Micropublish', $urlPart.'micropublish/', $filterState->isMicroPublishActive());
+			$this->assertMenuItem($subMenu[7], 'Events', $urlPart.'event/', $filterState->isEventActive());
+			$this->assertMenuItem($subMenu[8], 'Documents', $urlPart.'document/', $filterState->isDocumentActive());
+			$this->assertMenuItem($subMenu[9], 'Locations', $urlPart.'location/', $filterState->isLocationActive());
 		}
 		
 		private function assertMenuForLocalUser($mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
