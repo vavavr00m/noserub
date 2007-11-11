@@ -25,9 +25,19 @@
 			$controller = $this->value($options, 'controller');
 			$action = $this->value($options, 'action');
 			
-			if ($controller == 'Identities' && $action == 'social_stream') {
-				$filter = $this->value($options, 'filter');
-				$menuItems = $this->getFilterSubMenu($filter);
+			if (($controller == 'Identities' && ($action == 'social_stream' || $action == 'index')) || ($controller == 'Contacts' && $action == 'network')) {
+				if ($action == 'social_stream') {
+					$filter = $this->value($options, 'filter');
+					$menuItems = $this->getFilterSubMenu($filter);					
+				} elseif ($action == 'index') {
+					$localUsername = $this->value($options, 'local_username');
+					$filter = $this->value($options, 'filter');
+					$menuItems = $this->getFilterSubMenu($filter, $localUsername);
+				} else {
+					$localUsername = $this->value($options, 'local_username');
+					$filter = $this->value($options, 'filter');
+					$menuItems = $this->getFilterSubMenu($filter, $localUsername, true);
+				}
 			} else {
 				$localUsername = $this->value($options, 'local_username');
 				$isOpenIDUser = $this->value($options, 'openid_user', false);
@@ -36,17 +46,27 @@
 			return $menuItems;
 		}
 		
-		private function getFilterSubMenu($filter) {
-			$menuItems[] = new MenuItem('All', '', $filter == 'all');
-			$menuItems[] = new MenuItem('Photo', '', $filter == 'photo');
-			$menuItems[] = new MenuItem('Video', '', $filter == 'video');
-			$menuItems[] = new MenuItem('Audio', '', $filter == 'audio');
-			$menuItems[] = new MenuItem('Link', '', $filter == 'link');
-			$menuItems[] = new MenuItem('Text', '', $filter == 'text');
-			$menuItems[] = new MenuItem('Micropublish', '', $filter == 'micropublish');
-			$menuItems[] = new MenuItem('Events', '', $filter == 'event');
-			$menuItems[] = new MenuItem('Documents', '', $filter == 'document');
-			$menuItems[] = new MenuItem('Locations', '', $filter == 'location');
+		private function getFilterSubMenu($filter, $localUsername = null, $isForNetwork = false) {
+			$urlPart = '';
+			if ($localUsername != null) {
+				if ($isForNetwork) {
+					$urlPart = '/' . $localUsername . '/network/';
+				} else {
+					$urlPart = '/' . $localUsername . '/';
+				}
+			} else {
+				$urlPart = '/social_stream/';
+			}
+			$menuItems[] = new MenuItem('All', $urlPart, $filter == 'all');
+			$menuItems[] = new MenuItem('Photo', $urlPart.'photo/', $filter == 'photo');
+			$menuItems[] = new MenuItem('Video', $urlPart.'video/', $filter == 'video');
+			$menuItems[] = new MenuItem('Audio', $urlPart.'audio/', $filter == 'audio');
+			$menuItems[] = new MenuItem('Link', $urlPart.'link/', $filter == 'link');
+			$menuItems[] = new MenuItem('Text', $urlPart.'text/', $filter == 'text');
+			$menuItems[] = new MenuItem('Micropublish', $urlPart.'micropublish/', $filter == 'micropublish');
+			$menuItems[] = new MenuItem('Events', $urlPart.'event/', $filter == 'event');
+			$menuItems[] = new MenuItem('Documents', $urlPart.'document/', $filter == 'document');
+			$menuItems[] = new MenuItem('Locations', $urlPart.'location/', $filter == 'location');
 			
 			return $menuItems;
 		}
