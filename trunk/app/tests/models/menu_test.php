@@ -60,20 +60,29 @@
 		function testGetMainMenuForWebUsersWithRegistrationPossibility() {
 			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all'));
 			$this->assertEqual(2, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
-			$this->assertMenuItem($mainMenu[1], 'Add me!', '/pages/register/', false);
+			$this->assertMenuForAnonymousUser($mainMenu, false, false);
 		}
 
 		function testGetMainMenuWithRegisterSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => 'register'));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
-			$this->assertMenuItem($mainMenu[1], 'Add me!', '/pages/register/', true);
+			$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
+			
+			foreach ($registerActions as $action) {
+				$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => $action));
+				$this->assertMenuForAnonymousUser($mainMenu, false, true);
+			}
 		}
 		
 		function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
 			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'none'));
 			$this->assertEqual(1, count($mainMenu));
 			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
+		}
+		
+		// sub menus
+		
+		function testGetNoSubMenuOnRegisterPage() {
+			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'register'));
+			$this->assertTrue(empty($subMenu));
 		}
 		
 		function testGetFilterSubMenu() {
@@ -106,18 +115,18 @@
 		}
 		
 		function testGetSettingsSubMenu() {
-			$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser'));
+			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
 			$this->assertEqual(7, count($subMenu));
-			$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, false, false, false, false, false);
+			$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, true, false, false, false, false);
 		}
 		
 		function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
-			$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'openid_user' => true));
+			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
 			$this->assertEqual(6, count($subMenu));
 			$link = '/testuser/settings/';
 			$this->assertMenuItem($subMenu[0], 'Profile', $link . 'profile/', false);
 			$this->assertMenuItem($subMenu[1], 'Accounts', $link . 'accounts/', false);
-			$this->assertMenuItem($subMenu[2], 'Privacy', $link . 'privacy/', false);
+			$this->assertMenuItem($subMenu[2], 'Privacy', $link . 'privacy/', true);
 			$this->assertMenuItem($subMenu[3], 'Feeds', $link . 'feeds/', false);
 			$this->assertMenuItem($subMenu[4], 'OpenID', $link . 'openid/', false);
 			$this->assertMenuItem($subMenu[5], 'Delete account', $link . 'account/', false);
@@ -150,6 +159,11 @@
 			$this->assertMenuItem($subMenu[7], 'Events', $urlPart.'event/', $filterState->isEventActive());
 			$this->assertMenuItem($subMenu[8], 'Documents', $urlPart.'document/', $filterState->isDocumentActive());
 			$this->assertMenuItem($subMenu[9], 'Locations', $urlPart.'location/', $filterState->isLocationActive());
+		}
+		
+		private function assertMenuForAnonymousUser($mainMenu, $socialStreamActive, $registerActive) {
+			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', $socialStreamActive);
+			$this->assertMenuItem($mainMenu[1], 'Add me!', '/pages/register/', $registerActive);
 		}
 		
 		private function assertMenuForLocalUser($mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
@@ -282,8 +296,12 @@
 	
 	class RegisterMenuItemTest extends CakeTestCase {
 		function testCreateActivatedRegisterMenuItem() {
-			$menuItem = new RegisterMenuItem('Identities', 'register');
-			$this->assertMenuItem($menuItem, true);
+			$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
+			
+			foreach ($registerActions as $action) {
+				$menuItem = new RegisterMenuItem('Identities', $action);
+				$this->assertMenuItem($menuItem, true);
+			}
 		}
 		
 		function testCreateNotActivatedRegisterMenuItem() {			

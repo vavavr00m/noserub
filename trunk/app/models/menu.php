@@ -22,41 +22,34 @@
 		}
 		
 		function getSubMenu($options) {
+			$menuItems = array();
 			$controller = $this->value($options, 'controller');
 			$action = $this->value($options, 'action');
 			
-			if (($controller == 'Identities' && ($action == 'social_stream' || $action == 'index')) || ($controller == 'Contacts' && $action == 'network')) {
+			if ($this->showFilterSubMenu($controller, $action)) {
+				$filter = $this->value($options, 'filter');
+				
 				if ($action == 'social_stream') {
-					$filter = $this->value($options, 'filter');
-					$menuItems = $this->getFilterSubMenu($filter);					
-				} elseif ($action == 'index') {
-					$localUsername = $this->value($options, 'local_username');
-					$filter = $this->value($options, 'filter');
-					$menuItems = $this->getFilterSubMenu($filter, $localUsername);
+					$menuItems = $this->getFilterSubMenuForSocialStream($filter);					
 				} else {
 					$localUsername = $this->value($options, 'local_username');
-					$filter = $this->value($options, 'filter');
-					$menuItems = $this->getFilterSubMenu($filter, $localUsername, true);
+
+					if ($action == 'index') {
+						$menuItems = $this->getFilterSubMenuForMyProfile($filter, $localUsername);
+					} else {
+						$menuItems = $this->getFilterSubMenuForNetwork($filter, $localUsername);
+					}
 				}
-			} else {
+			} elseif ($this->showSettingsSubMenu($controller, $action)) {
 				$localUsername = $this->value($options, 'local_username');
 				$isOpenIDUser = $this->value($options, 'openid_user', false);
 				$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser);
 			}
+			
 			return $menuItems;
 		}
 		
-		private function getFilterSubMenu($filter, $localUsername = null, $isForNetwork = false) {
-			$urlPart = '';
-			if ($localUsername != null) {
-				if ($isForNetwork) {
-					$urlPart = '/' . $localUsername . '/network/';
-				} else {
-					$urlPart = '/' . $localUsername . '/';
-				}
-			} else {
-				$urlPart = '/social_stream/';
-			}
+		private function getFilterSubMenu($filter, $urlPart) {
 			$menuItems[] = new MenuItem('All', $urlPart, $filter == 'all');
 			$menuItems[] = new MenuItem('Photo', $urlPart.'photo/', $filter == 'photo');
 			$menuItems[] = new MenuItem('Video', $urlPart.'video/', $filter == 'video');
@@ -69,6 +62,18 @@
 			$menuItems[] = new MenuItem('Locations', $urlPart.'location/', $filter == 'location');
 			
 			return $menuItems;
+		}
+		
+		private function getFilterSubMenuForMyProfile($filter, $localUsername) {
+			return $this->getFilterSubMenu($filter, '/'.$localUsername.'/');
+		}
+		
+		private function getFilterSubMenuForNetwork($filter, $localUsername) {
+			return $this->getFilterSubMenu($filter, '/'.$localUsername.'/network/');
+		}
+		
+		private function getFilterSubMenuForSocialStream($filter) {
+			return $this->getFilterSubMenu($filter, '/social_stream/');
 		}
 		
 		private function getMainMenuForAnonymousUser($controller, $action, $registrationType) {
@@ -125,6 +130,38 @@
 			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
 			
 			return $menuItems;
+		}
+
+		private function showFilterSubMenu($controller, $action) {
+			if ($controller == 'Identities') {
+				if ($action == 'social_stream' || $action == 'index') {
+					return true;
+				}
+			}
+			
+			if ($controller == 'Contacts' && $action == 'network') {
+				return true;
+			}
+			
+			return false;
+		}
+		
+		private function showSettingsSubMenu($controller, $action) {
+			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+			
+			if (in_array($controller, $controllers)) {
+				return true;
+			}
+			
+			if ($controller == 'Identities') {
+				$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+				
+				if (in_array($action, $identityActions)) {
+					return true;
+				}
+			}
+			
+			return false;
 		}
 		
 		private function value($options, $key, $defaultValue = '') {
@@ -206,8 +243,12 @@
 		}
 		
 		function isActive() {
-			if ($this->controller == 'Identities' && $this->action == 'register') {
-				return true;
+			if ($this->controller == 'Identities') {
+				$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
+				
+				if (in_array($this->action, $registerActions)) {
+					return true;
+				}
 			}
 			
 			return false;
