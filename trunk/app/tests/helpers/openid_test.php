@@ -66,11 +66,9 @@
 			ClassRegistry::removeObject('view');
 			
 			$view = new View(new AppController());
-        	$view->set('menu', array('main' => '',
-                      	 			 'sub'  => '',
-                      	 			 'model'     => '',
-                      	 			 'action'    => '',
-                   		 			 'filter'    => '',
+        	$view->set('mainMenu', new Menu(array()));
+        	$view->set('subMenu', new Menu(array()));
+			$view->set('menu', array('main' => '',
                       	 			 'logged_in' => ''));
 			
 			return $view;

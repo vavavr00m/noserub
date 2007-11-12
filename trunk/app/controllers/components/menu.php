@@ -1,103 +1,66 @@
 <?php
 
 class MenuComponent extends Object {
-
-    private $controller;
+	public $components = array('Session');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function init(&$controller) {
+    function setViewData($controller) {
+        loadModel('Menu');
+        $factory = new MenuFactory();
         
-    }
-    
-    function setViewData(&$controller, $model = null, $action = null) {
-	    $model  = $model  === null ? $controller->name   : $model;
-        $action = $action === null ? $controller->action : $action;
-
-        $filter    = isset($controller->params['filter'])   ? $controller->params['filter']   : '';
-        $logged_in = isset($_SESSION['Identity']);
+        $controller->set('mainMenu', $factory->getMainMenu($this->getMainMenuOptions($controller)));
+        $controller->set('subMenu', $factory->getSubMenu($this->getSubMenuOptions($controller)));
         
-        $main_menu = '';
-        $sub_menu  = '';
-        switch($model) {
-            case 'Accounts':
-                $main_menu = 'settings';
-                $sub_menu = 'accounts';
-                break;
-
-            case 'Contacts':
-                switch($action) {
-                    case 'network':
-                        $main_menu = 'network';
-                        $sub_menu  = $filter == '' ? 'all' : $filter;
-                        break;
-
-                    default:
-                        $main_menu = 'my_contacts'; break;
-                }
-                break;
-                
-            case 'Identities':
-                switch($action) {
-                    case 'register':
-                        $main_menu = 'register'; break;
-                        
-                    case 'index':
-                        $main_menu = 'my_profile'; 
-                        $sub_menu  = $filter == '' ? 'all' : $filter;
-                        break;
-                    
-                    case 'social_stream':
-                        $main_menu = 'social_stream';
-                        $sub_menu  = $filter == '' ? 'all' : $filter;
-                        break;
-                        
-                    case 'profile_settings':
-                        $main_menu = 'settings'; 
-                        $sub_menu  = 'profile'; 
-                        break;
-                        
-                    case 'privacy_settings':
-                        $main_menu = 'settings'; 
-                        $sub_menu  = 'privacy'; 
-                        break;
-                        
-                    case 'password_settings':
-                        $main_menu = 'settings'; 
-                        $sub_menu  = 'password'; 
-                        break;
-                        
-                    case 'account_settings':
-                        $main_menu = 'settings';
-                        $sub_menu  = 'account';
-                        break;
-                }
-                break;
-            
-			case 'OpenidSites':
-				$main_menu = 'settings'; 
-                $sub_menu  = 'openid';
-                break;
-				
-            case 'Syndications':
-                $main_menu = 'settings';
-                $sub_menu  = 'feeds';
-                break;
+        // set some data to be compatible with earlier version of this component
+        $controller->set('menu', $this->getCompatibilityData($controller));
+	}
+	
+	private function getCompatibilityData($controller) {
+		$mainMenu = '';
+        if ($controller->name == 'Contacts' && $controller->action == 'network') {
+        	$mainMenu = 'network'; 
         }
-
-        $data = array('main' => $main_menu,
-                      'sub'  => $sub_menu,
-                      'model'     => $model,
-                      'action'    => $action,
-                      'filter'    => $filter,
-                      'logged_in' => $logged_in);
-                      
-        $controller->set('menu', $data);
+        
+        $data = array('logged_in' => $this->Session->check('Identity'), 'main' => $mainMenu);
+        
+        return $data;
+	}
+	
+	private function getFilterOption($controller) {
+		$filter = isset($controller->params['filter']) ? $controller->params['filter']   : '';
+        $filter = ($filter == '') ? 'all' : $filter;
+        
+        return array('filter' => $filter);
+	}
+	
+	private function getMainMenuOptions($controller) {
+		$menuOptions = array('controller' => $controller->name, 'action' => $controller->action);
+        
+        if ($this->Session->check('Identity')) {
+        	$isLocal = $this->Session->read('Identity.is_local') == '1' ? true : false;
+        	$localUsername = $this->Session->read('Identity.local_username');
+        	$menuOptions = am($menuOptions, array('is_local' => $isLocal, 'local_username' => $localUsername));
+        }
+        
+        return $menuOptions;
+	}
+	
+	private function getSubMenuOptions($controller) {
+		$menuOptions = array('controller' => $controller->name, 'action' => $controller->action);
+		$menuOptions = am($menuOptions, $this->getFilterOption($controller));
+		
+        if ($this->Session->check('Identity')) {
+        	if ($this->Session->read('Identity.openid') != '') {
+        		$menuOptions = am($menuOptions, array('openid_user' => true));
+        	}
+        	
+        	$localUsername = $this->Session->read('Identity.local_username');
+        	$menuOptions = am($menuOptions, array('local_username' => $localUsername));
+        } else {
+        	$localUsername = isset($controller->params['username']) ? $controller->params['username'] : '';
+        	$menuOptions = am($menuOptions, array('local_username' => $localUsername));
+        }
+        
+		return $menuOptions;
 	}
 }
 
