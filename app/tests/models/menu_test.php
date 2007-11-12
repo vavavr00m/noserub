@@ -1,27 +1,51 @@
 <?php
 
 	class MenuTest extends CakeTestCase {
-		private $menu = null;
+		function testMenu() {
+			$menuItems[] = new MenuItem('A', '', false);
+			$menuItems[] = new MenuItem('B', '', false);
+			$menuItems[] = new MenuItem('C', '', false);
+			$menu = new Menu($menuItems);
+			$menuItems = $menu->getMenuItems();
+			$this->assertEqual(3, count($menuItems));
+			$this->assertEqual('A', $menuItems[0]->getLabel());
+			$this->assertEqual('B', $menuItems[1]->getLabel());
+			$this->assertEqual('C', $menuItems[2]->getLabel());
+			$this->assertIdentical(false, $menu->getActiveMenuItem());
+		}
+		
+		function testGetActiveMenuItem() {
+			$menuItems[] = new MenuItem('A', '', false);
+			$menuItems[] = new MenuItem('B', '', true);
+			$menuItems[] = new MenuItem('C', '', false);
+			$menu = new Menu($menuItems);
+			$activeMenuItem = $menu->getActiveMenuItem();
+			$this->assertEqual('B', $activeMenuItem->getLabel());
+		}
+	}
+
+	class MenuFactoryTest extends CakeTestCase {
+		private $factory = null;
 		
 		function setUp() {
-			$this->menu = new Menu();
+			$this->factory = new MenuFactory();
 		}
 		
 		// local user
 		
 		function testGetMainMenuForLocalUser() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
-			$this->assertEqual(4, count($mainMenu));
+			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
+			$this->assertEqual(4, count($mainMenu->getMenuItems()));
 			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false);
 		}
 		
 		function testGetMainMenuWithMyContactsSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'action' => 'index', 'local_username' => 'test'));
+			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'action' => 'index', 'local_username' => 'test'));
 			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, true, false);
 		}
 		
 		function testGetMainMenuWithMyProfileSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index', 'local_username' => 'test'));
+			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index', 'local_username' => 'test'));
 			$this->assertMenuForLocalUser($mainMenu, 'test', false, true, false, false);
 		}
 		
@@ -29,37 +53,38 @@
 			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 			
 			foreach ($controllers as $controller) {
-				$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => $controller, 'local_username' => 'test'));
+				$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => $controller, 'local_username' => 'test'));
 				$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, true);
 			}
 			
 			$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
 			
 			foreach ($identityActions as $action) {
-				$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action, 'local_username' => 'test'));
+				$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action, 'local_username' => 'test'));
 				$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, true);
 			}
 		}
 		
 		function testGetMainMenuWithSocialStreamSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream', 'local_username' => 'test'));
+			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream', 'local_username' => 'test'));
 			$this->assertMenuForLocalUser($mainMenu, 'test', true, false, false, false);
 		}		
 		
 		// remote user
 		
 		function testGetMainMenuForRemoteUser() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => false));
-			$this->assertEqual(2, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
-			$this->assertMenuItem($mainMenu[1], 'My Profile', '', false);
+			$mainMenu = $this->factory->getMainMenu(array('is_local' => false));
+			$menuItems = $mainMenu->getMenuItems();
+			$this->assertEqual(2, count($menuItems));
+			$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', false);
+			$this->assertMenuItem($menuItems[1], 'My Profile', '', false);
 		}
 		
 		// anonymous user
 		
 		function testGetMainMenuForWebUsersWithRegistrationPossibility() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all'));
-			$this->assertEqual(2, count($mainMenu));
+			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all'));
+			$this->assertEqual(2, count($mainMenu->getMenuItems()));
 			$this->assertMenuForAnonymousUser($mainMenu, false, false);
 		}
 
@@ -67,39 +92,40 @@
 			$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 			
 			foreach ($registerActions as $action) {
-				$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => $action));
+				$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => $action));
 				$this->assertMenuForAnonymousUser($mainMenu, false, true);
 			}
 		}
 		
 		function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
-			$mainMenu = $this->menu->getMainMenu(array('registration_type' => 'none'));
-			$this->assertEqual(1, count($mainMenu));
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', false);
+			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'none'));
+			$menuItems = $mainMenu->getMenuItems();
+			$this->assertEqual(1, count($menuItems));
+			$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', false);
 		}
 		
 		// sub menus
 		
 		function testGetNoSubMenuOnRegisterPage() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'register'));
-			$this->assertTrue(empty($subMenu));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'register'));
+			$this->assertIdentical(false, $subMenu);
 		}
 		
 		function testGetFilterSubMenu() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream'));
-			$this->assertEqual(10, count($subMenu));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream'));
+			$this->assertEqual(10, count($subMenu->getMenuItems()));
 			$filterState = new FilterState();
 			$this->assertFilterSubMenu($subMenu, '/social_stream/', $filterState);
 		}
 		
 		function testGetFilterSubMenuForMyProfile() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'index', 'local_username' => 'testuser'));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'index', 'local_username' => 'testuser'));
 			$filterState = new FilterState();
 			$this->assertFilterSubMenu($subMenu, '/testuser/', $filterState);
 		}
 		
 		function testGetFilterSubMenuForContactsNetwork() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Contacts', 'action' => 'network', 'local_username' => 'testuser'));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Contacts', 'action' => 'network', 'local_username' => 'testuser'));
 			$filterState = new FilterState();
 			$this->assertFilterSubMenu($subMenu, '/testuser/network/', $filterState);
 		}
@@ -108,69 +134,73 @@
 			$filters = array('all', 'photo', 'video', 'audio', 'link', 'text', 'micropublish', 'event', 'document', 'location');
 			
 			foreach ($filters as $filter) {
-				$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream', 'filter' => $filter));
+				$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream', 'filter' => $filter));
 				$filterState = new FilterState($filter);
 				$this->assertFilterSubMenu($subMenu, '/social_stream/', $filterState);
 			}
 		}
 		
 		function testGetSettingsSubMenu() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
-			$this->assertEqual(7, count($subMenu));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
+			$this->assertEqual(7, count($subMenu->getMenuItems()));
 			$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, true, false, false, false, false);
 		}
 		
 		function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
-			$subMenu = $this->menu->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
-			$this->assertEqual(6, count($subMenu));
+			$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
+			$this->assertEqual(6, count($subMenu->getMenuItems()));
+			$menuItems = $subMenu->getMenuItems();
 			$link = '/testuser/settings/';
-			$this->assertMenuItem($subMenu[0], 'Profile', $link . 'profile/', false);
-			$this->assertMenuItem($subMenu[1], 'Accounts', $link . 'accounts/', false);
-			$this->assertMenuItem($subMenu[2], 'Privacy', $link . 'privacy/', true);
-			$this->assertMenuItem($subMenu[3], 'Feeds', $link . 'feeds/', false);
-			$this->assertMenuItem($subMenu[4], 'OpenID', $link . 'openid/', false);
-			$this->assertMenuItem($subMenu[5], 'Delete account', $link . 'account/', false);
+			$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', false);
+			$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', false);
+			$this->assertMenuItem($menuItems[2], 'Privacy', $link . 'privacy/', true);
+			$this->assertMenuItem($menuItems[3], 'Feeds', $link . 'feeds/', false);
+			$this->assertMenuItem($menuItems[4], 'OpenID', $link . 'openid/', false);
+			$this->assertMenuItem($menuItems[5], 'Delete account', $link . 'account/', false);
 		}
 		
 		function testGetSettingsSubMenuWithOneItemSelected() {
 			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 			
 			foreach ($controllers as $controller) {
-				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'controller' => $controller));
+				$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => $controller));
 				$this->assertSettingsSubMenu($subMenu, 'testuser', false, $controller == 'Accounts', false, $controller == 'Syndications', $controller == 'OpenidSites', false, false);
 			}
 			
 			$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
 			
 			foreach ($identityActions as $action) {
-				$subMenu = $this->menu->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
+				$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
 				$this->assertSettingsSubMenu($subMenu, 'testuser', $action == 'profile_settings', false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
 			}
 		}
 		
-		private function assertFilterSubMenu($subMenu, $urlPart, FilterState $filterState) {
-			$this->assertMenuItem($subMenu[0], 'All', $urlPart, $filterState->isAllActive());
-			$this->assertMenuItem($subMenu[1], 'Photo', $urlPart.'photo/', $filterState->isPhotoActive());
-			$this->assertMenuItem($subMenu[2], 'Video', $urlPart.'video/', $filterState->isVideoActive());
-			$this->assertMenuItem($subMenu[3], 'Audio', $urlPart.'audio/', $filterState->isAudioActive());
-			$this->assertMenuItem($subMenu[4], 'Link', $urlPart.'link/', $filterState->isLinkActive());
-			$this->assertMenuItem($subMenu[5], 'Text', $urlPart.'text/', $filterState->isTextActive());
-			$this->assertMenuItem($subMenu[6], 'Micropublish', $urlPart.'micropublish/', $filterState->isMicroPublishActive());
-			$this->assertMenuItem($subMenu[7], 'Events', $urlPart.'event/', $filterState->isEventActive());
-			$this->assertMenuItem($subMenu[8], 'Documents', $urlPart.'document/', $filterState->isDocumentActive());
-			$this->assertMenuItem($subMenu[9], 'Locations', $urlPart.'location/', $filterState->isLocationActive());
+		private function assertFilterSubMenu(Menu $subMenu, $urlPart, FilterState $filterState) {
+			$menuItems = $subMenu->getMenuItems();
+			$this->assertMenuItem($menuItems[0], 'All', $urlPart, $filterState->isAllActive());
+			$this->assertMenuItem($menuItems[1], 'Photo', $urlPart.'photo/', $filterState->isPhotoActive());
+			$this->assertMenuItem($menuItems[2], 'Video', $urlPart.'video/', $filterState->isVideoActive());
+			$this->assertMenuItem($menuItems[3], 'Audio', $urlPart.'audio/', $filterState->isAudioActive());
+			$this->assertMenuItem($menuItems[4], 'Link', $urlPart.'link/', $filterState->isLinkActive());
+			$this->assertMenuItem($menuItems[5], 'Text', $urlPart.'text/', $filterState->isTextActive());
+			$this->assertMenuItem($menuItems[6], 'Micropublish', $urlPart.'micropublish/', $filterState->isMicroPublishActive());
+			$this->assertMenuItem($menuItems[7], 'Events', $urlPart.'event/', $filterState->isEventActive());
+			$this->assertMenuItem($menuItems[8], 'Documents', $urlPart.'document/', $filterState->isDocumentActive());
+			$this->assertMenuItem($menuItems[9], 'Locations', $urlPart.'location/', $filterState->isLocationActive());
 		}
 		
-		private function assertMenuForAnonymousUser($mainMenu, $socialStreamActive, $registerActive) {
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', $socialStreamActive);
-			$this->assertMenuItem($mainMenu[1], 'Add me!', '/pages/register/', $registerActive);
+		private function assertMenuForAnonymousUser(Menu $mainMenu, $socialStreamActive, $registerActive) {
+			$menuItems = $mainMenu->getMenuItems();
+			$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
+			$this->assertMenuItem($menuItems[1], 'Add me!', '/pages/register/', $registerActive);
 		}
 		
-		private function assertMenuForLocalUser($mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
-			$this->assertMenuItem($mainMenu[0], 'Social Stream', '/social_stream/', $socialStreamActive);
-			$this->assertMenuItem($mainMenu[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
-			$this->assertMenuItem($mainMenu[2], 'My Contacts', '/' . $localUsername . '/contacts/', $myContactsActive);
-			$this->assertMenuItem($mainMenu[3], 'Settings', '/' . $localUsername . '/settings/',$settingsActive);
+		private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
+			$menuItems = $mainMenu->getMenuItems();
+			$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
+			$this->assertMenuItem($menuItems[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
+			$this->assertMenuItem($menuItems[2], 'My Contacts', '/' . $localUsername . '/contacts/', $myContactsActive);
+			$this->assertMenuItem($menuItems[3], 'Settings', '/' . $localUsername . '/settings/',$settingsActive);
 		}
 		
 		private function assertMenuItem(MenuItem $menuItem, $label, $link, $isActive) {
@@ -179,15 +209,16 @@
 			$this->assertIdentical($isActive, $menuItem->isActive());
 		}
 		
-		private function assertSettingsSubMenu($subMenu, $localUsername, $profileActive, $accountsActive, $privacyActive, $feedsActive, $openidActive, $passwordActive, $deleteAccountActive) {
+		private function assertSettingsSubMenu(Menu $subMenu, $localUsername, $profileActive, $accountsActive, $privacyActive, $feedsActive, $openidActive, $passwordActive, $deleteAccountActive) {
+			$menuItems = $subMenu->getMenuItems();
 			$link = '/' . $localUsername . '/settings/';
-			$this->assertMenuItem($subMenu[0], 'Profile', $link . 'profile/', $profileActive);
-			$this->assertMenuItem($subMenu[1], 'Accounts', $link . 'accounts/', $accountsActive);
-			$this->assertMenuItem($subMenu[2], 'Privacy', $link . 'privacy/', $privacyActive);
-			$this->assertMenuItem($subMenu[3], 'Feeds', $link . 'feeds/', $feedsActive);
-			$this->assertMenuItem($subMenu[4], 'OpenID', $link . 'openid/', $openidActive);
-			$this->assertMenuItem($subMenu[5], 'Password', $link . 'password/', $passwordActive);
-			$this->assertMenuItem($subMenu[6], 'Delete account', $link . 'account/', $deleteAccountActive);
+			$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', $profileActive);
+			$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', $accountsActive);
+			$this->assertMenuItem($menuItems[2], 'Privacy', $link . 'privacy/', $privacyActive);
+			$this->assertMenuItem($menuItems[3], 'Feeds', $link . 'feeds/', $feedsActive);
+			$this->assertMenuItem($menuItems[4], 'OpenID', $link . 'openid/', $openidActive);
+			$this->assertMenuItem($menuItems[5], 'Password', $link . 'password/', $passwordActive);
+			$this->assertMenuItem($menuItems[6], 'Delete account', $link . 'account/', $deleteAccountActive);
 		}
 	}
 	

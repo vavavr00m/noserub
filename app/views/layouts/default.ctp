@@ -44,9 +44,11 @@
 				<h2><?php echo $headline; ?></h2>
 			</div>
 		</div>
-		<?php if($menu['main'] != 'my_profile' && $menu['main'] != 'social_stream' && $menu['main'] != 'network') { 
-		    echo $this->renderElement('subnav'); 
-		} ?>
+		<?php 
+			if (is_a($mainMenu->getActiveMenuItem(), 'SettingsMenuItem')) {
+				echo $this->renderElement('subnav');
+		    } 
+		?>
 		
 		<div id="content" class="wrapper">
             <?php echo $content_for_layout; ?>

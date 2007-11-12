@@ -1,6 +1,28 @@
 <?php
 
 	class Menu {
+		private $menuItems = null;
+		
+		function __construct($menuItems) {
+			$this->menuItems = $menuItems;
+		}
+		
+		function getActiveMenuItem() {
+			foreach ($this->menuItems as $menuItem) {
+				if ($menuItem->isActive()) {
+					return $menuItem;
+				}
+			}
+			
+			return false;
+		}
+		
+		function getMenuItems() {
+			return $this->menuItems;
+		}
+	}
+
+	class MenuFactory {
 		
 		function getMainMenu($options) {
 			$menuItems = array();
@@ -18,7 +40,7 @@
 				$menuItems = $this->getMainMenuForAnonymousUser($controller, $action, $this->getRegistrationType($options));
 			}
 			
-			return $menuItems;
+			return new Menu($menuItems);
 		}
 		
 		function getSubMenu($options) {
@@ -46,7 +68,11 @@
 				$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser);
 			}
 			
-			return $menuItems;
+			if (empty($menuItems)) {
+				return false;
+			}
+			
+			return new Menu($menuItems);
 		}
 		
 		private function getFilterSubMenu($filter, $urlPart) {
