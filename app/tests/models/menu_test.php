@@ -16,7 +16,7 @@
 		}
 		
 		function testGetMainMenuWithMyContactsSelected() {
-			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'local_username' => 'test'));
+			$mainMenu = $this->menu->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'action' => 'index', 'local_username' => 'test'));
 			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, true, false);
 		}
 		
@@ -255,12 +255,15 @@
 	
 	class MyContactsMenuItemTest extends CakeTestCase {
 		function testCreateActivatedMyContactsMenuItem() {
-			$menuItem = new MyContactsMenuItem('Contacts', 'testuser');
+			$menuItem = new MyContactsMenuItem('Contacts', 'index', 'testuser');
 			$this->assertMenuItem($menuItem, '/testuser/contacts/', true);
 		}
 		
 		function testCreateNotActivatedMyContactsMenuItem() {
-			$menuItem = new MyContactsMenuItem('SomeController', 'test');
+			$menuItem = new MyContactsMenuItem('Contacts', 'network', 'testuser');
+			$this->assertMenuItem($menuItem, '/testuser/contacts/', false);
+			
+			$menuItem = new MyContactsMenuItem('SomeController', 'someaction', 'test');
 			$this->assertMenuItem($menuItem, '/test/contacts/', false);
 		}
 		

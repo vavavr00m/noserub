@@ -89,7 +89,7 @@
 		private function getMainMenuForLocalUser($controller, $action, $localUsername) {
 			$menuItems[] = new SocialStreamMenuItem($controller, $action);
 			$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
-			$menuItems[] = new MyContactsMenuItem($controller, $localUsername);
+			$menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
 			$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 			
 			return $menuItems;
@@ -195,14 +195,16 @@
 	
 	class MyContactsMenuItem extends MenuItem {
 		private $controller = null;
+		private $action = null;
 		
-		function __construct($controller, $localUsername) {
+		function __construct($controller, $action, $localUsername) {
 			parent::__construct('My Contacts', '/' . $localUsername . '/contacts/', false);
 			$this->controller = $controller;
+			$this->action = $action;
 		}
 		
 		function isActive() {
-			if ($this->controller == 'Contacts') {
+			if ($this->controller == 'Contacts' && $this->action != 'network') {
 				return true;
 			}
 			
