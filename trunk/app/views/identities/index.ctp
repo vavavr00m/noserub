@@ -146,7 +146,7 @@
 	    <ul class="whoissidebar">
 	        <?php foreach($accounts as $item) { ?>
 	            <li>
-	                <img src="/images/icons/services/<?php echo $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
+	                <img src="<?php echo Router::url('/images/icons/services/') . $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
 	                <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
 	            </li>
 	        <?php } ?>
