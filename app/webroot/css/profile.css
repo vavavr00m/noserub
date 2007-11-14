@@ -15,7 +15,7 @@
 	margin: 0px 0px 10px 0px;
 	font-size: 11px;
 	color: #000;
-	background-image: url('/images/profile/about_bg.gif');
+	background-image: url('../images/profile/about_bg.gif');
 	line-height: 24px;
 	padding: 0px 10px 0px 10px;
 }
@@ -96,7 +96,7 @@
 }
 
 .externalcontact {
-	background: transparent url('/images/contacts/external-contact.gif') no-repeat center right;
+	background: transparent url('../images/contacts/external-contact.gif') no-repeat center right;
 }
 
 .contacts {

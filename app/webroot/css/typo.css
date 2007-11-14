@@ -26,7 +26,7 @@ body {
 #logo h1 {
 	width: 100px;
 	height: 55px;
-	background: transparent url('/images/logo.gif') no-repeat;
+	background: transparent url('../images/logo.gif') no-repeat;
 }
 
 #logo h1 a {
@@ -259,6 +259,6 @@ dd a:hover {
 /* misc */
 
 .addmore {
-	background: transparent url(/images/icons/portal/more.gif) no-repeat center right;
+	background: transparent url(../images/icons/portal/more.gif) no-repeat center right;
 	padding: 5px 20px 5px 0;
 }

@@ -11,7 +11,7 @@
 
 #mainnav li {
 	float:left;
-	background:url("/images/navigation/left.gif") no-repeat left top;
+	background:url("../images/navigation/left.gif") no-repeat left top;
 	margin:0;
 	padding:0 0 0 9px;
 }
@@ -19,7 +19,7 @@
 #mainnav a {
 	float:left;
 	display:block;
-	background:url("/images/navigation/right.gif") no-repeat right top;
+	background:url("../images/navigation/right.gif") no-repeat right top;
 	padding:5px 15px 4px 6px;
 	text-decoration:none;
 	font-weight: normal;
@@ -35,11 +35,11 @@
 }
   
 #mainnav .active {
-	background-image:url("/images/navigation/left_on.gif");
+	background-image:url("../images/navigation/left_on.gif");
 }
 
 #mainnav .active a {
-	background-image:url("/images/navigation/right_on.gif");
+	background-image:url("../images/navigation/right_on.gif");
 	color: #585857;
 	font-weight: bold;
 	padding-bottom:5px;
