@@ -1,5 +1,5 @@
 <p class="infotext">
-If you have an <img src="/images/openid_small.gif" alt="OpenID logo" /> OpenID, please follow this 
+If you have an <img src="<?php echo Router::url('/images/openid_small.gif'); ?>" alt="OpenID logo" /> OpenID, please follow this 
 <?php echo $html->link('link', '/pages/register/withopenid'); ?> to register a new NoseRub account.
 </p>
 

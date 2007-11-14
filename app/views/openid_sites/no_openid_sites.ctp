@@ -1,5 +1,5 @@
 <p class="right">
-	<img src="/images/openid.gif" width="200" height="66" alt="OpenID" />
+	<img src="<?php echo Router::url('/images/openid.gif'); ?>" width="200" height="66" alt="OpenID" />
 </p>
 
 <p>
