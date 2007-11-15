@@ -1,4 +1,9 @@
-<h4><?php echo $box_head; ?></h4>
+<h4>
+	<?php echo $box_head; ?>
+	<?php if (isset($manage) && $manage && $session->check('Identity')): ?>
+		<span class="more"><?php echo $html->link('manage', '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
+	<?php endif; ?>
+</h4>
 <p class="contactsbox">
     <?php foreach($data as $item) { ?>
         <?php if(isset($item['WithIdentity'])) {

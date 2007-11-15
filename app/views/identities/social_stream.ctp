@@ -33,10 +33,10 @@
     </div>
 
     <div id="sidebar">
-    	<?php echo $this->renderElement('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url)); ?>
+    	<?php echo $this->renderElement('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if($menu['logged_in'] && isset($contacts)) { ?>
     	    <hr />
-    	    <?php echo $this->renderElement('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
+    	    <?php echo $this->renderElement('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url, 'manage' => true)); ?>
     	<?php } ?>
     	<?php if(isset($newbies)) { ?>
     	    <hr />

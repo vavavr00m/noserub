@@ -121,9 +121,8 @@
 
     <div id="sidebar">
 	
-	    <?php if(($relationship_status == 'self' && $num_noserub_contacts+$num_private_contacts > 9) ||
-	             ($num_noserub_contacts > 9) ) { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">see all</a></span>
+	    <?php if($relationship_status == 'self') { ?>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
     	<?php } ?>
     	<?php echo $this->renderElement('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
     	<p class="morefriends">
