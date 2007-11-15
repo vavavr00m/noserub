@@ -199,7 +199,7 @@
 			$menuItems = $mainMenu->getMenuItems();
 			$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
 			$this->assertMenuItem($menuItems[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
-			$this->assertMenuItem($menuItems[2], 'My Contacts', '/' . $localUsername . '/contacts/', $myContactsActive);
+			$this->assertMenuItem($menuItems[2], 'My Contacts', '/' . $localUsername . '/network/', $myContactsActive);
 			$this->assertMenuItem($menuItems[3], 'Settings', '/' . $localUsername . '/settings/',$settingsActive);
 		}
 		
@@ -286,21 +286,23 @@
 	
 	class MyContactsMenuItemTest extends CakeTestCase {
 		function testCreateActivatedMyContactsMenuItem() {
-			$menuItem = new MyContactsMenuItem('Contacts', 'index', 'testuser');
-			$this->assertMenuItem($menuItem, '/testuser/contacts/', true);
+			$username = 'testuser';
+			$menuItem = new MyContactsMenuItem('Contacts', 'index', $username);
+			$this->assertMenuItem($menuItem, $username, true);
+
+			$menuItem = new MyContactsMenuItem('Contacts', 'network', $username);
+			$this->assertMenuItem($menuItem, $username, true);
 		}
 		
-		function testCreateNotActivatedMyContactsMenuItem() {
-			$menuItem = new MyContactsMenuItem('Contacts', 'network', 'testuser');
-			$this->assertMenuItem($menuItem, '/testuser/contacts/', false);
-			
-			$menuItem = new MyContactsMenuItem('SomeController', 'someaction', 'test');
-			$this->assertMenuItem($menuItem, '/test/contacts/', false);
+		function testCreateNotActivatedMyContactsMenuItem() {			
+			$username = 'test';
+			$menuItem = new MyContactsMenuItem('SomeController', 'someaction', $username);
+			$this->assertMenuItem($menuItem, $username, false);
 		}
 		
-		private function assertMenuItem($menuItem, $link, $isActive) {
+		private function assertMenuItem($menuItem, $username, $isActive) {
 			$this->assertEqual('My Contacts', $menuItem->getLabel());
-			$this->assertEqual($link, $menuItem->getLink());
+			$this->assertEqual('/'.$username.'/network/', $menuItem->getLink());
 			$this->assertIdentical($isActive, $menuItem->isActive());
 		}
 	}

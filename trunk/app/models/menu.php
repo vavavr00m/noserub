@@ -224,13 +224,13 @@
 		private $action = null;
 		
 		function __construct($controller, $action, $localUsername) {
-			parent::__construct('My Contacts', '/' . $localUsername . '/contacts/', false);
+			parent::__construct('My Contacts', '/' . $localUsername . '/network/', false);
 			$this->controller = $controller;
 			$this->action = $action;
 		}
 		
 		function isActive() {
-			if ($this->controller == 'Contacts' && $this->action != 'network') {
+			if ($this->controller == 'Contacts') {
 				return true;
 			}
 			
