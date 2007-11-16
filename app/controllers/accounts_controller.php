@@ -18,9 +18,7 @@ class AccountsController extends AppController {
         $session_identity = $this->Session->read('Identity');
         
         # get identity that is displayed
-        $this->Account->Identity->recursive = 0;
-        $this->Account->Identity->expects('Identity');
-        $identity = $this->Account->Identity->findByUsername($splitted['username']);
+        $identity = $this->getIdentity($splitted['username']);
         if(!$identity) {
             # this identity is not here
             $this->redirect('/', null, true);
@@ -65,9 +63,7 @@ class AccountsController extends AppController {
         # check, if logged in user may add accounts
         
         # get identity for which accounts should be added
-        $this->Account->Identity->recursive = 0;
-        $this->Account->Identity->expects('Identity');
-        $identity = $this->Account->Identity->findByUsername($splitted['username']);
+        $identity = $this->getIdentity($splitted['username']);
         
         if($identity['Identity']['id'] != $session_identity['id']) {
             # identity is not the logged in user
@@ -319,9 +315,7 @@ class AccountsController extends AppController {
                         $new_identity_username = $this->Account->Identity->sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];
                         $new_splitted = $this->Account->Identity->splitUsername($new_identity_username);
                         
-                        $this->Account->Identity->recursive = 0;
-                        $this->Account->Identity->expects('Identity');
-                        $identity = $this->Account->Identity->findByUsername($new_splitted['username']);
+                        $identity = $this->getIdentity($new_splitted['username']);
                         if(!$identity) {
                             # create a new identity
                             $identity = array('is_local' => 1,
@@ -488,9 +482,7 @@ class AccountsController extends AppController {
         if($splitted['username'] != $session_identity['username']) {
             # check, if $username belongs to the
             # logged in identities namespace
-            $this->Account->Identity->recursive = 0;
-            $this->Account->Identity->expects('Identity');
-            $about_identity = $this->Account->Identity->findByUsername($splitted['username']);
+        	$about_identity = $this->getIdentity($splitted['username']);
             if(!$about_identity) {
                 # could not find the identity
                 $this->flashMessage('alert', 'Could not find the user.');
@@ -516,5 +508,13 @@ class AccountsController extends AppController {
         }
         
         $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');
+    }
+    
+    private function getIdentity($username) {
+    	$this->Account->Identity->recursive = 0;
+        $this->Account->Identity->expects('Identity');
+        $identity = $this->Account->Identity->findByUsername($username);
+        
+        return $identity;
     }
 }
