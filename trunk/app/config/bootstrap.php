@@ -58,6 +58,10 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # just a precaution for avoiding confusions.
 define('NOSERUB_RESERVED_USERNAMES', 'pages,jobs,tests,noserub,auth,login,register,social_stream');
 
+# temporary constant for development purposes
+# TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
+define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
+
 /**
  * Static files directory
  * @name STATIC_DIR
