@@ -258,19 +258,19 @@ class AccountsController extends AppController {
                             $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/', null, true);
                         }
                     }
+                    
+                    $this->flashMessage('success', 'Account added.');
                 }
             }
             # we're done!
             if($identity_id == $session_identity['id']) {
                 # new account for the logged in user, so we redirect to his/her account settings
-                $this->flashMessage('success', 'Account added.');
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             } else {
                 # new account for a private contact. redirect to his/her profile
                 $this->Account->Identity->recursive = 0;
                 $this->Account->Identity->expects('Identity');
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
-                $this->flashMessage('success', 'Account added.');
                 $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
             }
         }
