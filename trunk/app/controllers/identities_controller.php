@@ -168,7 +168,7 @@ class IdentitiesController extends AppController {
                                                'is_local'  => 1,
                                                'hash'      => '',
         									   'NOT last_activity = "0000-00-00 00:00:00"',
-                                               'NOT username LIKE "%@%"'),
+                                               'username NOT LIKE "%@%"'),
                                          null, 'Identity.last_activity DESC, Identity.modified DESC', 25);
 
         # extract the identities
