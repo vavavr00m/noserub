@@ -1,0 +1,130 @@
+@import url("typo.css");
+@import url("navigation.css");
+@import url("profile.css");
+@import url("tables.css");
+@import url("forms.css");
+@import url("messages.css");
+@import url("icons.css");
+
+body {
+	background-color: #ffffff;
+	margin: 0;
+}
+
+img, acronym {
+	border: 0;
+}
+
+.clear {
+	clear: both;
+	padding: 0;
+	margin: 0;
+}
+
+.right {
+	float: right;
+}
+
+.left {
+	float: left;
+}
+
+.space {
+	border: 0;
+	color: #EBEBEB;
+	background-color: #EBEBEB;
+	height: 1px;
+}
+
+#top {
+	height: 5px;
+	background-color: #12a1c9;
+}
+
+#header {
+	height: 55px;
+}
+
+.wrapper {
+	margin-left: auto;
+	margin-right: auto;
+	width: 760px;
+}
+
+#headline {
+	height: 60px;
+	background-color: #ecebe5;
+	border-bottom: 5px solid #d9d7ca;
+	clear: both;
+}
+
+/* ie7 hack // start */
+*+html #headline {
+	margin-top: 34px;
+}
+/* ugly ie7 hack // end */
+
+#content {
+	padding-top: 15px;
+}
+
+#subnavigation {
+	background-color: #12a1c9;
+	height: 20px;
+}
+
+#footer {
+	border-top: 1px solid #d9d7ca;
+	color: #999999;
+	text-align: center;
+	margin-top: 25px;
+	padding: 10px 0 25px 0;
+	clear: both;
+}
+
+.noserublogo {
+	float: right;
+}
+
+#metanav {
+	text-align: right;
+	margin-top: 5px;
+	height: 10px;
+}
+
+.yourboxes {
+	float: left;
+	margin: 0 50px 20px 0;
+}
+
+/* Network */
+.date {
+	float: right;
+	color: #999999;
+}
+
+.photothumb {
+	float: left;
+	border: 1px solid #ECEBE5;
+	margin: 0 15px 15px 0;
+}
+
+.photothumb img {
+	padding: 7px 0 0 8px;
+}
+
+.extended {
+	margin-top: -15px !important;
+}
+
+/* Settings */
+#settings_photo {
+	float: right;
+	width: 255px;
+	padding: 0 0 0 25px;
+	border-left: 1px solid #ECEBE5;
+}
+
+#settings_data {
+	width: 400px;
+}
