@@ -596,7 +596,7 @@ class DeliciousService implements IService {
 class DeviantartService implements IService {
 	
 	function getAccountUrl($username) {
-		return 'http://'.$username.'deviantart.com';
+		return 'http://'.$username.'.deviantart.com';
 	}
 	
 	function getContacts($username) {
