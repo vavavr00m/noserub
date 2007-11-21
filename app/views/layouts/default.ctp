@@ -19,6 +19,16 @@
 	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL . Router::url('/'); ?>favicon.ico" />
 	<?php echo $scripts_for_layout; ?>
 
+
+
+    <?php  if (is_a($mainMenu->getActiveMenuItem(), 'SocialStreamMenuItem')) { ?>
+        <!-- RSS -->
+        <?php
+            $filter = $filter == '' ? 'all' : $filter;
+        ?>
+        <link rel="alternate" type="application/rss+xml" title="Social Stream Feed" href="<?php echo Router::Url('/social_stream/' . $filter . '/rss'); ?>" />
+	<?php } ?>
+
 <!-- CSS -->
 	 <?php echo $this->renderElement('css'); ?>
 	                   

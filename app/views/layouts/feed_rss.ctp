@@ -4,6 +4,7 @@ $now = date('D, d M Y H:i:s T');
 
 echo '<?xml version="1.0" encoding="UTF-8"?>'; 
 
+header('Content-Type: text/xml');
 ?>
 <!-- generator="NoseRub" -->
 <rss version="2.0" 
@@ -14,7 +15,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
     <channel>
 	    <title><?php echo $syndication_name; ?> - NoseRub Feed</title>
-	    <link>http://<?php echo $identity['username']; ?></link>
+	    <?php if(isset($identity['username'])) { ?>
+	        <link>http://<?php echo $identity['username']; ?></link>
+	    <?php } else { ?>
+	        <link><?php echo Router::Url('/social_strem/' . $filter, true); ?></link>
+	    <?php } ?>
 	    <description><?php echo $syndication_name; ?> - NoseRub Feed</description>
 	    <pubDate><?php echo $now; ?></pubDate>
 	    <generator>http://noserub.com/</generator>
