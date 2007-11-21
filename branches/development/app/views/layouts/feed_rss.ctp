@@ -24,6 +24,7 @@ header('Content-Type: text/xml');
 	    <pubDate><?php echo $now; ?></pubDate>
 	    <generator>http://noserub.com/</generator>
 	    <language>en</language>
+	    <?php $num_items = 0; ?>
 	    <?php foreach($data as $item) { ?>
 	        <item>
 		        <title><?php echo $item['title']; ?></title>
@@ -33,6 +34,12 @@ header('Content-Type: text/xml');
                 <description><![CDATA[<?php echo substr($item['content'], 0, 255); ?><?php echo strlen($item['content']) > 255 ? ' [...]' : ''; ?>]]></description>
                 <content:encoded><![CDATA[<?php echo $item['content']; ?>]]></content:encoded>
 		    </item>
+		    <?php 
+		        $num_items++;
+		        if($num_items > 50) {
+		            break;
+		        }
+		    ?>
         <?php } ?>
 	</channel>
 </rss>
