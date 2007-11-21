@@ -158,6 +158,7 @@ class IdentitiesController extends AppController {
     function social_stream() {
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
         $filter = $this->filterSanitize->sanitize($filter);
+        $output = isset($this->params['output']) ? $this->params['output']   : 'html';
         
         $this->Identity->recursive = 2;
         $this->Identity->expects('Identity.Identity', 'Identity.Account', 
@@ -197,22 +198,31 @@ class IdentitiesController extends AppController {
             }
         }
         usort($items, 'sort_items');
-        $items = $this->cluster->create($items);
-
+        if($output === 'html') {
+            $items = $this->cluster->create($items);
+        }
+        
         # also get my contacts, when I'm logged in
         $logged_in_identity_id = $this->Session->read('Identity.id');
         if($logged_in_identity_id) {
         	$this->set('contacts', $this->Identity->getContacts($logged_in_identity_id, 9));
         }
         
-        $this->set('newbies', $this->Identity->getNewbies(9));
-        $this->set('data', $data);
-        $this->set('identities', $identities);
-        $this->set('items', $items);
-        $this->set('filter', $filter);
-        
-        $this->set('headline', 'All public social activities');
-        $this->render('social_stream');
+        if($output === 'rss') {
+            $this->set('filter', $filter);
+            $this->set('data', $items);
+            $this->set('syndication_name', 'Social Stream');
+            $this->layout = 'feed_rss';
+            $this->render('../syndications/feed');
+        } else {
+            $this->set('newbies', $this->Identity->getNewbies(9));
+            $this->set('data', $data);
+            $this->set('identities', $identities);
+            $this->set('items', $items);
+            $this->set('filter', $filter);
+            $this->set('headline', 'All public social activities');
+            $this->render('social_stream');
+        }
     }
     
     function send_message() {
