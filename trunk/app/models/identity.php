@@ -7,8 +7,9 @@ class Identity extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
                                 'required' => VALID_NOT_EMPTY),
-            'email'    => array('mail'     => VALID_EMAIL,
-                                'required' => VALID_NOT_EMPTY),
+            'email'    => array('mail'       => VALID_EMAIL,
+                                'required'   => VALID_NOT_EMPTY,
+                                'restricted' => array('rule' => 'validateRestrictedEmail')),
             'passwd'   => array('rule' => array('minLength', 6)),
             'passwd2'  => array('rule' => 'validatePasswd2'),
     		'openid'   => array('rule' => 'validateUniqueOpenID')
@@ -52,6 +53,19 @@ class Identity extends AppModel {
             return true;
         }
     }    
+    
+    /**
+     * check, wether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+     */
+    function validateRestrictedEmail($email, $params = array()) {
+        if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 
+            NOSERUB_REGISTRATION_RESTRICTED_HOSTS === false ||
+            $email == '') {
+            return true;
+        }
+        list($local, $host) = explode('@', $email);
+        return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
+    }
     
     /**
      * Method description
