@@ -44,7 +44,7 @@ class SyndicationsController extends AppController {
                     }
                     if($new_items) {
                         $items = array_merge($items, $new_items);
-                    }
+                    }  
                 }
                 usort($items, 'sort_items');
             }
@@ -69,9 +69,8 @@ class SyndicationsController extends AppController {
                         $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
                         ob_end_clean();
                     }                
-                    return true;
                 } 
-                return false;
+                return true;
             } else {
                 # just render it
                 $this->layout = 'feed_'.$extension;
