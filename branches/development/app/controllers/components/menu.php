@@ -48,17 +48,12 @@ class MenuComponent extends Object {
 		$menuOptions = array('controller' => $controller->name, 'action' => $controller->action);
 		$menuOptions = am($menuOptions, $this->getFilterOption($controller));
 		
-        if ($this->Session->check('Identity')) {
-        	if ($this->Session->read('Identity.openid') != '') {
-        		$menuOptions = am($menuOptions, array('openid_user' => true));
-        	}
-        	
-        	$localUsername = $this->Session->read('Identity.local_username');
-        	$menuOptions = am($menuOptions, array('local_username' => $localUsername));
-        } else {
-        	$localUsername = isset($controller->params['username']) ? $controller->params['username'] : '';
-        	$menuOptions = am($menuOptions, array('local_username' => $localUsername));
+        if ($this->Session->check('Identity') && $this->Session->read('Identity.openid') != '') {
+        	$menuOptions = am($menuOptions, array('openid_user' => true));
         }
+        
+        $localUsername = isset($controller->params['username']) ? $controller->params['username'] : '';
+        $menuOptions = am($menuOptions, array('local_username' => $localUsername));
         
 		return $menuOptions;
 	}
