@@ -164,7 +164,8 @@ class ContactsController extends AppController {
                         $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
                         if($this->Contact->save($contact, true, $saveable)) {
                             $this->flashMessage('success', 'Added new contact.');
-                            $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
+                            $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+                            $this->redirect('/' . $splitted['local_username'] . '/contacts/define_contact_types', null, true);
                         }
                     }
                 } else {
@@ -187,7 +188,20 @@ class ContactsController extends AppController {
     }
     
     function define_contact_types() {
-    	$this->set('headline', 'Define contact types');
+    	$username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Contact->Identity->splitUsername($username);
+
+    	if ($this->data) {
+    		if (isset($this->params['form']['submit'])) { 
+    			$contactId = $this->Session->read('Contacts.add.Contact.id');
+    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $this->data['NoserubContactType']);
+    			$this->Session->delete('Contacts.add.Contact.id');
+    		}
+			$this->redirect('/' . $splitted['local_username'] . '/contacts/');
+    	} else {
+    		$this->set('headline', 'Define contact types');
+    		$this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
+    	}
     }
     
     /**
