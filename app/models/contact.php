@@ -13,7 +13,17 @@ class Contact extends AppModel {
                                 'required' => VALID_NOT_EMPTY)
         );
         
-        
+
+	function createAssociationsToNoserubContactTypes($contactId, $data) {
+		$iterator = new NoserubContactTypesFilter($data);
+		
+		foreach ($iterator as $key => $value) {
+			if (is_numeric($key)) {
+				$this->query('INSERT INTO contacts_noserub_contact_types (contact_id, noserub_contact_type_id) values ('.$contactId.', '.$key.')');
+			}
+		}
+	}
+    
     /**
      * Deletes all contacts from and to this identity_id
      * Also deletes all private contact's identites, accounts and feeds
@@ -39,5 +49,17 @@ class Contact extends AppModel {
             # the contact itself can be removed in all cases
             $this->delete($contact['Contact']['id']);
         }
+    }
+}
+
+class NoserubContactTypesFilter extends FilterIterator {
+	private $filter = 1;
+	
+	public function __construct($array) {
+		parent::__construct(new ArrayIterator($array));
+	}
+	
+	public function accept() {
+		return ($this->current() == $this->filter);
     }
 }
