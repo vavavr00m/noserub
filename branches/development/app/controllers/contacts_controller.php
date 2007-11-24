@@ -186,6 +186,10 @@ class ContactsController extends AppController {
         }
     }
     
+    function define_contact_types() {
+    	$this->set('headline', 'Define contact types');
+    }
+    
     /**
      * Method description
      *

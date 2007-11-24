@@ -5,7 +5,9 @@ class Contact extends AppModel {
     var $belongsTo = array('Identity',
                            'WithIdentity' => array('className' => 'Identity',
                                                    'foreignKey' => 'with_identity_id'));
-                                                   
+
+    var $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
+    
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'required' => VALID_NOT_EMPTY)
