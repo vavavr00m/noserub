@@ -133,14 +133,9 @@ class ContactsController extends AppController {
                     exit;
                 }
                 
-                $this->Contact->create();
                 $contact = array('identity_id'      => $session_identity['id'],
                                  'with_identity_id' => $new_identity_id);
-                $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                if($this->Contact->save($contact, true, $saveable)) {
-                    $this->flashMessage('success', 'Added new contact.');
-                    $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
-                }
+                $this->saveContactAndRedirect($contact, $splitted['local_username']);
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
                 # create the username with the special namespace
@@ -157,16 +152,9 @@ class ContactsController extends AppController {
                     $saveable = array('is_local', 'username', 'created', 'modified');
                     # no validation, as we have no password.
                     if($this->Contact->Identity->save($identity, false, $saveable)) {
-                        # create the contact now
-                        $this->Contact->create();
                         $contact = array('identity_id'      => $session_identity['id'],
                                          'with_identity_id' => $this->Contact->Identity->id);
-                        $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                        if($this->Contact->save($contact, true, $saveable)) {
-                            $this->flashMessage('success', 'Added new contact.');
-                            $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/contacts/define_contact_types', null, true);
-                        }
+                        $this->saveContactAndRedirect($contact, $splitted['local_username']);
                     }
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
@@ -381,5 +369,16 @@ class ContactsController extends AppController {
         }
         
         $this->redirect('/' . $splitted['local_username'], null, true);
+    }
+    
+    private function saveContactAndRedirect($contactData, $localUsername) {
+		$this->Contact->create();
+
+		$saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+		if($this->Contact->save($contactData, true, $saveable)) {
+			$this->flashMessage('success', 'Added new contact.');
+			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+			$this->redirect('/' . $localUsername . '/contacts/define_contact_types', null, true);
+		}
     }
 }
