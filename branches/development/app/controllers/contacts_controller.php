@@ -248,6 +248,10 @@ class ContactsController extends AppController {
         $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
     }
     
+    function edit() {
+    	$this->set('headline', 'Edit contact');
+    }
+    
     /**
      * Displays the social stream of one identity. That means all his/her contact's activities.
      *
