@@ -249,7 +249,11 @@ class ContactsController extends AppController {
     }
     
     function edit() {
+    	$contactId = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$this->set('headline', 'Edit contact');
+    	$this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
+    	// FIXME refactor this into a model function
+    	$this->set('selectedNoserubContactTypes', Set::extract($this->Contact->ContactsNoserubContactType->findAllByContactId($contactId), '{n}.ContactsNoserubContactType.noserub_contact_type_id'));
     }
     
     /**
