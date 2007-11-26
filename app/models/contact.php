@@ -13,7 +13,7 @@ class Contact extends AppModel {
                                 'required' => VALID_NOT_EMPTY)
         );
         
-
+	// TODO removing iterator and foreach
 	function createAssociationsToNoserubContactTypes($contactId, $data) {
 		$iterator = new NoserubContactTypesFilter($data);
 		
@@ -24,6 +24,10 @@ class Contact extends AppModel {
 		}
 	}
     
+	function deleteAssociationsToNoserubContactTypes($contactId, $data) {
+		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.noserub_contact_type_id' => $data, 'ContactsNoserubContactType.contact_id' => $contactId));
+	}
+	
     /**
      * Deletes all contacts from and to this identity_id
      * Also deletes all private contact's identites, accounts and feeds
@@ -49,6 +53,35 @@ class Contact extends AppModel {
             # the contact itself can be removed in all cases
             $this->delete($contact['Contact']['id']);
         }
+    }
+    
+    function getIdsOfSelectedNoserubContactTypes($contactId) {
+    	$contactTypes = $this->ContactsNoserubContactType->findAllByContactId($contactId);
+    	$ids = Set::extract($contactTypes, '{n}.ContactsNoserubContactType.noserub_contact_type_id');
+    	
+    	return $ids;
+    }
+    
+    function updateSelectedNoserubContactTypes($contactId, $data) {
+    	$currentlySelected = $this->getIdsOfSelectedNoserubContactTypes($contactId);
+    	$toCreate = array();
+    	$toRemove = array();
+    	
+    	foreach ($data as $contactTypeId => $selected) {
+    		if ($selected && !in_array($contactTypeId, $currentlySelected)) {
+    			$toCreate[$contactTypeId] = 1;
+    		} elseif (!$selected && in_array($contactTypeId, $currentlySelected)) {
+    			$toRemove[] = $contactTypeId;
+    		}
+    	}
+    	
+    	if (!empty($toCreate)) {
+    		$this->createAssociationsToNoserubContactTypes($contactId, $toCreate);
+    	}
+    	
+    	if (!empty($toRemove)) {
+    		$this->deleteAssociationsToNoserubContactTypes($contactId, $toRemove);
+    	}
     }
 }
 

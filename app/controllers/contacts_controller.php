@@ -250,10 +250,23 @@ class ContactsController extends AppController {
     
     function edit() {
     	$contactId = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
+    	$username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Contact->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
+            # this is not the logged in user
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+        }
+    	
+    	if ($this->data) {
+    		$this->Contact->updateSelectedNoserubContactTypes($contactId, $this->data['NoserubContactType']);
+    		$this->flashMessage('success', 'Contact updated.');
+    	}
+    	
     	$this->set('headline', 'Edit contact');
-    	$this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
-    	// FIXME refactor this into a model function
-    	$this->set('selectedNoserubContactTypes', Set::extract($this->Contact->ContactsNoserubContactType->findAllByContactId($contactId), '{n}.ContactsNoserubContactType.noserub_contact_type_id'));
+	    $this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
+	    $this->set('selectedNoserubContactTypes', $this->Contact->getIdsOfSelectedNoserubContactTypes($contactId));
     }
     
     /**
