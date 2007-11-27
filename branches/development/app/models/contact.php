@@ -13,17 +13,22 @@ class Contact extends AppModel {
                                 'required' => VALID_NOT_EMPTY)
         );
         
-	// TODO removing iterator and foreach
+	/**
+	 * @param array $data Array of NoserubContactTypeIds
+	*/
 	function createAssociationsToNoserubContactTypes($contactId, $data) {
-		$iterator = new NoserubContactTypesFilter($data);
+		$dataToInsert['ContactsNoserubContactType']['contact_id'] = $contactId;
 		
-		foreach ($iterator as $key => $value) {
-			if (is_numeric($key)) {
-				$this->query('INSERT INTO contacts_noserub_contact_types (contact_id, noserub_contact_type_id) values ('.$contactId.', '.$key.')');
-			}
+		foreach ($data as $contactTypeId) {
+			$dataToInsert['ContactsNoserubContactType']['noserub_contact_type_id'] = $contactTypeId;
+			$this->ContactsNoserubContactType->create($dataToInsert);
+			$this->ContactsNoserubContactType->save();
 		}
 	}
     
+	/**
+	 * @param array $data Array of NoserubContactTypeIds
+	 */
 	function deleteAssociationsToNoserubContactTypes($contactId, $data) {
 		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.noserub_contact_type_id' => $data, 'ContactsNoserubContactType.contact_id' => $contactId));
 	}
@@ -55,6 +60,21 @@ class Contact extends AppModel {
         }
     }
     
+    function extractIdsOfSelectedNoserubContactTypes($data) {
+    	if (empty($data) || !isset($data['NoserubContactType'])) {
+    		return array();
+    	}
+    	
+    	$iterator = new NoserubContactTypesFilter($data['NoserubContactType']);
+    	$ids = array();
+    	
+    	foreach ($iterator as $key => $value) {
+    		$ids[] = $key;
+    	}
+    	
+    	return $ids;
+    }
+    
     function getIdsOfSelectedNoserubContactTypes($contactId) {
     	$contactTypes = $this->ContactsNoserubContactType->findAllByContactId($contactId);
     	$ids = Set::extract($contactTypes, '{n}.ContactsNoserubContactType.noserub_contact_type_id');
@@ -69,7 +89,7 @@ class Contact extends AppModel {
     	
     	foreach ($data as $contactTypeId => $selected) {
     		if ($selected && !in_array($contactTypeId, $currentlySelected)) {
-    			$toCreate[$contactTypeId] = 1;
+    			$toCreate[] = $contactTypeId;
     		} elseif (!$selected && in_array($contactTypeId, $currentlySelected)) {
     			$toRemove[] = $contactTypeId;
     		}

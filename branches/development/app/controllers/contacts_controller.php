@@ -182,7 +182,8 @@ class ContactsController extends AppController {
     	if ($this->data) {
     		if (isset($this->params['form']['submit'])) { 
     			$contactId = $this->Session->read('Contacts.add.Contact.id');
-    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $this->data['NoserubContactType']);
+    			$ids = $this->Contact->extractIdsOfSelectedNoserubContactTypes($this->data);
+    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $ids);
     			$this->Session->delete('Contacts.add.Contact.id');
     		}
 			$this->redirect('/' . $splitted['local_username'] . '/contacts/');
