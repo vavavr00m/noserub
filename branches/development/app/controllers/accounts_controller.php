@@ -115,7 +115,7 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_2_service() {
-    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted    = $this->Account->Identity->splitUsername($username);
         $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         $service_id  = $this->Session->read('Service.add.id');
@@ -163,7 +163,7 @@ class AccountsController extends AppController {
      * @access 
      */
     function add_step_2_feed() {
-    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted    = $this->Account->Identity->splitUsername($username);
         $identity_id = $this->Session->read('Service.add.account.to.identity_id');
         
@@ -182,7 +182,7 @@ class AccountsController extends AppController {
             $this->ensureSecurityToken();
             
             # get title, url and preview
-            $data = $this->Account->Service->getInfoFromFeed($splitted['username'], $this->data['Account']['service_type_id'], $this->data['Account']['feed_url']);    
+            $data = $this->Account->Service->getInfoFromFeed($splitted['username'], $this->data['Account']['service_type_id'], $this->data['Account']['feed_url']);   
             if(!$data) {
                 $this->Account->invalidate('feed_url', 1);
             } else {
@@ -220,7 +220,8 @@ class AccountsController extends AppController {
             # a step, or the user was logged out during the process
             $this->redirect('/', null, true);
         }
-        
+
+        $data['service_id'] = $this->Session->read('Service.add.id');
         if(!empty($this->params['form'])) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -233,12 +234,15 @@ class AccountsController extends AppController {
                 if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
-                
-                    $saveable = array('identity_id', 'service_id', 'service_type_id', 
+                          if (isset($this->data['Account']['title']) and !empty($this->data['Account']['title'])) {
+                             $data['title'] = $this->data['Account']['title'];
+                          }
+                    
+                          $saveable = array('identity_id', 'service_id', 'service_type_id', 
                                       'username', 'account_url', 'feed_url', 'created', 
-                                      'modified');
+                                      'modified', 'title');
                     $this->Account->create();
-                    $this->Account->save($data);
+                    $this->Account->save($data, true, $saveable);
 
                     if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         # save feed information to cache
@@ -424,13 +428,15 @@ class AccountsController extends AppController {
      * @access 
      */
     function edit($account_id) {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
-        
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+        $session_identity = $this->Session->read('Identity');
+        $identity_id      = $session_identity['id'];
+
+        # check the session vars
+        if(!$session_identity) {
             $this->redirect('/', null, true);
         }
+
 
         # get the account
         $this->Account->recursive = 0;
@@ -442,19 +448,16 @@ class AccountsController extends AppController {
         }
         
         if(!$this->data) {
+            $this->set('headline', 'Edit service ' . htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8'));
             $this->data = $data;
         } else {
-            # the form was submitted
             $this->Account->id = $account_id;
-            $this->data['Account']['feedurl'] = $this->Account->Service->getFeedUrl($this->data['Account']['service_id'], $this->data['Account']['username']);
-            $saveable = array('modified', 'service_id', 'username', 'feedurl');
-            if($this->Account->save($this->data, true, $saveable)) {
+            if($this->Account->save($this->data, true, array('title'))) {
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             }
         }
         
-        $this->set('services', $this->Account->Service->getSelect('all'));
-        $this->render('add');
+        $this->render('edit');
     }
     
     /**
@@ -482,7 +485,7 @@ class AccountsController extends AppController {
         if($splitted['username'] != $session_identity['username']) {
             # check, if $username belongs to the
             # logged in identities namespace
-        	$about_identity = $this->getIdentity($splitted['username']);
+            $about_identity = $this->getIdentity($splitted['username']);
             if(!$about_identity) {
                 # could not find the identity
                 $this->flashMessage('alert', 'Could not find the user.');
@@ -511,10 +514,10 @@ class AccountsController extends AppController {
     }
     
     private function getIdentity($username) {
-    	$this->Account->Identity->recursive = 0;
+        $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
         $identity = $this->Account->Identity->findByUsername($username);
-        
+
         return $identity;
     }
 }

@@ -1,7 +1,16 @@
+<form id="AccountAddFormStep3" method="post" action="<?php echo $this->here ?>">
 <dl>
     <?php if(isset($data['title'])) { ?>
         <dt>Title</dt>
-        <dd><?php echo htmlentities($data['title']); ?></dd>
+        <dd>
+		  <?php
+		  if ($data['service_id'] === 8):
+           echo $form->input('Account.title', array('value' => $data['title']));
+		  else:
+		  	echo htmlentities($data['title']);
+			endif;
+			?>
+			</dd>
     <?php } ?>
     
     <dt>URL</dt>
@@ -21,7 +30,6 @@
         </dd>
     <?php } ?>
 </dl>
-<form id="AccountAddFormStep3" method="post" action="<?php echo $this->here ?>">
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <input class="submitbutton" type="submit" name="submit" value="OK. Save it!"/>
     <input class="submitbutton" type="submit" name="cancel" value="Forget it"/>
