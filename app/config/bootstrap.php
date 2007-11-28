@@ -50,9 +50,7 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism'); // alt, das neue ist von lars strojny
-#define('NOSERUB_VALID_USERNAME', '/^[\w./\-_]+$/ismD'); // FIXME regex fails
-#define('NOSERUB_VALID_LOCAL_USERNAME', '/^[\da-zA-Z-\.\_]+@' . NOSERUB_DOMAIN . '$/');
+define('NOSERUB_VALID_USERNAME', '|^[\w\./\-_]+$|ismD');
 
 # to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
