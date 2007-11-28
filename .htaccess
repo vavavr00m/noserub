@@ -1,5 +1,11 @@
 <IfModule mod_rewrite.c>
    RewriteEngine on
-   RewriteRule    ^$ app/webroot/    [L]
-   RewriteRule    (.*) app/webroot/$1 [L]
+   RewriteRule  ^$ app/webroot/    [L]
+   RewriteRule  (.*) app/webroot/$1 [L]
 </IfModule>
+
+# Deny access to .svn-directories
+<FilesMatch "^\.">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
