@@ -178,18 +178,27 @@ class ContactsController extends AppController {
     function define_contact_types() {
     	$username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Contact->Identity->splitUsername($username);
+        $identityId = $this->Session->read('Identity.id');
 
     	if ($this->data) {
-    		if (isset($this->params['form']['submit'])) { 
+    		if (isset($this->params['form']['submit'])) {     			
     			$contactId = $this->Session->read('Contacts.add.Contact.id');
+    			
     			$ids = $this->Contact->extractIdsOfSelectedNoserubContactTypes($this->data);
     			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $ids);
+    			
+    			$contactTypes = explode(' ', $this->data['ContactType']['tags']);
+    			$this->Contact->ContactType->saveIfNotExisting($identityId, $contactTypes);
+    			$ids = $this->Contact->ContactType->getIds($identityId, $contactTypes);
+    			$this->Contact->createAssociationsToContactTypes($contactId, $ids);
+
     			$this->Session->delete('Contacts.add.Contact.id');
     		}
 			$this->redirect('/' . $splitted['local_username'] . '/contacts/');
     	} else {
     		$this->set('headline', 'Define contact types');
     		$this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
+    		$this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($identityId));
     	}
     }
     
@@ -268,6 +277,9 @@ class ContactsController extends AppController {
     	$this->set('headline', 'Edit contact');
 	    $this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
 	    $this->set('selectedNoserubContactTypes', $this->Contact->getIdsOfSelectedNoserubContactTypes($contactId));
+	    $this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
+	    $ids = Set::extract($this->Contact->ContactTypesContact->findAllByContactId($contactId), '{n}.ContactTypesContact.contact_type_id');
+	    $this->set('selectedContactTypes', $this->Contact->ContactType->findAllById($ids));
     }
     
     /**

@@ -12,6 +12,19 @@ class Contact extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'required' => VALID_NOT_EMPTY)
         );
+
+    /**
+     * @param array $data Array of ContactTypeIds
+     */
+	function createAssociationsToContactTypes($contactId, $data) {
+		$dataToInsert['ContactTypesContact']['contact_id'] = $contactId;
+		
+		foreach ($data as $contactTypeId) {
+			$dataToInsert['ContactTypesContact']['contact_type_id'] = $contactTypeId;
+			$this->ContactTypesContact->create($dataToInsert);
+			$this->ContactTypesContact->save();
+		}
+	}
         
 	/**
 	 * @param array $data Array of NoserubContactTypeIds
