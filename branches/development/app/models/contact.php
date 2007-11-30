@@ -73,21 +73,6 @@ class Contact extends AppModel {
         }
     }
     
-    function extractIdsOfSelectedNoserubContactTypes($data) {
-    	if (empty($data) || !isset($data['NoserubContactType'])) {
-    		return array();
-    	}
-    	
-    	$iterator = new NoserubContactTypesFilter($data['NoserubContactType']);
-    	$ids = array();
-    	
-    	foreach ($iterator as $key => $value) {
-    		$ids[] = $key;
-    	}
-    	
-    	return $ids;
-    }
-    
     function getIdsOfSelectedNoserubContactTypes($contactId) {
     	$contactTypes = $this->ContactsNoserubContactType->findAllByContactId($contactId);
     	$ids = Set::extract($contactTypes, '{n}.ContactsNoserubContactType.noserub_contact_type_id');
@@ -117,15 +102,4 @@ class Contact extends AppModel {
     	}
     }
 }
-
-class NoserubContactTypesFilter extends FilterIterator {
-	private $filter = 1;
-	
-	public function __construct($array) {
-		parent::__construct(new ArrayIterator($array));
-	}
-	
-	public function accept() {
-		return ($this->current() == $this->filter);
-    }
-}
+?>
