@@ -19,7 +19,7 @@
 			$this->assertEqual(3, $noserubContactTypeIDs[1]);
 		}
 		
-		function testExtractIdsOfSelectedNoserubContactTypesWithInvalidData() {
+		function testGetSelectedNoserubContactTypeIDsFromInvalidData() {
 			$noserubContactTypeIDs = $this->model->getSelectedNoserubContactTypeIDs(array());
 			$this->assertIdentical(true, empty($noserubContactTypeIDs));
 			
