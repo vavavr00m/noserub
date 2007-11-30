@@ -184,8 +184,8 @@ class ContactsController extends AppController {
     		if (isset($this->params['form']['submit'])) {     			
     			$contactId = $this->Session->read('Contacts.add.Contact.id');
     			
-    			$ids = $this->Contact->extractIdsOfSelectedNoserubContactTypes($this->data);
-    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $ids);
+    			$noserubContactTypeIDs = $this->Contact->NoserubContactType->getSelectedNoserubContactTypeIDs($this->data);
+    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs);
     			
     			$contactTypes = explode(' ', $this->data['ContactType']['tags']);
     			$this->Contact->ContactType->saveIfNotExisting($identityId, $contactTypes);
