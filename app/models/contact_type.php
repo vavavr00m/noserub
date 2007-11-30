@@ -5,6 +5,14 @@ uses('Sanitize');
 class ContactType extends AppModel {
 	var $hasAndBelongsToMany = array('Contact');
 	
+	function getContactTypesFromString($string) {
+		if (empty($string)) {
+			return array();
+		}
+		
+		return array_unique(explode(' ', $string));
+	}
+	
 	function getIds($identityId, $contactTypes) {
 		$sanitizedContactTypes = $this->sanitizeContactTypes($contactTypes);
 

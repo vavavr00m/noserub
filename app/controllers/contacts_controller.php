@@ -187,7 +187,7 @@ class ContactsController extends AppController {
     			$noserubContactTypeIDs = $this->Contact->NoserubContactType->getSelectedNoserubContactTypeIDs($this->data);
     			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs);
     			
-    			$contactTypes = explode(' ', $this->data['ContactType']['tags']);
+    			$contactTypes = $this->Contact->ContactType->getContactTypesFromString($this->data['ContactType']['tags']);
     			$this->Contact->ContactType->saveIfNotExisting($identityId, $contactTypes);
     			$ids = $this->Contact->ContactType->getIds($identityId, $contactTypes);
     			$this->Contact->createAssociationsToContactTypes($contactId, $ids);
