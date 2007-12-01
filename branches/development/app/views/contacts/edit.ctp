@@ -6,10 +6,7 @@
 		<br />
 	<?php endforeach; ?>
 	<div>
-	Selected tags:
-	<?php foreach ($selectedContactTypes as $contactType): ?>
-		<?php echo $contactType['ContactType']['name']; ?>
-	<?php endforeach; ?>
+	Selected tags: <?php echo $form->input('ContactType.tags', array('value' => $selectedContactTypes)); ?>
 	</div>
 	<div>
 	Your tags:

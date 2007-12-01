@@ -265,6 +265,7 @@ class ContactsController extends AppController {
     	$username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        $identityId = $session_identity['id'];
         
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
@@ -277,6 +278,18 @@ class ContactsController extends AppController {
     		$this->Contact->createAssociationsToNoserubContactTypes($contactId, $this->Contact->NoserubContactType->getNoserubContactTypeIDsToAdd($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs));
     		$this->Contact->deleteAssociationsToNoserubContactTypes($contactId, $this->Contact->NoserubContactType->getNoserubContactTypeIDsToRemove($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs));
     		
+    		$currentlySelectedContactTypes = Set::extract($this->Contact->ContactType->findAllByIdentityId($identityId), '{n}.ContactType.name');
+    		$newlySelectedContactTypes = $this->Contact->ContactType->getContactTypesFromString($this->data['ContactType']['tags']);
+    		$newContactTypes = $this->Contact->ContactType->getNewContactTypes($identityId, $newlySelectedContactTypes);
+    		$this->Contact->ContactType->createContactTypes($identityId, $newContactTypes);
+    		
+    		$contactTypeIDs = $this->Contact->ContactType->getIDsOfContactTypes($identityId, $newlySelectedContactTypes);
+    		$this->Contact->createAssociationsToContactTypes($contactId, $contactTypeIDs);    		
+    		$contactTypeIDsToRemoveAssociationWith = $this->Contact->ContactType->getIDsOfContactTypes($identityId, array_diff($currentlySelectedContactTypes, $newlySelectedContactTypes));
+    		$this->Contact->deleteAssociationsToContactTypes($contactId, $contactTypeIDsToRemoveAssociationWith);
+
+    		// TODO deleting contact types which are no longer used
+    		
     		$this->flashMessage('success', 'Contact updated.');
     	}
     	
@@ -285,7 +298,7 @@ class ContactsController extends AppController {
 	    $this->set('selectedNoserubContactTypes', $this->Contact->NoserubContactType->getNoserubContactTypeIDsForContact($contactId));
 	    $this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
 	    $ids = Set::extract($this->Contact->ContactTypesContact->findAllByContactId($contactId), '{n}.ContactTypesContact.contact_type_id');
-	    $this->set('selectedContactTypes', $this->Contact->ContactType->findAllById($ids));
+	    $this->set('selectedContactTypes', implode(' ', Set::extract($this->Contact->ContactType->findAllById($ids), '{n}.ContactType.name')));
     }
     
     /**
