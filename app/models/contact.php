@@ -40,6 +40,13 @@ class Contact extends AppModel {
 	}
     
 	/**
+	 * @param unknown_type $data Array of ContactTypeIds
+	 */
+	function deleteAssociationsToContactTypes($contactId, $data) {
+		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $data));
+	}
+	
+	/**
 	 * @param array $data Array of NoserubContactTypeIds
 	 */
 	function deleteAssociationsToNoserubContactTypes($contactId, $data) {
