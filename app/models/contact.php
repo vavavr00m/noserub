@@ -43,7 +43,7 @@ class Contact extends AppModel {
 	 * @param array $data Array of NoserubContactTypeIds
 	 */
 	function deleteAssociationsToNoserubContactTypes($contactId, $data) {
-		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.noserub_contact_type_id' => $data, 'ContactsNoserubContactType.contact_id' => $contactId));
+		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $data));
 	}
 	
     /**
@@ -71,35 +71,6 @@ class Contact extends AppModel {
             # the contact itself can be removed in all cases
             $this->delete($contact['Contact']['id']);
         }
-    }
-    
-    function getIdsOfSelectedNoserubContactTypes($contactId) {
-    	$contactTypes = $this->ContactsNoserubContactType->findAllByContactId($contactId);
-    	$ids = Set::extract($contactTypes, '{n}.ContactsNoserubContactType.noserub_contact_type_id');
-    	
-    	return $ids;
-    }
-    
-    function updateSelectedNoserubContactTypes($contactId, $data) {
-    	$currentlySelected = $this->getIdsOfSelectedNoserubContactTypes($contactId);
-    	$toCreate = array();
-    	$toRemove = array();
-    	
-    	foreach ($data as $contactTypeId => $selected) {
-    		if ($selected && !in_array($contactTypeId, $currentlySelected)) {
-    			$toCreate[] = $contactTypeId;
-    		} elseif (!$selected && in_array($contactTypeId, $currentlySelected)) {
-    			$toRemove[] = $contactTypeId;
-    		}
-    	}
-    	
-    	if (!empty($toCreate)) {
-    		$this->createAssociationsToNoserubContactTypes($contactId, $toCreate);
-    	}
-    	
-    	if (!empty($toRemove)) {
-    		$this->deleteAssociationsToNoserubContactTypes($contactId, $toRemove);
-    	}
     }
 }
 ?>

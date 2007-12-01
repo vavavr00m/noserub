@@ -1,10 +1,42 @@
 <?php
+	Mock::generatePartial('Model', 'NoserubContactTypeTestVersion', array('findAllByContactId'));
 
 	class NoserubContactTypeTest extends CakeTestCase {
 		private $model;
 		
 		function setUp() {
 			$this->model = new NoserubContactType();
+		}
+		
+		function testGetNoserubContactTypeIDsForContact() {
+			$returnValue = array(0 => array('ContactsNoserubContactType' => array('noserub_contact_type_id' => 4)),
+								 1 => array('ContactsNoserubContactType' => array('noserub_contact_type_id' => 7)));
+								 
+			$mock = new NoserubContactTypeTestVersion($this);
+			$mock->setReturnValue('findAllByContactId', $returnValue);
+			
+			$this->model->ContactsNoserubContactType = $mock;
+			$noserubContactTypeIDs = $this->model->getNoserubContactTypeIDsForContact(1);
+			$this->assertEqual(4, $noserubContactTypeIDs[0]);
+			$this->assertEqual(7, $noserubContactTypeIDs[1]);
+		}
+		
+		function testGetNoserubContactTypeIDsToAdd() {
+			$old = array(1, 2, 3);
+			$new = array(1, 2, 3);
+			$this->assertIdentical(array(), $this->model->getNoserubContactTypeIDsToAdd($old, $new));
+			
+			$new = array(1, 4, 5);
+			$this->assertIdentical(array(4, 5), $this->model->getNoserubContactTypeIDsToAdd($old, $new));
+		}
+		
+		function testGetNoserubContactTypeIDsToRemove() {
+			$old = array(1, 2, 3);
+			$new = array(1, 2, 3);
+			$this->assertIdentical(array(), $this->model->getNoserubContactTypeIDsToRemove($old, $new));
+			
+			$new = array(2);
+			$this->assertIdentical(array(1, 3), $this->model->getNoserubContactTypeIDsToRemove($old, $new));
 		}
 		
 		function testGetSelectedNoserubContactTypeIDs() {
