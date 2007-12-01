@@ -34,6 +34,7 @@
 
 	eval($model);
 	
+	vendor('simpletest'.DS.'mock_objects');
 	vendor('simpletest'.DS.'test_case');
 	vendor('simpletest'.DS.'unit_tester');
 	vendor('simpletest'.DS.'reporter');
