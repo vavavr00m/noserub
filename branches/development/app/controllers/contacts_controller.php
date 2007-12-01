@@ -272,13 +272,17 @@ class ContactsController extends AppController {
         }
     	
     	if ($this->data) {
-    		$this->Contact->updateSelectedNoserubContactTypes($contactId, $this->data['NoserubContactType']);
+    		$currentlySelectedNoserubContactTypeIDs = $this->Contact->NoserubContactType->getNoserubContactTypeIDsForContact($contactId);
+    		$newlySelectedNoserubContactTypeIDs = $this->Contact->NoserubContactType->getSelectedNoserubContactTypeIDs($this->data);
+    		$this->Contact->createAssociationsToNoserubContactTypes($contactId, $this->Contact->NoserubContactType->getNoserubContactTypeIDsToAdd($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs));
+    		$this->Contact->deleteAssociationsToNoserubContactTypes($contactId, $this->Contact->NoserubContactType->getNoserubContactTypeIDsToRemove($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs));
+    		
     		$this->flashMessage('success', 'Contact updated.');
     	}
     	
     	$this->set('headline', 'Edit contact');
 	    $this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
-	    $this->set('selectedNoserubContactTypes', $this->Contact->getIdsOfSelectedNoserubContactTypes($contactId));
+	    $this->set('selectedNoserubContactTypes', $this->Contact->NoserubContactType->getNoserubContactTypeIDsForContact($contactId));
 	    $this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
 	    $ids = Set::extract($this->Contact->ContactTypesContact->findAllByContactId($contactId), '{n}.ContactTypesContact.contact_type_id');
 	    $this->set('selectedContactTypes', $this->Contact->ContactType->findAllById($ids));
