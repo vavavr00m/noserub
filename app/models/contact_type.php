@@ -15,6 +15,10 @@ class ContactType extends AppModel {
 		}
 	}
 	
+	function deleteContactTypes($contactTypeIDs) {
+		$this->deleteAll(array('ContactType.id' => $contactTypeIDs));
+	}
+	
 	function getContactTypesFromString($string) {
 		if (empty($string)) {
 			return array();
@@ -29,6 +33,21 @@ class ContactType extends AppModel {
 		$contactTypeIDs = Set::extract($contactTypeIDs, '{n}.ContactType.id');
 		
 		return $contactTypeIDs;
+	}
+	
+	function getIDsOfUnusedContactTypes($contactTypeIDs) {
+		$usedContactTypeIDs = $this->ContactTypesContact->findAll(array('ContactTypesContact.contact_type_id' => $contactTypeIDs));
+		$usedContactTypeIDs = array_unique(Set::extract($usedContactTypeIDs, '{n}.ContactTypesContact.contact_type_id'));
+		
+		$unusedContactTypeIDS = array();
+		
+		foreach ($contactTypeIDs as $contactTypeID) {
+			if (!in_array($contactTypeID, $usedContactTypeIDs)) {
+				$unusedContactTypeIDS[] = $contactTypeID;
+			}
+		}
+		
+		return $unusedContactTypeIDS;
 	}
 	
 	/**
