@@ -24,7 +24,14 @@ class ContactType extends AppModel {
 			return array();
 		}
 		
-		return array_unique(explode(' ', $string));
+		$contactTypes = array_unique(explode(' ', $string)); 
+		$sanitizedContactTypes = array();
+		
+		foreach($contactTypes as $contactType) {
+			$sanitizedContactTypes[] = Sanitize::paranoid($contactType);
+		}
+		
+		return $sanitizedContactTypes; 
 	}
 	
 	function getIDsOfContactTypes($identityId, $contactTypes) {
