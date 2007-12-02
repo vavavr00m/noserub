@@ -13,44 +13,32 @@ class Contact extends AppModel {
                                 'required' => VALID_NOT_EMPTY)
         );
 
-    /**
-     * @param array $data Array of ContactTypeIds
-     */
-	function createAssociationsToContactTypes($contactId, $data) {
+	function createAssociationsToContactTypes($contactId, $contactTypeIDs) {
 		$dataToInsert['ContactTypesContact']['contact_id'] = $contactId;
 		
-		foreach ($data as $contactTypeId) {
+		foreach ($contactTypeIDs as $contactTypeId) {
 			$dataToInsert['ContactTypesContact']['contact_type_id'] = $contactTypeId;
 			$this->ContactTypesContact->create($dataToInsert);
 			$this->ContactTypesContact->save();
 		}
 	}
-        
-	/**
-	 * @param array $data Array of NoserubContactTypeIds
-	*/
-	function createAssociationsToNoserubContactTypes($contactId, $data) {
+
+	function createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
 		$dataToInsert['ContactsNoserubContactType']['contact_id'] = $contactId;
 		
-		foreach ($data as $contactTypeId) {
+		foreach ($noserubContactTypeIDs as $contactTypeId) {
 			$dataToInsert['ContactsNoserubContactType']['noserub_contact_type_id'] = $contactTypeId;
 			$this->ContactsNoserubContactType->create($dataToInsert);
 			$this->ContactsNoserubContactType->save();
 		}
 	}
     
-	/**
-	 * @param unknown_type $data Array of ContactTypeIds
-	 */
-	function deleteAssociationsToContactTypes($contactId, $data) {
-		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $data));
+	function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
+		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
 	}
 	
-	/**
-	 * @param array $data Array of NoserubContactTypeIds
-	 */
-	function deleteAssociationsToNoserubContactTypes($contactId, $data) {
-		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $data));
+	function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
+		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
 	}
 	
     /**
