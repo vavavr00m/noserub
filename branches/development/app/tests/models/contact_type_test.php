@@ -29,6 +29,9 @@
 			$contactTypes = $this->model->getContactTypesFromString('test');
 			$this->assertEqual('test', $contactTypes[0]);
 			
+			$contactTypes = $this->model->getContactTypesFromString('<!test?>');
+			$this->assertEqual('test', $contactTypes[0]);
+			
 			$contactTypes = $this->model->getContactTypesFromString('typeA typeB');
 			$this->assertEqual('typeA', $contactTypes[0]);
 			$this->assertEqual('typeB', $contactTypes[1]);
