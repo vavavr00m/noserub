@@ -6,13 +6,13 @@
 		<br />
 	<?php endforeach; ?>
 	<div>
-	Selected tags: <?php echo $form->input('ContactType.tags', array('value' => $selectedContactTypes)); ?>
+	<?php echo $form->input('ContactType.tags', array('value' => $selectedContactTypes)); ?>
 	</div>
-	<div>
 	Your tags:
-	<?php foreach ($contactTypes as $contactType): ?>
-		<?php echo $contactType['ContactType']['name']; ?>
-	<?php endforeach; ?>
+	<div id="tags">
+		<?php foreach ($contactTypes as $contactType): ?>
+			<a href="#" onclick="return false;"><?php echo $contactType['ContactType']['name']; ?></a>
+		<?php endforeach; ?>
 	</div>
 	<input class="submitbutton" type="submit" name="submit" value="Save"/>
 <?php echo $form->end(); ?>
