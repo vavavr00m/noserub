@@ -81,6 +81,18 @@ noserub.fn = noserub.prototype = {
         });
     },
     
+    Contacts_define_contact_types: function() {
+    	this.contact_type_tagging();
+    },
+    
+    Contacts_edit: function() {
+    	this.contact_type_tagging();
+    },
+    
+    contact_type_tagging: function() {
+    	$('#ContactTypeTags').jTagging($('#tags'), ' ');
+    },
+    
     Contacts_network: function() {
         this.social_stream_items();
     },
