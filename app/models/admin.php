@@ -32,7 +32,11 @@ class Admin extends AppModel {
                                'values' => array(true, false))
                           );
     
-    var $directories = array('tmp');
+    var $directories;
+    
+    function __construct() {
+    	$this->directories = array('tmp', 'webroot'.DS.'static'.DS.'avatars');
+    }
     
     /**
      * checks if some directories are writeable
