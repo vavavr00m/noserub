@@ -285,7 +285,7 @@ class ContactsController extends AppController {
     		
     		$contactTypeIDs = $this->Contact->ContactType->getIDsOfContactTypes($identityId, $newlySelectedContactTypes);
     		$this->Contact->createAssociationsToContactTypes($contactId, $contactTypeIDs);    		
-    		$contactTypeIDsToRemoveAssociationWith = $this->Contact->ContactType->getIDsOfContactTypes($identityId, array_diff($currentlySelectedContactTypes, $newlySelectedContactTypes));
+    		$contactTypeIDsToRemoveAssociationWith = $this->Contact->ContactType->getIDsOfContactTypes($identityId, array_values(array_diff($currentlySelectedContactTypes, $newlySelectedContactTypes)));
     		$this->Contact->deleteAssociationsToContactTypes($contactId, $contactTypeIDsToRemoveAssociationWith);
 
     		$idsOfUnusedContactTypes = $this->Contact->ContactType->getIDsOfUnusedContactTypes($contactTypeIDsToRemoveAssociationWith);
