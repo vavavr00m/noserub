@@ -390,7 +390,9 @@ class Identity extends AppModel {
         
         $data['Identity']['username'] = $splitted['username'];
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        
+      
+        // XXX for some reason I have to set this variable, otherwise not all validations work
+        $this->data = $data;
         if(!$this->save($data, true, $this->getSaveableFields($isAccountWithOpenID))) {
             return false;
         }
