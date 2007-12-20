@@ -151,13 +151,13 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    public function check($data) {
+	public function check($data) {
         $splitted = $this->splitUsername($data['Identity']['username']);
         $username = $splitted['username'];
         $this->recursive = 0;
         $this->expects('Identity');
         return $this->find(array('Identity.hash' => '',
-                                 'Identity.username = "'. $username .'"', 
+                                 'Identity.username' => $username, 
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
@@ -371,7 +371,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    public function register($data) {
+	public function register($data) {
         $isAccountWithOpenID = isset($data['Identity']['openid']);
     	
     	# transform it to a real username
@@ -390,7 +390,9 @@ class Identity extends AppModel {
         
         $data['Identity']['username'] = $splitted['username'];
         $data['Identity']['hash'] = md5(time().$data['Identity']['username']);
-        
+      
+        // XXX for some reason I have to set this variable, otherwise not all validations work
+        $this->data = $data;
         if(!$this->save($data, true, $this->getSaveableFields($isAccountWithOpenID))) {
             return false;
         }
