@@ -157,7 +157,7 @@ class Identity extends AppModel {
         $this->recursive = 0;
         $this->expects('Identity');
         return $this->find(array('Identity.hash' => '',
-                                 'Identity.username = "'. $username .'"', 
+                                 'Identity.username' => $username, 
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
