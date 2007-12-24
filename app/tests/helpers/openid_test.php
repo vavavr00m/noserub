@@ -24,22 +24,20 @@
 		}
 		
 		function testServerLink() {
-			$expected = '<link rel="openid.server" href="'.$this->url.'" />';
 			$result = $this->helper->serverLink($this->url);
-			$this->assertEqual($expected, $result);
+			$this->assertEqual($this->getServerLink(), $result);
 		}
 		
 		function testServerLinkWithRelativeUrl() {
-			$expected = '<link rel="openid.server" href="'.$this->url.'" />';
 			$result = $this->helper->serverLink('/server');
-			$this->assertEqual($expected, $result);
+			$this->assertEqual($this->getServerLink(), $result);
 		}
 		
 		function testServerLinkNotInline() {
 			$view = $this->createView();
 			$this->helper->serverLink($this->url, false);
 			$renderedLayout = $view->renderLayout('');
-			$this->assertPattern('#<head>.*?<link rel="openid.server" href="'.$this->url.'" />.*?</head>#s', $renderedLayout);
+			$this->assertPattern('#<head>.*?'.$this->getServerLink().'.*?</head>#s', $renderedLayout);
 		}
 		
 		function testXrdsLocation() {
@@ -72,6 +70,10 @@
                       	 			 'logged_in' => ''));
 			
 			return $view;
+		}
+		
+		private function getServerLink() {
+			return '<link rel="openid2.provider openid.server" href="'.$this->url.'" />';
 		}
 	}
 ?>

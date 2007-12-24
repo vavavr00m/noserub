@@ -23,7 +23,7 @@
 		 * @return the link or nothing, depending on the $inline parameter
 		 */
 		function serverLink($url, $inline = true) {
-			return $this->createTag('<link rel="openid.server" href="?" />', $url, $inline);
+			return $this->createTag('<link rel="openid2.provider openid.server" href="?" />', $url, $inline);
 		}
 		
 		/**
