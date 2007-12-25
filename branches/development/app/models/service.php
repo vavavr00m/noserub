@@ -5,6 +5,21 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
 
+    function getDomainFromString($url) {
+    	if (trim($url) == '' || strpos($url, '.') === false) {
+    		return false;
+    	}
+    	
+    	$domain = str_ireplace('http://', '', $url);
+    	$domain = str_ireplace('https://', '', $domain);
+    	$domain = str_ireplace('www.', '', $domain);
+    	
+    	$domain = $this->removePath($domain);
+    	$domain = $this->removeSubdomains($domain);
+    	
+    	return $domain;
+    }
+    
     /**
      * Method description
      *
@@ -383,6 +398,25 @@ class Service extends AppModel {
     		default:
     			return false;
     	}
+    }
+    
+    private function removePath($url) {
+    	$positionOfSlash = strpos($url, '/');
+    	if ($positionOfSlash) {
+    		$url = substr($url, 0, $positionOfSlash);    	
+    	}
+    	
+    	return $url;
+    }
+    
+    private function removeSubdomains($url) {
+    	$dotCount = substr_count($url, '.');
+    	if ($dotCount > 1) {
+    		$revertedUrl = strrev($url);
+    		$url = strrev(substr($revertedUrl, 0, strpos($revertedUrl, '.', 4)));
+    	}
+    	
+    	return $url;
     }
 }
 
