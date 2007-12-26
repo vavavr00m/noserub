@@ -17,6 +17,22 @@ class Service extends AppModel {
     	return $domain;
     }
     
+    function getServiceFromString($url) {
+    	$domain = $this->getDomainFromString($url);
+    	
+    	if ($domain) {
+    		$domain = Sanitize::paranoid($domain, array('.', '-'));
+    		$service = $this->find(array('Service.url' => 'LIKE %'.$domain.'%'), 'Service.id');
+    		
+    		if ($service) {
+    			return $service['Service']['id'];
+    		} else {
+    			// it is an unknown service, so we treat it as a RSS feed
+    			return 8;
+    		}
+    	}
+    }
+    
     /**
      * Method description
      *
