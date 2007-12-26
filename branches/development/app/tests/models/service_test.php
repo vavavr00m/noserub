@@ -19,6 +19,7 @@
 		function testGetDomainFromStringWithoutDomain() {
 			$this->assertIdentical(false, $this->service->getDomainFromString(''));
 			$this->assertIdentical(false, $this->service->getDomainFromString('example'));
+			$this->assertIdentical(false, $this->service->getDomainFromString('e.x'));
 		}
 	}
 ?>
