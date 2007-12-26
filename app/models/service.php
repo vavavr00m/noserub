@@ -6,14 +6,11 @@ class Service extends AppModel {
     var $belongsTo = array('ServiceType');
 
     function getDomainFromString($url) {
-    	if (trim($url) == '' || strpos($url, '.') === false) {
+    	if (strlen(trim($url)) < 4 || strpos($url, '.') === false) {
     		return false;
     	}
-    	
-    	$domain = str_ireplace('http://', '', $url);
-    	$domain = str_ireplace('https://', '', $domain);
-    	$domain = str_ireplace('www.', '', $domain);
-    	
+
+    	$domain = $this->removeProtocol($url);
     	$domain = $this->removePath($domain);
     	$domain = $this->removeSubdomains($domain);
     	
@@ -405,6 +402,13 @@ class Service extends AppModel {
     	if ($positionOfSlash) {
     		$url = substr($url, 0, $positionOfSlash);    	
     	}
+    	
+    	return $url;
+    }
+    
+    private function removeProtocol($url) {
+    	$url = str_ireplace('http://', '', $url);
+    	$url = str_ireplace('https://', '', $url);
     	
     	return $url;
     }
