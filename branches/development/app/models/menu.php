@@ -142,9 +142,10 @@
 		
 		private function getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser) {
 			$link = '/' . $localUsername . '/settings/';
-			
+
 			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
 			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', $controller == 'Accounts');
+			$menuItems[] = new MenuItem('Locations', $link . 'locations/', $controller == 'Locations');
 			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
@@ -173,7 +174,7 @@
 		}
 		
 		private function showSettingsSubMenu($controller, $action) {
-			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+			$controllers = array('Accounts', 'Locations', 'OpenidSites', 'Syndications');
 			
 			if (in_array($controller, $controllers)) {
 				return true;
@@ -294,7 +295,7 @@
 		}
 		
 		function isActive() {
-			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+			$controllers = array('Locations', 'Accounts', 'OpenidSites', 'Syndications');
 			
 			if (in_array($this->controller, $controllers)) {
 				return true;
