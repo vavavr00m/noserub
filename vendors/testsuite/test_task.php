@@ -13,15 +13,16 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 
-	uses('object', 'controller'.DS.'controller', 'configure', 'inflector');
+	uses('controller'.DS.'controller');
 
 	if (file_exists(CONFIGS.'test-database.php')) {
-		$connectionManager = file_get_contents(LIBS.'model'.DS.'connection_manager.php');
+// FIXME this doesn't work any longer... some workaround is needed
+/*		$connectionManager = file_get_contents(LIBS.'model'.DS.'connection_manager.php');
 		$connectionManager = str_replace('<?php', '', $connectionManager);
 		$connectionManager = str_replace('?>', '', $connectionManager);
 		$connectionManager = str_replace("config('database');", "config('test-database');", $connectionManager);
 		
-		eval($connectionManager);
+		eval($connectionManager);*/
 	} else {
 		echo "File config/test-database.php not found. Copy config/database.php and configure the test database(s).\n";
 		exit;
@@ -34,7 +35,6 @@
 
 	eval($model);
 	
-	vendor('simpletest'.DS.'mock_objects');
 	vendor('simpletest'.DS.'test_case');
 	vendor('simpletest'.DS.'unit_tester');
 	vendor('simpletest'.DS.'reporter');
@@ -45,67 +45,67 @@
 		var $test = null;
 		
 		function execute($params) {
-			$this->test = &new CakeGroupTest();
+			$this->test = new CakeGroupTest();
 			
 			if (empty($params)) {
-				$this->__injectTestableController();
-				$this->__addAllTests();
+				$this->injectTestableController();
+				$this->addAllTests();
 			} else {
 				$paramCount = count($params);
 				switch ($params[0]) {
 					case 'models':
-						$this->__addModelTests();
+						$this->addModelTests();
 						break;
 					case 'helpers':
-						$this->__addHelperTests();
+						$this->addHelperTests();
 						break;
 					case 'components':
-						$this->__addComponentTests();
+						$this->addComponentTests();
 						break;
 					case 'controllers':
-						$this->__injectTestableController();
-						$this->__addControllerTests();
+						$this->injectTestableController();
+						$this->addControllerTests();
 						break;
 					case 'plugins':
-						$this->__injectTestableController();
-						$this->__addPluginTests();
+						$this->injectTestableController();
+						$this->addPluginTests();
 						break;
 					case 'model':
-						$this->__loadModels();
+						$this->loadModels();
 						if ($paramCount == 2) {
-							$this->__addTest($params[1], 'models');
+							$this->addTest($params[1], 'models');
 						}
 						break;
 					case 'helper':
 						if ($paramCount == 2) {
 							loadHelper($params[1]);
-							$this->__addTest($params[1], 'helpers');
+							$this->addTest($params[1], 'helpers');
 						}
 						break;
 					case 'component':
 						if ($paramCount == 2) {
 							loadComponent($params[1]);
-							$this->__addTest($params[1], 'components');
+							$this->addTest($params[1], 'components');
 						}
 						break;
 					case 'controller':
-						$this->__injectTestableController();
-						$this->__loadControllersAndModels();
+						$this->injectTestableController();
+						$this->loadControllersAndModels();
 						if ($paramCount == 2) {
-							$this->__addTest($params[1], 'controllers');
+							$this->addTest($params[1], 'controllers');
 						}
 						break;
 					case 'plugin':
-						$this->__injectTestableController();
+						$this->injectTestableController();
 						if ($paramCount == 2) {
-							$this->__addPluginTests($params[1]);
+							$this->addPluginTests($params[1]);
 						}
 						breaK;
 					case 'group':
-						$this->__injectTestableController();
-						$this->__loadControllersAndModels();
+						$this->injectTestableController();
+						$this->loadControllersAndModels();
 						if ($paramCount == 2) {
-							$this->__addTest($params[1], 'groups', '.php');
+							$this->addTest($params[1], 'groups', '.php');
 						}
 						break;
 					default:
@@ -113,10 +113,10 @@
 				}
 			}
 			
-			$this->test->run($this->__createReporter());
+			$this->test->run($this->createReporter());
 		}
 		
-	function __createReporter() {
+		private function createReporter() {
 			$reporter = null;
 			
 			if (getEnv('display') == 'html') {
@@ -128,58 +128,57 @@
 			return $reporter;
 		}
 		
-		function __addAllTests() {
-			$this->__loadControllersAndModels();
-
-			$this->__addTests('models');			
-			$this->__addTests('controllers');
-			$this->__addHelperTests();
-			$this->__addComponentTests();
-			$this->__addPluginTests();
+		private function addAllTests() {
+			$this->loadControllersAndModels();
+			$this->addTests('models');			
+			$this->addTests('controllers');
+			$this->addHelperTests();
+			$this->addComponentTests();
+			$this->addPluginTests();
 			$this->test->_label = 'All tests';
 		}
 		
-		function __addHelperTests() {
+		private function addHelperTests() {
 			$this->test->_label = 'Helper tests';
-			
-			$tests = listClasses(APP.'tests'.DS.'helpers');
+
+			$tests = Configure::listObjects('file', APP.'tests'.DS.'helpers');
 			
 			foreach ($tests as $test) {
 				if (substr_count($test, '_test.php') == 1) {
-					loadHelper(substr($test, 0, strpos($test, '_test.php')));
+					App::import('Helper', substr($test, 0, strpos($test, '_test.php')));
 					$this->test->addTestFile('helpers'.DS.$test);
 				}
 			}
 		}
 		
-		function __addModelTests() {
-			$this->__loadModels();
+		private function addModelTests() {
+			$this->loadModels();
 			$this->test->_label = 'Model tests';
-			$this->__addTests('models');
+			$this->addTests('models');
 		}
 		
-		function __addComponentTests() {
+		private function addComponentTests() {
 			$this->test->_label = 'Component tests';
 			
-			$tests = listClasses(APP.'tests'.DS.'components');
+			$tests = Configure::listObjects('file', APP.'tests'.DS.'components');
 			
 			foreach ($tests as $test) {
 				if (substr_count($test, '_test.php') == 1) {
-					loadComponent(substr($test, 0, strpos($test, '_test.php')));
+					App::import('Component', substr($test, 0, strpos($test, '_test.php')));
 					$this->test->addTestFile('components'.DS.$test);
 				}
 			}
 		}
 		
-		function __addControllerTests() {
+		private function addControllerTests() {
 			ob_start();
-			$this->__loadControllersAndModels();
+			$this->loadControllersAndModels();
 			
 			$this->test->_label = 'Controller tests';
-			$this->__addTests('controllers');
+			$this->addTests('controllers');
 		}
 		
-		function __addPluginTests($pluginName = null) {
+		private function addPluginTests($pluginName = null) {
 			if ($pluginName == null) {
 				$this->test->_label = 'Plugin Tests';
 				uses('Folder');
@@ -187,24 +186,24 @@
 				$folderContent = $pluginsFolder->ls(true, true);
 				
 				foreach($folderContent[0] as $pluginName) {
-					$this->__addTestsForSinglePlugin($pluginName);
+					$this->addTestsForSinglePlugin($pluginName);
 				}
 			} else {
 				$this->test->_label = 'Tests for plugin '.$pluginName;
-				$this->__addTestsForSinglePlugin($pluginName);
+				$this->addTestsForSinglePlugin($pluginName);
 			}
 		}
 		
-		function __addTestsForSinglePlugin($pluginName) {
+		private function addTestsForSinglePlugin($pluginName) {
 			if (file_exists(APP.'plugins'.DS.$pluginName.DS.'tests')) {
-				$this->__addPluginModelTests($pluginName);
-				$this->__addPluginControllerTests($pluginName);
-				$this->__addPluginHelperTests($pluginName);
-				$this->__addPluginComponentTests($pluginName);
+				$this->addPluginModelTests($pluginName);
+				$this->addPluginControllerTests($pluginName);
+				$this->addPluginHelperTests($pluginName);
+				$this->addPluginComponentTests($pluginName);
 			}
 		}
 		
-		function __addPluginModelTests($pluginName) {
+		private function addPluginModelTests($pluginName) {
 			uses('Folder');
 			loadPluginModels($pluginName);
 			
@@ -216,7 +215,7 @@
 			}
 		}
 		
-		function __addPluginControllerTests($pluginName) {
+		private function addPluginControllerTests($pluginName) {
 			uses('Folder');
 			
 			$controllerTestFolder = new Folder(APP.'plugins'.DS.$pluginName.DS.'tests'.DS.'controllers');
@@ -227,7 +226,7 @@
 			}
 		}
 		
-		function __addPluginComponentTests($pluginName) {
+		private function addPluginComponentTests($pluginName) {
 			uses('Folder');
 			
 			$componentTestFolder = new Folder(APP.'plugins'.DS.$pluginName.DS.'tests'.DS.'components');
@@ -238,7 +237,7 @@
 			}
 		}
 		
-		function __addPluginHelperTests($pluginName) {
+		private function addPluginHelperTests($pluginName) {
 			uses('Folder');
 			
 			$helperTestFolder = new Folder(APP.'plugins'.DS.$pluginName.DS.'tests'.DS.'helpers');
@@ -252,14 +251,14 @@
 			}
 		}
 		
-		function __addTest($objectName, $folderName, $postFix = '_test.php') {
+		private function addTest($objectName, $folderName, $postFix = '_test.php') {
 			$this->test->_label = 'Test of ' . Inflector::singularize($folderName) . ' '. $objectName;
 			$fileName = Inflector::underscore($objectName);
 			$this->test->addTestFile($folderName.DS.$fileName.$postFix);
 		}
 		
-		function __addTests($folderWithTests) {
-			$tests = listClasses(APP.'tests'.DS.$folderWithTests);
+		private function addTests($folderWithTests) {
+			$tests = Configure::listObjects('file', APP.'tests'.DS.$folderWithTests);
 			
 			foreach ($tests as $test) {
 				if (substr_count($test, '_test.php') == 1) {
@@ -268,7 +267,7 @@
 			}
 		}
 		
-		function __injectTestableController() {
+		private function injectTestableController() {
 			require(VENDORS.'testsuite'.DS.'testable_controller.php');
 			$appController = 'app_controller.php';
 			$appControllerContent = null;
@@ -286,26 +285,18 @@
 			eval($appControllerContent);
 		}
 
-		function __loadControllersAndModels() {
-			$this->__loadModels();
-			$this->__loadControllers();
+		private function loadControllersAndModels() {
+			$this->loadModels();
+			$this->loadControllers();
 		}
 		
-		function __loadControllers() {
-			// FIXME calling this function breaks the test suite!!!
-			//loadControllers();
+		private function loadControllers() {
+			// FIXME if enabled, this causes a "cannot redeclare class" error
+			//App::import('Controller', Configure::listObjects('controller'));
 		}
 		
-		function __loadModels() {
-			$appModel = 'app_model.php';
-			
-			if (file_exists(APP . $appModel)) {
-				require(APP . $appModel);
-			} else {
-				require(CAKE . $appModel);
-			}
-			
-			loadModels();
+		private function loadModels() {
+			App::import('Model', Configure::listObjects('model', MODELS));
 		}
 	}
 ?>
