@@ -43,6 +43,10 @@
 	Configure::write('debug', 1);
 	define('JS_DEBUG', false);
 /**
+ * Application wide charset encoding
+ */
+	Configure::write('App.encoding', 'UTF-8');
+/**
  * To configure CakePHP *not* to use mod_rewrite and to
  * use CakePHP pretty URLs, remove these .htaccess
  * files:
@@ -149,10 +153,18 @@
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
+ * and /vendors/csspp/csspp.php
  *
- * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
+ * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use HtmlHelper::css().
  */
-	define('COMPRESS_CSS', false);
+	//Configure::write('Asset.filter.css', 'css.php');
+/**
+ * Plug in your own custom JavaScript compressor by dropping a script in your webroot to handle the
+ * output, and setting the config below to the name of the script.
+ *
+ * To use, prefix your JavaScript link URLs with '/cjs/' instead of '/js/' or use JavaScriptHelper::link().
+ */
+	//Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 /**
  * The classname and database used in CakePHP's
  * access control lists.

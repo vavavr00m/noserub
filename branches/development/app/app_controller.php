@@ -18,7 +18,7 @@ class AppController extends Controller {
      * See Issue #127
      * http://code.google.com/p/noserub/issues/detail?id=127
      *
-     * If you need a specific model in AppController, use "loadModel()"
+     * If you need a specific model in AppController, use "App::import('Model', 'ModelName');"
      *
      * (Basically no models that make use of a database table may be 'used' here.
      *  Because if you do so, Cake will complain and you have no chance of doing
@@ -93,7 +93,7 @@ class AppController extends Controller {
      */
     function ensureSecurityToken() {
         if(!isset($this->Identity)) {
-            loadModel('Identity');
+            App::import('Model', 'Identity');
             $this->Identity = new Identity();
         }
         $session_identity_id = $this->Session->read('Identity.id');
@@ -112,7 +112,7 @@ class AppController extends Controller {
     
     public function beforeRender() {
         if(!isset($this->Identity)) {
-            loadModel('Identity');
+            App::import('Model', 'Identity');
             $this->Identity = new Identity();
         }
         # set new security_token

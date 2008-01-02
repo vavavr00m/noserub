@@ -4,7 +4,7 @@ class MenuComponent extends Object {
 	public $components = array('Session');
     
     function setViewData($controller) {
-        loadModel('Menu');
+        App::import('Model', 'Menu');
         $factory = new MenuFactory();
         
         $controller->set('mainMenu', $factory->getMainMenu($this->getMainMenuOptions($controller)));
