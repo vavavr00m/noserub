@@ -20,7 +20,8 @@
 	
 	eval($dispatcher);
 	
-	uses('security', 'session', 'sanitize');
+	uses('security', 'session', 'sanitize', 'string');
+	vendor('simpletest'.DS.'mock_objects');
 	vendor('testsuite'.DS.'test_dispatcher');
 	vendor('testsuite'.DS.'session');
 	vendor('testsuite'.DS.'error');
@@ -49,7 +50,7 @@
                     if ($reporter->shouldInvoke($this->getLabel(), $method)) {
                         $invoker = &$this->_reporter->createInvoker($this->createInvoker());
                         $invoker->before($method);
-                        $this->__loadFixtures();
+                        $this->loadFixtures();
                         $invoker->invoke($method);
                         $invoker->after($method);
                     }
@@ -61,92 +62,7 @@
             return $reporter->getStatus();
         }
         
-        function __loadFixtures() {
-			if (!empty($this->fixtures)) {
-        		$db =& ConnectionManager::getDataSource('default');
-
-				$fixturePath = APP.'tests'.DS.'fixtures';
-
-				if (strpos($this->_reporter->_test_stack[1], APP.'plugins') !== false) {
-					$testFile = $this->_reporter->_test_stack[1];
-					$testFileWithoutBasePath = substr($testFile, strlen(APP.'plugins'.DS));
-					$pluginName = substr($testFileWithoutBasePath, 0, strpos($testFileWithoutBasePath, DS));
-					$fixturePath = APP.'plugins'.DS.$pluginName.DS.'tests'.DS.'fixtures';
-				}
-        		
-        		foreach ($this->fixtures as $fixture) {
-        			require_once($fixturePath.DS.Inflector::underscore($fixture).'.php');
-        			
-        			$f = new $fixture();
-        			
-        			$variables = get_class_vars($fixture);
-		
-        			$db->execute('DELETE FROM '.Inflector::underscore($fixture));
-        			$columns = $this->__checkForColumnAvailability($db, Inflector::underscore($fixture));
-        			
-        			foreach ($variables as $name => $data) {
-        				if ($name != 'columns') {
-        					$this->$name = array_combine($f->columns, $f->$name);
-        					$values = array();
-	
-        					foreach ($f->$name as $value) {
-        						$values[] = $this->__handleValue($value, $db);
-        					}
-        					
-        					$additionalColumns = $this->__getAdditionalColumns($f->columns, $columns);
-        					$noOfAdditionalColumns = count($additionalColumns);
-        					
-        					for ($i = 0; $i < $noOfAdditionalColumns; $i++) {
-        						$values[] = 'NOW()';
-        					}
-        					
-        					$sql = 'INSERT INTO '.Inflector::underscore($fixture).' ('.implode(',', am($f->columns, $additionalColumns)).') VALUES ('.implode(',', $values).')';
-        					$db->execute($sql);
-        				}
-        			}
-        		}
-        	}
-		}
         
-		function __getAdditionalColumns($fixtureColumns, $columns) {
-			$additionalColumns = array();
-        	$possibleColumns = array('created', 'modified', 'updated');
-
-        	foreach ($possibleColumns as $column) {
-        		if (!in_array($column, $fixtureColumns) && $columns[$column] === true) {
-        			$additionalColumns[] = $column;
-        		}
-        	}
-        	
-        	return $additionalColumns;
-		}
-		
-		function __checkForColumnAvailability($db, $tableName) {
-			$result = $db->query('DESC '.$tableName);
-			$columns = array('modified' => false, 'created' => false, 'updated' => false);
-   			
-   			foreach ($result as $column) {
-   				if (array_key_exists($column['COLUMNS']['Field'], $columns)) {
-   					$columns[$column['COLUMNS']['Field']] = true;
-   				}
-   			}
-   			
-   			return $columns;
-		}
-		
-		function __handleValue($value, $db) {
-			$result = '';
-			
-			if (is_string($value)) {
-				$result = $db->value($value);
-			} elseif (is_bool($value)) {
-				$result = $value == true ? 'true' : 'false';
-			} else {
-				$result = $value;
-			}
-			
-			return $result;
-		}
 		
 		/**
 		 * Override this function in subclasses. It is executed once per test case, before any tests are executed.
@@ -171,7 +87,7 @@
          */
         function get($url, $sessionData = array(), $cookieData = array()) {
         	unset($_POST['data']);
-        	$this->__doRequest($url, $sessionData, $cookieData);
+        	$this->doRequest($url, $sessionData, $cookieData);
         }
         
         /**
@@ -184,51 +100,10 @@
          */
         function post($url, $data, $sessionData = array(), $cookieData = array()) {
         	$_POST['data'] = $data;
-        	$this->__doRequest($url, $sessionData, $cookieData);
+        	$this->doRequest($url, $sessionData, $cookieData);
         }
         
-        function __doRequest($url, $sessionData, $cookieData) {
-        	$this->response = array();
-        	$errorHandler =& ErrorHandlerHelper::getInstance();
-        	$errorHandler->error = null;
-        	
-			$sessionComponent =& SessionComponent::getInstance();
-			$sessionComponent->destroy();
-			if ($sessionData != null) {
-				foreach ($sessionData as $key => $data) {
-        			$sessionComponent->write($key, $data);
-        		}
-			}
-        	
-        	$cookieComponent =& CookieComponent::getInstance();
-        	$cookieComponent->destroy();
-        	foreach ($cookieData as $key => $value) {
-        		$cookieComponent->write($key, $value);
-        	}
-        	
-        	Router::reload();
-        	$dispatcher = new TestDispatcher();
-        	$dispatcher->dispatch($url);
-
-			$this->controller =& $dispatcher->controller;
-			$this->session = $sessionComponent->session;
-			$this->flash = $sessionComponent->flash;
-			$this->error = $errorHandler->error;
-			$this->cookie = $cookieComponent->cookieData;
-
-        	if ($this->error == null) {
-        		if ($this->controller->redirectUrl != null) {
-        			$this->response['type'] = REDIRECT;
-        		} else {
-        			$this->response['type'] = SUCCESS;
-        		}
-        	} else {
-        		$this->response['type'] = $this->error;
-        	}
-        	
-        	$this->response['redirectUrl'] = $this->controller->redirectUrl;
-        	$this->response['flashMessage'] = $this->controller->flashMessage;
-        }
+        
         
         /**
          * Asserts that the default flash message was set.
@@ -319,5 +194,135 @@
         		return $this->fail($message);
         	}
         }
+        
+		private function checkForColumnAvailability($db, $tableName) {
+			$result = $db->query('DESC '.$tableName);
+			$columns = array('modified' => false, 'created' => false, 'updated' => false);
+   			
+   			foreach ($result as $column) {
+   				if (array_key_exists($column['COLUMNS']['Field'], $columns)) {
+   					$columns[$column['COLUMNS']['Field']] = true;
+   				}
+   			}
+   			
+   			return $columns;
+		}
+        
+		private function doRequest($url, $sessionData, $cookieData) {
+        	$this->response = array();
+        	$errorHandler =& ErrorHandlerHelper::getInstance();
+        	$errorHandler->error = null;
+        	
+			$sessionComponent =& SessionComponent::getInstance();
+			$sessionComponent->destroy();
+			if ($sessionData != null) {
+				foreach ($sessionData as $key => $data) {
+        			$sessionComponent->write($key, $data);
+        		}
+			}
+        	
+        	$cookieComponent =& CookieComponent::getInstance();
+        	$cookieComponent->destroy();
+        	foreach ($cookieData as $key => $value) {
+        		$cookieComponent->write($key, $value);
+        	}
+        	
+        	Router::reload();
+        	$dispatcher = new TestDispatcher();
+        	$dispatcher->dispatch($url);
+
+			$this->controller =& $dispatcher->controller;
+			$this->session = $sessionComponent->session;
+			$this->flash = $sessionComponent->flash;
+			$this->error = $errorHandler->error;
+			$this->cookie = $cookieComponent->cookieData;
+
+        	if ($this->error == null) {
+        		if ($this->controller->redirectUrl != null) {
+        			$this->response['type'] = REDIRECT;
+        		} else {
+        			$this->response['type'] = SUCCESS;
+        		}
+        	} else {
+        		$this->response['type'] = $this->error;
+        	}
+        	
+        	$this->response['redirectUrl'] = $this->controller->redirectUrl;
+        	$this->response['flashMessage'] = $this->controller->flashMessage;
+        }
+        
+		private function getAdditionalColumns($fixtureColumns, $columns) {
+			$additionalColumns = array();
+        	$possibleColumns = array('created', 'modified', 'updated');
+
+        	foreach ($possibleColumns as $column) {
+        		if (!in_array($column, $fixtureColumns) && $columns[$column] === true) {
+        			$additionalColumns[] = $column;
+        		}
+        	}
+        	
+        	return $additionalColumns;
+		}
+        
+		private function handleValue($value, $db) {
+			$result = '';
+			
+			if (is_string($value)) {
+				$result = $db->value($value);
+			} elseif (is_bool($value)) {
+				$result = $value == true ? 'true' : 'false';
+			} else {
+				$result = $value;
+			}
+			
+			return $result;
+		}
+		
+		private function loadFixtures() {
+			if (!empty($this->fixtures)) {
+        		$db =& ConnectionManager::getDataSource('default');
+
+				$fixturePath = APP.'tests'.DS.'fixtures';
+
+				if (strpos($this->_reporter->_test_stack[1], APP.'plugins') !== false) {
+					$testFile = $this->_reporter->_test_stack[1];
+					$testFileWithoutBasePath = substr($testFile, strlen(APP.'plugins'.DS));
+					$pluginName = substr($testFileWithoutBasePath, 0, strpos($testFileWithoutBasePath, DS));
+					$fixturePath = APP.'plugins'.DS.$pluginName.DS.'tests'.DS.'fixtures';
+				}
+        		
+        		foreach ($this->fixtures as $fixture) {
+        			require_once($fixturePath.DS.Inflector::underscore($fixture).'.php');
+        			
+        			$f = new $fixture();
+        			
+        			$variables = get_class_vars($fixture);
+		
+        			$db->execute('DELETE FROM '.Inflector::underscore($fixture));
+        			$columns = $this->checkForColumnAvailability($db, Inflector::underscore($fixture));
+        			
+        			foreach ($variables as $name => $data) {
+        				if ($name != 'columns') {
+        					$this->$name = array_combine($f->columns, $f->$name);
+        					$values = array();
+	
+        					foreach ($f->$name as $value) {
+        						$values[] = $this->handleValue($value, $db);
+        					}
+        					
+        					$additionalColumns = $this->getAdditionalColumns($f->columns, $columns);
+        					$noOfAdditionalColumns = count($additionalColumns);
+        					
+        					for ($i = 0; $i < $noOfAdditionalColumns; $i++) {
+        						$values[] = 'NOW()';
+        					}
+        					
+        					$sql = 'INSERT INTO '.Inflector::underscore($fixture).' ('.implode(',', am($f->columns, $additionalColumns)).') VALUES ('.implode(',', $values).')';
+        					$db->execute($sql);
+        				}
+        			}
+        		}
+        	}
+		}
 	}
 ?>

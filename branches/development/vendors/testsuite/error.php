@@ -50,7 +50,7 @@
 				$__previousError = array($method, $messages);
 	
 				if (!class_exists('AppController')) {
-					loadController(null);
+					App::import('Controller', 'App');
 				}
 	
 				$this->controller =& new AppController();

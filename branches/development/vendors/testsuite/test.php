@@ -13,33 +13,36 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-	defineConstants();
-	$cakeDir = CORE_PATH.DS.'cake'.DS;
-	$argCount = count($argv);
-
-	if ($argCount == 1 || isHelpParam($argv[1])) {
-		showHelp();
-	} else {
-		$taskName = 'test';
-		$params = null;
-
-		$appPath = getAppPath($argv[1]);	
-
-		if ($appPath != false) {
-			defineAppConstants($appPath);
-			$params = prepareParams($argv, 2);
+class TestTaskRunner {
+	function __construct($args = array()) {
+		set_time_limit(0);
+		$this->initConstants();
+		$argCount = count($args);
+		
+		if ($argCount == 1 || $this->isHelpParam($args[1])) {
+			$this->showHelp();
 		} else {
-			echo "No entry in vendors/testsuite/apps.ini for " . $argv[1] . "\n";
-			exit();
+			$taskName = 'test';
+			$params = null;
+			
+			$appPath = $this->getAppPath($args[1]);
+			
+			if ($appPath != false) {
+				$this->defineAppConstants($appPath);
+				$this->setHttpHost();
+				$this->loadCoreFiles();
+				$params = $this->prepareParams($args, 2);
+			} else {
+				echo "No entry in vendors/testsuite/apps.ini for " . $args[1] . "\n";
+				exit();
+			}
+		
+			$this->setRequestUri();
+			$this->executeTask($taskName, $params);
 		}
-
-		setHttpHost();
-		setRequestUri();
-		includeCoreFiles($cakeDir);
-		executeTask($taskName, $params);
 	}
-
-	function defineAppConstants($appPath) {
+	
+	private function defineAppConstants($appPath) {
 		$delimiter = strrpos($appPath, DS);
 		$root = substr($appPath, 0, $delimiter);
 		$appdir = substr($appPath, $delimiter + 1);
@@ -47,19 +50,13 @@
 		define('ROOT', $root);
 		define('APP_DIR', $appdir);
 		define('APP_PATH', ROOT.DS.APP_DIR.DS);
-		// TODO: how to handle situation with a non-standard webroot setup?
-		define('WWW_ROOT', APP_PATH.'webroot'.DS);
+		define('WWW_ROOT', 'webroot');
+		
+		
 	}
-
-	function defineConstants() {
-		define('PHP5', (phpversion() >= 5));
-		define('DS', DIRECTORY_SEPARATOR);
-		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
-	}
-
-	function executeTask($taskName, $params) {
-		$class = getTaskClass($taskName);
+	
+	private function executeTask($taskName, $params) {
+		$class = $this->getTaskClass($taskName);
 
 		if ($class !== null) {
 			$class->execute($params);
@@ -67,12 +64,12 @@
 			echo "Task not found: " . $taskName . "\n";
 		}
 	}
-
-	function getAppPath($appPathShortcut) {
+	
+	private function getAppPath($appPathShortcut) {
 		$iniFile = CORE_PATH.'vendors'.DS.'testsuite'.DS.'apps.ini';
 
 		if (file_exists($iniFile)) {
-			$appArray = readConfigFile($iniFile);
+			$appArray = $this->readConfigFile($iniFile);
 
 			if (array_key_exists($appPathShortcut, $appArray)) {
 				return $appArray[$appPathShortcut];
@@ -81,8 +78,8 @@
 
 		return false;
 	}
-
-	function getTaskClass($taskName) {
+	
+	private function getTaskClass($taskName) {
 		$scriptDir = dirname(__FILE__);
 		$taskPath = 'testsuite'.DS.$taskName.'_task.php';
 		$fileExists = true;
@@ -102,18 +99,51 @@
 
 		return null;
 	}
-
-	function includeCoreFiles($cakePath) {
-		require($cakePath.'basics.php');
-		require($cakePath.'config'.DS.'paths.php');
-		uses('cache');
+	
+	private function initConstants() {
+		if (function_exists('ini_set')) {
+			ini_set('display_errors', '1');
+			ini_set('error_reporting', E_ALL);
+			ini_set('html_errors', false);
+			ini_set('implicit_flush', true);
+			ini_set('max_execution_time', 60 * 5);
+		}
+		define('PHP5', (phpversion() >= 5));
+		define('DS', DIRECTORY_SEPARATOR);
+		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 	}
-
-	function isHelpParam($param) {
+	
+	private function isHelpParam($param) {
 		return ($param == 'help' || $param == '--help');
 	}
+	
+	private function loadCoreFiles() {
+		$includes = array(
+			CORE_PATH . 'cake' . DS . 'basics.php',
+			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
+		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php'
+		);
 
-	function prepareParams($originalParams, $elementsToRemove) {
+		foreach ($includes as $inc) {
+			if (!require($inc)) {
+				echo ("Failed to load Cake core file ".$inc);
+				return false;
+			}
+		}
+
+		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
+		
+		include_once APP_PATH . 'config' . DS . 'core.php';
+		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php';
+
+		Configure::write('debug', 1);
+	}
+	
+	private function prepareParams($originalParams, $elementsToRemove) {
 		$params = $originalParams;
 
 		for ($i = 0; $i < $elementsToRemove; $i++) {
@@ -122,8 +152,8 @@
 
 		return $params;
 	}
-
-	function readConfigFile($fileName) {
+	
+	private function readConfigFile($fileName) {
 		$fileLineArray = file($fileName);
 
 		foreach($fileLineArray as $fileLine) {
@@ -140,8 +170,8 @@
 
 		return $iniSetting;
 	}
-
-	function setHttpHost() {
+	
+	private function setHttpHost() {
 		$configFile = APP_PATH.'config'.DS.'test-config.php';
 		$httpHost = 'localhost';
 		
@@ -154,12 +184,15 @@
 		$_SERVER['HTTP_HOST'] = $httpHost;
 	}
 	
-	function setRequestUri() {
+	private function setRequestUri() {
 		// XXX I am not sure whether this will work, it is possible that it causes unwanted side-effects...
 		$_SERVER['REQUEST_URI'] = '/';
 	}
 	
-	function showHelp() {
+	private function showHelp() {
 		echo "Usage: php test.php app-alias [param1, ...]\n";
 	}
+}
+
+new TestTaskRunner($argv);
 ?>

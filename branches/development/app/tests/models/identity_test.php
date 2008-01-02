@@ -1,5 +1,4 @@
 <?php
-loadController(null);
 	
 class IdentityModelTestCase extends CakeTestCase {
 
