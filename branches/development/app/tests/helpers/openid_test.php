@@ -63,6 +63,7 @@
 			// required because of https://trac.cakephp.org/ticket/3241
 			ClassRegistry::removeObject('view');
 			
+			loadModel('Menu');
 			$view = new View(new AppController());
         	$view->set('mainMenu', new Menu(array()));
         	$view->set('subMenu', new Menu(array()));
