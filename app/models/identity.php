@@ -16,7 +16,7 @@ class Identity extends AppModel {
         );
     
     function validatePasswd2($value, $params = array()) {
-        if($this->data['Identity']['passwd'] !==$value) {
+        if ($this->data['Identity']['passwd'] !== $value['passwd2']) {
             return false;
         } else {
             return true;
@@ -24,7 +24,7 @@ class Identity extends AppModel {
     }
 
     function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->findCount(array('Identity.openid' => $value, 'Identity.hash' => '<> #deleted#')) > 0) {
+    	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
     		return false;
     	} else {
     		return true;
@@ -39,7 +39,7 @@ class Identity extends AppModel {
      * @access 
      */
     function validateUniqueUsername($value, $params = array()) {
-        $value = strtolower($value);
+        $value = strtolower($value['username']);
         $split_username = $this->splitUsername($value);
         if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
             return false;
@@ -55,7 +55,7 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, wether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+     * check, whether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
      */
     function validateRestrictedEmail($email, $params = array()) {
         if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 

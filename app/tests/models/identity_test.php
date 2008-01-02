@@ -4,7 +4,7 @@ loadController(null);
 class IdentityModelTestCase extends CakeTestCase {
 
 	function setUp() {
-	    loadModel('Identity');
+	    App::import('Model', 'Identity');
 		$this->model = new Identity();
 	}
 	
