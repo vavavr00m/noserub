@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_postgres.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_postgres.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * PostgreSQL layer for DBO.
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -346,8 +346,8 @@ class DboPostgres extends DboSource {
  * @return integer
  */
 	function lastInsertId($source, $field = 'id') {
-		foreach ($this->__descriptions[$source] as $sourceinfo) {
-			if (strcasecmp($sourceinfo['name'], $field) == 0) {
+		foreach ($this->__descriptions[$source] as $name => $sourceinfo) {
+			if (strcasecmp($name, $field) == 0) {
 				break;
 			}
 		}
@@ -374,7 +374,7 @@ class DboPostgres extends DboSource {
  */
 	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->name;
+			$alias = $model->alias;
 		}
 		$fields = parent::fields($model, $alias, $fields, false);
 
@@ -389,7 +389,7 @@ class DboPostgres extends DboSource {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
 						$prepend = 'DISTINCT ';
-						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
+						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 					}
 
 					$dot = strrpos($fields[$i], '.');
@@ -442,7 +442,7 @@ class DboPostgres extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -482,7 +482,7 @@ class DboPostgres extends DboSource {
  * @return int An integer representing the length of the column
  */
 	function length($real) {
-		$col = r(array(')', 'unsigned'), '', $real);
+		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
 
 		if (strpos($col, '(') !== false) {
@@ -551,7 +551,7 @@ class DboPostgres extends DboSource {
 		if ($data === true || $data === false) {
 			$result = $data;
 		} elseif (is_string($data) && !is_numeric($data)) {
-			if (strpos(low($data), 't') !== false) {
+			if (strpos(strtolower($data), 't') !== false) {
 				$result = true;
 			} else {
 				$result = false;
@@ -586,10 +586,8 @@ class DboPostgres extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
-		}
+		parent::__insertMulti($table, $fields, $values);
 	}
 }
+
 ?>

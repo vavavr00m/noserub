@@ -1,11 +1,11 @@
 <?php
-/* SVN FILE: $Id: default.ctp 5847 2007-10-22 03:39:01Z phpnut $ */
+/* SVN FILE: $Id: default.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -13,14 +13,14 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs.view.templates.pages
+ * @subpackage		cake.cake.console.libs.templates.skel.views.layouts
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 5847 $
+ * @version			$Revision: 6311 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-10-21 22:39:01 -0500 (Sun, 21 Oct 2007) $
+ * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
@@ -31,13 +31,14 @@
 		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout;?>
 	</title>
+	<?php
+		echo $html->charset();
+		echo $html->meta('icon');
 
-	<?php echo $html->charset();?>
+		echo $html->css('cake.generic');
 
-	<link rel="icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
-	<link rel="shortcut icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
-	<?php echo $html->css('cake.generic');?>
-	<?php echo $scripts_for_layout;?>
+		echo $scripts_for_layout;
+	?>
 </head>
 <body>
 	<div id="container">

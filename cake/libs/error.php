@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: error.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -65,8 +65,9 @@ class ErrorHandler extends Object{
 		}
 		$this->__dispatch =& new Dispatcher();
 		if (!class_exists('appcontroller')) {
-			loadController(null);
+			App::import('Controller', 'App');
 		}
+
 		if ($__previousError != array($method, $messages)) {
 			$__previousError = array($method, $messages);
 
@@ -101,7 +102,7 @@ class ErrorHandler extends Object{
 		extract($params);
 		$this->controller->base = $base;
 		$this->controller->webroot = $this->_webroot();
-		$this->controller->viewPath='errors';
+		$this->controller->viewPath = 'errors';
 		$this->controller->set(array('code' => $code,
 										'name' => $name,
 										'message' => $message,
@@ -130,8 +131,8 @@ class ErrorHandler extends Object{
 
 		header("HTTP/1.0 404 Not Found");
 		$this->error(array('code' => '404',
-							'name' => __('Not found', true),
-							'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message),
+							'name' => __('Not Found', true),
+							'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>", $message),
 							'base' => $base));
 		exit();
 	}
@@ -168,7 +169,9 @@ class ErrorHandler extends Object{
 		$this->controller->base = $base;
 		$this->controller->webroot = $webroot;
 		$this->controller->viewPath = 'errors';
+		$controllerName = str_replace('Controller', '', $className);
 		$this->controller->set(array('controller' => $className,
+										'controllerName' => $controllerName,
 										'action' => $action,
 										'title' => __('Missing Method in Controller', true)));
 		$this->controller->render('missingAction');
@@ -390,5 +393,4 @@ class ErrorHandler extends Object{
 		return $this->__dispatch->webroot;
 	}
 }
-
 ?>

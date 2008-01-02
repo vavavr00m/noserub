@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysqli.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_mysqli.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * MySQLi layer for DBO
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -119,7 +119,29 @@ class DboMysqli extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		return mysqli_query($this->connection, $sql);
+		if (preg_match('/^\s*call/i', $sql)) {
+			return $this->_executeProcedure($sql);
+		} else {
+			return mysqli_query($this->connection, $sql);
+		}
+	}
+/**
+ * Executes given SQL statement (procedure call).
+ *
+ * @param string $sql SQL statement (procedure call)
+ * @return resource Result resource identifier for first recordset
+ * @access protected
+ */
+	function _executeProcedure($sql) {
+	    $answer = mysqli_multi_query($this->connection, $sql);
+
+	    $firstResult = mysqli_store_result($this->connection);
+
+        if (mysqli_more_results($this->connection)) {
+            while($lastResult = mysqli_next_result($this->connection));
+        }
+
+        return $firstResult;
 	}
 /**
  * Returns an array of sources (tables) in the database.
@@ -328,7 +350,7 @@ class DboMysqli extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
 		@list($col,$vals) = explode('(', $col);
 
@@ -368,7 +390,7 @@ class DboMysqli extends DboSource {
  * @return integer An integer representing the length of the column
  */
 	function length($real) {
-		$col = r(array(')', 'unsigned'), '', $real);
+		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
 
 		if (strpos($col, '(') !== false) {

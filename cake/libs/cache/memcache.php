@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: memcache.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: memcache.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Memcache storage engine for cache
  *
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.cache
@@ -64,7 +64,7 @@ class MemcacheEngine extends CacheEngine {
 		}
 		parent::init($settings);
 		$defaults = array('servers' => array('127.0.0.1'), 'compress'=> false);
-		$this->settings = am($this->settings, $defaults, $settings);
+		$this->settings = array_merge($this->settings, $defaults, $settings);
 
 		if ($this->settings['compress']) {
 			$this->settings['compress'] = MEMCACHE_COMPRESSED;

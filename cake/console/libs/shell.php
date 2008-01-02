@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: shell.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: shell.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Base class for Shells
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs
@@ -170,8 +170,8 @@ class Shell extends Object {
  * @access protected
  */
 	function _welcome() {
-		$this->out('App : '. APP_DIR);
-		$this->out('Path: '. ROOT . DS . APP_DIR);
+		$this->out('App : '. $this->params['app']);
+		$this->out('Path: '. $this->params['working']);
 		$this->hr();
 	}
 /**
@@ -208,7 +208,7 @@ class Shell extends Object {
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
 		);
 
-		if ($this->uses === true && loadModel()) {
+		if ($this->uses === true && App::import('Model', 'AppModel')) {
 			$this->AppModel = & new AppModel(false, false, false);
 			return true;
 		}
@@ -221,7 +221,7 @@ class Shell extends Object {
 				$modelKey = Inflector::underscore($modelClass);
 
 				if (!class_exists($modelClass)) {
-					loadModel($modelClass);
+					App::import('Model', $modelClass);
 				}
 				if (class_exists($modelClass)) {
 					$model =& new $modelClass();
@@ -255,45 +255,37 @@ class Shell extends Object {
 			}
 
 			foreach ($tasks as $taskName) {
-				$loaded = false;
-				foreach ($this->Dispatch->shellPaths as $path) {
-					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
-					if (file_exists($taskPath)) {
-						$loaded = true;
-						break;
+				$taskKey = Inflector::underscore($taskName);
+				$taskClass = Inflector::camelize($taskName.'Task');
+				if (!class_exists($taskClass)) {
+					foreach ($this->Dispatch->shellPaths as $path) {
+						$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
+						if (file_exists($taskPath)) {
+							require_once $taskPath;
+							break;
+						}
+					}
+				}
+				if (ClassRegistry::isKeySet($taskKey)) {
+					$this->taskNames[] = $taskName;
+					if (!PHP5) {
+						$this->{$taskName} =& ClassRegistry::getObject($taskKey);
+						ClassRegistry::map($taskName, $taskKey);
+					} else {
+						$this->{$taskName} = ClassRegistry::getObject($taskKey);
+						ClassRegistry::map($taskName, $taskKey);
+					}
+				} else {
+					$this->taskNames[] = $taskName;
+					if (!PHP5) {
+						$this->{$taskName} =& new $taskClass($this->Dispatch);
+					} else {
+						$this->{$taskName} = new $taskClass($this->Dispatch);
 					}
 				}
 
-				if ($loaded) {
-					$taskKey = Inflector::underscore($taskName);
-					$taskClass = Inflector::camelize($taskName.'Task');
-					if (!class_exists($taskClass)) {
-						require_once $taskPath;
-					}
-					if (ClassRegistry::isKeySet($taskKey)) {
-						$this->taskNames[] = $taskName;
-						if (!PHP5) {
-							$this->{$taskName} =& ClassRegistry::getObject($taskKey);
-							ClassRegistry::map($taskName, $taskKey);
-						} else {
-							$this->{$taskName} = ClassRegistry::getObject($taskKey);
-							ClassRegistry::map($taskName, $taskKey);
-						}
-					} else {
-						$this->taskNames[] = $taskName;
-						if (!PHP5) {
-							$this->{$taskName} =& new $taskClass($this->Dispatch);
-						} else {
-							$this->{$taskName} = new $taskClass($this->Dispatch);
-						}
-					}
-
-					if (!isset($this->{$taskName})) {
-						$this->err("Task '".$taskName."' could not be loaded");
-						exit();
-					}
-				} else {
-					$this->err("Task '".$taskName."' could not be found");
+				if (!isset($this->{$taskName})) {
+					$this->err("Task '".$taskName."' could not be loaded");
 					exit();
 				}
 			}
@@ -338,7 +330,7 @@ class Shell extends Object {
  * @access public
  */
 	function out($string, $newline = true) {
-		if(is_array($string)) {
+		if (is_array($string)) {
 			$str = '';
 			foreach($string as $message) {
 				$str .= $message ."\n";
@@ -354,7 +346,7 @@ class Shell extends Object {
  * @access public
  */
 	function err($string) {
-		if(is_array($string)) {
+		if (is_array($string)) {
 			$str = '';
 			foreach($string as $message) {
 				$str .= $message ."\n";
@@ -433,8 +425,10 @@ class Shell extends Object {
 		if (!class_exists('File')) {
 			uses('file');
 		}
+
 		if ($File = new File($path, true)) {
-			$File->write($contents);
+			$data = $File->prepare($contents);
+			$File->write($data);
 			$this->out(__("Wrote", true) ." {$path}");
 			return true;
 		} else {

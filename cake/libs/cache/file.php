@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: file.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * File Storage engine for cache
  *
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.cache
@@ -29,8 +29,8 @@
  * Included libraries.
  *
  */
-if (!class_exists('file')) {
-	uses ('file');
+if (!class_exists('File')) {
+	uses ('File');
 }
 /**
  * File Storage engine for cache
@@ -60,6 +60,20 @@ class FileEngine extends CacheEngine {
  */
 	var $settings = array();
 /**
+ * Set to true if FileEngine::init(); and FileEngine::__active(); do not fail.
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__active = false;
+/**
+ * True unless FileEngine::__active(); fails
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__init = true;
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -72,16 +86,15 @@ class FileEngine extends CacheEngine {
 	function init($settings = array()) {
 		parent::init($settings);
 		$defaults = array('path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true);
-		$this->settings = am($defaults, $this->settings, $settings);
+		$this->settings = array_merge($defaults, $this->settings, $settings);
 		if(!isset($this->__File)) {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
-		if (!is_writable($this->settings['path'])) {
-			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
+		if(empty($this->settings['path'])) {
 			return false;
 		}
-		return true;
+		return $this->__active();
 	}
 /**
  * Garbage collection. Permanently remove all expired and deleted data
@@ -102,7 +115,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$data, $duration) {
-		if (empty($data)) {
+		if (empty($data) || !$this->__init) {
 			return false;
 		}
 
@@ -113,18 +126,26 @@ class FileEngine extends CacheEngine {
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
+		$windows = false;
+		$lineBreak = "\n";
+
+		if (substr(PHP_OS, 0, 3) == "WIN") {
+			$lineBreak = "\r\n";
+			$windows = true;
+		}
 		if (!empty($this->settings['serialize'])) {
-			$data = serialize($data);
+			if ($windows) {
+				$data = str_replace('\\', '\\\\\\\\', serialize($data));
+			} else {
+				$data = serialize($data);
+			}
 		}
 
 		if ($this->settings['lock']) {
 			$this->__File->lock = true;
 		}
-
 		$expires = time() + $duration;
-
-		$contents = $expires."\n".$data."\n";
-
+		$contents = $expires . $lineBreak . $data . $lineBreak;
 		$success = $this->__File->write($contents);
 		$this->__File->close();
 		return $success;
@@ -137,7 +158,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		if($this->__setKey($key) === false) {
+		if($this->__setKey($key) === false || !$this->__init) {
 			return false;
 		}
 		if ($this->settings['lock']) {
@@ -151,8 +172,15 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 		$data = $this->__File->read(true);
+
 		if (!empty($data) && !empty($this->settings['serialize'])) {
+			$data = stripslashes($data);
+			$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
 			$data = unserialize($data);
+
+			if (is_array($data)) {
+				$data = array_map('stripslashes_deep', $data);
+			}
 		}
 		$this->__File->close();
 		return $data;
@@ -165,7 +193,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function delete($key) {
-		if($this->__setKey($key) === false) {
+		if($this->__setKey($key) === false || !$this->__init) {
 			return false;
 		}
 		return $this->__File->delete();
@@ -178,6 +206,9 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function clear($check) {
+		if (!$this->__init) {
+			return false;
+		}
 		$dir = dir($this->settings['path']);
 		if ($check) {
 			$now = time();
@@ -219,6 +250,21 @@ class FileEngine extends CacheEngine {
 		if (!$this->__File->Folder->inPath($this->__File->pwd(), true)) {
 			return false;
 		}
+	}
+/**
+ * Determine is cache directory is writable
+ *
+ * @return boolean
+ * @access private
+ */
+	function __active() {
+		if (!$this->__active && $this->__init && !is_writable($this->settings['path'])) {
+			$this->__init = false;
+			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
+		} else {
+			$this->__active = true;
+		}
+		return true;
 	}
 }
 ?>

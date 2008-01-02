@@ -1,11 +1,11 @@
 <?php
-/* SVN FILE: $Id: component.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: component.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -13,7 +13,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller
@@ -62,7 +62,14 @@ class Component extends Object {
 		$this->controller =& $controller;
 		if ($this->controller->components !== false) {
 			$loaded = array();
-			$this->controller->components = array_merge($this->controller->components, array('Session'));
+
+			if(in_array('Security', $this->controller->components)) {
+				$remove = array_flip($this->controller->components);
+				unset($remove['Security']);
+				$this->controller->components = array_merge(array('Session', 'Security'), array_flip($remove));
+			} else {
+				$this->controller->components = array_merge(array('Session'), $this->controller->components);
+			}
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
 			foreach (array_keys($loaded) as $component) {
@@ -87,8 +94,6 @@ class Component extends Object {
  * @access protected
  */
 	function &_loadComponents(&$loaded, $components) {
-		$components[] = 'Session';
-
 		foreach ($components as $component) {
 			$parts = preg_split('/\/|\./', $component);
 
@@ -103,8 +108,8 @@ class Component extends Object {
 
 			if (in_array($component, array_keys($loaded)) !== true) {
 				if (!class_exists($componentCn)) {
-					if (is_null($plugin) || !loadPluginComponent($plugin, $component)) {
-						if (!loadComponent($component)) {
+					if (is_null($plugin) || !App::import('Component', $plugin . '.' . $component)) {
+						if (!App::import('Component', $component)) {
 							$this->cakeError('missingComponentFile', array(array(
 													'className' => $this->controller->name,
 													'component' => $component,
@@ -139,5 +144,4 @@ class Component extends Object {
 		return $loaded;
 	}
 }
-
 ?>

@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: socket.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: socket.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Cake Socket connection class.
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -97,7 +97,7 @@ class CakeSocket extends Object {
 		$classVars = get_class_vars(__CLASS__);
 		$baseConfig = $classVars['_baseConfig'];
 
-		$this->config = am($baseConfig, $config);
+		$this->config = array_merge($baseConfig, $config);
 
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
@@ -114,11 +114,16 @@ class CakeSocket extends Object {
 			$this->disconnect();
 		}
 
+		$scheme = null;
+		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+			$scheme = 'ssl://';
+		}
+
 		if ($this->config['persistent'] == true) {
 			$tmp = null;
-			$this->connection = @pfsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
-			$this->connection = fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		}
 
 		if (!empty($errNum) || !empty($errStr)) {

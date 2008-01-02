@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.view.helpers
@@ -29,9 +29,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-require_once CAKE.'app_helper.php';
-uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'rss');
+uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'rss');
 
 /**
  * Short description for class.
@@ -42,7 +40,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class RssTest extends UnitTestCase {
 
 	function setUp() {
-		$this->Rss = new RssHelper();
+		$this->Rss =& new RssHelper();
 	}
 
 	function tearDown() {
@@ -94,6 +92,29 @@ class RssTest extends UnitTestCase {
 	}
 
 	function testItems() {
+		$items = array(
+			array('title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'),
+			array('title' => 'title2', 'guid' => 'http://www.example.com/guid2', 'link' => 'http://www.example.com/link2', 'description' => 'description2'),
+			array('title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3')
+		);
+
+		$result = $this->Rss->items($items);
+		$this->assertPattern('/^<item>.*<\/item><item>.*<\/item><item>.*<\/item>$/', $result);
+		$this->assertPattern('/<item>.*<title>title1<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid1') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link1') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description1<\/description>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<title>title2<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid2') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link2') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description2<\/description>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<title>title3<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid3') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link3') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description3<\/description>.*<\/item>/', $result);
+
+		$result = $this->Rss->items(array());
+		$this->assertEqual($result, '');
 	}
 
 	function testItem() {

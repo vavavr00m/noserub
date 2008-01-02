@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: xml.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: xml.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * XML Helper class file.
  *
  * Simplifies the output of XML documents.
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -88,7 +88,10 @@ class XmlHelper extends AppHelper {
  * @return string XML header
  */
 	function header($attrib = array()) {
-		$attrib = am(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
+		if (Configure::read('App.encoding') !== null) {
+			$this->encoding = Configure::read('App.encoding');
+		}
+		$attrib = array_merge(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
 		return $this->output('<' . '?xml' . $this->__composeAttributes($attrib) . ' ?' . '>');
 	}
 /**
@@ -247,7 +250,7 @@ class XmlHelper extends AppHelper {
 		if (!class_exists('XML') && !class_exists('xml')) {
 			uses('xml');
 		}
-		$options = am(array('attributes' => false, 'format' => 'xml'), $options);
+		$options = array_merge(array('attributes' => false, 'format' => 'xml'), $options);
 
 		switch ($options['format']) {
 			case 'xml':

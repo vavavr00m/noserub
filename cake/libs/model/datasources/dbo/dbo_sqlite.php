@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sqlite.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_sqlite.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * SQLite layer for DBO
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -161,10 +161,21 @@ class DboSqlite extends DboSource {
 
 		foreach ($result as $column) {
 			$fields[$column[0]['name']] = array(
-				'type' => $this->column($column[0]['type']),
-				'null' => ! $column[0]['notnull'],
-				'default' => $column[0]['dflt_value']
+				'type'		=> $this->column($column[0]['type']),
+				'null'		=> !$column[0]['notnull'],
+				'default'	=> $column[0]['dflt_value'],
+				'length'	=> $this->length($column[0]['type'])
 			);
+			if($column[0]['pk'] == 1) {
+				$fields[$column[0]['name']] = array(
+					'type'		=> $fields[$column[0]['name']]['type'],
+					'null'		=> false,
+					'default'	=> $column[0]['dflt_value'],
+					'key'		=> $this->index['PRI'],
+					'extra'		=> 'auto_increment',
+					'length'	=> $this->columns['integer']['limit']
+				);
+			}
 		}
 
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
@@ -247,6 +258,17 @@ class DboSqlite extends DboSource {
 		return false;
 	}
 /**
+ * Deletes all the records in a table and resets the count of the auto-incrementing
+ * primary key, where applicable.
+ *
+ * @param mixed $table A string or model class representing the table to be truncated
+ * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @access public
+ */
+	function truncate($table) {
+		return $this->execute('DELETE From ' . $this->fullTableName($table));
+	}
+/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
@@ -304,7 +326,7 @@ class DboSqlite extends DboSource {
 			return $col;
 		}
 
-		$col = low(r(')', '', $real));
+		$col = strtolower(str_replace(')', '', $real));
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -400,10 +422,62 @@ class DboSqlite extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		parent::__insertMulti($table, $fields, $values);
+	}
+/**
+ * Generate a database-native column schema string
+ *
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function buildColumn($column) {
+		$name = $type = null;
+		$column = array_merge(array('null' => true), $column);
+		extract($column);
+
+		if (empty($name) || empty($type)) {
+			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			return null;
 		}
+
+		if (!isset($this->columns[$type])) {
+			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			return null;
+		}
+
+		$real = $this->columns[$type];
+		if (isset($column['key']) && $column['key'] == 'primary') {
+			$out = $this->name($name) . ' ' . $this->columns['primary_key']['name'];
+		} else {
+			$out = $this->name($name) . ' ' . $real['name'];
+
+			if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+				if (isset($column['length'])) {
+					$length = $column['length'];
+				} elseif (isset($column['limit'])) {
+					$length = $column['limit'];
+				} elseif (isset($real['length'])) {
+					$length = $real['length'];
+				} else {
+					$length = $real['limit'];
+				}
+				$out .= '(' . $length . ')';
+			}
+			if (isset($column['key']) && $column['key'] == 'primary') {
+				$out .= ' NOT NULL';
+			} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
+				$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+			} elseif (isset($column['default'])) {
+				$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+			} elseif (isset($column['null']) && $column['null'] == true) {
+				$out .= ' DEFAULT NULL';
+			} elseif (isset($column['null']) && $column['null'] == false) {
+				$out .= ' NOT NULL';
+			}
+		}
+		return $out;
 	}
 }
+
 ?>

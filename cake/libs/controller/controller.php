@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: controller.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: controller.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Base controller class.
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller
@@ -27,7 +27,7 @@
 /**
  * Include files
  */
-uses('controller' . DS . 'component', 'view' . DS . 'view');
+App::import('Core', array('Component', 'View'));
 /**
  * Controller
  *
@@ -87,7 +87,7 @@ class Controller extends Object {
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-	var $helpers = array('Html');
+	var $helpers = array('Html', 'Form');
 /**
  * Parameters received in the current request: GET and POST data, information
  * about the request, etc.
@@ -294,37 +294,74 @@ class Controller extends Object {
 		if ($this->viewPath == null) {
 			$this->viewPath = Inflector::underscore($this->name);
 		}
-
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-
-		if (is_subclass_of($this, 'AppController')) {
-			$appVars = get_class_vars('AppController');
-			$uses = $appVars['uses'];
-			$merge = array('components', 'helpers');
-
-			if ($uses == $this->uses && !empty($this->uses)) {
-				array_unshift($this->uses, $this->modelClass);
-			} elseif ($this->uses !== null || $this->uses !== false) {
-				$merge[] = 'uses';
-			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
-				}
-			}
-		}
 		parent::__construct();
 	}
 /**
  * Starts the components linked to this controller.
  *
  * @access protected
+ * @see Component::init()
  */
 	function _initComponents() {
 		$component = new Component();
 		$component->init($this);
+	}
+/**
+ * Merge components, helpers, and uses vars from AppController and PluginAppController
+ *
+ * @access protected
+ */
+	function _mergeVars () {
+		$pluginName = Inflector::camelize($this->plugin);
+		$pluginController = $pluginName . 'AppController';
+
+		if (is_subclass_of($this, 'AppController') || is_subclass_of($this, $pluginController)) {
+			$appVars = get_class_vars('AppController');
+			$uses = $appVars['uses'];
+			$merge = array('components', 'helpers');
+			$plugin = null;
+
+			if (!empty($this->plugin)) {
+				$plugin = $pluginName . '.';
+				if (!is_subclass_of($this, $pluginController)) {
+					$pluginController = null;
+				}
+			} else {
+				$pluginController = null;
+			}
+
+			if ($uses == $this->uses && !empty($this->uses)) {
+				if (!in_array($plugin . $this->modelClass, $this->uses)) {
+					array_unshift($this->uses, $plugin . $this->modelClass);
+				}
+			} elseif ($this->uses !== null || $this->uses !== false) {
+				$merge[] = 'uses';
+			}
+
+			foreach ($merge as $var) {
+				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+				}
+			}
+		}
+
+		if ($pluginController) {
+			$appVars = get_class_vars($pluginController);
+			$uses = $appVars['uses'];
+			$merge = array('components', 'helpers');
+
+			if ($this->uses !== null || $this->uses !== false) {
+				$merge[] = 'uses';
+			}
+
+			foreach ($merge as $var) {
+				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+				}
+			}
+		}
 	}
 /**
  * Loads Model classes based on the the uses property
@@ -332,6 +369,7 @@ class Controller extends Object {
  *
  * @return mixed true if models found and instance created, or cakeError if models not found.
  * @access public
+ * @see Controller::loadModel()
  */
 	function constructClasses() {
 		if ($this->uses === null || ($this->uses === array())) {
@@ -364,45 +402,50 @@ class Controller extends Object {
  * @return mixed true when single model found and instance created error returned if models not found.
  * @access public
  */
-	function loadModel($modelClass = null, $id = false) {
-		if($modelClass === null) {
+	function loadModel($modelClass = null, $id = null) {
+		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
 		$cached = false;
 		$object = null;
 		$plugin = null;
-		if ($this->plugin) {
-			$plugin = $this->plugin . '.';
+		if ($this->uses === false) {
+			if ($this->plugin) {
+				$plugin = $this->plugin . '.';
+			}
 		}
 
-		$modelKey = Inflector::underscore($modelClass);
-
-		if (!class_exists($modelClass)) {
-			loadModel($plugin . $modelClass);
+		if (strpos($modelClass, '.') !== false) {
+			list($plugin, $modelClass) = explode('.', $modelClass);
+			$plugin = $plugin . '.';
 		}
 
-		if (class_exists($modelClass)) {
-			if ($this->persistModel === true) {
-				$cached = $this->_persist($modelClass, null, $object);
+		if ($this->persistModel === true) {
+			$cached = $this->_persist($modelClass, null, $object);
+		}
+
+		if (($cached === false)) {
+			$this->modelNames[] = $modelClass;
+
+			if (!PHP5) {
+				$this->{$modelClass} =& ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
+			} else {
+				$this->{$modelClass} = ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
 			}
 
-			if (($cached === false)) {
-				$model =& new $modelClass($id);
-				$this->modelNames[] = $modelClass;
-				$this->{$modelClass} =& $model;
+			if (!$this->{$modelClass}) {
+				return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
+			}
 
-				if ($this->persistModel === true) {
-					$this->_persist($modelClass, true, $model);
-					$registry = ClassRegistry::getInstance();
-					$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
-				}
-			} else {
-				$this->_persist($modelClass . 'registry', true, $object, 'registry');
-				$this->_persist($modelClass, true, $object);
-				$this->modelNames[] = $modelClass;
+			if ($this->persistModel === true) {
+				$this->_persist($modelClass, true, $model);
+				$registry = ClassRegistry::getInstance();
+				$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
 			}
 		} else {
-			return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
+			$this->_persist($modelClass . 'registry', true, $object, 'registry');
+			$this->_persist($modelClass, true, $object);
+			$this->modelNames[] = $modelClass;
 		}
 	}
 /**
@@ -411,11 +454,11 @@ class Controller extends Object {
  *
  * @param mixed $url A string or array-based URL pointing to another location
  *                   within the app, or an absolute URL
- * @param integer $status Optional HTTP status code
+ * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @access public
  */
-	function redirect($url, $status = null, $exit = false) {
+	function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
 
 		if (is_array($status)) {
@@ -502,7 +545,7 @@ class Controller extends Object {
 		if ($url !== null) {
 			header('Location: ' . Router::url($url, true));
 		}
-		if (!empty($status)) {
+		if (!empty($status) && ($status >= 300 && $status < 400)) {
 			header($status);
 		}
 		if ($exit) {
@@ -543,7 +586,10 @@ class Controller extends Object {
 		}
 	}
 /**
- * Internally redirects one action to another
+ * Internally redirects one action to another. Examples:
+ *
+ * setAction('another_action');
+ * setAction('action_with_parameters', $parameter1);
  *
  * @param string $action The new action to be redirected to
  * @param mixed  Any other parameters passed to this method will be passed as
@@ -557,9 +603,9 @@ class Controller extends Object {
 		call_user_func_array(array(&$this, $action), $args);
 	}
 /**
- * controller callback to tie into Auth component.
+ * Controller callback to tie into Auth component.
  *
- * @return bool
+ * @return bool true if authorized, false otherwise
  * @access public
  */
  	function isAuthorized() {
@@ -582,9 +628,12 @@ class Controller extends Object {
 		return count($errors);
 	}
 /**
- * Validates a FORM according to the rules set up in the Model.
+ * Validates models passed by parameters. Example:
  *
- * @return integer Number of errors
+ * $errors = $this->validateErrors($this->Article, $this->User);
+ *
+ * @param mixed A list of models as a variable argument
+ * @return array Validation errors, or false if none
  * @access public
  */
 	function validateErrors() {
@@ -595,8 +644,8 @@ class Controller extends Object {
 
 		$errors = array();
 		foreach ($objects as $object) {
-			$this->{$object->name}->set($object->data);
-			$errors = array_merge($errors, $this->{$object->name}->invalidFields());
+			$this->{$object->alias}->set($object->data);
+			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 		return $this->validationErrors = (count($errors) ? $errors : false);
 	}
@@ -611,7 +660,6 @@ class Controller extends Object {
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
-
 		$this->beforeRender();
 
 		$viewClass = $this->view;
@@ -620,7 +668,7 @@ class Controller extends Object {
 				list($plugin, $viewClass) = explode('.', $viewClass);
 			}
 			$viewClass = $viewClass . 'View';
-			loadView($this->view);
+			App::import('View', $this->view);
 		}
 
 		foreach ($this->components as $c) {
@@ -711,192 +759,11 @@ class Controller extends Object {
  */
 	function flash($message, $url, $pause = 1) {
 		$this->autoRender = false;
-		$this->autoLayout = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-
-		if (file_exists(VIEWS . 'layouts' . DS . 'flash.ctp')) {
-			$flash = VIEWS . 'layouts' . DS . 'flash.ctp';
-		} elseif (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
-			$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
-		} elseif ($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.ctp')) {
-		}
-		$this->render(null, false, $flash);
-	}
-/**
- * @deprecated on 1.2.0.5258
- * @see FormHelper::create()
- * @access public
- */
-	function generateFieldNames($data = null, $doCreateOptions = true) {
-		trigger_error(sprintf(__('Method generateFieldNames() is deprecated in %s: see FormHelper::create()', true), get_class($this)), E_USER_NOTICE);
-		$fieldNames = array();
-		$model = $this->modelClass;
-		$modelKey = $this->modelKey;
-		$modelObj =& ClassRegistry::getObject($modelKey);
-
-		foreach ($modelObj->_tableInfo->value as $column) {
-			$humanName = $column['name'];
- 			if ($modelObj->isForeignKey($column['name'])) {
-				foreach ($modelObj->belongsTo as $associationName => $assoc) {
-					if ($column['name'] == $assoc['foreignKey']) {
-						$humanName = Inflector::underscore($associationName);
-						$fkNames = $modelObj->keyToTable[$column['name']];
-						$fieldNames[$column['name']]['table'] = $fkNames[0];
-						$fieldNames[$column['name']]['model'] = Inflector::classify($associationName);
-						$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
-						$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
-						$fieldNames[$column['name']]['foreignKey'] = true;
-						break;
-					}
-				}
-			}
-
-			$fieldNames[$column['name']]['label'] = Inflector::humanize($humanName);
-			$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
-
-			$fieldNames[$column['name']]['fieldName'] = $model . '.' . $column['name'];
-			$fieldNames[$column['name']]['name'] = $column['name'];
-			$fieldNames[$column['name']]['class'] = 'optional';
-			$validationFields = $modelObj->validate;
-			if (isset($validationFields[$column['name']])) {
-				if (VALID_NOT_EMPTY == $validationFields[$column['name']]) {
-					$fieldNames[$column['name']]['required'] = true;
-					$fieldNames[$column['name']]['class'] = 'required';
-					$fieldNames[$column['name']]['error'] = "Required Field";
-				}
-			}
-			$lParenPos = strpos($column['type'], '(');
-			$rParenPos = strpos($column['type'], ')');
-
-			if (false != $lParenPos) {
-				$type = substr($column['type'], 0, $lParenPos);
-				$fieldLength = substr($column['type'], $lParenPos + 1, $rParenPos - $lParenPos - 1);
-			} else {
-				$type = $column['type'];
-			}
-			switch($type) {
-				case "text":
-					$fieldNames[$column['name']]['type'] = 'textarea';
-					$fieldNames[$column['name']]['cols'] = '30';
-					$fieldNames[$column['name']]['rows'] = '10';
-				break;
-				case "string":
-					if (isset($fieldNames[$column['name']]['foreignKey'])) {
-						$fieldNames[$column['name']]['type'] = 'select';
-						$fieldNames[$column['name']]['options'] = array();
-						$otherModelObj =& ClassRegistry::getObject($fieldNames[$column['name']]['modelKey']);
-						if (is_object($otherModelObj)) {
-							if ($doCreateOptions) {
-								$fieldNames[$column['name']]['options'] = $otherModelObj->generateList();
-							}
-							$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
-						}
-					} else {
-						$fieldNames[$column['name']]['type'] = 'text';
-					}
-				break;
-				case "boolean":
-						$fieldNames[$column['name']]['type'] = 'checkbox';
-				break;
-				case "integer":
-				case "float":
-					if (strcmp($column['name'], $this->$model->primaryKey) == 0) {
-						$fieldNames[$column['name']]['type'] = 'hidden';
-					} elseif (isset($fieldNames[$column['name']]['foreignKey'])) {
-						$fieldNames[$column['name']]['type'] = 'select';
-						$fieldNames[$column['name']]['options'] = array();
-
-						$otherModelObj =& ClassRegistry::getObject($fieldNames[$column['name']]['modelKey']);
-						if (is_object($otherModelObj)) {
-							if ($doCreateOptions) {
-								$fieldNames[$column['name']]['options'] = $otherModelObj->generateList();
-							}
-							$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
-						}
-					} else {
-						$fieldNames[$column['name']]['type'] = 'text';
-					}
-
-				break;
-				case "enum":
-					$fieldNames[$column['name']]['type'] = 'select';
-					$fieldNames[$column['name']]['options'] = array();
-					$enumValues = split(',', $fieldLength);
-
-					foreach ($enumValues as $enum) {
-						$enum = trim($enum, "'");
-						$fieldNames[$column['name']]['options'][$enum] = $enum;
-					}
-					$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
-				break;
-				case "date":
-				case "datetime":
-				case "time":
-				case "year":
-					if (0 != strncmp("created", $column['name'], 7) && 0 != strncmp("modified", $column['name'], 8) && 0 != strncmp("updated", $column['name'], 7)) {
-						$fieldNames[$column['name']]['type'] = $type;
-						if (isset($data[$model][$column['name']])) {
-							$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
-						} else {
-							$fieldNames[$column['name']]['selected'] = null;
-						}
-					} else {
-						unset($fieldNames[$column['name']]);
-					}
-				break;
-				default:
-				break;
-			}
-		}
-
-		foreach ($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
-			$otherModelKey = Inflector::underscore($assocData['className']);
-			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
-			if ($doCreateOptions) {
-				$fkName = $modelObj->alias[$associationName];
-				$fieldNames[$associationName]['table'] = $assocData['joinTable'];
-				$fieldNames[$associationName]['model'] = $associationName;
-				$fieldNames[$associationName]['label'] = "Related " . Inflector::humanize($fkName);
-				$fieldNames[$associationName]['prompt'] = $fieldNames[$associationName]['label'];
-				$fieldNames[$associationName]['type'] = "select";
-				$fieldNames[$associationName]['multiple'] = "multiple";
-				$fieldNames[$associationName]['fieldName'] = $associationName . '.' . $associationName;
-				$fieldNames[$associationName]['name'] = $associationName;
-				$fieldNames[$associationName]['class'] = 'optional';
-				$fieldNames[$associationName]['options'] = $otherModelObj->generateList();
-				if (isset($data[$associationName])) {
-					$fieldNames[$associationName]['selected'] = $this->_selectedArray($data[$associationName], $otherModelObj->primaryKey);
-				}
-			}
-		}
-
-		return $fieldNames;
-	}
-/**
- * @deprecated on 1.2.0.5821
- * @see FormHelper::create()
- * @access protected
- */
-	function _selectedArray($data, $key = 'id') {
-		if (!is_array($data)) {
-			$model = $data;
-			if (!empty($this->data[$model][$model])) {
-				return $this->data[$model][$model];
-			}
-			if (!empty($this->data[$model])) {
-				$data = $this->data[$model];
-			}
-		}
-		$array = array();
-		if (!empty($data)) {
-			foreach ($data as $var) {
-				$array[$var[$key]] = $var[$key];
-			}
-		}
-		return $array;
+		$this->render(false, 'flash');
 	}
 /**
  * Converts POST'ed model data to a model conditions array, suitable for a find
@@ -942,7 +809,7 @@ class Controller extends Object {
 				}
 			}
 		}
-		if ($bool != null && up($bool) != 'AND') {
+		if ($bool != null && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;
@@ -956,7 +823,7 @@ class Controller extends Object {
  */
 	function __postConditionMatch($op, $value) {
 		if (is_string($op)) {
-			$op = up(trim($op));
+			$op = strtoupper(trim($op));
 		}
 
 		switch($op) {
@@ -974,87 +841,18 @@ class Controller extends Object {
 		}
 	}
 /**
- * Cleans up the date fields of current Model. Goes through posted fields (in Controller::$data)
- * and prepares their values to be used for model operations.
+ * Deprecated, see Model::deconstruct();
  *
- * @param string $modelClass Model class to use (defaults to controller's model)
- * @access public
+ * @see Model::deconstruct()
+ * @deprecated as of 1.2.0.5970
  */
-	function cleanUpFields($modelClass = null) {
-		if ($modelClass == null) {
-			$modelClass = $this->modelClass;
-		}
-		$fields = $this->{$modelClass}->schema();
-		foreach ($fields->value as $field => $value) {
-			if (in_array($value['type'], array('datetime', 'timestamp', 'date', 'time'))) {
-				$useNewDate = false;
-				$date = array();
-				$dates = array('Y'=>'_year', 'm'=>'_month', 'd'=>'_day');
-				foreach ($dates as $default => $var) {
-					if (isset($this->data[$modelClass][$field . $var])) {
-						if (!empty($this->data[$modelClass][$field . $var])) {
-							$date[$var] = $this->data[$modelClass][$field . $var];
-						}
-						$useNewDate = true;
-						unset($this->data[$modelClass][$field . $var]);
-					}
-				}
-				if (count($date) == 3 && in_array($value['type'], array('datetime', 'timestamp', 'date'))) {
-					$date = join('-', array_values($date));
-				} else {
-					$date = null;
-				}
-
-				if ($value['type'] != 'date') {
-					$time = array();
-					$times = array('H'=>'_hour', 'i'=>'_min', 's'=>'_sec');
-					foreach($times as $default => $var) {
-						if (isset($this->data[$modelClass][$field . $var])) {
-							if (!empty($this->data[$modelClass][$field . $var])) {
-								$time[$var] = $this->data[$modelClass][$field . $var];
-							} elseif ($this->data[$modelClass][$field . $var] === '0') {
-								$time[$var] = '00';
-							}
-							$useNewDate = true;
-							unset($this->data[$modelClass][$field . $var]);
-						}
-					}
-
-					$meridian = false;
-					if (isset($this->data[$modelClass][$field . '_meridian'])) {
-						$meridian = $this->data[$modelClass][$field . '_meridian'];
-						 unset($this->data[$modelClass][$field . '_meridian']);
-					}
-
-					if (isset($time['_hour']) && $time['_hour'] != 12 && 'pm' == $meridian) {
-						$time['_hour'] = $time['_hour'] + 12;
-					}
-					if (isset($time['_hour']) && $time['_hour'] == 12 && 'am' == $meridian) {
-						$time['_hour'] = '00';
-					}
-					if (count($time) > 1) {
-						$time = join(':', array_values($time));
-					}
-
-					if($date && $time) {
-						$date = $date . ' ' . $time;
-					} elseif (is_string($time)) {
-						$date = $time;
-					}
-				}
-
-				if ($useNewDate && (isset($date) || isset($value['null']))) {
-					$this->data[$modelClass][$field] = $date;
-				}
-			}
-		}
-	}
+	function cleanUpFields($modelClass = null) {}
 /**
  * Handles automatic pagination of model records.
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param mixed $scope Conditions to use while paginating
- * @param array $whitelist
+ * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @access public
  */
@@ -1066,40 +864,46 @@ class Controller extends Object {
 		}
 		$assoc = null;
 
-		if (is_string($object) && !strpos($object, '.')) {
-			if (isset($this->{$object})) {
+		if (is_string($object)) {
+			$assoc = null;
+
+			if (strpos($object, '.') !== false) {
+				list($object, $assoc) = explode('.', $object);
+			}
+
+			if ($assoc && isset($this->{$object}->{$assoc})) {
+				$object = $this->{$object}->{$assoc};
+			} elseif ($assoc && isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$assoc})) {
+				$object = $this->{$this->modelClass}->{$assoc};
+			} elseif (isset($this->{$object})) {
 				$object = $this->{$object};
 			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
 				$object = $this->{$this->modelClass}->{$object};
-			} elseif (!empty($this->uses)) {
-				for ($i = 0; $i < count($this->uses); $i++) {
-					$model = $this->uses[$i];
-					if (isset($this->{$model}->{$object})) {
-						$object = $this->{$model}->{$object};
-						break;
-					}
-				}
-			}
-		} elseif (is_string($object)) {
-			list($object, $assoc) = explode('.', $object);
-			if (isset($this->{$object})) {
-				$object = $this->{$object};
 			}
 		} elseif (empty($object) || $object == null) {
 			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
 			} else {
-				$object = $this->{$this->uses[0]};
+				$className = null;
+				$name = $this->uses[0];
+				if (strpos($this->uses[0], '.') !== false) {
+					list($name, $className) = explode('.', $this->uses[0]);
+				}
+				if ($className) {
+					$object = $this->{$className};
+				} else {
+					$object = $this->{$name};
+				}
 			}
 		}
 
 		if (!is_object($object)) {
-			trigger_error(sprintf(__("Controller::paginate() - can't find model %s in controller %sController", true), $object, $this->name), E_USER_WARNING);
+			trigger_error(sprintf(__('Controller::paginate() - can\'t find model %1$s in controller %2$sController', true), $object, $this->name), E_USER_WARNING);
 			return array();
 		}
-		$options = am($this->params, $this->params['url'], $this->passedArgs);
-		if (isset($this->paginate[$object->name])) {
-			$defaults = $this->paginate[$object->name];
+		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
+		if (isset($this->paginate[$object->alias])) {
+			$defaults = $this->paginate[$object->alias];
 		} else {
 			$defaults = $this->paginate;
 		}
@@ -1117,7 +921,7 @@ class Controller extends Object {
 		if (!empty($options['order']) && is_array($options['order'])) {
 			$key = key($options['order']);
 			if (strpos($key, '.') === false && $object->hasField($key)) {
-				$options['order'][$object->name . '.' . $key] = $options['order'][$key];
+				$options['order'][$object->alias . '.' . $key] = $options['order'][$key];
 				unset($options['order'][$key]);
 			}
 		}
@@ -1142,9 +946,9 @@ class Controller extends Object {
 			$defaults['conditions'] = array();
 		}
 
-		extract($options = am(array('page' => 1, 'limit' => 20), $defaults, $options));
+		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
 		if (is_array($scope) && !empty($scope)) {
-			$conditions = am($conditions, $scope);
+			$conditions = array_merge($conditions, $scope);
 		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
@@ -1157,8 +961,10 @@ class Controller extends Object {
 		}
 		$pageCount = intval(ceil($count / $limit));
 
-		if ($page == 'last') {
+		if ($page == 'last' || $page >= $pageCount) {
 			$options['page'] = $page = $pageCount;
+		} elseif (intval($page) < 1) {
+			$options['page'] = $page = 1;
 		}
 
 		if (method_exists($object, 'paginate')) {
@@ -1173,11 +979,11 @@ class Controller extends Object {
 			'prevPage'	=> ($page > 1),
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
-			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
+			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
 
-		$this->params['paging'][$object->name] = $paging;
+		$this->params['paging'][$object->alias] = $paging;
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
@@ -1249,5 +1055,4 @@ class Controller extends Object {
 		return false;
 	}
 }
-
 ?>

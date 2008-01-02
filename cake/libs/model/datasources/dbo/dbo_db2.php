@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_db2.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_db2.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * IBM DB2 for DBO
  *
@@ -18,7 +18,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -221,9 +221,11 @@ class DboDb2 extends DboSource {
 
 		while (db2_fetch_row($result)) {
 			$fields[strtolower(db2_result($result, 'COLUMN_NAME'))] = array(
-				'type' => strtolower(db2_result($result, 'TYPE_NAME')),
+				'type' => $this->column(strtolower(db2_result($result, 'TYPE_NAME'))),
 				'null' => db2_result($result, 'NULLABLE'),
-				'default' => db2_result($result, 'COLUMN_DEF'));
+				'default' => db2_result($result, 'COLUMN_DEF'),
+				'length' => db2_result($result, 'COLUMN_SIZE')
+				);
 		}
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
@@ -477,7 +479,7 @@ class DboDb2 extends DboSource {
 			}
 			return $col;
 		}
-		$col                = r(')', '', $real);
+		$col                = str_replace(')', '', $real);
 		$limit              = null;
 		@list($col, $limit) = explode('(', $col);
 

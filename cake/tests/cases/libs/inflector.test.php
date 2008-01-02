@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: inflector.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: inflector.test.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs
@@ -109,6 +109,54 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->Inflector->singularize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('alumni');
+		$expected = 'alumnus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('bacilli');
+		$expected = 'bacillus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('cacti');
+		$expected = 'cactus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('foci');
+		$expected = 'focus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('fungi');
+		$expected = 'fungus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('nuclei');
+		$expected = 'nucleus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('octopuses');
+		$expected = 'octopus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('radii');
+		$expected = 'radius';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('stimuli');
+		$expected = 'stimulus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('syllabi');
+		$expected = 'syllabus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('termini');
+		$expected = 'terminus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('viri');
+		$expected = 'virus';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectingPlurals() {
@@ -179,11 +227,63 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->Inflector->pluralize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('alumnus');
+		$expected = 'alumni';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('bacillus');
+		$expected = 'bacilli';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('cactus');
+		$expected = 'cacti';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('focus');
+		$expected = 'foci';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('fungus');
+		$expected = 'fungi';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('nucleus');
+		$expected = 'nuclei';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('octopus');
+		$expected = 'octopuses';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('radius');
+		$expected = 'radii';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('stimulus');
+		$expected = 'stimuli';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('syllabus');
+		$expected = 'syllabi';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('terminus');
+		$expected = 'termini';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('virus');
+		$expected = 'viri';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectorSlug() {
 		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more');
 		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->slug('this/is/a/path');
+		$expected = 'this_is_a_path';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more', "-");

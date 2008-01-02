@@ -6,7 +6,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -39,13 +39,6 @@ class MagicDb extends Object {
  * @var array
  **/
 	var $db = array();
-
-/**
- * The file currently being read. Can be a string or a file resource
- * 
- * @var mixed
- */
-	var $_file = null;
 
 /**
  * Reads a MagicDb from various formats
@@ -122,14 +115,16 @@ class MagicDb extends Object {
 			}
 
 			$columns = explode("\t", $line);
-			if (in_array($columns[0]{0}, array('&', '>'))) {
+			if (in_array($columns[0]{0}, array('>', '&'))) {
 				$format[] = $columns;
 			} elseif (!empty($format)) {
 				$db['database'][] = $format;
-				$format = array();
+				$format = array($columns);
+			} else {
+				$format = array($columns);
 			}
 		}
-		
+
 		return $db;
 	}
 
@@ -162,14 +157,127 @@ class MagicDb extends Object {
 		if (!is_string($file)) {
 			return false;
 		}
-		
-		if (file_exists($file)) {
-			$this->_file =& new File($file);
-		} else {
-			$this->_file = $file;
-		}
-		
 
+		$matches = array();
+		$MagicFileResource =& new MagicFileResource($file);
+		foreach ($this->db['database'] as $format) {
+			$magic = $format[0];
+			$match = $MagicFileResource->test($magic);
+			if ($match === false) {
+				continue;
+			}
+			$matches[] = $magic;
+		}
+
+		return $matches;
+	}
+}
+
+/**
+ * undocumented class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs
+ */
+class MagicFileResource extends Object{
+/**
+ * undocumented variable
+ *
+ * @var unknown
+ * @access public
+ */
+	var $resource = null;
+/**
+ * undocumented variable
+ *
+ * @var unknown
+ * @access public
+ */
+	var $offset = 0;
+/**
+ * undocumented function
+ *
+ * @param unknown $file
+ * @return void
+ * @access public
+ */
+	function __construct($file) {
+		if (file_exists($file)) {
+			$this->resource =& new File($file);
+		} else {
+			$this->resource = $file;
+		}
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $magic
+ * @return void
+ * @access public
+ */
+	function test($magic) {
+		@list($offset, $type, $expected, $comment) = $magic;
+		$val = $this->extract($offset, $type, $expected);
+		return $val == $expected;
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $type
+ * @param unknown $length
+ * @return void
+ * @access public
+ */
+	function read($length = null) {
+		if (!is_object($this->resource)){
+			return substr($this->resource, $this->offset, $length);
+		} else {
+			return $this->resource->read($length);
+		}
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $type
+ * @param unknown $expected
+ * @return void
+ * @access public
+ */
+	function extract($offset, $type, $expected) {
+		switch ($type) {
+			case 'string':
+				$this->offset($offset);
+				$val = $this->read(strlen($expected));
+				if ($val === $expected) {
+					return true;
+				}
+				break;
+		}
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $offset
+ * @param unknown $whence
+ * @return void
+ * @access public
+ */
+	function offset($offset = null) {
+		if (is_null($offset)) {
+			if (!is_object($this->resource)) {
+				return $this->offset;
+			}
+			return $this->offset;
+		}
+
+		if (!ctype_digit($offset)) {
+			return false;
+		}
+		if (is_object($this->resource)) {
+			$this->resource->offset($offset);
+		} else {
+			$this->offset = $offset;
+		}
 	}
 }
 

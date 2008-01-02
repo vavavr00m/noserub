@@ -6,7 +6,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -72,7 +72,7 @@
 		}
 
 		function schema() {
-			return new Set(array(
+			$this->_schema = array(
 				'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 				'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -91,7 +91,8 @@
 				'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 				'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 				'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+			);
+			return $this->_schema;
 		}
 	}
 
@@ -101,24 +102,31 @@
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTest extends UnitTestCase {
+class DboMssqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
  * @var object
  * @access public
  */
-	var $Db = null;
+	var $db = null;
+/**
+ * Skip if cannot connect to mssql
+ *
+ * @access public
+ */
+	function skip() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($db->config['driver'] != 'mssql', 'SQL Server connection not available');
+	}
 /**
  * Sets up a Dbo class instance for testing
  *
  * @access public
  */
 	function setUp() {
-		require_once APP . 'config' . DS . 'database.php';
-		$config = new DATABASE_CONFIG();
-		$this->db =& new DboMssqlTestDb($config->default, false);
-		$this->db->fullDebug = false;
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
 

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sybase.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_sybase.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Sybase layer for DBO
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -171,7 +171,8 @@ class DboSybase extends DboSource {
 			}
 			if (isset($column[0])) {
 				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']),
-														'null' => $column[0]['Null']
+													'null' => $column[0]['Null'],
+													'length' => $this->length($column[0]['Type']),
 													);
 			}
 		}
@@ -317,7 +318,7 @@ class DboSybase extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -387,10 +388,8 @@ class DboSybase extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
-		}
+		parent::__insertMulti($table, $fields, $values);
 	}
 }
+
 ?>
