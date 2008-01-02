@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: rss.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: rss.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * RSS Helper class file.
  *
  * Simplifies the output of RSS feeds.
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -112,7 +112,7 @@ class RssHelper extends XmlHelper {
 			$attrib['version'] = $this->version;
 		}
 
-		$attrib = array_reverse(am($this->__prepareNamespaces(), $attrib));
+		$attrib = array_reverse(array_merge($this->__prepareNamespaces(), $attrib));
 		return $this->elem('rss', $attrib, $content);
 	}
 /**

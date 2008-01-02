@@ -6,7 +6,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -72,7 +72,7 @@ class MysqlTestModel extends Model {
 	}
 
 	function schema() {
-		return new Set(array(
+		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -91,7 +91,7 @@ class MysqlTestModel extends Model {
 			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		));
+		);
 	}
 }
 /**
@@ -100,7 +100,7 @@ class MysqlTestModel extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMysqlTest extends UnitTestCase {
+class DboMysqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
@@ -114,11 +114,8 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function skip() {
-		$skip = true;
-		if(function_exists('mysql_connect')) {
-			$skip = false;
-		}
-		$this->skipif ($skip, 'MySql not installed');
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($db->config['driver'] != 'mysql', 'MySQL connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -126,10 +123,8 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once APP . 'config' . DS . 'database.php';
-		$config = new DATABASE_CONFIG();
-		$this->Db =& new DboMysqlTestDb($config->default);
-		$this->Db->fullDebug = false;
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();
 	}
 /**
@@ -138,7 +133,7 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->Db);
+		unset($this->db);
 	}
 /**
  * Test Dbo value method
@@ -146,7 +141,7 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function testQuoting() {
-		$result = $this->Db->fields($this->model);
+		$result = $this->db->fields($this->model);
 		$expected = array(
 			'`MysqlTestModel`.`id`',
 			'`MysqlTestModel`.`client_id`',
@@ -170,23 +165,23 @@ class DboMysqlTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$expected = 1.2;
-		$result = $this->Db->value(1.2, 'float');
+		$result = $this->db->value(1.2, 'float');
 		$this->assertEqual($expected, $result);
 
 		$expected = "'1,2'";
-		$result = $this->Db->value('1,2', 'float');
+		$result = $this->db->value('1,2', 'float');
 		$this->assertEqual($expected, $result);
 
 		$expected = "'4713e29446'";
-		$result = $this->Db->value('4713e29446');
+		$result = $this->db->value('4713e29446');
 		$this->assertEqual($expected, $result);
 
 		$expected = 10010001;
-		$result = $this->Db->value(10010001);
+		$result = $this->db->value(10010001);
 		$this->assertEqual($expected, $result);
 
 		$expected = "'00010010001'";
-		$result = $this->Db->value('00010010001');
+		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
 }

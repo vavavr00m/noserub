@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: api.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: api.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * API shell to get CakePHP core method signatures.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs
@@ -54,7 +54,8 @@ class ApiShell extends Shell {
 			'component' => LIBS . 'controller' . DS . 'components' . DS,
 			'helper' => LIBS . 'view' . DS . 'helpers' . DS,
 			'model' => LIBS . 'model' . DS,
-			'view' => LIBS . 'view' . DS
+			'view' => LIBS . 'view' . DS,
+			'core' => LIBS
 		));
 	}
 /**
@@ -66,72 +67,76 @@ class ApiShell extends Shell {
 		if (empty($this->args)) {
 			return $this->help();
 		}
-		if (count($this->args) == 1 && in_array($this->args[0], array_keys($this->paths))) {
-			$this->args[1] = $this->args[0];
-		}
 
-		if (count($this->args) > 1) {
-			$path = $this->args[0];
-			$class = $this->args[1];
+		$type = low($this->args[0]);
 
-			$this->__loadDependencies($path);
-
-			if (in_array(low($path), array('behavior', 'component', 'helper')) && low($path) !== low($class)) {
-				if (!preg_match('/' . Inflector::camelize($path) . '$/', $class)) {
-					$class .= Inflector::camelize($path);
-				}
-			} elseif (low($path) === low($class)) {
-				$class = Inflector::camelize($path);
-			}
-
-			if (isset($this->paths[low($path)])) {
-				$path = $this->paths[low($path)];
-			}
+		if (isset($this->paths[$type])) {
+			$path = $this->paths[$type];
 		} else {
-			$class = $this->args[0];
-			$path = LIBS;
+			$path = $this->paths['core'];
 		}
 
-		if (!is_readable($path) || !is_dir($path)) {
-			$this->err(sprintf(__('Path %s could not be accessed', true), $path));
-			return;
+		if (count($this->args) == 1) {
+			$file = $type;
+			$class = Inflector::camelize($type);
+		} elseif (count($this->args) > 1) {
+			$file = Inflector::underscore($this->args[1]);
+			$class = Inflector::camelize($file);
 		}
 
-		$File = null;
-
-		$candidates = array(
-			Inflector::underscore($class),
-			substr(Inflector::underscore($class), 0, strpos(Inflector::underscore($class), '_'))
-		);
-
-		foreach ($candidates as $candidate) {
-			$File =& new File($path . $candidate . '.php');
-
-			if ($File->exists()) {
-				if (!class_exists($class)) {
-					include($File->pwd());
-				}
-				if (class_exists($class)) {
-					break;
+		$objects = Configure::listObjects('class', $path);
+		if (in_array($class, $objects)) {
+			if (in_array($type, array('behavior', 'component', 'helper')) && $type !== $file) {
+				if (!preg_match('/' . Inflector::camelize($type) . '$/', $class)) {
+					$class .= Inflector::camelize($type);
 				}
 			}
 
-			$File = null;
+		} else {
+			$this->err(sprintf(__("%s not found", true), $class));
+			exit();
 		}
 
-		if (empty($File)) {
-			$this->err(sprintf(__('No file for class %s could be found', true), $class));
-			return;
-		}
-
-		$parsed = $this->__parseClass($File, $class);
+		$parsed = $this->__parseClass($path . $file .'.php');
 
 		if (!empty($parsed)) {
-			$this->out(ucwords($class));
-			$this->hr();
+			if (isset($this->params['m'])) {
+				if (!isset($parsed[$this->params['m']])) {
+					$this->err(sprintf(__("%s::%s() could not be found", true), $class, $this->params['m']));
+					exit();
+				}
+				$method = $parsed[$this->params['m']];
+				$this->out($class .'::'.$method['method'] . $method['parameters']);
+				$this->hr();
+				$this->out($method['comment'], true);
+			} else {
+				$this->out(ucwords($class));
+				$this->hr();
+				$i = 0;
+				foreach ($parsed as $method) {
+					$list[] = ++$i . ". " . $method['method'] . $method['parameters'];
+				}
+				$this->out($list);
 
-			foreach ($parsed as $method) {
-				$this->out("\t" . $method['method'] . "(" . $method['parameters'] . ")", true);
+				$methods = array_keys($parsed);
+				while ($number = $this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.', true), null, 'q')) {
+					if ($number === 'q') {
+						$this->out(__('Done', true));
+						exit();
+					}
+
+					if ($number === 'l') {
+						$this->out($list);
+					}
+
+					if (isset($methods[--$number])) {
+						$method = $parsed[$methods[$number]];
+						$this->hr();
+						$this->out($class .'::'.$method['method'] . $method['parameters']);
+						$this->hr();
+						$this->out($method['comment'], true);
+					}
+				}
 			}
 		}
 	}
@@ -142,13 +147,13 @@ class ApiShell extends Shell {
  * @access public
  */
 	function help() {
-		$head  = "Usage: cake api [<path>] <className>\n";
+		$head  = "Usage: cake api [<type>] <className> <-m method>\n";
 		$head .= "-----------------------------------------------\n";
 		$head .= "Parameters:\n\n";
 
 		$commands = array(
-			'path' => "\t<path>\n" .
-						"\t\tEither a full path or an indicator on where the class is stored.\n".
+			'path' => "\t<type>\n" .
+						"\t\tEither a full path or type of class (model, behavior, controller, component, view, helper).\n".
 						"\t\tAvailable values:\n\n".
 						"\t\tbehavior\tLook for class in CakePHP behavior path\n".
 						"\t\tcache\tLook for class in CakePHP cache path\n".
@@ -182,55 +187,32 @@ class ApiShell extends Shell {
  * @return array Methods and signatures indexed by method name
  * @access private
  */
-	function __parseClass(&$File, $class) {
+	function __parseClass($path) {
 		$parsed = array();
 
-		$methods = am(array(), array_diff(get_class_methods($class), get_class_methods(get_parent_class($class))));
+		$File = new File($path);
+		if (!$File->exists()) {
+			$this->err(sprintf(__("%s could not be found", true), $File->name));
+			exit();
+		}
 
 		$contents = $File->read();
 
-		foreach ($methods as $method) {
-			if (strpos($method, '__') !== 0 && strpos($method, '_') !== 0) {
-				$regex = '/\s+function\s+(' . preg_quote($method, '/') . ')\s*\(([^{]*)\)\s*{/is';
+		if (preg_match_all('%(/\\*\\*[\\s\\S]*?\\*/)(\\s+function\\s+\\w+)(\\(.+\\))%', $contents, $result, PREG_PATTERN_ORDER)) {
+			foreach($result[2] as $key => $method) {
+				$method = str_replace('function ', '', trim($method));
 
-				if (preg_match($regex, $contents, $matches)) {
+				if (strpos($method, '__') === false && strpos($method, '_') !== 0) {
 					$parsed[$method] = array(
-							'method' => trim($matches[1]),
-							'parameters' => trim($matches[2])
-					);
+											'comment' => r(array('/*', '*/', '*'), '', trim($result[1][$key])),
+											'method' => $method,
+											'parameters' => trim($result[3][$key]),
+											);
 				}
 			}
 		}
-		sort($parsed);
+		ksort($parsed);
 		return $parsed;
-	}
-
-/**
- * Load dependencies for given element (controller/component/helper)
- *
- * @param string $element Element to load dependency for
- * @access private
- */
-	function __loadDependencies($element) {
-		switch(low($element)) {
-			case 'behavior':
-				loadModel(null);
-				loadBehavior(null);
-				break;
-			case 'controller':
-				loadController(null);
-				break;
-			case 'component':
-				loadComponent(null);
-				break;
-			case 'helper':
-				uses('view'.DS.'helper');
-				loadHelper(null);
-				break;
-			case 'model':
-				loadModel(null);
-				break;
-		}
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: l10n.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: l10n.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -388,7 +388,7 @@ class L10n extends Object {
 	function __autoLanguage() {
 		$_detectableLanguages = split ('[,;]', env('HTTP_ACCEPT_LANGUAGE'));
 		foreach ($_detectableLanguages as $key => $langKey) {
-			$langKey = low($langKey);
+			$langKey = strtolower($langKey);
 			if (isset($this->__l10nCatalog[$langKey])) {
 
 				$this->language = $this->__l10nCatalog[$langKey]['language'];
@@ -399,7 +399,7 @@ class L10n extends Object {
 				$this->charset = $this->__l10nCatalog[$langKey]['charset'];
 
 				if ($this->default) {
-					$this->languagePath[2] = $this->__l10nCatalog[$this->default]['localeFallback'];
+					$this->languagePath[2] = $this->__l10nCatalog[$this->__l10nMap[$this->default]]['localeFallback'];
 				}
 				$this->found = true;
 				Configure::write('Config.language', $this->lang);

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: class_registry.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: class_registry.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Class collections.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -63,6 +63,94 @@ class ClassRegistry {
 			$instance[0] =& new ClassRegistry();
 		}
 		 return $instance[0];
+	}
+/**
+ * Loads a class, registers the object in the registry and returns instance of the object.
+ *
+ *
+ * @param mixed $class as a string or a single key => value array instance will be created, stored in the registry and returned.
+ *   Required: array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass');
+ *   Model Classes can accept optional array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);
+ * When $class is a numeric keyed array, multiple class instances will be stored in the registry, no instance of the object will be returned
+ *   array(
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'));
+ *
+ * @param string $type TypeOfClass
+ * @return object intance of ClassName
+ */
+	function &init($class, $type = null) {
+		$_this =& ClassRegistry::getInstance();
+		$id = $false = false;
+		$table = $ds = $alias = $plugin = null;
+		$options = null;
+		$true = true;
+		if (!$type) {
+			$type = 'Model';
+		}
+
+		if (is_array($class)) {
+			$objects = $class;
+			if (!isset($class[0])) {
+				$objects = array($class);
+			}
+		} else {
+			$objects = array(array('class' => $class));
+		}
+
+		$count = count($objects);
+		foreach ($objects as $key => $settings) {
+			if (is_array($settings)) {
+				$plugin = null;
+				$settings = array_merge(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null), $settings);
+
+				extract($settings, EXTR_OVERWRITE);
+
+				if (strpos($class, '.') !== false) {
+					list($plugin, $class) = explode('.', $class);
+					$plugin = $plugin . '.';
+				}
+
+				if (empty($alias)) {
+					$alias = $class;
+				}
+
+				if ($_this->_duplicate($alias, $class) && $count == 1) {
+					$_this->map($alias, $class);
+					return $_this->getObject($alias);
+				}
+
+				if ($type === 'Model') {
+					$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
+				}
+				if (App::import($type, $plugin . $class)) {
+					${$class} =& new $class($options);
+				} elseif ($type === 'Model') {
+					${$class} =& new AppModel($options);
+				}
+
+				if (!isset(${$class})) {
+					trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', true), $class, $type), E_USER_WARNING);
+					return $false;
+				}
+
+				if ($type !== 'Model') {
+					$_this->addObject($alias, ${$class});
+				} else {
+					$_this->map($alias, $class);
+				}
+			} elseif (is_numeric($settings)) {
+				trigger_error(__('(ClassRegistry::init() Attempted to create instance of a class with a numeric name', true), E_USER_WARNING);
+				return $false;
+			}
+		}
+
+		if ($count > 1) {
+			return $true;
+		}
+
+		return ${$class};
 	}
 /**
  * Add $object to the registry, associating it with the name $key.
@@ -145,6 +233,26 @@ class ClassRegistry {
 		return $return;
 	}
 /**
+ * Checks to see if $alias is a duplicate $class Object
+ *
+ * @param string $alias
+ * @param string $class
+ * @return boolean
+ */
+	function _duplicate($alias,  $class) {
+		$_this =& ClassRegistry::getInstance();
+		$duplicate = false;
+
+		if ($_this->isKeySet($alias)) {
+			$model = $_this->getObject($alias);
+			if (is_a($model, $class)) {
+				$duplicate = true;
+			}
+			unset($model);
+		}
+		return $duplicate;
+	}
+/**
  * Add a key name pair to the registry to map name to class in the regisrty.
  *
  * @param string $key Key to include in map
@@ -183,7 +291,7 @@ class ClassRegistry {
 		}
 	}
 /**
- * Flushes all objects from the ClassREgistry.
+ * Flushes all objects from the ClassRegistry.
  *
  * @access public
  */

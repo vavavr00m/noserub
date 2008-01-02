@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: time.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: time.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * Time Helper class file.
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -35,18 +35,6 @@
  * @subpackage	cake.cake.libs.view.helpers
  */
 class TimeHelper extends AppHelper {
-
-/**
- * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
- *
- * @param string $string String to trim
- * @param integer $length Length of returned string, excluding ellipsis
- * @param string $ending Ending to be appended after trimmed string
- * @return string Trimmed string
- */
-	function trim($string, $length, $ending = '..') {
-		return substr($string, 0, $length) . (strlen($string) > $length ? $ending : null);
-	}
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
@@ -140,8 +128,7 @@ class TimeHelper extends AppHelper {
  */
 	function isToday($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', time());
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
 /**
  * Returns true if given datetime string is within this week
@@ -169,8 +156,7 @@ class TimeHelper extends AppHelper {
  */
 	function isThisYear($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y', $date) == date('Y', time());
-		return $this->output($ret);
+		return  date('Y', $date) == date('Y', time());
 	}
 /**
  * Returns true if given datetime string was yesterday.
@@ -180,8 +166,7 @@ class TimeHelper extends AppHelper {
  */
 	function wasYesterday($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
 /**
  * Returns true if given datetime string is tomorrow.
@@ -191,8 +176,41 @@ class TimeHelper extends AppHelper {
  */
 	function isTomorrow($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
+	}
+/**
+ * Returns the quart
+ * @param string $date_string
+ * @param boolean $range if true returns a range in Y-m-d format
+ * @return boolean True if datetime string is within current week
+ */
+	function toQuarter($date_string, $range = false) {
+		$time = $this->fromString($date_string);
+		$date = ceil(date('m', $time) / 3);
+
+		if ($range === true) {
+			$range = 'Y-m-d';
+		}
+
+		if ($range !== false) {
+			$year = date('Y', $time);
+
+			switch ($date) {
+				case 1:
+					$date = array($year.'-01-01', $year.'-03-31');
+					break;
+				case 2:
+					$date = array($year.'-04-01', $year.'-06-30');
+					break;
+				case 3:
+					$date = array($year.'-07-01', $year.'-09-30');
+					break;
+				case 4:
+					$date = array($year.'-10-01', $year.'-12-31');
+					break;
+			}
+		}
+		return $this->output($date);
 	}
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
@@ -201,7 +219,7 @@ class TimeHelper extends AppHelper {
  * @return integer Unix timestamp
  */
 	function toUnix($date_string) {
-		$ret = strtotime($date_string);
+		$ret = $this->fromString($date_string);
 		return $this->output($ret);
 	}
 /**
@@ -222,7 +240,7 @@ class TimeHelper extends AppHelper {
  * @return string Formatted date string
  */
 	function toRSS($date_string) {
-		$date = TimeHelper::fromString($date_string);
+		$date = $this->fromString($date_string);
 		$ret = date("r", $date);
 		return $this->output($ret);
 	}
@@ -241,23 +259,41 @@ class TimeHelper extends AppHelper {
  * like 'Posted ' before the function output.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @param string $format Default format if timestamp is used in $date_string
+ * @param array $options Default format if timestamp is used in $date_string
  * @param string $backwards False if $date_string is in the past, true if in the future
  * @return string Relative time string.
  */
-	function timeAgoInWords($datetime_string, $format = 'j/n/y', $backwards = false) {
-		$datetime = $this->fromString($datetime_string);
+	function timeAgoInWords($datetime_string, $options = array(), $backwards = null) {
+		$in_seconds = $this->fromString($datetime_string);
 
-		$in_seconds = $datetime;
-
-		if ($backwards) {
-			$diff = $in_seconds - time();
-		} else {
-			$diff = time() - $in_seconds;
+		if ($backwards === null && $in_seconds > time()) {
+			$backwards = true;
 		}
 
-		$months = floor($diff / 2419200);
-		$diff -= $months * 2419200;
+		$format = 'j/n/y';
+		$end = '+1 month';//when to show format
+
+		if (is_array($options)) {
+			if (isset($options['format'])) {
+				$format = $options['format'];
+				unset($options['format']);
+			}
+			if (isset($options['end'])) {
+				$end = $options['end'];
+				unset($options['end']);
+			}
+		} else {
+			$format = $options;
+		}
+
+		if ($backwards) {
+			$start = abs($in_seconds - time());
+		} else {
+			$start = abs(time() - $in_seconds);
+		}
+
+		$months = floor($start / 2638523.0769231);
+		$diff = $start - $months * 2638523.0769231;
 		$weeks = floor($diff / 604800);
 		$diff -= $weeks * 604800;
 		$days = floor($diff / 86400);
@@ -268,41 +304,41 @@ class TimeHelper extends AppHelper {
 		$diff -= $minutes * 60;
 		$seconds = $diff;
 
-		if ($months > 0) {
-			// over a month old, just show date (mm/dd/yyyy format)
-			$relative_date = 'on ' . date($format, $in_seconds);
-			$old = true;
-		} else {
-			$relative_date = '';
-			$old = false;
+		$relative_date = '';
 
-			if ($weeks > 0) {
+		if ($start > abs(time() - $this->fromString($end))) {
+			$relative_date = 'on ' . date($format, $in_seconds);
+		} else {
+			if (abs($months) > 0) {
+				// months, weeks and days
+				$relative_date .= ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($weeks) > 0) {
 				// weeks and days
 				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
 				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
-			} elseif ($days > 0) {
+			} elseif (abs($days) > 0) {
 				// days and hours
 				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
 				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-			} elseif ($hours > 0) {
+			} elseif (abs($hours) > 0) {
 				// hours and minutes
 				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
 				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-			} elseif ($minutes > 0) {
+			} elseif (abs($minutes) > 0) {
 				// minutes only
 				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
 			} else {
 				// seconds only
 				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
-		}
 
-		$ret = $relative_date;
-		// show relative date and add proper verbiage
-		if (!$backwards && !$old) {
-			$ret .= ' ago';
+			if (!$backwards) {
+				$relative_date .= ' ago';
+			}
 		}
-		return $this->output($ret);
+		return $this->output($relative_date);
 	}
 /**
  * Alias for timeAgoInWords, but can also calculate dates in the future
@@ -365,13 +401,12 @@ class TimeHelper extends AppHelper {
 			case "weeks":
 			case "week":
 				$weeks = floor($seconds / 604800);
-
 				$timePeriod = $weeks;
 			break;
 
 			case "months":
 			case "month":
-				$months = floor($seconds / 2629743.83);
+				$months = floor($seconds / 2638523.0769231);
 				$timePeriod = $months;
 			break;
 
@@ -395,7 +430,12 @@ class TimeHelper extends AppHelper {
 
 		return $this->output($ret);
 	}
-
+/**
+ * Returns gmt, given either a UNIX timestamp or a valid strtotime() date string.
+ *
+ * @param string $date_string Datetime string
+ * @return string Formatted date string
+ */
 	function gmt($string = null) {
 		if ($string != null) {
 			$string = $this->fromString($string);
@@ -413,7 +453,12 @@ class TimeHelper extends AppHelper {
 		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
 		return $return;
 	}
-
+/**
+ * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ *
+ * @param string $date_string Datetime string
+ * @return string Formatted date string
+ */
 	function format($format = 'd-m-Y', $date) {
 		return date($format, $this->fromString($date));
 	}

@@ -1,6 +1,6 @@
 #!/usr/bin/php -q
 <?php
-/* SVN FILE: $Id: cake.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: cake.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007,	Cake Software Foundation, Inc.
+ * Copyright 2005-2008,	Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console
@@ -362,7 +362,7 @@ class ShellDispatcher {
 		}
 		$result = fgets($this->stdin);
 
-		if($result === false){
+		if ($result === false){
 			exit;
 		}
 		$result = trim($result);
@@ -403,14 +403,7 @@ class ShellDispatcher {
  * @access public
  */
 	function parseParams($params) {
-		$out = array();
-		for ($i = 0; $i < count($params); $i++) {
-			if (strpos($params[$i], '-') === 0) {
-				$this->params[substr($params[$i], 1)] = str_replace('"', '', $params[++$i]);
-			} else {
-				$this->args[] = $params[$i];
-			}
-		}
+		$this->__parseParams($params);
 
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
@@ -436,6 +429,37 @@ class ShellDispatcher {
 		$working = str_replace(DS . DS, DS, $root . DS . $app);
 
 		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $working));
+	}
+/**
+ * Helper for recursively paraing params
+ *
+ * @return array params
+ * @access private
+ */
+	function __parseParams($params) {
+		$count = count($params);
+		for ($i = 0; $i < $count; $i++) {
+			if (isset($params[$i])) {
+				if ($params[$i]{0} === '-') {
+					$key = substr($params[$i], 1);
+					$this->params[$key] = true;
+					unset($params[$i]);
+					if (isset($params[++$i])) {
+						if ($params[$i]{0} !== '-') {
+							$this->params[$key] = str_replace('"', '', $params[$i]);
+							unset($params[$i]);
+						} else {
+							$i--;
+							$this->__parseParams($params);
+						}
+					}
+				} else {
+					$this->args[] = $params[$i];
+					unset($params[$i]);
+				}
+
+			}
+		}
 	}
 /**
  * Removes first argument and shifts other arguments up
@@ -471,7 +495,7 @@ class ShellDispatcher {
 		$this->stdout("\nAvailable Shells:");
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
-				$shells = listClasses($path);
+				$shells = Configure::listObjects('file', $path);
 				$path = r(CORE_PATH, '', $path);
 				$this->stdout("\n " . $path . ":");
 				if (empty($shells)) {

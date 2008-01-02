@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_fixture.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: cake_test_fixture.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake
  * @subpackage		cake.cake.tests.libs
@@ -54,7 +54,6 @@ class CakeTestFixture extends Object {
  *
  */
 	function init() {
-
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
 
@@ -70,9 +69,7 @@ class CakeTestFixture extends Object {
 				$model =& new $import['model'];
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
-				$this->table = $this->useTable;
-				$schema = $model->schema(true);
-				$this->fields = $schema->value;
+				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 			} elseif (isset($import['table'])) {
 				$model =& new Model(null, $import['table'], $import['connection']);
@@ -81,8 +78,7 @@ class CakeTestFixture extends Object {
 				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
 				$model->table = $import['table'];
 				$model->tablePrefix = $db->config['prefix'];
-				$schema = $model->schema(true);
-				$this->fields = $schema->value;
+				$this->fields = $model->schema(true);
 			}
 
 			if ($import['records'] !== false && isset($model) && isset($db)) {
@@ -91,7 +87,7 @@ class CakeTestFixture extends Object {
 				$query = array(
 					'fields' => array_keys($this->fields),
 					'table' => $db->name($model->table),
-					'alias' => $model->name,
+					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,
 					'limit' => null
@@ -101,10 +97,10 @@ class CakeTestFixture extends Object {
 					$query['fields'][$index] = $db->name($query['alias']) . '.' . $db->name($field);
 				}
 
-				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->name);
+				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
 
 				if ($records !== false && !empty($records)) {
-					$this->records = Set::extract($records, '{n}.' . $model->name);
+					$this->records = Set::extract($records, '{n}.' . $model->alias);
 				}
 			}
 		}
@@ -155,20 +151,6 @@ class CakeTestFixture extends Object {
 			$this->_drop = $this->db->dropSchema($this->Schema);
 		}
 		return $this->_drop;
-	}
-/**
- * Run after each tests is executed, should return SQL statement to empty of records the table for this fixture.
- *
- * @return string	SQL TRUNCATE TABLE statement, false if not applicable.
- *
- * @access public
- */
-	function truncate() {
-		if (!isset($this->_truncate)) {
-			$this->_truncate = 'TRUNCATE TABLE ' . $this->db->name($this->db->config['prefix'] . $this->table);
-		}
-
-		return $this->_truncate;
 	}
 /**
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table of this fixture.

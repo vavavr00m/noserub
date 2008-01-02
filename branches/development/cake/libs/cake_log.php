@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_log.php 5135 2007-05-20 06:50:08Z phpnut $ */
+/* SVN FILE: $Id: cake_log.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Logging.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -40,9 +40,6 @@
  */
 	if (!defined('LOG_WARNING')) {
 		define('LOG_WARNING', 3);
-	}
-	if (!defined('LOG_ERR')) {
-		define('LOG_ERR', LOG_ERROR);
 	}
 	if (!defined('LOG_NOTICE')) {
 		define('LOG_NOTICE', 4);
@@ -69,6 +66,12 @@ class CakeLog {
  * @access public
  */
 	function write($type, $msg) {
+		if (!defined('LOG_ERROR')) {
+			define('LOG_ERROR', 2);
+		}
+		if (!defined('LOG_ERR')) {
+			define('LOG_ERR', LOG_ERROR);
+		}
 		$levels = array(
 			LOG_WARNING => 'warning',
 			LOG_NOTICE => 'notice',
@@ -90,8 +93,10 @@ class CakeLog {
 			$filename = LOGS . $type . '.log';
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
-		$log = new File($filename);
-		return $log->append($output);
+		$log = new File($filename, true);
+		if ($log->writable()) {
+			return $log->append($output);
+		}
 	}
 }
 ?>

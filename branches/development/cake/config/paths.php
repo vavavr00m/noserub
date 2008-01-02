@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: paths.php 5318 2007-06-20 09:01:21Z phpnut $ */
+/* SVN FILE: $Id: paths.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.app.config
@@ -111,7 +111,9 @@
 /**
  * Path to the tests directory.
  */
+if (!defined('TESTS')) {
 	define ('TESTS', APP.'tests'.DS);
+}
 /**
  * Path to the controller test directory.
  */
@@ -135,7 +137,9 @@
 /**
  * Path to the temporary files directory.
  */
+if (!defined('TMP')) {
 	define ('TMP', APP.'tmp'.DS);
+}
 /**
  * Path to the logs directory.
  */
@@ -147,7 +151,9 @@
 /**
  * Path to the vendors directory.
  */
+if (!defined('VENDORS')) {
 	define ('VENDORS', CAKE_CORE_INCLUDE_PATH.DS.'vendors'.DS);
+}
 /**
  * Path to the Pear directory
  * The purporse is to make it easy porting Pear libs into Cake
@@ -171,13 +177,19 @@
 /**
  * Web path to the public images directory.
  */
+if (!defined('IMAGES_URL')) {
 	define ('IMAGES_URL', 'img/');
+}
 /**
  * Web path to the CSS files directory.
  */
+if (!defined('CSS_URL')) {
 	define ('CSS_URL', 'css/');
+}
 /**
  * Web path to the js files directory.
  */
+if (!defined('JS_URL')) {
 	define ('JS_URL', 'js/');
+}
 ?>

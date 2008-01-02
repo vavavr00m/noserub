@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mssql.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_mssql.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * MS SQL layer for DBO
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -73,7 +73,6 @@ class DboMssql extends DboSource {
 		'password' => '',
 		'database' => 'cake',
 		'port' => '1433',
-		'connect' => 'mssql_pconnect'
 	);
 /**
  * MS SQL column definition
@@ -136,7 +135,12 @@ class DboMssql extends DboSource {
 		} else {
 			$port = '\\' . $config['port'];	// Named pipe
 		}
-		$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+
+		if (!$config['persistent'] || (isset($config['connect']) && $config['connect'] === 'mssql_connect')) {
+			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password'], true);
+		} else {
+			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+		}
 
 		if (mssql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
@@ -206,11 +210,11 @@ class DboMssql extends DboSource {
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
 
 		foreach ($cols as $column) {
-			$fields[] = array(
-				'name' => $column[0]['Field'],
+			$fields[$column[0]['Field']] = array(
 				'type' => $this->column($column[0]['Type']),
-				'null' => (up($column[0]['Null']) == 'YES'),
-				'default' => $column[0]['Default']
+				'null' => (strtoupper($column[0]['Null']) == 'YES'),
+				'default' => $column[0]['Default'],
+				'length' => intval($column[0]['Length']),
 			);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
@@ -241,11 +245,16 @@ class DboMssql extends DboSource {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
+			case 'datetime':
+				if ($data && (($timestamp = strtotime($data)) !== false)) {
+					$data =	date('Y-m-d\TH:i:s', $timestamp);
+				}
+			break;
 			default:
 				if (get_magic_quotes_gpc()) {
-					$data = stripslashes(r("'", "''", $data));
+					$data = stripslashes(str_replace("'", "''", $data));
 				} else {
-					$data = r("'", "''", $data);
+					$data = str_replace("'", "''", $data);
 				}
 			break;
 		}
@@ -265,7 +274,7 @@ class DboMssql extends DboSource {
  */
 	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->name;
+			$alias = $model->alias;
 		}
 		$fields = parent::fields($model, $alias, $fields, false);
 		$count = count($fields);
@@ -359,7 +368,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (strpos(low($error), 'changed database') === false) {
+			if (strpos(strtolower($error), 'changed database') === false) {
 				return $error;
 			}
 		}
@@ -435,7 +444,7 @@ class DboMssql extends DboSource {
 			}
 			return $col;
 		}
-		$col                = r(')', '', $real);
+		$col                = str_replace(')', '', $real);
 		$limit              = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -501,20 +510,26 @@ class DboMssql extends DboSource {
 /**
  * Builds final SQL statement
  *
+ * @param string $type Query type
  * @param array $data Query data
  * @return string
  */
-	function renderStatement($data) {
+	function renderStatement($type, $data) {
 		extract($data);
-		if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
-			$limit = preg_replace('/\s*offset.*$/i', '', $limit);
-			preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
-			$offset = intval($offset[1]) + intval($limitVal[1]);
-			$rOrder = $this->__switchSort($order);
-			list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
-			return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
+
+		if (strtolower($type) == 'select') {
+			if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
+				$limit = preg_replace('/\s*offset.*$/i', '', $limit);
+				preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
+				$offset = intval($offset[1]) + intval($limitVal[1]);
+				$rOrder = $this->__switchSort($order);
+				list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
+				return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
+			} else {
+				return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
+			}
 		} else {
-			return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
+			return parent::renderStatement($type, $data);
 		}
 	}
 /**
@@ -588,11 +603,8 @@ class DboMssql extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
-		}
+		parent::__insertMulti($table, $fields, $values);
 	}
-
 }
+
 ?>

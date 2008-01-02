@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: auth.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: auth.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * Authentication component
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
@@ -164,7 +164,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $loginError = '';
+	var $loginError = null;
 /**
  * Error to display when user attempts to access an object or action to which they do not have
  * acccess.
@@ -172,7 +172,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $authError = '';
+	var $authError = null;
 /**
  * Determines whether AuthComponent will automatically redirect and exit if login is successful.
  *
@@ -225,13 +225,11 @@ class AuthComponent extends Object {
 	function initialize(&$controller) {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
-		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
-		$this->loginError = __('Login failed.  Invalid username or password.', true);
-		$this->authError = __('You are not authorized to access that location.', true);
+		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
 
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin)) {
-			$this->actionMap = am($this->actionMap, array(
+			$this->actionMap = array_merge($this->actionMap, array(
 				$admin . '_index'	=> 'read',
 				$admin . '_add'		=> 'create',
 				$admin . '_edit'	=> 'update',
@@ -256,7 +254,15 @@ class AuthComponent extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
+		if (!$this->loginError) {
+			$this->loginError = __('Login failed. Invalid username or password.', true);
+		}
+
+		if (!$this->authError) {
+			$this->authError = __('You are not authorized to access that location.', true);
+		}
+
+		if (strtolower($controller->name) == 'app' || (strtolower($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
 
@@ -276,8 +282,8 @@ class AuthComponent extends Object {
 			$url = $controller->params['url']['url'];
 		}
 
-		$this->loginAction = $this->_normalizeURL($this->loginAction);
-		if ($this->loginAction == $this->_normalizeURL($url)) {
+		$this->loginAction = Router::normalize($this->loginAction);
+		if ($this->loginAction == Router::normalize($url)) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
@@ -338,9 +344,6 @@ class AuthComponent extends Object {
 						}
 					}
 					$type = array('model' => $object);
-				break;
-				default:
-					return true;
 				break;
 			}
 
@@ -419,7 +422,7 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "%s" in controller "%s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
+					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
 				} else {
 					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
@@ -492,7 +495,10 @@ class AuthComponent extends Object {
 		if (empty($args)) {
 			$this->allowedActions = array('*');
 		} else {
-			$this->allowedActions = am($this->allowedActions, $args);
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
+			}
+			$this->allowedActions = array_merge($this->allowedActions, $args);
 		}
 	}
 /**
@@ -571,7 +577,7 @@ class AuthComponent extends Object {
 		$this->Session->del($this->sessionKey);
 		$this->Session->del('Auth.redirect');
 		$this->_loggedIn = false;
-		return $this->_normalizeURL($this->logoutRedirect);
+		return Router::normalize($this->logoutRedirect);
 	}
 /**
  * Get the current user from the session.
@@ -611,13 +617,13 @@ class AuthComponent extends Object {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if ($this->_normalizeURL($redir) == $this->loginAction) {
+			if (Router::normalize($redir) == $this->loginAction) {
 				$redir = $this->loginRedirect;
 			}
 		} else {
 			$redir = $this->loginRedirect;
 		}
-		return $this->_normalizeURL($redir);
+		return Router::normalize($redir);
 	}
 /**
  * Validates a user against an abstract object.
@@ -634,7 +640,6 @@ class AuthComponent extends Object {
  */
 	function validate($object, $user = null, $action = null) {
 		if (empty($user)) {
-			$this->getModel();
 			$user = $this->user();
 		}
 		if (empty($user)) {
@@ -652,7 +657,7 @@ class AuthComponent extends Object {
  * @access public
  */
 	function action($action = ':controller/:action') {
-		return r(
+		return str_replace(
 			array(':controller', ':action'),
 			array(Inflector::camelize($this->params['controller']), $this->params['action']),
 			$this->actionPath . $action
@@ -671,25 +676,15 @@ class AuthComponent extends Object {
 		if (!$name) {
 			$name = $this->userModel;
 		}
-		if (!ClassRegistry::isKeySet($name)) {
-			if (!loadModel(Inflector::underscore($name))) {
-				trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
-				return $model;
-			} else {
-				$model = new $name();
-			}
+
+		if (PHP5) {
+			$model = ClassRegistry::init($name);
+		} else {
+			$model =& ClassRegistry::init($name);
 		}
 
 		if (empty($model)) {
-			if (PHP5) {
-				$model = ClassRegistry::getObject($name);
-			} else {
-				$model =& ClassRegistry::getObject($name);
-			}
-		}
-
-		if (empty($model)) {
-			trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
+			trigger_error(__('Auth::getModel() - Model is not set or could not be found', true), E_USER_WARNING);
 			return null;
 		}
 
@@ -698,12 +693,20 @@ class AuthComponent extends Object {
 /**
  * Identifies a user based on specific criteria.
  *
- * @param mixed  $user    Optional.  The identity of the user to be validated.
- *                        Uses the current user session if none specified.
+ * @param mixed $user Optional. The identity of the user to be validated.
+ *              Uses the current user session if none specified.
+ * @param array $conditions Optional. Additional conditions to a find.
  * @return array User record data, or null, if the user could not be identified.
  * @access public
  */
-	function identify($user = null) {
+	function identify($user = null, $conditions = null) {
+		if ($conditions === false) {
+			$conditions = null;
+		} elseif (is_array($conditions)) {
+			$conditions = array_merge((array)$this->userScope, $conditions);
+		} else {
+			$conditions = $this->userScope;
+		}
 		if (empty($user)) {
 			$user = $this->user();
 			if (empty($user)) {
@@ -740,14 +743,13 @@ class AuthComponent extends Object {
 				return false;
 			}
 			$model =& $this->getModel();
-			$data = $model->find(am($find, $this->userScope), null, null, -1);
+			$data = $model->find(array_merge($find, $conditions), null, null, -1);
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
 		} elseif (is_numeric($user)) {
-			// Assume it's a user's ID
 			$model =& $this->getModel();
-			$data = $model->find(am(array($model->escapeField() => $user), $this->userScope));
+			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
 
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
@@ -801,30 +803,6 @@ class AuthComponent extends Object {
 		if ($this->_loggedIn) {
 			$this->Session->del('Auth.redirect');
 		}
-	}
-/**
- * Normalizes a URL
- *
- * @param string $url URL to normalize
- * @return string Normalized URL
- * @access protected
- */
-	function _normalizeURL($url = '/') {
-		if (is_array($url)) {
-			$url = Router::url($url);
-		}
-
-		$paths = Router::getPaths();
-		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = r($paths['base'], '', $url);
-		}
-
-		$url = '/' . $url . '/';
-
-		while (strpos($url, '//') !== false) {
-			$url = r('//', '/', $url);
-		}
-		return $url;
 	}
 }
 ?>

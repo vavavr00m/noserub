@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: inflector.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: inflector.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Pluralize and singularize English words.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -76,24 +76,24 @@ class Inflector extends Object {
 		$_this =& Inflector::getInstance();
 		$corePluralRules = array('/(s)tatus$/i' => '\1\2tatuses',
 									'/(quiz)$/i' => '\1zes',
-									'/^(ox)$/i' => '\1\2en', # ox
-									'/([m|l])ouse$/i' => '\1ice', # mouse, louse
-									'/(matr|vert|ind)(ix|ex)$/i'  => '\1ices', # matrix, vertex, index
-									'/(x|ch|ss|sh)$/i' => '\1es', # search, switch, fix, box, process, address
-									'/([^aeiouy]|qu)y$/i' => '\1ies', # query, ability, agency
-									'/(hive)$/i' => '\1s', # archive, hive
-									'/(?:([^f])fe|([lr])f)$/i' => '\1\2ves', # half, safe, wife
-									'/sis$/i' => 'ses', # basis, diagnosis
-									'/([ti])um$/i' => '\1a', # datum, medium
-									'/(p)erson$/i' => '\1eople', # person, salesperson
-									'/(m)an$/i' => '\1en', # man, woman, spokesman
-									'/(c)hild$/i' => '\1hildren', # child
-									'/(buffal|tomat)o$/i' => '\1\2oes', # buffalo, tomato
-									'/us$/' => 'uses', # us
-									'/(alias)$/i' => '\1es', # alias
-									'/(octop|vir)us$/i' => '\1i', # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
-									'/(ax|cri|test)is$/i' => '\1es', # axis, crisis
-									'/s$/' => 's',  # no change (compatibility)
+									'/^(ox)$/i' => '\1\2en',
+									'/([m|l])ouse$/i' => '\1ice',
+									'/(matr|vert|ind)(ix|ex)$/i'  => '\1ices',
+									'/(x|ch|ss|sh)$/i' => '\1es',
+									'/([^aeiouy]|qu)y$/i' => '\1ies',
+									'/(hive)$/i' => '\1s',
+									'/(?:([^f])fe|([lr])f)$/i' => '\1\2ves',
+									'/sis$/i' => 'ses',
+									'/([ti])um$/i' => '\1a',
+									'/(p)erson$/i' => '\1eople',
+									'/(m)an$/i' => '\1en',
+									'/(c)hild$/i' => '\1hildren',
+									'/(buffal|tomat)o$/i' => '\1\2oes',
+									'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
+									'/us$/' => 'uses',
+									'/(alias)$/i' => '\1es',
+									'/(ax|cri|test)is$/i' => '\1es',
+									'/s$/' => 's',
 									'/$/' => 's',);
 
 		$coreUninflectedPlural = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'Amoyese',
@@ -211,7 +211,7 @@ class Inflector extends Object {
 									'/(vert|ind)ices$/i' => '\1ex',
 									'/^(ox)en/i' => '\1',
 									'/(alias)(es)*$/i' => '\1',
-									'/([octop|vir])i$/i' => '\1us',
+									'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
 									'/(cris|ax|test)es$/i' => '\1is',
 									'/(shoe)s$/i' => '\1',
 									'/(o)es$/i' => '\1',

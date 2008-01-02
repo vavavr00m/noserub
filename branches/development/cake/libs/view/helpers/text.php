@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: text.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: text.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * Text Helper
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -100,9 +100,9 @@ class TextHelper extends AppHelper {
  */
 	function autoLinkUrls($text, $htmlOptions = array()) {
 		$options = 'array(';
-
 		foreach ($htmlOptions as $option => $value) {
-				$options .= "'$option' => '$value', ";
+				$value = var_export($value, true);
+				$options .= "'$option' => $value, ";
 		}
 		$options .= ')';
 
@@ -110,7 +110,7 @@ class TextHelper extends AppHelper {
 			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $options . ');'), $text);
 
 		return preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])#i',
-			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . low($matches[0]),' . $options . ');'), $text);
+			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . strtolower($matches[0]),' . $options . ');'), $text);
 	}
 /**
  * Adds email links (<a href="mailto:....) to a given text.
@@ -200,7 +200,7 @@ class TextHelper extends AppHelper {
 			$radius = strlen($phrase);
 		}
 
-		$pos = strpos(low($text), low($phrase));
+		$pos = strpos(strtolower($text), strtolower($phrase));
 		$startPos = ife($pos <= $radius, 0, $pos - $radius);
 		$endPos = ife($pos + strlen($phrase) + $radius >= strlen($text), strlen($text), $pos + strlen($phrase) + $radius);
 		$excerpt = substr($text, $startPos, $endPos - $startPos);

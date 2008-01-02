@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: bootstrap.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: bootstrap.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Basic Cake functionality.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake
@@ -29,9 +29,6 @@
 if (!defined('PHP5')) {
 	define ('PHP5', (phpversion() >= 5));
 }
-if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
-	define('SERVER_IIS', true);
-}
 /**
  * Configuration, directory layout and standard libraries
  */
@@ -43,25 +40,14 @@ if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
 	}
+	require LIBS . 'file.php';
 	require LIBS . 'cache.php';
 
 	Configure::getInstance();
 
-	if(Configure::read('Cache.disable') !== true) {
-		$cache = Cache::settings();
-		if(empty($cache)) {
-			trigger_error('Cache not configured. Please use Cache::config(); in APP/config/core.php', E_USER_WARNING);
-			Cache::config('default', array('engine' => 'File'));
-		}
-	}
-
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'string.php';
-
-
-	Configure::store(null, 'class.paths');
-	Configure::load('class.paths');
 
 	$url = null;
 	require CAKE . 'dispatcher.php';

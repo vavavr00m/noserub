@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: js.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: js.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * Javascript Generator class file.
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * Copyright 2006-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -185,7 +185,7 @@ class JsHelper extends Overloadable2 {
  */
 	function escape($string) {
 		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return r(array_keys($escape), array_values($escape), $string);
+		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 
 	function get__($name) {
@@ -333,8 +333,8 @@ class JsHelperObject {
 	function __call($name, $args) {
 		$data = '';
 
-		if (isset($this->__parent->effectMap[low($name)])) {
-			array_unshift($args, $this->__parent->effectMap[low($name)]);
+		if (isset($this->__parent->effectMap[strtolower($name)])) {
+			array_unshift($args, $this->__parent->effectMap[strtolower($name)]);
 			$name = 'effect';
 		}
 

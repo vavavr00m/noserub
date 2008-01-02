@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: model.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Database Storage engine for cache
  *
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.cache
@@ -33,13 +33,6 @@
  */
 class ModelEngine extends CacheEngine {
 /**
- * Model instance.
- *
- * @var object
- * @access private
- */
-	var $__Model = null;
-/**
  * settings
  * 		className = name of the model to use, default => Cache
  * 		fields = database fields that hold data and ttl, default => data, expires
@@ -48,6 +41,21 @@ class ModelEngine extends CacheEngine {
  * @access public
  */
 	var $settings = array();
+
+/**
+ * Model instance.
+ *
+ * @var object
+ * @access private
+ */
+	var $__Model = null;
+/**
+ * Model instance.
+ *
+ * @var object
+ * @access private
+ */
+	var $__fields = array();
 /**
  * Initialize the Cache Engine
  *
@@ -60,13 +68,16 @@ class ModelEngine extends CacheEngine {
  */
 	function init($settings) {
 		parent::init($settings);
-		$defaults = array('className'=> 'Cache', 'fields'=> array('data', 'expires'));
-		$this->settings = am($this->settings, $defaults, $settings);
-		if (!class_exists($this->settings['className']) && !loadModel($this->settings['className'])) {
-			$this->__Model = new $modelName();
+		$defaults = array('className'=> 'CacheModel', 'fields'=> array('data', 'expires'));
+		$this->settings = array_merge($this->settings, $defaults, $settings);
+		$className = $this->settings['className'];
+		$this->__fields = $this->settings['fields'];
+		if (App::import($className)) {
+			$this->__Model = ClassRegistry::init($className);
 		} else {
-			$this->__Model = new Model(array('name' => $this->settings['className']));
+			$this->__Model = new Model(array('name' => $className));
 		}
+		return true;
 	}
 /**
  * Garbage collection. Permanently remove all expired and deleted data
@@ -94,15 +105,15 @@ class ModelEngine extends CacheEngine {
 			return false;
 		}
 
-		$cache = array($this->__Model->name => array(
-							$this->__fields[0] => $data,
-							$this->__fields[1] => time() + $duration));
-
-		$oldId = $this->__Model->id;
-		$this->__Model->id = $key;
-		$res = $this->__Model->save($cache);
-		$this->__Model->id = $oldId;
-		return $res;
+		$cache = array('id' => $key,
+						$this->__fields[0] => $data,
+						$this->__fields[1] => time() + $duration
+					);
+		$result = false;
+		if ($this->__Model->save($cache)) {
+			$result = true;
+		}
+		return $result;
 	}
 /**
  * Read a key from the cache
@@ -117,7 +128,7 @@ class ModelEngine extends CacheEngine {
 			return false;
 		}
 		if (isset($this->settings['serialize'])) {
-		 	return unserialize($val);
+		 	return unserialize($data);
 		}
 		return $data;
 	}
@@ -138,7 +149,7 @@ class ModelEngine extends CacheEngine {
  * @access public
  */
 	function clear() {
-		return $this->__Model->deleteAll(null);
+		return $this->__Model->deleteAll('1=1');
 	}
 
 }

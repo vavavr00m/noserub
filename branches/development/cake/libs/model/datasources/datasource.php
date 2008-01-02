@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: datasource.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: datasource.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * DataSource base class
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources
@@ -42,13 +42,6 @@ class DataSource extends Object {
  * @access public
  */
 	var $connected = false;
-/**
- * Print debug info?
- *
- * @var boolean
- * @access public
- */
-	var $debug = false;
 /**
  * Print full query debug info?
  *
@@ -254,6 +247,30 @@ class DataSource extends Object {
 		return null;
 	}
 /**
+ * Begin a transaction
+ *
+ * @return boolean True
+ */
+	function begin() {
+		return true;
+	}
+/**
+ * Commit a transaction
+ *
+ * @return boolean True
+ */
+	function commit(&$model) {
+		return true;
+	}
+/**
+ * Rollback a transaction
+ *
+ * @return boolean True
+ */
+	function rollback(&$model) {
+		return true;
+	}
+/**
  * Converts column types to basic types
  *
  * @param string $real Real  column type (i.e. "varchar(255)")
@@ -408,9 +425,9 @@ class DataSource extends Object {
 			if (strpos($query, $key) !== false) {
 				switch($key) {
 					case '{$__cakeID__$}':
-						if (isset($data[$model->name]) || isset($data[$association])) {
-							if (isset($data[$model->name][$model->primaryKey])) {
-								$val = $data[$model->name][$model->primaryKey];
+						if (isset($data[$model->alias]) || isset($data[$association])) {
+							if (isset($data[$model->alias][$model->primaryKey])) {
+								$val = $data[$model->alias][$model->primaryKey];
 							} elseif (isset($data[$association][$model->primaryKey])) {
 								$val = $data[$association][$model->primaryKey];
 							}
@@ -435,8 +452,8 @@ class DataSource extends Object {
 									if (isset($assoc['foreignKey'])) {
 										$foreignKey = $assoc['foreignKey'];
 
-										if (isset($data[$model->name][$foreignKey])) {
-											$val = $data[$model->name][$foreignKey];
+										if (isset($data[$model->alias][$foreignKey])) {
+											$val = $data[$model->alias][$foreignKey];
 										} elseif (isset($data[$association][$foreignKey])) {
 											$val = $data[$association][$foreignKey];
 										} else {
@@ -462,7 +479,7 @@ class DataSource extends Object {
 				if (empty($val) && $val !== '0') {
 					return false;
 				}
-				$query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
+				$query = str_replace($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
 			}
 		}
 		return $query;
@@ -475,7 +492,7 @@ class DataSource extends Object {
  * @return unknown
  */
 	function resolveKey($model, $key) {
-		return $model->name . $key;
+		return $model->alias . $key;
 	}
 /**
  * Closes the current datasource.

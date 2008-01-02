@@ -1,11 +1,11 @@
 <?php
-/* SVN FILE: $Id: index.ctp 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: index.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -13,18 +13,18 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
  * @since			CakePHP(tm) v 1.2.0.5234
- * @version			$Revision: 5811 $
+ * @version			$Revision: 6311 $
  * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-10-20 01:39:14 -0500 (Sat, 20 Oct 2007) $
+ * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $pluralVar;?>">
+<div class="<?php echo $pluralVar;?> index">
 <h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
 <p>
 <?php echo "<?php
@@ -36,7 +36,7 @@ echo \$paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php  foreach ($fields as $field):?>
-	<th><?php echo "<?php echo \$paginator->sort('{$field['name']}');?>";?></th>
+	<th><?php echo "<?php echo \$paginator->sort('{$field}');?>";?></th>
 <?php endforeach;?>
 	<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
 </tr>
@@ -50,23 +50,19 @@ foreach (\${$pluralVar} as \${$singularVar}):
 	}
 ?>\n";
 	echo "\t<tr<?php echo \$class;?>>\n";
-
 		foreach ($fields as $field) {
-			if (in_array($field['name'], array_keys($foreignKeys))) {
-				$otherModelClass = $foreignKeys[$field['name']][1];
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				if (isset($foreignKeys[$field['name']][2])) {
-					$otherModelClass = $foreignKeys[$field['name']][2];
+			$isKey = false;
+			if(!empty($associations['belongsTo'])) {
+				foreach ($associations['belongsTo'] as $alias => $details) {
+					if($field === $details['foreignKey']) {
+						$isKey = true;
+						echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
+						break;
+					}
 				}
-				$otherVariableName = Inflector::variable($otherModelClass);
-				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$otherPrimaryKey = $otherModelObj->primaryKey;
-				$otherDisplayField = $otherModelObj->displayField;
-				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
-			} else {
-				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t</td>\n";
+			}
+			if($isKey !== true) {
+				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t</td>\n";
 			}
 		}
 
@@ -88,21 +84,18 @@ echo "<?php endforeach; ?>\n";
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo "<?php echo \$html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action'=>'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
 <?php
-		foreach ($foreignKeys as $field => $value) {
-			$otherModelClass = $value['1'];
-			if ($otherModelClass != $modelClass) {
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				$otherVariableName = Inflector::variable($otherModelClass);
-				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s',  true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+	$done = array();
+	foreach ($associations as $type => $data) {
+		foreach($data as $alias => $details) {
+			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";
+				$done[] = $details['controller'];
 			}
 		}
+	}
 ?>
 	</ul>
 </div>

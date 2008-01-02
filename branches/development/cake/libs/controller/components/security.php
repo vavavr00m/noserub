@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: security.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: security.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
@@ -135,7 +135,7 @@ class SecurityComponent extends Object {
 		$this->__authRequired($controller);
 		$this->__loginRequired($controller);
 
-		if ((!isset($controller->params['requested']) || $controller->params['requested'] != 1) && $this->RequestHandler->isPost()) {
+		if ((!isset($controller->params['requested']) || $controller->params['requested'] != 1) && ($this->RequestHandler->isPost() || $this->RequestHandler->isPut())) {
 			$this->__validatePost($controller);
 		}
 
@@ -190,7 +190,7 @@ class SecurityComponent extends Object {
 				$this->requireLogin[] = $arg;
 			}
 		}
-		$this->loginOptions = am($base, $this->loginOptions);
+		$this->loginOptions = array_merge($base, $this->loginOptions);
 
 		if (empty($this->requireLogin)) {
 			$this->requireLogin = array('*');
@@ -208,7 +208,7 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginCredentials($type = null) {
-		switch (low($type)) {
+		switch (strtolower($type)) {
 			case 'basic':
 				$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
 				if (!empty($login['username'])) {
@@ -246,12 +246,12 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginRequest($options = array()) {
-		$options = am($this->loginOptions, $options);
+		$options = array_merge($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
 		$auth = 'WWW-Authenticate: ' . ucfirst($options['type']);
 		$out = array('realm="' . $options['realm'] . '"');
 
-		if (low($options['type']) == 'digest') {
+		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
 			$out[] = 'nonce="' . uniqid() . '"'; //str_replace('-', '', String::uuid())
 			$out[] = 'opaque="' . md5($options['realm']).'"';
@@ -303,7 +303,7 @@ class SecurityComponent extends Object {
 	}
 /**
  * Black-hole an invalid request with a 404 error or custom callback. If SecurityComponent::$blackHoleCallback
- * is speicifed, it will use this callback by executing the method indicated in $error
+ * is specified, it will use this callback by executing the method indicated in $error
  *
  * @param object $controller Instantiating controller
  * @param string $error Error method
@@ -312,6 +312,8 @@ class SecurityComponent extends Object {
  * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
+		$this->Session->del('_Token');
+
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {
@@ -419,7 +421,7 @@ class SecurityComponent extends Object {
 					if (isset($this->loginOptions['login'])) {
 						$this->__callback($controller, $this->loginOptions['login'], array($login));
 					} else {
-						if (low($this->loginOptions['type']) == 'digest') {
+						if (strtolower($this->loginOptions['type']) == 'digest') {
 							// Do digest authentication
 							if ($login && isset($this->loginUsers[$login['username']])) {
 								if ($login['response'] == $this->generateDigestResponseHash($login)) {
@@ -578,15 +580,24 @@ class SecurityComponent extends Object {
 	function __generateToken(&$controller) {
 		if (!isset($controller->params['requested']) || $controller->params['requested'] != 1) {
 			$authKey = Security::generateAuthKey();
-			$expires = strtotime('+'.Security::inactiveMins().' minutes');
-			$token = array('key' => $authKey,
-								'expires' => $expires,
-								'allowedControllers' => $this->allowedControllers,
-								'allowedActions' => $this->allowedActions,
-								'disabledFields' => $this->disabledFields);
+			$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
+			$token = array(
+				'key' => $authKey,
+				'expires' => $expires,
+				'allowedControllers' => $this->allowedControllers,
+				'allowedActions' => $this->allowedActions,
+				'disabledFields' => $this->disabledFields
+			);
 
 			if (!isset($controller->data)) {
 				$controller->data = array();
+			}
+
+			if ($this->Session->check('_Token')) {
+				$tData = unserialize($this->Session->read('_Token'));
+				if (isset($tData['expires']) && $tData['expires'] > time() && isset($tData['key'])) {
+					$token['key'] = $tData['key'];
+				}
 			}
 			$controller->params['_Token'] = $token;
 			$this->Session->write('_Token', serialize($token));
@@ -600,13 +611,13 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __setLoginDefaults(&$options) {
-		$options = am(array(
+		$options = array_merge(array(
 			'type' => 'basic',
 			'realm' => env('SERVER_NAME'),
 			'qop' => 'auth',
 			'nonce' => String::uuid()
 		), array_filter($options));
-		$options = am(array('opaque' => md5($options['realm'])), $options);
+		$options = array_merge(array('opaque' => md5($options['realm'])), $options);
 	}
 /**
  * Calls a controller callback method

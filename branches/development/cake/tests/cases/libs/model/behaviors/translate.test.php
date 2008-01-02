@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.model.behaviors
@@ -58,8 +58,22 @@ class TranslatedItem extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
+class TranslatedItemWithTable extends CakeTestModel {
+	var $name = 'TranslatedItemWithTable';
+	var $useTable = 'translated_items';
+	var $cacheQueries = false;
+	var $actsAs = array('Translate' => array('content', 'title'));
+	var $translateModel = 'TranslateTestModel';
+	var $translateTable = 'another_i18n';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model.behaviors
+ */
 class TranslateTest extends CakeTestCase {
-	var $fixtures = array('core.translated_item', 'core.translate');
+	var $fixtures = array('core.translated_item', 'core.translate', 'core.translate_table');
 	var $Model = null;
 
 	function startCase() {
@@ -296,6 +310,19 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->save();
 		$result = $this->Model->read(null, $id);
 		$expected = array('TranslatedItem' => am($oldData, $newData, array('locale' => 'spa')));
+		$this->assertEqual($result, $expected);
+	}
+
+	function testAnotherTranslateTable() {
+		$Model =& new TranslatedItemWithTable();
+		$Model->locale = 'eng';
+		$result = $Model->read(null, 1);
+		$expected = array('TranslatedItemWithTable' => array(
+				'id' => 1,
+				'slug' => 'first_translated',
+				'locale' => 'eng',
+				'title' => 'Another Title #1',
+				'content' => 'Another Content #1'));
 		$this->assertEqual($result, $expected);
 	}
 }
