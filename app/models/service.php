@@ -5,6 +5,15 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
 
+    // TODO implement this method completely 
+    function detectService($url) {
+    	$services = $this->getAllServices();
+    	
+    	foreach ($services as $service) {
+    		$service->detectService($url);
+    	}
+    }
+    
     function getDomainFromString($url) {
     	if (strlen(trim($url)) < 4 || strpos($url, '.') === false) {
     		return false;
@@ -302,7 +311,21 @@ class Service extends AppModel {
         
         return array();
     }
-        
+
+    private function getAllServices() {
+    	$services = array();
+    	
+    	for ($i = 1; $i <= 53; $i++) {
+    		$service = $this->getService($i);
+    		
+    		if ($service) {
+    			$services[] = $service;
+    		}
+    	}
+
+    	return $services;
+    }
+    
     /**
      * Factory method to create services
      */
@@ -495,6 +518,7 @@ class ContactExtractor {
 }
 
 interface IService {
+	function detectService($url);
 	function getAccountUrl($username);
 	function getContacts($username);
 	function getContent($feeditem);
@@ -506,6 +530,10 @@ interface IService {
  * and overriding only the methods of interest.
  */
 abstract class ServiceAdapter implements IService {
+	
+	function detectService($url) {
+		return false;
+	}
 	
 	function getAccountUrl($username) {
 		return '';
@@ -554,7 +582,7 @@ class AimService extends ServiceAdapter {
 	}
 }
 
-class BloggerdeService implements IService {
+class BloggerdeService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.blogger.de/';
@@ -573,7 +601,7 @@ class BloggerdeService implements IService {
 	}
 }
 
-class CorkdService implements IService {
+class CorkdService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://corkd.com/people/'.$username.'/';
@@ -592,7 +620,7 @@ class CorkdService implements IService {
 	}
 }
 
-class DailymotionService implements IService {
+class DailymotionService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.dailymotion.com/'.$username.'/';
@@ -611,7 +639,7 @@ class DailymotionService implements IService {
 	}
 }
 
-class DeliciousService implements IService {
+class DeliciousService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://del.icio.us/'.$username;
@@ -630,7 +658,7 @@ class DeliciousService implements IService {
 	}
 }
 
-class DeviantartService implements IService {
+class DeviantartService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.deviantart.com';
@@ -649,7 +677,7 @@ class DeviantartService implements IService {
 	}
 }
 
-class DiggService implements IService {
+class DiggService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://digg.com/users/'.$username;
@@ -682,7 +710,7 @@ class FacebookService extends ServiceAdapter {
 	}
 }
 
-class FavesService implements IService {
+class FavesService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://faves.com/users/'.$username;
@@ -701,7 +729,7 @@ class FavesService implements IService {
 	}
 }
 
-class FlickrService implements IService {
+class FlickrService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.flickr.com/photos/'.$username.'/';
@@ -733,7 +761,7 @@ class FlickrService implements IService {
 	}
 }
 
-class FolkdService implements IService {
+class FolkdService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.folkd.com/user/'.$username;
@@ -773,7 +801,7 @@ class IcqService extends ServiceAdapter {
 	}
 }
 
-class IlikeService implements IService {
+class IlikeService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://ilike.com/user/'.$username;
@@ -792,7 +820,7 @@ class IlikeService implements IService {
 	}
 }
 
-class ImthereService implements IService {
+class ImthereService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://imthere.com/users/'.$username;
@@ -811,7 +839,7 @@ class ImthereService implements IService {
 	}
 }
 
-class IpernityService implements IService {
+class IpernityService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://ipernity.com/doc/'.$username.'/home/photo';
@@ -841,7 +869,7 @@ class JabberService extends ServiceAdapter {
 	}
 }
 
-class KulandoService implements IService {
+class KulandoService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.kulando.de';
@@ -867,7 +895,7 @@ class KulandoService implements IService {
 	}
 }
 
-class LastfmService implements IService {
+class LastfmService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.last.fm/user/'.$username.'/';
@@ -893,7 +921,7 @@ class LinkedinService extends ServiceAdapter {
 	}
 }
 
-class LivejournalService implements IService {
+class LivejournalService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.livejournal.com/';
@@ -912,7 +940,7 @@ class LivejournalService implements IService {
 	}
 }
 
-class MagnoliaService implements IService {
+class MagnoliaService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://ma.gnolia.com/people/'.$username.'/';
@@ -931,7 +959,7 @@ class MagnoliaService implements IService {
 	}
 }
 
-class MisterwongService implements IService {
+class MisterwongService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
@@ -950,7 +978,7 @@ class MisterwongService implements IService {
 	}
 }
 
-class MoodmillService implements IService {
+class MoodmillService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.moodmill.com/citizen/'.$username;
@@ -976,7 +1004,7 @@ class MsnService extends ServiceAdapter {
 	}
 }
 
-class NewsvineService implements IService {
+class NewsvineService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.newsvine.com/';
@@ -995,7 +1023,7 @@ class NewsvineService implements IService {
 	}
 }
 
-class OdeoService implements IService {
+class OdeoService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://odeo.com/profile/'.$username;
@@ -1021,7 +1049,7 @@ class OrkutService extends ServiceAdapter {
 	}
 }
 
-class PlazesService implements IService {
+class PlazesService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://plazes.com/users/'.$username;
@@ -1040,7 +1068,7 @@ class PlazesService implements IService {
 	}
 }
 
-class PownceService implements IService {
+class PownceService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://pownce.com/'.$username.'/';
@@ -1059,7 +1087,7 @@ class PownceService implements IService {
 	}
 }
 
-class QypeService implements IService {
+class QypeService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.qype.com/people/'.$username.'/';
@@ -1078,7 +1106,7 @@ class QypeService implements IService {
 	}
 }
 
-class RedditService implements IService {
+class RedditService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://reddit.com/user/'.$username;
@@ -1097,7 +1125,7 @@ class RedditService implements IService {
 	}
 }
 
-class ScribdService implements IService {
+class ScribdService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.scribd.com/people/view/'.$username;
@@ -1123,7 +1151,7 @@ class SecondlifeService extends ServiceAdapter {
 	}	
 }
 
-class SimpyService implements IService {
+class SimpyService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.simpy.com/user/'.$username;
@@ -1149,7 +1177,7 @@ class SkypeService extends ServiceAdapter {
 	}
 }
 
-class SlideshareService implements IService {
+class SlideshareService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.slideshare.net/'.$username;
@@ -1168,7 +1196,7 @@ class SlideshareService implements IService {
 	}
 }
 
-class StumbleuponService implements IService {
+class StumbleuponService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.stumbleupon.com/';
@@ -1187,7 +1215,7 @@ class StumbleuponService implements IService {
 	}
 }
 
-class TwitterService implements IService {
+class TwitterService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://twitter.com/'.$username;
@@ -1218,7 +1246,7 @@ class TwitterService implements IService {
 	}
 }
 
-class UpcomingService implements IService {
+class UpcomingService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://upcoming.yahoo.com/user/'.$username.'/';
@@ -1237,7 +1265,7 @@ class UpcomingService implements IService {
 	}
 }
 
-class ViddlerService implements IService {
+class ViddlerService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.viddler.com/explore/'.$username.'/';
@@ -1256,7 +1284,7 @@ class ViddlerService implements IService {
 	}
 }
 
-class ViddyouService implements IService {
+class ViddyouService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://viddyou.com/profile.php?user='.$username;
@@ -1275,7 +1303,7 @@ class ViddyouService implements IService {
 	}
 }
 
-class VimeoService implements IService {
+class VimeoService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://vimeo.com/'.$username.'/';
@@ -1294,7 +1322,7 @@ class VimeoService implements IService {
 	}
 }
 
-class WeventService implements IService {
+class WeventService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://wevent.org/users/'.$username;
@@ -1313,7 +1341,7 @@ class WeventService implements IService {
 	}
 }
 
-class WordpresscomService implements IService {
+class WordpresscomService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.wordpress.com';
@@ -1346,7 +1374,7 @@ class YimService extends ServiceAdapter {
 	}
 }
 
-class ZooomrService implements IService {
+class ZooomrService extends ServiceAdapter {
 	
 	function getAccountUrl($username) {
 		return 'http://www.zooomr.com/photos/'.$username;
