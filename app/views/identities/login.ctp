@@ -10,6 +10,10 @@
     <fieldset>
         <?php echo $form->input('Identity.username'); ?>
         <?php echo $form->input('Identity.password', array('type' => 'password')); ?>
+        <br />
+        <?php echo $form->checkbox('Identity.remember'); ?>Remember me
+    </fieldset>
+    <fieldset>
         <input class="submitbutton" type="submit" value="Login"/>
     </fieldset>
 <?php echo $form->end(); ?>

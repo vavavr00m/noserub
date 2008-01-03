@@ -11,7 +11,7 @@
  */
 class AppController extends Controller {
     var $helpers = array('javascript', 'html');
-    var $components = array('menu');
+    var $components = array('menu', 'Cookie');
     
     /**
      * Never ever "use" something here, or the migrations will fail.
@@ -51,6 +51,34 @@ class AppController extends Controller {
         }
     }
     
+    private function auto_login() {
+        $lh = $this->Cookie->read('lh'); # login hash
+        $lu = $this->Cookie->read('lu'); # login user
+            
+        if($lh && $lu) {
+            #echo 'jetzt mal gucken<br />'.$lh.'<br />'.$lu; exit;
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity();
+            }
+            
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $identity = $this->Identity->find(array('Identity.username' => $lu, 'Identity.login_hash' => $lh));
+
+            if(!$identity) {
+                # not found. delete the cookie.
+                $this->Cookie->del('lh');
+                $this->Cookie->del('lu');
+            } else {
+                $this->Session->write('Identity', $identity['Identity']);
+                # refresh auto login cookie
+                $this->Cookie->write('lh', $lh, true, '4 weeks');
+                $this->Cookie->write('lu', $lu, true, '4 weeks');
+            }
+        }
+            
+    }
     /**
      * Method description
      *
@@ -58,7 +86,12 @@ class AppController extends Controller {
      * @return 
      * @access 
      */
-    function beforeFilter() {       
+    function beforeFilter() {
+        # check for auto-login
+        if(!$this->Session->check('Identity.id')) {
+            $this->auto_login();
+        }        
+        
         # set menu data
         $this->menu->setViewData($this);  
         
