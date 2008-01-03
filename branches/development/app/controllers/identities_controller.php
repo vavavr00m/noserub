@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize', 'Cookie');
     
     /**
      * Displays profile page of an identity
@@ -520,6 +520,17 @@ class IdentitiesController extends AppController {
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth', null, true);
                 } else {
+                    # check, if we should remember this user
+                    if($this->data['Identity']['remember'] == 1) {
+                        # create new hash
+                        $login_hash = md5($identity['Identity']['username'] . time());
+                        $this->Identity->id = $identity['Identity']['id'];
+                        $this->Identity->saveField('login_hash', $login_hash);
+                        
+                        # set cookie
+                        $this->Cookie->write('lh', $login_hash, true, '4 weeks');
+                        $this->Cookie->write('lu', $identity['Identity']['username'], true, '4 weeks');
+                    } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
                 	$this->redirect($url, null, true);
@@ -569,6 +580,11 @@ class IdentitiesController extends AppController {
     function logout() {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
+        
+        # make sure the login cookie is invalid
+        # set cookie
+        $this->Cookie->del('lh');
+        $this->Cookie->del('lu');
         
         $this->Session->delete('Identity');
         $this->redirect($this->url->http('/'), null, true);
