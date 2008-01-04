@@ -161,6 +161,7 @@ class LocationsController extends AppController {
         if(1 == $this->Location->findCount(array('id' => $location_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Location->delete($location_id);
+            
             $this->flashMessage('success', 'Location deleted.');            
         } else {
             $this->flashMessage('error', 'Location could not be deleted.');

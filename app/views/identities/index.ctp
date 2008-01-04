@@ -30,7 +30,10 @@
                                    2 => 'he'),
                      'him' => array(0 => 'him/her',
                                     1 => 'her',
-                                    2 => 'him'));
+                                    2 => 'him'),
+                     'his' => array(0 => 'his/her',
+                                    1 => 'her',
+                                    2 => 'his'));
     
         if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
             $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
@@ -73,7 +76,11 @@
         		    </li>
 		        <?php } ?>
         		<?php if(isset($distance) || $data['Identity']['address_shown']) {
-        		    $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+        		    if($relationship_status == 'self') {
+        		        $label = 'you live ';
+        		    } else {
+        		        $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+    		        }
         		    if(isset($distance)) {
         		        $label .= ceil($distance) . ' km away from you';
         		    }
@@ -82,7 +89,17 @@
         		    } ?>
         		    <li class="destination icon"> <?php echo $label; ?></li>
         		<?php } ?>
-		
+		        
+		        <?php 
+		            if($relationship_status == 'self') {
+		                $label = 'your last Location: ';
+		            } else {
+		                $label = $sex['his'][$data['Identity']['sex']] . ' last Location: ';
+		            }
+		            $label .= $data['Location']['name'] == '' ? '<em>Unknown</em>' : $data['Location']['name'];
+		        ?>
+		        <li class="destination icon"> <?php echo $label; ?></li>
+		        
         		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
                     <?php
                         if($relationship_status == 'contact') {
@@ -95,6 +112,24 @@
         	</ul>
         </div>
 
+        <br class="clear" />
+        
+        <?php if($relationship_status == 'self') { ?>        
+            <form class="locator" method="POST" action="<?php echo $this->here; ?>">
+                 <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+                I'm currently at
+                <select name="data[Locator][id]" size="1">
+                    <?php $selected_location = $data['Identity']['last_location_id']; ?>
+                    <?php foreach($locations as $id => $name) { ?>
+                        <option <?php if($id == $selected_location) { echo 'selected="selected" '; } ?>value="<?php echo $id; ?>"><?php echo $name; ?></option>
+                    <?php } ?>
+                    <option value="0">[somewhere else]</option>
+                </select>
+                <input type="text" name="data[Locator][name]" value="">
+                <input class="submitbutton" type="submit" value="Update"/>
+            </form>
+        <?php } ?>
+        
         <br class="clear" />
         
         <?php if($data['Identity']['about']) { ?>
