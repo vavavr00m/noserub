@@ -7,6 +7,11 @@ class Service extends AppModel {
 
     // TODO implement this method completely 
     function detectService($url) {
+    	$url = trim($url);
+    	if ($url == '') {
+    		return false;
+    	}
+    	
     	$services = $this->getAllServices();
     	
     	foreach ($services as $service) {
@@ -517,11 +522,21 @@ class ContactExtractor {
 	}
 }
 
+/**
+ * Every service has to implement this interface.
+ */
 interface IService {
+	/**
+	 * Returns boolean false if the provided $url doesn't belong to the service. 
+	 */
 	function detectService($url);
 	function getAccountUrl($username);
 	function getContacts($username);
 	function getContent($feeditem);
+
+	/**
+	 * Returns boolean false if the service doesn't provide a feed.
+	 */
 	function getFeedUrl($username);
 }
 
@@ -530,7 +545,7 @@ interface IService {
  * and overriding only the methods of interest.
  */
 abstract class ServiceAdapter implements IService {
-	
+	// TODO remove this method when all services implement this method
 	function detectService($url) {
 		return false;
 	}
