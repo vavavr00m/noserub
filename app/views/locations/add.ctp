@@ -5,10 +5,14 @@
             The address is only used to geocode the location and will not be displayed.<br />
             You can mostly just use <em>Town, Country</em> to specify an address.
         </legend>
-        <?php echo $form->input('Location.name', array('label' => 'Name', 'value' => '', 'size' => 64, 'error' => 'You need to specify a name.')); ?>
-        <?php echo $form->input('Location.address', array('label' => 'Address', 'value' => '', 'size' => 64)); ?>
+        <?php echo $form->input('Location.name', array('label' => 'Name', 'size' => 64, 'error' => 'You need to specify a name.')); ?>
+        <?php echo $form->input('Location.address', array('label' => 'Address', 'size' => 64)); ?>
     </fieldset>
     <fieldset>
-        <input class="submitbutton" type="submit" value="Create Location"/>
+        <?php if($this->action == 'add') { ?>
+            <input class="submitbutton" type="submit" value="Create Location"/>
+        <?php } else { ?>
+            <input class="submitbutton" type="submit" value="Save"/>
+        <?php } ?>
     </fieldset>
 </form>

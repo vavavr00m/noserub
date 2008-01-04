@@ -55,6 +55,7 @@ class LocationsController extends AppController {
                     }
                 }
                 $this->data['Location']['identity_id'] = $session_identity['id'];
+                $this->Location->create();
                 if($this->Location->save($this->data)) {
                     $this->flashMessage('success', 'Location added.');
                     $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
@@ -68,6 +69,67 @@ class LocationsController extends AppController {
         } 
         
         $this->set('headline', 'Add new Location');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function edit() {
+        $location_id = isset($this->params['location_id']) ? $this->params['location_id'] :  0;
+        $username    = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted    = $this->Location->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username'] ||
+           !$location_id) {
+            # this is not the logged in user, or location_id not set
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        # get the location and check, if it is this user's location
+            $this->Location->recursive = 0;
+            $this->Location->expects('Location');
+            $location = $this->Location->find(array('id' => $location_id, 'identity_id' => $session_identity['id']));
+            if(!$location) {
+                $this->flashMessage('error', 'Location could not be edited.');
+                $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+            	$this->redirect($url, null, true);
+            }
+            
+        if($this->data) {
+            if($this->data['Location']['name']) {
+                if($this->data['Location']['address']) {
+                    $geolocation = $this->geocoder->get($this->data['Location']['address']);
+                    if($geolocation !== false) {
+                        $this->data['Location']['latitude']  = $geolocation['latitude'];
+                        $this->data['Location']['longitude'] = $geolocation['longitude'];
+                    } else {
+                        $this->data['Location']['latitude']  = 0;
+                        $this->data['Location']['longitude'] = 0;
+                    }
+                }
+                $this->Location->id = $location['Location']['id'];
+                if($this->Location->save($this->data)) {
+                    $this->flashMessage('success', 'Location added.');
+                } else {
+                    $this->flashMessage('error', 'Location could not be created.');
+                }
+                $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+            	$this->redirect($url, null, true);
+            } else {
+                $this->Location->invalidate('name');
+            }
+        } else {
+            $this->data = $location;
+        }
+        
+        $this->set('headline', 'Edit Location');
+        $this->render('add');
     }
     
     /**
