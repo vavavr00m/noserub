@@ -32,7 +32,10 @@
             <tr>
                 <td><?php echo $item['Location']['name']; ?></td>
                 <td><?php echo $item['Location']['address']; ?></td>
-                <td>Latitude: <?php echo $item['Location']['latitude']; ?>, Longitude: <?php echo $item['Location']['longitude']; ?></td>
+                <td>
+                    Latitude: <?php echo $item['Location']['latitude']; ?><br />
+                    Longitude: <?php echo $item['Location']['longitude']; ?>
+                </td>
                 <td>
                 	<ul>
                    		<li class="delete icon"><?php echo $html->link('Delete', $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'); ?></li>
