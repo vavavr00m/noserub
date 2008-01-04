@@ -7,6 +7,11 @@
 			$this->service = new Service();
 		}
 		
+		function testDetectServiceFromInvalidString() {
+			$this->assertIdentical(false, $this->service->detectService(''));
+			$this->assertIdentical(false, $this->service->detectService(' '));
+		}
+		
 		function testGetDomainFromString() {
 			$this->assertEqual('example.com', $this->service->getDomainFromString('http://example.com'));
 			$this->assertEqual('example.com', $this->service->getDomainFromString('https://example.com'));
