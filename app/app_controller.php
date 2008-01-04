@@ -52,10 +52,9 @@ class AppController extends Controller {
     }
     
     private function auto_login() {
-        $lh = $this->Cookie->read('lh'); # login hash
-        $lu = $this->Cookie->read('lu'); # login user
+        $li = $this->Cookie->read('li'); # login id
             
-        if($lh && $lu) {
+        if($li) {
             #echo 'jetzt mal gucken<br />'.$lh.'<br />'.$lu; exit;
             if(!isset($this->Identity)) {
                 App::import('Model', 'Identity');
@@ -64,17 +63,15 @@ class AppController extends Controller {
             
             $this->Identity->recursive = 0;
             $this->Identity->expects('Identity');
-            $identity = $this->Identity->find(array('Identity.username' => $lu, 'Identity.login_hash' => $lh));
+            $identity = $this->Identity->findById($li);
 
             if(!$identity) {
                 # not found. delete the cookie.
-                $this->Cookie->del('lh');
-                $this->Cookie->del('lu');
+                $this->Cookie->del('li');
             } else {
                 $this->Session->write('Identity', $identity['Identity']);
                 # refresh auto login cookie
-                $this->Cookie->write('lh', $lh, true, '4 weeks');
-                $this->Cookie->write('lu', $lu, true, '4 weeks');
+                $this->Cookie->write('li', $li, true, '4 weeks');
             }
         }
             
