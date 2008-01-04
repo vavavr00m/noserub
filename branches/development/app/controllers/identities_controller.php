@@ -522,14 +522,9 @@ class IdentitiesController extends AppController {
                 } else {
                     # check, if we should remember this user
                     if($this->data['Identity']['remember'] == 1) {
-                        # create new hash
-                        $login_hash = md5($identity['Identity']['username'] . time());
-                        $this->Identity->id = $identity['Identity']['id'];
-                        $this->Identity->saveField('login_hash', $login_hash);
                         
                         # set cookie
-                        $this->Cookie->write('lh', $login_hash, true, '4 weeks');
-                        $this->Cookie->write('lu', $identity['Identity']['username'], true, '4 weeks');
+                        $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
@@ -583,8 +578,7 @@ class IdentitiesController extends AppController {
         
         # make sure the login cookie is invalid
         # set cookie
-        $this->Cookie->del('lh');
-        $this->Cookie->del('lu');
+        $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
         $this->redirect($this->url->http('/'), null, true);
