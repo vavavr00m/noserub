@@ -31,7 +31,7 @@
         <?php foreach($data as $item) { ?>
             <tr>
                 <td><?php echo $item['Location']['name']; ?></td>
-                <td><?php echo $item['Location']['address']; ?></td>
+                <td><?php echo $item['Location']['address'] == '' ? '<em>Not entered</em>' : $item['Location']['address']; ?></td>
                 <td>
                     Latitude: <?php echo $item['Location']['latitude']; ?><br />
                     Longitude: <?php echo $item['Location']['longitude']; ?>

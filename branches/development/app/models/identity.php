@@ -3,6 +3,9 @@
  
 class Identity extends AppModel {
     var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location');
+    var $belongsTo = array('Location' => array('className'  => 'Location',
+                                               'foreignKey' => 'last_location_id'));
+    
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),

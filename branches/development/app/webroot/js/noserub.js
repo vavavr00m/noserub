@@ -23,6 +23,7 @@ noserub.fn = noserub.prototype = {
         
         try {
             this[data.controller+'_'+data.action]();
+            this.log(data.controller+'_'+data.action + '()');
         } catch(e) {
             this.log(data.controller+'_'+data.action + '() not found!');
         }
@@ -99,6 +100,18 @@ noserub.fn = noserub.prototype = {
     
     Identities_index: function() {
         this.social_stream_items();
+        if($('.locator option').size() > 1) {
+            $('.locator :text').hide();
+        }
+        $('.locator select').change(function() {
+            selected = $('.locator option:selected');
+            if(selected.val() != 0) {
+                $('.locator :text').hide();
+            } else {
+                $('.locator :text').attr({value : ''});
+                $('.locator :text').show();
+            }
+        });
     },
     
     Identities_social_stream: function() {

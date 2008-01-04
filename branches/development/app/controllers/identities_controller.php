@@ -25,16 +25,38 @@ class IdentitiesController extends AppController {
         $filter = $this->filterSanitize->sanitize($filter);
         
         $session_identity = $this->Session->read('Identity');
+
+        if($this->data) {
+            $this->ensureSecurityToken();
+            
+            # location was changed
+            $location_id = $this->data['Locator']['id'];
+            if($location_id == 0 && $this->data['Locator']['name'] != '') {
+                # a new location must be created
+                $data = array('identity_id' => $session_identity['id'],
+                              'name'        => $this->data['Locator']['name']);
+                $this->Identity->Location->create();
+                $this->Identity->Location->save($data);
+                $location_id = $this->Identity->Location->id;
+            } 
+            if($location_id > 0) {
+                $data = array('last_location_id' => $location_id);
+                $this->Identity->id = $session_identity['id'];
+                $this->Identity->save($data);
+                $this->flashMessage('success', 'Location updated');
+            }
+        }
         
         if($splitted['namespace'] !== '' && $splitted['namespace'] != $session_identity['local_username']) {
             # don't display local contacts to anyone else, but the owner
             $data = null;
         } else {
             $this->Identity->recursive = 2;
-            $this->Identity->expects('Identity.Identity', 'Identity.Account',
+            $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Location',
                                      'Account.Account', 'Account.Service', 'Account.ServiceType',
                                      'Service.Service',
-                                     'ServiceType.ServiceType');
+                                     'ServiceType.ServiceType',
+                                     'Location.Location');
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
@@ -102,6 +124,11 @@ class IdentitiesController extends AppController {
                     if($mutual_contacts) {
                     	$this->set('mutual_contacts', $mutual_contacts);
                     }
+                }
+                
+                # get list of locations, if this is the logged in user
+                if($relationship_status == 'self') {
+                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'id, name', 'order' => 'name ASC')));
                 }
                 
                 # create $about_identity for the view
