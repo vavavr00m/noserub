@@ -12,14 +12,34 @@
 			$this->assertIdentical(false, $this->service->detectService(' '));
 		}
 		
+		function testDetect23hqService() {
+			$result = $this->service->detectService('23hq.com/username');
+			$this->assertService(4, 'username', $result);
+		}
+		
 		function testDetectAIMService() {
 			$result = $this->service->detectService('aim:goIM?screenname=username');
 			$this->assertService(27, 'username', $result);
 		}
 		
+		function testDetectDeliciousService() {
+			$result = $this->service->detectService('del.icio.us/username');
+			$this->assertService(2, 'username', $result);
+		}
+		
+		function testDetectFlickrService() {
+			$result = $this->service->detectService('www.flickr.com/photos/username');
+			$this->assertService(1, 'username', $result);
+		}
+		
 		function testDetectGadugaduService() {
 			$result = $this->service->detectService('gg:username');
 			$this->assertService(47, 'username', $result);
+		}
+		
+		function testDetectIpernityService() {
+			$result = $this->service->detectService('ipernity.com/doc/username/home/photo');
+			$this->assertService(3, 'username', $result);
 		}
 		
 		function testDetectMsnService() {
