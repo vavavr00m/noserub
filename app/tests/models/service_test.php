@@ -12,6 +12,12 @@
 			$this->assertIdentical(false, $this->service->detectService(' '));
 		}
 		
+		function testDetectSkypeService() {
+			$result = $this->service->detectService('skype:username');
+			$this->assertEqual(28, $result['service_id']);
+			$this->assertEqual('username', $result['username']);
+		}
+		
 		function testGetDomainFromString() {
 			$this->assertEqual('example.com', $this->service->getDomainFromString('http://example.com'));
 			$this->assertEqual('example.com', $this->service->getDomainFromString('https://example.com'));
