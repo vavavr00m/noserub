@@ -1120,6 +1120,10 @@ class PlazesService extends AbstractService {
 
 class PownceService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#pownce.com/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://pownce.com/'.$username.'/';
 	}
@@ -1271,6 +1275,10 @@ class StumbleuponService extends AbstractService {
 
 class TwitterService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#twitter.com/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://twitter.com/'.$username;
 	}
@@ -1301,6 +1309,10 @@ class TwitterService extends AbstractService {
 }
 
 class UpcomingService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#upcoming.yahoo.com/user/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://upcoming.yahoo.com/user/'.$username.'/';
@@ -1358,6 +1370,10 @@ class ViddyouService extends AbstractService {
 }
 
 class VimeoService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#vimeo.com/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://vimeo.com/'.$username.'/';

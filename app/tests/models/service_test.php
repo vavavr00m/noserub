@@ -47,9 +47,29 @@
 			$this->assertService(29, 'username', $result);
 		}
 		
+		function testDetectPownceService() {
+			$result = $this->service->detectService('pownce.com/username');
+			$this->assertService(6, 'username', $result);
+		}
+		
 		function testDetectSkypeService() {
 			$result = $this->service->detectService('skype:username');
 			$this->assertService(28, 'username', $result);
+		}
+		
+		function testDetectTwitterService() {
+			$result = $this->service->detectService('twitter.com/username');
+			$this->assertService(5, 'username', $result);
+		}
+		
+		function testDetectUpcomingService() {
+			$result = $this->service->detectService('upcoming.yahoo.com/user/username');
+			$this->assertService(9, 'username', $result);
+		}
+		
+		function testDetectVimeoService() {
+			$result = $this->service->detectService('vimeo.com/username');
+			$this->assertService(10, 'username', $result);
 		}
 		
 		function testGetDomainFromString() {
