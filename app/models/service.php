@@ -577,6 +577,10 @@ abstract class AbstractService {
 // class name starts with '_' as it is not allowed to use a number as first character
 class _23hqService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#23hq.com/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.23hq.com/'.$username;
 	}
@@ -667,6 +671,10 @@ class DailymotionService extends AbstractService {
 
 class DeliciousService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#del.icio.us/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://del.icio.us/'.$username;
 	}
@@ -756,6 +764,10 @@ class FavesService extends AbstractService {
 }
 
 class FlickrService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#flickr.com/photos/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.flickr.com/photos/'.$username.'/';
@@ -870,6 +882,10 @@ class ImthereService extends AbstractService {
 }
 
 class IpernityService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#ipernity.com/doc/(.+)/home/photo#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://ipernity.com/doc/'.$username.'/home/photo';
