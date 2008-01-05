@@ -11,6 +11,10 @@
 	background: transparent url(../images/icons/profile/destination.gif) no-repeat center left;
 }
 
+.userlocation {
+	background: transparent url(../images/icons/profile/userlocation.gif) no-repeat center left;
+}
+
 .addcontact {
 	background: transparent url(../images/icons/profile/add-contact.gif) no-repeat center left;
 }
