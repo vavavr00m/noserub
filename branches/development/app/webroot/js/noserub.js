@@ -102,14 +102,17 @@ noserub.fn = noserub.prototype = {
         this.social_stream_items();
         if($('.locator option').size() > 1) {
             $('.locator :text').hide();
+            $('.locator #locator_name').hide();
         }
         $('.locator select').change(function() {
             selected = $('.locator option:selected');
             if(selected.val() != 0) {
                 $('.locator :text').hide();
+                $('.locator #locator_name').hide();
             } else {
                 $('.locator :text').attr({value : ''});
                 $('.locator :text').show();
+                $('.locator #locator_name').show();
             }
         });
     },

@@ -155,7 +155,7 @@
                     <?php } ?>
                     <option value="0">[somewhere else]</option>
                 </select>
-                <label name="data[Locator][name]">Where are you then?</label>
+                <label id="locator_name" for="data[Locator][name]">Where are you then?</label>
                 <input type="text" name="data[Locator][name]" value="">
                 <input class="submitbutton" type="submit" value="Update"/>
                 </div>
