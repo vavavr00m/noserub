@@ -12,10 +12,24 @@
 			$this->assertIdentical(false, $this->service->detectService(' '));
 		}
 		
+		function testDetectAIMService() {
+			$result = $this->service->detectService('aim:goIM?screenname=username');
+			$this->assertService(27, 'username', $result);
+		}
+		
+		function testDetectGadugaduService() {
+			$result = $this->service->detectService('gg:username');
+			$this->assertService(47, 'username', $result);
+		}
+		
+		function testDetectMsnService() {
+			$result = $this->service->detectService('msnim:username');
+			$this->assertService(29, 'username', $result);
+		}
+		
 		function testDetectSkypeService() {
 			$result = $this->service->detectService('skype:username');
-			$this->assertEqual(28, $result['service_id']);
-			$this->assertEqual('username', $result['username']);
+			$this->assertService(28, 'username', $result);
 		}
 		
 		function testGetDomainFromString() {
@@ -31,6 +45,11 @@
 			$this->assertIdentical(false, $this->service->getDomainFromString(''));
 			$this->assertIdentical(false, $this->service->getDomainFromString('example'));
 			$this->assertIdentical(false, $this->service->getDomainFromString('e.x'));
+		}
+		
+		private function assertService($expectedServiceId, $expectedUsername, $result) {
+			$this->assertEqual($expectedServiceId, $result['service_id']);
+			$this->assertEqual($expectedUsername, $result['username']);
 		}
 	}
 ?>

@@ -599,6 +599,10 @@ class _23hqService extends AbstractService {
 
 class AimService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('/^aim:goIM\?screenname=(.+)/'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'aim:goIM?screenname='.$username;
 	}
@@ -803,6 +807,10 @@ class FolkdService extends AbstractService {
 }
 
 class GadugaduService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('/^gg:(.+)/'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'gg:'.$username;
@@ -1020,6 +1028,10 @@ class MoodmillService extends AbstractService {
 }
 
 class MsnService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('/^msnim:(.+)/'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'msnim:'.$username;
