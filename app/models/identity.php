@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location');
+    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity');
     var $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
     

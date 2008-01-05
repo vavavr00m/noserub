@@ -76,7 +76,11 @@
                                     $splitted2 = split('@', $splitted[count($splitted)-1]);
                                     $username = $splitted2[0];
                                     $intro = str_replace('@user@', '<a href="http://'.$item['username'].'">'.$username.'</a>', $item['intro']);
-                                    $intro = str_replace('@item@', '»<a class="external" href="'.$item['url'].'">'.$item['title'].'</a>«', $intro);
+                                    if($item['url']) {
+                                        $intro = str_replace('@item@', '»<a class="external" href="'.$item['url'].'">'.$item['title'].'</a>«', $intro);
+                                    } else {
+                                        $intro = str_replace('@item@', '»'.$item['title'].'«', $intro);
+                                    }
                                     echo $intro; 
                                 ?>
                             </span>

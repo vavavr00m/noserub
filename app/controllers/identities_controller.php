@@ -44,6 +44,13 @@ class IdentitiesController extends AppController {
                 $this->Identity->id = $session_identity['id'];
                 $this->Identity->save($data);
                 $this->flashMessage('success', 'Location updated');
+                
+                # we need to get the complete location for the activity
+                $this->Identity->Location->id = $location_id;
+                $this->Identity->Location->recursive = 0;
+                $this->Identity->Location->expects('Location');
+                $location = $this->Identity->Location->findById($location_id);
+                $this->Identity->Activity->setLocation($session_identity['id'], $location);
             }
         }
         
@@ -151,8 +158,10 @@ class IdentitiesController extends AppController {
             $this->set('headline', 'Username could not be found!');
         }
 
+        # get all activities
+        $items = $this->Identity->Activity->getLatest($data['Identity']['id'], $filter);
+        
         # get all items for those accounts
-        $items = array();
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
                 if(!$filter || $account['ServiceType']['token'] == $filter) {
@@ -207,7 +216,12 @@ class IdentitiesController extends AppController {
             if(count($identities) < 9) {
                 $identities[] = $identity['Identity'];
             }
-            
+
+            # get all activities
+            $activity_items = $this->Identity->Activity->getLatest($identity['Identity']['id'], $filter);
+            if($activity_items) {
+                $items = array_merge($items, $activity_items);
+            }
             # get all items for those accounts
             if(is_array($identity['Account'])) {
                 foreach($identity['Account'] as $account) {
