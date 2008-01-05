@@ -98,7 +98,8 @@
 		            }
 		            $label .= $data['Location']['name'] == '' ? '<em>Unknown</em>' : $data['Location']['name'];
 		        ?>
-		        <li class="destination icon"> <?php echo $label; ?></li>
+		        
+		        <li class="userlocation icon"> <?php echo $label; ?></li>
 		        
         		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
                     <?php
@@ -111,24 +112,6 @@
                 <?php } ?>
         	</ul>
         </div>
-
-        <br class="clear" />
-        
-        <?php if($relationship_status == 'self') { ?>        
-            <form class="locator" method="POST" action="<?php echo $this->here; ?>">
-                 <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
-                I'm currently at
-                <select name="data[Locator][id]" size="1">
-                    <?php $selected_location = $data['Identity']['last_location_id']; ?>
-                    <?php foreach($locations as $id => $name) { ?>
-                        <option <?php if($id == $selected_location) { echo 'selected="selected" '; } ?>value="<?php echo $id; ?>"><?php echo $name; ?></option>
-                    <?php } ?>
-                    <option value="0">[somewhere else]</option>
-                </select>
-                <input type="text" name="data[Locator][name]" value="">
-                <input class="submitbutton" type="submit" value="Update"/>
-            </form>
-        <?php } ?>
         
         <br class="clear" />
         
@@ -155,6 +138,31 @@
     </div>
 
     <div id="sidebar">
+        
+         <?php if($relationship_status == 'self') { ?>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/locations/'; ?>">manage</a></span>
+    	
+    	<h4>Location</h4>
+    	
+            <form class="locator" method="POST" action="<?php echo $this->here; ?>">
+                <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+                <div class="input">
+                <label>I'm currently at</label>
+                <select name="data[Locator][id]" size="1">
+                    <?php $selected_location = $data['Identity']['last_location_id']; ?>
+                    <?php foreach($locations as $id => $name) { ?>
+                        <option <?php if($id == $selected_location) { echo 'selected="selected" '; } ?>value="<?php echo $id; ?>"><?php echo $name; ?></option>
+                    <?php } ?>
+                    <option value="0">[somewhere else]</option>
+                </select>
+                <label name="data[Locator][name]">Where are you then?</label>
+                <input type="text" name="data[Locator][name]" value="">
+                <input class="submitbutton" type="submit" value="Update"/>
+                </div>
+            </form>
+    
+        <hr />
+        <?php } ?>
 	
 	    <?php if($relationship_status == 'self') { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
