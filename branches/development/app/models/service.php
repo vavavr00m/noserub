@@ -11,6 +11,7 @@ class Service extends AppModel {
     		return false;
     	}
     	
+    	$url = $this->removeProtocol($url);
     	$services = $this->getAllServices();
 
     	foreach ($services as $service) {
@@ -633,6 +634,10 @@ class BloggerdeService extends AbstractService {
 
 class CorkdService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#corkd.com/people/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://corkd.com/people/'.$username.'/';
 	}
@@ -943,6 +948,10 @@ class KulandoService extends AbstractService {
 
 class LastfmService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#last.fm/user/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.last.fm/user/'.$username.'/';
 	}
@@ -987,6 +996,10 @@ class LivejournalService extends AbstractService {
 }
 
 class MagnoliaService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#ma.gnolia.com/people/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://ma.gnolia.com/people/'.$username.'/';
@@ -1143,6 +1156,10 @@ class PownceService extends AbstractService {
 
 class QypeService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#qype.com/people/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.qype.com/people/'.$username.'/';
 	}
@@ -1255,6 +1272,10 @@ class SlideshareService extends AbstractService {
 }
 
 class StumbleuponService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).stumbleupon.com#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.stumbleupon.com/';
