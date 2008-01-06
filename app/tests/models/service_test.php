@@ -37,6 +37,11 @@
 			$this->assertService(2, 'username', $result);
 		}
 		
+		function testDetectDiggService() {
+			$result = $this->service->detectService('digg.com/users/username');
+			$this->assertService(38, 'username', $result);
+		}
+		
 		function testDetectFacebookService() {
 			$result = $this->service->detectService('facebook.com/profile.php?id=username');
 			$this->assertService(30, 'username', $result);
@@ -45,6 +50,11 @@
 		function testDetectFlickrService() {
 			$result = $this->service->detectService('www.flickr.com/photos/username');
 			$this->assertService(1, 'username', $result);
+		}
+		
+		function testDetectFolkdService() {
+			$result = $this->service->detectService('folkd.com/user/username');
+			$this->assertService(40, 'username', $result);
 		}
 		
 		function testDetectGadugaduService() {
@@ -87,6 +97,16 @@
 			$this->assertService(13, 'username', $result);
 		}
 		
+		function testDetectMisterwongService() {
+			$result = $this->service->detectService('mister-wong.de/user/username/?profile');
+			$this->assertService(39, 'username', $result);
+		}
+		
+		function testDetectMoodmillService() {
+			$result = $this->service->detectService('moodmill.com/citizen/username');
+			$this->assertService(37, 'username', $result);
+		}
+		
 		function testDetectMsnService() {
 			$result = $this->service->detectService('msnim:username');
 			$this->assertService(29, 'username', $result);
@@ -118,6 +138,11 @@
 		function testDetectQypeService() {
 			$result = $this->service->detectService('qype.com/people/username');
 			$this->assertService(12, 'username', $result);
+		}
+		
+		function testDetectRedditService() {
+			$result = $this->service->detectService('reddit.com/user/username');
+			$this->assertService(41, 'username', $result);
 		}
 		
 		function testDetectScribdService() {

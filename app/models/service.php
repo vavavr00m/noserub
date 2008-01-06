@@ -722,6 +722,10 @@ class DeviantartService extends AbstractService {
 
 class DiggService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#digg.com/users/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://digg.com/users/'.$username;
 	}
@@ -813,6 +817,10 @@ class FlickrService extends AbstractService {
 }
 
 class FolkdService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#folkd.com/user/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.folkd.com/user/'.$username;
@@ -1044,6 +1052,10 @@ class MagnoliaService extends AbstractService {
 
 class MisterwongService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#mister-wong.de/user/(.+)/\?profile#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
 	}
@@ -1062,6 +1074,10 @@ class MisterwongService extends AbstractService {
 }
 
 class MoodmillService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#moodmill.com/citizen/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.moodmill.com/citizen/'.$username;
@@ -1214,6 +1230,10 @@ class QypeService extends AbstractService {
 }
 
 class RedditService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#reddit.com/user/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://reddit.com/user/'.$username;
