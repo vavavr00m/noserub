@@ -50,7 +50,7 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-define('NOSERUB_VALID_USERNAME', '|^[\w\./\-_]+$|ismD');
+define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 
 # to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
