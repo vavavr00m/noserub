@@ -61,6 +61,16 @@ foreach($data as $item) {
             <?php 
                 $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
                 if($identity_id == $session_identity_id && $session_identity_id != 0) { ?>
+                    <?php
+                         $contact_types = array_merge($item['ContactType'], $item['NoserubContactType']);
+                    ?>
+                    <?php if($contact_types) { ?>
+                        <dd>Types: <em>
+                            <?php foreach($contact_types as $contact_type) { ?>
+                                <?php echo $contact_type['name'] . ' '; ?>
+                            <?php } ?>
+                        </em></dd>
+                    <?php } ?>
                     <dd class="contact_option"><?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
                     <dd class="contact_option"><?php echo $html->link('Edit Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
                 <?php } ?>

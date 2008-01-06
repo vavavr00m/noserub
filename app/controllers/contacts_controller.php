@@ -30,7 +30,7 @@ class ContactsController extends AppController {
         
         # get all noserub contacts
         $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
         
         $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                      'WithIdentity.username NOT LIKE "%@%"'), 
@@ -39,7 +39,7 @@ class ContactsController extends AppController {
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
             $this->Contact->recursive = 1;
-            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
 
             $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                          'WithIdentity.username LIKE "%@%"'), 
