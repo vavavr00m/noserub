@@ -1146,6 +1146,10 @@ class OrkutService extends AbstractService {
 
 class PlazesService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#plazes.com/users/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://plazes.com/users/'.$username;
 	}
@@ -1230,6 +1234,10 @@ class RedditService extends AbstractService {
 
 class ScribdService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#scribd.com/people/view/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.scribd.com/people/view/'.$username;
 	}
@@ -1248,6 +1256,10 @@ class ScribdService extends AbstractService {
 }
 
 class SecondlifeService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('/^#(.+)/'));
+	}
 	
 	function getAccountUrl($username) {
 		return '#'.$username;
@@ -1285,6 +1297,10 @@ class SkypeService extends AbstractService {
 }
 
 class SlideshareService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#slideshare.net/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.slideshare.net/'.$username;
@@ -1488,6 +1504,10 @@ class WordpresscomService extends AbstractService {
 }
 
 class XingService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#xing.com/profile/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'https://www.xing.com/profile/'.$username;

@@ -105,6 +105,11 @@
 			$this->assertService(18, 'username', $result);
 		}
 		
+		function testDetectPlazesService() {
+			$result = $this->service->detectService('plazes.com/users/username');
+			$this->assertService(35, 'username', $result);
+		}
+		
 		function testDetectPownceService() {
 			$result = $this->service->detectService('pownce.com/username');
 			$this->assertService(6, 'username', $result);
@@ -115,9 +120,24 @@
 			$this->assertService(12, 'username', $result);
 		}
 		
+		function testDetectScribdService() {
+			$result = $this->service->detectService('scribd.com/people/view/username');
+			$this->assertService(36, 'username', $result);
+		}
+		
+		function testDetectSecondlifeService() {
+			$result = $this->service->detectService('#username');
+			$this->assertService(31, 'username', $result);
+		}
+		
 		function testDetectSkypeService() {
 			$result = $this->service->detectService('skype:username');
 			$this->assertService(28, 'username', $result);
+		}
+		
+		function testDetectSlideshareService() {
+			$result = $this->service->detectService('slideshare.net/username');
+			$this->assertService(34, 'username', $result);
 		}
 		
 		function testDetectStumbleuponService() {
@@ -146,6 +166,11 @@
 		function testDetectWeventService() {
 			$result = $this->service->detectService('wevent.org/users/username');
 			$this->assertService(20, 'username', $result);
+		}
+		
+		function testDetectXingService() {
+			$result = $this->service->detectService('xing.com/profile/username');
+			$this->assertService(33, 'username', $result);
 		}
 		
 		function testDetectZooomrService() {
