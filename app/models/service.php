@@ -615,6 +615,10 @@ class AimService extends AbstractService {
 
 class BloggerdeService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).blogger.de#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.blogger.de/';
 	}
@@ -748,6 +752,10 @@ class DiggService extends AbstractService {
 }
 
 class DopplrService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#dopplr.com/traveller/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.dopplr.com/traveller/'.$username;
@@ -958,6 +966,10 @@ class JabberService extends AbstractService {
 
 class KulandoService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).kulando.de#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.kulando.de';
 	}
@@ -1017,6 +1029,10 @@ class LinkedinService extends AbstractService {
 }
 
 class LivejournalService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).livejournal.com#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.livejournal.com/';
@@ -1162,6 +1178,10 @@ class OdeoService extends AbstractService {
 }
 
 class OrkutService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#orkut.com/Profile.aspx\?uid=(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.orkut.com/Profile.aspx?uid='.$username;
@@ -1525,6 +1545,10 @@ class WeventService extends AbstractService {
 }
 
 class WordpresscomService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).wordpress.com#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.wordpress.com';

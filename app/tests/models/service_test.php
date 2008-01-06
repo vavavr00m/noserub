@@ -22,6 +22,14 @@
 			$this->assertService(27, 'username', $result);
 		}
 		
+		function testDetectBloggerdeService() {
+			$result = $this->service->detectService('username.blogger.de');
+			$this->assertService(52, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.blogger.de');
+			$this->assertService(52, 'username', $result);
+		}
+		
 		function testDetectCorkdService() {
 			$result = $this->service->detectService('corkd.com/people/username');
 			$this->assertService(15, 'username', $result);
@@ -48,6 +56,11 @@
 		function testDetectDiggService() {
 			$result = $this->service->detectService('digg.com/users/username');
 			$this->assertService(38, 'username', $result);
+		}
+		
+		function testDetectDopplrService() {
+			$result = $this->service->detectService('dopplr.com/traveller/username');
+			$this->assertService(48, 'username', $result);
 		}
 		
 		function testDetectFacebookService() {
@@ -95,6 +108,14 @@
 			$this->assertService(3, 'username', $result);
 		}
 		
+		function testDetectKulandoService() {
+			$result = $this->service->detectService('username.kulando.de');
+			$this->assertService(50, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.kulando.de');
+			$this->assertService(50, 'username', $result);
+		}
+		
 		function testDetectLastfmService() {
 			$result = $this->service->detectService('last.fm/user/username');
 			$this->assertService(11, 'username', $result);
@@ -103,6 +124,14 @@
 		function testDetectLinkedinService() {
 			$result = $this->service->detectService('www.linkedin.com/in/username');
 			$this->assertService(32, 'username', $result);
+		}
+		
+		function testDetectLivejournalService() {
+			$result = $this->service->detectService('username.livejournal.com');
+			$this->assertService(53, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.livejournal.com');
+			$this->assertService(53, 'username', $result);
 		}
 		
 		function testDetectMagnoliaService() {
@@ -136,6 +165,11 @@
 		function testDetectOdeoService() {
 			$result = $this->service->detectService('odeo.com/profile/username');
 			$this->assertService(18, 'username', $result);
+		}
+		
+		function testDetectOrkutService() {
+			$result = $this->service->detectService('orkut.com/Profile.aspx?uid=username');
+			$this->assertService(49, 'username', $result);
 		}
 		
 		function testDetectPlazesService() {
@@ -219,6 +253,14 @@
 		function testDetectWeventService() {
 			$result = $this->service->detectService('wevent.org/users/username');
 			$this->assertService(20, 'username', $result);
+		}
+		
+		function testDetectWordpressService() {
+			$result = $this->service->detectService('username.wordpress.com');
+			$this->assertService(51, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.wordpress.com');
+			$this->assertService(51, 'username', $result);
 		}
 		
 		function testDetectXingService() {
