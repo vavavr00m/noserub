@@ -27,6 +27,11 @@
 			$this->assertService(15, 'username', $result);
 		}
 		
+		function testDetectDailymotionService() {
+			$result = $this->service->detectService('dailymotion.com/username');
+			$this->assertService(16, 'username', $result);
+		}
+		
 		function testDetectDeliciousService() {
 			$result = $this->service->detectService('del.icio.us/username');
 			$this->assertService(2, 'username', $result);
@@ -40,6 +45,11 @@
 		function testDetectGadugaduService() {
 			$result = $this->service->detectService('gg:username');
 			$this->assertService(47, 'username', $result);
+		}
+		
+		function testDetectIlikeService() {
+			$result = $this->service->detectService('ilike.com/user/username');
+			$this->assertService(19, 'username', $result);
 		}
 		
 		function testDetectIpernityService() {
@@ -60,6 +70,11 @@
 		function testDetectMsnService() {
 			$result = $this->service->detectService('msnim:username');
 			$this->assertService(29, 'username', $result);
+		}
+		
+		function testDetectOdeoService() {
+			$result = $this->service->detectService('odeo.com/profile/username');
+			$this->assertService(18, 'username', $result);
 		}
 		
 		function testDetectPownceService() {
@@ -98,6 +113,16 @@
 		function testDetectVimeoService() {
 			$result = $this->service->detectService('vimeo.com/username');
 			$this->assertService(10, 'username', $result);
+		}
+		
+		function testDetectWeventService() {
+			$result = $this->service->detectService('wevent.org/users/username');
+			$this->assertService(20, 'username', $result);
+		}
+		
+		function testDetectZooomrService() {
+			$result = $this->service->detectService('zooomr.com/photos/username');
+			$this->assertService(17, 'username', $result);
 		}
 		
 		function testGetDomainFromString() {

@@ -657,6 +657,10 @@ class CorkdService extends AbstractService {
 
 class DailymotionService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#dailymotion.com/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.dailymotion.com/'.$username.'/';
 	}
@@ -849,6 +853,10 @@ class IcqService extends AbstractService {
 }
 
 class IlikeService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#ilike.com/user/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://ilike.com/user/'.$username;
@@ -1087,6 +1095,10 @@ class NewsvineService extends AbstractService {
 }
 
 class OdeoService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#odeo.com/profile/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://odeo.com/profile/'.$username;
@@ -1415,6 +1427,10 @@ class VimeoService extends AbstractService {
 
 class WeventService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#wevent.org/users/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://wevent.org/users/'.$username;
 	}
@@ -1466,6 +1482,10 @@ class YimService extends AbstractService {
 }
 
 class ZooomrService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#zooomr.com/photos/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://www.zooomr.com/photos/'.$username;
