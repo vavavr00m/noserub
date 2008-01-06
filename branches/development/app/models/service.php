@@ -748,6 +748,10 @@ class DopplrService extends AbstractService {
 
 class FacebookService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#facebook.com/profile.php\?id=(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.facebook.com/profile.php?id='.$username;
 	}
@@ -847,6 +851,10 @@ class GtalkService extends AbstractService {
 
 class IcqService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#icq.com/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.icq.com/'.$username;
 	}
@@ -876,6 +884,10 @@ class IlikeService extends AbstractService {
 }
 
 class ImthereService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#imthere.com/users/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://imthere.com/users/'.$username;
@@ -979,6 +991,10 @@ class LastfmService extends AbstractService {
 
 class LinkedinService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#www.linkedin.com/in/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.linkedin.com/in/'.$username;
 	}
@@ -1076,6 +1092,10 @@ class MsnService extends AbstractService {
 }
 
 class NewsvineService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).newsvine.com#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.newsvine.com/';

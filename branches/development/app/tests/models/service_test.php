@@ -37,6 +37,11 @@
 			$this->assertService(2, 'username', $result);
 		}
 		
+		function testDetectFacebookService() {
+			$result = $this->service->detectService('facebook.com/profile.php?id=username');
+			$this->assertService(30, 'username', $result);
+		}
+		
 		function testDetectFlickrService() {
 			$result = $this->service->detectService('www.flickr.com/photos/username');
 			$this->assertService(1, 'username', $result);
@@ -47,9 +52,19 @@
 			$this->assertService(47, 'username', $result);
 		}
 		
+		function testDetectIcqService() {
+			$result = $this->service->detectService('icq.com/username');
+			$this->assertService(25, 'username', $result);
+		}
+		
 		function testDetectIlikeService() {
 			$result = $this->service->detectService('ilike.com/user/username');
 			$this->assertService(19, 'username', $result);
+		}
+		
+		function testDetectImthereService() {
+			$result = $this->service->detectService('imthere.com/users/username');
+			$this->assertService(21, 'username', $result);
 		}
 		
 		function testDetectIpernityService() {
@@ -62,6 +77,11 @@
 			$this->assertService(11, 'username', $result);
 		}
 		
+		function testDetectLinkedinService() {
+			$result = $this->service->detectService('www.linkedin.com/in/username');
+			$this->assertService(32, 'username', $result);
+		}
+		
 		function testDetectMagnoliaService() {
 			$result = $this->service->detectService('ma.gnolia.com/people/username');
 			$this->assertService(13, 'username', $result);
@@ -70,6 +90,14 @@
 		function testDetectMsnService() {
 			$result = $this->service->detectService('msnim:username');
 			$this->assertService(29, 'username', $result);
+		}
+		
+		function testDetectNewsvineService() {
+			$result = $this->service->detectService('username.newsvine.com');
+			$this->assertService(22, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.newsvine.com');
+			$this->assertService(22, 'username', $result);
 		}
 		
 		function testDetectOdeoService() {
