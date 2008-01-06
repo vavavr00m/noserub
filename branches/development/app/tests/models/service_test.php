@@ -37,6 +37,14 @@
 			$this->assertService(2, 'username', $result);
 		}
 		
+		function testDetectDeviantartService() {
+			$result = $this->service->detectService('username.deviantart.com');
+			$this->assertService(44, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.deviantart.com');
+			$this->assertService(44, 'username', $result);
+		}
+		
 		function testDetectDiggService() {
 			$result = $this->service->detectService('digg.com/users/username');
 			$this->assertService(38, 'username', $result);
@@ -45,6 +53,11 @@
 		function testDetectFacebookService() {
 			$result = $this->service->detectService('facebook.com/profile.php?id=username');
 			$this->assertService(30, 'username', $result);
+		}
+		
+		function testDetectFavesService() {
+			$result = $this->service->detectService('faves.com/users/username');
+			$this->assertService(42, 'username', $result);
 		}
 		
 		function testDetectFlickrService() {
@@ -155,6 +168,11 @@
 			$this->assertService(31, 'username', $result);
 		}
 		
+		function testDetectSimpyService() {
+			$result = $this->service->detectService('simpy.com/user/username');
+			$this->assertService(43, 'username', $result);
+		}
+		
 		function testDetectSkypeService() {
 			$result = $this->service->detectService('skype:username');
 			$this->assertService(28, 'username', $result);
@@ -181,6 +199,16 @@
 		function testDetectUpcomingService() {
 			$result = $this->service->detectService('upcoming.yahoo.com/user/username');
 			$this->assertService(9, 'username', $result);
+		}
+		
+		function testDetectViddlerService() {
+			$result = $this->service->detectService('viddler.com/explore/username');
+			$this->assertService(45, 'username', $result);
+		}
+		
+		function testDetectViddyouService() {
+			$result = $this->service->detectService('viddyou.com/profile.php?user=username');
+			$this->assertService(46, 'username', $result);
 		}
 		
 		function testDetectVimeoService() {

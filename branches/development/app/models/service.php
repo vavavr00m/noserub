@@ -703,6 +703,10 @@ class DeliciousService extends AbstractService {
 
 class DeviantartService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#(.+).deviantart.com#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://'.$username.'.deviantart.com';
 	}
@@ -762,6 +766,10 @@ class FacebookService extends AbstractService {
 }
 
 class FavesService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#faves.com/users/(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://faves.com/users/'.$username;
@@ -1288,6 +1296,10 @@ class SecondlifeService extends AbstractService {
 
 class SimpyService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#simpy.com/user/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.simpy.com/user/'.$username;
 	}
@@ -1422,6 +1434,10 @@ class UpcomingService extends AbstractService {
 
 class ViddlerService extends AbstractService {
 	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#viddler.com/explore/(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'http://www.viddler.com/explore/'.$username.'/';
 	}
@@ -1440,6 +1456,10 @@ class ViddlerService extends AbstractService {
 }
 
 class ViddyouService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#viddyou.com/profile.php\?user=(.+)#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://viddyou.com/profile.php?user='.$username;
