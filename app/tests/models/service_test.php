@@ -22,6 +22,11 @@
 			$this->assertService(27, 'username', $result);
 		}
 		
+		function testDetectCorkdService() {
+			$result = $this->service->detectService('corkd.com/people/username');
+			$this->assertService(15, 'username', $result);
+		}
+		
 		function testDetectDeliciousService() {
 			$result = $this->service->detectService('del.icio.us/username');
 			$this->assertService(2, 'username', $result);
@@ -42,6 +47,16 @@
 			$this->assertService(3, 'username', $result);
 		}
 		
+		function testDetectLastfmService() {
+			$result = $this->service->detectService('last.fm/user/username');
+			$this->assertService(11, 'username', $result);
+		}
+		
+		function testDetectMagnoliaService() {
+			$result = $this->service->detectService('ma.gnolia.com/people/username');
+			$this->assertService(13, 'username', $result);
+		}
+		
 		function testDetectMsnService() {
 			$result = $this->service->detectService('msnim:username');
 			$this->assertService(29, 'username', $result);
@@ -52,9 +67,22 @@
 			$this->assertService(6, 'username', $result);
 		}
 		
+		function testDetectQypeService() {
+			$result = $this->service->detectService('qype.com/people/username');
+			$this->assertService(12, 'username', $result);
+		}
+		
 		function testDetectSkypeService() {
 			$result = $this->service->detectService('skype:username');
 			$this->assertService(28, 'username', $result);
+		}
+		
+		function testDetectStumbleuponService() {
+			$result = $this->service->detectService('username.stumbleupon.com');
+			$this->assertService(14, 'username', $result);
+			
+			$result = $this->service->detectService('http://username.stumbleupon.com');
+			$this->assertService(14, 'username', $result);
 		}
 		
 		function testDetectTwitterService() {
