@@ -959,6 +959,11 @@ class IpernityService extends AbstractService {
 
 class JabberService extends AbstractService {
 	
+	function detectService($url) {
+		// TODO adapt regex to return false if it is a gmail address
+		return $this->extractUsername($url, array('#xmpp:(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'xmpp:'.$username;
 	}
@@ -1579,6 +1584,10 @@ class XingService extends AbstractService {
 }
 
 class YimService extends AbstractService {
+	
+	function detectService($url) {
+		return $this->extractUsername($url, array('#edit.yahoo.com/config/send_webmesg\?.target=(.+)&.src=pg#'));
+	}
 	
 	function getAccountUrl($username) {
 		return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';

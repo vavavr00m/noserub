@@ -108,6 +108,16 @@
 			$this->assertService(3, 'username', $result);
 		}
 		
+		function testDetectJabberService() {
+			$result = $this->service->detectService('xmpp:username');
+			$this->assertService(23, 'username', $result);
+			
+			// this URL should be detected as GTalk service 
+			// TODO enable this test
+			//$result = $this->service->detectService('xmpp:username@gmail.com');
+			//$this->assertNotEqual(23, $result['service_id']);
+		}
+		
 		function testDetectKulandoService() {
 			$result = $this->service->detectService('username.kulando.de');
 			$this->assertService(50, 'username', $result);
@@ -266,6 +276,11 @@
 		function testDetectXingService() {
 			$result = $this->service->detectService('xing.com/profile/username');
 			$this->assertService(33, 'username', $result);
+		}
+		
+		function testDetectYimService() {
+			$result = $this->service->detectService('edit.yahoo.com/config/send_webmesg?.target=username&.src=pg');
+			$this->assertService(26, 'username', $result);
 		}
 		
 		function testDetectZooomrService() {
