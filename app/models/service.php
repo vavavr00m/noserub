@@ -11,7 +11,7 @@ class Service extends AppModel {
     		return false;
     	}
     	
-    	$url = $this->removeProtocol($url);
+    	$url = $this->removeHttpProtocol($url);
     	$services = $this->getAllServices();
 
     	foreach ($services as $service) {
@@ -30,7 +30,7 @@ class Service extends AppModel {
     		return false;
     	}
 
-    	$domain = $this->removeProtocol($url);
+    	$domain = $this->removeHttpProtocol($url);
     	$domain = $this->removePath($domain);
     	$domain = $this->removeSubdomains($domain);
     	
@@ -458,7 +458,7 @@ class Service extends AppModel {
     	return $url;
     }
     
-    private function removeProtocol($url) {
+    private function removeHttpProtocol($url) {
     	$url = str_ireplace('http://', '', $url);
     	$url = str_ireplace('https://', '', $url);
     	
