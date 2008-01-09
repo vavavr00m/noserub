@@ -538,9 +538,11 @@ abstract class AbstractService {
 		$this->service_id = $service_id;
 	}
 
-	function detectService($url) {
-		return false;
-	}
+	/**
+	 * Implementations of this function have to return boolean false if 
+	 * the service couldn't be detected, or a string with the username.
+	 */
+	abstract function detectService($url);
 	
 	protected function extractUsername($url, $patterns) {
 		foreach ($patterns as $pattern) {
