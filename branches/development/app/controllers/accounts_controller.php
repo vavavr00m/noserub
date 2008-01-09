@@ -38,12 +38,65 @@ class AccountsController extends AppController {
         }
     }
     
+    function add_step_1_service_detection() {
+    	$username = isset($this->params['username']) ? $this->params['username'] : '';
+    	$session_identity = $this->Session->read('Identity');
+    	$splitted = $this->Account->Identity->splitUsername($username);
+    	
+    	$this->Session->delete('Service.add.account.to.identity_id');
+        $this->Session->delete('Service.add.id');
+    	
+    	# only logged in users can add accounts
+        if(!$session_identity) {
+            # this user is not logged in
+            $this->redirect('/', null, true);
+        }
+
+        $identity = $this->getIdentity($splitted['username']);
+        
+        if($identity['Identity']['id'] != $session_identity['id']) {
+            # identity is not the logged in user
+            
+            if(!$identity || $identity['Identity']['namespace'] != $session_identity['local_username']) {
+                # Identity not found, or identity's namespace does not match logged in username
+                $this->redirect('/', null, true);
+            }
+            
+            $this->Session->write('Service.add.account.is_logged_in_user', true);
+        }
+        
+        # save identity for which we want to add the servie
+        # into session, so we don't need to check any further
+        $this->Session->write('Service.add.account.to.identity_id', $identity['Identity']['id']);
+        
+        # also save, wether we add the account for a logged in user. this is
+        # needed to distinguish during the process (eg no import of conacts)
+		$this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);        
+        
+    	if ($this->data) {
+    		$serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
+    		
+    		if ($serviceData) {
+    			$this->Session->write('Service.add.id', $serviceData['service_id']);
+	    		$data = $this->Account->Service->getInfoFromService($splitted['username'], $serviceData['service_id'], $serviceData['username']);    
+	            if(!$data) {
+	                $this->Account->invalidate('username', 1);
+	            } else {
+	                $this->Session->write('Service.add.data', $data);
+	                $this->Session->write('Service.add.type', $data['service_type_id']);
+	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
+	            }
+    		}
+    	}
+    }
+    
     /**
      * Method description
      *
      * @param  
      * @return 
      * @access 
+     * @deprecated 
      */
     function add_step_1() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
