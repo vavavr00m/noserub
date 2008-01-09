@@ -868,6 +868,14 @@ class GadugaduService extends AbstractService {
 
 class GtalkService extends AbstractService {
 	
+	function detectService($url) {
+		if (strpos($url, '@gmail.com') === false) {
+			return false;
+		}
+		
+		return $this->extractUsername($url, array('#xmpp:(.+)#'));
+	}
+	
 	function getAccountUrl($username) {
 		return 'xmpp:'.$username;
 	}
@@ -960,7 +968,11 @@ class IpernityService extends AbstractService {
 class JabberService extends AbstractService {
 	
 	function detectService($url) {
-		// TODO adapt regex to return false if it is a gmail address
+		// GTalk Jabber addresses are not handled by this service
+		if (strpos($url, '@gmail.com') !== false) {
+			return false;
+		}
+
 		return $this->extractUsername($url, array('#xmpp:(.+)#'));
 	}
 	

@@ -88,6 +88,14 @@
 			$this->assertService(47, 'username', $result);
 		}
 		
+		function testDetectGtalkService() {
+			$result = $this->service->detectService('xmpp:username@gmail.com');
+			$this->assertService(24, 'username@gmail.com', $result);
+			
+			$result = $this->service->detectService('xmpp:username');
+			$this->assertNotEqual(24, $result['service_id']);
+		}
+		
 		function testDetectIcqService() {
 			$result = $this->service->detectService('icq.com/username');
 			$this->assertService(25, 'username', $result);
@@ -111,11 +119,9 @@
 		function testDetectJabberService() {
 			$result = $this->service->detectService('xmpp:username');
 			$this->assertService(23, 'username', $result);
-			
-			// this URL should be detected as GTalk service 
-			// TODO enable this test
-			//$result = $this->service->detectService('xmpp:username@gmail.com');
-			//$this->assertNotEqual(23, $result['service_id']);
+
+			$result = $this->service->detectService('xmpp:username@gmail.com');
+			$this->assertNotEqual(23, $result['service_id']);
 		}
 		
 		function testDetectKulandoService() {
