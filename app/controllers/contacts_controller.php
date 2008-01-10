@@ -267,8 +267,15 @@ class ContactsController extends AppController {
         $session_identity = $this->Session->read('Identity');
         $identityId = $session_identity['id'];
         
-        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
+        # get the contact
+	    $this->Contact->recursive = 1;
+	    $this->Contact->expects('Contact', 'Contact.WithIdentity');
+	    $contact = $this->Contact->findById($contactId);
+	    
+        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username'] ||
+           $session_identity['id'] != $contact['Contact']['identity_id']) {
+            # this is not the logged in user, or this is not a contact of
+            # the logged in user
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
         }
     	
@@ -292,14 +299,18 @@ class ContactsController extends AppController {
 			$this->Contact->ContactType->deleteContactTypes($idsOfUnusedContactTypes);
     		
     		$this->flashMessage('success', 'Contact updated.');
+    		$this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
     	}
     	
-    	$this->set('headline', 'Edit contact');
+    	$this->set('contact', $contact);
+    	
+    	$this->set('headline', 'Edit the contact details');
 	    $this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
 	    $this->set('selectedNoserubContactTypes', $this->Contact->NoserubContactType->getNoserubContactTypeIDsForContact($contactId));
 	    $this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
 	    $ids = Set::extract($this->Contact->ContactTypesContact->findAllByContactId($contactId), '{n}.ContactTypesContact.contact_type_id');
-	    $this->set('selectedContactTypes', implode(' ', Set::extract($this->Contact->ContactType->findAllById($ids), '{n}.ContactType.name')));
+	    $this->set('selectedContactTypes', Set::extract($this->Contact->ContactType->findAllById($ids), '{n}.ContactType.id'));
+	    #$this->set('selectedContactTypes', implode(' ', Set::extract($this->Contact->ContactType->findAllById($ids), '{n}.ContactType.name')));
     }
     
     /**
