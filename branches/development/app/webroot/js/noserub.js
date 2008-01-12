@@ -125,7 +125,7 @@ noserub.fn = noserub.prototype = {
         $(':checkbox').hide();
         $(':checkbox[checked]').next().css('font-weight', 'bold').css('font-size', '14px');
         $(':checkbox').bind('set_result', function(e) {
-            $('#taglist').append($(this).next().text() + ' ');
+            $('#taglist').append($(this).next().text() + '&nbsp;');
         });
         $(':checkbox[checked]').trigger('set_result');
         $('.contact_type').click(function() {

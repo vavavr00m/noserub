@@ -52,7 +52,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	
 <br class="clear" />
 
-<h2>Define you relationship</h2>
+<h2>Define your relationship</h2>
 <p>
     Click on a term to choose it and/or add a term to specify the relationship and group your contacts.
 </p>
