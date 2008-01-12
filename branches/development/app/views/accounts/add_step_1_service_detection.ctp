@@ -2,7 +2,7 @@
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
     	<legend>Specify the service url</legend>
-    	<?php echo $form->input('Account.url'); ?>
+    	<?php echo $form->input('Account.url', array('error' => 'Could not detect a service or a feed')); ?>
     </fieldset>
     <fieldset>
         <input class="submitbutton" type="submit" value="Next step"/>
