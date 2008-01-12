@@ -79,13 +79,26 @@ class AccountsController extends AppController {
     		if ($serviceData) {
     			$this->Session->write('Service.add.id', $serviceData['service_id']);
 	    		$data = $this->Account->Service->getInfoFromService($splitted['username'], $serviceData['service_id'], $serviceData['username']);    
-	            if(!$data) {
-	                $this->Account->invalidate('username', 1);
+
+	    		if (!$data) {
+	                $this->Account->invalidate('url', 1);
 	            } else {
 	                $this->Session->write('Service.add.data', $data);
 	                $this->Session->write('Service.add.type', $data['service_type_id']);
 	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
 	            }
+    		} else {
+    			$this->Session->write('Service.add.id', 8); # any rss feed
+    			// TODO how do we want to handle the service type?
+    			$data = $this->Account->Service->getInfoFromFeed($splitted['username'], /*$this->data['Account']['service_type_id']*/ 3, $this->data['Account']['url']);
+
+    			if (!$data) {
+    				$this->Account->invalidate('url', 1);
+    			} else {
+    				$this->Session->write('Service.add.data', $data);
+	                $this->Session->write('Service.add.type', $data['service_type_id']);
+	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
+    			}
     		}
     	}
     }
