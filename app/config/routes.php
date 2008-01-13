@@ -81,7 +81,7 @@ Router::connect('/:username/settings/locations/:location_id/edit/', array('contr
 Router::connect('/:username/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
 
 Router::connect('/:username/settings/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
-Router::connect('/:username/settings/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_feed'));
+Router::connect('/:username/settings/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_select_service_type'));
 Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
 Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
 Router::connect('/:username/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1_service_detection'));

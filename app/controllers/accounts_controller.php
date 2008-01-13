@@ -49,7 +49,7 @@ class AccountsController extends AppController {
     	# only logged in users can add accounts
         if(!$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         $identity = $this->getIdentity($splitted['username']);
@@ -59,7 +59,7 @@ class AccountsController extends AppController {
             
             if(!$identity || $identity['Identity']['namespace'] != $session_identity['local_username']) {
                 # Identity not found, or identity's namespace does not match logged in username
-                $this->redirect('/', null, true);
+                $this->redirect('/');
             }
             
             $this->Session->write('Service.add.account.is_logged_in_user', true);
@@ -74,6 +74,7 @@ class AccountsController extends AppController {
 		$this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);        
         
     	if ($this->data) {
+    		$this->ensureSecurityToken();
     		$serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
     		
     		if ($serviceData) {
@@ -85,22 +86,45 @@ class AccountsController extends AppController {
 	            } else {
 	                $this->Session->write('Service.add.data', $data);
 	                $this->Session->write('Service.add.type', $data['service_type_id']);
-	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
+	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/');
 	            }
     		} else {
     			$this->Session->write('Service.add.id', 8); # any rss feed
-    			// TODO how do we want to handle the service type?
-    			$data = $this->Account->Service->getInfoFromFeed($splitted['username'], /*$this->data['Account']['service_type_id']*/ 3, $this->data['Account']['url']);
+    			
+    			// as we don't know the service type id yet we set the id to 3 for Text/Blog 
+    			$data = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $this->data['Account']['url']);
 
     			if (!$data) {
     				$this->Account->invalidate('url', 1);
     			} else {
     				$this->Session->write('Service.add.data', $data);
 	                $this->Session->write('Service.add.type', $data['service_type_id']);
-	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
+	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/feed/');
     			}
     		}
     	}
+    	
+    	$this->set('headline', 'Specify the service url');
+    }
+    
+    function add_step_2_select_service_type() {
+    	$username = isset($this->params['username']) ? $this->params['username'] : '';
+    	$session_identity = $this->Session->read('Identity');
+    	$splitted = $this->Account->Identity->splitUsername($username);
+    	
+    	# only logged in users can add accounts
+        if(!$session_identity) {
+            $this->redirect('/');
+        }
+    	
+    	if ($this->data) {
+    		$this->ensureSecurityToken();
+    		$this->Session->write('Service.add.type', $this->data['Account']['service_type_id']);
+    		$this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/');
+    	}
+    	
+    	$this->set('service_types', $this->Account->ServiceType->find('list'));
+    	$this->set('headline', 'Select the feed type');
     }
     
     /**
