@@ -80,7 +80,6 @@ Router::connect('/:username/settings/locations/:location_id/delete/:security_tok
 Router::connect('/:username/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
 Router::connect('/:username/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
 
-Router::connect('/:username/settings/accounts/add/service/', array('controller' => 'accounts', 'action' => 'add_step_2_service'));
 Router::connect('/:username/settings/accounts/add/feed/', array('controller' => 'accounts', 'action' => 'add_step_2_select_service_type'));
 Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
 Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
