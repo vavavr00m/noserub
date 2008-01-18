@@ -361,10 +361,11 @@ class AccountsController extends AppController {
         
         if(!$this->data) {
             $this->set('headline', 'Edit service ' . htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8'));
+            $this->set('service_types', $this->Account->ServiceType->find('list'));
             $this->data = $data;
         } else {
             $this->Account->id = $account_id;
-            if($this->Account->save($this->data, true, array('title'))) {
+            if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             }
         }

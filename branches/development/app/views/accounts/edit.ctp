@@ -3,6 +3,8 @@
     <fieldset>
     	<legend>Edit service details</legend>
         <?php echo $form->input('Account.title'); ?>
+        <label for="AccountServiceTypeId">Servicetype</label>
+        <?php echo $form->select('Account.service_type_id', $service_types, array($this->data['Account']['service_type_id']), null, null, false); ?>
     </fieldset>
     <fieldset>
         <input class="submitbutton" type="submit" value="Change"/>
