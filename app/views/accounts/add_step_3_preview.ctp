@@ -12,6 +12,12 @@
 			?>
 			</dd>
     <?php } ?>
+    <?php if (isset($service_types)): ?>
+    	<dt>Servicetype</dt>
+    	<dd>
+    		<?php echo $form->select('Account.service_type_id', $service_types, array('3'), null, null, false); ?>
+    	</dd>
+    <?php endif; ?>
     
     <dt>URL</dt>
     <dd><?php echo htmlentities($data['account_url']); ?></dd>
