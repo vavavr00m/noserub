@@ -81,8 +81,8 @@ Router::connect('/:username/settings/locations/:location_id/edit/', array('contr
 Router::connect('/:username/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
 
 Router::connect('/:username/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1_service_detection'));
-Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_3_preview'));
-Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_4_friends'));
+Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_2_preview'));
+Router::connect('/:username/settings/accounts/add/friends/', array('controller' => 'accounts', 'action' => 'add_step_3_friends'));
 Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
 Router::connect('/:username/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
 Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));

@@ -110,7 +110,7 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function add_step_3_preview() {
+    function add_step_2_preview() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -197,7 +197,7 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function add_step_4_friends() {
+    function add_step_3_friends() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
