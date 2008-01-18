@@ -84,9 +84,7 @@ class AccountsController extends AppController {
 	    		if (!$data) {
 	                $this->Account->invalidate('url', 1);
 	            } else {
-	                $this->Session->write('Service.add.data', $data);
-	                $this->Session->write('Service.add.type', $data['service_type_id']);
-	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/');
+	            	$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
 	            }
     		} else {
     			$this->Session->write('Service.add.id', 8); # any rss feed
@@ -97,34 +95,12 @@ class AccountsController extends AppController {
     			if (!$data) {
     				$this->Account->invalidate('url', 1);
     			} else {
-    				$this->Session->write('Service.add.data', $data);
-	                $this->Session->write('Service.add.type', $data['service_type_id']);
-	                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/feed/');
+    				$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
     			}
     		}
     	}
     	
     	$this->set('headline', 'Specify the service url');
-    }
-    
-    function add_step_2_select_service_type() {
-    	$username = isset($this->params['username']) ? $this->params['username'] : '';
-    	$session_identity = $this->Session->read('Identity');
-    	$splitted = $this->Account->Identity->splitUsername($username);
-    	
-    	# only logged in users can add accounts
-        if(!$session_identity) {
-            $this->redirect('/');
-        }
-    	
-    	if ($this->data) {
-    		$this->ensureSecurityToken();
-    		$this->Session->write('Service.add.type', $this->data['Account']['service_type_id']);
-    		$this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/');
-    	}
-    	
-    	$this->set('service_types', $this->Account->ServiceType->find('list'));
-    	$this->set('headline', 'Select the feed type');
     }
     
     /**
@@ -161,11 +137,16 @@ class AccountsController extends AppController {
                 if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
-                          if (isset($this->data['Account']['title']) and !empty($this->data['Account']['title'])) {
-                             $data['title'] = $this->data['Account']['title'];
-                          }
+					
+                    if (isset($this->data['Account']['title']) and !empty($this->data['Account']['title'])) {
+						$data['title'] = $this->data['Account']['title'];
+					}
                     
-                          $saveable = array('identity_id', 'service_id', 'service_type_id', 
+					if (isset($this->data['Account']['service_type_id'])) {
+						$data['service_type_id'] = $this->data['Account']['service_type_id'];
+					}
+					
+					$saveable = array('identity_id', 'service_id', 'service_type_id', 
                                       'username', 'account_url', 'feed_url', 'created', 
                                       'modified', 'title');
                     $this->Account->create();
@@ -200,6 +181,10 @@ class AccountsController extends AppController {
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
                 $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
             }
+        }
+        // for feeds it must be possible to select the service type
+        if ($data['service_id'] == 8) {
+        	$this->set('service_types', $this->Account->ServiceType->find('list'));
         }
         $this->set('data', $data);
         $this->set('headline', 'Preview the data');
@@ -446,5 +431,11 @@ class AccountsController extends AppController {
         $identity = $this->Account->Identity->findByUsername($username);
 
         return $identity;
+    }
+    
+    private function saveToSessionAndRedirectToPreview($data, $username) {
+    	$this->Session->write('Service.add.data', $data);
+		$this->Session->write('Service.add.type', $data['service_type_id']);
+		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
     }
 }
