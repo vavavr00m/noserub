@@ -341,112 +341,169 @@ class Service extends AppModel {
      * Factory method to create services
      */
     private function getService($service_id) {
+    	$serviceName = '';
+    	
     	switch ($service_id) {
     		case 1:
-    			return new FlickrService($service_id);
+    			$serviceName = 'Flickr';
+    			break;
     		case 2:
-    			return new DeliciousService($service_id);
+    			$serviceName = 'Delicious';
+    			break;
     		case 3:
-    			return new IpernityService($service_id);
+    			$serviceName = 'Ipernity';
+    			break;
     		case 4:
-    			return new _23hqService($service_id);
+    			$serviceName = '_23hq';
+    			break;
     		case 5: 
-    			return new TwitterService($service_id);
+    			$serviceName = 'Twitter';
+    			break;
     		case 6:
-    			return new PownceService($service_id);
+    			$serviceName = 'Pownce';
+    			break;
     		case 9:
-    			return new UpcomingService($service_id);
+    			$serviceName = 'Upcoming';
+    			break;
     		case 10:
-    			return new VimeoService($service_id);
+    			$serviceName = 'Vimeo';
+    			break;
     		case 11:
-    			return new LastfmService($service_id);
+    			$serviceName = 'Lastfm';
+    			break;
     		case 12:
-    			return new QypeService($service_id);
+    			$serviceName = 'Qype';
+    			break;
     		case 13:
-    			return new MagnoliaService($service_id);
+    			$serviceName = 'Magnolia';
+    			break;
     		case 14:
-    			return new StumbleuponService($service_id);
+    			$serviceName = 'Stumbleupon';
+    			break;
     		case 15:
-    			return new CorkdService($service_id);
+    			$serviceName = 'Corkd';
+    			break;
     		case 16:
-    			return new DailymotionService($service_id);
+    			$serviceName = 'Dailymotion';
+    			break;
     		case 17:
-    			return new ZooomrService($service_id);
+    			$serviceName = 'Zooomr';
+    			break;
     		case 18:
-    			return new OdeoService($service_id);
+    			$serviceName = 'Odeo';
+    			break;
     		case 19:
-    			return new IlikeService($service_id);
+    			$serviceName = 'Ilike';
+    			break;
     		case 20:
-    			return new WeventService($service_id);
+    			$serviceName = 'Wevent';
+    			break;
     		case 21:
-    			return new ImthereService($service_id);
+    			$serviceName = 'Imthere';
+    			break;
     		case 22:
-    			return new NewsvineService($service_id);
+    			$serviceName = 'Newsvine';
+    			break;
     		case 23:
-    			return new JabberService($service_id);
+    			$serviceName = 'Jabber';
+    			break;
     		case 24:
-    			return new GtalkService($service_id);
+    			$serviceName = 'Gtalk';
+    			break;
     		case 25:
-    			return new IcqService($service_id);
+    			$serviceName = 'Icq';
+    			break;
     		case 26:
-    			return new YimService($service_id);
+    			$serviceName = 'Yim';
+    			break;
     		case 27:
-    			return new AimService($service_id);
+    			$serviceName = 'Aim';
+    			break;
     		case 28:
-    			return new SkypeService($service_id);
+    			$serviceName = 'Skype';
+    			break;
     		case 29:
-    			return new MsnService($service_id);
+    			$serviceName = 'Msn';
+    			break;
     		case 30:
-    			return new FacebookService($service_id);
+    			$serviceName = 'Facebook';
+    			break;
     		case 31:
-        		return new SecondlifeService($service_id);
+    			$serviceName = 'Secondlife';
+    			break;
     		case 32:
-    			return new LinkedinService($service_id);
+    			$serviceName = 'Linkedin';
+    			break;
     		case 33:
-    			return new XingService($service_id);
+    			$serviceName = 'Xing';
+    			break;
     		case 34:
-    			return new SlideshareService($service_id);
+    			$serviceName = 'Slideshare';
+    			break;
     		case 35:
-    			return new PlazesService($service_id);
+    			$serviceName = 'Plazes';
+    			break;
     		case 36:
-    			return new ScribdService($service_id);
+    			$serviceName = 'Scribd';
+    			break;
     		case 37:
-    			return new MoodmillService($service_id);
+    			$serviceName = 'Moodmill';
+    			break;
     		case 38:
-    			return new DiggService($service_id);
+    			$serviceName = 'Digg';
+    			break;
     		case 39:
-    			return new MisterwongService($service_id);
+    			$serviceName = 'Misterwong';
+    			break;
     		case 40:
-    			return new FolkdService($service_id);
+    			$serviceName = 'Folkd';
+    			break;
     		case 41:
-    			return new RedditService($service_id);
+    			$serviceName = 'Reddit';
+    			break;
     		case 42:
-    			return new FavesService($service_id);
+    			$serviceName = 'Faves';
+    			break;
     		case 43:
-    			return new SimpyService($service_id);
+    			$serviceName = 'Simpy';
+    			break;
     		case 44:
-    			return new DeviantartService($service_id);
+    			$serviceName = 'Deviantart';
+    			break;
     		case 45:
-    			return new ViddlerService($service_id);
+    			$serviceName = 'Viddler';
+    			break;
     		case 46:
-    			return new ViddyouService($service_id);
+    			$serviceName = 'Viddyou';
+    			break;
     		case 47:
-    			return new GadugaduService($service_id);
+    			$serviceName = 'Gadugadu';
+    			break;
     		case 48:
-    			return new DopplrService($service_id);
+    			$serviceName = 'Dopplr';
+    			break;
     		case 49:
-    			return new OrkutService($service_id);
+    			$serviceName = 'Orkut';
+    			break;
     		case 50:
-    			return new KulandoService($service_id);
+    			$serviceName = 'Kulando';
+    			break;
     		case 51:
-    			return new WordpresscomService($service_id);
+    			$serviceName = 'Wordpresscom';
+    			break;
     		case 52:
-    			return new BloggerdeService($service_id);
+    			$serviceName = 'Bloggerde';
+    			break;
     		case 53:
-    			return new LivejournalService($service_id);
+    			$serviceName = 'Livejournal';
+    			break;
     		default:
     			return false;
     	}
+    	
+    	$className = $serviceName . 'Service';
+    	
+    	return new $className($service_id);
     }
     
     private function removePath($url) {
