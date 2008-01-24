@@ -341,166 +341,19 @@ class Service extends AppModel {
      * Factory method to create services
      */
     private function getService($service_id) {
-    	$serviceName = '';
-    	
-    	switch ($service_id) {
-    		case 1:
-    			$serviceName = 'Flickr';
-    			break;
-    		case 2:
-    			$serviceName = 'Delicious';
-    			break;
-    		case 3:
-    			$serviceName = 'Ipernity';
-    			break;
-    		case 4:
-    			$serviceName = '_23hq';
-    			break;
-    		case 5: 
-    			$serviceName = 'Twitter';
-    			break;
-    		case 6:
-    			$serviceName = 'Pownce';
-    			break;
-    		case 9:
-    			$serviceName = 'Upcoming';
-    			break;
-    		case 10:
-    			$serviceName = 'Vimeo';
-    			break;
-    		case 11:
-    			$serviceName = 'Lastfm';
-    			break;
-    		case 12:
-    			$serviceName = 'Qype';
-    			break;
-    		case 13:
-    			$serviceName = 'Magnolia';
-    			break;
-    		case 14:
-    			$serviceName = 'Stumbleupon';
-    			break;
-    		case 15:
-    			$serviceName = 'Corkd';
-    			break;
-    		case 16:
-    			$serviceName = 'Dailymotion';
-    			break;
-    		case 17:
-    			$serviceName = 'Zooomr';
-    			break;
-    		case 18:
-    			$serviceName = 'Odeo';
-    			break;
-    		case 19:
-    			$serviceName = 'Ilike';
-    			break;
-    		case 20:
-    			$serviceName = 'Wevent';
-    			break;
-    		case 21:
-    			$serviceName = 'Imthere';
-    			break;
-    		case 22:
-    			$serviceName = 'Newsvine';
-    			break;
-    		case 23:
-    			$serviceName = 'Jabber';
-    			break;
-    		case 24:
-    			$serviceName = 'Gtalk';
-    			break;
-    		case 25:
-    			$serviceName = 'Icq';
-    			break;
-    		case 26:
-    			$serviceName = 'Yim';
-    			break;
-    		case 27:
-    			$serviceName = 'Aim';
-    			break;
-    		case 28:
-    			$serviceName = 'Skype';
-    			break;
-    		case 29:
-    			$serviceName = 'Msn';
-    			break;
-    		case 30:
-    			$serviceName = 'Facebook';
-    			break;
-    		case 31:
-    			$serviceName = 'Secondlife';
-    			break;
-    		case 32:
-    			$serviceName = 'Linkedin';
-    			break;
-    		case 33:
-    			$serviceName = 'Xing';
-    			break;
-    		case 34:
-    			$serviceName = 'Slideshare';
-    			break;
-    		case 35:
-    			$serviceName = 'Plazes';
-    			break;
-    		case 36:
-    			$serviceName = 'Scribd';
-    			break;
-    		case 37:
-    			$serviceName = 'Moodmill';
-    			break;
-    		case 38:
-    			$serviceName = 'Digg';
-    			break;
-    		case 39:
-    			$serviceName = 'Misterwong';
-    			break;
-    		case 40:
-    			$serviceName = 'Folkd';
-    			break;
-    		case 41:
-    			$serviceName = 'Reddit';
-    			break;
-    		case 42:
-    			$serviceName = 'Faves';
-    			break;
-    		case 43:
-    			$serviceName = 'Simpy';
-    			break;
-    		case 44:
-    			$serviceName = 'Deviantart';
-    			break;
-    		case 45:
-    			$serviceName = 'Viddler';
-    			break;
-    		case 46:
-    			$serviceName = 'Viddyou';
-    			break;
-    		case 47:
-    			$serviceName = 'Gadugadu';
-    			break;
-    		case 48:
-    			$serviceName = 'Dopplr';
-    			break;
-    		case 49:
-    			$serviceName = 'Orkut';
-    			break;
-    		case 50:
-    			$serviceName = 'Kulando';
-    			break;
-    		case 51:
-    			$serviceName = 'Wordpresscom';
-    			break;
-    		case 52:
-    			$serviceName = 'Bloggerde';
-    			break;
-    		case 53:
-    			$serviceName = 'Livejournal';
-    			break;
-    		default:
-    			return false;
+    	// RSS feeds are not handled by this method, so we simply return false
+    	if ($service_id == 8) {
+    		return false;
     	}
     	
+    	$this->recursive = 0;
+    	$service = $this->find(array('Service.id' => $service_id), array('Service.internal_name'));
+    	
+    	if (!$service) {
+    		return false;
+    	}
+    	
+    	$serviceName = $service['Service']['internal_name'];
     	$className = $serviceName . 'Service';
     	
     	if (!class_exists($className)) {
