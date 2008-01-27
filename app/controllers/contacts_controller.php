@@ -174,36 +174,7 @@ class ContactsController extends AppController {
             $this->set('headline', 'Add a contact to '. $splitted['local_username'] . '\'s social network');
         }
     }
-    
-    function define_contact_types() {
-    	$username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Contact->Identity->splitUsername($username);
-        $identityId = $this->Session->read('Identity.id');
-
-    	if ($this->data) {
-    		if (isset($this->params['form']['submit'])) {     			
-    			$contactId = $this->Session->read('Contacts.add.Contact.id');
-    			
-    			$noserubContactTypeIDs = $this->Contact->NoserubContactType->getSelectedNoserubContactTypeIDs($this->data);
-    			$this->Contact->createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs);
-    			
-    			$contactTypes = $this->Contact->ContactType->getContactTypesFromString($this->data['ContactType']['tags']);
-    			$newContactTypes = $this->Contact->ContactType->getNewContactTypes($identityId, $contactTypes);
-    			$this->Contact->ContactType->createContactTypes($identityId, $newContactTypes);
-
-    			$contactTypeIDs = $this->Contact->ContactType->getIDsOfContactTypes($identityId, $contactTypes);
-    			$this->Contact->createAssociationsToContactTypes($contactId, $contactTypeIDs);
-
-    			$this->Session->delete('Contacts.add.Contact.id');
-    		}
-			$this->redirect('/' . $splitted['local_username'] . '/contacts/');
-    	} else {
-    		$this->set('headline', 'Define contact types');
-    		$this->set('noserubContactTypes', $this->Contact->NoserubContactType->findAll());
-    		$this->set('contactTypes', $this->Contact->ContactType->findAllByIdentityId($identityId));
-    	}
-    }
-    
+        
     /**
      * Method description
      *
@@ -236,6 +207,12 @@ class ContactsController extends AppController {
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
         }
         
+        # remove contact_type relationships
+        $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
+        $this->Contact->ContactTypesContact->execute($sql);
+        $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
+        $this->Contact->ContactsNoserubContactType->execute($sql);
+        
         # remove this contact
         $with_identity_id = $contact['Contact']['with_identity_id'];
         $this->Contact->id = $contact_id;
@@ -243,12 +220,12 @@ class ContactsController extends AppController {
         $this->flashMessage('success', 'Removed the contact.');
         
         # get the other identity in order to determine, if
-        # this was a local identity and therfore can be deleted
+        # this was a local identity and therefore can be deleted
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
         $with_identity = $this->Contact->WithIdentity->findById($with_identity_id);
         
-        if($with_identity['Identity']['namespace'] == $session_identity['local_username']) {
+        if($with_identity['WithIdentity']['namespace'] == $session_identity['local_username']) {
             # it's only local, so delete the identity
             $this->Contact->Identity->id = $with_identity_id;
             $this->Contact->Identity->delete();
@@ -486,7 +463,7 @@ class ContactsController extends AppController {
             $this->flashMessage('success', 'Added new contact.');
         }
         
-        $this->redirect('/' . $splitted['local_username'], null, true);
+        $this->redirect('/' . $splitted['local_username']);
     }
     
     private function saveContactAndRedirect($contactData, $localUsername) {
@@ -494,9 +471,9 @@ class ContactsController extends AppController {
 
 		$saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
 		if($this->Contact->save($contactData, true, $saveable)) {
-			$this->flashMessage('success', 'Added new contact.');
+			$this->flashMessage('success', 'New contact added.');
 			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-			$this->redirect('/' . $localUsername . '/contacts/define_contact_types', null, true);
+			$this->redirect('/' . $localUsername . '/contacts/' . $this->Contact->id . '/edit/');
 		}
     }
 }
