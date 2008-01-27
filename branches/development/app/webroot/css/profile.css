@@ -130,3 +130,16 @@
 	padding: 5px 2px 5px 0;
 	vertical-align: middle;
 }
+
+/* editing contacts */
+span.contact_type {
+    margin: 5px;
+    padding: 5px;
+    float: left;
+} 
+
+span.contact_type.checked {
+    background-color: #12A1C9;
+    color: #fff;
+    text-decoration: underline;
+}
