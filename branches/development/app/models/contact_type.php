@@ -5,6 +5,60 @@ uses('Sanitize');
 class ContactType extends AppModel {
 	var $hasAndBelongsToMany = array('Contact');
 	
+	/**
+	 * return ids of contact types for the tags in
+	 * the string. also removes thos tags from the new tags.
+	 *
+	 * @param array $new_tag 
+	 * @return array of contact type ids and cleaned up tags
+	 */
+	public function extract($tags) {
+	    $ids = array();
+	    $remaining_tags = array();
+	    foreach($tags['tags'] as $tag) {
+	        if($tag) {
+	            $this->recursive = 0;
+	            $this->expects('ContactType');
+	            $data = $this->findByName($tag, array('id'));
+                if($data) {
+                    $ids[$data['ContactType']['id']] = 1;
+                } else {
+                    $remaining_tags[] = $tag;
+                }
+            }
+	    }
+
+	    return array('contact_type_ids'         => $ids,
+	                 'noserub_contact_type_ids' => $tags['noserub_contact_type_ids'],
+	                 'tags'                     => $remaining_tags);
+	}
+	
+	/**
+     * merges the array of contact types (id => {0,1}) with
+     * the tags in the string $new_tags
+     */
+	public function merge($contact_types, $new_tag_ids) {
+	    foreach($contact_types as $id => $marked) {
+	        if(isset($new_tag_ids[$id])) {
+	            $contact_types[$id] = 1;
+	        }
+	    }
+	    
+	    return $contact_types;
+	}
+	
+	/**
+	 * removes a contact type, when it is no longer being used
+	 */
+	public function removeIfUnused($contact_type_id) {
+	    $this->ContactTypesContact->recursive = 0;
+	    $this->ContactTypesContact->expect('ContactTypesContact');
+	    if(!$this->findCount(array('contact_type_id' => $contact_type_id))) {
+	        $this->id = $contact_type_id;
+	        $this->delete();
+	    }
+	}
+	
 	function createContactTypes($identityId, $contactTypes) {
 		$data['ContactType']['identity_id'] = $identityId;
 		

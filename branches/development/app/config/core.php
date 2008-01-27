@@ -41,7 +41,7 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 1);
-	define('JS_DEBUG', false);
+	define('JS_DEBUG', true);
 /**
  * Application wide charset encoding
  */
