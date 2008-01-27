@@ -5,6 +5,18 @@ class Service extends AppModel {
     var $hasMany = array('Account');
     var $belongsTo = array('ServiceType');
 
+    /**
+     * returns all accounts with is_contact=1
+     *
+     * @return array
+     */
+    function getContactAccounts() {
+        $this->recursive = 0;
+        $this->expects('Service');
+        
+        return $this->findAllByIsContact(1);
+    }
+    
     function detectService($url) {
     	$url = trim($url);
     	if ($url == '') {
@@ -19,36 +31,6 @@ class Service extends AppModel {
     		
     		if ($username) {
     			return array('service_id' => $service->getServiceId(), 'username' => $username);
-    		}
-    	}
-    	
-    	return false;
-    }
-    
-    function getDomainFromString($url) {
-    	if (strlen(trim($url)) < 4 || strpos($url, '.') === false) {
-    		return false;
-    	}
-
-    	$domain = $this->removeHttpProtocol($url);
-    	$domain = $this->removePath($domain);
-    	$domain = $this->removeSubdomains($domain);
-    	
-    	return $domain;
-    }
-    
-    function getServiceFromString($url) {
-    	$domain = $this->getDomainFromString($url);
-    	
-    	if ($domain) {
-    		$domain = Sanitize::paranoid($domain, array('.', '-'));
-    		$service = $this->find(array('Service.url' => 'LIKE %'.$domain.'%'), 'Service.id');
-    		
-    		if ($service) {
-    			return $service['Service']['id'];
-    		} else {
-    			// it is an unknown service, so we treat it as a RSS feed
-    			return 8;
     		}
     	}
     	
