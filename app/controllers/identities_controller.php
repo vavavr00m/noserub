@@ -40,17 +40,8 @@ class IdentitiesController extends AppController {
                 $location_id = $this->Identity->Location->id;
             } 
             if($location_id > 0) {
-                $data = array('last_location_id' => $location_id);
-                $this->Identity->id = $session_identity['id'];
-                $this->Identity->save($data);
+                $this->Identity->Location->set($session_identity['id'], $location_id);                
                 $this->flashMessage('success', 'Location updated');
-                
-                # we need to get the complete location for the activity
-                $this->Identity->Location->id = $location_id;
-                $this->Identity->Location->recursive = 0;
-                $this->Identity->Location->expects('Location');
-                $location = $this->Identity->Location->findById($location_id);
-                $this->Identity->Activity->setLocation($session_identity['id'], $location);
             }
         }
         
