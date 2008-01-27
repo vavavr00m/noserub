@@ -1,5 +1,4 @@
 <?php
-#$session_identity_id    = isset($session_identity['id']) ? $session_identity['id'] : 0;
 $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
                              1 => Router::url('/images/profile/avatar/female.gif'),
                              2 => Router::url('/images/profile/avatar/male.gif')),
@@ -64,17 +63,20 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
         Your relationship: <span id="taglist"></span>
     </fieldset>
     <fieldset>
-	    <?php foreach ($noserubContactTypes as $contactType) { ?>
-    		<?php echo $form->checkbox('NoserubContactType.'.$contactType['NoserubContactType']['id'], array('checked' => in_array($contactType['NoserubContactType']['id'], $selectedNoserubContactTypes))); ?>&nbsp;
-    		<span class="contact_type"><?php echo $contactType['NoserubContactType']['name']; ?></span>
+	    <?php foreach ($noserub_contact_types as $contact_type) { ?>
+    		<?php echo $form->checkbox('NoserubContactType.' . $contact_type['NoserubContactType']['id'], 
+    		                           array('checked' => in_array($contact_type['NoserubContactType']['id'], $selected_noserub_contact_types))); 
+    		?>&nbsp;
+    		<span class="contact_type"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
     	<?php } ?>
-    	<?php foreach ($contactTypes as $contactType) { ?>
-    	    <?php echo $form->checkbox('ContactType.'.$contactType['ContactType']['id'], array('checked' => in_array($contactType['ContactType']['id'], $selectedContactTypes))); ?>
-    		<span class="contact_type"><?php echo $contactType['ContactType']['name']; ?></span>
+    	<?php foreach ($contact_types as $contact_type) { ?>
+    	    <?php echo $form->checkbox('ContactType.' . $contact_type['ContactType']['id'], 
+    	                               array('checked' => in_array($contact_type['ContactType']['id'], $selected_contact_types))); ?>
+    		<span class="contact_type"><?php echo $contact_type['ContactType']['name']; ?></span>
     	<?php } ?>
     </fieldset>
     <fieldset>
-	    <?php echo $form->input('ContactType.tags', array('value' => $selectedContactTypes, 'label' => 'Add your own (separated by space):')); ?>
+	    <?php echo $form->input('Tags.own', array('label' => 'Add your own (separated by space):')); ?>
 	</fieldset>
 	<fieldset>
 	    <input class="submitbutton" type="submit" name="submit" value="Save"/>
