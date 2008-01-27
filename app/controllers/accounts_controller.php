@@ -36,6 +36,8 @@ class AccountsController extends AppController {
         } else {
             $this->set('headline', $splitted['username'] . '\'s accounts');
         }
+        
+        $this->set('contact_accounts', $this->Account->Service->getContactAccounts());
     }
     
     function add_step_1_service_detection() {
@@ -49,6 +51,7 @@ class AccountsController extends AppController {
     	# only logged in users can add accounts
         if(!$session_identity) {
             # this user is not logged in
+            $this->flashMessage('error', 'You need to be logged in to add an account.');
             $this->redirect('/');
         }
 
