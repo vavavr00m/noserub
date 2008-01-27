@@ -201,7 +201,6 @@ class LocationsController extends AppController {
         
         $this->Location->set($identity['Identity']['id'], $location_id);
         
-        $this->set('data', 'ok');
         $this->layout = 'api_' . $result_type;
         $this->render('../empty');
     }
