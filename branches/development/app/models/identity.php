@@ -499,19 +499,24 @@ class Identity extends AppModel {
     
     
     /**
-     * if Identity.last_activity is before $datetime, idis updated in the
+     * if Identity.last_activity is before $datetime, it is updated in the
      * database.
      */
-    public function updateLastActivity($datetime, $identity_id = null) {
-        # make sure we have datetime and not only date or something like that
-        $datetime = date('Y-m-d H:i:s', strtotime($datetime));
+    public function updateLastActivity($datetime = null, $identity_id = null) {
+        if($datetime === null) {
+            # no datetime set, use now
+            $datetime = date('Y-m-d H:i:s');
+        } else {
+            # make sure we have datetime and not only date or something like that
+            $datetime = date('Y-m-d H:i:s', strtotime($datetime));
         
-        # get now
-        $now = date('Y-m-d H:i:s');
+            # get now
+            $now = date('Y-m-d H:i:s');
         
-        if($datetime > $now) {
-            # don't allow "last_activity" to be in the future
-            return;
+            if($datetime > $now) {
+                # don't allow "last_activity" to be in the future
+                return;
+            }
         }
         
         # get the current value

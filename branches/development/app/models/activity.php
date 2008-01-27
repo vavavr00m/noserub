@@ -46,7 +46,12 @@ class Activity extends AppModel {
                           'created'         => date('Y-m-d H:i:s'));
                       
             $this->create();
-            return $this->save($data);
+            $this->save($data);
+            
+            # update user's last_activity
+            # not so nice to update user model data here
+            $this->Identity->updateLastActivity();
+            return true;
         } else {
             return false;
         }
