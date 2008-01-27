@@ -170,4 +170,39 @@ class LocationsController extends AppController {
         $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
     	$this->redirect($url, null, true);
     }
+    
+    public function api_get() {
+        $username    = isset($this->params['username'])    ? $this->params['username']    : '';
+        $api_hash    = isset($this->params['api_hash'])    ? $this->params['api_hash']    : '';
+        $result_type = isset($this->params['result_type']) ? $this->params['result_type']    : '';        
+        $splitted = $this->Location->Identity->splitUsername($username);
+        
+        $this->Location->Identity->recursive = 0;
+        $this->Location->Identity->expects('Identity');
+        $identity = $this->Location->Identity->findByUsername($splitted['username'], array('id'));
+                
+        $this->Location->recursive = 0;
+        $this->Location->expects('Location');
+        $this->set('data', $this->Location->findAllByIdentityId($identity['Identity']['id'], array('id', 'name')));
+        
+        $this->layout = 'api_' . $result_type;
+        $this->render('../empty');        
+    }
+    
+    public function api_set($location_id) {
+        $username    = isset($this->params['username'])    ? $this->params['username']    : '';
+        $api_hash    = isset($this->params['api_hash'])    ? $this->params['api_hash']    : '';
+        $result_type = isset($this->params['result_type']) ? $this->params['result_type']    : '';        
+        $splitted = $this->Location->Identity->splitUsername($username);
+        
+        $this->Location->Identity->recursive = 0;
+        $this->Location->Identity->expects('Identity');
+        $identity = $this->Location->Identity->findByUsername($splitted['username'], array('id'));
+        
+        $this->Location->set($identity['Identity']['id'], $location_id);
+        
+        $this->set('data', 'ok');
+        $this->layout = 'api_' . $result_type;
+        $this->render('../empty');
+    }
 }
