@@ -60,19 +60,21 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 
 <form id="DefineContactTypesForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
-        Your relationship: <span id="taglist"></span>
-    </fieldset>
-    <fieldset>
 	    <?php foreach ($noserub_contact_types as $contact_type) { ?>
-    		<?php echo $form->checkbox('NoserubContactType.' . $contact_type['NoserubContactType']['id'], 
-    		                           array('checked' => in_array($contact_type['NoserubContactType']['id'], $selected_noserub_contact_types))); 
+	        <?php
+	            $checked = in_array($contact_type['NoserubContactType']['id'], $selected_noserub_contact_types);
+    		    echo $form->checkbox('NoserubContactType.' . $contact_type['NoserubContactType']['id'], 
+    		                           array('checked' => $checked)); 
     		?>&nbsp;
-    		<span class="contact_type"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
+    		<span class="contact_type<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
     	<?php } ?>
     	<?php foreach ($contact_types as $contact_type) { ?>
-    	    <?php echo $form->checkbox('ContactType.' . $contact_type['ContactType']['id'], 
-    	                               array('checked' => in_array($contact_type['ContactType']['id'], $selected_contact_types))); ?>
-    		<span class="contact_type"><?php echo $contact_type['ContactType']['name']; ?></span>
+    	    <?php
+    	        $checked = in_array($contact_type['ContactType']['id'], $selected_contact_types);
+    	        echo $form->checkbox('ContactType.' . $contact_type['ContactType']['id'], 
+    	                               array('checked' => $checked)); 
+    	    ?>
+    		<span class="contact_type<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></span>
     	<?php } ?>
     </fieldset>
     <fieldset>

@@ -123,22 +123,14 @@ noserub.fn = noserub.prototype = {
     
     Contacts_edit: function() {
         $(':checkbox').hide();
-        $(':checkbox[checked]').next().css('font-weight', 'bold').css('font-size', '14px');
-        $(':checkbox').bind('set_result', function(e) {
-            $('#taglist').append($(this).next().text() + '&nbsp;');
-        });
-        $(':checkbox[checked]').trigger('set_result');
         $('.contact_type').click(function() {
             if($(this).prev().attr('checked')) {
                 $(this).prev().attr({checked: false});
-                 $(this).css('font-weight', 'normal').css('font-size', '11px');
+                $(this).removeClass('checked');
             } else {
                 $(this).prev().attr({checked: true});
-                $(this).css('font-weight', 'bold').css('font-size', '14px');
-            }
-            
-            $('#taglist').text('');
-            $(':checkbox[checked]').trigger('set_result');        
+                $(this).addClass('checked');
+            }            
         });
     }
 };
