@@ -76,7 +76,7 @@
 		}
 		
 		private function getFilterSubMenu($filter, $urlPart) {
-			$menuItems[] = new MenuItem('All', $urlPart, $filter == 'all');
+			$menuItems[] = new MenuItem('Overview', $urlPart, $filter == 'all');
 			$menuItems[] = new MenuItem('Photo', $urlPart.'photo/', $filter == 'photo');
 			$menuItems[] = new MenuItem('Video', $urlPart.'video/', $filter == 'video');
 			$menuItems[] = new MenuItem('Audio', $urlPart.'audio/', $filter == 'audio');
