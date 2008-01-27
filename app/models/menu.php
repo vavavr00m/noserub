@@ -146,6 +146,7 @@
 			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
 			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', $controller == 'Accounts');
 			$menuItems[] = new MenuItem('Locations', $link . 'locations/', $controller == 'Locations');
+			$menuItems[] = new MenuItem('Display', $link . 'display/', $controller == 'Identities' && $action == 'display_settings');
 			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
@@ -297,14 +298,14 @@
 		function isActive() {
 			$controllers = array('Locations', 'Accounts', 'OpenidSites', 'Syndications');
 			
-			if (in_array($this->controller, $controllers)) {
+			if(in_array($this->controller, $controllers)) {
 				return true;
 			}
 			
-			if ($this->controller == 'Identities') {
+			if($this->controller == 'Identities') {
 				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
 					
-				if (in_array($this->action, $identityActions)) {
+				if(in_array($this->action, $identityActions)) {
 					return true;
 				}
 			}

@@ -7,7 +7,7 @@ class Activity extends AppModel {
     public function getLatest($identity_id, $filter) {
         $items = array();
         
-        if($filter == 'location' || $filter == '') {
+        if(in_array('location', $filter)) {
             $items = $this->getLocations($identity_id);
         }
         

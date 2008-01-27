@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize', 'Cookie');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie');
     
     /**
      * Displays profile page of an identity
@@ -22,10 +22,10 @@ class IdentitiesController extends AppController {
         $splitted = $this->Identity->splitUsername($username);
         $username = $splitted['username'];
         
-        $filter = $this->filterSanitize->sanitize($filter);
+        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         
         $session_identity = $this->Session->read('Identity');
-
+        
         if($this->data) {
             $this->ensureSecurityToken();
             
@@ -149,13 +149,21 @@ class IdentitiesController extends AppController {
             $this->set('headline', 'Username could not be found!');
         }
 
+        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        if($filter == '') {
+            # no filter, that means "overview"
+            $filter = $show_in_overview;
+        } else {
+            $filter = array($filter);
+        }
+        
         # get all activities
         $items = $this->Identity->Activity->getLatest($data['Identity']['id'], $filter);
         
         # get all items for those accounts
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
-                if(!$filter || $account['ServiceType']['token'] == $filter) {
+                if(in_array($account['ServiceType']['token'], $filter)) {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                     } else {
@@ -184,7 +192,8 @@ class IdentitiesController extends AppController {
      */
     function social_stream() {
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
-        $filter = $this->filterSanitize->sanitize($filter);
+        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
+        $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
         
         $this->Identity->recursive = 2;
@@ -208,6 +217,14 @@ class IdentitiesController extends AppController {
                 $identities[] = $identity['Identity'];
             }
 
+            $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+            if($filter == '') {
+                # no filter, that means "overview"
+                $filter = $show_in_overview;
+            } else {
+                $filter = array($filter);
+            }
+            
             # get all activities
             $activity_items = $this->Identity->Activity->getLatest($identity['Identity']['id'], $filter);
             if($activity_items) {
@@ -216,7 +233,7 @@ class IdentitiesController extends AppController {
             # get all items for those accounts
             if(is_array($identity['Account'])) {
                 foreach($identity['Account'] as $account) {
-                    if(!$filter || $account['ServiceType']['token'] == $filter) {
+                    if(in_array($account['ServiceType']['token'], $filter)) {
                         if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                             $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                         } else {
@@ -420,6 +437,52 @@ class IdentitiesController extends AppController {
         }
         
         $this->set('headline', 'Settings for my NoseRub Account');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function display_settings() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            # sanitize all the filters
+            $sanitized_filters = array();
+            foreach($this->data['Identity']['overview_filters'] as $filter) {
+                if($this->Identity->Account->ServiceType->sanitizeFilter($filter)) {
+                    $sanitized_filters[] = $filter;
+                }
+            }
+            
+            $this->Identity->id = $session_identity['id'];
+            $new_value = join(',', $sanitized_filters);
+            $this->Identity->saveField('overview_filters', $new_value);
+            
+            $this->Session->write('Identity.overview_filters', $new_value);
+            
+            $this->flashMessage('success', 'Display options have been saved.');
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            $this->data['Identity']['overview_filters'] = explode(',', $this->Identity->field('overview_filters'));
+        }
+        
+        $this->set('filters', $this->Identity->Account->ServiceType->getFilters());
+        $this->set('headline', 'Configure your display options');
     }
     
     /**

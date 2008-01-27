@@ -4,7 +4,7 @@
 class ContactsController extends AppController {
     var $uses = array('Contact');
     var $helpers = array('form', 'nicetime', 'flashmessage');
-    var $components = array('cluster', 'filterSanitize');
+    var $components = array('cluster');
     
     /**
      * Method description
@@ -356,7 +356,7 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-		$filter = $this->filterSanitize->sanitize($filter);
+		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
         
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');

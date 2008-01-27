@@ -68,6 +68,7 @@ Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xr
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
 
+Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
