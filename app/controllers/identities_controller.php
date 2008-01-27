@@ -40,7 +40,7 @@ class IdentitiesController extends AppController {
                 $location_id = $this->Identity->Location->id;
             } 
             if($location_id > 0) {
-                $this->Identity->Location->set($session_identity['id'], $location_id);                
+                $this->Identity->Location->setTo($session_identity['id'], $location_id);                
                 $this->flashMessage('success', 'Location updated');
             }
         }

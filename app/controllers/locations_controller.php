@@ -199,7 +199,7 @@ class LocationsController extends AppController {
         $this->Location->Identity->expects('Identity');
         $identity = $this->Location->Identity->findByUsername($splitted['username'], array('id'));
         
-        $this->Location->set($identity['Identity']['id'], $location_id);
+        $this->Location->setTo($identity['Identity']['id'], $location_id);
         
         $this->layout = 'api_' . $result_type;
         $this->render('../empty');

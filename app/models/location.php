@@ -4,7 +4,7 @@
 class Location extends AppModel {
     var $belongsTo = array('Identity');                                                   
 
-    public function set($identity_id, $location_id) {
+    public function setTo($identity_id, $location_id) {
         $data = array('last_location_id' => $location_id);
         $this->Identity->id = $identity_id;
         $this->Identity->save($data);
