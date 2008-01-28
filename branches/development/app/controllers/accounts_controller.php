@@ -28,7 +28,8 @@ class AccountsController extends AppController {
         # get all accounts
         $this->Account->recursive = 1;
         $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
-        $this->set('data', $this->Account->findAllByIdentity_id($identity['Identity']['id']));
+        $data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
+        $this->set('data', $data);
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
@@ -38,6 +39,61 @@ class AccountsController extends AppController {
         }
         
         $this->set('contact_accounts', $this->Account->Service->getContactAccounts());
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            $need_redirect = false;
+            
+            # extract service_id and username from $data
+            $present_contact_accounts = array();
+            foreach($data as $item) {
+                if($item['Service']['is_contact']) {
+                    $present_contact_accounts[$item['Service']['id']] = array(
+                        'username'   => $item['Account']['username'],
+                        'account_id' => $item['Account']['id']);
+                }
+            }
+            foreach($this->data['Service'] as $service_id => $item) {
+                # go through each given data and test, wether we already have
+                # account-data for it.
+                if(isset($present_contact_accounts[$service_id])) {
+                    if($item['username'] == '') {
+                        # account can be deleted
+                        $account_id = $present_contact_accounts[$service_id]['account_id'];
+                        $this->Account->id = $account_id;
+                        $this->Account->delete();
+                        $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+                        $need_redirect = true;
+                    } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
+                        # username was changed!
+                        $this->Account->id = $present_contact_accounts[$service_id]['account_id'];
+                        $this->Account->saveField('username', $item['username']);
+                        $need_redirect = true;
+                    }
+                } else if($item['username']) {
+                    # new account needs to be created
+                    $new_account = array(
+                        'identity_id' => $session_identity['id'],
+                        'service_id'  => $service_id,
+                        'service_type_id' => $this->Account->Service->getServiceTypeId($service_id),
+                        'username'        => $item['username'],
+                        'account_url'     => $this->Account->Service->getAccountUrl($service_id, $item['username']));
+                    $this->Account->create();
+                    $this->Account->save($new_account, true, array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'created', 'modified'));
+                    $need_redirect = true;
+                }
+            }
+            if($need_redirect) {
+                # we need to redirect, because $data is already outdated 
+                # after the changes we just made
+                $this->flashMessage('success', 'Changes saved.');
+                $this->redirect($this->here);
+            } else {
+                $this->flashMessage('info', 'No changes made');
+            }
+        }
     }
     
     function add_step_1_service_detection() {
