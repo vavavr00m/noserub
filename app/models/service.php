@@ -109,7 +109,7 @@ class Service extends AppModel {
     function getFeedUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 		
-    	if ($service) {
+    	if($service) {
     		return $service->getFeedUrl($username);
         }
                 
@@ -298,7 +298,7 @@ class Service extends AppModel {
         
     	$service = $this->getService($account['Account']['service_id']);
 
-    	if ($service) {
+    	if($service) {
     		return $service->getContacts($account['Account']['username']);
         }
         
@@ -308,10 +308,10 @@ class Service extends AppModel {
     private function getAllServices() {
     	$services = array();
     	
-    	for ($i = 1; $i <= 53; $i++) {
+    	for($i = 1; $i <= 53; $i++) {
     		$service = $this->getService($i);
     		
-    		if ($service) {
+    		if($service) {
     			$services[] = $service;
     		}
     	}
@@ -324,21 +324,21 @@ class Service extends AppModel {
      */
     private function getService($service_id) {
     	// RSS feeds are not handled by this method, so we simply return false
-    	if ($service_id == 8) {
+    	if($service_id == 8) {
     		return false;
     	}
     	
     	$this->recursive = 0;
     	$service = $this->find(array('Service.id' => $service_id), array('Service.internal_name'));
     	
-    	if (!$service) {
+    	if(!$service) {
     		return false;
     	}
     	
     	$serviceName = $service['Service']['internal_name'];
     	$className = $serviceName . 'Service';
     	
-    	if (!class_exists($className)) {
+    	if(!class_exists($className)) {
     		require(MODELS.'services'.DS.strtolower($serviceName).'.php');
     	}
     	

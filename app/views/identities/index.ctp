@@ -217,7 +217,7 @@
 	</ul>
 	<?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
         <p>
-            <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+            <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />

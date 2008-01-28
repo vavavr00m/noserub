@@ -17,11 +17,6 @@
         No accounts yet.
     </p>
 <?php } else {?>
-<?php if($show_action_links) { ?>
-	<p class="infotext">
-	    <?php echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
-	</p>
-<?php } ?>
     <table class="listing">
         <thead>
             <tr>
@@ -33,10 +28,13 @@
         <tbody>
             <?php if(!empty($data)) {
                 foreach($data as $item) {
+                    if($item['Service']['is_contact']) {
+                        continue;
+                    }
                     $username    = isset($item['Account']['username'])    ? $item['Account']['username']    : $item['username'];
                     $account_id  = isset($item['Account']['id'])          ? $item['Account']['id']          : $item['id'];
                     $account_url = isset($item['Account']['account_url']) ? $item['Account']['account_url'] : $item['account_url'];
-						  $title       = isset($item['Account']['title'])       ? $item['Account']['title']       : false;
+					$title       = isset($item['Account']['title'])       ? $item['Account']['title']       : false;
                     ?><tr>
                         <?php if($item['Service']['id'] == 8) { ?>
                             <td colspan="2"><a rel="me" href="<?php echo $account_url; ?>"><?php echo $title ? htmlentities($title, ENT_QUOTES, 'UTF-8') : trim(str_replace('http://', '', $account_url), '/'); ?></a></td>
