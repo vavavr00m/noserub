@@ -345,28 +345,9 @@ class Service extends AppModel {
     	return new $className($service_id);
     }
     
-    private function removePath($url) {
-    	$positionOfSlash = strpos($url, '/');
-    	if ($positionOfSlash) {
-    		$url = substr($url, 0, $positionOfSlash);    	
-    	}
-    	
-    	return $url;
-    }
-    
     private function removeHttpProtocol($url) {
     	$url = str_ireplace('http://', '', $url);
     	$url = str_ireplace('https://', '', $url);
-    	
-    	return $url;
-    }
-    
-    private function removeSubdomains($url) {
-    	$dotCount = substr_count($url, '.');
-    	if ($dotCount > 1) {
-    		$revertedUrl = strrev($url);
-    		$url = strrev(substr($revertedUrl, 0, strpos($revertedUrl, '.', 4)));
-    	}
     	
     	return $url;
     }
