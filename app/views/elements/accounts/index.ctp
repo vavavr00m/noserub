@@ -6,11 +6,6 @@
                           ($session_local_username      != '' && 
                            $about_identity['namespace'] == $session_local_username);
 ?>
-<p class="infotext">
-    Here you can add all your own social/online activities and import friends in your network.
-</p>
-
-<hr class="space" />
 
 <?php if(empty($data)) { ?>
     <p>
