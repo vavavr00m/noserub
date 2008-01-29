@@ -113,10 +113,10 @@
         	</ul>
         </div>
         
-        <br class="clear" />
+        <hr class="clear" />
         
         <?php if($data['Identity']['about']) { ?>
-            <h4>About me</h4>
+            <h4>About <?php echo $sex['his'][$data['Identity']['sex']]; ?></h4>
             <div id="about">
                 <p class="summary">
                     <?php if($data['Identity']['about']) {
@@ -126,8 +126,35 @@
                 </p>        
             </div>
         <?php } ?>
+        
+        <?php if($relationship_status == 'contact') { ?>
+        
+        <hr />
+        	
+        <div class="textBox">
+        	<span class="more"><a href="#">edit</a></span>
+        	<h4>Relationship</h4>
+            <div id="relationshipBox">
+                <p class="summary">
+                	friend, acquaintance Some tags to be replaced with funky php code.
+                </p>        
+            </div>
+        </div>
+        
+        <div class="textBox lastBox">
+            <span class="more"><a href="#">edit</a></span>
+            <h4>Memo</h4>
+            <div id="memoBox">
+                <p class="summary">
+                    Some text to be replaced with funky php code.
+                </p>        
+            </div>
+		</div>
+            
+        <?php } ?>
+        
+        <hr class="clear" />
 
-        <br class="clear" />
         <div>
             <h4>Social activity</h4>
             <?php echo $this->renderElement('subnav', array('no_wrapper' => true)); ?>

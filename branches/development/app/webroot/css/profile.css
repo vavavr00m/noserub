@@ -20,6 +20,24 @@
 	padding: 0px 10px 0px 10px;
 }
 
+.textBox {
+	width: 290px;
+	float: left;
+}
+
+.lastBox {
+	margin-left: 20px;
+}
+
+#relationshipBox, #memoBox {
+	margin: 0px 0px 10px 0px;
+	font-size: 11px;
+	color: #000;
+	background-image: url('../images/profile/smallbox_bg.gif');
+	line-height: 24px;
+	padding: 0px 10px 0px 10px;
+}
+
 #whois, #photo, #addfriend {
 	float: left;
 }
@@ -44,6 +62,11 @@
 #sidebar hr {
 	border: none;
 	padding: 10px;
+}
+
+.vcard hr {
+	border: none;
+	padding: 5px;
 }
 
 #network {
@@ -136,7 +159,13 @@ span.contact_type {
     margin: 5px;
     padding: 5px;
     float: left;
+    cursor: pointer;
 } 
+
+span.contact_type:hover {
+    background-color: #ECEBE5;
+    text-decoration: underline;
+}
 
 span.contact_type.checked {
     background-color: #12A1C9;

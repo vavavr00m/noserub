@@ -1,8 +1,15 @@
 <?php $flashmessage->render(); ?>
-<div style="float:left;">
+<p class="infotext">
+    Here you can add all your own social/online activities and import friends in your network.
+</p>
+
+<hr class="space" />
+
+<div class="left">
     <?php echo $this->renderElement('accounts/index'); ?>
 </div>
-<div class="left" style="float:right;">
+
+<div class="right">
     <form method="POST" action="<?php echo $this->here; ?>">
         <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
         <table class="listing">

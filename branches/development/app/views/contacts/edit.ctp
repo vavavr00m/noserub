@@ -51,12 +51,11 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	
 <br class="clear" />
 
-<h2>Define your relationship</h2>
-<p>
+<h3>Define your relationship</h3>
+
+<p class="infotext">
     Click on a term to choose it and/or add a term to specify the relationship and group your contacts.
 </p>
-
-<br class="clear" />
 
 <form id="DefineContactTypesForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
