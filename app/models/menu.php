@@ -182,7 +182,7 @@
 			}
 			
 			if ($controller == 'Identities') {
-				$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+				$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings', 'display_settings');
 				
 				if (in_array($action, $identityActions)) {
 					return true;
@@ -303,7 +303,7 @@
 			}
 			
 			if($this->controller == 'Identities') {
-				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings', 'display_settings');
 					
 				if(in_array($this->action, $identityActions)) {
 					return true;
