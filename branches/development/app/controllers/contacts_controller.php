@@ -275,7 +275,11 @@ class ContactsController extends AppController {
     	    $entered_noserub_contact_types = $this->Contact->NoserubContactType->merge($this->data['NoserubContactType'], $new_tags['noserub_contact_type_ids']);
     	    
     	    # merge manual tags with contact types
-    	    $entered_contact_types = $this->Contact->ContactType->merge($this->data['ContactType'], $new_tags['contact_type_ids']);
+    	    if(isset($this->data['ContactType'])) {
+    	        $entered_contact_types = $this->Contact->ContactType->merge($this->data['ContactType'], $new_tags['contact_type_ids']);
+            } else {
+                $entered_contact_types = array();
+            }
             
             # go through entered noserub contact types and decide what to do
             foreach($entered_noserub_contact_types as $id => $marked) {
