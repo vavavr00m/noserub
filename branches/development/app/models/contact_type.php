@@ -52,7 +52,7 @@ class ContactType extends AppModel {
 	 */
 	public function removeIfUnused($contact_type_id) {
 	    $this->ContactTypesContact->recursive = 0;
-	    $this->ContactTypesContact->expect('ContactTypesContact');
+	    $this->ContactTypesContact->expects('ContactTypesContact');
 	    if(!$this->findCount(array('contact_type_id' => $contact_type_id))) {
 	        $this->id = $contact_type_id;
 	        $this->delete();
