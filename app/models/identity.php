@@ -433,6 +433,18 @@ class Identity extends AppModel {
     }
     
     /**
+     * removes http://, https:// and www. from url
+     */
+    function removeHttpWww($url) {
+        $url = str_ireplace('http://', '', $url);
+        $url = str_ireplace('https://', '', $url);
+        if(stripos($url, 'www.') === 0) {
+            $url = substr($url, 4);
+        }
+        
+        return $url;
+    }
+    /**
      * extract single information out of a username
      * a username may have the following occurences:
      * (1) noserub.com/dirk.olbertz
@@ -447,11 +459,7 @@ class Identity extends AppModel {
      */
     function splitUsername($username) {
         # first, remove http://, https:// and www.
-        $username = str_ireplace('http://', '', $username);
-        $username = str_ireplace('https://', '', $username);
-        if(stripos($username, 'www.') === 0) {
-            $username = str_ireplace('www.', '', $username);
-        }
+        $username = $this->removeHttpWww($username);
         
         # remove trailing slashes
         $username = trim($username, '/');
@@ -468,8 +476,7 @@ class Identity extends AppModel {
             # be for this server
             $local_username = $splitted[0];
             $servername = FULL_BASE_URL;
-            $servername = str_ireplace('http://', '', $servername);
-            $servername = str_ireplace('https://', '', $servername);
+            $servername = $this->removeHttpWww($servername);
             $username =  $servername . Router::url('/') . $local_username;
         } else {
             $servername = $splitted[0];
@@ -481,11 +488,8 @@ class Identity extends AppModel {
         $local_username_namespace = split('@', $local_username);
         
         # test, if this is a local contact, or not
-        $server_name = str_ireplace('http://', '', FULL_BASE_URL . Router::url('/'));
-        $server_name = str_ireplace('https://', '', $server_name);
-        if(stripos($server_name, 'www.') === 0) {
-            $server_name = str_ireplace('www.', '', $server_name);
-        }
+        $server_name = FULL_BASE_URL . Router::url('/');
+        $server_name = $this->removeHttpWww($server_name);
         $local = stripos($username, $server_name) === 0;
         $result = array('username'        => $username,
                         'local_username'  => $local_username,
