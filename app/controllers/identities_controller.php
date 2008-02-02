@@ -65,11 +65,14 @@ class IdentitiesController extends AppController {
                 if($data['Identity']['id'] == $session_identity['id']) {
                     $relationship_status = 'self';
                 } else {
-                    $this->Identity->Contact->recursive = 0;
-                    $this->Identity->Contact->expects('Contact');
-                    $is_contact = 1 == $this->Identity->Contact->findCount(array('identity_id'      => $session_identity['id'],
-                                                                                 'with_identity_id' => $data['Identity']['id']));
-                    $relationship_status = $is_contact ? 'contact' : 'none';
+                    $this->Identity->Contact->recursive = 1;
+                    $this->Identity->Contact->expects('Contact', 'ContactType', 'NoserubContactType');
+                    $contact = $this->Identity->Contact->find(
+                        array(
+                            'identity_id'      => $session_identity['id'],
+                            'with_identity_id' => $data['Identity']['id']));
+                    $relationship_status = $contact ? 'contact' : 'none';
+                    $this->set('contact', $contact);
                 }
                 $this->set('relationship_status', $relationship_status);
                 

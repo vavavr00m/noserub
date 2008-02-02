@@ -129,27 +129,34 @@
         
         <?php if($relationship_status == 'contact') { ?>
         
-        <hr />
+            <hr />
         	
-        <div class="textBox">
-        	<span class="more"><a href="#">edit</a></span>
-        	<h4>Relationship</h4>
-            <div id="relationshipBox">
-                <p class="summary">
-                	friend, acquaintance Some tags to be replaced with funky php code.
-                </p>        
+            <div class="textBox">
+            	<span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
+            	<h4>Relationship</h4>
+                <div id="relationshipBox">
+                    <p class="summary">
+                    	<?php
+                    	    foreach($contact['NoserubContactType'] as $contact_type) {
+                    	        echo $contact_type['name'] . ' ';
+                    	    }
+                    	    foreach($contact['ContactType'] as $contact_type) {
+                    	        echo $contact_type['name'] . ' ';
+                    	    }
+                    	?>
+                    </p>        
+                </div>
             </div>
-        </div>
         
-        <div class="textBox lastBox">
-            <span class="more"><a href="#">edit</a></span>
-            <h4>Memo</h4>
-            <div id="memoBox">
-                <p class="summary">
-                    Some text to be replaced with funky php code.
-                </p>        
-            </div>
-		</div>
+            <div class="textBox lastBox">
+                <span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
+                <h4>Notes</h4>
+                <div id="noteBox">
+                    <p class="summary">
+                        <?php echo $contact['Contact']['note'] ? $contact['Contact']['note'] : '<em>Add some notes here.</em>'; ?>
+                    </p>        
+                </div>
+    		</div>
             
         <?php } ?>
         
