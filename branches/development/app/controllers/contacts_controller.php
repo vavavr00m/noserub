@@ -265,6 +265,11 @@ class ContactsController extends AppController {
 	    $this->set('selected_noserub_contact_types', $selected_noserub_contact_types);
 	    
     	if($this->data) {
+    	    if($this->data['Contact']['note'] != $contact['Contact']['note']) {
+    	        $this->Contact->id = $contact_id;
+    	        $this->Contact->saveField('note', $this->data['Contact']['note']);
+    	    }
+    	    
     	    # extract noserub contact types from new tags and clean them up
     	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
     	    

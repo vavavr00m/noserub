@@ -77,8 +77,12 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     	<?php } ?>
     </fieldset>
     <fieldset>
-	    <?php echo $form->input('Tags.own', array('label' => 'Add your own (separated by space):')); ?>
+	    <?php echo $form->input('Tags.own', array('label' => 'Add your own terms (separated by space):')); ?>
 	</fieldset>
+	<fieldset>
+	    <label>Make some notes</label>
+	    <?php echo $form->textarea('Contact.note'); ?>
+	</fieldse>
 	<fieldset>
 	    <input class="submitbutton" type="submit" name="submit" value="Save"/>
 	</fieldset>
