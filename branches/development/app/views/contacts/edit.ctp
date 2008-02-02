@@ -81,8 +81,8 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	</fieldset>
 	<fieldset>
 	    <label>Make some notes</label>
-	    <?php echo $form->textarea('Contact.note'); ?>
-	</fieldse>
+	    <?php echo $form->textarea('Contact.note', array('value' => $contact['Contact']['note'])); ?>
+	</fieldset>
 	<fieldset>
 	    <input class="submitbutton" type="submit" name="submit" value="Save"/>
 	</fieldset>
