@@ -5,6 +5,7 @@
  * eg. Google SocialGraph API
  */
 vendor('social_graph/google_api');
+App::import('Component', 'Json');
 
 class SocialGraphComponent extends JsonComponent {
 
