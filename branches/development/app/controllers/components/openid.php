@@ -55,9 +55,9 @@
 			}
 		}
 		
-		public function getResponse() {
+		public function getResponse($returnTo) {
 			$consumer = $this->getConsumer();
-			$response = $consumer->complete();
+			$response = $consumer->complete($returnTo);
 			
 			return $response;
 		}

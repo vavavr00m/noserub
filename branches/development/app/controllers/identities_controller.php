@@ -643,12 +643,13 @@ class IdentitiesController extends AppController {
     
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
+    	$returnTo = '/pages/login/withopenid';
     	
     	if (!empty($this->data)) {
-    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/login/withopenid');
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
     	} else {
     		if (count($this->params['url']) > 1) {
-    			$response = $this->getOpenIDResponseIfSuccess();
+    			$response = $this->getOpenIDResponseIfSuccess($returnTo);
     			$identity = $this->Identity->checkOpenID($response);
  
     			if ($identity) {
@@ -720,12 +721,13 @@ class IdentitiesController extends AppController {
     
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
-
+		$returnTo = '/pages/register/withopenid';
+    	
     	if (!empty($this->data)) {
-    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/register/withopenid', array('email'));
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
     	} else {
     		if (count($this->params['url']) > 1) {
-    			$response = $this->getOpenIDResponseIfSuccess();
+    			$response = $this->getOpenIDResponseIfSuccess($returnTo);
 
     			$identity = $this->Identity->checkOpenID($response);
     			
@@ -920,8 +922,8 @@ class IdentitiesController extends AppController {
 		}
     }
     
-    private function getOpenIDResponseIfSuccess() {
-    	$response = $this->openid->getResponse();
+    private function getOpenIDResponseIfSuccess($returnTo) {
+    	$response = $this->openid->getResponse('http://'.$_SERVER['SERVER_NAME'].$returnTo);
     			
     	if ($response->status == Auth_OpenID_CANCEL) {
     		$this->Identity->invalidate('openid', 'verification_cancelled');
