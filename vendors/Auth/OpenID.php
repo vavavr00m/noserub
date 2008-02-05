@@ -97,7 +97,7 @@ define('Auth_OpenID_punct',
        "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 
 if (Auth_OpenID_getMathLib() === null) {
-    define('Auth_OpenID_NO_MATH_SUPPORT', true);
+    Auth_OpenID_setNoMathSupport();
 }
 
 /**
@@ -137,20 +137,42 @@ class Auth_OpenID {
      */
     function getQuery($query_str=null)
     {
+        $data = array();
+
         if ($query_str !== null) {
-            $str = $query_str;
-        } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $str = $_SERVER['QUERY_STRING'];
-        } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $data = Auth_OpenID::params_from_string($query_str);
+        } else if (!array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            // Do nothing.
+        } else {
+          // XXX HACK FIXME HORRIBLE.
+          //
+          // POSTing to a URL with query parameters is acceptable, but
+          // we don't have a clean way to distinguish those parameters
+          // when we need to do things like return_to verification
+          // which only want to look at one kind of parameter.  We're
+          // going to emulate the behavior of some other environments
+          // by defaulting to GET and overwriting with POST if POST
+          // data is available.
+          $data = Auth_OpenID::params_from_string($_SERVER['QUERY_STRING']);
+
+          if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $str = file_get_contents('php://input');
 
             if ($str === false) {
-                return array();
+              $post = array();
+            } else {
+              $post = Auth_OpenID::params_from_string($str);
             }
-        } else {
-            return array();
+
+            $data = array_merge($data, $post);
+          }
         }
 
+        return $data;
+    }
+
+    function params_from_string($str)
+    {
         $chunks = explode("&", $str);
 
         $data = array();
@@ -529,6 +551,26 @@ class Auth_OpenID {
             return array($parts[0], "");
         } else {
             return $parts;
+        }
+    }
+
+    function filter($callback, &$sequence)
+    {
+        $result = array();
+
+        foreach ($sequence as $item) {
+            if (call_user_func_array($callback, array($item))) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
+    }
+
+    function update(&$dest, &$src)
+    {
+        foreach ($src as $k => $v) {
+            $dest[$k] = $v;
         }
     }
 }
