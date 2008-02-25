@@ -19,17 +19,17 @@ class Service extends AppModel {
     
     function detectService($url) {
     	$url = trim($url);
-    	if ($url == '') {
+    	if($url == '') {
     		return false;
     	}
     	
     	$url = $this->removeHttpProtocol($url);
     	$services = $this->getAllServices();
 
-    	foreach ($services as $service) {
+    	foreach($services as $service) {
     		$username = $service->detectService($url);
     		
-    		if ($username) {
+    		if($username) {
     			return array('service_id' => $service->getServiceId(), 'username' => $username);
     		}
     	}

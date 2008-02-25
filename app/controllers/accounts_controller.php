@@ -96,7 +96,7 @@ class AccountsController extends AppController {
         }
     }
     
-    function add_step_1_service_detection() {
+    function add_step_1() {
     	$username = isset($this->params['username']) ? $this->params['username'] : '';
     	$session_identity = $this->Session->read('Identity');
     	$splitted = $this->Account->Identity->splitUsername($username);
@@ -132,16 +132,28 @@ class AccountsController extends AppController {
         # needed to distinguish during the process (eg no import of conacts)
 		$this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);        
         
-    	if ($this->data) {
+    	if($this->data) {
     		$this->ensureSecurityToken();
-    		$serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
-    		
-    		if ($serviceData) {
+    		$autodetect = false;
+            if($this->data['Account']['url']) {
+                $autodetect = true;
+    		    $serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
+		    } else {
+		        $serviceData = array(
+		            'service_id' => $this->data['Account']['service_id'],
+		            'username'   => $this->data['Account']['username']);
+		    }
+		    
+    		if($serviceData) {
     			$this->Session->write('Service.add.id', $serviceData['service_id']);
 	    		$data = $this->Account->Service->getInfoFromService($splitted['username'], $serviceData['service_id'], $serviceData['username']);    
 
-	    		if (!$data) {
-	                $this->Account->invalidate('url', 1);
+	    		if(!$data) {
+	    		    if($autodetect) {
+	                    $this->Account->invalidate('url', 1);
+                    } else {
+                        $this->Account->invalidate('username', 1);
+                    }
 	            } else {
 	            	$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
 	            }
@@ -159,6 +171,13 @@ class AccountsController extends AppController {
     		}
     	}
     	
+    	$this->Account->Service->recursive = 0;
+    	$this->Account->Service->expects('Service');
+    	$this->set('services', $this->Account->Service->find('list', array(
+    	    'conditions' => array(
+    	        'is_contact' => '0',
+    	        'service_type_id > 0'),
+    	    'order' => 'name ASC')));
     	$this->set('headline', 'Specify the service url');
     }
     
