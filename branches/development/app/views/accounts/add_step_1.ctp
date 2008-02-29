@@ -4,7 +4,7 @@
     	<legend>Specify an url and let us try to auto discover</legend>
     	<?php echo $form->input('Account.url', array('error' => 'Could not detect a service or a feed', 'size' => 64)); ?>
     </fieldset>
-    <fieldset
+    <fieldset>
     <p>- OR -</p>
     </fieldset>
     <fieldset>
