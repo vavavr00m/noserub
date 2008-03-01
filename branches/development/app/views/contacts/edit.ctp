@@ -60,23 +60,23 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 <form id="DefineContactTypesForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
         <legend>Friendship</legend>
-        <?php echo $xfn->friendship($selected_noserub_contact_types); ?>
+        <p><?php echo $xfn->friendship($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
         <legend>Geographical</legend>
-        <?php echo $xfn->geographical($selected_noserub_contact_types); ?>
+        <p><?php echo $xfn->geographical($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
         <legend>Familiy</legend>
-        <?php echo $xfn->family($selected_noserub_contact_types); ?>
+        <p><?php echo $xfn->family($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
         <legend>Physical</legend>
-        <?php echo $xfn->physical($selected_noserub_contact_types); ?>
+        <p><?php echo $xfn->physical($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
         <legend>Tags</legend>
-	    <?php foreach ($noserub_contact_types as $contact_type) { ?>
+	    <p><?php foreach ($noserub_contact_types as $contact_type) { ?>
 	        <?php
 	            if(in_array($contact_type['NoserubContactType']['id'], array(1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14))) {
 	                continue;
@@ -94,7 +94,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     	                               array('checked' => $checked)); 
     	    ?>
     		<span class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></span>
-    	<?php } ?>
+    	<?php } ?></p>
     </fieldset>
     <fieldset>
 	    <?php echo $form->input('Tags.own', array('label' => 'Add your own tags (separated by space):')); ?>
