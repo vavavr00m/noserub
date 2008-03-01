@@ -3,7 +3,7 @@
  
 class ContactsController extends AppController {
     var $uses = array('Contact');
-    var $helpers = array('form', 'nicetime', 'flashmessage');
+    var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
     var $components = array('cluster');
     
     /**
@@ -265,11 +265,25 @@ class ContactsController extends AppController {
 	    $this->set('selected_noserub_contact_types', $selected_noserub_contact_types);
 	    
     	if($this->data) {
+    	    #pr($this->data); exit;
     	    if($this->data['Contact']['note'] != $contact['Contact']['note']) {
     	        $this->Contact->id = $contact_id;
     	        $this->Contact->saveField('note', $this->data['Contact']['note']);
     	    }
     	    
+            # transform the xfn data to the noserub contact typ
+            # (not so nice, but working for now)
+            $xfn_ids = array(1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14);
+            for($i=0; $i<count($xfn_ids); $i++) {
+                $this->data['NoserubContactType'][$xfn_ids[$i]] = 0;
+            }
+            foreach($this->data['xfn'] as $id) {
+                if($id) {
+                    $this->data['NoserubContactType'][$id] = 1;
+                }
+            }
+            
+            
     	    # extract noserub contact types from new tags and clean them up
     	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
     	    

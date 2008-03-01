@@ -21,11 +21,28 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
 }
 
-foreach($data as $item) { 
+foreach($data as $item) {
     if($item['WithIdentity']['namespace'] != '' && $session_local_username != $item['WithIdentity']['namespace']) {
         # don't display local contacts to anyone else, but the owner
         continue;
     }
+    
+    if(isset($item['NoserubContactType']) && $item['NoserubContactType']) {
+        $rel_data = array();
+        foreach($item['NoserubContactType'] as $contact_type) {
+            if($contact_type['is_xfn']) {
+                $rel_data[] = $contact_type['name'];
+            }
+        }
+        if($rel_data) {
+            $rel = join(' ', $rel_data);
+        } else {
+            $rel = 'contact';
+        }
+    } else {
+        $rel = 'contact';
+    }
+    
     if($item['WithIdentity']['photo']) {
         if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
            strpos($item['WithIdentity']['photo'], 'https://') === 0) {
@@ -41,13 +58,13 @@ foreach($data as $item) {
         <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards <?php echo $show_photo ? 'contacts' : 'private'; ?> <?php echo $item['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">
             <?php if($show_photo) { ?>
                 <dt>
-        	        <a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>">
+        	        <a href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>" rel="<?php echo $rel; ?>">
         	            <img class="photo" src="<?php echo $contact_photo; ?>" width="80" height="80" alt="<?php echo $item['WithIdentity']['single_username']; ?>'s Picture" />
         	        </a>
         	    </dt>                     
         	<?php } ?>  			
             <dt>
-                <a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>"><?php echo $item['WithIdentity']['single_username']; ?></a>
+                <a class="url nickname" href="<?php echo 'http://' . $item['WithIdentity']['username']; ?>" rel="<?php echo $rel; ?>"><?php echo $item['WithIdentity']['single_username']; ?></a>
             </dt>
    			<dd class="fn"><?php echo $item['WithIdentity']['name']; ?></dd>
 			
@@ -64,13 +81,6 @@ foreach($data as $item) {
                     <?php
                          $contact_types = array_merge($item['ContactType'], $item['NoserubContactType']);
                     ?>
-                    <?php if($contact_types) { ?>
-                        <dd>Types: <em>
-                            <?php foreach($contact_types as $contact_type) { ?>
-                                <?php echo $contact_type['name'] . ' '; ?>
-                            <?php } ?>
-                        </em></dd>
-                    <?php } ?>
                     <dd class="contact_option"><?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
                     <dd class="contact_option"><?php echo $html->link('Edit Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
                 <?php } ?>
