@@ -1,4 +1,4 @@
-<p class="infotext">
+<p id="message" class="warning">
     Once you deleted your account, you can not gain it back again.<br />
     <strong>Your current username will be blocked on this server in order to prevent fraud.</strong>
 </p>

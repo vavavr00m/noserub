@@ -80,11 +80,11 @@ textarea {
 	margin-top: 10px;
 }
 
-#SyndicationAddForm ul {
+#SyndicationAddForm ul, #IdentityDisplaySettingsForm ul {
 	padding: 0px;
 }
 
-#SyndicationAddForm li {
+#SyndicationAddForm li, #IdentityDisplaySettingsForm li {
 	list-style: none;
 	border-bottom: 1px solid #EBEBEB;
 	padding: 5px;

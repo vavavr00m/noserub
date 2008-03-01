@@ -3,6 +3,11 @@
 	float: left;
 }
 
+.mini {
+	padding-bottom: 15px;
+	clear: both;
+}
+
 #sidebar {
 	float: left;
 	width: 125px;
