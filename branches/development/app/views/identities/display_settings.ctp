@@ -5,16 +5,19 @@
         <legend>
             Filter, which should be shown, when selecting <em>Overview</em> as filter.
         </legend>
+        <ul>
         <?php foreach($filters as $value => $label) { ?>
-            <input 
+            <li><input 
                 type="checkbox" 
                 <?php if(in_array($value, $this->data['Identity']['overview_filters'])) { ?>
                     checked="checked"
                 <?php } ?>
                 name="data[Identity][overview_filters][]" 
                 value="<?php echo $value; ?>">
-            <?php echo $label; ?><br />
+            <?php echo $label; ?>
+            </li>
         <?php } ?>
+        </ul>
     </fieldset>
     <fieldset>
         <input class="submitbutton" type="submit" value="Save changes"/>

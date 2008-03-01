@@ -35,7 +35,7 @@ if($data['photo']) {
 }
 ?>
 <!-- mini profile // start -->
-<div id="hcard-<?php echo $data['local_username']; ?>" class="vcard">
+<div id="hcard-<?php echo $data['local_username']; ?>" class="vcard mini">
 <div id="photo">
 	<a href="<?php echo $noserub_url; ?>"><img src="<?php echo $profile_photo; ?>" width="35" height="35" alt="<?php echo $data['local_username']; ?>'s Picture" /></a>
 </div>

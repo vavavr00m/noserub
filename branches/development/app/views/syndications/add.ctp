@@ -17,7 +17,6 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     <fieldset>
         <legend>Choose, which of your activities should be included</legend>
         <ul>
-        <li>
         <?php foreach($accounts as $item) { ?>
             <li>
             <input type="checkbox" name="data[Syndication][Account][]" value="<?php echo $item['Account']['id']; ?>" />

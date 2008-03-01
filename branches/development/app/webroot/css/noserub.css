@@ -118,8 +118,7 @@ img, acronym {
 }
 
 /* Settings */
-#settings_photo {
-	float: right;
+#settings_photo, #locationsapi {
 	width: 255px;
 	padding: 0 0 0 25px;
 	border-left: 1px solid #ECEBE5;

@@ -1,9 +1,9 @@
-<p class="right">
-	<img src="<?php echo Router::url('/images/openid.gif'); ?>" width="200" height="66" alt="OpenID" />
+<p id="message" class="info">
+    <strong>No OpenID sites found.</strong>
 </p>
 
-<p>
-    <strong>No OpenID sites found.</strong>
+<p class="right">
+	<img src="<?php echo Router::url('/images/openid.gif'); ?>" width="200" height="66" alt="OpenID" />
 </p>
 
 <p class="infotext">
