@@ -643,7 +643,7 @@ class IdentitiesController extends AppController {
     
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
-    	$returnTo = '/pages/login/withopenid';
+    	$returnTo = $this->webroot.'/pages/login/withopenid';
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
@@ -721,7 +721,7 @@ class IdentitiesController extends AppController {
     
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
-		$returnTo = '/pages/register/withopenid';
+		$returnTo = $this->webroot.'/pages/register/withopenid';
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
@@ -896,7 +896,7 @@ class IdentitiesController extends AppController {
     	try {
     		$this->openid->authenticate($openid, 
     									'http://'.$_SERVER['SERVER_NAME'].$returnTo, 
-    									'http://'.$_SERVER['SERVER_NAME'], 
+    									$this->url->http('/'),
     									$required,
     									$optional);
     	} catch (InvalidArgumentException $e) {
