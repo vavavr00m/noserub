@@ -123,7 +123,8 @@ noserub.fn = noserub.prototype = {
     
     Contacts_edit: function() {
         $(':checkbox').hide();
-        $('.contact_type').click(function() {
+        $(':radio').hide();
+        $('.contact_type.check').click(function() {
             if($(this).prev().attr('checked')) {
                 $(this).prev().attr({checked: false});
                 $(this).removeClass('checked');
@@ -131,6 +132,11 @@ noserub.fn = noserub.prototype = {
                 $(this).prev().attr({checked: true});
                 $(this).addClass('checked');
             }            
+        });
+        $('.contact_type.radio').click(function() {
+            $(this).siblings().removeClass('checked');
+            $(this).addClass('checked');
+            $(this).prev().attr({checked: true});
         });
     }
 };

@@ -222,7 +222,7 @@ class Identity extends AppModel {
      */
     function getContacts($identityId, $limit = null) {
     	$this->Contact->recursive = 1;
-        $this->Contact->expects('Contact', 'WithIdentity');
+        $this->Contact->expects('Contact', 'WithIdentity', 'NoserubContactType.NoserubContactType');
 		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.last_activity DESC', $limit);
 		
 		return $contacts;

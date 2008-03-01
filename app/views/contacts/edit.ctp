@@ -51,7 +51,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	
 <br class="clear" />
 
-<h3>Define your relationship</h3>
+<h3>Define the relationship</h3>
 
 <p class="infotext">
     Click on a term to choose it and/or add a term to specify the relationship and group your contacts.
@@ -59,13 +59,33 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 
 <form id="DefineContactTypesForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
+        <legend>Friendship</legend>
+        <?php echo $xfn->friendship($selected_noserub_contact_types); ?>
+    </fieldset>
+    <fieldset>
+        <legend>Geographical</legend>
+        <?php echo $xfn->geographical($selected_noserub_contact_types); ?>
+    </fieldset>
+    <fieldset>
+        <legend>Familiy</legend>
+        <?php echo $xfn->family($selected_noserub_contact_types); ?>
+    </fieldset>
+    <fieldset>
+        <legend>Physical</legend>
+        <?php echo $xfn->physical($selected_noserub_contact_types); ?>
+    </fieldset>
+    <fieldset>
+        <legend>Tags</legend>
 	    <?php foreach ($noserub_contact_types as $contact_type) { ?>
 	        <?php
+	            if(in_array($contact_type['NoserubContactType']['id'], array(1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14))) {
+	                continue;
+	            }
 	            $checked = in_array($contact_type['NoserubContactType']['id'], $selected_noserub_contact_types);
     		    echo $form->checkbox('NoserubContactType.' . $contact_type['NoserubContactType']['id'], 
     		                           array('checked' => $checked)); 
     		?>&nbsp;
-    		<span class="contact_type<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
+    		<span class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
     	<?php } ?>
     	<?php foreach ($contact_types as $contact_type) { ?>
     	    <?php
@@ -73,11 +93,11 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     	        echo $form->checkbox('ContactType.' . $contact_type['ContactType']['id'], 
     	                               array('checked' => $checked)); 
     	    ?>
-    		<span class="contact_type<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></span>
+    		<span class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></span>
     	<?php } ?>
     </fieldset>
     <fieldset>
-	    <?php echo $form->input('Tags.own', array('label' => 'Add your own terms (separated by space):')); ?>
+	    <?php echo $form->input('Tags.own', array('label' => 'Add your own tags (separated by space):')); ?>
 	</fieldset>
 	<fieldset>
 	    <label>Make some notes</label>
