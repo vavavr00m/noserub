@@ -201,7 +201,10 @@ class LocationsController extends AppController {
         $identity = $this->getIdentityForAPI();
         $this->exitWith404ErrorIfInvalidAPIRequest($identity);
         
-        $this->Location->setTo($identity['Identity']['id'], $location_id);
+        if(!$this->Location->setTo($identity['Identity']['id'], $location_id)) {
+            $this->set('code', -1);
+            $this->set('msg', 'dataset not found');
+        }
         
         $this->renderAPIResult();
     }
@@ -209,7 +212,7 @@ class LocationsController extends AppController {
     private function exitWith404ErrorIfInvalidAPIRequest($identity) {
     	$api_hash = isset($this->params['api_hash']) ? $this->params['api_hash'] : '';
     	
-    	if ($identity['Identity']['api_hash'] != $api_hash || $identity['Identity']['api_active'] == false) {
+    	if($identity['Identity']['api_hash'] != $api_hash || $identity['Identity']['api_active'] == false) {
         	$this->cakeError('error404', array(array('action' => $this->here)));
         }
     }
@@ -221,7 +224,7 @@ class LocationsController extends AppController {
     	$this->Location->Identity->recursive = 0;
         $this->Location->Identity->expects('Identity');
         $identity = $this->Location->Identity->findByUsername($splitted['username'], array('id', 'api_hash', 'api_active'));
-        
+
         return $identity;
     }
     

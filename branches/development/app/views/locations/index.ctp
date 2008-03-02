@@ -12,22 +12,25 @@
 
 <!-- API Box -->
 <div id="locationsapi" class="right">
-<form id="APISettingsForm" method="post" action="<?php echo $this->here; ?>">
-	<input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
-	<fieldset>
-		<legend>Location API</legend>
-		<p class="infotext">
-        Location API.
-    	</p>
-		<input type="checkbox" name="data[Identity][api_active]" 
-			<?php if ($session_identity['api_active'] == 1) { ?>
-            	checked="checked"
-            <?php } ?> 
-            value = '1' /> API activated	
-		<?php echo $form->input('Identity.api_hash', array('label' => 'API hash', 'value' => $session_identity['api_hash'])); ?>
-        <input class="submitbutton" type="submit" value="Save changes"/>
-	</fieldset>
-<?php echo $form->end(); ?>
+    <form id="APISettingsForm" method="post" action="<?php echo $this->here; ?>">
+    	<input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+    	<fieldset>
+    		<legend>Location API</legend>
+    		<p class="infotext">
+                Location API.
+        	</p>
+    		<input type="checkbox" name="data[Identity][api_active]" 
+    			<?php if ($session_identity['api_active'] == 1) { ?>
+                	checked="checked"
+                <?php } ?> 
+                value = '1' /> API activated	
+    		<?php echo $form->input('Identity.api_hash', array('label' => 'API hash', 'value' => $session_identity['api_hash'])); ?>
+            <input class="submitbutton" type="submit" value="Save changes"/>
+    	</fieldset>
+    <?php echo $form->end(); ?>
+    <p>
+        API-Documentation: <a href="http://noserub.com/documentation/archives/API-Application-Programming-Interface.html">noserub.com/documentation</a>
+    </p>
 </div>
 
 <!-- Your Locations -->
