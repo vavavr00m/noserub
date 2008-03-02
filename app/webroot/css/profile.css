@@ -160,18 +160,19 @@
 }
 
 /* editing contacts */
-span.contact_type {
+label.contact_type {
     margin: 5px;
     padding: 5px;
     cursor: pointer;
+    float: left;
 } 
 
-span.contact_type:hover {
+label.contact_type:hover {
     background-color: #ECEBE5;
     text-decoration: underline;
 }
 
-span.contact_type.checked {
+label.contact_type.checked {
     background-color: #12A1C9;
     color: #fff;
     text-decoration: underline;

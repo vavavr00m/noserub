@@ -45,7 +45,7 @@ class XfnHelper extends AppHelper {
             $checked_css = '';
         }
 
-        return '<input type="radio" name="data[xfn]['.$name.']" value="'.$value.'"'. $checked . '/><span class="contact_type radio'.$checked_css.'">'.$label.'</span>';
+        return '<input id="'.$name.$value.'" type="radio" name="data[xfn]['.$name.']" value="'.$value.'"'. $checked . '/><label for="'.$name.$value.'" class="contact_type radio'.$checked_css.'">'.$label.'</label>';
     }
     
     private function checked($data, $ids) {

@@ -85,7 +85,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     		    echo $form->checkbox('NoserubContactType.' . $contact_type['NoserubContactType']['id'], 
     		                           array('checked' => $checked)); 
     		?>&nbsp;
-    		<span class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['NoserubContactType']['name']; ?></span>
+    		<label for="NoserubContactType<?php echo $contact_type['NoserubContactType']['id']; ?>" class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['NoserubContactType']['name']; ?></label>
     	<?php } ?>
     	<?php foreach ($contact_types as $contact_type) { ?>
     	    <?php
@@ -93,7 +93,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     	        echo $form->checkbox('ContactType.' . $contact_type['ContactType']['id'], 
     	                               array('checked' => $checked)); 
     	    ?>
-    		<span class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></span>
+    		<label for="ContactType<?php echo $contact_type['ContactType']['id']; ?>" class="contact_type check<?php echo $checked ? ' checked' : ''; ?>"><?php echo $contact_type['ContactType']['name']; ?></label>
     	<?php } ?></p>
     </fieldset>
     <fieldset>
