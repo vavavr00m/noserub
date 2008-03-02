@@ -124,19 +124,27 @@ noserub.fn = noserub.prototype = {
     Contacts_edit: function() {
         $(':checkbox').hide();
         $(':radio').hide();
+        $('.hidejs').hide();
         $('.contact_type.check').click(function() {
             if($(this).prev().attr('checked')) {
-                $(this).prev().attr({checked: false});
+                $(this).prev().prev().attr({checked: false});
                 $(this).removeClass('checked');
             } else {
-                $(this).prev().attr({checked: true});
+                $(this).prev().prev().attr({checked: true});
                 $(this).addClass('checked');
             }            
         });
-        $('.contact_type.radio').click(function() {
+        $('.contact_type.radio').click(function(e) {
+            e.preventDefault();
+            console.log($(this).siblings());
             $(this).siblings().removeClass('checked');
-            $(this).addClass('checked');
-            $(this).prev().attr({checked: true});
+            if($(this).prev().attr('checked')) {
+                console.log($(this).siblings(':first'));
+                $(this).siblings(':first').attr({checked: true});
+            } else {
+                $(this).addClass('checked');
+                $(this).prev().attr({checked: true});
+            }
         });
     }
 };
