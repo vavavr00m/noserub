@@ -179,5 +179,5 @@ label.contact_type.checked {
 
 /* this overwrites the overall label rule */
 #DefineContactTypesForm label {
-	display: inline !important;
+	display: inline;
 }
