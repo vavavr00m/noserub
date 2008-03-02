@@ -97,7 +97,8 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     	<?php } ?></p>
     </fieldset>
     <fieldset>
-	    <?php echo $form->input('Tags.own', array('label' => 'Add your own tags (separated by space):')); ?>
+        <legend>Add your own tags</legend>
+	    <?php echo $form->input('Tags.own', array('label' => '(separated by space):', 'size' => 32)); ?>
 	</fieldset>
 	<fieldset>
 	    <label>Make some notes</label>

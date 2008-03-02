@@ -122,28 +122,25 @@ noserub.fn = noserub.prototype = {
     },
     
     Contacts_edit: function() {
+        $('.hidejs').hide();
         $(':checkbox').hide();
         $(':radio').hide();
-        $('.hidejs').hide();
+        
         $('.contact_type.check').click(function() {
             if($(this).prev().attr('checked')) {
-                $(this).prev().prev().attr({checked: false});
                 $(this).removeClass('checked');
             } else {
-                $(this).prev().prev().attr({checked: true});
                 $(this).addClass('checked');
             }            
         });
         $('.contact_type.radio').click(function(e) {
-            e.preventDefault();
-            console.log($(this).siblings());
             $(this).siblings().removeClass('checked');
             if($(this).prev().attr('checked')) {
-                console.log($(this).siblings(':first'));
+                e.preventDefault();
                 $(this).siblings(':first').attr({checked: true});
+                $(this).removeClass('checked');
             } else {
                 $(this).addClass('checked');
-                $(this).prev().attr({checked: true});
             }
         });
     }
