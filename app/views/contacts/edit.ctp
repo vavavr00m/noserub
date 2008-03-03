@@ -101,7 +101,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
 	    <?php echo $form->input('Tags.own', array('label' => '(separated by space):', 'size' => 32)); ?>
 	</fieldset>
 	<fieldset>
-	    <label>Make some notes</label>
+	    <legend>Make some notes</legend>
 	    <?php echo $form->textarea('Contact.note', array('value' => $contact['Contact']['note'])); ?>
 	</fieldset>
 	<fieldset>
