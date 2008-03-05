@@ -92,4 +92,32 @@ class Feed extends AppModel {
         }
         return $return_data;
     }
+    
+    /**
+     * Updates the $service_id for a given account to a new
+     * service_id
+     *
+     * @param int $account_id
+     * @param int $new_service_id
+     */
+    public function updateServiceType($account_id, $new_service_id) {
+        $this->recursive = 0;
+        $this->expects('Feed');
+        $feed = $this->findByAccountId($account_id);
+        $data = @unserialize($feed['Feed']['content']);
+        if($data) {
+            # get intro for new service
+            $this->Account->ServiceType->recursive = 0;
+            $this->Account->ServiceType->expects('ServiceType');
+            $this->Account->ServiceType->id = $new_service_id;
+            $new_intro = $this->Account->ServiceType->field('intro');
+
+            foreach($data as $idx => $item) {
+                $data[$idx]['intro'] = $new_intro;
+            }
+            
+            $this->id = $feed['Feed']['id'];
+            $this->saveField('content', @serialize($data));
+        }
+    }
 }

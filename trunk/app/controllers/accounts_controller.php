@@ -233,6 +233,7 @@ class AccountsController extends AppController {
                     if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         # save feed information to cache
                         $this->Account->Feed->store($this->Account->id, $data['items']);
+                        $this->Account->Feed->updateServiceType($this->Account->id, $data['service_type_id']);
                     }
                     
                     if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
@@ -427,7 +428,6 @@ class AccountsController extends AppController {
             $this->redirect('/', null, true);
         }
 
-
         # get the account
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
@@ -444,6 +444,7 @@ class AccountsController extends AppController {
         } else {
             $this->Account->id = $account_id;
             if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
+                $this->Account->Feed->updateServiceType($this->Account->id, $this->data['Account']['service_type_id']);
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             }
         }
