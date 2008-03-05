@@ -129,7 +129,7 @@ class IdentitiesController extends AppController {
                 
                 # get list of locations, if this is the logged in user
                 if($relationship_status == 'self') {
-                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'id, name', 'order' => 'name ASC')));
+                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'id, name', 'conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
                 }
                 
                 # create $about_identity for the view
@@ -211,6 +211,15 @@ class IdentitiesController extends AppController {
                                                'username NOT LIKE "%@%"'),
                                          null, 'Identity.last_activity DESC, Identity.modified DESC', 25);
 
+        # get filter
+        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        if($filter == '') {
+            # no filter, that means "overview"
+            $filter = $show_in_overview;
+        } else {
+            $filter = array($filter);
+        }
+
         # extract the identities
         $items      = array();
         $identities = array();
@@ -220,14 +229,6 @@ class IdentitiesController extends AppController {
                 $identities[] = $identity['Identity'];
             }
 
-            $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
-            if($filter == '') {
-                # no filter, that means "overview"
-                $filter = $show_in_overview;
-            } else {
-                $filter = array($filter);
-            }
-            
             # get all activities
             $activity_items = $this->Identity->Activity->getLatest($identity['Identity']['id'], $filter);
             if($activity_items) {
