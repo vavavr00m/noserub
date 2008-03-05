@@ -1,5 +1,4 @@
 <?php
-$filter = isset($filter[0]) ? $filter[0] : '';    
 $max_num_items_per_day = 10;
 ?>
 <div id="network">
@@ -19,7 +18,7 @@ $max_num_items_per_day = 10;
                 break;
             }
             
-            if($filter != 'photo') {
+            if(!in_array('photo', $filter)) {
                 $num_of_activities = count($cluster);
                 echo '<span class="more">';
                 if($num_of_activities > $max_num_items_per_day) {
@@ -37,7 +36,7 @@ $max_num_items_per_day = 10;
             } else {
                 echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             }
-            if($filter == 'photo') {
+            if(count($filter) == 1 && in_array('photo', $filter)) {
                 foreach($cluster as $item) { ?>
                     <span class="photothumb">
                     <?php echo $item['content']; ?><br />
