@@ -380,7 +380,15 @@ class ContactsController extends AppController {
         $session_identity = $this->Session->read('Identity');
         
 		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
-        
+        # get filter
+        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        if($filter == '') {
+            # no filter, that means "overview"
+            $filter = $show_in_overview;
+        } else {
+            $filter = array($filter);
+        }
+            
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
         $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
@@ -412,7 +420,7 @@ class ContactsController extends AppController {
         $items = array();
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
-                if(!$filter || $account['ServiceType']['token'] == $filter) {
+                if(in_array($account['ServiceType']['token'], $filter)) {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Contact->Identity->Account->Feed->access($account['Account']['id']);
                     } else {
