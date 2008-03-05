@@ -18,7 +18,7 @@ $max_num_items_per_day = 10;
                 break;
             }
             
-            if(!in_array('photo', $filter)) {
+            if(count($filter) > 0 || (!in_array('photo', $filter))) {
                 $num_of_activities = count($cluster);
                 echo '<span class="more">';
                 if($num_of_activities > $max_num_items_per_day) {
