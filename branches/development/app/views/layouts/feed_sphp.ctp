@@ -1,8 +1,4 @@
 <?php
-vendor('Zend/Json');
-$zend_json = new Zend_Json();
-$zend_json->useBuiltinEncoderDecoder = true;
-
 # go through all the items and build the json data structure
 $items = array();
 foreach($data as $item) {
