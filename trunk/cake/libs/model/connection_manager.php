@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: connection_manager.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: connection_manager.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * Short description for file.
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model
@@ -41,11 +41,10 @@ uses ('model' . DS . 'datasources' . DS . 'datasource');
 config('database');
 
 class ConnectionManager extends Object {
-
 /**
  * Holds a loaded instance of the Connections object
  *
- * @var class:Connections
+ * @var object
  * @access public
  */
 	var $config = null;
@@ -53,14 +52,14 @@ class ConnectionManager extends Object {
  * Holds instances DataSource objects
  *
  * @var array
- * @access private
+ * @access protected
  */
 	var $_dataSources = array();
 /**
  * Contains a list of all file and class names used in Connection settings
  *
  * @var array
- * @access private
+ * @access protected
  */
 	var $_connectionsEnum = array();
 /**
@@ -69,19 +68,21 @@ class ConnectionManager extends Object {
  */
 	function __construct() {
 		if (class_exists('DATABASE_CONFIG')) {
-			$this->config = new DATABASE_CONFIG();
+			$this->config =& new DATABASE_CONFIG();
 		}
 	}
 /**
  * Gets a reference to the ConnectionManger object instance
  *
- * @return object
+ * @return object Instance
+ * @access public
+ * @static
  */
 	function &getInstance() {
 		static $instance = array();
 
 		if (!isset($instance[0]) || !$instance[0]) {
-			$instance[0] = &new ConnectionManager();
+			$instance[0] =& new ConnectionManager();
 		}
 
 		return $instance[0];
@@ -90,7 +91,9 @@ class ConnectionManager extends Object {
  * Gets a reference to a DataSource object
  *
  * @param string $name The name of the DataSource, as defined in app/config/connections
- * @return object
+ * @return object Instance
+ * @access public
+ * @static
  */
 	function &getDataSource($name) {
 		$_this =& ConnectionManager::getInstance();
@@ -116,7 +119,9 @@ class ConnectionManager extends Object {
 /**
  * Gets the list of available DataSource connections
  *
- * @return array
+ * @return array List of available connections
+ * @access public
+ * @static
  */
 	function sourceList() {
 		$_this =& ConnectionManager::getInstance();
@@ -125,12 +130,13 @@ class ConnectionManager extends Object {
 /**
  * Gets a DataSource name from an object reference
  *
- * @param object $source
- * @return string
+ * @param object $source DataSource object
+ * @return string Datasource name
+ * @access public
+ * @static
  */
 	function getSourceName(&$source) {
 		$_this =& ConnectionManager::getInstance();
-
 		$names = array_keys($_this->_dataSources);
 		for ($i = 0; $i < count($names); $i++) {
 			if ($_this->_dataSources[$names[$i]] === $source) {
@@ -145,6 +151,8 @@ class ConnectionManager extends Object {
  * @param mixed $connName A string name of the connection, as defined in Connections config,
  *                        or an array containing the file and class name of the object.
  * @return boolean True on success, null on failure or false if the class is already loaded
+ * @access public
+ * @static
  */
 	function loadDataSource($connName) {
 		$_this =& ConnectionManager::getInstance();
@@ -178,6 +186,8 @@ class ConnectionManager extends Object {
  *
  * @return array An associative array of elements where the key is the connection name
  *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
+ * @access public
+ * @static
  */
 	function enumConnectionObjects() {
 		$_this =& ConnectionManager::getInstance();
@@ -202,6 +212,8 @@ class ConnectionManager extends Object {
  * @param string $name The DataSource name
  * @param array $config The DataSource configuration settings
  * @return object A reference to the DataSource object, or null if creation failed
+ * @access public
+ * @static
  */
 	function &create($name = '', $config = array()) {
 		$_this =& ConnectionManager::getInstance();
@@ -216,9 +228,10 @@ class ConnectionManager extends Object {
 		return $_this->getDataSource($name);
 	}
 /**
- * Private method
+ * Returns the file, class name, and parent for the given driver.
  *
- * Returns the file and class name for the given driver
+ * @return array An indexed array with: filename, classname, and parent
+ * @access private
  */
 	function __getDriver($config) {
 		$_this =& ConnectionManager::getInstance();
@@ -241,6 +254,7 @@ class ConnectionManager extends Object {
 /**
  * Destructor.
  *
+ * @access private
  */
 	function __destruct() {
 		if (Configure::read('Session.save') == 'database' && function_exists('session_write_close')) {

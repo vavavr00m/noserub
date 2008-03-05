@@ -1,11 +1,23 @@
 <?php
-loadController(null);
 	
 class IdentityModelTestCase extends CakeTestCase {
 
 	function setUp() {
-	    loadModel('Identity');
+	    App::import('Model', 'Identity');
 		$this->model = new Identity();
+	}
+	
+	# removeHttpWww($url)
+	function testRemoveHttpWww() {
+	    $tests = array('http://identoo.com/dirk.olbertz'      => 'identoo.com/dirk.olbertz',
+	                   'https://identoo.com/dirk.olbertz'     => 'identoo.com/dirk.olbertz',
+	                   'http://www.identoo.com/dirk.olbertz'  => 'identoo.com/dirk.olbertz',
+	                   'https://www.identoo.com/dirk.olbertz' => 'identoo.com/dirk.olbertz',
+	                   'http://www.www.test.com/www.olbertz'  => 'www.test.com/www.olbertz');
+	
+	    foreach($tests as $before => $after) {
+	        $this->assertEqual($after, $this->model->removeHttpWww($before));
+	    }
 	}
 	
 	# splitUsername($username)
@@ -199,7 +211,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	function testSanitizeUsername6() {
-	    $username = 'te%&%§!"c';
+	    $username = 'te!c';
 	    $expected = 'tec';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);

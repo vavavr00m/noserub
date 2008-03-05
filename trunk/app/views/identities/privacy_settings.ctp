@@ -6,9 +6,8 @@
         <input class="submitbutton" type="submit" value="Save changes"/>
     </fieldset>
 </form>
-<p>
+
+<p id="message" class="info">
     If you would like to discuss what and how to save from public
-    viewing, please join us at <a href="http://noserub.com/discuss/">noserub.com/discuss</a>.<br />
-    <br />
-    Thank you!
+    viewing, please join us at <a href="http://noserub.com/discuss/">noserub.com/discuss</a>.
 </p>

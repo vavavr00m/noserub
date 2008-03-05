@@ -2,7 +2,10 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Contact', 'Account', 'OpenidSite');
+    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity');
+    var $belongsTo = array('Location' => array('className'  => 'Location',
+                                               'foreignKey' => 'last_location_id'));
+    
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
@@ -16,7 +19,7 @@ class Identity extends AppModel {
         );
     
     function validatePasswd2($value, $params = array()) {
-        if($this->data['Identity']['passwd'] !==$value) {
+        if ($this->data['Identity']['passwd'] !== $value['passwd2']) {
             return false;
         } else {
             return true;
@@ -24,7 +27,7 @@ class Identity extends AppModel {
     }
 
     function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->findCount(array('Identity.openid' => $value, 'Identity.hash' => '<> #deleted#')) > 0) {
+    	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
     		return false;
     	} else {
     		return true;
@@ -39,7 +42,7 @@ class Identity extends AppModel {
      * @access 
      */
     function validateUniqueUsername($value, $params = array()) {
-        $value = strtolower($value);
+        $value = strtolower($value['username']);
         $split_username = $this->splitUsername($value);
         if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
             return false;
@@ -55,7 +58,7 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, wether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+     * check, whether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
      */
     function validateRestrictedEmail($email, $params = array()) {
         if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 
@@ -219,7 +222,7 @@ class Identity extends AppModel {
      */
     function getContacts($identityId, $limit = null) {
     	$this->Contact->recursive = 1;
-        $this->Contact->expects('Contact', 'WithIdentity');
+        $this->Contact->expects('Contact', 'WithIdentity', 'NoserubContactType.NoserubContactType');
 		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.last_activity DESC', $limit);
 		
 		return $contacts;
@@ -430,6 +433,18 @@ class Identity extends AppModel {
     }
     
     /**
+     * removes http://, https:// and www. from url
+     */
+    function removeHttpWww($url) {
+        $url = str_ireplace('http://', '', $url);
+        $url = str_ireplace('https://', '', $url);
+        if(stripos($url, 'www.') === 0) {
+            $url = substr($url, 4);
+        }
+        
+        return $url;
+    }
+    /**
      * extract single information out of a username
      * a username may have the following occurences:
      * (1) noserub.com/dirk.olbertz
@@ -444,11 +459,7 @@ class Identity extends AppModel {
      */
     function splitUsername($username) {
         # first, remove http://, https:// and www.
-        $username = str_ireplace('http://', '', $username);
-        $username = str_ireplace('https://', '', $username);
-        if(stripos($username, 'www.') === 0) {
-            $username = str_ireplace('www.', '', $username);
-        }
+        $username = $this->removeHttpWww($username);
         
         # remove trailing slashes
         $username = trim($username, '/');
@@ -465,8 +476,7 @@ class Identity extends AppModel {
             # be for this server
             $local_username = $splitted[0];
             $servername = FULL_BASE_URL;
-            $servername = str_ireplace('http://', '', $servername);
-            $servername = str_ireplace('https://', '', $servername);
+            $servername = $this->removeHttpWww($servername);
             $username =  $servername . Router::url('/') . $local_username;
         } else {
             $servername = $splitted[0];
@@ -478,11 +488,8 @@ class Identity extends AppModel {
         $local_username_namespace = split('@', $local_username);
         
         # test, if this is a local contact, or not
-        $server_name = str_ireplace('http://', '', FULL_BASE_URL . Router::url('/'));
-        $server_name = str_ireplace('https://', '', $server_name);
-        if(stripos($server_name, 'www.') === 0) {
-            $server_name = str_ireplace('www.', '', $server_name);
-        }
+        $server_name = FULL_BASE_URL . Router::url('/');
+        $server_name = $this->removeHttpWww($server_name);
         $local = stripos($username, $server_name) === 0;
         $result = array('username'        => $username,
                         'local_username'  => $local_username,
@@ -496,19 +503,24 @@ class Identity extends AppModel {
     
     
     /**
-     * if Identity.last_activity is before $datetime, idis updated in the
+     * if Identity.last_activity is before $datetime, it is updated in the
      * database.
      */
-    public function updateLastActivity($datetime, $identity_id = null) {
-        # make sure we have datetime and not only date or something like that
-        $datetime = date('Y-m-d H:i:s', strtotime($datetime));
+    public function updateLastActivity($datetime = null, $identity_id = null) {
+        if($datetime === null) {
+            # no datetime set, use now
+            $datetime = date('Y-m-d H:i:s');
+        } else {
+            # make sure we have datetime and not only date or something like that
+            $datetime = date('Y-m-d H:i:s', strtotime($datetime));
         
-        # get now
-        $now = date('Y-m-d H:i:s');
+            # get now
+            $now = date('Y-m-d H:i:s');
         
-        if($datetime > $now) {
-            # don't allow "last_activity" to be in the future
-            return;
+            if($datetime > $now) {
+                # don't allow "last_activity" to be in the future
+                return;
+            }
         }
         
         # get the current value

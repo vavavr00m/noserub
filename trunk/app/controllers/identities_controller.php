@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'filterSanitize');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie');
     
     /**
      * Displays profile page of an identity
@@ -22,19 +22,39 @@ class IdentitiesController extends AppController {
         $splitted = $this->Identity->splitUsername($username);
         $username = $splitted['username'];
         
-        $filter = $this->filterSanitize->sanitize($filter);
+        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         
         $session_identity = $this->Session->read('Identity');
+        
+        if($this->data) {
+            $this->ensureSecurityToken();
+            
+            # location was changed
+            $location_id = $this->data['Locator']['id'];
+            if($location_id == 0 && $this->data['Locator']['name'] != '') {
+                # a new location must be created
+                $data = array('identity_id' => $session_identity['id'],
+                              'name'        => $this->data['Locator']['name']);
+                $this->Identity->Location->create();
+                $this->Identity->Location->save($data);
+                $location_id = $this->Identity->Location->id;
+            } 
+            if($location_id > 0) {
+                $this->Identity->Location->setTo($session_identity['id'], $location_id);                
+                $this->flashMessage('success', 'Location updated');
+            }
+        }
         
         if($splitted['namespace'] !== '' && $splitted['namespace'] != $session_identity['local_username']) {
             # don't display local contacts to anyone else, but the owner
             $data = null;
         } else {
             $this->Identity->recursive = 2;
-            $this->Identity->expects('Identity.Identity', 'Identity.Account',
+            $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Location',
                                      'Account.Account', 'Account.Service', 'Account.ServiceType',
                                      'Service.Service',
-                                     'ServiceType.ServiceType');
+                                     'ServiceType.ServiceType',
+                                     'Location.Location');
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
@@ -45,11 +65,14 @@ class IdentitiesController extends AppController {
                 if($data['Identity']['id'] == $session_identity['id']) {
                     $relationship_status = 'self';
                 } else {
-                    $this->Identity->Contact->recursive = 0;
-                    $this->Identity->Contact->expects('Contact');
-                    $is_contact = 1 == $this->Identity->Contact->findCount(array('identity_id'      => $session_identity['id'],
-                                                                                 'with_identity_id' => $data['Identity']['id']));
-                    $relationship_status = $is_contact ? 'contact' : 'none';
+                    $this->Identity->Contact->recursive = 1;
+                    $this->Identity->Contact->expects('Contact', 'ContactType', 'NoserubContactType');
+                    $contact = $this->Identity->Contact->find(
+                        array(
+                            'identity_id'      => $session_identity['id'],
+                            'with_identity_id' => $data['Identity']['id']));
+                    $relationship_status = $contact ? 'contact' : 'none';
+                    $this->set('contact', $contact);
                 }
                 $this->set('relationship_status', $relationship_status);
                 
@@ -104,6 +127,11 @@ class IdentitiesController extends AppController {
                     }
                 }
                 
+                # get list of locations, if this is the logged in user
+                if($relationship_status == 'self') {
+                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'id, name', 'order' => 'name ASC')));
+                }
+                
                 # create $about_identity for the view
                 $this->set('about_identity', $data['Identity']);
             }
@@ -124,11 +152,21 @@ class IdentitiesController extends AppController {
             $this->set('headline', 'Username could not be found!');
         }
 
+        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        if($filter == '') {
+            # no filter, that means "overview"
+            $filter = $show_in_overview;
+        } else {
+            $filter = array($filter);
+        }
+        
+        # get all activities
+        $items = $this->Identity->Activity->getLatest($data['Identity']['id'], $filter);
+        
         # get all items for those accounts
-        $items = array();
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
-                if(!$filter || $account['ServiceType']['token'] == $filter) {
+                if(in_array($account['ServiceType']['token'], $filter)) {
                     if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                     } else {
@@ -157,7 +195,8 @@ class IdentitiesController extends AppController {
      */
     function social_stream() {
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
-        $filter = $this->filterSanitize->sanitize($filter);
+        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
+        $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
         
         $this->Identity->recursive = 2;
@@ -180,11 +219,24 @@ class IdentitiesController extends AppController {
             if(count($identities) < 9) {
                 $identities[] = $identity['Identity'];
             }
+
+            $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+            if($filter == '') {
+                # no filter, that means "overview"
+                $filter = $show_in_overview;
+            } else {
+                $filter = array($filter);
+            }
             
+            # get all activities
+            $activity_items = $this->Identity->Activity->getLatest($identity['Identity']['id'], $filter);
+            if($activity_items) {
+                $items = array_merge($items, $activity_items);
+            }
             # get all items for those accounts
             if(is_array($identity['Account'])) {
                 foreach($identity['Account'] as $account) {
-                    if(!$filter || $account['ServiceType']['token'] == $filter) {
+                    if(in_array($account['ServiceType']['token'], $filter)) {
                         if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                             $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                         } else {
@@ -397,6 +449,52 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
+    function display_settings() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            # sanitize all the filters
+            $sanitized_filters = array();
+            foreach($this->data['Identity']['overview_filters'] as $filter) {
+                if($this->Identity->Account->ServiceType->sanitizeFilter($filter)) {
+                    $sanitized_filters[] = $filter;
+                }
+            }
+            
+            $this->Identity->id = $session_identity['id'];
+            $new_value = join(',', $sanitized_filters);
+            $this->Identity->saveField('overview_filters', $new_value);
+            
+            $this->Session->write('Identity.overview_filters', $new_value);
+            
+            $this->flashMessage('success', 'Display options have been saved.');
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            $this->data['Identity']['overview_filters'] = explode(',', $this->Identity->field('overview_filters'));
+        }
+        
+        $this->set('filters', $this->Identity->Account->ServiceType->getFilters());
+        $this->set('headline', 'Configure your display options');
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
     function privacy_settings() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -520,6 +618,12 @@ class IdentitiesController extends AppController {
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth', null, true);
                 } else {
+                    # check, if we should remember this user
+                    if($this->data['Identity']['remember'] == 1) {
+                        
+                        # set cookie
+                        $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
+                    } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
                 	$this->redirect($url, null, true);
@@ -539,12 +643,13 @@ class IdentitiesController extends AppController {
     
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
+    	$returnTo = $this->webroot.'/pages/login/withopenid';
     	
     	if (!empty($this->data)) {
-    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/login/withopenid');
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
     	} else {
     		if (count($this->params['url']) > 1) {
-    			$response = $this->getOpenIDResponseIfSuccess();
+    			$response = $this->getOpenIDResponseIfSuccess($returnTo);
     			$identity = $this->Identity->checkOpenID($response);
  
     			if ($identity) {
@@ -569,6 +674,10 @@ class IdentitiesController extends AppController {
     function logout() {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
+        
+        # make sure the login cookie is invalid
+        # set cookie
+        $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
         $this->redirect($this->url->http('/'), null, true);
@@ -612,12 +721,13 @@ class IdentitiesController extends AppController {
     
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
-
+		$returnTo = $this->webroot.'/pages/register/withopenid';
+    	
     	if (!empty($this->data)) {
-    		$this->authenticateOpenID($this->data['Identity']['openid'], '/pages/register/withopenid', array('email'));
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
     	} else {
     		if (count($this->params['url']) > 1) {
-    			$response = $this->getOpenIDResponseIfSuccess();
+    			$response = $this->getOpenIDResponseIfSuccess($returnTo);
 
     			$identity = $this->Identity->checkOpenID($response);
     			
@@ -786,7 +896,7 @@ class IdentitiesController extends AppController {
     	try {
     		$this->openid->authenticate($openid, 
     									'http://'.$_SERVER['SERVER_NAME'].$returnTo, 
-    									'http://'.$_SERVER['SERVER_NAME'], 
+    									$this->url->http('/'),
     									$required,
     									$optional);
     	} catch (InvalidArgumentException $e) {
@@ -812,8 +922,8 @@ class IdentitiesController extends AppController {
 		}
     }
     
-    private function getOpenIDResponseIfSuccess() {
-    	$response = $this->openid->getResponse();
+    private function getOpenIDResponseIfSuccess($returnTo) {
+    	$response = $this->openid->getResponse('http://'.$_SERVER['SERVER_NAME'].$returnTo);
     			
     	if ($response->status == Auth_OpenID_CANCEL) {
     		$this->Identity->invalidate('openid', 'verification_cancelled');

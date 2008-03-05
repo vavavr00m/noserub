@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.test.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: model.test.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.model
@@ -29,12 +29,9 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource', 'model'.DS.'datasources'.DS.'dbo_source',
-	'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
 
-if (!class_exists('AppModel')) {
-	loadModel();
-}
+App::import('Core', array('AppModel', 'Model', 'DataSource', 'DboSource', 'DboMysql'));
+
 /**
  * Short description for class.
  *
@@ -45,24 +42,14 @@ class Test extends Model {
 	var $useTable = false;
 	var $name = 'Test';
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
-	}
-
 	function schema() {
-		return new Set(array(
+		return array(
 			'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 			'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 			'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
 			'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null));
 	}
 }
 
@@ -78,25 +65,26 @@ class TestValidate extends Model {
 
 	function validateNumber($value, $options) {
 		$options = am(array('min' => 0, 'max' => 100), $options);
-		$valid = ($value >= $options['min'] && $value <= $options['max']);
+		$valid = ($value['number'] >= $options['min'] && $value['number'] <= $options['max']);
 		return $valid;
 	}
 
-	function validateTitle($title) {
-		if (!empty($title) && strpos(low($title), 'title-') === 0) {
+	function validateTitle($value) {
+		if (!empty($value) && strpos(low($value['title']), 'title-') === 0) {
 			return true;
 		}
 		return false;
 	}
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'title', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'body', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'number', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'modified', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'title' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'body' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
+			'number' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 }
 
@@ -124,11 +112,22 @@ class Article extends CakeTestModel {
 	var $validate = array('user_id' => VALID_NUMBER, 'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY), 'body' => VALID_NOT_EMPTY);
 
 	function titleDuplicate ($title) {
-		if($title === 'My Article Title') {
+		if ($title === 'My Article Title') {
 			return false;
 		}
 		return true;
 	}
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Article10 extends CakeTestModel {
+	var $name = 'Article10';
+	var $useTable = 'articles';
+	var $hasMany = array('Comment' => array('dependent' => true, 'exclusive' => true));
 }
 /**
  * Short description for class.
@@ -383,7 +382,20 @@ class ModelC extends CakeTestModel {
 	var $hasMany = array('ModelD');
 }
 class ModelD extends CakeTestModel {
+	var $name = 'ModelD';
 	var $useTable = 'threads';
+}
+class Something extends CakeTestModel {
+	var $name = 'Something';
+	var $hasAndBelongsToMany = array('SomethingElse' => array('with' => array('JoinThing' => array('doomed'))));
+}
+class SomethingElse extends CakeTestModel {
+	var $name = 'SomethingElse';
+	var $hasAndBelongsToMany = array('Something' => array('with' => 'JoinThing'));
+}
+class JoinThing extends CakeTestModel {
+	var $name = 'JoinThing';
+	var $belongsTo = array('Something', 'SomethingElse');
 }
 class Portfolio extends CakeTestModel {
 	var $name = 'Portfolio';
@@ -391,7 +403,7 @@ class Portfolio extends CakeTestModel {
 }
 class Item extends CakeTestModel {
 	var $name = 'Item';
-	var $belongsTo = array('Syfile');
+	var $belongsTo = array('Syfile' => array('counterCache' => true));
 	var $hasAndBelongsToMany = array('Portfolio');
 }
 class ItemsPortfolio extends CakeTestModel {
@@ -412,7 +424,7 @@ class DeviceType extends CakeTestModel {
 		'Image' => array('className' => 'Document'),
 		'Extra1' => array('className' => 'Document'),
 		'Extra2' => array('className' => 'Document'));
-	var $hasMany = array('Device' => array('order' => array('Device.typ' => 'ASC')));
+	var $hasMany = array('Device' => array('order' => array('Device.id' => 'ASC')));
 }
 class DeviceTypeCategory extends CakeTestModel {
 	var $name = 'DeviceTypeCategory';
@@ -434,6 +446,12 @@ class Device extends CakeTestModel {
 class DocumentDirectory extends CakeTestModel {
 	var $name = 'DocumentDirectory';
 }
+class PrimaryModel extends CakeTestModel {
+	var $name = 'PrimaryModel';
+}
+class SecondaryModel extends CakeTestModel {
+	var $name = 'SecondaryModel';
+}
 /**
  * Short description for class.
  *
@@ -441,14 +459,16 @@ class DocumentDirectory extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
+
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid',
 		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
-		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory'
-		);
+		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory',
+		'core.primary_model', 'core.secondary_model', 'core.something', 'core.something_else', 'core.join_thing'
+	);
 
 	function start() {
 		parent::start();
@@ -506,12 +526,12 @@ class ModelTest extends CakeTestCase {
 						'Item' => array(
 						array('id' => 2, 'syfile_id' => 2, 'name' => 'Item 2',
 								'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2',
+								'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
 										'Image' => array('id' => 2, 'name' => 'Image 2'))),
 
 						array('id' => 6, 'syfile_id' => 6, 'name' => 'Item 6',
 								'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6',
+								'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
 										'Image' => array()))));
 		$this->assertEqual($result, $expected);
 		unset($this->Portfolio);
@@ -539,6 +559,68 @@ class ModelTest extends CakeTestCase {
 		unset($this->Project);
 	}
 
+	function testWithAssociation() {
+		$this->model =& new Something();
+		$result = $this->model->SomethingElse->find('all');
+
+		$expected = array(
+			array('SomethingElse' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Something' => array(array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+					'JoinThing' => array('id' => '3', 'something_id' => '3', 'something_else_id' => '1', 'doomed' => '1', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')))),
+			array('SomethingElse' => array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Something' => array(array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+					'JoinThing' => array('id' => '1', 'something_id' => '1', 'something_else_id' => '2', 'doomed' => '1', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')))),
+			array('SomethingElse' => array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Something' => array (array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array('id' => '2', 'something_id' => '2', 'something_else_id' => '3', 'doomed' => '0', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')))));
+
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->find('all');
+		$expected = array(
+			array('Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'SomethingElse' => array(
+					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')))),
+				array('Something' => array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+					'SomethingElse' => array(
+						array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'JoinThing' => array('doomed' => '0', 'something_id' => '2', 'something_else_id' => '3')))),
+				array('Something' => array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+					'SomethingElse' => array(
+						array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '3', 'something_else_id' => '1')))));
+
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->findById(1);
+		$expected = array(
+			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'SomethingElse' => array(array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2'))));
+		$this->assertEqual($result, $expected);
+
+		$this->model->hasAndBelongsToMany['SomethingElse']['unique'] = false;
+		$this->model->create(array(
+			'Something' => array('id' => 1),
+			'SomethingElse' => array(3, array('something_else_id' => 1, 'doomed' => '1'))
+		));
+		$ts = date('Y-m-d H:i:s');
+		$this->model->save();
+
+		$result = $this->model->findById(1);
+		$expected = array(
+			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => $ts),
+				'SomethingElse' => array(
+					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
+					array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '1')),
+					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'JoinThing' => array('doomed' => null, 'something_id' => '1', 'something_else_id' => '3'))));
+		$this->assertEqual($result, $expected);
+	}
+
 	function testFindAllRecursiveSelfJoin() {
 		$this->model =& new Home();
 		$this->model->recursive = 2;
@@ -563,7 +645,7 @@ class ModelTest extends CakeTestCase {
 
 	function testIdentity() {
 		$this->model =& new Test();
-		$result = $this->model->name;
+		$result = $this->model->alias;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}
@@ -573,9 +655,8 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
 		$this->assertEqual($result, $expected);
-
 		$this->model =& new User();
-		$result = $this->model->_tableInfo->value;
+		$result = $this->model->schema();
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		if (isset($db->columns['primary_key']['length'])) {
@@ -587,17 +668,125 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$expected = array(
-				array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary', 'extra' => 'auto_increment'),
-				array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				array('name' => 'created',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
-				array('name' => 'updated',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null));
+				'id' => array('type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary', 'extra' => 'auto_increment'),
+				'user' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+				'password' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+				'created' => array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
+				'updated'=> array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null));
 		$this->assertEqual($result, $expected);
 
 		$this->model =& new Article();
 		$result = $this->model->create();
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
+
+	}
+
+	function testCreationOfEmptyRecord() {
+		$this->model =& new Author();
+		$this->assertEqual($this->model->find('count'), 4);
+
+		$this->model->deleteAll(true, false, false);
+		$this->assertEqual($this->model->find('count'), 0);
+
+		$result = $this->model->save();
+		$this->assertTrue(isset($result['Author']['created']));
+		$this->assertTrue(isset($result['Author']['updated']));
+		$this->assertEqual($this->model->find('count'), 1);
+	}
+
+	function testCreationWithMultipleData() {
+		$this->Article =& new Article();
+		$this->Comment =& new Comment();
+
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
+		$this->assertEqual($comments, array(
+			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
+			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y'))));
+
+		$data = array('Comment' => array('article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'),
+				'Article' => array('id' => 2, 'title' => 'Second Article Modified'));
+		$result = $this->Comment->create($data);
+		$this->assertTrue($result);
+		$result = $this->Comment->save();
+		$this->assertTrue($result);
+
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
+		$this->assertEqual($comments, array(
+			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
+			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 7, 'article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'))));
+	}
+
+	function testCreationWithMultipleDataSameModel() {
+		$this->Article =& new Article();
+		$this->SecondaryArticle =& new Article();
+
+		$result = $this->Article->field('title', array('id' => 1));
+		$this->assertEqual($result, 'First Article');
+
+		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'),
+			'SecondaryArticle' => array('id' => 1));
+		$this->Article->create();
+		$result = $this->Article->save($data);
+		$this->assertTrue($result);
+
+		$result = $this->Article->getInsertID();
+		$this->assertTrue(!empty($result));
+
+		$result = $this->Article->field('title', array('id' => 1));
+		$this->assertEqual($result, 'First Article');
+
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article')),
+			array('Article' => array('id' => 4, 'title' => 'Brand New Article'))));
+	}
+
+	function testCreationWithMultipleDataSameModelManualInstances() {
+		$Primary =& new PrimaryModel();
+		$Secondary =& new PrimaryModel();
+
+		$result = $Primary->field('primary_name', array('id' => 1));
+		$this->assertEqual($result, 'Primary Name Existing');
+
+		$data = array('PrimaryModel' => array('primary_name' => 'Primary Name New'),
+			'SecondaryModel' => array('id' => array(1)));
+		$Primary->create();
+		$result = $Primary->save($data);
+		$this->assertTrue($result);
+
+		$result = $Primary->field('primary_name', array('id' => 1));
+		$this->assertEqual($result, 'Primary Name Existing');
+
+		$result = $Primary->getInsertID();
+		$this->assertTrue(!empty($result));
+
+		$result = $Primary->field('primary_name', array('id' => $result));
+		$this->assertEqual($result, 'Primary Name New');
+
+		$result = $Primary->findCount();
+		$this->assertEqual($result, 2);
 	}
 
 	function testReadFakeThread() {
@@ -764,36 +953,37 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 		$this->model->displayField = 'title';
 
-		$result = $this->model->generateList(null, 'Article.title ASC');
+		$result = $this->model->find('list', array('order' => 'Article.title ASC'));
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title'))), '{n}.Article.id', '{n}.Article.title');
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article');
 		$expected = array(
 				1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 				2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 				3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title');
-		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
-		$this->assertEqual($result, $expected);
-
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
 		$expected = array(1 => array(
 						1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 						3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
 				3 => array(2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
-		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'),
-				3 => array(2 => 'Second Article'));
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title', 'user_id'))), '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
+		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'), 3 => array(2 => 'Second Article'));
 		$this->assertEqual($result, $expected);
+
+		$this->model =& new Apple();
+		$expected = array(1 => 'Red Apple 1', 2 => 'Bright Red Apple', 3 => 'green blue', 6 => 'Test Name', 7 => 'Blue Green', 8 => 'My new apple', 9 => 'Some odd color');
+
+		$this->assertEqual($this->model->find('list'), $expected);
+		$this->assertEqual($this->model->Parent->find('list'), $expected);
 	}
 
 	function testFindField() {
@@ -822,7 +1012,7 @@ class ModelTest extends CakeTestCase {
 		$this->model->id = $id = 1000;
 		$this->model->delete();
 
-		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user')));
+		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user', 'password' => 'some password')));
 		$this->assertEqual($this->model->id, $id);
 
 		$this->model->save(array('User' => array('user' => 'updated user')));
@@ -948,6 +1138,25 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
 				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
 		$this->assertEqual($result, $expected);
+
+		$this->model2 =& new DeviceType();
+
+		$expected = array('className' => 'FeatureSet', 'foreignKey' => 'feature_set_id', 'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => '');
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('FeatureSet', array('conditions' => array('active' => true)));
+		$expected['conditions'] = array('active' => true);
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('FeatureSet', array('foreignKey' => false, 'conditions' => array('Feature.name' => 'DeviceType.name')));
+		$expected['conditions'] = array('Feature.name' => 'DeviceType.name');
+		$expected['foreignKey'] = false;
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('NewFeatureSet', array('type' => 'hasMany', 'className' => 'FeatureSet', 'conditions' => array('active' => true)));
+		$expected = array('className' => 'FeatureSet', 'conditions' => array('active' => true), 'foreignKey' => 'device_type_id', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 'dependent' => '', 'exclusive' => '', 'finderQuery' => '', 'counterQuery' => '');
+		$this->assertEqual($this->model2->hasMany['NewFeatureSet'], $expected);
+		$this->assertTrue(is_object($this->model2->NewFeatureSet));
 	}
 
 	function testFindCount() {
@@ -957,6 +1166,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->db->fullDebug = true;
 		$this->model->order = 'User.id';
+		$this->db->_queriesLog = array();
 		$result = $this->model->findCount();
 		$this->assertEqual($result, 4);
 
@@ -1584,6 +1794,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
 
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '');
@@ -1594,16 +1805,19 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
 
 		$this->model->id = 1;
-		$result = $this->model->saveField('title', 'First Article');
-		$this->assertTrue($result);
-
-		$this->model->recursive = -1;
+		$this->model->set('body', 'Messed up data');
+		$this->assertTrue($this->model->saveField('title', 'First Article'));
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
 
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '', true);
@@ -1686,9 +1900,7 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->Comment->create() && $this->model->Comment->save($data);
 		$this->assertTrue($result);
 
-		$data = array('Attachment' => array(
-				'comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31'
-		));
+		$data = array('Attachment' => array('comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31'));
 		$result = $this->model->Comment->Attachment->save($data);
 		$this->assertTrue($result);
 
@@ -1823,6 +2035,18 @@ class ModelTest extends CakeTestCase {
 			array('Article' => array('id' => 5, 'title' => 'Fifth Article - New Title 5' ))
 		);
 		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveFromXml() {
+		if (!class_exists('Xml')) {
+			uses('xml');
+		}
+		$Article = new Article();
+		$result = $Article->save(new Xml('<article title="test xml"/>'));
+		$this->assertTrue($result);
+
+		$results = $Article->find(array('Article.title' => 'test xml'));
+		$this->assertTrue($results);
 	}
 
 	function testSaveHabtm() {
@@ -2128,6 +2352,60 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSaveAll() {
+		$this->model =& new Post();
+
+		$result = $this->model->find('all');
+		$this->assertEqual(count($result), 3);
+		$this->assertFalse(isset($result[3]));
+		$ts = date('Y-m-d H:i:s');
+
+		$this->model->saveAll(array(
+			'Post' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author'),
+			'Author' => array('user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90')
+		));
+
+		$result = $this->model->find('all');
+		$expected = array(
+			'Post' => array('id' => '4', 'author_id' => '5', 'title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'published' => 'N', 'created' => $ts, 'updated' => $ts),
+			'Author' => array('id' => '5', 'user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90', 'created' => $ts, 'updated' => $ts, 'test' => 'working')
+		);
+		$this->assertEqual($result[3], $expected);
+		$this->assertEqual(count($result), 4);
+
+		$this->model->deleteAll(true);
+		$this->assertEqual($this->model->find('all'), array());
+
+		$ts = date('Y-m-d H:i:s');
+		$this->model->saveAll(array(
+			array('title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'author_id' => 2),
+			array('title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'author_id' => 2)
+		));
+
+		$result = $this->model->find('all', array('recursive' => -1));
+		$expected = array(
+			array('Post' => array('id' => '6', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
+			array('Post' => array('id' => '5', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveWithCounterCache() {
+		$this->model =& new Syfile();
+		$this->model2 =& new Item();
+
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], null);
+
+		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1));
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '2');
+
+		$this->model2->delete(1);
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '1');
+	}
+
 	function testDel() {
 		$this->model =& new Article();
 
@@ -2244,6 +2522,18 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 0);
 	}
 
+	function testDependentExclusiveDelete() {
+		$this->model =& new Article10();
+
+		$result = $this->model->find('all');
+		$this->assertEqual(count($result[0]['Comment']), 4);
+		$this->assertEqual(count($result[1]['Comment']), 2);
+		$this->assertEqual($this->model->Comment->find('count'), 6);
+
+		$this->model->delete(1);
+		$this->assertEqual($this->model->Comment->find('count'), 2);
+	}
+
 	function testFindAllThreaded() {
 		$this->model =& new Category();
 
@@ -2338,6 +2628,13 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->findNeighbours(null, 'Article.id', '3');
 		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => array());
 		$this->assertEqual($result, $expected);
+
+		$result = $this->model->findNeighbours(array('User.id' => 1), array('Article.id', 'Article.title'), 2);
+		$expected = array(
+			'prev' => array('Article' => array('id' => 1, 'title' => 'First Article')),
+			'next' => array('Article' => array('id' => 3, 'title' => 'Third Article')),
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFindCombinedRelations() {
@@ -2346,72 +2643,74 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->findAll();
 
 		$expected = array(array('Apple' => array(
-				'id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
+				'id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null),
-					'Child' => array(array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'))),
+					'Child' => array(array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
+				'id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => '2', 'apple_id' => '2', 'name' => 'sample2' ),
-					'Child' => array(array('id' => '1',	'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-						array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24' ),
-						array('id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'))),
+					'Child' => array(array('id' => '1',	'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+						array('id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
+				'id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => '1', 'apple_id' => '3', 'name' => 'sample1'),
 					'Child' => array()),
 			array('Apple' => array(
-				'id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
+				'id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => '3', 'apple_id' => '6', 'name' => 'sample3'),
-					'Child' => array(array('id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'))),
+					'Child' => array(array('id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
+				'id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => '4', 'apple_id' => '7', 'name' => 'sample4'),
-					'Child' => array(array('id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'))),
+					'Child' => array(array('id' => '7', 'apple_id' => '7', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
+				'id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '6', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null ),
-					'Child' => array(array('id' => '9', 'apple_id' => '8', 'color' => 'Some wierd color',
-						'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'))),
+					'Child' => array(array('id' => '9', 'apple_id' => '8', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => '9', 'apple_id' => '8', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
+				'id' => '9', 'apple_id' => '8', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => '8', 'apple_id' => '6', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
 					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null),
 					'Child' => array()));
 		$this->assertEqual($result, $expected);
 	}
 
 	function testSaveEmpty() {
-		$this->model =& new Article();
+		$this->model =& new Thread();
 		$data = array();
 		$expected = $this->model->save($data);
 		$this->assertFalse($expected);
 	}
 
-	/*function testBasicValidation() {
-		$this->model =& new ValidationTest();
-		$this->model->set(array('title' => '', 'published' => 1));
-		$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
-
-		$this->model->create();
-		$this->model->set(array('title' => 'Hello', 'published' => 0));
-		$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
-
-		$this->model->create();
-		$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
-		$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
-	}*/
+	// function testBasicValidation() {
+	// 	$this->model =& new ValidationTest();
+	// 	$this->model->testing = true;
+	// 	$this->model->set(array('title' => '', 'published' => 1));
+	// 	$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
+	//
+	// 	$this->model->create();
+	// 	$this->model->set(array('title' => 'Hello', 'published' => 0));
+	// 	$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
+	//
+	// 	$this->model->create();
+	// 	$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
+	// 	$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
+	// }
 
 	function testMultipleValidation() {
 		$this->model =& new ValidationTest();
+
+
 	}
 
-	function testLoadModelSecondIteration (){
+	function testLoadModelSecondIteration() {
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -2428,149 +2727,219 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll();
 		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04','modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-						'Sample' => array('id' => 2,'apple_id' => 2,'name' => 'sample2')),
-					'Sample' => array('id' => '','apple_id' => '','name' => ''),
-					'Child' => array(array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-							'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')))),
+				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => ''),
+					'Child' => array(
+						array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+								'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+								'Child' => array(
+									array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+									array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+									array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array ('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10'),
-						'Sample' => array()),
+				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array ('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10')),
-					'Child' => array(array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array()),
-					array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
-					array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3')))),
+						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array(),
+							'Child' => array(
+								array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
+						array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
+
+						array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3'),
+							'Child' => array(
+								array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-						'Sample' => array( 'id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24')),
+						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17')),
 					'Child' => array()),
 			array('Apple' => array(
-				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-							'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3',
-						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36')),
-					'Child' => array(array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-						'Sample' => array()))),
+						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+							'Sample' => array(),
+							'Child' => array(
+								array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')),
+				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4'),
+						'Child' => array(
+							array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4',
-						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16')),
-					'Child' => array(array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')))),
+						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4'),
+							'Child' => array(
+								array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array( 'id' => 3, 'apple_id' => 6, 'name' => 'sample3')),
+				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3'),
+						'Child' => array(
+							array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array(array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21',
-						'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-						'Sample' => array()))),
+					'Child' => array(
+						array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+							'Sample' => array()))),
 			array('Apple' => array(
-				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-							'Sample' => array()),
-						'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-						'Child' => array()));
+				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
+					'Child' => array()));
 		$this->assertEqual($result, $expected);
-
-		$this->model =& new Apple();
-		$this->model->recursive = 2;
 
 		$result = $this->model->Parent->unbindModel(array('hasOne' => array('Sample')));
 		$this->assertTrue($result);
 
 		$result = $this->model->findAll();
 		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04','modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
-					'Sample' => array('id' => '','apple_id' => '','name' => ''),
-					'Child' => array(array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-							'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')))),
+				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => ''),
+					'Child' => array(
+						array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+								'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+								'Child' => array(
+									array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+									array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+									array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array ('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10')),
+				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array ('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10')),
-					'Child' => array(array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array()),
-					array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
-					array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3')))),
+						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array(),
+							'Child' => array(
+								array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
+						array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
+
+						array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3'),
+							'Child' => array(
+								array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
+				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24')),
+						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17')),
 					'Child' => array()),
 			array('Apple' => array(
-				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
+				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3',
-						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36')),
-					'Child' => array(array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-						'Sample' => array()))),
+						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+							'Sample' => array(),
+							'Child' => array(
+								array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16')),
+				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4',
-						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16')),
-					'Child' => array(array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')))),
+						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17')),
+					'Child' => array(
+						array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4'),
+							'Child' => array(
+								array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))))),
 			array('Apple' => array(
-				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10')),
+				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array(array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21',
-						'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-						'Sample' => array()))),
+					'Child' => array(
+						array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17',
+							'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+							'Sample' => array()))),
 			array('Apple' => array(
-				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36')),
-						'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-						'Child' => array()));
+				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
+					'Child' => array()));
 		$this->assertEqual($result, $expected);
-
-		$this->model =& new Apple();
-		$this->model->recursive = 2;
 
 		$result = $this->model->Parent->unbindModel(array('hasOne' => array('Sample')));
 		$this->assertTrue($result);
@@ -2580,48 +2949,65 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll();
 		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04','modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
-					'Sample' => array('id' => '','apple_id' => '','name' => '')),
+				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array ('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10')),
+				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array ('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'))),
+						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
+				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'))),
+						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26')),
+				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3',
-						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'))),
+						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16')),
+				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4',
-						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'))),
+						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10')),
+				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36')),
-						'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+						'Child' => array(
+							array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
 		$this->assertEqual($result, $expected);
-
-		$this->model =& new Apple();
-		$this->model->recursive = 2;
 
 		$result = $this->model->unbindModel(array('hasMany' => array('Child')));
 		$this->assertTrue($result);
@@ -2631,47 +3017,67 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll();
 		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04','modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-						'Sample' => array('id' => 2,'apple_id' => 2,'name' => 'sample2')),
-					'Sample' => array('id' => '','apple_id' => '','name' => '')),
+				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array ('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01','modified' => '2006-11-30 18:38:10'),
-						'Sample' => array()),
+				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
 			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-						'Sample' => array( 'id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
 			array('Apple' => array(
-				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-							'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3')),
 			array('Apple' => array(
-				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')),
+				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4'),
+						'Child' => array(
+							array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')),
 			array('Apple' => array(
-				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-						'Sample' => array( 'id' => 3, 'apple_id' => 6, 'name' => 'sample3')),
+				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3'),
+						'Child' => array(
+							array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-							'Sample' => array()),
-						'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+						'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->Parent->unbindModel(array('belongsTo' => array('Parent')));
@@ -2682,44 +3088,64 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll();
 		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04','modified' => '2006-12-01 13:31:26'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Sample' => array('id' => 2,'apple_id' => 2,'name' => 'sample2')),
-					'Sample' => array('id' => '','apple_id' => '','name' => '')),
+				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-					'Parent' => array ('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26',
-						'Sample' => array()),
+				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array ('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'))),
+						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Sample' => array( 'id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'))),
+						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10',
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
+				'id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
+						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+						'Child' => array(
+							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+							array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3',
-						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'))),
+						'Apple' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16',
-							'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4')),
+				'id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
+						'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4'),
+						'Child' => array(
+							array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => 4, 'apple_id' => 7, 'name' => 'sample4',
-						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'))),
+						'Apple' => array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
 			array('Apple' => array(
-				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36',
-						'Sample' => array( 'id' => 3, 'apple_id' => 6, 'name' => 'sample3')),
+				'id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
+						'Sample' => array('id' => 3, 'apple_id' => 6, 'name' => 'sample3'),
+						'Child' => array(
+							array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
 					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
 			array('Apple' => array(
-				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21'),
-					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39',
-							'Sample' => array()),
-						'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+				'id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
+					'Parent' => array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
+						'Sample' => array(),
+						'Child' => array(
+							array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
+					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -2743,6 +3169,184 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$this->assertEqual($afterFindData, $noAfterFindData);
+	}
+
+	function testAfterFindAssociation() {
+		
+	}
+
+	function testDeconstructFields() {
+		$this->model =& new Apple();
+
+		$data['Apple']['created']['year'] = '';
+		$data['Apple']['created']['month'] = '';
+		$data['Apple']['created']['day'] = '';
+		$data['Apple']['created']['hour'] = '';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 00:00:00'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:00'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '';
+		$data['Apple']['created']['day'] = '12';
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '33';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '33';
+		$data['Apple']['created']['sec'] = '33';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '13';
+		$data['Apple']['created']['min'] = '00';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:09', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '--';
+		$data['Apple']['created']['month'] = '--';
+		$data['Apple']['created']['day'] = '--';
+		$data['Apple']['created']['hour'] = '--';
+		$data['Apple']['created']['min'] = '--';
+		$data['Apple']['created']['sec'] = '--';
+		$data['Apple']['date']['year'] = '--';
+		$data['Apple']['date']['month'] = '--';
+		$data['Apple']['date']['day'] = '--';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '--';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['mytime']['hour'] = '03';
+		$data['Apple']['mytime']['min'] = '04';
+		$data['Apple']['mytime']['sec'] = '04';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['mytime']['hour'] = '3';
+		$data['Apple']['mytime']['min'] = '4';
+		$data['Apple']['mytime']['sec'] = '4';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['mytime']['hour'] = '03';
+		$data['Apple']['mytime']['min'] = '4';
+		$data['Apple']['mytime']['sec'] = '4';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
+		$this->assertEqual($this->model->data, $expected);
 	}
 
 	function endTest() {
@@ -2773,8 +3377,38 @@ class ValidationTest extends CakeTestModel {
 		return $data === 1;
 	}
 
-	function loadInfo() {
-		return new Set();
+	function schema() {
+		return array();
 	}
 }
+
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ValidationTest2 extends CakeTestModel {
+	var $name = 'ValidationTest2';
+	var $useTable = false;
+
+	var $validate = array(
+		'title' => VALID_NOT_EMPTY,
+		'published' => 'customValidationMethod',
+		'body' => array(
+			VALID_NOT_EMPTY,
+			'/^.{5,}$/s' => 'no matchy',
+			'/^[0-9A-Za-z \\.]{1,}$/s'
+		)
+	);
+
+	function customValidationMethod($data) {
+		return $data === 1;
+	}
+
+	function schema() {
+		return array();
+	}
+}
+
 ?>

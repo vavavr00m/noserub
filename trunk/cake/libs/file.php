@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: file.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: file.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -200,6 +200,22 @@ class File extends Object {
 		return false;
 	}
 /**
+ * Prepares a ascii string for writing
+ * fixes line endings
+ *
+ * @param string $data Data to prepare for writing.
+ * @return string
+ * @access public
+ */
+	function prepare($data) {
+		$lineBreak = "\n";
+		if (substr(PHP_OS,0,3) == "WIN") {
+			$lineBreak = "\r\n";
+	    }
+	    return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+	}
+
+/**
  * Write given data to this File.
  *
  * @param string $data	Data to write to this File.
@@ -216,11 +232,6 @@ class File extends Object {
 					return false;
 				}
 			}
-			$lineBreak = "\n";
-			if (substr(PHP_OS,0,3) == "WIN") {
-				$lineBreak = "\r\n";
-	        }
-	        $data = strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
 
 			if (fwrite($this->handle, $data) !== false) {
 				$success = true;

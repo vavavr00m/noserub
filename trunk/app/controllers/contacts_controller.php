@@ -3,8 +3,8 @@
  
 class ContactsController extends AppController {
     var $uses = array('Contact');
-    var $helpers = array('form', 'nicetime', 'flashmessage');
-    var $components = array('cluster', 'filterSanitize');
+    var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
+    var $components = array('cluster');
     
     /**
      * Method description
@@ -30,7 +30,7 @@ class ContactsController extends AppController {
         
         # get all noserub contacts
         $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
         
         $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                      'WithIdentity.username NOT LIKE "%@%"'), 
@@ -39,7 +39,7 @@ class ContactsController extends AppController {
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
             $this->Contact->recursive = 1;
-            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
 
             $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                          'WithIdentity.username LIKE "%@%"'), 
@@ -133,14 +133,9 @@ class ContactsController extends AppController {
                     exit;
                 }
                 
-                $this->Contact->create();
                 $contact = array('identity_id'      => $session_identity['id'],
                                  'with_identity_id' => $new_identity_id);
-                $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                if($this->Contact->save($contact, true, $saveable)) {
-                    $this->flashMessage('success', 'Added new contact.');
-                    $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
-                }
+                $this->saveContactAndRedirect($contact, $splitted['local_username']);
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
                 # create the username with the special namespace
@@ -157,15 +152,9 @@ class ContactsController extends AppController {
                     $saveable = array('is_local', 'username', 'created', 'modified');
                     # no validation, as we have no password.
                     if($this->Contact->Identity->save($identity, false, $saveable)) {
-                        # create the contact now
-                        $this->Contact->create();
                         $contact = array('identity_id'      => $session_identity['id'],
                                          'with_identity_id' => $this->Contact->Identity->id);
-                        $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-                        if($this->Contact->save($contact, true, $saveable)) {
-                            $this->flashMessage('success', 'Added new contact.');
-                            $this->redirect('/' . $splitted['local_username'] . '/contacts/', null, true);
-                        }
+                        $this->saveContactAndRedirect($contact, $splitted['local_username']);
                     }
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
@@ -185,7 +174,7 @@ class ContactsController extends AppController {
             $this->set('headline', 'Add a contact to '. $splitted['local_username'] . '\'s social network');
         }
     }
-    
+        
     /**
      * Method description
      *
@@ -218,6 +207,12 @@ class ContactsController extends AppController {
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
         }
         
+        # remove contact_type relationships
+        $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
+        $this->Contact->ContactTypesContact->execute($sql);
+        $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
+        $this->Contact->ContactsNoserubContactType->execute($sql);
+        
         # remove this contact
         $with_identity_id = $contact['Contact']['with_identity_id'];
         $this->Contact->id = $contact_id;
@@ -225,12 +220,12 @@ class ContactsController extends AppController {
         $this->flashMessage('success', 'Removed the contact.');
         
         # get the other identity in order to determine, if
-        # this was a local identity and therfore can be deleted
+        # this was a local identity and therefore can be deleted
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
         $with_identity = $this->Contact->WithIdentity->findById($with_identity_id);
         
-        if($with_identity['Identity']['namespace'] == $session_identity['local_username']) {
+        if($with_identity['WithIdentity']['namespace'] == $session_identity['local_username']) {
             # it's only local, so delete the identity
             $this->Contact->Identity->id = $with_identity_id;
             $this->Contact->Identity->delete();
@@ -240,6 +235,135 @@ class ContactsController extends AppController {
         }
 
         $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+    }
+    
+    function edit() {
+    	$contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
+    	$username   = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted   = $this->Contact->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
+            # this is not the logged in user
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+        }
+        
+        # get the contact
+        $this->Contact->recursive = 2;
+	    $this->Contact->expects('Contact.Contact', 'Identity.Identity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
+	    $contact = $this->Contact->findById($contact_id);
+	    
+        if($session_identity['id'] != $contact['Contact']['identity_id']) {
+            # this is not a contact of the logged in user
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+        }
+    	
+    	# get currently selected types (pre- and user-defined)
+    	$selected_contact_types = Set::extract($contact['ContactType'], '{n}.id');
+	    $this->set('selected_contact_types', Set::extract($contact['ContactType'], '{n}.id'));
+	    $selected_noserub_contact_types = Set::extract($contact['NoserubContactType'], '{n}.id');
+	    $this->set('selected_noserub_contact_types', $selected_noserub_contact_types);
+	    
+    	if($this->data) {
+    	    #pr($this->data); exit;
+    	    if($this->data['Contact']['note'] != $contact['Contact']['note']) {
+    	        $this->Contact->id = $contact_id;
+    	        $this->Contact->saveField('note', $this->data['Contact']['note']);
+    	    }
+    	    
+            # transform the xfn data to the noserub contact typ
+            # (not so nice, but working for now)
+            $xfn_ids = array(1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14);
+            for($i=0; $i<count($xfn_ids); $i++) {
+                $this->data['NoserubContactType'][$xfn_ids[$i]] = 0;
+            }
+            foreach($this->data['xfn'] as $id) {
+                if($id) {
+                    $this->data['NoserubContactType'][$id] = 1;
+                }
+            }
+            
+            
+    	    # extract noserub contact types from new tags and clean them up
+    	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
+    	    
+    	    # extract contact types from new tags and clean them up
+    	    $new_tags = $this->Contact->ContactType->extract($new_tags);
+    	    
+    	    # merge manual tags with noserub contact types
+    	    $entered_noserub_contact_types = $this->Contact->NoserubContactType->merge($this->data['NoserubContactType'], $new_tags['noserub_contact_type_ids']);
+    	    
+    	    # merge manual tags with contact types
+    	    if(isset($this->data['ContactType'])) {
+    	        $entered_contact_types = $this->Contact->ContactType->merge($this->data['ContactType'], $new_tags['contact_type_ids']);
+            } else {
+                $entered_contact_types = array();
+            }
+            
+            # go through entered noserub contact types and decide what to do
+            foreach($entered_noserub_contact_types as $id => $marked) {
+                if($marked && !in_array($id, $selected_noserub_contact_types)) {
+                    $data = array(
+                        'ContactsNoserubContactType' => array(
+                            'contact_id'              => $contact_id,
+                            'noserub_contact_type_id' => $id));
+                    $this->Contact->ContactsNoserubContactType->create();        
+                    $this->Contact->ContactsNoserubContactType->save($data);
+                } else if(!$marked && in_array($id, $selected_noserub_contact_types)) {
+                    $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE ' .
+                           'contact_id=' . $contact_id . ' AND noserub_contact_type_id=' . $id;
+                    $this->Contact->ContactsNoserubContactType->execute($sql);
+                }
+            }
+            
+            # go through manually entered tags and create them
+            foreach($new_tags['tags'] as $tag) {
+                if($tag) {
+                    $data = array(
+                        'ContactType' => array(
+                            'identity_id' => $session_identity['id'],
+                            'name'        => $tag));
+                    $this->Contact->ContactType->create();
+                    $this->Contact->ContactType->save($data);
+                    # add id to entered contact types, so it gets assigned
+                    # to that contact
+                    $entered_contact_types[$this->Contact->ContactType->id] = 1;
+                }
+            }
+            
+            # go through entered contact types and decide what to do
+            foreach($entered_contact_types as $id => $marked) {
+                if($marked && !in_array($id, $selected_contact_types)) {
+                    $data = array(
+                        'ContactTypesContact' => array(
+                            'contact_id'      => $contact_id,
+                            'contact_type_id' => $id));
+                    $this->Contact->ContactTypesContact->create();        
+                    $this->Contact->ContactTypesContact->save($data);
+                } else if(!$marked && in_array($id, $selected_contact_types)) {
+                    $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE ' .
+                           'contact_id=' . $contact_id . ' AND contact_type_id=' . $id;
+                    $this->Contact->ContactTypesContact->execute($sql);
+                    
+                    $this->Contact->ContactType->removeIfUnused($id);
+                }
+            }
+                	    
+    		$this->flashMessage('success', 'Contact updated.');
+    		$this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+    	}
+    	
+    	$this->set('contact', $contact);
+    	
+    	$this->set('headline', 'Edit the contact details');
+    	
+    	$this->Contact->NoserubContactType->recursive = 0;
+    	$this->Contact->NoserubContactType->expects('NoserubContactType');
+	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->findAll());	    
+	    
+	    $this->Contact->ContactType->recursive = 0;
+	    $this->Contact->ContactType->expects('ContactType');
+	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
     }
     
     /**
@@ -255,7 +379,7 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-		$filter = $this->filterSanitize->sanitize($filter);
+		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
         
         $this->Contact->Identity->recursive = 0;
         $this->Contact->Identity->expects('Identity');
@@ -362,6 +486,17 @@ class ContactsController extends AppController {
             $this->flashMessage('success', 'Added new contact.');
         }
         
-        $this->redirect('/' . $splitted['local_username'], null, true);
+        $this->redirect('/' . $splitted['local_username']);
+    }
+    
+    private function saveContactAndRedirect($contactData, $localUsername) {
+		$this->Contact->create();
+
+		$saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
+		if($this->Contact->save($contactData, true, $saveable)) {
+			$this->flashMessage('success', 'New contact added.');
+			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+			$this->redirect('/' . $localUsername . '/contacts/' . $this->Contact->id . '/edit/');
+		}
     }
 }

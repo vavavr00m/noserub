@@ -28,7 +28,8 @@ class AccountsController extends AppController {
         # get all accounts
         $this->Account->recursive = 1;
         $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
-        $this->set('data', $this->Account->findAllByIdentity_id($identity['Identity']['id']));
+        $data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
+        $this->set('data', $data);
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
@@ -36,33 +37,80 @@ class AccountsController extends AppController {
         } else {
             $this->set('headline', $splitted['username'] . '\'s accounts');
         }
+        
+        $this->set('contact_accounts', $this->Account->Service->getContactAccounts());
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            $need_redirect = false;
+            
+            # extract service_id and username from $data
+            $present_contact_accounts = array();
+            foreach($data as $item) {
+                if($item['Service']['is_contact']) {
+                    $present_contact_accounts[$item['Service']['id']] = array(
+                        'username'   => $item['Account']['username'],
+                        'account_id' => $item['Account']['id']);
+                }
+            }
+            foreach($this->data['Service'] as $service_id => $item) {
+                # go through each given data and test, wether we already have
+                # account-data for it.
+                if(isset($present_contact_accounts[$service_id])) {
+                    if($item['username'] == '') {
+                        # account can be deleted
+                        $account_id = $present_contact_accounts[$service_id]['account_id'];
+                        $this->Account->id = $account_id;
+                        $this->Account->delete();
+                        $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+                        $need_redirect = true;
+                    } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
+                        # username was changed!
+                        $this->Account->id = $present_contact_accounts[$service_id]['account_id'];
+                        $this->Account->saveField('username', $item['username']);
+                        $need_redirect = true;
+                    }
+                } else if($item['username']) {
+                    # new account needs to be created
+                    $new_account = array(
+                        'identity_id' => $session_identity['id'],
+                        'service_id'  => $service_id,
+                        'service_type_id' => $this->Account->Service->getServiceTypeId($service_id),
+                        'username'        => $item['username'],
+                        'account_url'     => $this->Account->Service->getAccountUrl($service_id, $item['username']));
+                    $this->Account->create();
+                    $this->Account->save($new_account, true, array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'created', 'modified'));
+                    $need_redirect = true;
+                }
+            }
+            if($need_redirect) {
+                # we need to redirect, because $data is already outdated 
+                # after the changes we just made
+                $this->flashMessage('success', 'Changes saved.');
+                $this->redirect($this->here);
+            } else {
+                $this->flashMessage('info', 'No changes made');
+            }
+        }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     function add_step_1() {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $session_identity = $this->Session->read('Identity');
-        $splitted         = $this->Account->Identity->splitUsername($username);
-        
-        # reset session
-        $this->Session->delete('Service.add.account.to.identity_id');
+    	$username = isset($this->params['username']) ? $this->params['username'] : '';
+    	$session_identity = $this->Session->read('Identity');
+    	$splitted = $this->Account->Identity->splitUsername($username);
+    	
+    	$this->Session->delete('Service.add.account.to.identity_id');
         $this->Session->delete('Service.add.id');
-        
-        # only logged in users can add accounts
+    	
+    	# only logged in users can add accounts
         if(!$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->flashMessage('error', 'You need to be logged in to add an account.');
+            $this->redirect('/');
         }
-        
-        # check, if logged in user may add accounts
-        
-        # get identity for which accounts should be added
+
         $identity = $this->getIdentity($splitted['username']);
         
         if($identity['Identity']['id'] != $session_identity['id']) {
@@ -70,7 +118,7 @@ class AccountsController extends AppController {
             
             if(!$identity || $identity['Identity']['namespace'] != $session_identity['local_username']) {
                 # Identity not found, or identity's namespace does not match logged in username
-                $this->redirect('/', null, true);
+                $this->redirect('/');
             }
             
             $this->Session->write('Service.add.account.is_logged_in_user', true);
@@ -82,77 +130,55 @@ class AccountsController extends AppController {
         
         # also save, wether we add the account for a logged in user. this is
         # needed to distinguish during the process (eg no import of conacts)
-        $this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);
+		$this->Session->write('Service.add.account.is_logged_in_user', $identity['Identity']['id'] == $session_identity['id']);        
         
-        if($this->data) {
-            # make sure, that the correct security token is set
-            $this->ensureSecurityToken();
-            
-            if($this->data['Account']['type'] == 1) {
-                # user selected a service
-                $this->Session->write('Service.add.id', $this->data['Account']['service_id']);
-                $this->redirect('/'.$splitted['local_username'].'/settings/accounts/add/service/', null, true);
-            } else {
-                # user wants to add Blog or RSS-Feed
-                $this->Session->write('Service.add.id', 8); # any rss feed
-                $this->redirect('/'.$splitted['local_username'].'/settings/accounts/add/feed/', null, true);
-            }
-        }
-        $this->set('services', $this->Account->Service->generateList(array('id<>8'), 'Service.name', null, "{n}.Service.id", "{n}.Service.name"));
-        
-        if($splitted['username'] == $session_identity['username']) {
-            $this->set('headline', 'Add existing Web-Service or RSS-Feed to your profile.');
-        } else {
-            $this->set('headline', 'Add existing Web-Service or RSS-Feed to '. $splitted['local_username'] . '\'s profile.');
-        }
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_2_service() {
-    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted    = $this->Account->Identity->splitUsername($username);
-        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
-        $service_id  = $this->Session->read('Service.add.id');
+    	if($this->data) {
+    		$this->ensureSecurityToken();
+    		$autodetect = false;
+            if($this->data['Account']['url']) {
+                $autodetect = true;
+    		    $serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
+		    } else {
+		        $serviceData = array(
+		            'service_id' => $this->data['Account']['service_id'],
+		            'username'   => $this->data['Account']['username']);
+		    }
+		    
+    		if($serviceData) {
+    			$this->Session->write('Service.add.id', $serviceData['service_id']);
+	    		$data = $this->Account->Service->getInfoFromService($splitted['username'], $serviceData['service_id'], $serviceData['username']);    
 
-        # check the session vars
-        if(!$identity_id || !$service_id) {
-            # couldn't find the session vars. so either someone skipped 
-            # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
-        }
-        
-        # reset session
-        $this->Session->delete('Service.add.data');
-        
-        if($this->data) {
-            # make sure, that the correct security token is set
-            $this->ensureSecurityToken();
-            
-            # get title, url and preview
-            $data = $this->Account->Service->getInfoFromService($splitted['username'], $service_id, $this->data['Account']['username']);    
-            if(!$data) {
-                $this->Account->invalidate('username', 1);
-            } else {
-                $this->Session->write('Service.add.data', $data);
-                $this->Session->write('Service.add.type', $data['service_type_id']);
-                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
-            }
-        } else {
-            $this->data = array('Account' => array('feed_url' => 'http://')); 
-        }
-         
-        $this->Account->Service->recursive = 0;
-        $this->Account->Service->expects('Service');
-        $service = $this->Account->Service->findById($service_id);
-        $this->set('service', $service);
-        
-        $this->set('headline', 'Enter username for ' . $service['Service']['name']);
+	    		if(!$data) {
+	    		    if($autodetect) {
+	                    $this->Account->invalidate('url', 1);
+                    } else {
+                        $this->Account->invalidate('username', 1);
+                    }
+	            } else {
+	            	$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
+	            }
+    		} else {
+    			$this->Session->write('Service.add.id', 8); # any rss feed
+    			
+    			// as we don't know the service type id yet we set the id to 3 for Text/Blog 
+    			$data = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $this->data['Account']['url']);
+
+    			if (!$data) {
+    				$this->Account->invalidate('url', 1);
+    			} else {
+    				$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
+    			}
+    		}
+    	}
+    	
+    	$this->Account->Service->recursive = 0;
+    	$this->Account->Service->expects('Service');
+    	$this->set('services', $this->Account->Service->find('list', array(
+    	    'conditions' => array(
+    	        'is_contact' => '0',
+    	        'service_type_id > 0'),
+    	    'order' => 'name ASC')));
+    	$this->set('headline', 'Specify the service url');
     }
     
     /**
@@ -162,52 +188,7 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function add_step_2_feed() {
-    	$username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted    = $this->Account->Identity->splitUsername($username);
-        $identity_id = $this->Session->read('Service.add.account.to.identity_id');
-        
-        # check the session vars
-        if(!$identity_id) {
-            # couldn't find the session vars. so either someone skipped 
-            # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
-        }
-        
-        # reset session
-        $this->Session->delete('Service.add.data');
-        
-        if($this->data) {
-            # make sure, that the correct security token is set
-            $this->ensureSecurityToken();
-            
-            # get title, url and preview
-            $data = $this->Account->Service->getInfoFromFeed($splitted['username'], $this->data['Account']['service_type_id'], $this->data['Account']['feed_url']);    
-            if(!$data) {
-                $this->Account->invalidate('feed_url', 1);
-            } else {
-                $data['service_type_id'] = $this->data['Account']['service_type_id'];
-                $this->Session->write('Service.add.type', $data['service_type_id']);
-                $this->Session->write('Service.add.data', $data);
-                $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/preview/', null, true);
-            }
-        } else {
-            $this->data = array('Account' => array('feed_url' => 'http://')); 
-        }
-        
-        $this->set('service_types', $this->Account->ServiceType->generateList(null, null, null, "{n}.ServiceType.id", "{n}.ServiceType.name"));
-        
-        $this->set('headline', 'Enter feed information');
-    }
-    
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_3_preview() {
+    function add_step_2_preview() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -220,7 +201,8 @@ class AccountsController extends AppController {
             # a step, or the user was logged out during the process
             $this->redirect('/', null, true);
         }
-        
+
+        $data['service_id'] = $this->Session->read('Service.add.id');
         if(!empty($this->params['form'])) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -233,12 +215,20 @@ class AccountsController extends AppController {
                 if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
-                
-                    $saveable = array('identity_id', 'service_id', 'service_type_id', 
+					
+                    if (isset($this->data['Account']['title']) and !empty($this->data['Account']['title'])) {
+						$data['title'] = $this->data['Account']['title'];
+					}
+                    
+					if (isset($this->data['Account']['service_type_id'])) {
+						$data['service_type_id'] = $this->data['Account']['service_type_id'];
+					}
+					
+					$saveable = array('identity_id', 'service_id', 'service_type_id', 
                                       'username', 'account_url', 'feed_url', 'created', 
-                                      'modified');
+                                      'modified', 'title');
                     $this->Account->create();
-                    $this->Account->save($data);
+                    $this->Account->save($data, true, $saveable);
 
                     if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
                         # save feed information to cache
@@ -270,6 +260,10 @@ class AccountsController extends AppController {
                 $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
             }
         }
+        // for feeds it must be possible to select the service type
+        if ($data['service_id'] == 8) {
+        	$this->set('service_types', $this->Account->ServiceType->find('list'));
+        }
         $this->set('data', $data);
         $this->set('headline', 'Preview the data');
     }
@@ -281,7 +275,7 @@ class AccountsController extends AppController {
      * @return 
      * @access 
      */
-    function add_step_4_friends() {
+    function add_step_3_friends() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -424,13 +418,15 @@ class AccountsController extends AppController {
      * @access 
      */
     function edit($account_id) {
-        $username    = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity_id = $this->Session->read('Identity.id');
-        
-        if(!$identity_id || !$username || $username != $this->Session->read('Identity.username')) {
-            # this is not the logged in user
+        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+        $session_identity = $this->Session->read('Identity');
+        $identity_id      = $session_identity['id'];
+
+        # check the session vars
+        if(!$session_identity) {
             $this->redirect('/', null, true);
         }
+
 
         # get the account
         $this->Account->recursive = 0;
@@ -442,19 +438,17 @@ class AccountsController extends AppController {
         }
         
         if(!$this->data) {
+            $this->set('headline', 'Edit service ' . htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8'));
+            $this->set('service_types', $this->Account->ServiceType->find('list'));
             $this->data = $data;
         } else {
-            # the form was submitted
             $this->Account->id = $account_id;
-            $this->data['Account']['feedurl'] = $this->Account->Service->getFeedUrl($this->data['Account']['service_id'], $this->data['Account']['username']);
-            $saveable = array('modified', 'service_id', 'username', 'feedurl');
-            if($this->Account->save($this->data, true, $saveable)) {
+            if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             }
         }
         
-        $this->set('services', $this->Account->Service->getSelect('all'));
-        $this->render('add');
+        $this->render('edit');
     }
     
     /**
@@ -482,7 +476,7 @@ class AccountsController extends AppController {
         if($splitted['username'] != $session_identity['username']) {
             # check, if $username belongs to the
             # logged in identities namespace
-        	$about_identity = $this->getIdentity($splitted['username']);
+            $about_identity = $this->getIdentity($splitted['username']);
             if(!$about_identity) {
                 # could not find the identity
                 $this->flashMessage('alert', 'Could not find the user.');
@@ -511,10 +505,16 @@ class AccountsController extends AppController {
     }
     
     private function getIdentity($username) {
-    	$this->Account->Identity->recursive = 0;
+        $this->Account->Identity->recursive = 0;
         $this->Account->Identity->expects('Identity');
         $identity = $this->Account->Identity->findByUsername($username);
-        
+
         return $identity;
+    }
+    
+    private function saveToSessionAndRedirectToPreview($data, $username) {
+    	$this->Session->write('Service.add.data', $data);
+		$this->Session->write('Service.add.type', $data['service_type_id']);
+		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
     }
 }

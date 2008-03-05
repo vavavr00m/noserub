@@ -76,7 +76,7 @@
 		}
 		
 		private function getFilterSubMenu($filter, $urlPart) {
-			$menuItems[] = new MenuItem('All', $urlPart, $filter == 'all');
+			$menuItems[] = new MenuItem('Overview', $urlPart, $filter == 'all');
 			$menuItems[] = new MenuItem('Photo', $urlPart.'photo/', $filter == 'photo');
 			$menuItems[] = new MenuItem('Video', $urlPart.'video/', $filter == 'video');
 			$menuItems[] = new MenuItem('Audio', $urlPart.'audio/', $filter == 'audio');
@@ -142,9 +142,11 @@
 		
 		private function getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser) {
 			$link = '/' . $localUsername . '/settings/';
-			
+
 			$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
 			$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', $controller == 'Accounts');
+			$menuItems[] = new MenuItem('Locations', $link . 'locations/', $controller == 'Locations');
+			$menuItems[] = new MenuItem('Display', $link . 'display/', $controller == 'Identities' && $action == 'display_settings');
 			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
@@ -173,14 +175,14 @@
 		}
 		
 		private function showSettingsSubMenu($controller, $action) {
-			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+			$controllers = array('Accounts', 'Locations', 'OpenidSites', 'Syndications');
 			
 			if (in_array($controller, $controllers)) {
 				return true;
 			}
 			
 			if ($controller == 'Identities') {
-				$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+				$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings', 'display_settings');
 				
 				if (in_array($action, $identityActions)) {
 					return true;
@@ -294,16 +296,16 @@
 		}
 		
 		function isActive() {
-			$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+			$controllers = array('Locations', 'Accounts', 'OpenidSites', 'Syndications');
 			
-			if (in_array($this->controller, $controllers)) {
+			if(in_array($this->controller, $controllers)) {
 				return true;
 			}
 			
-			if ($this->controller == 'Identities') {
-				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+			if($this->controller == 'Identities') {
+				$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings', 'display_settings');
 					
-				if (in_array($this->action, $identityActions)) {
+				if(in_array($this->action, $identityActions)) {
 					return true;
 				}
 			}

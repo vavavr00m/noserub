@@ -3,6 +3,11 @@
 	float: left;
 }
 
+.mini {
+	padding-bottom: 15px;
+	clear: both;
+}
+
 #sidebar {
 	float: left;
 	width: 125px;
@@ -16,6 +21,24 @@
 	font-size: 11px;
 	color: #000;
 	background-image: url('../images/profile/about_bg.gif');
+	line-height: 24px;
+	padding: 0px 10px 0px 10px;
+}
+
+.textBox {
+	width: 290px;
+	float: left;
+}
+
+.lastBox {
+	margin-left: 20px;
+}
+
+#relationshipBox, #noteBox {
+	margin: 0px 0px 10px 0px;
+	font-size: 11px;
+	color: #000;
+	background-image: url('../images/profile/smallbox_bg.gif');
 	line-height: 24px;
 	padding: 0px 10px 0px 10px;
 }
@@ -44,6 +67,11 @@
 #sidebar hr {
 	border: none;
 	padding: 10px;
+}
+
+.vcard hr {
+	border: none;
+	padding: 5px;
 }
 
 #network {
@@ -129,4 +157,27 @@
 .sendmail_icon {
 	padding: 5px 2px 5px 0;
 	vertical-align: middle;
+}
+
+/* editing contacts */
+label.contact_type {
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+} 
+
+label.contact_type:hover {
+    background-color: #ECEBE5;
+    text-decoration: underline;
+}
+
+label.contact_type.checked {
+    background-color: #12A1C9;
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* this overwrites the overall label rule */
+#DefineContactTypesForm label {
+	display: inline;
 }

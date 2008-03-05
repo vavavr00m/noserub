@@ -11,14 +11,14 @@
  */
 class AppController extends Controller {
     var $helpers = array('javascript', 'html');
-    var $components = array('menu');
+    var $components = array('menu', 'Cookie');
     
     /**
      * Never ever "use" something here, or the migrations will fail.
      * See Issue #127
      * http://code.google.com/p/noserub/issues/detail?id=127
      *
-     * If you need a specific model in AppController, use "loadModel()"
+     * If you need a specific model in AppController, use "App::import('Model', 'ModelName');"
      *
      * (Basically no models that make use of a database table may be 'used' here.
      *  Because if you do so, Cake will complain and you have no chance of doing
@@ -51,6 +51,31 @@ class AppController extends Controller {
         }
     }
     
+    private function auto_login() {
+        $li = $this->Cookie->read('li'); # login id
+            
+        if($li) {
+            #echo 'jetzt mal gucken<br />'.$lh.'<br />'.$lu; exit;
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity();
+            }
+            
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $identity = $this->Identity->findById($li);
+
+            if(!$identity) {
+                # not found. delete the cookie.
+                $this->Cookie->del('li');
+            } else {
+                $this->Session->write('Identity', $identity['Identity']);
+                # refresh auto login cookie
+                $this->Cookie->write('li', $li, true, '4 weeks');
+            }
+        }
+            
+    }
     /**
      * Method description
      *
@@ -58,7 +83,12 @@ class AppController extends Controller {
      * @return 
      * @access 
      */
-    function beforeFilter() {       
+    function beforeFilter() {
+        # check for auto-login
+        if(!$this->Session->check('Identity.id')) {
+            $this->auto_login();
+        }        
+        
         # set menu data
         $this->menu->setViewData($this);  
         
@@ -93,7 +123,7 @@ class AppController extends Controller {
      */
     function ensureSecurityToken() {
         if(!isset($this->Identity)) {
-            loadModel('Identity');
+            App::import('Model', 'Identity');
             $this->Identity = new Identity();
         }
         $session_identity_id = $this->Session->read('Identity.id');
@@ -112,7 +142,7 @@ class AppController extends Controller {
     
     public function beforeRender() {
         if(!isset($this->Identity)) {
-            loadModel('Identity');
+            App::import('Model', 'Identity');
             $this->Identity = new Identity();
         }
         # set new security_token

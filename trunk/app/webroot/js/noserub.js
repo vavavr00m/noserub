@@ -23,6 +23,7 @@ noserub.fn = noserub.prototype = {
         
         try {
             this[data.controller+'_'+data.action]();
+            this.log(data.controller+'_'+data.action + '()');
         } catch(e) {
             this.log(data.controller+'_'+data.action + '() not found!');
         }
@@ -81,15 +82,66 @@ noserub.fn = noserub.prototype = {
         });
     },
     
+    Contacts_define_contact_types: function() {
+    	this.contact_type_tagging();
+    },
+    
+    Contacts_edit: function() {
+    	this.contact_type_tagging();
+    },
+    
+    contact_type_tagging: function() {
+    	$('#ContactTypeTags').jTagging($('#tags'), ' ');
+    },
+    
     Contacts_network: function() {
         this.social_stream_items();
     },
     
     Identities_index: function() {
         this.social_stream_items();
+        if($('.locator option').size() > 1) {
+            $('.locator :text').hide();
+            $('.locator #locator_name').hide();
+        }
+        $('.locator select').change(function() {
+            selected = $('.locator option:selected');
+            if(selected.val() != 0) {
+                $('.locator :text').hide();
+                $('.locator #locator_name').hide();
+            } else {
+                $('.locator :text').attr({value : ''});
+                $('.locator :text').show();
+                $('.locator #locator_name').show();
+            }
+        });
     },
     
     Identities_social_stream: function() {
         this.social_stream_items();
+    },
+    
+    Contacts_edit: function() {
+        $('.hidejs').hide();
+        $(':checkbox').hide();
+        $(':radio').hide();
+        
+        $('.contact_type.check').click(function() {
+            if($(this).prev().attr('checked')) {
+                $(this).removeClass('checked');
+            } else {
+                $(this).addClass('checked');
+            }            
+        });
+        $('.contact_type.radio').click(function(e) {
+            $(this).siblings().removeClass('checked');
+            if($(this).prev().attr('checked')) {
+                e.preventDefault();
+                $(this).siblings(':first').attr({checked: true});
+                $(this).removeClass('checked');
+            } else {
+                $(this).addClass('checked');
+            }
+        });
     }
 };

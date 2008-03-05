@@ -1,5 +1,5 @@
 <?php
-	loadController(null);
+	App::import('Controller', 'App');
 	
 	class OpenidHelperTest extends CakeTestCase {
 		var $helper = null;
@@ -24,22 +24,20 @@
 		}
 		
 		function testServerLink() {
-			$expected = '<link rel="openid.server" href="'.$this->url.'" />';
 			$result = $this->helper->serverLink($this->url);
-			$this->assertEqual($expected, $result);
+			$this->assertEqual($this->getServerLink(), $result);
 		}
 		
 		function testServerLinkWithRelativeUrl() {
-			$expected = '<link rel="openid.server" href="'.$this->url.'" />';
 			$result = $this->helper->serverLink('/server');
-			$this->assertEqual($expected, $result);
+			$this->assertEqual($this->getServerLink(), $result);
 		}
 		
 		function testServerLinkNotInline() {
 			$view = $this->createView();
 			$this->helper->serverLink($this->url, false);
 			$renderedLayout = $view->renderLayout('');
-			$this->assertPattern('#<head>.*?<link rel="openid.server" href="'.$this->url.'" />.*?</head>#s', $renderedLayout);
+			$this->assertPattern('#<head>.*?'.$this->getServerLink().'.*?</head>#s', $renderedLayout);
 		}
 		
 		function testXrdsLocation() {
@@ -65,6 +63,7 @@
 			// required because of https://trac.cakephp.org/ticket/3241
 			ClassRegistry::removeObject('view');
 			
+			App::import('Model', 'Menu');
 			$view = new View(new AppController());
         	$view->set('mainMenu', new Menu(array()));
         	$view->set('subMenu', new Menu(array()));
@@ -72,6 +71,10 @@
                       	 			 'logged_in' => ''));
 			
 			return $view;
+		}
+		
+		private function getServerLink() {
+			return '<link rel="openid2.provider openid.server" href="'.$this->url.'" />';
 		}
 	}
 ?>

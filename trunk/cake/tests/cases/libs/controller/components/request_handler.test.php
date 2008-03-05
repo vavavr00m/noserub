@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.controller.components
@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'request_handler');
+uses('controller' . DS . 'controller', 'controller' . DS . 'components' . DS .'request_handler');
 /**
  * Short description for class.
  *
@@ -35,8 +35,20 @@ uses('controller' . DS . 'components' . DS .'request_handler');
  */
 class RequestHandlerComponentTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (true, 'RequestHandlerComponentTest not implemented');
+	function setUp() {
+		$this->RequestHandler = new RequestHandlerComponent();
+		$this->Controller = new Controller();
+	}
+
+	function testRenderAs() {
+		$this->assertFalse(in_array('Xml', $this->Controller->helpers));
+		$this->RequestHandler->renderAs($this->Controller, 'xml');
+		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
+	}
+
+	function tearDown() {
+		unset($this->RequestHandler);
+		unset($this->Controller);
 	}
 }
 ?>

@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: folder.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: folder.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Convenience class for handling directories.
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -262,20 +262,6 @@ class Folder extends Object{
 		return $match;
 	}
 /**
- * Returns true if given $path ends in a slash (i.e. is slash-terminated).
- *
- * @param string $path Path to check
- * @return boolean true if path ends with slash, false otherwise
- * @access public
- * @static
- */
-	function isSlashTerm($path) {
-		if (preg_match('/[\/\\\]$/', $path)) {
-			return true;
-		}
-		return false;
-	}
-/**
  * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
  *
  * @param string $path Path to check
@@ -284,7 +270,7 @@ class Folder extends Object{
  * @static
  */
 	function normalizePath($path) {
-		if ($this->isWindowsPath($path)) {
+		if (Folder::isWindowsPath($path)) {
 			return '\\';
 		}
 		return '/';
@@ -298,7 +284,7 @@ class Folder extends Object{
  * @static
  */
 	function correctSlashFor($path) {
-		if ($this->isWindowsPath($path)) {
+		if (Folder::isWindowsPath($path)) {
 			return '\\';
 		}
 		return '/';
@@ -312,10 +298,10 @@ class Folder extends Object{
  * @static
  */
 	function slashTerm($path) {
-		if ($this->isSlashTerm($path)) {
+		if (Folder::isSlashTerm($path)) {
 			return $path;
 		}
-		return $path . $this->correctSlashFor($path);
+		return $path . Folder::correctSlashFor($path);
 	 }
 /**
  * Returns $path with $element added, with correct slash in-between.
@@ -363,7 +349,7 @@ class Folder extends Object{
 /**
  * Change the mode on a directory structure recursively.
  *
- * @param string $pathname The directory structure to create
+ * @param string $path The path to chmod
  * @param integer $mode octal value 0755
  * @param boolean $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
@@ -412,11 +398,12 @@ class Folder extends Object{
  * Returns an array of nested directories and files in each directory
  *
  * @param string $path the directory path to build the tree from
- * @param = boolean $hidden return hidden files and directories
+ * @param boolean $hidden return hidden files and directories
+ * @param string $type either file or dir. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  * @access public
  */
-	function tree($path, $hidden = true) {
+	function tree($path, $hidden = true, $type = null) {
 		$path = rtrim($path, DS);
 		$this->__files = array();
 		$this->__directories = array($path);
@@ -428,8 +415,13 @@ class Folder extends Object{
 			array_push($directories, $dir);
 
 		}
-        $return = array($directories, $this->__files);
-        return $return;
+		if ($type === null) {
+			return array($directories, $this->__files);
+		}
+		if ($type === 'dir') {
+			return $directories;
+		}
+		return $this->__files;
 	}
 /**
  * Private method to list directories and files in each directory
@@ -457,8 +449,8 @@ class Folder extends Object{
 					}
 				}
 			}
+			closedir($dirHandle);
 		}
-		closedir($dirHandle);
 	}
 /**
  * Create a directory structure recursively.
@@ -586,7 +578,7 @@ class Folder extends Object{
 			$to = $options;
 			$options = array();
 		}
-		$options = am(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -606,7 +598,7 @@ class Folder extends Object{
 			return false;
 		}
 
-		$exceptions = am(array('.','..','.svn'), $options['skip']);
+		$exceptions = array_merge(array('.','..','.svn'), $options['skip']);
 		$handle = opendir($fromDir);
 		if ($handle) {
 			while (false !== ($item = readdir($handle))) {
@@ -627,7 +619,7 @@ class Folder extends Object{
 						if (mkdir($to, intval($mode, 8))) {
 							chmod($to, intval($mode, 8));
 							$this->__messages[] = sprintf(__('%s created', true), $to);
-							$options = am($options, array('to'=> $to, 'from'=> $from));
+							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
 							$this->__errors[] = sprintf(__('%s not created', true), $to);
@@ -656,8 +648,9 @@ class Folder extends Object{
 		$to = null;
 		if (is_string($options)) {
 			$to = $options;
+			$options = (array)$options;
 		}
-		$options = am(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {
@@ -767,6 +760,20 @@ class Folder extends Object{
 			$newpath .= DS;
 		}
 		return $newpath;
+	}
+/**
+ * Returns true if given $path ends in a slash (i.e. is slash-terminated).
+ *
+ * @param string $path Path to check
+ * @return boolean true if path ends with slash, false otherwise
+ * @access public
+ * @static
+ */
+	function isSlashTerm($path) {
+		if (preg_match('/[\/\\\]$/', $path)) {
+			return true;
+		}
+		return false;
 	}
 /**
  *

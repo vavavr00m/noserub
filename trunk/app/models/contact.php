@@ -4,14 +4,43 @@
 class Contact extends AppModel {
     var $belongsTo = array('Identity',
                            'WithIdentity' => array('className' => 'Identity',
-                                                   'foreinKey' => 'with_identity_id'));
-                                                   
+                                                   'foreignKey' => 'with_identity_id'));
+
+    var $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
+    
     var $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'required' => VALID_NOT_EMPTY)
         );
-        
-        
+
+	function createAssociationsToContactTypes($contactId, $contactTypeIDs) {
+		$dataToInsert['ContactTypesContact']['contact_id'] = $contactId;
+		
+		foreach ($contactTypeIDs as $contactTypeId) {
+			$dataToInsert['ContactTypesContact']['contact_type_id'] = $contactTypeId;
+			$this->ContactTypesContact->create($dataToInsert);
+			$this->ContactTypesContact->save();
+		}
+	}
+
+	function createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
+		$dataToInsert['ContactsNoserubContactType']['contact_id'] = $contactId;
+		
+		foreach ($noserubContactTypeIDs as $contactTypeId) {
+			$dataToInsert['ContactsNoserubContactType']['noserub_contact_type_id'] = $contactTypeId;
+			$this->ContactsNoserubContactType->create($dataToInsert);
+			$this->ContactsNoserubContactType->save();
+		}
+	}
+    
+	function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
+		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
+	}
+	
+	function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
+		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
+	}
+	
     /**
      * Deletes all contacts from and to this identity_id
      * Also deletes all private contact's identites, accounts and feeds
@@ -39,3 +68,4 @@ class Contact extends AppModel {
         }
     }
 }
+?>

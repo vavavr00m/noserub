@@ -23,7 +23,7 @@ class GeocoderComponent extends Object {
         if($response === false) {
             return false;
         }
-        
+
         $result = split(',', $response);
         if($result[0] != 200) {
             return false;

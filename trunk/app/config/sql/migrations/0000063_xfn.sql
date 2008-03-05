@@ -1,0 +1,2 @@
+ALTER TABLE  `noserub_contact_types` ADD  `is_xfn` TINYINT UNSIGNED NOT NULL AFTER  `name` ,ADD  `created` DATETIME NOT NULL AFTER  `is_xfn` , ADD  `modified` DATETIME NOT NULL AFTER  `created` ;
+UPDATE `noserub_contact_types` SET `is_xfn` = 1 WHERE name <> 'want-to-meet'; 

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: tree.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: tree.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Tree behavior class.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * Copyright 2006-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.behaviors
@@ -37,22 +37,31 @@
 class TreeBehavior extends ModelBehavior {
 
 	function setup(&$model, $config = array()) {
-		$settings = am(array(
-		'parent' => 'parent_id',
-		'left' => 'lft',
-		'right' => 'rght',
-		'scope' => '1 = 1',
-		'enabled' => true,
-		'type' => 'nested',
-		'__parentChange' => false
-		), $config);
+		$settings = array_merge(array(
+			'parent' => 'parent_id',
+			'left' => 'lft',
+			'right' => 'rght',
+			'scope' => '1 = 1',
+			'enabled' => true,
+			'type' => 'nested',
+			'__parentChange' => false
+		), (array)$config);
 
 		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
 			$data = $model->getAssociated($settings['scope']);
 			$parent =& $model->{$data['className']};
 			$settings['scope'] = $model->escapeField($data['foreignKey']) . ' = ' . $parent->escapeField($parent->primaryKey, $settings['scope']);
-			}*/
-		$this->settings[$model->name] = $settings;
+		}*/
+		$this->settings[$model->alias] = $settings;
+	}
+/**
+ * Change the Tree behavior on the fly
+ *
+ * @param object $model
+ * @param mixed $scope
+ */
+	function setScope(&$model, $scope) {
+	    $this->settings[$model->name]['scope'] = $scope;
 	}
 /**
  * After save method. Called after all saves
@@ -65,17 +74,17 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  */
 	function afterSave(&$model, $created) {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 		if (!$enabled) {
 			return true;
 		}
 		if ($created) {
-			if ((isset($model->data[$model->name][$parent])) && $model->data[$model->name][$parent]) {
-				return $this->_setParent($model, $model->data[$model->name][$parent]);
+			if ((isset($model->data[$model->alias][$parent])) && $model->data[$model->alias][$parent]) {
+				return $this->_setParent($model, $model->data[$model->alias][$parent]);
 			}
 		} elseif ($__parentChange) {
-			$this->settings[$model->name]['__parentChange'] = false;
-			return $this->_setParent($model, $model->data[$model->name][$parent]);
+			$this->settings[$model->alias]['__parentChange'] = false;
+			return $this->_setParent($model, $model->data[$model->alias][$parent]);
 		}
 	}
 /**
@@ -87,15 +96,13 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true to continue, false to abort the delete
  */
 	function beforeDelete(&$model) {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 
 		if (!$enabled) {
 			return true;
 		}
-		list($name, $data)= array(
-		$model->name,
-		$model->read());
-		$data= $data[$name];
+		list($name, $data) = array($model->alias, $model->read());
+		$data = $data[$name];
 
 		if (!$data[$right] || !$data[$left]) {
 			return true;
@@ -103,7 +110,7 @@ class TreeBehavior extends ModelBehavior {
 		$diff = $data[$right] - $data[$left] + 1;
 
 		if ($diff > 2) {
-			$constraint = $scope . ' AND ' . $left . ' BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
+			$constraint = $scope . ' AND ' . $model->escapeField($left) . ' BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
 			$model->deleteAll($constraint);
 		}
 		$this->__sync($model, $diff, '-', '> ' . $data[$right]);
@@ -121,45 +128,53 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true to continue, false to abort the save
  */
 	function beforeSave(&$model) {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 
 		if (!$enabled) {
 			return true;
 		}
-		if (isset($model->data[$model->name][$model->primaryKey])) {
-			if ($model->data[$model->name][$model->primaryKey]) {
+		if (isset($model->data[$model->alias][$model->primaryKey])) {
+			if ($model->data[$model->alias][$model->primaryKey]) {
 				if (!$model->id) {
-					$model->id = $model->data[$model->name][$model->primaryKey];
+					$model->id = $model->data[$model->alias][$model->primaryKey];
 				}
 			}
-			unset ($model->data[$model->name][$model->primaryKey]);
+			unset($model->data[$model->alias][$model->primaryKey]);
 		}
 
 		if (!$model->id) {
-			if ((!isset($model->data[$model->name][$parent])) || (!$model->data[$model->name][$parent])) {
+			if ((!isset($model->data[$model->alias][$parent])) || (!$model->data[$model->alias][$parent])) {
 				$edge = $this->__getMax($model, $scope, $right);
-				$model->data[$model->name][$left]= $edge +1;
-				$model->data[$model->name][$right]= $edge +2;
+				$model->data[$model->alias][$left] = $edge + 1;
+				$model->data[$model->alias][$right] = $edge + 2;
+				$this->_addToWhitelist($model, array($left, $right));
 			} else {
-				$parentNode = $model->find(array($scope, $model->escapeField() => $model->data[$model->name][$parent]),
-													array($model->primaryKey), null, -1);
+				$parentNode = $model->find('first', array(
+					'conditions' => array($scope, $model->escapeField() => $model->data[$model->alias][$parent]),
+					'fields' => array($model->primaryKey), 'recursive' => -1
+				));
 
 				if (!$parentNode) {
 					return false;
 				}
 			}
-		} elseif (isset($model->data[$model->name][$parent])) {
-			if ($model->data[$model->name][$parent] != $model->field($parent)) {
-				$this->settings[$model->name]['__parentChange'] = true;
+		} elseif (isset($model->data[$model->alias][$parent])) {
+			if ($model->data[$model->alias][$parent] != $model->field($parent)) {
+				$this->settings[$model->alias]['__parentChange'] = true;
 			}
-			if (!$model->data[$model->name][$parent]) {
-				$model->data[$model->name][$parent]= null;
+			if (!$model->data[$model->alias][$parent]) {
+				$model->data[$model->alias][$parent] = null;
+				$this->_addToWhitelist($model, $parent);
 			} else {
-				list($node) = array_values($model->find(array($scope,$model->escapeField() => $model->id),
-													array($model->primaryKey, $parent, $left, $right ), null, -1));
+				list($node) = array_values($model->find('first', array(
+					'conditions' => array($scope,$model->escapeField() => $model->id),
+					'fields' => array($model->primaryKey, $parent, $left, $right ), 'recursive' => -1)
+				));
 
-				$parentNode = $model->find(array($scope, $model->escapeField() => $model->data[$model->name][$parent]),
-													array($model->primaryKey, $left, $right), null, -1);
+				$parentNode = $model->find('first', array(
+					'conditions' => array($scope, $model->escapeField() => $model->data[$model->alias][$parent]),
+					'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1
+				));
 				if (!$parentNode) {
 					return false;
 				} else {
@@ -192,18 +207,17 @@ class TreeBehavior extends ModelBehavior {
 		} elseif (!$id) {
 			$id = null;
 		}
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 
 		if ($direct) {
-			return $model->findCount(array($scope, $model->escapeField($parent) => $id));
+			return $model->find('count', array('conditions' => array($scope, $model->escapeField($parent) => $id)));
 		} else {
 			if ($id === null) {
-				return $model->findCount($scope);
-			}
-			elseif (!empty ($model->data)) {
-				$data = $model->data[$model->name];
+				return $model->find('count', array('conditions' => $scope));
+			} elseif (!empty ($model->data)) {
+				$data = $model->data[$model->alias];
 			} else {
-				list($data)= array_values($model->find(array($scope, $model->escapeField() => $id), null, null, -1));
+				list($data) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'recursive' => -1)));
 			}
 			return ($data[$right] - $data[$left] - 1) / 2;
 		}
@@ -231,22 +245,23 @@ class TreeBehavior extends ModelBehavior {
 		} elseif (!$id) {
 			$id = null;
 		}
-		$name = $model->name;
+		$name = $model->alias;
 		extract($this->settings[$name]);
 
 		if (!$order) {
-			$order = $model->name . '.' . $left . ' asc';
+			$order = $model->alias . '.' . $left . ' asc';
 		}
 		if ($direct) {
-			return $model->findAll(array($scope, $model->escapeField($parent) => $id), $fields, $order, $limit, $page, $recursive);
+			$conditions = array($scope, $model->escapeField($parent) => $id);
+			return $model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 		} else {
 			if (!$id) {
 				$constraint = $scope;
 			} else {
-				@list($item) = array_values($model->find(array($scope,$model->escapeField() => $id), array($left, $right), null, -1));
+				@list($item) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
 				$constraint = array($scope, $model->escapeField($right) => '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
 			}
-			return $model->findAll($constraint, $fields, $order, $limit, $page, $recursive);
+			return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
 		}
 	}
 /**
@@ -262,7 +277,7 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function generatetreelist(&$model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = -1) {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 
 		if ($keyPath == null && $valuePath == null && $model->hasField($model->displayField)) {
 			$fields = array($model->primaryKey, $model->displayField, $left, $right);
@@ -271,11 +286,11 @@ class TreeBehavior extends ModelBehavior {
 		}
 
 		if ($keyPath == null) {
-			$keyPath = '{n}.' . $model->name . '.' . $model->primaryKey;
+			$keyPath = '{n}.' . $model->alias . '.' . $model->primaryKey;
 		}
 
 		if ($valuePath == null) {
-			$valuePath = array('{0}{1}', '{n}.tree_prefix', '{n}.' . $model->name . '.' . $model->displayField);
+			$valuePath = array('{0}{1}', '{n}.tree_prefix', '{n}.' . $model->alias . '.' . $model->displayField);
 
 		} elseif (is_string($valuePath)) {
 			$valuePath = array('{0}{1}', '{n}.tree_prefix', $valuePath);
@@ -284,15 +299,19 @@ class TreeBehavior extends ModelBehavior {
 			$valuePath[0] = '{' . (count($valuePath) - 1) . '}' . $valuePath[0];
 			$valuePath[] = '{n}.tree_prefix';
 		}
-		$results = $model->findAll($conditions, $fields, $left, null, null, $recursive);
+		$order = $left;
+		$results = $model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
 		$stack = array();
 
 		foreach ($results as $i => $result) {
-			while ($stack && ($stack[count($stack)-1] < $result[$model->name][$right])) {
+			while ($stack && ($stack[count($stack) - 1] < $result[$model->alias][$right])) {
 				array_pop($stack);
 			}
 			$results[$i]['tree_prefix'] = str_repeat($spacer,count($stack));
-			$stack[] = $result[$model->name][$right];
+			$stack[] = $result[$model->alias][$right];
+		}
+		if (empty($results)) {
+			return array();
 		}
 		return Set::combine($results, $keyPath, $valuePath);
 	}
@@ -311,12 +330,12 @@ class TreeBehavior extends ModelBehavior {
 		if (empty ($id)) {
 			$id = $model->id;
 		}
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 		$parentId = $model->read($parent, $id);
 
 		if ($parentId) {
-			$parentId = $parentId[$model->name][$parent];
-			$parent = $model->find(array($model->escapeField() => $parentId), $fields, null, $recursive);
+			$parentId = $parentId[$model->alias][$parent];
+			$parent = $model->find('first', array('conditions' => array($model->escapeField() => $parentId), 'fields' => $fields, 'recursive' => $recursive));
 
 			return $parent;
 		} else {
@@ -337,18 +356,17 @@ class TreeBehavior extends ModelBehavior {
 		if (empty ($id)) {
 			$id = $model->id;
 		}
-		extract($this->settings[$model->name]);
-		@list($item) = array_values($model->find(array($model->escapeField() => $id), array($left, $right), null, -1));
+		extract($this->settings[$model->alias]);
+		@list($item) = array_values($model->find('first', array('conditions' => array($model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
 
 		if (empty ($item)) {
 			return null;
 		}
 
-		$results = $model->findAll(
-			array($scope, $model->escapeField($left) => '<= ' . $item[$left],
-			$model->escapeField($right) => '>= ' . $item[$right]),
-			$fields, array($model->escapeField($left) => 'asc'), null, null, $recursive
-		);
+		$results = $model->find('all', array(
+			'conditions' => array($scope, $model->escapeField($left) => '<= ' . $item[$left], $model->escapeField($right) => '>= ' . $item[$right]),
+			'fields' => $fields, 'order' => array($model->escapeField($left) => 'asc'), 'recursive' => $recursive
+		));
 		return $results;
 	}
 /**
@@ -366,18 +384,22 @@ class TreeBehavior extends ModelBehavior {
 		if (empty ($id)) {
 			$id = $model->id;
 		}
-		extract($this->settings[$model->name]);
-		list($node) = array_values($model->find(array($scope, $model->escapeField() => $id),
-											array($model->primaryKey, $left, $right, $parent), null, -1));
+		extract($this->settings[$model->alias]);
+		list($node) = array_values($model->find('first', array(
+			'conditions' => array($scope, $model->escapeField() => $id),
+			'fields' => array($model->primaryKey, $left, $right, $parent), 'recursive' => -1
+		)));
 		if ($node[$parent]) {
-			list($parentNode) = array_values($model->find(array($scope, $model->escapeField() => $node[$parent]),
-											array($model->primaryKey, $left, $right), null, -1));
+			list($parentNode) = array_values($model->find('first', array(
+				'conditions' => array($scope, $model->escapeField() => $node[$parent]),
+				'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1
+			)));
 			if (($node[$right] + 1) == $parentNode[$right]) {
 				return false;
 			}
 		}
-		$nextNode = $model->find(array($scope, $model->escapeField($left) => ($node[$right] + 1)),
-										array($model->primaryKey, $left, $right), null, -1);
+		$nextNode = $model->find('first', array('conditions' => array($scope, $model->escapeField($left) => ($node[$right] + 1)),
+										'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1));
 		if ($nextNode) {
 			list($nextNode)= array_values($nextNode);
 		} else {
@@ -410,18 +432,22 @@ class TreeBehavior extends ModelBehavior {
 		if (empty ($id)) {
 			$id = $model->id;
 		}
-		extract($this->settings[$model->name]);
-		list($node) = array_values($model->find(array($scope, $model->escapeField() => $id),
-										array($model->primaryKey, $left, $right, $parent ), null, -1));
+		extract($this->settings[$model->alias]);
+		list($node) = array_values($model->find('first', array(
+			'conditions' => array($scope, $model->escapeField() => $id),
+			'fields' => array($model->primaryKey, $left, $right, $parent ), 'recursive' => -1
+		)));
 		if ($node[$parent]) {
-			list($parentNode) = array_values($model->find(array( $scope, $model->escapeField() => $node[$parent]),
-											array($model->primaryKey, $left, $right), null, -1));
+			list($parentNode) = array_values($model->find('first', array(
+				'conditions' => array($scope, $model->escapeField() => $node[$parent]),
+				'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1
+			)));
 			if (($node[$left] - 1) == $parentNode[$left]) {
 				return false;
 			}
 		}
-		$previousNode = $model->find(array($scope, $model->escapeField($right) => ($node[$left] - 1)),
-				array($model->primaryKey, $left, $right), null, -1);
+		$previousNode = $model->find('first', array('conditions' => array($scope, $model->escapeField($right) => ($node[$left] - 1)),
+    				            'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1));
 		if ($previousNode) {
 			list($previousNode) = array_values($previousNode);
 		} else {
@@ -453,30 +479,30 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function recover(&$model, $mode = 'parent') {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 		$model->recursive = -1;
 		if ($mode == 'parent') {
 			$count = 1;
-			foreach ($model->findAll($scope, array($model->primaryKey), $left) as $array) {
-				$model->{$model->primaryKey} = $array[$model->name][$model->primaryKey];
+			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey), 'order' => $left)) as $array) {
+				$model->{$model->primaryKey} = $array[$model->alias][$model->primaryKey];
 				$lft = $count++;
 				$rght = $count++;
 				$model->save(array($left => $lft,$right => $rght));
 			}
-			foreach ($model->findAll($scope, array($model->primaryKey,$parent), $left) as $array) {
+			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$model->create();
-				$model->id = $array[$model->name][$model->primaryKey];
-				$this->_setParent($model, $array[$model->name][$parent], true);
+				$model->id = $array[$model->alias][$model->primaryKey];
+				$this->_setParent($model, $array[$model->alias][$parent], true);
 			}
 		} else {
-			foreach ($model->findAll($scope, array($model->primaryKey, $parent), $left) as $array) {
-				$path = $this->getpath($model, $array[$model->name][$model->primaryKey]);
+			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey, $parent), 'order' => $left)) as $array) {
+				$path = $this->getpath($model, $array[$model->alias][$model->primaryKey]);
 				if ($path == null || count($path) < 2) {
 					$parentId = null;
 				} else {
-					$parentId = $path[count($path) - 2][$model->name][$model->primaryKey];
+					$parentId = $path[count($path) - 2][$model->alias][$model->primaryKey];
 				}
-				$model->updateAll(array($parent => $parentId), array($model->primaryKey => $array[$model->name][$model->primaryKey]));
+				$model->updateAll(array($parent => $parentId), array($model->escapeField() => $array[$model->alias][$model->primaryKey]));
 			}
 		}
 	}
@@ -496,10 +522,9 @@ class TreeBehavior extends ModelBehavior {
 		if (empty ($id)) {
 			$id = $model->id;
 		}
-		extract($this->settings[$model->name]);
-		list($node) = array_values($model->find(
-			array($scope, $model->escapeField() => $id),
-			array($model->primaryKey, $left, $right, $parent), null, -1)
+		extract($this->settings[$model->alias]);
+		list($node) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id),
+			                         'fields' => array($model->primaryKey, $left, $right, $parent), 'recursive' => -1))
 		);
 		if ($node[$right] == $node[$left] + 1) {
 			if ($delete) {
@@ -508,9 +533,8 @@ class TreeBehavior extends ModelBehavior {
 				return false;
 			}
 		} elseif ($node[$parent]) {
-			list($parentNode) = array_values($model->find(
-				array($scope, $model->escapeField() => $node[$parent]),
-				array($model->primaryKey, $left, $right), null, -1)
+			list($parentNode) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $node[$parent]),
+				                                'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1))
 			);
 		} else {
 			$parentNode[$right]= $node[$right] + 1;
@@ -521,7 +545,10 @@ class TreeBehavior extends ModelBehavior {
 		$model->id = $id;
 
 		if ($delete) {
-			$model->updateAll(array($left => null, $right => null, $parent => null), array($model->primaryKey => $id));
+			$model->updateAll(
+				array($model->escapeField($left) => null, $model->escapeField($right) => null, $model->escapeField($parent) => null),
+				array($model->escapeField() => $id)
+			);
 			return $model->delete($id);
 		} else {
 			$edge = $this->__getMax($model, $scope, $right);
@@ -543,7 +570,7 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function setparent(&$model, $parentId = null , $created = null) {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 		if ($created === false && $parentId == $model->field($parent)) {
 			return true;
 		}
@@ -560,8 +587,8 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function verify(&$model) {
-		extract($this->settings[$model->name]);
-		if (!$model->findCount($scope)) {
+		extract($this->settings[$model->alias]);
+		if (!$model->find('count', array('conditions' => $scope))) {
 			return true;
 		}
 		$min = $this->__getMin($model, $scope, $left);
@@ -569,7 +596,7 @@ class TreeBehavior extends ModelBehavior {
 		$errors =  array();
 
 		for ($i = $min; $i <= $edge; $i++) {
-			$count = $model->findCount(array($scope, 'OR' => array($model->escapeField($left) => $i, $model->escapeField($right) => $i)));
+			$count = $model->find('count', array('conditions' => array($scope, 'OR' => array($model->escapeField($left) => $i, $model->escapeField($right) => $i))));
 			if ($count != 1) {
 				if ($count == 0) {
 					$errors[] = array('index', $i, 'missing');
@@ -578,32 +605,32 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 		}
-		$count = $model->findCount(array($scope, $model->escapeField($right) => '< ' . $model->escapeField($left)));
+		$count = $model->find('count', array('conditions' => array($scope, $model->escapeField($right) => '< ' . $model->escapeField($left))));
 		if ($count != 0) {
-			$node = $model->find(array($scope, $model->escapeField($right) => '< ' . $model->escapeField($left)));
+			$node = $model->find('first', array('conditions' => array($scope, $model->escapeField($right) => '< ' . $model->escapeField($left))));
 			$errors[] = array('node', $node[$model->primaryKey], 'left greater than right.');
 		}
 
-
 		$model->bindModel(array('belongsTo' => array('VerifyParent' => array(
-			'className' => $model->name,
+			'className' => $model->alias,
 			'foreignKey' => $parent,
 			'fields' => array($model->primaryKey, $left, $right, $parent)
 		))));
-		foreach ($model->findAll($scope, null, null, null, null, 1) as $instance) {
-			if ($instance[$model->name][$parent]) {
+
+		foreach ($model->find('all', array('conditions' => $scope, 'recursive' => 1)) as $instance) {
+			if ($instance[$model->alias][$parent]) {
 				if (!$instance['VerifyParent'][$model->primaryKey]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
-						'The parent node ' . $instance[$model->name][$parent] . ' doesn\'t exist');
-				} elseif ($instance[$model->name][$left] < $instance['VerifyParent'][$left]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
+					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
+						'The parent node ' . $instance[$model->alias][$parent] . ' doesn\'t exist');
+				} elseif ($instance[$model->alias][$left] < $instance['VerifyParent'][$left]) {
+					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
 						'left less than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
-				} elseif ($instance[$model->name][$right] > $instance['VerifyParent'][$right]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
+				} elseif ($instance[$model->alias][$right] > $instance['VerifyParent'][$right]) {
+					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
 						'right greater than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				}
-			} elseif ($model->findCount(array($scope, $left . '< ' . $instance[$model->name][$left], $right . '> ' . $instance[$model->name][$right]))) {
-				$errors[] = array('node', $instance[$model->name][$model->primaryKey], 'The parent field is blank, but has a parent');
+			} elseif ($model->find('count', array('conditions' => array($scope, $left . '< ' . $instance[$model->alias][$left], $right . '> ' . $instance[$model->alias][$right])))) {
+				$errors[] = array('node', $instance[$model->alias][$model->primaryKey], 'The parent field is blank, but has a parent');
 			}
 		}
 
@@ -626,17 +653,17 @@ class TreeBehavior extends ModelBehavior {
  * @access protected
  */
 	function _setParent(&$model, $parentId = null) {
-		extract($this->settings[$model->name]);
-		list($node) = array_values($model->find(array($scope, $model->escapeField() => $model->id),
-									array($model->primaryKey, $parent, $left, $right), null, -1));
+		extract($this->settings[$model->alias]);
+		list($node) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $model->id),
+									'fields' => array($model->primaryKey, $parent, $left, $right), 'recursive' => -1)));
 		$edge = $this->__getMax($model, $scope, $right);
 
 		if (empty ($parentId)) {
 			$this->__sync($model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
 			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left]);
 		} else {
-			list($parentNode)= array_values($model->find(array($scope, $model->escapeField() => $parentId),
-										array($model->primaryKey, $left, $right), null, -1));
+			list($parentNode)= array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
+										'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1)));
 
 			if (empty ($parentNode)) {
 				return false;
@@ -681,7 +708,7 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __getMax($model, $scope, $right) {
-		list($edge) = array_values($model->find($scope, 'MAX(' . $right . ') AS ' . $right, null, -1));
+		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => 'MAX(' . $right . ') AS ' . $right, 'recursive' => -1)));
 		return ife(empty ($edge[$right]), 0, $edge[$right]);
 	}
 /**
@@ -694,7 +721,7 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __getMin($model, $scope, $left) {
-		list($edge) = array_values($model->find($scope, 'MIN(' . $left . ') AS ' . $left, null, -1));
+		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => 'MIN(' . $left . ') AS ' . $left, 'recursive' => -1)));
 		return ife(empty ($edge[$left]), 0, $edge[$left]);
 }
 /**
@@ -710,22 +737,22 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __sync(&$model, $shift, $dir = '+', $conditions = array(), $field = 'both') {
-		extract($this->settings[$model->name]);
+		extract($this->settings[$model->alias]);
 		if ($field == 'both') {
 			$this->__sync($model, $shift, $dir, $conditions, $left);
 			$field = $right;
 		}
 		if (is_string($conditions)) {
-			$conditions = array($field => $conditions);
+			$conditions = array($model->escapeField($field) => $conditions);
 		}
 		if ($scope != '1 = 1' && $scope) {
 			if (is_string($scope)) {
 				$conditions[]= $scope;
 			} else {
-				$conditions= am($conditions, $scope);
+				$conditions= array_merge($conditions, $scope);
 			}
 		}
-		$model->updateAll(array($field => $field . ' ' . $dir . ' ' . $shift), $conditions);
+		$model->updateAll(array($model->escapeField($field) => $model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions);
 	}
 }
 ?>

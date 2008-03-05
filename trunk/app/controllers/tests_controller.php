@@ -19,7 +19,7 @@
 		var $uses = array();
 		
 		function index() {
-			$groupTestFileNames = listClasses(APP.'tests'.DS.'groups');
+			$groupTestFileNames = Configure::listObjects('file', APP.'tests'.DS.'groups');
 			$groupTestNames = array();
 			$pluginsWithTests = array();
 			

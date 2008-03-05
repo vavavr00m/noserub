@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 5422 2007-07-09 05:23:06Z phpnut $ */
+/* SVN FILE: $Id: cache.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
@@ -59,6 +59,14 @@ class CacheHelper extends AppHelper {
  */
 	 var $view;
 /**
+ * cache action time
+ *
+ * @var object
+ * @access public
+ */
+	 var $cacheAction;
+
+/**
  * Main method used to cache a view
  *
  * @param string $file File to cache
@@ -75,7 +83,7 @@ class CacheHelper extends AppHelper {
 			$match = str_replace('/' . $this->controllerName . '/', '', $match);
 			$check = str_replace($replace, '', $check);
 			$check = str_replace('_' . $this->controllerName . '_', '', $check);
-			$check = convertSlash($check);
+			$check = Inflector::slug($check);
 			$check = preg_replace('/^_+/', '', $check);
 			$keys = str_replace('/', '_', array_keys($this->cacheAction));
 			$found = array_keys($this->cacheAction);
@@ -202,7 +210,7 @@ class CacheHelper extends AppHelper {
 			$cacheTime = strtotime($timestamp, $now);
 		}
 
-		$cache = convertSlash($this->here);
+		$cache = Inflector::slug($this->here);
 		if (empty($cache)) {
 			return;
 		}
@@ -211,8 +219,8 @@ class CacheHelper extends AppHelper {
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
 		if (empty($this->plugin)) {
 			$file .= '
-			loadController(\'' . $this->controllerName. '\');
-			loadModels();
+			App::import(\'Controller\', \'' . $this->controllerName. '\');
+			App::import(\'Model\');
 			';
 		} else {
 			$file .= '
@@ -223,8 +231,8 @@ class CacheHelper extends AppHelper {
 					require(\''.CAKE . 'app_controller.php\');
 				}
 			}
-			loadPluginController(\''.$this->plugin.'\',\''.$this->controllerName.'\');
-			loadPluginModels(\''.$this->plugin.'\');
+			App::import(\'Controller\', \'' . $this->plugin . '.' . $this->controllerName. '\');
+			App::import(\'Model\', \''.$this->plugin.'\');
 			';
 		}
         $file .= '$this->controller = new ' . $this->controllerName . 'Controller();
@@ -242,6 +250,7 @@ class CacheHelper extends AppHelper {
 					$this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
 					$this->themeWeb = \'' . $this->themeWeb . '\';
 					$this->plugin = \'' . $this->plugin . '\';
+					Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));
 					$loadedHelpers = array();
 					$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 					foreach (array_keys($loadedHelpers) as $helper)

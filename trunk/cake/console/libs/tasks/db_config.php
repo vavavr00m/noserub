@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_config.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: db_config.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * The DbConfig Task handles creating and updating the database.php
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs.tasks
@@ -75,7 +75,7 @@ class DbConfigTask extends Shell {
 			$driver = '';
 
 			while ($driver == '') {
-				$driver = $this->in('Driver:', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc', 'oracle', 'db2'), 'mysql');
+				$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
 			}
 			$persistent = '';
 

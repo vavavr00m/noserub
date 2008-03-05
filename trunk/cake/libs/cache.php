@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: cache.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Caching for CakePHP.
  *
@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -15,7 +15,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -167,6 +167,19 @@ class Cache extends Object {
 		return false;
 	}
 /**
+ * Garbage collection
+ *
+ * Permanently remove all expired and deleted data
+ *
+ * @access public
+ */
+	function gc() {
+		$_this =& Cache::getInstance();
+		$config = $_this->config();
+		extract($config);
+		$_this->_Engine[$engine]->gc();
+	}
+/**
  * Write data for key into cache
  *
  * @param string $key Identifier for the data
@@ -178,13 +191,18 @@ class Cache extends Object {
  */
 	function write($key, $value, $duration = null) {
 		$_this =& Cache::getInstance();
+		$config = null;
 		if (is_array($duration)) {
 			extract($duration);
-		} else {
+		} elseif (isset($_this->__config[$duration])) {
 			$config = $duration;
+			$duration = null;
 		}
-
 		$config = $_this->config($config);
+
+		if (!is_array($config)) {
+			return null;
+		}
 		extract($config);
 
 		if (!$_this->isInitialized($engine)) {
@@ -202,8 +220,8 @@ class Cache extends Object {
 		if (!$duration) {
 			$duration = $settings['duration'];
 		}
+		$duration = ife(is_numeric($duration), intval($duration), strtotime($duration) - time());
 
-		$duration = ife(is_string($duration), strtotime($duration) - time(), intval($duration));
 		if ($duration < 1) {
 			return false;
 		}
@@ -221,8 +239,12 @@ class Cache extends Object {
  */
 	function read($key, $config = null) {
 		$_this =& Cache::getInstance();
-
 		$config = $_this->config($config);
+
+		if (!is_array($config)) {
+			return null;
+		}
+
 		extract($config);
 
 		if (!$_this->isInitialized($engine)) {
@@ -328,7 +350,7 @@ class Cache extends Object {
 		if (empty($key)) {
 			return false;
 		}
-		$key = r(array(DS, '/', '.'), '_', strval($key));
+		$key = str_replace(array(DS, '/', '.'), '_', strval($key));
 		return $key;
 	}
 }
@@ -357,7 +379,7 @@ class CacheEngine extends Object {
  * @access public
  */
 	function init($settings = array()) {
-		$this->settings = am(array('duration'=> 3600, 'probability'=> 100), $settings);
+		$this->settings = array_merge(array('duration'=> 3600, 'probability'=> 100), $settings);
 		return true;
 	}
 /**

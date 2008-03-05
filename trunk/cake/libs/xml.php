@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xml.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: xml.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * XML handling for Cake.
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright    Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package      cake
  * @subpackage   cake.cake.libs
@@ -112,8 +112,7 @@ class XMLNode extends Object {
  * @return array Properties from object
  * @access private
  */
-	function __objectToNode($object) {
-
+	function __objectToNode($object, $key = false) {
 		if (is_array($object)) {
 			$objects = array();
 			foreach ($object as $obj) {
@@ -122,15 +121,18 @@ class XMLNode extends Object {
 			return $objects;
 		}
 
-		if (isset($object->__identity__) && !empty($object->__identity__)) {
-			$name = $object->__identity__;
+		if (isset($object->_name_) && !empty($object->_name_)) {
+			$name = $object->_name_;
+		} elseif ($key) {
+			$name = $key;
 		} elseif (isset($object->name) && $object->name != null) {
 			$name = $object->name;
 		} else {
 			$name = get_class($object);
 		}
-		if ($name != low($name)) {
-			$name = Inflector::underscore($name);
+
+		if ($name != strtolower($name)) {
+			$name = Inflector::slug(Inflector::underscore($name));
 		}
 
 		if (is_object($object)) {
@@ -152,11 +154,11 @@ class XMLNode extends Object {
 					unset($attributes[$key]);
 				}
 			} elseif (is_object($val)) {
-				$children[] = $this->__objectToNode($val);
+				$children[] = $this->__objectToNode($val, $key);
 				unset($attributes[$key]);
 			}
 		}
-		unset($attributes['__identity__']);
+		unset($attributes['_name_']);
 
 		$node = new XMLNode($name, $attributes, null, $children);
 		return $node;
@@ -504,6 +506,10 @@ class XML extends XMLNode {
 			}
 		}
 
+		if (Configure::read('App.encoding') !== null) {
+			$this->encoding = Configure::read('App.encoding');
+		}
+
 		foreach ($options as $key => $val) {
 			switch ($key) {
 				case 'version':
@@ -559,7 +565,7 @@ class XML extends XMLNode {
  * @see load()
  */
 	function parse() {
-		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
+		$this->header = trim(str_replace(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
 		$xml = new XMLNode();

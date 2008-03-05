@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: debugger.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: debugger.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Framework debugging and PHP error-handling class
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -33,7 +33,9 @@
 	if (!class_exists('Object')) {
 		 uses('object');
 	}
-	uses('cake_log');
+	if (!class_exists('CakeLog')) {
+		uses('cake_log');
+	}
 /**
  * Provide custom logging and error handling.
  *
@@ -58,6 +60,20 @@ class Debugger extends Object {
  * @access public
  */
 	var $helpPath = null;
+/**
+ * holds current output format
+ *
+ * @var string
+ * @access private
+ */
+	var $__outputFormat = 'js';
+/**
+ * holds current output data when outputFormat is false
+ *
+ * @var string
+ * @access private
+ */
+	var $__data = array();
 /**
  * Constructor
  *
@@ -89,6 +105,29 @@ class Debugger extends Object {
 		}
 		return $instance[0];
 	}
+/**
+ * formats and outputs the passed var
+*/
+	function dump($var) {
+		$_this = Debugger::getInstance();
+		pr($_this->exportVar($var));
+	}
+/**
+ *  neatly logs a given var
+*/
+	function log($var, $level = 7) {
+		$_this = Debugger::getInstance();
+		$trace = $_this->trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
+		$source = null;
+
+		if (is_object($trace[0]['object']) && isset($trace[0]['object']->_reporter->_test_stack)) {
+			$stack = $trace[0]['object']->_reporter->_test_stack;
+			$source = "[". $stack[0].", ". $stack[2] ."::" . $stack[3] ."()]\n";
+		}
+
+		CakeLog::write($level, $source . $_this->exportVar($var));
+	}
+
 /**
  * Overrides PHP's default error handling
  *
@@ -128,6 +167,7 @@ class Debugger extends Object {
 			case E_ERROR:
 			case E_CORE_ERROR:
 			case E_COMPILE_ERROR:
+			case E_USER_ERROR:
 				$error = 'Fatal Error';
 				$level = LOG_ERROR;
 			break;
@@ -139,6 +179,7 @@ class Debugger extends Object {
 				$level = LOG_WARNING;
 			break;
 			case E_NOTICE:
+			case E_USER_NOTICE:
 				$error = 'Notice';
 				$level = LOG_NOTICE;
 			break;
@@ -155,41 +196,7 @@ class Debugger extends Object {
 			}
 		}
 
-		$link = "document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-		$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
-
-		if (Configure::read() > 0) {
-			debug($out, false, false);
-			e('<div id="CakeStackTrace' . count($_this->errors) . '" class="cake-stack-trace" style="display: none;">');
-			if (!empty($context)) {
-				$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-				e("<a href='javascript:void(0);' onclick='{$link}'>Context</a> | ");
-				$link = "document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-				e("<a href='javascript:void(0);' onclick='{$link}'>Code</a>");
-
-				if (!empty($helpCode)) {
-					e(" | <a href='{$_this->helpPath}{$helpCode}' target='blank'>Help</a>");
-				}
-
-				e("<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
-				foreach ($context as $var => $value) {
-					e("\${$var}\t=\t" . $_this->exportVar($value, 1) . "\n");
-				}
-				e("</pre>");
-			}
-		}
-
-		$files = $_this->trace(array('start' => 1, 'format' => 'points'));
-		$listing = Debugger::excerpt($files[0]['file'], $files[0]['line'] - 1, 2);
-
-		if (Configure::read() > 0) {
-			e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-			pr(implode("\n", $listing), false);
-			e('</div>');
-
-			pr($_this->trace(array('start' => 1)), false);
-			e('</div>');
-		}
+		echo $_this->__output($level, $error, $code, $helpCode, $description, $file, $line, $context);
 
 		if (Configure::read('log')) {
 			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");
@@ -205,10 +212,10 @@ class Debugger extends Object {
  *
  * @param array $options Format for outputting stack trace
  * @return string Formatted stack trace
- * @access protected
+ * @access public
  */
 	function trace($options = array()) {
-		$options = am(array(
+		$options = array_merge(array(
 				'depth'		=> 999,
 				'format'	=> '',
 				'args'		=> false,
@@ -223,7 +230,7 @@ class Debugger extends Object {
 		$back = array();
 
 		for ($i = $options['start']; $i < count($backtrace) && $i < $options['depth']; $i++) {
-			$trace = am(
+			$trace = array_merge(
 				array(
 					'file' => '[internal]',
 					'line' => '??'
@@ -232,7 +239,7 @@ class Debugger extends Object {
 			);
 
 			if (isset($backtrace[$i + 1])) {
-				$next = am(
+				$next = array_merge(
 					array(
 						'line'		=> '??',
 						'file'		=> '[internal]',
@@ -264,6 +271,8 @@ class Debugger extends Object {
 				$back[] = array('file' => $trace['file'], 'line' => $trace['line']);
 			} elseif (empty($options['format'])) {
 				$back[] = $function . ' - ' . Debugger::trimPath($trace['file']) . ', line ' . $trace['line'];
+			} else {
+				$back[] = $trace;
 			}
 		}
 
@@ -278,19 +287,25 @@ class Debugger extends Object {
  *
  * @param string $path Path to shorten
  * @return string Normalized path
- * @access protected
+ * @access public
  */
 	function trimPath($path) {
 		if (!defined('CAKE_CORE_INCLUDE_PATH') || !defined('APP')) {
 			return $path;
 		}
 
-		if (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
-			$path = r(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
-		} elseif (strpos($path, APP) === 0) {
-			$path = r(APP, 'APP' . DS, $path);
+		if (strpos($path, APP) === 0) {
+			return str_replace(APP, 'APP' . DS, $path);
+		} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+			return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
 		} elseif (strpos($path, ROOT) === 0) {
-			$path = r(ROOT, 'ROOT' . DS, $path);
+			return str_replace(ROOT, 'ROOT', $path);
+		}
+		$corePaths = Configure::corePaths('cake');
+		foreach ($corePaths as $corePath) {
+			if (strpos($path, $corePath) === 0) {
+				return str_replace($corePath, 'CORE' .DS . 'cake' .DS, $path);
+			}
 		}
 		return $path;
 	}
@@ -301,7 +316,7 @@ class Debugger extends Object {
  * @param integer $line Line number to highlight
  * @param integer $context Number of lines of context to extract above and below $line
  * @return array Set of lines highlighted
- * @access protected
+ * @access public
  */
 	function excerpt($file, $line, $context = 2) {
 		$data = $lines = array();
@@ -314,10 +329,11 @@ class Debugger extends Object {
 			if (!isset($data[$i])) {
 				continue;
 			}
+			$string = str_replace(array("\r\n", "\n"), "", highlight_string($data[$i], true));
 			if ($i == $line) {
-				$lines[] = '<span class="code-highlight">' . highlight_string($data[$i], true) . '</span>';
+				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
-				$lines[] = highlight_string($data[$i], true);
+				$lines[] = $string;
 			}
 		}
 		return $lines;
@@ -327,10 +343,11 @@ class Debugger extends Object {
  *
  * @param string $var Variable to convert
  * @return string Variable as a formatted string
- * @access protected
+ * @access public
  */
 	function exportVar($var, $recursion = 0) {
-		switch(low(gettype($var))) {
+		$_this =  Debugger::getInstance();
+		switch(strtolower(gettype($var))) {
 			case 'boolean':
 				return ife($var, 'true', 'false');
 			break;
@@ -339,44 +356,56 @@ class Debugger extends Object {
 				return $var;
 			break;
 			case 'string':
-				return '"' . $var . '"';
+				if (trim($var) == "") {
+					return '"[empty string]"';
+				}
+				return '"' . h($var) . '"';
 			break;
 			case 'object':
-				$var = get_object_vars($var);
+				return get_class($var) . "\n" . $_this->__object($var);
 			case 'array':
-				$out = 'array(';
-				if ($recursion !== 0) {
-					$vars = array();
-					foreach ($var as $key => $val) {
-						$vars[] = Debugger::exportVar($key) . ' => ' . Debugger::exportVar($val, $recursion - 1);
+				$out = "array(";
+				$vars = array();
+				foreach ($var as $key => $val) {
+					if (is_numeric($key)) {
+						$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
+					} else {
+						$vars[] = "\n\t" .$_this->exportVar($key) . ' => ' . $_this->exportVar($val, $recursion - 1);
 					}
-					return $out . join(', ', $vars) . ')';
-				} else {
-					return 'array';
 				}
+				$n = null;
+				if (count($vars) > 0) {
+					$n = "\n";
+				}
+				return $out . join(",", $vars) . "{$n})";
 			break;
 			case 'resource':
-				return low(gettype($var));
+				return strtolower(gettype($var));
 			break;
 			case 'null':
 				return 'null';
 			break;
 		}
 	}
-
+/**
+ * Handles object conversion to debug string
+ *
+ * @param string $var Object to convert
+ * @access private
+ */
 	function __object($var) {
 		static $history = array();
 		$serialized = serialize($var);
 		array_push($history, $serialized);
-		echo "\n";
-
+		$out = array();
 		if(is_object($var)) {
 			$className = get_class($var);
 			$objectVars = get_object_vars($var);
+
 			foreach($objectVars as $key => $value) {
-				$value = ife((!is_object($value) && !is_array($value) && trim($value) == ""), "[empty string]", $value);
+				$inline = null;
 				if(strpos($key, '_', 0) !== 0) {
-					echo "$className::$key = ";
+					$inline = "$className::$key = ";
 				}
 
 				if(is_object($value) || is_array($value)) {
@@ -386,33 +415,115 @@ class Debugger extends Object {
 						$value = ife(is_object($value), "*RECURSION* -> " . get_class($value), "*RECURSION*");
 					}
 				}
-
 				if(in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource', 'object', 'null'))) {
-					if(is_array($value)) {
-						foreach($value as $name => $output) {
-							if(is_numeric($name)) {
-								echo "$output ";
-							} else {
-								echo "$name => $output ";
-							}
-						}
-						echo "\n";
-					} else {
-						echo Debugger::exportVar($value) . "\n";
-					}
+					$out[] = "$className::$$key = " . Debugger::exportVar($value);
 				} else {
-					echo $value . "\n";
+					$out[] = "$className::$$key = " . var_export($value, true);
 				}
 			}
 
 			$objectMethods = get_class_methods($className);
 			foreach($objectMethods as $key => $value) {
 				if(strpos($value, '_', 0) !== 0) {
-					echo "$className::$value() \n";
+					$out[] = "$className::$value()";
 				}
 			}
 		}
 		array_pop($history);
+		return join("\n", $out);
+	}
+/**
+ * Handles object conversion to debug string
+ *
+ * @param string $var Object to convert
+ * @access protected
+ */
+	function output($format = 'js') {
+		$_this = Debugger::getInstance();
+		$data = null;
+
+		if ($format === true && !empty($_this->__data)) {
+			$data = $_this->__data;
+			$_this->__data = array();
+			$format = false;
+		}
+		$_this->__outputFormat = $format;
+
+		return $data;
+	}
+/**
+ * Handles object conversion to debug string
+ *
+ * @param string $var Object to convert
+ * @access private
+ */
+	function __output($level, $error, $code, $helpCode, $description, $file, $line, $kontext) {
+		$_this = Debugger::getInstance();
+
+		$files = $_this->trace(array('start' => 2, 'format' => 'points'));
+		$listing = $_this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		$trace = $_this->trace(array('start' => 2, 'depth' => '20'));
+		$context = array();
+
+		foreach ((array)$kontext as $var => $value) {
+			$context[] = "\${$var}\t=\t" . $_this->exportVar($value, 1);
+		}
+
+		switch ($_this->__outputFormat) {
+			default:
+			case 'js':
+				$link = "document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+				$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
+				if (Configure::read() > 0) {
+					debug($out, false, false);
+					e('<div id="CakeStackTrace' . count($_this->errors) . '" class="cake-stack-trace" style="display: none;">');
+						$link = "document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+						e("<a href='javascript:void(0);' onclick='{$link}'>Code</a>");
+
+						if (!empty($context)) {
+							$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+							e(" | <a href='javascript:void(0);' onclick='{$link}'>Context</a>");
+
+							if (!empty($helpCode)) {
+								e(" | <a href='{$_this->helpPath}{$helpCode}' target='blank'>Help</a>");
+							}
+
+							e("<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
+							e(implode("\n", $context));
+							e("</pre>");
+						}
+
+						e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
+							pr(implode("\n", $listing) . "\n", false);
+						e('</div>');
+						pr($trace, false);
+					e('</div>');
+				}
+			break;
+			case 'html':
+				echo "<pre class=\"cake-debug\"><b>{$error}</b> ({$code}) : {$description} [<b>{$file}</b>, line <b>{$line}]</b></pre>";
+				if (!empty($context)) {
+					echo "Context:\n" .implode("\n", $context) . "\n";
+				}
+				echo "<pre class=\"cake-debug context\"><b>Context</b> <p>" . implode("\n", $context) . "</p></pre>";
+				echo "<pre class=\"cake-debug trace\"><b>Trace</b> <p>" . $trace. "</p></pre>";
+			break;
+			case 'text':
+			case 'txt':
+				echo "{$error}: {$code} :: {$description} on line {$line} of {$file}\n";
+				if (!empty($context)) {
+					echo "Context:\n" .implode("\n", $context) . "\n";
+				}
+				echo "Trace:\n" . $trace;
+			break;
+			case 'log':
+				$_this->log(compact('error', 'code', 'description', 'line', 'file', 'context', 'trace'));
+			break;
+			case false:
+				$this->__data[] = compact('error', 'code', 'description', 'line', 'file', 'context', 'trace');
+			break;
+		}
+
 	}
 /**
  * Verify that the application's salt has been changed from the default value

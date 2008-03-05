@@ -125,7 +125,6 @@ form#sp_form input.text {
 					?>
 				</div>
 			<?php endforeach; ?>
-			</div>
 		<?php endif; ?>
 	</div>
 

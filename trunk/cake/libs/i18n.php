@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: i18n.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: i18n.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -29,7 +29,7 @@
 /**
  * Included libraries.
  */
-uses('l10n');
+App::import('Core', 'l10n');
 /**
  * Short description for file.
  *
@@ -47,6 +47,13 @@ class I18n extends Object {
  */
 	var $l10n = null;
 /**
+ * Current domain of translation
+ *
+ * @var string
+ * @access public
+ */
+	var $domain = null;
+/**
  * Translation strings for a specific domain read from the .mo or .po files
  *
  * @var array
@@ -61,6 +68,13 @@ class I18n extends Object {
  * @access private
  */
 	var $__noLocale = false;
+/**
+ * Determine if $__domains cache should be wrote
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__cache = false;
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
@@ -98,31 +112,28 @@ class I18n extends Object {
  * @param string $domain Domain
  * @param string $category Category
  * @param integer $count Count
- * @param string $directory Directory that contains the file that is requesting translation
  * @return string translated strings.
  * @access public
  */
-	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
+	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null) {
+		if (!$category) {
+			$category = 5;
+		}
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
 
 		if (is_null($domain)) {
-			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
-				$domain = $regs[1];
-			} elseif (preg_match('/controllers{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
-				$domain = $regs[1];
-			}
+			$domain = 'default';
+		}
+		$_this->domain = $domain . '_' . $_this->l10n->locale;
 
-			if (isset($domain) && $domain == 'templates') {
-				if (preg_match('/templates{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
-					$domain = $regs[1];
-				}
-			}
-			$directory = null;
+		if (empty($_this->__domains)) {
+			$_this->__domains = Cache::read($_this->domain, '_cake_core_');
 		}
 
 		if (!isset($_this->__domains[$_this->category][$domain])) {
-			$_this->__bindTextDomain($domain, $directory);
+			$_this->__bindTextDomain($domain);
+			$_this->__cache = true;
 		}
 
 		if (!isset($count)) {
@@ -287,50 +298,48 @@ class I18n extends Object {
 	}
 /**
  * Binds the given domain to a file in the specified directory.
- * If directory is null, will attempt to search default locations.
  *
  * @param string $domain Domain to bind
- * @param string $directory Directory
  * @return string Domain binded
  * @access private
  */
-	function __bindTextDomain($domain, $directory = null) {
+	function __bindTextDomain($domain) {
 		$_this =& I18n::getInstance();
 		$_this->__noLocale = true;
-		if (is_null($directory)) {
-			$searchPath[] = APP . 'locale';
-			$searchPath[] = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale';
-		} else {
-			$searchPath[] = $directory;
+		$core = true;
+		$merge = array();
+
+		$searchPath[] = APP . 'locale';
+		$plugins = Configure::listObjects('plugin');
+
+		if (!empty($plugins)) {
+
 		}
 
 		foreach ($searchPath as $directory) {
 			foreach ($_this->l10n->languagePath as $lang) {
 				$file = $directory . DS . $lang . DS . $_this->category . DS . $domain;
-				$default = APP . 'locale'. DS . $lang . DS . $_this->category . DS . 'default';
-				$core = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale'. DS . $lang . DS . $_this->category . DS . 'core';
+
+				if ($core) {
+					$app = $directory . DS . $lang . DS . $_this->category . DS . 'core';
+					if (file_exists($fn = "$app.mo")) {
+						$_this->__loadMo($fn, $domain);
+						$_this->__noLocale = false;
+						$merge = $_this->__domains;
+						$core = null;
+					} elseif (file_exists($fn = "$app.po") && ($f = fopen($fn, "r"))) {
+						$_this->__loadPo($f, $domain);
+						$_this->__noLocale = false;
+						$merge = $_this->__domains;
+						$core = null;
+					}
+				}
 
 				if (file_exists($fn = "$file.mo")) {
 					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$default.mo")) {
-					$_this->__loadMo($fn, $domain);
-					$_this->__noLocale = false;
-					break 2;
 				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
-					$_this->__loadPo($f, $domain);
-					$_this->__noLocale = false;
-					break 2;
-				} elseif (file_exists($fn = "$default.po") && ($f = fopen($fn, "r"))) {
-					$_this->__loadPo($f, $domain);
-					$_this->__noLocale = false;
-					break 2;
-				} elseif (file_exists($fn = "$core.mo")) {
-					$_this->__loadMo($fn, $domain);
-					$_this->__noLocale = false;
-					break 2;
-				} elseif (file_exists($fn = "$core.po") && ($f = fopen($fn, "r"))) {
 					$_this->__loadPo($f, $domain);
 					$_this->__noLocale = false;
 					break 2;
@@ -339,6 +348,7 @@ class I18n extends Object {
 		}
 
 		if (empty($_this->__domains[$_this->category][$domain])) {
+			$_this->__domains[$_this->category][$domain] = array();
 			return($domain);
 		}
 
@@ -352,6 +362,11 @@ class I18n extends Object {
 			if (isset($_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"])) {
 				$switch = preg_replace("/[() {}\\[\\]^\\s*\\]]+/", "", $_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"]);
 				$_this->__domains[$_this->category][$domain]["%plural-c"] = $switch;
+			}
+			$_this->__domains = Set::pushDiff($_this->__domains, $merge);
+
+			if (isset($_this->__domains[$_this->category][$domain][null])) {
+				unset($_this->__domains[$_this->category][$domain][null]);
 			}
 		}
 		return($domain);
@@ -372,7 +387,7 @@ class I18n extends Object {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == "950412de") && ($version == 0)) {
+			if (($magic == (-1794895138 & 0xFFFFFFFF) || $magic == (2500072158 & 0xFFFFFFFF)) && $version == 0) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
@@ -479,6 +494,18 @@ class I18n extends Object {
  */
 	function __bindTextDomainCodeset($domain, $codeset = null) {
 		return($domain);
+	}
+/**
+ * Object destructor
+ *
+ * Write cache file if changes have been made to the $__map or $__paths
+ * @access private
+ */
+	function __destruct() {
+		$_this =& I18n::getInstance();
+		if ($_this->__cache) {
+			Cache::write($_this->domain, array_filter($_this->__domains), '_cake_core_');
+		}
 	}
 }
 ?>

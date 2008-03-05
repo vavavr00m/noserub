@@ -30,7 +30,10 @@
                                    2 => 'he'),
                      'him' => array(0 => 'him/her',
                                     1 => 'her',
-                                    2 => 'him'));
+                                    2 => 'him'),
+                     'his' => array(0 => 'his/her',
+                                    1 => 'her',
+                                    2 => 'his'));
     
         if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
             $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
@@ -73,7 +76,11 @@
         		    </li>
 		        <?php } ?>
         		<?php if(isset($distance) || $data['Identity']['address_shown']) {
-        		    $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+        		    if($relationship_status == 'self') {
+        		        $label = 'you live ';
+        		    } else {
+        		        $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+    		        }
         		    if(isset($distance)) {
         		        $label .= ceil($distance) . ' km away from you';
         		    }
@@ -82,7 +89,18 @@
         		    } ?>
         		    <li class="destination icon"> <?php echo $label; ?></li>
         		<?php } ?>
-		
+		        
+		        <?php 
+		            if($relationship_status == 'self') {
+		                $label = 'your last Location: ';
+		            } else {
+		                $label = $sex['his'][$data['Identity']['sex']] . ' last Location: ';
+		            }
+		            $label .= $data['Location']['name'] == '' ? '<em>Unknown</em>' : $data['Location']['name'];
+		        ?>
+		        
+		        <li class="userlocation icon"> <?php echo $label; ?></li>
+		        
         		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
                     <?php
                         if($relationship_status == 'contact') {
@@ -94,11 +112,11 @@
                 <?php } ?>
         	</ul>
         </div>
-
-        <br class="clear" />
+        
+        <hr class="clear" />
         
         <?php if($data['Identity']['about']) { ?>
-            <h4>About me</h4>
+            <h4>About <?php echo $sex['his'][$data['Identity']['sex']]; ?></h4>
             <div id="about">
                 <p class="summary">
                     <?php if($data['Identity']['about']) {
@@ -108,8 +126,42 @@
                 </p>        
             </div>
         <?php } ?>
+        
+        <?php if($relationship_status == 'contact') { ?>
+        
+            <hr />
+        	
+            <div class="textBox">
+            	<span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
+            	<h4>Relationship</h4>
+                <div id="relationshipBox">
+                    <p class="summary">
+                    	<?php
+                    	    foreach($contact['NoserubContactType'] as $contact_type) {
+                    	        echo $contact_type['name'] . ' ';
+                    	    }
+                    	    foreach($contact['ContactType'] as $contact_type) {
+                    	        echo $contact_type['name'] . ' ';
+                    	    }
+                    	?>
+                    </p>        
+                </div>
+            </div>
+        
+            <div class="textBox lastBox">
+                <span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
+                <h4>Notes</h4>
+                <div id="noteBox">
+                    <p class="summary">
+                        <?php echo $contact['Contact']['note'] ? $contact['Contact']['note'] : '<em>Add some notes here.</em>'; ?>
+                    </p>        
+                </div>
+    		</div>
+            
+        <?php } ?>
+        
+        <hr class="clear" />
 
-        <br class="clear" />
         <div>
             <h4>Social activity</h4>
             <?php echo $this->renderElement('subnav', array('no_wrapper' => true)); ?>
@@ -120,6 +172,31 @@
     </div>
 
     <div id="sidebar">
+        
+         <?php if($relationship_status == 'self') { ?>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/locations/'; ?>">manage</a></span>
+    	
+    	<h4>Location</h4>
+    	
+            <form class="locator" method="POST" action="<?php echo $this->here; ?>">
+                <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+                <div class="input">
+                <label>I'm currently at</label>
+                <select name="data[Locator][id]" size="1">
+                    <?php $selected_location = $data['Identity']['last_location_id']; ?>
+                    <?php foreach($locations as $id => $name) { ?>
+                        <option <?php if($id == $selected_location) { echo 'selected="selected" '; } ?>value="<?php echo $id; ?>"><?php echo $name; ?></option>
+                    <?php } ?>
+                    <option value="0">[somewhere else]</option>
+                </select>
+                <label id="locator_name" for="data[Locator][name]">Where are you then?</label>
+                <input type="text" name="data[Locator][name]" value="">
+                <input class="submitbutton" type="submit" value="Update"/>
+                </div>
+            </form>
+    
+        <hr />
+        <?php } ?>
 	
 	    <?php if($relationship_status == 'self') { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
@@ -146,7 +223,7 @@
 	        <?php foreach($accounts as $item) { ?>
 	            <li>
 	                <img src="<?php echo Router::url('/images/icons/services/') . $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-	                <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo $item['Service']['name']; ?></a>
+	                <a rel="me" class="taggedlink" href="<?php echo $item['account_url']; ?>"><?php echo isset($item['title']) ? $item['title'] : $item['Service']['name']; ?></a>
 	            </li>
 	        <?php } ?>
 	    </ul>
@@ -174,7 +251,7 @@
 	</ul>
 	<?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
         <p>
-            <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+            <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />

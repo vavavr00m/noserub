@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_adodb.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: dbo_adodb.php 6311 2008-01-02 06:33:52Z phpnut $ */
 
 /**
  * AdoDB layer for DBO.
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.datasources.dbo
@@ -334,7 +334,7 @@ class DboAdodb extends DboSource {
  */
 	function fields(&$model, $alias = null, $fields = null, $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->name;
+			$alias = $model->alias;
 		}
 
 		if (!is_array($fields)) {
@@ -346,9 +346,7 @@ class DboAdodb extends DboSource {
 				}
 				$fields = array_map('trim', $fields);
 			} else {
-				foreach ($model->_tableInfo->value as $field) {
-					$fields[] = $field['name'];
-				}
+				$fields = array_keys($model->schema());
 			}
 		}
 
@@ -360,7 +358,7 @@ class DboAdodb extends DboSource {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
 						$prepend = 'DISTINCT ';
-						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
+						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 					}
 
 					$dot = strrpos($fields[$i], '.');
@@ -428,10 +426,7 @@ class DboAdodb extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
-		}
+		parent::__insertMulti($table, $fields, $values);
 	}
 }
 ?>

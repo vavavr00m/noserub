@@ -1,5 +1,4 @@
 <?php
-	loadController(null);
 
 	class NiceSRegTest extends CakeTestCase {
 		var $helper = null;
@@ -12,8 +11,8 @@
 			new View(new AppController());
 			
 			$this->helper = new NiceSRegHelper();
-			loadHelper('Html');
-			loadHelper('Form');
+			App::import('Helper', 'Html');
+			App::import('Helper', 'Form');			
 			$this->helper->Form = new FormHelper();
 			$this->helper->Form->Html = new HtmlHelper();
 		}

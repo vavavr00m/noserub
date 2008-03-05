@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: project.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: project.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * The Project Task handles creating the base application
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.scripts.bake
@@ -52,7 +52,7 @@ class ProjectTask extends Shell {
 	}
 /**
  * Checks that given project path does not already exist, and
- * finds the app directory in it. Then it calls __buildDirLayout() with that information.
+ * finds the app directory in it. Then it calls bake() with that information.
  *
  * @param string $project Project path
  * @access public
@@ -111,10 +111,35 @@ class ProjectTask extends Shell {
 		}
 
 		if (!is_dir($this->params['root'])) {
-			$this->err('The directory path you supplied was not found. Please try again.');
+			$this->err(__('The directory path you supplied was not found. Please try again.', true));
 		}
 
-		$this->__buildDirLayout($project);
+		if($this->bake($project)) {
+			$path = Folder::slashTerm($project);
+			if ($this->createHome($path)) {
+				$this->out(__('Welcome page created', true));
+			} else {
+				$this->out(__('The Welcome page was NOT created', true));
+			}
+
+			if ($this->securitySalt($path) === true ) {
+				$this->out(__('Random hash key created for \'Security.salt\'', true));
+			} else {
+				$this->err(sprintf(__('Unable to generate random hash for \'Security.salt\', you should change it in %s', true), CONFIGS . 'core.php'));
+			}
+
+			$corePath = $this->corePath($path);
+			if ($corePath === true ) {
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s'), true,  CAKE_CORE_INCLUDE_PATH));
+			} elseif ($corePath === false) {
+				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', true), $path . 'webroot' .DS .'index.php'));
+			}
+			$Folder = new Folder($path);
+			if (!$Folder->chmod($path . 'tmp', 0777)) {
+				$this->err(sprintf(__('Could not set permissions on %s', true), $path . DS .'tmp'));
+				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
+			}
+		}
 		exit();
 	}
 /**
@@ -124,77 +149,54 @@ class ProjectTask extends Shell {
  * A default home page will be added, and the tmp file storage will be chmod'ed to 0777.
  *
  * @param string $path Project path
+ * @param string $skel Path to copy from
+ * @param string $skip array of directories to skip when copying
  * @access private
  */
-	function __buildDirLayout($path) {
-		$skel = $this->params['skel'];
-		while ($skel == '') {
-			$skel = $this->in("What is the path to the app directory you wish to copy?\nExample: ".APP, null, ROOT.DS.'myapp'.DS);
+	function bake($path, $skel = null, $skip = array('empty')) {
+		if(!$skel) {
+			$skel = $this->params['skel'];
+		}
+		while (!$skel) {
+			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
-				$this->out('The directory path you supplied was empty. Please try again.');
+				$this->out(__('The directory path you supplied was empty. Please try again.', true));
 			} else {
 				while (is_dir($skel) === false) {
-					$skel = $this->in('Directory path does not exist please choose another:');
+					$skel = $this->in(__('Directory path does not exist please choose another:', true));
 				}
 			}
 		}
 
 		$app = basename($path);
+
 		$this->out('Bake Project');
 		$this->out("Skel Directory: $skel");
 		$this->out("Will be copied to: {$path}");
 		$this->hr();
+
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			$verboseOuptut = $this->in('Do you want verbose output?', array('y', 'n'), 'n');
-			$verbose = false;
-
-			if (low($verboseOuptut) == 'y' || low($verboseOuptut) == 'yes') {
-				$verbose = true;
-			}
+			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
-			if ($Folder->copy($path)) {
-				$path = $Folder->slashTerm($path);
+			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
 				$this->hr();
-
-				if ($this->createHome($path)) {
-					$this->out('Welcome page created');
-				} else {
-					$this->out('The Welcome page was NOT created');
-				}
-
-				if ($this->securitySalt($path) === true ) {
-					$this->out('Random hash key created for \'Security.salt\'');
-				} else {
-					$this->err('Unable to generate random hash for \'Security.salt\', please change this yourself in ' . CONFIGS . 'core.php');
-				}
-
-				$corePath = $this->corePath($path);
-				if ($corePath === true ) {
-					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
-				} elseif ($corePath === false) {
-					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
-				}
-
-				if (!$Folder->chmod($path . 'tmp', 0777)) {
-					$this->err('Could not set permissions on '. $path . DS .'tmp');
-					$this->out('You must manually check that these directories can be wrote to by the server');
-				}
 			} else {
 				$this->err(" '".$app."' could not be created properly");
+				return false;
 			}
 
-			if ($verbose) {
+			if (low($verbose) == 'y' || low($verbose) == 'yes') {
 				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
 			}
 
-			return;
+			return true;
 		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
 			$this->out('Bake Aborted.');
 		} else {
@@ -211,6 +213,7 @@ class ProjectTask extends Shell {
  * @access public
  */
 	function createHome($dir) {
+		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
 		return $this->createFile($path.'home.ctp', $output);
@@ -259,6 +262,19 @@ class ProjectTask extends Shell {
 			} else {
 				return false;
 			}
+
+			$File =& new File($path . 'webroot' . DS . 'test.php');
+			$contents = $File->read();
+			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
+				if ($File->write($result)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
 		}
 	}
 /**
@@ -283,5 +299,21 @@ class ProjectTask extends Shell {
 			return false;
 		}
 	}
+/**
+ * Help
+ *
+ * @return void
+ * @access public
+ */
+	function help() {
+		$this->hr();
+		$this->out("Usage: cake bake project <arg1>");
+		$this->hr();
+		$this->out('Commands:');
+		$this->out("\n\tproject <name>\n\t\tbakes app directory structure.\n\t\tif <name> begins with '/' path is absolute.");
+		$this->out("");
+		exit();
+	}
+
 }
 ?>

@@ -6,6 +6,38 @@ class Service extends AppModel {
     var $belongsTo = array('ServiceType');
 
     /**
+     * returns all accounts with is_contact=1
+     *
+     * @return array
+     */
+    function getContactAccounts() {
+        $this->recursive = 0;
+        $this->expects('Service');
+        
+        return $this->findAllByIsContact(1);
+    }
+    
+    function detectService($url) {
+    	$url = trim($url);
+    	if($url == '') {
+    		return false;
+    	}
+    	
+    	$url = $this->removeHttpProtocol($url);
+    	$services = $this->getAllServices();
+
+    	foreach($services as $service) {
+    		$username = $service->detectService($url);
+    		
+    		if($username) {
+    			return array('service_id' => $service->getServiceId(), 'username' => $username);
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    /**
      * Method description
      *
      * @param  
@@ -77,7 +109,7 @@ class Service extends AppModel {
     function getFeedUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 		
-    	if ($service) {
+    	if($service) {
     		return $service->getFeedUrl($username);
         }
                 
@@ -266,123 +298,58 @@ class Service extends AppModel {
         
     	$service = $this->getService($account['Account']['service_id']);
 
-    	if ($service) {
+    	if($service) {
     		return $service->getContacts($account['Account']['username']);
         }
         
         return array();
     }
-        
+
+    private function getAllServices() {
+    	$services = array();
+    	
+    	for($i = 1; $i <= 53; $i++) {
+    		$service = $this->getService($i);
+    		
+    		if($service) {
+    			$services[] = $service;
+    		}
+    	}
+
+    	return $services;
+    }
+    
     /**
      * Factory method to create services
      */
     private function getService($service_id) {
-    	switch ($service_id) {
-    		case 1:
-    			return new FlickrService();
-    		case 2:
-    			return new DeliciousService();
-    		case 3:
-    			return new IpernityService();
-    		case 4:
-    			return new _23hqService();
-    		case 5: 
-    			return new TwitterService();
-    		case 6:
-    			return new PownceService();
-    		case 9:
-    			return new UpcomingService();
-    		case 10:
-    			return new VimeoService();
-    		case 11:
-    			return new LastfmService();
-    		case 12:
-    			return new QypeService();
-    		case 13:
-    			return new MagnoliaService();
-    		case 14:
-    			return new StumbleuponService();
-    		case 15:
-    			return new CorkdService();
-    		case 16:
-    			return new DailymotionService();
-    		case 17:
-    			return new ZooomrService();
-    		case 18:
-    			return new OdeoService();
-    		case 19:
-    			return new IlikeService();
-    		case 20:
-    			return new WeventService();
-    		case 21:
-    			return new ImthereService();
-    		case 22:
-    			return new NewsvineService();
-    		case 23:
-    			return new JabberService();
-    		case 24:
-    			return new GtalkService();
-    		case 25:
-    			return new IcqService();
-    		case 26:
-    			return new YimService();
-    		case 27:
-    			return new AimService();
-    		case 28:
-    			return new SkypeService();
-    		case 29:
-    			return new MsnService();
-    		case 30:
-    			return new FacebookService();
-    		case 31:
-        		return new SecondlifeService();
-    		case 32:
-    			return new LinkedinService();
-    		case 33:
-    			return new XingService();
-    		case 34:
-    			return new SlideshareService();
-    		case 35:
-    			return new PlazesService();
-    		case 36:
-    			return new ScribdService();
-    		case 37:
-    			return new MoodmillService();
-    		case 38:
-    			return new DiggService();
-    		case 39:
-    			return new MisterwongService();
-    		case 40:
-    			return new FolkdService();
-    		case 41:
-    			return new RedditService();
-    		case 42:
-    			return new FavesService();
-    		case 43:
-    			return new SimpyService();
-    		case 44:
-    			return new DeviantartService();
-    		case 45:
-    			return new ViddlerService();
-    		case 46:
-    			return new ViddyouService();
-    		case 47:
-    			return new GadugaduService();
-    		case 48:
-    			return new DopplrService();
-    		case 49:
-    			return new OrkutService();
-    		case 50:
-    			return new KulandoService();
-    		case 51:
-    			return new WordpresscomService();
-    		case 52:
-    			return new BloggerdeService();
-    		case 53:
-    			return new LivejournalService();
-    		default:
-    			return false;
+    	// RSS feeds are not handled by this method, so we simply return false
+    	if($service_id == 8) {
+    		return false;
     	}
+    	
+    	$this->recursive = 0;
+    	$service = $this->find(array('Service.id' => $service_id), array('Service.internal_name'));
+    	
+    	if(!$service) {
+    		return false;
+    	}
+    	
+    	$serviceName = $service['Service']['internal_name'];
+    	$className = $serviceName . 'Service';
+    	
+    	if(!class_exists($className)) {
+    		require(MODELS.'services'.DS.strtolower($serviceName).'.php');
+    	}
+    	
+    	return new $className($service_id);
+    }
+    
+    private function removeHttpProtocol($url) {
+    	$url = str_ireplace('http://', '', $url);
+    	$url = str_ireplace('https://', '', $url);
+    	
+    	return $url;
     }
 }
 
@@ -438,18 +405,33 @@ class ContactExtractor {
 	}
 }
 
-interface IService {
-	function getAccountUrl($username);
-	function getContacts($username);
-	function getContent($feeditem);
-	function getFeedUrl($username);
-}
-
 /**
- * This class is provided as a convenience for easily creating services by extending this class 
- * and overriding only the methods of interest.
+ * Base class for all services.
  */
-abstract class ServiceAdapter implements IService {
+abstract class AbstractService {
+	private $service_id;
+	
+	function __construct($service_id) {
+		$this->service_id = $service_id;
+	}
+
+	/**
+	 * Implementations of this function have to return boolean false if 
+	 * the service couldn't be detected, or a string with the username.
+	 */
+	abstract function detectService($url);
+	
+	protected function extractUsername($url, $patterns) {
+		foreach ($patterns as $pattern) {
+			preg_match($pattern, $url, $matches);
+		
+			if (!empty($matches)) {
+				return $matches[1];
+			}
+		}
+		
+		return false;
+	}
 	
 	function getAccountUrl($username) {
 		return '';
@@ -466,850 +448,8 @@ abstract class ServiceAdapter implements IService {
 	function getFeedUrl($username) {
 		return false;
 	}
-}
-
-// class name starts with '_' as it is not allowed to use a number as first character
-class _23hqService extends ServiceAdapter {
 	
-	function getAccountUrl($username) {
-		return 'http://www.23hq.com/'.$username;
-	}
-	
-	function getContent($feeditem) {
-		$raw_content = $feeditem->get_content();
-        #<a href="http://www.23hq.com/DonDahlmann/photo/2204674
-        if(preg_match('/<a href="http:\/\/www.23hq.com\/.*\/photo\/.*<\/a>/iU', $raw_content, $matches)) {
-            $content = str_replace('standard', 'quad100', $matches[0]);
-            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
-            return $content;
-        }
-        return '';
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.23hq.com/rss/'.$username;
-	}
-}
-
-class AimService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'aim:goIM?screenname='.$username;
-	}
-}
-
-class BloggerdeService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.blogger.de/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'blogger.de/', '/<a href="http:\/\/(.*).blogger.de" rel=".*">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://'.$username.'.blogger.de/rss?show=all';
-	}
-}
-
-class FavesService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://faves.com/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://faves.com/FriendExplorer.aspx?user=' . $username, '/<div class="summary"><a href="http:\/\/faves.com\/users\/(.*)">/iU', '/Next<\/a>/iU', '&page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://faves.com/users/'.$username.'/rss';
-	}
-}
-
-class CorkdService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://corkd.com/people/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://corkd.com/people/' . $username . '/buddies', '/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', '/Next &#8250;&#8250;<\/a>/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://corkd.com/feed/journal/'.$username;
-	}
-}
-
-class DailymotionService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.dailymotion.com/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.dailymotion.com/contacts/' . $username, '/<img width="80" height="80" src=".*" alt="(.*)" \/>/simU', '/next&nbsp;&raquo;<\/a>/iU', '/');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.dailymotion.com/rss/'.$username;
-	}
-}
-
-class DeliciousService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://del.icio.us/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://del.icio.us/network/' . $username . '/', '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://del.icio.us/rss/'.$username;
-	}
-}
-
-class DeviantartService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.deviantart.com';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username.'.deviantart.com/friends/', '/<a class="u" href="http:\/\/(.*).deviantart.com\/">/iU', '/Next Page<\/a>/iU', '?offset=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://backend.deviantart.com/rss.xml?q=gallery%3A'.$username.'+sort%3Atime&type=deviation';
-	}
-}
-
-class DiggService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://digg.com/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://digg.com/users/' . $username . '/friends/view', '/<a class="fn" href="\/users\/(.*)">/iU', '/Next &#187;<\/a>/iU', '/page');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
-	}
-}
-
-class DopplrService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://www.dopplr.com/traveller/'.$username;
-	}
-}
-
-class FacebookService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://www.facebook.com/profile.php?id='.$username;
-	}
-}
-
-class FlickrService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.flickr.com/photos/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.flickr.com/people/' . $username . '/contacts/', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		$raw_content = $feeditem->get_content();
-        if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {
-            $content = str_replace('_m.jpg', '_s.jpg', $matches[0]);
-            $content = preg_replace('/width="[0-9]+".+height="[0-9]+"/i', '', $content);
-            return $content;
-        }
-        return '';
-	}
-	
-	function getFeedUrl($username) {
-		# we need to read the page first in order to access
-        # the user id without need to access the API
-        $content = @file_get_contents('http://www.flickr.com/photos/'.$username.'/');
-        if(preg_match('/photos_public.gne\?id=(.*)&amp;/i', $content, $matches)) {
-        	return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'&lang=en-us&format=rss_200';
-        } else {
-        	return false;
-        }
-	}
-}
-
-class FolkdService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.folkd.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.folkd.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
-	}
-}
-
-class GadugaduService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'gg:'.$username;
-	}
-}
-
-class GtalkService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'xmpp:'.$username;
-	}
-}
-
-class IcqService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://www.icq.com/'.$username;
-	}
-}
-
-
-class IlikeService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://ilike.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://ilike.com/user/' . $username . '/friends', '/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/simU', '/src="\/images\/forward_arrow.gif" title="Go forward">/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://ilike.com/user/'.$username.'/recently_played.rss';
-	}
-}
-
-class ImthereService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://imthere.com/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://imthere.com/users/' . $username . '/friends', '/<h1 class="name"><a href="http:\/\/imthere.com\/users\/(.*)" class="friend">.*<\/a><\/h1>/iU', '/Next<\/a><\/li>/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://imthere.com/users/'.$username.'/events?format=rss';
-	}
-}
-
-class IpernityService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://ipernity.com/doc/'.$username.'/home/photo';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://ipernity.com/user/' . $username . '/network', '/<a href="\/user\/(.*)">Profile<\/a>/iU', '/>next &rarr;<\/a>/iU', '|R58%3Bord%3D3%3Boff%3D0?r[off]=');
-	}
-	
-	function getContent($feeditem) {
-		$raw_content = $feeditem->get_content();
-        if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {
-            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'t.jpg" /></a>';
-        }
-        return '';
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
-	}
-}
-
-class JabberService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'xmpp:'.$username;
-	}
-}
-
-class KulandoService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.kulando.de';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.kulando.de', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		# we need to read the page first in order to access
-        # the user id without need to access the API
-        $content = @file_get_contents('http://'.$username.'.kulando.de/');
-        if(preg_match('/href="http:\/\/www.kulando.de\/rss.php\?blogId=(.*)&amp;profile=/i', $content, $matches)) {
-        	return 'http://www.kulando.de/rss.php?blogId='.$matches[1].'&amp;profile=rss20';
-        } else {
-        	return false;
-        }
-	}
-}
-
-class LastfmService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.last.fm/user/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.last.fm/user/' . $username . '/friends/', '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
-	}
-}
-
-class LinkedinService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://www.linkedin.com/in/'.$username;
-	}
-}
-
-class LivejournalService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.livejournal.com/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.livejournal.com/tools/friendlist.bml?user=' . $username, '/lj:user=\'(.*)\'/iU', '/&gt;&gt;<\/b><\/a>/iU', '&page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://'.$username.'.livejournal.com/data/rss';
-	}
-}
-
-class MagnoliaService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://ma.gnolia.com/people/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://ma.gnolia.com/people/' . $username . '/contacts/', '/<a href="http:\/\/ma.gnolia.com\/people\/(.*)" class="fn url" rel="contact" title="Visit .*">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
-	}
-}
-
-class MisterwongService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
-	}
-}
-
-class MoodmillService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.moodmill.com/citizen/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.moodmill.com/citizen/' . $username, '/<div class="who">.*<a href="http:\/\/www.moodmill.com\/citizen\/(.*)\/">.*<\/a>.*<\/div>/simU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.moodmill.com/rss/'.$username.'/';
-	}
-}
-
-class MsnService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'msnim:'.$username;
-	}
-}
-
-class NewsvineService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.newsvine.com/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.newsvine.com/?more=Friends&si=', '/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', '/title="Next 50">NEXT 50<\/a>/iU', '');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
-	}
-}
-
-class OdeoService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://odeo.com/profile/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://odeo.com/profile/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://odeo.com/profile/'.$username.'/rss.xml';
-	}
-}
-
-class OrkutService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://www.orkut.com/Profile.aspx?uid='.$username;
-	}
-}
-
-class PlazesService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://plazes.com/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://plazes.com/users/' . $username . ';contacts', '/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)\s{6}<\/a>/simU', '/next<\/a><\/strong><\/p>/iU', '?page=');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://plazes.com/users/'.$username.'/presences.atom';
-	}
-}
-
-class PownceService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://pownce.com/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://pownce.com/' . $username . '/friends/', '/<div class="user-name">username: (.*)<\/div>/simU', '/Next Page &#187;<\/a>/iU', 'page/');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://pownce.com/feeds/public/'.$username.'/';
-	}
-}
-
-class QypeService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.qype.com/people/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.qype.com/people/' . $username . '/contacts/', '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.qype.com/people/'.$username.'/rss';
-	}
-}
-
-class RedditService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://reddit.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://reddit.com/user/'.$username.'/.rss';
-	}
-}
-
-class ScribdService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.scribd.com/people/view/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.scribd.com/people/friends/' . $username, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.scribd.com/feeds/user_rss/'.$username;
-	}
-}
-
-class SecondlifeService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return '#'.$username;
-	}	
-}
-
-class SimpyService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.simpy.com/user/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://reddit.com/user/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.simpy.com/rss/user/'.$username.'/links/';
-	}
-}
-
-class SkypeService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'skype:'.$username;
-	}
-}
-
-class SlideshareService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.slideshare.net/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.slideshare.net/' . $username . '/contacts', '/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', '/class="text_float_left">Next<\/a>/iU', '/');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.slideshare.net/rss/user/'.$username;
-	}
-}
-
-class StumbleuponService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.stumbleupon.com/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username;
-	}
-}
-
-class TwitterService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://twitter.com/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://twitter.com/' . $username . '/', '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
-	}
-	
-	function getContent($feeditem) {
-		# cut off the username
-		$content = $feeditem->get_content();
-        return substr($content, strpos($content, ': ') + 2);
-	}
-	
-	function getFeedUrl($username) {
-		# we need to reed the page first in order to
-        # access the rss-feed
-        $content = @file_get_contents('http://twitter.com/'.$username);
-        if(!$content) {
-        	return false;
-        }
-        if(preg_match('/http:\/\/twitter\.com\/statuses\/user_timeline\/([0-9]*)\.rss/i', $content, $matches)) {
-        	return 'http://twitter.com/statuses/user_timeline/'.$matches[1].'.rss';
-        } else {
-        	return false;
-        }
-	}
-}
-
-class UpcomingService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://upcoming.yahoo.com/user/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://upcoming.yahoo.com/user/' . $username . '/', '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
-	}
-}
-
-class ViddlerService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.viddler.com/explore/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.viddler.com/explore/' . $username . '/friends/', '/<p><strong><a.*href="\/explore\/.*\/".*>(.*)<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.viddler.com/explore/'.$username.'/videos/feed/';
-	}
-}
-
-class ViddyouService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://viddyou.com/profile.php?user='.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://viddyou.com/profile.php?user=' . $username . '/friends/', '/next>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.viddyou.com/feed/user/'.$username.'/feed.rss';
-	}
-}
-
-class VimeoService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://vimeo.com/'.$username.'/';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://vimeo.com/' . $username . '/contacts/', '/<div id="contact_(.*)">/iU', '/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', 'sort:date/page:');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://vimeo.com/'.$username.'/videos/rss/';
-	}
-}
-
-class WeventService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://wevent.org/users/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://wevent.org/users/' . $username, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_link();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
-	}
-}
-
-class WordpresscomService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://'.$username.'.wordpress.com';
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'wordpress.com', '/<a href="http:\/\/(.*).wordpress.com" rel=".*">.*<\/a>/iU');
-	}
-	
-	function getContent($feeditem) {
-		return $feeditem->get_content();
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://'.$username.'.wordpress.com/feed/';
-	}
-}
-
-class XingService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'https://www.xing.com/profile/'.$username;
-	}
-}
-
-class YimService extends ServiceAdapter {
-	
-	function getAccountUrl($username) {
-		return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
-	}
-}
-
-class ZooomrService implements IService {
-	
-	function getAccountUrl($username) {
-		return 'http://www.zooomr.com/photos/'.$username;
-	}
-	
-	function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.zooomr.com/people/' . $username . '/contacts/', '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
-	}
-	
-	function getContent($feeditem) {
-		$raw_content = $feeditem->get_content();
-        if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {
-            return '<a href="'.$feeditem->get_link().'"><img src="'.$matches[1].'_s.jpg" /></a>';
-        }
-        return '';
-	}
-	
-	function getFeedUrl($username) {
-		return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
+	final function getServiceId() {
+		return $this->service_id; 
 	}
 }

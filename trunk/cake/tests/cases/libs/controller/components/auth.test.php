@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: auth.test.php 5811 2007-10-20 06:39:14Z phpnut $ */
+/* SVN FILE: $Id: auth.test.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake
  * @subpackage		cake.cake.tests.cases.libs.controller.components
@@ -270,7 +270,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL($this->Controller->Auth->loginRedirect);
+		$expected = Router::normalize($this->Controller->Auth->loginRedirect);
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		$this->Controller->Session->del('Auth');
@@ -280,7 +280,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = null;
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL('admin/');
+		$expected = Router::normalize('admin/');
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
@@ -299,7 +299,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL('admin');
+		$expected = Router::normalize('admin');
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		$_SERVER['HTTP_REFERER'] = $backup;

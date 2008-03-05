@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: request_handler.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: request_handler.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -8,7 +8,7 @@
  * needs of a handheld computer and a desktop machine.
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
@@ -293,7 +293,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isPost() {
-		return (low(env('REQUEST_METHOD')) == 'post');
+		return (strtolower(env('REQUEST_METHOD')) == 'post');
 	}
 /**
  * Returns true if the current call a PUT request
@@ -302,7 +302,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isPut() {
-		return (low(env('REQUEST_METHOD')) == 'put');
+		return (strtolower(env('REQUEST_METHOD')) == 'put');
 	}
 /**
  * Returns true if the current call a GET request
@@ -311,7 +311,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isGet() {
-		return (low(env('REQUEST_METHOD')) == 'get');
+		return (strtolower(env('REQUEST_METHOD')) == 'get');
 	}
 /**
  * Returns true if the current call a DELETE request
@@ -320,7 +320,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isDelete() {
-		return (low(env('REQUEST_METHOD')) == 'delete');
+		return (strtolower(env('REQUEST_METHOD')) == 'delete');
 	}
 /**
  * Gets Prototype version if call is Ajax, otherwise empty string.
@@ -348,7 +348,7 @@ class RequestHandlerComponent extends Object {
  */
 	function setContent($name, $type = null) {
 		if (is_array($name)) {
-			$this->__requestContent = am($this->__requestContent, $name);
+			$this->__requestContent = array_merge($this->__requestContent, $name);
 			return;
 		}
 		$this->__requestContent[$name] = $type;
@@ -520,9 +520,15 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
+		$options = array('charset' => 'UTF-8');
+
+		if (Configure::read('App.encoding') !== null) {
+			$options = array('charset' => Configure::read('App.encoding'));
+		}
+
 		if ($type == 'ajax') {
 			$controller->layout = $this->ajaxLayout;
-			return $this->respondAs('html', array('charset' => 'UTF-8'));
+			return $this->respondAs('html', $options);
 		}
 
 		$controller->ext = '.ctp';
@@ -535,12 +541,13 @@ class RequestHandlerComponent extends Object {
 		$controller->layoutPath = $type;
 
 		if (in_array($type, array_keys($this->__requestContent))) {
-			$this->respondAs($type);
+			$this->respondAs($type, $options);
 		}
 
-		if (!in_array(ucfirst($type), $controller->helpers)) {
-			if (file_exists(HELPERS . $type . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $type . '.php')) {
-				$controller->helpers[] = ucfirst($type);
+		$helper = ucfirst($type);
+		if (!in_array($helper, $controller->helpers)) {
+			if (App::import('Helper', $helper)) {
+				$controller->helpers[] = $helper;
 			}
 		}
 	}
@@ -566,7 +573,7 @@ class RequestHandlerComponent extends Object {
 		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
-		$options = am(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
+		$options = array_merge(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
 
 		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;

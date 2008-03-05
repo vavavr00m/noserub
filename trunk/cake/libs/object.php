@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: object.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -90,9 +90,6 @@ class Object {
 				require CAKE . 'dispatcher.php';
 			}
 			$dispatcher =& new Dispatcher();
-			if (isset($this->plugin)) {
-				$extra['plugin'] = $this->plugin;
-			}
 			if (in_array('return', $extra, true)) {
 				$extra['return'] = 0;
 				$extra['bare'] = 1;

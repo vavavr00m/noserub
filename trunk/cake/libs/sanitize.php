@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: sanitize.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: sanitize.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Washes strings from unwanted noise.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -35,7 +35,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Sanitize{
+class Sanitize {
 /**
  * Removes any non-alphanumeric characters.
  *
@@ -72,7 +72,7 @@ class Sanitize{
  */
 	function escape($string, $connection = 'default') {
 		$db =& ConnectionManager::getDataSource($connection);
-		if (is_numeric($string)) {
+		if (is_numeric($string)  || $string === null) {
 			return $string;
 		}
 		$string = substr($db->value($string), 1);
@@ -139,9 +139,9 @@ class Sanitize{
  * @access public
  */
 	function stripAll($str) {
-		$str = $this->stripWhitespace($str);
-		$str = $this->stripImages($str);
-		$str = $this->stripScripts($str);
+		$str = Sanitize::stripWhitespace($str);
+		$str = Sanitize::stripImages($str);
+		$str = Sanitize::stripScripts($str);
 		return $str;
 	}
 /**
@@ -186,7 +186,7 @@ class Sanitize{
 			$options = array();
 		}
 
-		$options = am(array(
+		$options = array_merge(array(
 			'connection' => 'default',
 			'odd_spaces' => true,
 			'encode' => true,
@@ -204,30 +204,30 @@ class Sanitize{
 			return $data;
 		} else {
 			if ($options['odd_spaces']) {
-				$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+				$data = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
 			}
 			if ($options['encode']) {
-				$val = Sanitize::html($val);
+				$data = Sanitize::html($data);
 			}
 			if ($options['dollar']) {
-				$val = str_replace("\\\$", "$", $val);
+				$data = str_replace("\\\$", "$", $data);
 			}
 			if ($options['carriage']) {
-				$val = str_replace("\r", "", $val);
+				$data = str_replace("\r", "", $data);
 			}
 
-			$val = str_replace("'", "'", str_replace("!", "!", $val));
+			$data = str_replace("'", "'", str_replace("!", "!", $data));
 
 			if ($options['unicode']) {
-				$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
+				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
 			}
 			if ($options['escape']) {
-				$val = Sanitize::escape($val, $options['connection']);
+				$data = Sanitize::escape($data, $options['connection']);
 			}
 			if ($options['backslash']) {
-				$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+				$data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);
 			}
-			return $val;
+			return $data;
 		}
 	}
 /**

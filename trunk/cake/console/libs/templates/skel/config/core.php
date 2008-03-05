@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: core.php 5818 2007-10-20 12:01:30Z phpnut $ */
+/* SVN FILE: $Id: core.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * This is core configuration file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.app.config
@@ -150,10 +150,18 @@
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
+ * and /vendors/csspp/csspp.php
  *
- * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
+ * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use HtmlHelper::css().
  */
-	define('COMPRESS_CSS', false);
+	//Configure::write('Asset.filter.css', 'css.php');
+/**
+ * Plug in your own custom JavaScript compressor by dropping a script in your webroot to handle the
+ * output, and setting the config below to the name of the script.
+ *
+ * To use, prefix your JavaScript link URLs with '/cjs/' instead of '/js/' or use JavaScriptHelper::link().
+ */
+	//Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 /**
  * The classname and database used in CakePHP's
  * access control lists.
@@ -208,7 +216,7 @@
  *									'duration'=> 3600, //[optional]
  *									'probability'=> 100, //[optional]
  * 									'className' => 'Cache', //[optional]
- * 									'fields' => array('data' => 'data', 'expires => 'expires'), //[optional]
+ * 									'fields' => array('data' => 'data', 'expires' => 'expires'), //[optional]
  * 									'serialize' => true, [optional]
  *								)
  * 					);

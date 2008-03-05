@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.php 5875 2007-10-23 00:25:51Z phpnut $ */
+/* SVN FILE: $Id: email.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
@@ -273,7 +273,10 @@ class EmailComponent extends Object{
  * @access public
  */
 	function startup(&$controller) {
-		$this->Controller = & $controller;
+		$this->Controller =& $controller;
+		if (Configure::read('App.encoding') !== null) {
+			$this->charset = Configure::read('App.encoding');
+		}
 	}
 /**
  * Send an email using the specified content, template and layout
@@ -285,8 +288,8 @@ class EmailComponent extends Object{
  * @access public
  */
 	function send($content = null, $template = null, $layout = null) {
-		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
+		$this->__createHeader();
 
 		if ($template) {
 			$this->template = $template;
@@ -424,7 +427,10 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header = 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
+		if ($this->delivery == 'smtp') {
+			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
+		}
+		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
 
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
@@ -451,6 +457,9 @@ class EmailComponent extends Object{
 			}
 			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
+		if ($this->delivery == 'smtp') {
+			$this->__header .= 'Subject: ' . $this->subject . $this->_newLine;
+		}
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
 		if (!empty($this->headers)) {
@@ -474,7 +483,7 @@ class EmailComponent extends Object{
 			$this->__header .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
 		}
 
-		$this->__header .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine;
+		$this->__header .= 'Content-Transfer-Encoding: 7bit';
 	}
 /**
  * Format the message by seeing if it has attachments.
@@ -566,7 +575,7 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		if (low($this->charset) !== 'utf-8') {
+		if (low($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
 			$spacer = $end . "\n " . $start;
@@ -586,13 +595,17 @@ class EmailComponent extends Object{
  * Format a string as an email address
  *
  * @param string $string String representing an email address
- * @return string Email address suitable for email headers
+ * @return string Email address suitable for email headers or smtp pipe
  * @access private
  */
-	function __formatAddress($string) {
+	function __formatAddress($string, $smtp = false) {
 		if (strpos($string, '<') !== false) {
 			$value = explode('<', $string);
-			$string = $this->__encode($value[0]) . ' <' . $value[1];
+			if ($smtp) {
+				$string = '<' . $value[1];
+			} else {
+				$string = $this->__encode($value[0]) . ' <' . $value[1];
+			}
 		}
 		return $this->__strip($string);
 	}
@@ -607,7 +620,7 @@ class EmailComponent extends Object{
 	function __strip($value, $message = false) {
 		$search = array('/%0a/i', '/%0d/i', '/Content-Type\:/i',
 							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
-							'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
+							'/bcc\:.*/i','/to\:.*/i','/cc\:.*/i', '/\\r/i', '/\\n/i');
 
 		if ($message === true) {
 			$search = array_slice($search, 0, -2);
@@ -648,17 +661,36 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
+		if (!$this->__sendData("MAIL FROM: " . $this->__formatAddress($this->from, true) . "\r\n")) {
 			return false;
 		}
 
-		if (!$this->__sendData("RCPT TO: {$this->to}\r\n")) {
+		if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($this->to, true) . "\r\n")) {
 			return false;
 		}
 
-		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false);
+		foreach ($this->cc as $cc) {
+			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($cc, true) . "\r\n")) {
+				return false;
+			}
+		}
+		foreach ($this->bcc as $bcc) {
+			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($bcc, true) . "\r\n")) {
+				return false;
+			}
+		}
+		$this->__sendData("DATA\r\n", false);
+		$response = $this->__getSmtpResponse();
+
+		if (stristr($response, '354') === false){
+			$this->smtpError = $response;
+			return false;
+		}
+
+		if (!$this->__sendData($this->__header . "\r\n" . $this->__message . "\r\n\r\n\r\n.\r\n")) {
+			return false;
+		}
 		$this->__sendData("QUIT\r\n", false);
-
 		return true;
 	}
 /**
@@ -705,9 +737,10 @@ class EmailComponent extends Object{
  */
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
-		$response = $this->__getSmtpResponse();
 
-		if ($check != false) {
+		if ($check === true) {
+			$response = $this->__getSmtpResponse();
+
 			if (stristr($response, '250') === false) {
 				$this->smtpError = $response;
 				return false;
@@ -741,7 +774,7 @@ class EmailComponent extends Object{
 		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['password'])."\r\n");
 		$response = $this->__getSmtpResponse();
 
-		if (stristr($response, 'OK Authenticated') === false){
+		if (stristr($response, '235') === false){
 			$this->smtpError = $response;
 			return false;
 		}
