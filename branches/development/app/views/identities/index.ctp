@@ -218,6 +218,9 @@
 	        echo '<hr />';
 	    } ?>
 	    
+	    <?php if($relationship_status == 'self') { ?>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>">manage</a></span>
+    	<?php } ?>
 	    <h4>On the web</h4>
 	    <ul class="whoissidebar">
 	        <?php foreach($accounts as $item) { ?>
@@ -234,6 +237,9 @@
 	    <?php } ?>
 	    <hr />
 
+    <?php if($relationship_status == 'self') { ?>
+        <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>">manage</a></span>
+    <?php } ?>
 	<h4>Contact</h4>
 	<ul class="whoissidebar">
 	    <?php if($menu['logged_in'] &&
