@@ -1,5 +1,12 @@
 <?php
 $max_num_items_per_day = 10;
+
+if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
+    $filter = 'photo';
+} else {
+    # just for now, as we only have a special view for photo
+    $filter = '';
+}
 ?>
 <div id="network">
  <?php if(empty($data)) { ?>
@@ -18,7 +25,7 @@ $max_num_items_per_day = 10;
                 break;
             }
             
-            if(count($filter) > 0 || (!in_array('photo', $filter))) {
+            if($filter != 'photo') {
                 $num_of_activities = count($cluster);
                 echo '<span class="more">';
                 if($num_of_activities > $max_num_items_per_day) {
@@ -36,7 +43,7 @@ $max_num_items_per_day = 10;
             } else {
                 echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             }
-            if(count($filter) == 1 && in_array('photo', $filter)) {
+            if($filter == 'photo') {
                 foreach($cluster as $item) { ?>
                     <span class="photothumb">
                     <?php echo $item['content']; ?><br />
