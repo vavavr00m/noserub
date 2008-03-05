@@ -116,7 +116,7 @@
         <hr class="clear" />
         
         <?php if($data['Identity']['about']) { ?>
-            <h4>About <?php echo $sex['his'][$data['Identity']['sex']]; ?></h4>
+            <h4>About <?php echo $sex['him'][$data['Identity']['sex']]; ?></h4>
             <div id="about">
                 <p class="summary">
                     <?php if($data['Identity']['about']) {
