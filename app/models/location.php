@@ -14,7 +14,7 @@ class Location extends AppModel {
         }
         
         $this->Identity->id = $identity_id;
-        $this->Identity->saveField(last_location_id, $location_id);
+        $this->Identity->saveField('last_location_id', $location_id);
         
         $this->Identity->Activity->setLocation($identity_id, $location);
 
