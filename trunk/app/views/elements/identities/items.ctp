@@ -1,5 +1,6 @@
 <?php
-    $max_num_items_per_day = 10;
+$filter = isset($filter[0]) ? $filter[0] : '';    
+$max_num_items_per_day = 10;
 ?>
 <div id="network">
  <?php if(empty($data)) { ?>
