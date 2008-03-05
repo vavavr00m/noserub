@@ -35,7 +35,8 @@
                 <td><?php echo $item['Syndication']['name']; ?></td>
                 <td>
                     <a href="<?php echo $feed_url . $item['Syndication']['hash']; ?>.rss">RSS</a> - 
-                    <a href="<?php echo $feed_url . $item['Syndication']['hash']; ?>.js">JSON</a>
+                    <a href="<?php echo $feed_url . $item['Syndication']['hash']; ?>.js">JSON</a> -
+                    <a href="<?php echo $feed_url . $item['Syndication']['hash']; ?>.sphp">SPHP</a>
                 </td>
                 <td>
                 	<ul>
