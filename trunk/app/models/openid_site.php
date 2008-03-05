@@ -19,7 +19,7 @@ class OpenidSite extends AppModel {
 		}
 
 		if (!empty($keys)) {
-			$this->updateAll(array('openid_sites.allowed' => $allowed), array('openid_sites.identity_id' => $identityId, 'openid_sites.id' => $keys));
+			$this->updateAll(array('allowed' => $allowed), array('OpenidSite.identity_id' => $identityId, 'OpenidSite.id' => $keys));
 		}
 	}
 }
