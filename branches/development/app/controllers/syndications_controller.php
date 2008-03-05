@@ -13,7 +13,10 @@ class SyndicationsController extends AppController {
      * @access 
      */
     function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
-        $feed_types = array('rss' => 'text/xml', 'js' => 'text/javascript');
+        $feed_types = array(
+            'rss'  => 'text/xml', 
+            'js'   => 'text/javascript',
+            'sphp' => 'text/text');
         $extension = '';
         $hash = '';
         if(preg_match('/(.*)\.([0-9a-zA-Z]*)$/', $url, $match) == 1) {
