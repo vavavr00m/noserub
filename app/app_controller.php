@@ -55,7 +55,6 @@ class AppController extends Controller {
         $li = $this->Cookie->read('li'); # login id
             
         if($li) {
-            #echo 'jetzt mal gucken<br />'.$lh.'<br />'.$lu; exit;
             if(!isset($this->Identity)) {
                 App::import('Model', 'Identity');
                 $this->Identity = new Identity();

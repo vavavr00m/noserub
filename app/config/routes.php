@@ -54,6 +54,7 @@ Router::connect('/pages/security_check/', array('controller' => 'pages', 'action
 
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
