@@ -3,7 +3,7 @@
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
     var $helpers = array('form', 'html', 'nicetime', 'flashmessage');
-    var $components = array('url', 'cdn');
+    var $components = array('url', 'cdn', 'api');
     
     /**
      * Method description
@@ -237,6 +237,20 @@ class SyndicationsController extends AppController {
         }
         
         $this->set('headline', 'Add new Feed');
+    }
+    
+    /**
+     * API method to get a list of syndications, that the user created
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+        
+        $this->Syndication->recursive = 0;
+        $this->Syndication->expects('Location');
+        $this->set('data', $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('id', 'name')));
+        
+        $this->api->render();
     }
     
     /**
