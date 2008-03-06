@@ -5,12 +5,12 @@
         <dd>
 		  <?php
 		  if ($data['service_id'] === 8):
-           echo $form->input('Account.title', array('value' => $data['title']));
+          	echo $form->input('Account.title', array('value' => $data['title'], 'label' => false));
 		  else:
 		  	echo htmlentities($data['title']);
-			endif;
-			?>
-			</dd>
+		  endif;
+		  ?>
+		</dd>
     <?php } ?>
     <?php if (isset($service_types)): ?>
     	<dt>Servicetype</dt>
