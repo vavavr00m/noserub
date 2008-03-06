@@ -248,7 +248,25 @@ class SyndicationsController extends AppController {
         
         $this->Syndication->recursive = 0;
         $this->Syndication->expects('Location');
-        $this->set('data', $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('id', 'name')));
+        $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
+        
+        $url = Router::url('/' . $identity['Identity']['local_username']);
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
+        } else {
+            $feed_url = $url . '/feeds/';
+        }
+        
+        # replace the hash by the actual feed url
+        foreach($data as $idx => $item) {
+            $data[$idx]['Syndication']['url'] = array(
+                'rss'  => $feed_url . $item['Syndication']['hash'] . ',rss',
+                'json' => $feed_url . $item['Syndication']['hash'] . '.js',
+                'sphp' => $feed_url . $item['Syndication']['hash'] . '.sphp'
+                );
+            unset($data[$idx]['Syndication']['hash']);
+        }
+        $this->set('data', $data);
         
         $this->api->render();
     }
