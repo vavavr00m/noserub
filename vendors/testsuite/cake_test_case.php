@@ -196,6 +196,10 @@
         }
         
 		private function checkForColumnAvailability($db, $tableName) {
+			if (!empty($db->config['prefix'])) {
+				$tableName = $db->config['prefix'].$tableName;
+			}
+			
 			$result = $db->query('DESC '.$tableName);
 			$columns = array('modified' => false, 'created' => false, 'updated' => false);
    			
