@@ -305,18 +305,27 @@ class Service extends AppModel {
         return array();
     }
 
-    private function getAllServices() {
-    	$services = array();
+    private function createService($service_id, $service_name) {
+    	$class_name = $service_name . 'Service';
     	
-    	for($i = 1; $i <= 53; $i++) {
-    		$service = $this->getService($i);
-    		
-    		if($service) {
-    			$services[] = $service;
-    		}
+    	if(!class_exists($class_name)) {
+    		require(MODELS.'services'.DS.strtolower($service_name).'.php');
     	}
+    	
+    	return new $class_name($service_id);
+    }
+    
+    private function getAllServices() {
+    	$serviceObjects = array();
 
-    	return $services;
+    	$this->recursive = 0;
+    	$services = $this->findAll(array('service_type_id' => '> 0'), array('id', 'internal_name'));
+    	
+    	foreach($services as $service) {
+    		$serviceObjects[] = $this->createService($service['Service']['id'], $service['Service']['internal_name']);
+    	}
+    	
+    	return $serviceObjects;
     }
     
     /**
@@ -335,14 +344,7 @@ class Service extends AppModel {
     		return false;
     	}
     	
-    	$serviceName = $service['Service']['internal_name'];
-    	$className = $serviceName . 'Service';
-    	
-    	if(!class_exists($className)) {
-    		require(MODELS.'services'.DS.strtolower($serviceName).'.php');
-    	}
-    	
-    	return new $className($service_id);
+    	return $this->createService($service_id, $service['Service']['internal_name']);
     }
     
     private function removeHttpProtocol($url) {
