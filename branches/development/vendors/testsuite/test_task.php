@@ -275,7 +275,7 @@
 			if (file_exists(APP . $appController)) {
 				$appControllerContent = file_get_contents(APP . $appController);
 			} else {
-				$appControllerContent = file_get_contents(CAKE . $appController);
+				$appControllerContent = file_get_contents(CAKE.'libs'.DS.'controller'.DS.$appController);
 			}
 			
 			$appControllerContent = str_replace('<?php', '', $appControllerContent);
