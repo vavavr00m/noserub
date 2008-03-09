@@ -82,7 +82,7 @@ class Identity extends AppModel {
         # afterFinds could be catched, too
         if(is_array($data)) {
             if(isset($data['username'])) {
-                $username = Identity::splitUsername($data['username']);
+                $username = Identity::splitUsername($data['username'], false);
                 $data['local_username']  = $username['local_username'];
                 $data['single_username'] = $username['single_username'];
                 $data['username']        = $username['username'];
@@ -95,7 +95,7 @@ class Identity extends AppModel {
                     $checkModels = array('WithIdentity', 'Identity');
                     foreach($checkModels as $modelName) {
                         if(isset($item[$modelName]['username'])) {
-                            $username = Identity::splitUsername($item[$modelName]['username']);
+                            $username = Identity::splitUsername($item[$modelName]['username'], false);
                             $item[$modelName]['local_username']  = $username['local_username'];
                             $item[$modelName]['single_username'] = $username['single_username'];
                             $item[$modelName]['username']        = $username['username'];
@@ -284,84 +284,103 @@ class Identity extends AppModel {
             return false;
         }
 
-        preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
-        preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
-        preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
-        preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
-        preg_match('/<foaf:img>(.*)<\/foaf:img>/i', $content, $photo);
-        preg_match('/<foaf:address>(.*)<\/foaf:address>/i', $content, $address);
-        preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
-        preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
-        preg_match('/<foaf:about><!\[CDATA\[(.*)\]\]><\/foaf:about>/ims', $content, $about);
-        preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
-        preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
-        preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
-        
-        
-        #echo 'NOSERUB-ID<pre>'; print_r($noserub_id); echo '</pre>';
-        #echo 'FIRSTNAME<pre>'; print_r($firstname); echo '</pre>';
-        #echo 'LASTNAME<pre>'; print_r($lastname); echo '</pre>';
-        #echo 'GENDER<pre>'; print_r($gender); echo '</pre>';
-        #echo 'PHOTO<pre>'; print_r($photo); echo '</pre>';
-        #echo 'ADDRESS<pre>'; print_r($address); echo '</pre>';
-        #echo 'LATITUDE<pre>'; print_r($latitude); echo '</pre>';
-        #echo 'LONGITUDE<pre>'; print_r($longitude); echo '</pre>';
-        #echo 'ABOUT<pre>'; print_r($about); echo '</pre>';
-        #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
-        #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
-        #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
-        
-        if(empty($noserub_id)) {
-            return false;
-        }
-        
         $result = array('accounts' => array(),
                         'Identity' => array());
         
-        $result['Identity']['firstname'] = $firstname ? $firstname[1] : '';
-        $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
-        if($gender) {
-            switch($gender[1]) {
-                case 'female': $result['Identity']['sex'] = 1; break;
-                case 'male'  : $result['Identity']['sex'] = 2; break;
-                default      : $result['Identity']['sex'] = 0;
-            }
-        } else {
-            $result['identity']['sex'] = 0;
-        }
-        $result['Identity']['photo']         = $photo     ? $photo[1]     : '';
-        $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
-        $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
-        $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
-        $result['Identity']['about']         = $about     ? html_entity_decode($about[1], ENT_COMPAT, 'UTF-8') : '';
-        
-        if(is_array($accounts)) {
-            # gather all account data
-            foreach($accounts[1] as $idx => $account_url) {
-                $account = array();
-                
-                if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
-                    # this is service_id 8 => any RSS-Feed
-                    $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
-                    $account['account_url'] =  $account_url;
-                    $account['service_id']  = 8;
-                    $splitted = split(':', $services[1][$idx]);
-                    $account['service_type_id'] = $splitted[1];
-                    $account['username'] = 'RSS-Feed';
-                } else {
-                    $account['account_url'] = $account_url;
-                    $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
-                    $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
-                    $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
-                    $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
-                    $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
-                    $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
+        preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
+        if(empty($noserub_id)) {
+            vendor('microformat/hcard');
+            vendor('microformat/xfn');
+            $hcard = new hcard;
+        	$hcard = $hcard->getByURL($url);
+        	
+        	if(isset($hcard[0])) {
+        	    $hcard = $hcard[0];
+                $result['Identity']['firstname']     = $hcard['n']['given-name'];
+                $result['Identity']['lastname']      = $hcard['n']['family-name'];
+                $result['Identity']['gender']        = 0;
+                $result['Identity']['photo']         = isset($hcard['photo']) ? $hcard['photo'] : '';
+                $result['Identity']['address_shown'] = '';
+                $result['Identity']['latitude']      = 0;
+                $result['Identity']['longitude']     = 0;
+        	}
+        	$xfn = new xfn;
+        	$xfn = $xfn->getByUrl($url);
+        	
+        	$splitted = $this->splitUsername($url, false);
+        	
+        	foreach($xfn as $xfn_url) {
+        	    $serviceData = $this->Account->Service->detectService($xfn_url);
+        	    if(!$serviceData) {
+        	        $serviceData = array(
+    		            'service_id' => 8,
+    		            'username'   => $xfn_url
+    		        );
+        	    }
+        	    $account = $this->Account->Service->getInfoFromService(
+        	        $splitted['username'], 
+        	        $serviceData['service_id'], 
+        	        $serviceData['username']
+        	    );
+        	    if($account) {
+                    $result['accounts'][] = $account; 
                 }
-                
-                $result['accounts'][] = $account; 
-            }
+        	}
         } else {
-            return false;
+            preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
+            preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
+            preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
+            preg_match('/<foaf:img>(.*)<\/foaf:img>/i', $content, $photo);
+            preg_match('/<foaf:address>(.*)<\/foaf:address>/i', $content, $address);
+            preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
+            preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
+            preg_match('/<foaf:about><!\[CDATA\[(.*)\]\]><\/foaf:about>/ims', $content, $about);
+            preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
+            preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
+            preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
+               
+            $result['Identity']['firstname'] = $firstname ? $firstname[1] : '';
+            $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
+            if($gender) {
+                switch($gender[1]) {
+                    case 'female': $result['Identity']['sex'] = 1; break;
+                    case 'male'  : $result['Identity']['sex'] = 2; break;
+                    default      : $result['Identity']['sex'] = 0;
+                }
+            } else {
+                $result['identity']['sex'] = 0;
+            }
+            $result['Identity']['photo']         = $photo     ? $photo[1]     : '';
+            $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
+            $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
+            $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
+            
+            if(is_array($accounts)) {
+                # gather all account data
+                foreach($accounts[1] as $idx => $account_url) {
+                    $account = array();
+
+                    if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
+                        # this is service_id 8 => any RSS-Feed
+                        $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
+                        $account['account_url'] =  $account_url;
+                        $account['service_id']  = 8;
+                        $splitted = split(':', $services[1][$idx]);
+                        $account['service_type_id'] = $splitted[1];
+                        $account['username'] = 'RSS-Feed';
+                    } else {
+                        $account['account_url'] = $account_url;
+                        $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
+                        $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
+                        $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
+                        $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
+                        $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
+                        $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
+                    }
+
+                    $result['accounts'][] = $account; 
+                }
+            }
         }
         
         return $result;
@@ -457,7 +476,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function splitUsername($username) {
+    function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
         $username = $this->removeHttpWww($username);
         
@@ -471,7 +490,7 @@ class Identity extends AppModel {
             return false;
         }
         
-        if(count($splitted) == 1) {
+        if(count($splitted) == 1 && $assume_local) {
             # just a username was given. so we assume it should
             # be for this server
             $local_username = $splitted[0];
@@ -481,7 +500,11 @@ class Identity extends AppModel {
         } else {
             $servername = $splitted[0];
             $local_username = array_pop($splitted);
-            $username = join('/', $splitted) . '/' . $local_username;
+            $username = join('/', $splitted);
+            if($username) {
+                $username .= '/';
+            } 
+            $username .= $local_username;
         }
 
         # test, wether we have a namespace here, or not
@@ -496,7 +519,7 @@ class Identity extends AppModel {
                         'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
                         'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
                         'servername'      => $servername,
-                        'local'           => $local);
+                        'local'           => $local ? 1 : 0);
         
         return $result;
     }

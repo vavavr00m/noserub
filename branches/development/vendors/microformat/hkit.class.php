@@ -334,14 +334,18 @@
 		
 		private function loadDoc($input_xml, $fragment=false)
 		{
-			$xml 		= simplexml_load_string($input_xml);
+			$xml 		= @simplexml_load_string($input_xml);
 			
 			$this->doc	= $xml;
 			
 			if ($fragment){
 				$doc	= $xml->xpath("//*[@id='$fragment']");
-				$xml	= simplexml_load_string($doc[0]->asXML());
+				$xml	= @simplexml_load_string($doc[0]->asXML());
 				$doc	= null;
+			}
+			
+			if(!$xml) {
+			    return false;
 			}
 			
 			// base tag

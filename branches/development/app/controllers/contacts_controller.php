@@ -80,9 +80,10 @@ class ContactsController extends AppController {
             if(isset($this->params['form']['add'])) {
                 # this is a contact with a NoseRub-ID
                 $identity_username = trim($this->data['Contact']['noserub_id']);
-                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username);
+                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username, false);
+
                 # so, check, if this is really the case
-                if(strpos($identity_username_splitted['username'], '/') === false || $identity_username === '') {
+                if($identity_username === '') {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
                     exit;
