@@ -306,9 +306,7 @@ class Identity extends AppModel {
         	}
         	$xfn = new xfn;
         	$xfn = $xfn->getByUrl($url);
-        	
         	$splitted = $this->splitUsername($url, false);
-        	
         	foreach($xfn as $xfn_url) {
         	    $serviceData = $this->Account->Service->detectService($xfn_url);
         	    if(!$serviceData) {
@@ -322,7 +320,12 @@ class Identity extends AppModel {
         	        $serviceData['service_id'], 
         	        $serviceData['username']
         	    );
-        	    if($account) {
+        	    if(!$account) {
+        	        # as we don't know the service type id, we set the id to 3 for Text/Blog 
+        			$account = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $xfn_url);
+        			#pr($account);
+        		}
+        		if($account) {	
                     $result['accounts'][] = $account; 
                 }
         	}

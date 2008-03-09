@@ -429,7 +429,7 @@ abstract class AbstractService {
 			    # there was a case, where a trailing "/" was at the
 			    # flickr username. And we forbid to save accounts
 			    # with /, so we can delete them here, when at the end
-			    return(trim($matches[1], '/ '));
+			    return trim(urldecode($matches[1]), '/ ');
 			}
 		}
 		
