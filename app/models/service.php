@@ -259,14 +259,12 @@ class Service extends AppModel {
         $this->recursive = 0;
         $this->expects('Service');
         $service = $this->findById($service_id);
-        
         $data = array();
         $data['service_id']      = $service_id;
         $data['username']        = $account_username;
         $data['service_type_id'] = $service['Service']['service_type_id'];
         
         $data['account_url'] = $this->getAccountUrl($service_id, $account_username);
-        
         if($service['Service']['has_feed'] == 1) {
             $data['feed_url'] = $this->getFeedUrl($service_id, $account_username);
             $items            = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
@@ -428,7 +426,10 @@ abstract class AbstractService {
 			preg_match($pattern, $url, $matches);
 		
 			if (!empty($matches)) {
-				return $matches[1];
+			    # there was a case, where a trailing "/" was at the
+			    # flickr username. And we forbid to save accounts
+			    # with /, so we can delete them here, when at the end
+			    return(trim($matches[1], '/ '));
 			}
 		}
 		
