@@ -3,7 +3,7 @@
 class SyndicationsController extends AppController {
     var $uses = array('Syndication');
     var $helpers = array('form', 'html', 'nicetime', 'flashmessage');
-    var $components = array('url', 'cdn');
+    var $components = array('url', 'cdn', 'api');
     
     /**
      * Method description
@@ -237,6 +237,38 @@ class SyndicationsController extends AppController {
         }
         
         $this->set('headline', 'Add new Feed');
+    }
+    
+    /**
+     * API method to get a list of syndications, that the user created
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+        
+        $this->Syndication->recursive = 0;
+        $this->Syndication->expects('Location');
+        $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
+        
+        $url = Router::url('/' . $identity['Identity']['local_username']);
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
+        } else {
+            $feed_url = $url . '/feeds/';
+        }
+        
+        # replace the hash by the actual feed url
+        foreach($data as $idx => $item) {
+            $data[$idx]['Syndication']['url'] = array(
+                'rss'  => $feed_url . $item['Syndication']['hash'] . ',rss',
+                'json' => $feed_url . $item['Syndication']['hash'] . '.js',
+                'sphp' => $feed_url . $item['Syndication']['hash'] . '.sphp'
+                );
+            unset($data[$idx]['Syndication']['hash']);
+        }
+        $this->set('data', $data);
+        
+        $this->api->render();
     }
     
     /**

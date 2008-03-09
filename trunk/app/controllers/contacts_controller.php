@@ -381,7 +381,7 @@ class ContactsController extends AppController {
         
 		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
         # get filter
-        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
         if($filter == '') {
             # no filter, that means "overview"
             $filter = $show_in_overview;

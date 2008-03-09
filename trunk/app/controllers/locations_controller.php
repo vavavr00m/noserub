@@ -2,7 +2,7 @@
 class LocationsController extends AppController {
     var $uses = array('Location');
     var $helpers = array('form', 'flashmessage');
-    var $components = array('url', 'geocoder');
+    var $components = array('url', 'geocoder', 'api');
     
     public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -187,50 +187,25 @@ class LocationsController extends AppController {
     }
     
     public function api_get() {
-        $identity = $this->getIdentityForAPI();
-        $this->exitWith404ErrorIfInvalidAPIRequest($identity);
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
         
         $this->Location->recursive = 0;
         $this->Location->expects('Location');
         $this->set('data', $this->Location->findAllByIdentityId($identity['Identity']['id'], array('id', 'name')));
         
-        $this->renderAPIResult();
+        $this->api->render();
     }
     
     public function api_set($location_id) {
-        $identity = $this->getIdentityForAPI();
-        $this->exitWith404ErrorIfInvalidAPIRequest($identity);
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
         
         if(!$this->Location->setTo($identity['Identity']['id'], $location_id)) {
             $this->set('code', -1);
             $this->set('msg', 'dataset not found');
         }
         
-        $this->renderAPIResult();
-    }
-    
-    private function exitWith404ErrorIfInvalidAPIRequest($identity) {
-    	$api_hash = isset($this->params['api_hash']) ? $this->params['api_hash'] : '';
-    	
-    	if($identity['Identity']['api_hash'] != $api_hash || $identity['Identity']['api_active'] == false) {
-        	$this->cakeError('error404', array(array('action' => $this->here)));
-        }
-    }
-    
-    private function getIdentityForAPI() {
-    	$username = isset($this->params['username']) ? $this->params['username'] : '';
-    	$splitted = $this->Location->Identity->splitUsername($username);
-    	
-    	$this->Location->Identity->recursive = 0;
-        $this->Location->Identity->expects('Identity');
-        $identity = $this->Location->Identity->findByUsername($splitted['username'], array('id', 'api_hash', 'api_active'));
-
-        return $identity;
-    }
-    
-    private function renderAPIResult() {
-    	$result_type = isset($this->params['result_type']) ? $this->params['result_type'] : '';
-    	$this->layout = 'api_' . $result_type;
-        $this->render('../empty');
+        $this->api->render();
     }
 }
