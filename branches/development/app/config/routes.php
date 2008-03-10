@@ -52,9 +52,12 @@ Router::connect('/pages/account/deleted/', array('controller' => 'identities', '
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 
+Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('controller' => 'contacts', 'action' => 'api_get'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 

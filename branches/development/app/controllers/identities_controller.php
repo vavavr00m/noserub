@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie', 'api');
     
     /**
      * Displays profile page of an identity
@@ -945,5 +945,57 @@ class IdentitiesController extends AppController {
 	    $this->Session->delete('Registration.openid_identity');
 	    $this->Session->delete('Registration.openid_server_url');
 	    $this->Session->delete('Registration.email');
+    }
+    
+    /**
+     * returns a "vcard" of the authenticated user
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $this->Identity->recursive = 1;
+        $this->Identity->expects('Location');
+        $this->Identity->id = $identity['Identity']['id'];
+        $data = $this->Identity->read();
+        $this->set(
+            'data', 
+            array(
+                'firstname'     => $data['Identity']['firstname'],
+                'lastname'      => $data['Identity']['lastname'],
+                'url'           => 'http://' . $data['Identity']['username'],
+                'photo'         => $data['Identity']['photo'],
+                'about'         => $data['Identity']['about'],
+                'address'       => $data['Identity']['address_shown'],
+                'last_location' => array(
+                    'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
+                    'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
+                )
+            )
+        );
+        
+        $this->api->render();
+    }
+    
+    /**
+     * returns information about the last location
+     */
+    public function api_get_last_location() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $this->Identity->recursive = 1;
+        $this->Identity->expects('Identity', 'Location');
+        $this->Identity->id = $identity['Identity']['id'];
+        $data = $this->Identity->read();
+        $this->set(
+            'data', 
+            array(
+                'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
+                'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
+            )
+        );
+        
+        $this->api->render();
     }
 }

@@ -26,7 +26,12 @@ class ApiComponent extends Object {
     	
     	$this->controller->Identity->recursive = 0;
         $this->controller->Identity->expects('Identity');
-        $identity = $this->controller->Identity->findByUsername($splitted['username'], array('id', 'api_hash', 'api_active'));
+        $fields = array(
+            'id',
+            'api_hash',
+            'api_active'
+        );
+        $identity = $this->controller->Identity->findByUsername($splitted['username'], $fields);
 
         $identity['Identity'] = array_merge($identity['Identity'], $splitted);
         
