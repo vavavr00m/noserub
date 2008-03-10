@@ -4,7 +4,7 @@
 class ContactsController extends AppController {
     var $uses = array('Contact');
     var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
-    var $components = array('cluster');
+    var $components = array('cluster', 'api');
     
     /**
      * Method description
@@ -507,5 +507,86 @@ class ContactsController extends AppController {
 			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
 			$this->redirect('/' . $localUsername . '/contacts/' . $this->Contact->id . '/edit/');
 		}
+    }
+    
+    /**
+     * returns list of all contacts for this user
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $sex = array(
+            'img' => array(
+                0 => Router::url('/images/profile/avatar/noinfo.gif'),
+                1 => Router::url('/images/profile/avatar/female.gif'),
+                2 => Router::url('/images/profile/avatar/male.gif')
+            ),
+            'img-small' => array(
+                0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
+                1 => Router::url('/images/profile/avatar/female-small.gif'),
+                2 => Router::url('/images/profile/avatar/male-small.gif')
+            )
+        );
+        
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+
+                                     
+        # get all noserub contacts
+        $this->Contact->recursive = 1;
+        $this->Contact->expects(
+            'Contact.Contact', 
+            'Contact.WithIdentity', 
+            'WithIdentity.WithIdentity', 
+            'NoserubContactType.NoserubContactType'
+        );
+        
+        $conditions = array(
+            'Contact.identity_id' => $identity['Identity']['id'],
+            'WithIdentity.username NOT LIKE "%@%"'
+        );
+        
+        $data = $this->Contact->findAll($conditions, null, 'WithIdentity.last_activity DESC');
+        
+        $contacts = array();
+        foreach($data as $item) {
+            $xfn = array();
+            foreach($item['NoserubContactType'] as $nct) {
+                if($nct['is_xfn']) {
+                    $xfn[] = $nct['name'];
+                }
+            }
+            if(!$xfn) {
+                $xfn[] = 'contact';
+            }
+            
+            if($item['WithIdentity']['photo']) {
+                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
+                   strpos($item['WithIdentity']['photo'], 'https://') === 0) {
+                       # contains a complete path, eg. from not local identities
+                       $profile_photo = $item['WithIdentity']['photo'];
+                   } else {
+                       $profile_photo = $static_base_url . $item['WithIdentity']['photo'] . '.jpg';
+                   }
+            } else {
+                $profile_photo = $sex['img-small'][$item['WithIdentity']['sex']];
+            }
+            
+            $contact = array(
+                'url' => 'http://' . $item['WithIdentity']['username'],
+                'firstname' => $item['WithIdentity']['firstname'],
+                'lastname'  => $item['WithIdentity']['lastname'],
+                'photo'     => $profile_photo,
+                'xfn'       => join(' ', $xfn)
+            );
+            $contacts[] = $contact;
+        }
+        
+        $this->set('data', $contacts);
+        $this->api->render();
     }
 }
