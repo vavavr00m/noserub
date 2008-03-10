@@ -260,7 +260,7 @@ class SyndicationsController extends AppController {
         # replace the hash by the actual feed url
         foreach($data as $idx => $item) {
             $data[$idx]['Syndication']['url'] = array(
-                'rss'  => $feed_url . $item['Syndication']['hash'] . ',rss',
+                'rss'  => $feed_url . $item['Syndication']['hash'] . '.rss',
                 'json' => $feed_url . $item['Syndication']['hash'] . '.js',
                 'sphp' => $feed_url . $item['Syndication']['hash'] . '.sphp'
                 );
