@@ -598,7 +598,7 @@ class IdentitiesController extends AppController {
 			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
         }
         
-        $this->set('headline', 'Delete your account');
+        $this->set('headline', 'Manage your account');
     }
     
     /**
