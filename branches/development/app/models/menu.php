@@ -155,7 +155,7 @@
 				$menuItems[] = new MenuItem('Password', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
 			}
 			
-			$menuItems[] = new MenuItem('Delete account', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
+			$menuItems[] = new MenuItem('Manage', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
 			
 			return $menuItems;
 		}
