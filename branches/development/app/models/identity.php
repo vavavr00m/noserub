@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity');
+    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity', 'Syndication');
     var $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
     
@@ -479,7 +479,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function splitUsername($username, $assume_local = true) {
+    public function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
         $username = $this->removeHttpWww($username);
         
@@ -625,7 +625,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function verify($hash) {
+    public function verify($hash) {
         # check, if there is a username with that hash
         $this->recursive = 0;
         $this->expects = array('Identity');
@@ -637,6 +637,37 @@ class Identity extends AppModel {
         } else {
             return false;
         }
+    }
+    
+    public function export() {
+        $this->recursive = 0;
+        $data = $this->read();
+        $vcard = $data['Identity'];  
+        $vcard['username'] = $vcard['local_username'];      
+        $to_remove = array(
+            'id', 'is_local', 'password', 'openid', 'openid_identity', 
+            'openid_server_url', 'email', 'last_location_id', 
+            'api_hash', 'api_active', 'hash', 'security_token',
+            'last_activity', 'last_sync', 'created', 'modified',
+            'local_username', 'single_username', 'namespace',
+            'local', 'servername', 'name'
+        );
+        foreach($to_remove as $key) {
+            unset($vcard[$key]);
+        }
+        $server = array(
+            'base_url' => trim($this->removeHttpWww(FULL_BASE_URL . Router::url('/')), '/'),
+            'version'  => 1
+        );
+        
+        return array(
+            'server'    => $server,
+            'vcard'     => $vcard,
+            'contacts'  => $this->Contact->export($this->id),
+            'accounts'  => $this->Account->export($this->id),
+            'locations' => $this->Location->export($this->id),
+            'feeds'     => $this->Syndication->export($this->id)
+        );
     }
     
     private function getSaveableFields($isAccountWithOpenID) {

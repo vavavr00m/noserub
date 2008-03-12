@@ -52,4 +52,21 @@ class Account extends AppModel {
             $this->execute('DELETE FROM ' . $this->tablePrefix . 'feeds WHERE account_id=' . $item['Account']['id']);
         }
     }
+    
+    public function export($identity_id) {
+        $this->recursive = 0;
+        $this->expects('Account');
+        $data = $this->findAllByIdentityId($identity_id);
+        $accounts = array();
+        foreach($data as $item) {
+            $account = $item['Account'];
+            $account['key'] = md5($account['id']);
+            unset($account['id']);
+            unset($account['identity_id']);
+            unset($account['created']);
+            unset($account['modified']);
+            $accounts[] = $account;
+        }
+        return $accounts;
+    }
 }
