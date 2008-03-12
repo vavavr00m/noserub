@@ -67,5 +67,41 @@ class Contact extends AppModel {
             $this->delete($contact['Contact']['id']);
         }
     }
+    
+    public function export($identity_id) {
+        $this->recursive = 1;
+        $this->expects('Contact', 'WithIdentity', 'NoserubContactType', 'ContactType');
+        $data = $this->findAllByIdentityId($identity_id);
+        $contacts = array();
+        foreach($data as $item) {
+            $is_local = $item['WithIdentity']['is_local'];
+            $is_private = $item['WithIdentity']['namespace'] ? 1 : 0;
+            
+            $contact = array(
+                'username'   => $is_local ? $item['WithIdentity']['single_username'] : $item['WithIdentity']['username'],
+                'is_local'   => $is_local,
+                'is_private' => $is_private,
+                'firstname'  => $item['WithIdentity']['firstname'],
+                'lastname'   => $item['WithIdentity']['lastname'],
+                'photo'      => $item['WithIdentity']['photo']
+            );
+            $list = array();
+            foreach($item['NoserubContactType'] as $noserub_contact_type) {
+                $list[] = $noserub_contact_type['name'];
+            }
+            $contact['noserub_contact_types'] = join(' ', $list);
+            $list = array();
+            foreach($item['ContactType'] as $contact_type) {
+                $list[] = $contact_type['name'];
+            }
+            $contact['contact_types'] = join(' ', $list);
+            
+            if($is_local) {
+                $contact['accounts'] = $this->Identity->Account->export($item['WithIdentity']['id']);
+            }
+            $contacts[] = $contact;
+        }
+        return $contacts;
+    }
 }
 ?>

@@ -4,7 +4,7 @@
     profile information, your accounts and your contacts. You can use
     this data on another NoseRub installation to import your data.
 </p>
-<form id="IdentityAccountSettingsExportForm" method="post" action="<?php echo $this->here; ?>">
+<form id="IdentityAccountSettingsExportForm" method="post" action="<?php echo $this->here . 'export/'; ?>">
     <fieldset>
         <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     </fielset>
@@ -18,7 +18,7 @@
     Import previously exported NoseRub data, so you have all your data
     from the old NoseRub ID on this one.
 </p>
-<form id="IdentityAccountSettingsImportForm" method="post" action="<?php echo $this->here; ?>">
+<form id="IdentityAccountSettingsImportForm" method="post" action="<?php echo $this->here . 'import/'; ?>">
     <fieldset>
         <div class="input">
             <?php echo $form->file('Identity.import'); ?>

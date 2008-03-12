@@ -76,6 +76,9 @@ Router::connect('/:username/settings/display/', array('controller' => 'identitie
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
 Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
+Router::connect('/:username/settings/account/export/', array('controller' => 'identities', 'action' => 'account_settings_export'));
+Router::connect('/:username/settings/account/import/', array('controller' => 'identities', 'action' => 'account_settings_import'));
+Router::connect('/:username/settings/account/redirect/', array('controller' => 'identities', 'action' => 'account_settings_redirect'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));

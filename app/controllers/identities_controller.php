@@ -579,7 +579,7 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function account_settings() {
+    public function account_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -601,6 +601,28 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Manage your account');
     }
     
+    public function account_settings_export() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+            
+        $this->id = $session_identity['id'];
+		$data = $this->Identity->export();
+		pr($data); exit;
+		$this->set('data', $data);
+        
+        $this->set('headline', 'Manage your account');
+    }
+    
     /**
      * Method description
      *
@@ -608,7 +630,7 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function login() {
+    public function login() {
         $this->checkSecure();
         $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
         
