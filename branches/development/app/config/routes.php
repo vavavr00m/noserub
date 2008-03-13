@@ -51,6 +51,7 @@ Router::connect('/pages/register/thanks/', array('controller' => 'identities', '
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
+Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
 
 Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
