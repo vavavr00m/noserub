@@ -667,6 +667,7 @@ class IdentitiesController extends AppController {
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
     	$returnTo = $this->webroot.'/pages/login/withopenid';
+    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].'/pages/yadis.xrdf');
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
@@ -745,6 +746,7 @@ class IdentitiesController extends AppController {
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
 		$returnTo = $this->webroot.'/pages/register/withopenid';
+    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].'/pages/yadis.xrdf');
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
@@ -913,6 +915,12 @@ class IdentitiesController extends AppController {
         $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
+    }
+    
+    public function yadis() {
+    	$this->layout = 'xml';
+    	header('Content-type: application/xrds+xml');
+		$this->set('server', Router::url('/', true));
     }
     
     private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
