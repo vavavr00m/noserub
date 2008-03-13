@@ -70,6 +70,7 @@ Configure::write('Config.language', 'eng');
  */ 
 $static_dir = APP . WEBROOT_DIR . DS . 'static' . DS;
 define('STATIC_DIR', $static_dir);
+define('AVATAR_DIR', STATIC_DIR . 'avatars' . DS);
 
 # this is no real data for bootstrap.php, but I figure, "functions.php" isn't
 # suitable in /app/config/ either. So, as long as I don't know what to do with
