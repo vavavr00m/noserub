@@ -885,6 +885,8 @@ class IdentitiesController extends AppController {
                 }
             }
         }
+        
+        return $result;
     }
     
     /**
