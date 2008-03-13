@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie', 'api');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api');
     
     /**
      * Displays profile page of an identity
@@ -373,7 +373,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -402,8 +402,6 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['longitude'] = $identity['Identity']['longitude'];
             }
             
-            $path = STATIC_DIR . 'avatars' . DS;
-            
             # check, if photo should be removed
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
                 @unlink($path . $identity['Identity']['photo'] . '.jpg');
@@ -415,19 +413,19 @@ class IdentitiesController extends AppController {
             if($this->data['Identity']['photo']['error'] != 0) {
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else {                
-                $filename = $this->upload->add($this->data['Identity']['photo'], $identity, $path);
+                $this->Identity->id = $session_identity['id'];
+                $filename = $this->Identity->uploadPhotoByForm($this->data['Identity']['photo']);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
-                    
                     if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                         # store to CDN
-                        $this->cdn->copyTo($path . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
-                        $this->cdn->copyTo($path . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
+                        $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
+                        $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
                     }
                 }
             }   
              
-            $saveable = array('firstname', 'lastname', 'about', 'photo', 'sex', 'address', 'address_shown', 'latitude', 'longitude', 'modified');
+            $saveable = array('firstname', 'lastname', 'about', 'sex', 'photo', 'address', 'address_shown', 'latitude', 'longitude', 'modified');
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
@@ -872,7 +870,21 @@ class IdentitiesController extends AppController {
             return false;
         }
         
-        return $this->Identity->sync($identity_id, $identity['Identity']['username']);
+        $result = $this->Identity->sync($identity_id, $identity['Identity']['username']);
+        if($result) {
+            # check, if there is a new photo
+            $this->Identity->id = $identity_id;
+            $this->recursive = 0;
+            $data = $this->Identity->read();
+            if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
+                $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
+                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                    # store to CDN
+                    $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
+                    $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');
+                }
+            }
+        }
     }
     
     /**

@@ -670,6 +670,97 @@ class Identity extends AppModel {
         );
     }
     
+    /**
+     */
+    private function uploadPhoto($local_filename) {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        $imageinfo = getimagesize($local_filename);
+        switch($imageinfo[2]) {
+            case IMAGETYPE_GIF:
+                $picture = imageCreateFromGIF($local_filename);
+                break;
+                
+            case IMAGETYPE_JPEG:
+                $picture = imageCreateFromJPEG($local_filename);
+                break;
+                
+            case IMAGETYPE_PNG:
+                $picture = imageCreateFromPNG($local_filename);
+                break;
+                
+            default:
+                $picture = null;
+        }
+        
+        if($picture) {
+            $filename = $this->field('photo');
+            if(!$filename) {
+                # get random name for new photo and make sure it is unqiue
+                $filename = '';
+                $seed = $this->id . $local_filename;
+                while($filename == '') {
+                    $filename = md5($seed);
+                    if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
+                        $filename = '';
+                        $seed = md5($seed . time());
+                    }
+                }
+                $this->saveField('photo', $filename);
+            }
+            
+            $original_width  = $imageinfo[0];
+            $original_height = $imageinfo[1];
+
+            $this->save_scaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
+            $this->save_scaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            
+            return $filename;
+        }
+        
+        return false;
+    }
+    
+    public function uploadPhotoByForm($upload_form) {
+       return $this->uploadPhoto($upload_form['tmp_name']);
+    }
+       
+    public function uploadPhotoByUrl($url) {
+        # get the file first
+        $content = file_get_contents($url);
+        if($content) {
+            $filename = AVATAR_DIR . $this->id . '.tmp';
+            file_put_contents($filename, $content);
+            $this->saveField('photo', '');
+            $result = $this->uploadPhoto($filename);
+            @unlink($filename);
+            return $result;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function save_scaled($picture, $original_width, $original_height, $width, $height, $filename) {
+        if($original_width==$width && $original_height==$height) {
+            # original picture
+            imagejpeg($picture, $filename, 100); # best quality
+        } else {
+            # resampling picture
+            $resampled = imagecreatetruecolor($width, $height);
+            imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
+            imagejpeg($resampled, $filename, 100); # best quality 
+        }
+    }
+    
     private function getSaveableFields($isAccountWithOpenID) {
     	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'allow_emails', 'created', 'modified');
     	
