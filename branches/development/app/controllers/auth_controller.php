@@ -4,7 +4,7 @@
 	$path = $pathExtra . PATH_SEPARATOR . $path;
 	ini_set('include_path', $path);
 
-	vendor('Auth/OpenID/Server', 'Auth/OpenID/FileStore', 'Auth/OpenID/SReg');
+	vendor('Auth'.DS.'OpenID'.DS.'Server', 'Auth'.DS.'OpenID'.DS.'FileStore', 'Auth'.DS.'OpenID'.DS.'SReg');
 
 	class AuthController extends AppController {
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
