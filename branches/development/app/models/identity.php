@@ -291,15 +291,22 @@ class Identity extends AppModel {
         if(empty($noserub_id)) {
             vendor('microformat/hcard');
             vendor('microformat/xfn');
-            $hcard = new hcard;
-        	$hcard = $hcard->getByURL($url);
-        	
-        	if(isset($hcard[0])) {
-        	    $hcard = $hcard[0];
+            $hcard_obj = new hcard;
+        	$hcards = $hcard_obj->getByURL($url);
+        	$hcard = $this->getOwner($hcards, $url);
+        	if($hcard) {
                 $result['Identity']['firstname']     = $hcard['n']['given-name'];
                 $result['Identity']['lastname']      = $hcard['n']['family-name'];
                 $result['Identity']['gender']        = 0;
-                $result['Identity']['photo']         = isset($hcard['photo']) ? $hcard['photo'] : '';
+                
+                # because of bug in hKit for relative URLs
+                $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
+                $photo = str_replace(':///', '', $photo);
+                if(strpos($photo, 'ttp://') === false) {
+                    $photo = $url . '/' . $photo;
+                }
+                $result['Identity']['photo'] = $photo;
+                
                 $result['Identity']['address_shown'] = '';
                 $result['Identity']['latitude']      = 0;
                 $result['Identity']['longitude']     = 0;
@@ -387,6 +394,22 @@ class Identity extends AppModel {
         }
         
         return $result;
+    }
+    
+    private function getOwner($hcards, $url) {
+        if(count($hcards) > 1) {
+            foreach($hcards as $hcard) {
+                if(isset($hcard['uid']) && isset($hcard['url']) && 
+                   $hcard['uid'] && $hcard['url']) {
+                    if(in_array($url, $hcard['url']) || in_array($url . '/', $hcard['url'])) {
+                        return $hcard;
+                    }
+                }
+            }
+        }
+        
+        # just take the first one...
+        return isset($hcards[0]) ? $hcards[0] : false;
     }
     
     /**
