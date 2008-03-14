@@ -615,10 +615,71 @@ class IdentitiesController extends AppController {
             
         $this->id = $session_identity['id'];
 		$data = $this->Identity->export();
-		pr($data); exit;
 		$this->set('data', $data);
+        $this->layout = 'empty';
+    }
+    
+    public function account_settings_import() {
+        $this->Session->delete('Import.data');
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
         
-        $this->set('headline', 'Manage your account');
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            if($this->data['Import']['data']['error']) {
+                $this->flashMessage('alert', 'There was an error while uploading');
+            } else {
+                $filename = $this->data['Import']['data']['tmp_name'];
+                $data = $this->Identity->readImport($filename);
+                if($data) {
+                    $this->Session->write('Import.data', $data);
+                    $this->set('data', $data);
+                    $this->set('headline', 'Importing NoseRub data');
+                    $this->render();
+                    exit;
+                } else {
+                    $this->flashMessage('alert', 'Couldn\'t import the data');
+                }
+            }
+        } 
+            
+        $this->redirect('/' . $username . '/settings/account/');
+    }
+    
+    public function account_settings_import_data() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        $data = $this->Session->read('Import.data');
+        if(!$data) {
+            $this->flashMessage('alert', 'Couldn\'t import the data!');
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            if($this->Identity->import($data)) {
+                $this->flashMessage('success', 'Import completed');
+            } else {
+                $this->flashMessage('alert', 'There was an error during import!');
+            }
+        }
+            
+        $this->redirect('/' . $username . '/settings/account/');
     }
     
     /**

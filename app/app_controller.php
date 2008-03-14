@@ -140,7 +140,7 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
-        if ($this->viewPath != 'errors') {
+        if($this->viewPath != 'errors' && strpos($this->here, '/system/update/') === false) {
 	        if(!isset($this->Identity)) {
 	            App::import('Model', 'Identity');
 	            $this->Identity = new Identity();

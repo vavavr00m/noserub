@@ -693,6 +693,25 @@ class Identity extends AppModel {
         );
     }
     
+    public function import($data) {
+        pr($data);
+        exit;
+    }
+    
+    public function readImport($filename) {
+        $content = @file_get_contents($filename);
+        if(!$content) {
+            return false;
+        }
+        vendor('Zend/Json');
+        $zend_json = new Zend_Json();
+        $zend_json->useBuiltinEncoderDecoder = true;
+        
+        $data = $zend_json->decode($content);
+        
+        return $data;
+    }
+    
     /**
      */
     private function uploadPhoto($local_filename) {
