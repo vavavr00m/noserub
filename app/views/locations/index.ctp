@@ -17,7 +17,7 @@
     	<fieldset>
     		<legend>Location API</legend>
     		<p class="infotext">
-                Location API.
+                For more information, please checkout our API-Documentation: <a href="http://noserub.com/documentation/archives/API-Application-Programming-Interface.html">noserub.com/documentation</a>
         	</p>
     		<input type="checkbox" name="data[Identity][api_active]" 
     			<?php if ($session_identity['api_active'] == 1) { ?>
@@ -28,9 +28,6 @@
             <input class="submitbutton" type="submit" value="Save changes"/>
     	</fieldset>
     <?php echo $form->end(); ?>
-    <p>
-        API-Documentation: <a href="http://noserub.com/documentation/archives/API-Application-Programming-Interface.html">noserub.com/documentation</a>
-    </p>
 </div>
 
 <!-- Your Locations -->
