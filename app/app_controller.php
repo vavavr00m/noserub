@@ -140,12 +140,14 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
-        if(!isset($this->Identity)) {
-            App::import('Model', 'Identity');
-            $this->Identity = new Identity();
+        if ($this->viewPath != 'errors') {
+	        if(!isset($this->Identity)) {
+	            App::import('Model', 'Identity');
+	            $this->Identity = new Identity();
+	        }
+	        # set new security_token
+	        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
         }
-        # set new security_token
-        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
     }
     
     public function afterFilter() {
