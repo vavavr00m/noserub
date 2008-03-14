@@ -35,7 +35,7 @@ class Admin extends AppModel {
     private $directories;
     
     function __construct() {
-    	$this->directories = array(APP.'tmp', WWW_ROOT.DS.'static'.DS.'avatars');
+    	$this->directories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
     }
     
     /**
