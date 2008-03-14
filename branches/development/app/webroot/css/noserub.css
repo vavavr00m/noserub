@@ -117,8 +117,12 @@ img, acronym {
 	margin-top: -15px !important;
 }
 
+.boxLeft, .boxRight {
+	width: 400px;
+}
+
 /* Settings */
-#settings_photo, #locationsapi {
+#settings_photo, #locationsapi, #settingsExport {
 	width: 255px;
 	padding: 0 0 0 25px;
 	border-left: 1px solid #ECEBE5;
@@ -126,4 +130,17 @@ img, acronym {
 
 #settings_data {
 	width: 400px;
+}
+
+.settingsListSecond {
+	background-color: #f4f4f4;
+	padding: 10px 15px 10px 15px;
+}
+
+.contentSpacer {
+	border: none;
+	background-color: #ECEBE5;
+	height: 1px;
+	padding: 0;
+	margin: 20px;
 }
