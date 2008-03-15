@@ -178,8 +178,7 @@ class Service extends AppModel {
             } else {
             	$item['content'] = $feeditem->get_content();
             }
-            
-			$item['content'] = $service_type_filter->filter($item['content']);
+			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
     	}
 
@@ -470,12 +469,12 @@ class ServiceTypeFilterFactory {
 }
 
 interface IServiceTypeFilter {
-	public function filter($content);
+	public function filter($item);
 }
 
 class DummyFilter implements IServiceTypeFilter {
-	public function filter($content) {
-		return $content;
+	public function filter($item) {
+		return $item;
 	}
 }
 
@@ -484,14 +483,18 @@ class PhotoFilter implements IServiceTypeFilter {
 		vendor('htmlpurifier'.DS.'HTMLPurifier.auto');		
 	}
 	
-	public function filter($content) {
+	public function filter($item) {
 		$config = HTMLPurifier_Config::createDefault();
 		$config->set('HTML', 'Allowed', 'img[src|alt]');
 
 		$purifier = new HTMLPurifier($config);
-		$clean_html = $purifier->purify($content);
+		$clean_html = $purifier->purify($item['content']);
 		$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);
+		$img_src = substr($clean_html, stripos($clean_html, '<img '));
+		$img_src = substr($img_src, 0, stripos($img_src, '>'));
 		
-		return $clean_html;
+		$item['content'] = '<a href="' . $item['url'] . '">' . $img_src . '</a>';
+		
+		return $item;
 	}
 }
