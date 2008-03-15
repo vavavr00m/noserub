@@ -136,6 +136,7 @@ class Service extends AppModel {
         $this->ServiceType->id = $service_type_id;
         $intro = $this->ServiceType->field('intro');
         $token = $this->ServiceType->field('token');
+		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type_id);
         
         vendor('simplepie/simplepie');
         $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
@@ -178,6 +179,7 @@ class Service extends AppModel {
             	$item['content'] = $feeditem->get_content();
             }
             
+			$item['content'] = $service_type_filter->filter($item['content']);
     		$items[] = $item; 
     	}
 
@@ -454,5 +456,42 @@ abstract class AbstractService {
 	
 	final function getServiceId() {
 		return $this->service_id; 
+	}
+}
+
+class ServiceTypeFilterFactory {
+	public static function getFilter($service_type_id) {
+		if ($service_type_id == 1) {
+			return new PhotoFilter();
+		}
+		
+		return new DummyFilter();
+	}
+}
+
+interface IServiceTypeFilter {
+	public function filter($content);
+}
+
+class DummyFilter implements IServiceTypeFilter {
+	public function filter($content) {
+		return $content;
+	}
+}
+
+class PhotoFilter implements IServiceTypeFilter {
+	public function __construct() {
+		vendor('htmlpurifier'.DS.'HTMLPurifier.auto');		
+	}
+	
+	public function filter($content) {
+		$config = HTMLPurifier_Config::createDefault();
+		$config->set('HTML', 'Allowed', 'img[src|alt]');
+
+		$purifier = new HTMLPurifier($config);
+		$clean_html = $purifier->purify($content);
+		$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);
+		
+		return $clean_html;
 	}
 }
