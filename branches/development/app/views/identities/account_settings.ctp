@@ -1,3 +1,4 @@
+<?php $flashmessage->render(); ?>
 <div id="settingsExport" class="boxRight right">
     <h2>Export your account data</h2>
     <p class="infotext">
