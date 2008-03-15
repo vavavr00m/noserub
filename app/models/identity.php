@@ -27,6 +27,8 @@ class Identity extends AppModel {
     }
 
     function validateUniqueOpenID($value, $params = array()) {
+        $this->recursive = 0;
+        $this->expects('Identity');
     	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
     		return false;
     	} else {
@@ -673,7 +675,8 @@ class Identity extends AppModel {
             'api_hash', 'api_active', 'hash', 'security_token',
             'last_activity', 'last_sync', 'created', 'modified',
             'local_username', 'single_username', 'namespace',
-            'local', 'servername', 'name'
+            'local', 'servername', 'name', 'overview_filters',
+            'frontpage_updates', 'allow_emails'
         );
         foreach($to_remove as $key) {
             unset($vcard[$key]);
@@ -683,6 +686,16 @@ class Identity extends AppModel {
             'version'  => 1
         );
         
+        # make the photo hash an external url
+        if($vcard['photo']) {
+            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+            } else {
+                $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+            }
+            $vcard['photo'] = $static_base_url . $vcard['photo'] . '.jpg';
+        }
+    
         return array(
             'server'    => $server,
             'vcard'     => $vcard,
@@ -694,8 +707,80 @@ class Identity extends AppModel {
     }
     
     public function import($data) {
-        pr($data);
-        exit;
+        if(!$this->exists()) {
+            echo 'not exists';
+            return false;
+        }
+        
+        if(!isset($data['server']['version']) || $data['server']['version'] != 1) {
+            echo 'wrong version';
+            return false;
+        }
+
+        $vcard = isset($data['vcard']) ? $data['vcard'] : null;
+        if(!$vcard) {
+            echo 'vcard not found';
+            return false;
+        }
+        
+        $username = isset($vcard['username']) ? $vcard['username'] : '';
+        if(!$username) {
+            echo 'username not found';
+            return false;
+        }
+        
+        # get current identity, so we can check what
+        # to update
+        $this->recursive = 0;
+        $this->expects('Identity');
+        $identity = $this->read();
+        $identity = $identity['Identity'];
+        $saveable = array();
+        if(!$identity['firstname'])     { $saveable[] = 'firstname'; }
+        if(!$identity['lastname'])      { $saveable[] = 'lastname'; }
+        if(!$identity['about'])         { $saveable[] = 'about'; }
+        if(!$identity['address'])       { $saveable = array_merge($saveable, array('address', 'latitude', 'longitude'));}
+        if(!$identity['address_shown']) { $saveable[] = 'address_shown'; }
+        if(!$identity['birthday'])      { $saveable[] = 'birthday'; }
+        if(!$identity['sex'])           { $saveable[] = 'sex'; }
+        $vcard['openid'] = null;
+        $saveable[] = 'openid';
+        if(!$this->save($vcard, false, $saveable)) {
+            echo 'error on vcard save';
+            pr($this->validationErrors);
+            return false;
+        }
+        if(!$identity['photo']) {
+            if($vcard['photo']) {
+                $this->uploadPhotoByUrl($vcard['photo']);
+            }
+        }
+        
+        $contacts = isset($data['contacts']) ? $data['contacts'] : null;
+        if(!$this->Contact->import($contacts)) {
+            echo 'error on importing contacts';
+            return false;
+        }
+        
+        $accounts = isset($data['contacts']) ? $data['accounts'] : null;
+        if(!$this->Account->import($accounts)) {
+            echo 'error on importing accounts';
+            return false;
+        }
+        
+        $locations = isset($data['locations']) ? $data['locations'] : null;
+        if(!$this->Location->import($locations)) {
+            echo 'error on importing locations';
+            return false;
+        }
+        
+        $syndications = isset($data['syndications']) ? $data['syndications'] : null;
+        if(!$this->Syndication->import($syndications)) {
+            echo 'error on importing syndications';
+            return false;
+        }
+
+        return true;
     }
     
     public function readImport($filename) {
