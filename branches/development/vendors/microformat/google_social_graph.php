@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Zend/Json.php';
+vendor('Zend'.DS.'Json');
 
 class GSocialGraph {
     public function lookup($urls) {
