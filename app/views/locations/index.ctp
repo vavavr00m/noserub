@@ -60,8 +60,8 @@
                 </td>
                 <td>
                 	<ul>
-                   		<li class="delete icon"><?php echo $html->link('Delete', $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'); ?></li>
-                   		<li class="edit icon"><?php echo $html->link('Edit', $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'); ?></li>
+                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
+                   		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>">Edit</li>
                    	</ul>
                 </td>
             </tr>
