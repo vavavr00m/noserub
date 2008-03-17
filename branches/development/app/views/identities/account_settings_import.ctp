@@ -6,9 +6,8 @@
     The export file was for the user 
     <strong><?php echo $data['vcard']['username']; ?></strong>
     and contains <?php echo count($data['contacts']); ?> contacts, 
-    <?php echo count($data['accounts']); ?> accounts, 
-    <?php echo count($data['locations']); ?> locations and
-    <?php echo count($data['feeds']); ?> feeds.
+    <?php echo count($data['accounts']); ?> accounts and 
+    <?php echo count($data['locations']); ?> locations.
     <br /><br />
     <em>All the contacts and accounts you already have here, will not be overwritten.</em>
 </p>
