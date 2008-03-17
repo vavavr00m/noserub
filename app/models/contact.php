@@ -103,5 +103,9 @@ class Contact extends AppModel {
         }
         return $contacts;
     }
+    
+    public function import($identity_id, $data) {
+        return true;
+    }
 }
 ?>

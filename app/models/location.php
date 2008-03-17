@@ -36,4 +36,25 @@ class Location extends AppModel {
         }
         return $locations;
     }
+    
+    public function import($identity_id, $data) {
+        foreach($data as $item) {
+            # first check, if we already have a location by this name
+            $this->recursive = 0;
+            $this->expects('Location');
+            $conditions = array(
+                'Location.identity_id' => $identity_id,
+                'Location.name' => $item['name']
+            );
+            if($this->findCount($conditions) == 0) {
+                $this->create();
+                $saveable = array('identity_id', 'name', 'address', 'latitude', 'longitude');
+                $item['identity_id'] = $identity_id;
+                if(!$this->save($item, true, $saveable)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

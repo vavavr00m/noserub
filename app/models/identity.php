@@ -633,7 +633,7 @@ class Identity extends AppModel {
         
         # update all accounts for that identity
         # @todo: not so nice to update another model here
-        $this->Account->update($identity_id, $data['accounts']);
+        $this->Account->replace($identity_id, $data['accounts']);
 
         # update 'last_sync' field and also identity information
         $this->id = $identity_id;
@@ -701,31 +701,26 @@ class Identity extends AppModel {
             'vcard'     => $vcard,
             'contacts'  => $this->Contact->export($this->id),
             'accounts'  => $this->Account->export($this->id),
-            'locations' => $this->Location->export($this->id),
-            'feeds'     => $this->Syndication->export($this->id)
+            'locations' => $this->Location->export($this->id)
         );
     }
     
     public function import($data) {
         if(!$this->exists()) {
-            echo 'not exists';
             return false;
         }
         
         if(!isset($data['server']['version']) || $data['server']['version'] != 1) {
-            echo 'wrong version';
             return false;
         }
 
         $vcard = isset($data['vcard']) ? $data['vcard'] : null;
         if(!$vcard) {
-            echo 'vcard not found';
             return false;
         }
         
         $username = isset($vcard['username']) ? $vcard['username'] : '';
         if(!$username) {
-            echo 'username not found';
             return false;
         }
         
@@ -757,29 +752,21 @@ class Identity extends AppModel {
         }
         
         $contacts = isset($data['contacts']) ? $data['contacts'] : null;
-        if(!$this->Contact->import($contacts)) {
+        if(!$this->Contact->import($this->id, $contacts)) {
             echo 'error on importing contacts';
             return false;
         }
         
         $accounts = isset($data['contacts']) ? $data['accounts'] : null;
-        if(!$this->Account->import($accounts)) {
-            echo 'error on importing accounts';
+        if(!$this->Account->import($this->id, $accounts)) {
             return false;
         }
         
         $locations = isset($data['locations']) ? $data['locations'] : null;
-        if(!$this->Location->import($locations)) {
-            echo 'error on importing locations';
+        if(!$this->Location->import($this->id, $locations)) {
             return false;
         }
         
-        $syndications = isset($data['syndications']) ? $data['syndications'] : null;
-        if(!$this->Syndication->import($syndications)) {
-            echo 'error on importing syndications';
-            return false;
-        }
-
         return true;
     }
     
@@ -856,7 +843,7 @@ class Identity extends AppModel {
        
     public function uploadPhotoByUrl($url) {
         # get the file first
-        $content = file_get_contents($url);
+        $content = @file_get_contents($url);
         if($content) {
             $filename = AVATAR_DIR . $this->id . '.tmp';
             file_put_contents($filename, $content);
