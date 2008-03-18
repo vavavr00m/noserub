@@ -36,7 +36,7 @@
 <div id="settingsLeave" class="settingsListSecond">
     <h2>Leave a moving address</h2>
     <p id="message" class="info">
-        If you no longer need this NoseRub ID, but want to make sure you new page
+        If you no longer need this NoseRub ID, but want to make sure your new page
         can be accessed through this URL, just enter one.<br />Visitors will be redirected
         to that URL then.
     </p>
