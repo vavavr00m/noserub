@@ -194,6 +194,8 @@ class IdentitiesController extends AppController {
      * Displays the social stream of the whole plattform.
      */
     function social_stream() {
+    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
+    	
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
         $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         $session_identity = $this->Session->read('Identity');
@@ -726,7 +728,6 @@ class IdentitiesController extends AppController {
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
     	$returnTo = $this->webroot.'pages/login/withopenid';
-    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
@@ -805,7 +806,6 @@ class IdentitiesController extends AppController {
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
 		$returnTo = $this->webroot.'pages/register/withopenid';
-    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
