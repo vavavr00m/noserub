@@ -95,6 +95,10 @@ class Admin extends AppModel {
     function checkExtensions() {
         $result = array();
     	
+        if (!extension_loaded('curl')) {
+        	$result = am($result, array('curl' => 'needed for communicating with other servers'));
+        }
+        
     	if (!extension_loaded('gd')) {
         	$result = am($result, array('GD' => 'needed for image handling')); 
         }
