@@ -16,7 +16,7 @@
 		/**
 		 * @throws InvalidArgumentException if an invalid OpenID was provided
 		 */
-		public function authenticate($openidUrl, $returnTo, $trustRoot, $required = array(), $optional = array()) {
+		public function authenticate($openidUrl, $returnTo, $realm, $required = array(), $optional = array()) {
 			if (trim($openidUrl) != '') {
 				$consumer = $this->getConsumer();
 				$authRequest = $consumer->begin($openidUrl);
@@ -33,7 +33,7 @@
 			}
 			
 			if ($authRequest->shouldSendRedirect()) {
-				$redirectUrl = $authRequest->redirectUrl($trustRoot, $returnTo);
+				$redirectUrl = $authRequest->redirectUrl($realm, $returnTo);
 				
 				if (Auth_OpenID::isFailure($redirectUrl)) {
 					throw new Exception('Could not redirect to server: '.$redirectUrl->message);
@@ -42,7 +42,7 @@
 				}
 			} else {
 				$formId = 'openid_message';
-				$formHtml = $authRequest->formMarkup($trustRoot, $returnTo, false , array('id' => $formId));
+				$formHtml = $authRequest->formMarkup($realm, $returnTo, false , array('id' => $formId));
 
 				if (Auth_OpenID::isFailure($formHtml)) {
 					throw new Exception('Could not redirect to server: '.$formHtml->message);
