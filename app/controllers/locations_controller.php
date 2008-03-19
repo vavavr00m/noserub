@@ -222,4 +222,52 @@ class LocationsController extends AppController {
         
         $this->api->render();
     }
+    
+    public function api_add() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $name    = isset($this->params['url']['name'])    ? $this->params['url']['name']    : '';
+        $address = isset($this->params['url']['address']) ? $this->params['url']['address'] : '';
+        $set_to  = isset($this->params['url']['set_to'])  ? $this->params['url']['set_to']  :  0;
+        
+        if(!$name) {
+            $this->set('code', -2);
+            $this->set('msg', 'parameter wrong');
+        } else {
+            # test, wether we already have this location
+            $this->Location->recursive = 0;
+            $this->Location->expects('Location');
+            $conditions = array(
+                'identity_id' => $identity['Identity']['id'],
+                'name'        => $name
+            );
+            if($this->Location->findCount($conditions) > 0) {
+                $this->set('code', -3);
+                $this->set('msg', 'duplicate dataset');
+            } else {
+                $data = array(
+                    'identity_id' => $identity['Identity']['id'],
+                    'name'        => $name,
+                    'address'     => $address
+                );
+                if($address) {
+                    $geolocation = $this->geocoder->get($address);
+                    if($geolocation !== false) {
+                        $data['latitude']  = $geolocation['latitude'];
+                        $data['longitude'] = $geolocation['longitude'];
+                    }
+                }
+                $this->Location->create();
+                $this->Location->save($data, true, array_keys($data));
+                
+                if($set_to == 1) {
+                    $this->Location->cacheQueries = false;
+                    $this->Location->setTo($identity['Identity']['id'], $this->Location->id);
+                }
+            }
+        }
+        
+        $this->api->render();
+    }
 }
