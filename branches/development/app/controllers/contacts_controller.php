@@ -134,9 +134,13 @@ class ContactsController extends AppController {
                     exit;
                 }
                 
-                $contact = array('identity_id'      => $session_identity['id'],
-                                 'with_identity_id' => $new_identity_id);
-                $this->saveContactAndRedirect($contact, $splitted['local_username']);
+                if($this->Contact->add($session_identity['id'], $new_identity_id)) {
+                    $this->flashMessage('success', 'New contact added.');
+    			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+    			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
+			    } else {
+			        $this->flashMessage('error', 'Could not add contact');
+			    }
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
                 # create the username with the special namespace
@@ -151,12 +155,14 @@ class ContactsController extends AppController {
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
                     $saveable = array('is_local', 'username', 'created', 'modified');
-                    # no validation, as we have no password.
-                    if($this->Contact->Identity->save($identity, false, $saveable)) {
-                        $contact = array('identity_id'      => $session_identity['id'],
-                                         'with_identity_id' => $this->Contact->Identity->id);
-                        $this->saveContactAndRedirect($contact, $splitted['local_username']);
-                    }
+                    
+                    if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
+                        $this->flashMessage('success', 'New contact added.');
+        			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+        			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
+    			    } else {
+        			    $this->flashMessage('error', 'Could not add contact');
+        			}
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
                     $this->render();
@@ -496,17 +502,6 @@ class ContactsController extends AppController {
         }
         
         $this->redirect('/' . $splitted['local_username']);
-    }
-    
-    private function saveContactAndRedirect($contactData, $localUsername) {
-		$this->Contact->create();
-
-		$saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-		if($this->Contact->save($contactData, true, $saveable)) {
-			$this->flashMessage('success', 'New contact added.');
-			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-			$this->redirect('/' . $localUsername . '/contacts/' . $this->Contact->id . '/edit/');
-		}
     }
     
     /**

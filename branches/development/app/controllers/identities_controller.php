@@ -668,7 +668,6 @@ class IdentitiesController extends AppController {
             $url = $this->url->http('/');
             $this->redirect($url, null, true);
         }
-        
         $data = $this->Session->read('Import.data');
         if(!$data) {
             $this->flashMessage('alert', 'Couldn\'t import the data!');

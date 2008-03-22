@@ -59,14 +59,36 @@ class ContactType extends AppModel {
 	    }
 	}
 	
-	function createContactTypes($identityId, $contactTypes) {
-		$data['ContactType']['identity_id'] = $identityId;
+	public function createContactTypes($identity_id, $contact_types) {
+	    $contact_type_ids = array();
+		$data['ContactType']['identity_id'] = $identity_id;
 		
-		foreach ($contactTypes as $contactType) {
-			$data['ContactType']['name'] = $contactType;
-			$this->create($data);
-			$this->save();
+		foreach ($contact_types as $contact_type_name) {
+		    # check, if we already have it
+		    $this->recursive = 0;
+		    $this->expects('ContactType');
+		    $conditions = array(
+		        'identity_id' => $identity_id,
+		        'name'        => $contact_type_name
+		    );
+		    $this->cacheQueries = false;
+		    $contact_type = $this->find($conditions, array('id'));
+		    if(!$contact_type) {
+		        $data = $conditions;
+			    $this->create();
+			    $this->save($data);
+			    $contact_type_ids[] = $this->id;
+		    } else {
+		        $contact_type_ids[] = $contact_type['ContactType']['id'];
+		    }
 		}
+		
+		return $contact_type_ids;
+	}
+	
+	public function createFromString($identity_id, $string) {
+	    $contact_types = $this->getContactTypesFromString($string);
+	    return $this->createContactTypes($identity_id, $contact_types);
 	}
 	
 	function deleteContactTypes($contactTypeIDs) {
@@ -78,14 +100,14 @@ class ContactType extends AppModel {
 			return array();
 		}
 		
-		$contactTypes = array_unique(explode(' ', $string)); 
-		$sanitizedContactTypes = array();
+		$contact_types = array_unique(explode(' ', $string)); 
+		$sanitized_contact_types = array();
 		
-		foreach($contactTypes as $contactType) {
-			$sanitizedContactTypes[] = Sanitize::paranoid($contactType);
+		foreach($contact_types as $contact_type) {
+			$sanitized_contact_types[] = Sanitize::paranoid($contact_type);
 		}
 		
-		return $sanitizedContactTypes; 
+		return $sanitized_contact_types; 
 	}
 	
 	function getIDsOfContactTypes($identityId, $contactTypes) {
