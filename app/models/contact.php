@@ -13,23 +13,59 @@ class Contact extends AppModel {
                                 'required' => VALID_NOT_EMPTY)
         );
 
-	function createAssociationsToContactTypes($contactId, $contactTypeIDs) {
-		$dataToInsert['ContactTypesContact']['contact_id'] = $contactId;
+    /**
+     * creates a contact, when it's not already there
+     */
+    public function add($identity_id, $with_identity_id) {
+        $this->recursive = 0;
+        $this->expects('Contact');
+        $conditions = array(
+            'identity_id'      => $identity_id,
+            'with_identity_id' => $with_identity_id
+        );
+        
+        $contact = $this->find($conditions, array('id'));
+        if(!$contact) {
+            $this->create();
+            $data = $conditions;
+            
+            return $this->save($data, true, array_keys($data));
+        }
+        
+        # don't return with an error, if we already have the contact
+        $this->id = $contact['Contact']['id'];
+        return true;
+    }
+    
+	function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
+		$data['contact_id'] = $contact_id;
 		
-		foreach ($contactTypeIDs as $contactTypeId) {
-			$dataToInsert['ContactTypesContact']['contact_type_id'] = $contactTypeId;
-			$this->ContactTypesContact->create($dataToInsert);
-			$this->ContactTypesContact->save();
+		foreach($contact_type_ids as $contact_type_id) {
+		    $data['contact_type_id'] = $contact_type_id;
+		    
+		    # check, if we already have that
+		    $this->ContactTypesContact->cacheQueries = false;
+		    $conditions = $data;
+		    if($this->ContactTypesContact->findCount($conditions) == 0) {
+			    $this->ContactTypesContact->create();
+			    $this->ContactTypesContact->save($data);
+		    }
 		}
 	}
 
-	function createAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
-		$dataToInsert['ContactsNoserubContactType']['contact_id'] = $contactId;
+	function createAssociationsToNoserubContactTypes($contact_id, $noserub_contact_type_ids) {
+		$data['contact_id'] = $contact_id;
 		
-		foreach ($noserubContactTypeIDs as $contactTypeId) {
-			$dataToInsert['ContactsNoserubContactType']['noserub_contact_type_id'] = $contactTypeId;
-			$this->ContactsNoserubContactType->create($dataToInsert);
-			$this->ContactsNoserubContactType->save();
+		foreach ($noserub_contact_type_ids as $noserub_contact_type_id) {
+			$data['noserub_contact_type_id'] = $noserub_contact_type_id;
+			
+			# check, if we already have that
+		    $this->ContactsNoserubContactType->cacheQueries = false;
+		    $conditions = $data;
+		    if($this->ContactsNoserubContactType->findCount($conditions) == 0) {
+			    $this->ContactsNoserubContactType->create();
+			    $this->ContactsNoserubContactType->save($data);
+		    }
 		}
 	}
     
@@ -74,16 +110,17 @@ class Contact extends AppModel {
         $data = $this->findAllByIdentityId($identity_id);
         $contacts = array();
         foreach($data as $item) {
-            $is_local = $item['WithIdentity']['is_local'];
+            $is_local   = $item['WithIdentity']['is_local'];
             $is_private = $item['WithIdentity']['namespace'] ? 1 : 0;
             
             $contact = array(
-                'username'   => $is_local ? $item['WithIdentity']['single_username'] : $item['WithIdentity']['username'],
+                'username'   => $is_private ? $item['WithIdentity']['single_username'] : $item['WithIdentity']['username'],
                 'is_local'   => $is_local,
                 'is_private' => $is_private,
                 'firstname'  => $item['WithIdentity']['firstname'],
                 'lastname'   => $item['WithIdentity']['lastname'],
-                'photo'      => $item['WithIdentity']['photo']
+                'photo'      => $item['WithIdentity']['photo'],
+                'note'       => $item['Contact']['note']
             );
             $list = array();
             foreach($item['NoserubContactType'] as $noserub_contact_type) {
@@ -96,7 +133,7 @@ class Contact extends AppModel {
             }
             $contact['contact_types'] = join(' ', $list);
             
-            if($is_local) {
+            if($is_private) {
                 $contact['accounts'] = $this->Identity->Account->export($item['WithIdentity']['id']);
             }
             $contacts[] = $contact;
@@ -104,7 +141,99 @@ class Contact extends AppModel {
         return $contacts;
     }
     
+    /**
+     * Import the contacts and also create accounts for those
+     * contacts.
+     */
     public function import($identity_id, $data) {
+        # get identity first
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $this->Identity->id = $identity_id;
+        $identity = $this->Identity->read();
+
+        foreach($data as $item) {
+            # create username
+            $username = $item['username'];
+            if($item['is_private']) {
+                $username = $username . '@' . $identity['Identity']['local_username'];
+            }
+            $new_splitted = $this->Identity->splitUsername($username, $item['is_local']);
+        
+            # check, if we already have that username
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $new_identity = $this->Identity->findByUsername($new_splitted['username']);
+            
+            if(!$new_identity) {
+                # we need to create the contact
+                $this->Identity->create();
+                $new_identity = array('username' => $new_splitted['username']);
+                $this->Identity->save($new_identity, false, array_keys($new_identity));
+                $new_identity_id = $this->Identity->id;
+                
+                # get user data
+                if(!$item['is_private']) {
+                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                }
+            } else {
+                $new_identity_id = $new_identity['Identity']['id'];
+            }
+            
+            # make sure we add the contact
+            if(!$this->add($identity_id, $new_identity_id)) {
+                return false;
+            }
+
+            # just make sure, that we keep the note
+            if(isset($item['note']) && $item['note']) {
+                $this->recursive = 0;
+                $this->expects('Contact');
+                $this->cacheQueries = false;
+                $contact = $this->read();
+                if(!$contact['Contact']['note']) {
+                    $this->saveField('note', $item['note']);
+                }
+            }
+            
+            # add contact types
+            if(isset($item['contact_types']) && $item['contact_types']) {
+                $contact_type_ids = $this->ContactType->createFromString($identity_id, $item['contact_types']);
+                
+                if($contact_type_ids) {
+                    $this->createAssociationsToNoserubContactTypes($this->id, $contact_type_ids);
+                }
+            }
+            
+            # add noserub contact types
+            # but only, if there are none set here right now
+            if(isset($item['noserub_contact_types']) && $item['noserub_contact_types']) {
+                $this->recursive = 1;
+                $this->expects('Contact', 'NoserubContactType');
+                $this->cacheQueries = false;
+                $contact = $this->read();
+                if(count($contact['NoserubContactType']) == 0) {
+                    $result = $this->NoserubContactType->extract($item['noserub_contact_types']);
+                    if($result['noserub_contact_type_ids']) {
+                        # re-arrange the array
+                        $to_add = array();
+                        foreach($result['noserub_contact_type_ids'] as $id => $dummy) {
+                            $to_add[] = $id;
+                        }
+                        $this->createAssociationsToNoserubContactTypes($this->id, $to_add);
+                    }
+                }
+            }
+            
+            # add accounts
+            if($item['is_private'] && 
+               isset($item['accounts']) &&
+               $item['accounts']) {
+                $this->log(print_r($item['accounts'], 1));
+                $this->Identity->Account->update($new_identity_id, $item['accounts']);
+            }
+        }
+        
         return true;
     }
 }

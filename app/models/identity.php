@@ -297,6 +297,9 @@ class Identity extends AppModel {
         	$hcards = $hcard_obj->getByURL($url);
         	$hcard = $this->getOwner($hcards, $url);
         	if($hcard) {
+        	    if(!isset($hvcard['n'])) {
+        	        $this->log(print_r($hcard, 1));
+        	    }
                 $result['Identity']['firstname']     = $hcard['n']['given-name'];
                 $result['Identity']['lastname']      = $hcard['n']['family-name'];
                 $result['Identity']['gender']        = 0;
@@ -751,18 +754,18 @@ class Identity extends AppModel {
             }
         }
         
-        $contacts = isset($data['contacts']) ? $data['contacts'] : null;
+        $contacts = isset($data['contacts']) ? $data['contacts'] : array();
         if(!$this->Contact->import($this->id, $contacts)) {
             echo 'error on importing contacts';
             return false;
         }
         
-        $accounts = isset($data['contacts']) ? $data['accounts'] : null;
+        $accounts = isset($data['contacts']) ? $data['accounts'] : array();
         if(!$this->Account->import($this->id, $accounts)) {
             return false;
         }
         
-        $locations = isset($data['locations']) ? $data['locations'] : null;
+        $locations = isset($data['locations']) ? $data['locations'] : array();
         if(!$this->Location->import($this->id, $locations)) {
             return false;
         }
@@ -780,6 +783,12 @@ class Identity extends AppModel {
         $zend_json->useBuiltinEncoderDecoder = true;
         
         $data = $zend_json->decode($content);
+
+        if(!is_array($data) || 
+           !isset($data['server']['base_url']) || 
+           !isset($data['vcard']['username'])) {
+            return false;
+        }
         
         return $data;
     }

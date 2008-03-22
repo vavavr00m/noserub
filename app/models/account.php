@@ -42,6 +42,7 @@ class Account extends AppModel {
             );
             $this->recursive = 0;
             $this->expects('Account');
+            $this->cacheQueries = false;
             if($this->findCount($conditions) == 0) {
                 $item['identity_id'] = $identity_id;
                 $saveable = array(
