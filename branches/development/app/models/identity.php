@@ -616,9 +616,9 @@ class Identity extends AppModel {
      */
     function sync($identity_id, $username) {
         $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
-        # get the data from the remote server. try https:// and
-        # http://
-        $protocols = array('https://', 'http://');
+        # get the data from the remote server. try http:// and
+        # http2://
+        $protocols = array('http://', 'https://');
         foreach($protocols as $protocol) {
             $data = $this->parseNoseRubPage($protocol . $username);
             if($data) {
@@ -743,8 +743,7 @@ class Identity extends AppModel {
         $vcard['openid'] = null;
         $saveable[] = 'openid';
         if(!$this->save($vcard, false, $saveable)) {
-            echo 'error on vcard save';
-            pr($this->validationErrors);
+            $this->log('error on saving vcard');
             return false;
         }
         if(!$identity['photo']) {
@@ -755,17 +754,19 @@ class Identity extends AppModel {
         
         $contacts = isset($data['contacts']) ? $data['contacts'] : array();
         if(!$this->Contact->import($this->id, $contacts)) {
-            echo 'error on importing contacts';
+            $this->log('error on importing contacts');
             return false;
         }
         
         $accounts = isset($data['contacts']) ? $data['accounts'] : array();
         if(!$this->Account->import($this->id, $accounts)) {
+            $this->log('error on importing accounts');
             return false;
         }
         
         $locations = isset($data['locations']) ? $data['locations'] : array();
         if(!$this->Location->import($this->id, $locations)) {
+            $this->log('error on importing locations');
             return false;
         }
         
