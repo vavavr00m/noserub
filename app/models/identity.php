@@ -628,8 +628,6 @@ class Identity extends AppModel {
             }
         }
         
-        pr($data);
-        
         if(!$data) {
             # no data was found!
             return false;
