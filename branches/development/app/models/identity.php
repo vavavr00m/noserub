@@ -298,11 +298,14 @@ class Identity extends AppModel {
         	$hcard = $this->getOwner($hcards, $url);
         	if($hcard) {
         	    if(!isset($hvcard['n'])) {
+        	        $result['Identity']['firstname']     = '';
+                    $result['Identity']['lastname']      = $hcard['fn'];
         	        $this->log(print_r($hcard, 1));
-        	    }
-                $result['Identity']['firstname']     = $hcard['n']['given-name'];
-                $result['Identity']['lastname']      = $hcard['n']['family-name'];
-                $result['Identity']['gender']        = 0;
+        	    } else {
+                    $result['Identity']['firstname']     = $hcard['n']['given-name'];
+                    $result['Identity']['lastname']      = $hcard['n']['family-name'];
+                    $result['Identity']['gender']        = 0;
+                }
                 
                 # because of bug in hKit for relative URLs
                 $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
