@@ -30,8 +30,7 @@ class FeedsController extends AppController {
     } 
     
     /**
-     * Refreshes 250 feed caches, ordered by priority. Priority
-     * is increased for every access to a feed.
+     * Refreshes 250 feed caches, ordered by last update.
      *
      * @param  
      * @return 
@@ -47,13 +46,12 @@ class FeedsController extends AppController {
             
             $this->Feed->recursive = 2;
             $this->Feed->expects('Feed.Feed', 'Feed.Account', 'Account.Account', 'Account.Identity', 'Identity.Identity');
-            $data = $this->Feed->findAll(array('Feed.modified < "' . $last_refresh . '"'), null, 'Feed.modified ASC, Feed.priority DESC', 1);
-
+            $data = $this->Feed->findAll(array('Feed.updated < "' . $last_refresh . '"'), null, 'Feed.updated ASC', 1);
             foreach($data as $item) {
-                # set the modified right now, so a parallel running task
+                # set the updated right now, so a parallel running task
                 # would not get it, while we are fetching the feed
                 $this->Feed->id = $item['Feed']['id'];
-                $this->Feed->saveField('modified', date('Y-m-d H:i:s'));
+                $this->Feed->saveField('updated', date('Y-m-d H:i:s'));
                 
                 if($item['Account']['feed_url']) {
                     # get the actual feed. Maximum of 10 items, but without time restriction

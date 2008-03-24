@@ -17,8 +17,12 @@ class GSocialGraph {
                   '&sgn=0';   # Return internal representation of nodes. */
     
         $request = 'http://socialgraph.apis.google.com/lookup?' . $params;
+        $content = @file_get_contents($request);
+        if(!$content) {
+            return array();
+        }
         
-        $result = Zend_Json::decode(file_get_contents($request));  
+        $result = Zend_Json::decode($content);  
         $data = array();
         foreach($result['nodes'] as $url => $item) {
             $data[] = $url;

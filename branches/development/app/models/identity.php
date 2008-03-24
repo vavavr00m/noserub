@@ -335,7 +335,6 @@ class Identity extends AppModel {
         	    if(!$account) {
         	        # as we don't know the service type id, we set the id to 3 for Text/Blog 
         			$account = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $xfn_url);
-        			#pr($account);
         		}
         		if($account) {	
                     $result['accounts'][] = $account; 
@@ -625,9 +624,11 @@ class Identity extends AppModel {
             if($data) {
                 # we had success, so we don't need to try
                 # the remaining protocol(s)
-                continue;
+                break;
             }
         }
+        
+        pr($data);
         
         if(!$data) {
             # no data was found!
