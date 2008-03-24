@@ -128,7 +128,7 @@ class Service extends AppModel {
      * @access 
      */
     function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
-        if(!$feed_url) {
+        if(!$feed_url || strpos($feed_url, '//friendfeed.com/') > 0) {
             return false;
         }
         
