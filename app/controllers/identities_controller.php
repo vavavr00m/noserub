@@ -44,6 +44,22 @@ class IdentitiesController extends AppController {
                 $this->flashMessage('success', 'Location updated');
             }
         }
+
+        # check, if we need to redirect. only, when the user is not
+        # logged in.
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $identity = $this->Identity->findByUsername($username);        
+        if(strpos($identity['Identity']['redirect_url'], 'http://')  === 0 ||
+           strpos($identity['Identity']['redirect_url'], 'https://') === 0) {
+            # there is a redirect set
+            if($identity['Identity']['id'] != $session_identity['id']) {
+                $this->redirect($identity['Identity']['redirect_url'], '301');
+            } else {
+                $this->flashMessage('info', 'There is a redirect URL given!');
+                $this->redirect('http://' . $username . '/settings/account/');
+            }
+        }
         
         if($splitted['namespace'] !== '' && $splitted['namespace'] != $session_identity['local_username']) {
             # don't display local contacts to anyone else, but the owner
@@ -596,9 +612,43 @@ class IdentitiesController extends AppController {
             $this->ensureSecurityToken();
             
 			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $this->data = $this->Identity->read();
         }
         
         $this->set('headline', 'Manage your account');
+    }
+    
+    public function account_settings_redirect() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
+            $redirect_url = $this->data['Identity']['redirect_url'];
+            if($redirect_url &&
+               strpos($redirect_url, 'http://') !== 0 &&
+               strpos($redirect_url, 'https://') !== 0) {
+                $redirect_url = 'http://' . $redirect_url;
+            }
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->saveField('redirect_url', $redirect_url);
+            $this->flashMessage('success', 'Redirect URL saved.');
+        }
+        
+        $this->redirect('/' . $username . '/settings/account/');
     }
     
     public function account_settings_export() {

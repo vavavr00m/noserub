@@ -40,11 +40,11 @@
         can be accessed through this URL, just enter one.<br />Visitors will be redirected
         to that URL then.
     </p>
-    <form id="IdentityAccountSettingsRedirectForm" method="post" action="<?php echo $this->here; ?>">
+    <form id="IdentityAccountSettingsRedirectForm" method="post" action="<?php echo $this->here . 'redirect/'; ?>">
         <fieldset>
             <legend>Redirect URL</legend>
             <label for="IdentityRedirect">Please add the full URL (http://)</label>
-            <p><?php echo $form->input('Identity.redirect', array('label' => false, 'size' => 64)); ?></p>
+            <p><?php echo $form->input('Identity.redirect_url', array('label' => false, 'size' => 64)); ?></p>
             <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
         </fieldset>
     

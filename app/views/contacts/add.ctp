@@ -3,7 +3,8 @@
     or just a new username, that then will created a private contact which is for your access only!
 </p>
 <p class="infotext">
-    Whenever you have an URL of someone, you should try that to add a new contact.
+    Whenever you have an URL of someone, you should try that to add a new contact. Naturally you would
+    want to add a contact's blog as an URL, or his/her FriendFeed-URL.
 </p>
 <form id="ContactAddForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
