@@ -68,7 +68,7 @@ class Identity extends AppModel {
             $email == '') {
             return true;
         }
-        list($local, $host) = explode('@', $email);
+        list($local, $host) = explode('@', $email['email']);
         return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
     }
     
