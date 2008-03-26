@@ -1,6 +1,6 @@
 <?php
 
-	class MenuTest extends CakeTestCase {
+class MenuTest extends CakeTestCase {
 	function testMenu() {
 		$menuItems[] = new MenuItem('A', '', false);
 		$menuItems[] = new MenuItem('B', '', false);
@@ -158,7 +158,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[4], 'Privacy', $link . 'privacy/', true);
 		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', false);
 		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', false);
-		$this->assertMenuItem($menuItems[7], 'Delete account', $link . 'account/', false);
+		$this->assertMenuItem($menuItems[7], 'Manage', $link . 'account/', false);
 	}
 	
 	function testGetSettingsSubMenuWithOneItemSelected() {
@@ -222,7 +222,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', $feedsActive);
 		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', $openidActive);
 		$this->assertMenuItem($menuItems[7], 'Password', $link . 'password/', $passwordActive);
-		$this->assertMenuItem($menuItems[8], 'Delete account', $link . 'account/', $deleteAccountActive);
+		$this->assertMenuItem($menuItems[8], 'Manage', $link . 'account/', $deleteAccountActive);
 	}
 }
 

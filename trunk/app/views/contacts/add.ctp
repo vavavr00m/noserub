@@ -1,20 +1,21 @@
 <p class="infotext">
-    You can either enter a valid NoseRub-ID (<em>noserubserver.com/MyBuddy</em>)
+    You can either enter an URL or a NoseRub-ID (<em>noserubserver.com/MyBuddy</em>)
     or just a new username, that then will created a private contact which is for your access only!
 </p>
 <p class="infotext">
-    Whenever you have a NoseRub-ID from someone, you should use that to add a new contact.
+    Whenever you have an URL of someone, you should try that to add a new contact. Naturally you would
+    want to add a contact's blog as an URL, or his/her FriendFeed-URL.
 </p>
 <form id="ContactAddForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
-        <legend>Add a contact with a NoseRub-ID</legend>
+        <legend>Add a contact with an URL or NoseRub-ID</legend>
         <?php 
             echo $form->input('Contact.noserub_id', 
-                              array('label' => 'NoseRub-ID',
+                              array('label' => 'NoseRub-ID / URL',
                                     'size'  => 32,
                                     'error' => array(
                                         'user_not_found'      => 'This user could not be found at the other server',
-                                        'no_valid_noserub_id' => 'This is no valid NoseRub-ID. It must contain at least one "/"!',
+                                        'no_valid_noserub_id' => 'This is no valid NoseRub-ID or URL!',
                                         'own_noserub_id'      => 'You cannot add yourself as a contact.',
                               			'unique'              => 'This user has already been added as a contact.'))); 
         ?>

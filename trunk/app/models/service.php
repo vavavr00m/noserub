@@ -128,7 +128,7 @@ class Service extends AppModel {
      * @access 
      */
     function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
-        if(!$feed_url) {
+        if(!$feed_url || strpos($feed_url, '//friendfeed.com/') > 0) {
             return false;
         }
         
@@ -136,6 +136,7 @@ class Service extends AppModel {
         $this->ServiceType->id = $service_type_id;
         $intro = $this->ServiceType->field('intro');
         $token = $this->ServiceType->field('token');
+		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type_id);
         
         vendor('simplepie/simplepie');
         $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
@@ -177,7 +178,7 @@ class Service extends AppModel {
             } else {
             	$item['content'] = $feeditem->get_content();
             }
-            
+			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
     	}
 
@@ -259,14 +260,12 @@ class Service extends AppModel {
         $this->recursive = 0;
         $this->expects('Service');
         $service = $this->findById($service_id);
-        
         $data = array();
         $data['service_id']      = $service_id;
         $data['username']        = $account_username;
         $data['service_type_id'] = $service['Service']['service_type_id'];
         
         $data['account_url'] = $this->getAccountUrl($service_id, $account_username);
-        
         if($service['Service']['has_feed'] == 1) {
             $data['feed_url'] = $this->getFeedUrl($service_id, $account_username);
             $items            = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
@@ -428,7 +427,10 @@ abstract class AbstractService {
 			preg_match($pattern, $url, $matches);
 		
 			if (!empty($matches)) {
-				return $matches[1];
+			    # there was a case, where a trailing "/" was at the
+			    # flickr username. And we forbid to save accounts
+			    # with /, so we can delete them here, when at the end
+			    return trim(urldecode($matches[1]), '/ ');
 			}
 		}
 		
@@ -453,5 +455,46 @@ abstract class AbstractService {
 	
 	final function getServiceId() {
 		return $this->service_id; 
+	}
+}
+
+class ServiceTypeFilterFactory {
+	public static function getFilter($service_type_id) {
+		if ($service_type_id == 1) {
+			return new PhotoFilter();
+		}
+		
+		return new DummyFilter();
+	}
+}
+
+interface IServiceTypeFilter {
+	public function filter($item);
+}
+
+class DummyFilter implements IServiceTypeFilter {
+	public function filter($item) {
+		return $item;
+	}
+}
+
+class PhotoFilter implements IServiceTypeFilter {
+	public function __construct() {
+		vendor('htmlpurifier'.DS.'HTMLPurifier.auto');		
+	}
+	
+	public function filter($item) {
+		$config = HTMLPurifier_Config::createDefault();
+		$config->set('HTML', 'Allowed', 'img[src|alt]');
+
+		$purifier = new HTMLPurifier($config);
+		$clean_html = $purifier->purify($item['content']);
+		$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);
+		$img_src = substr($clean_html, stripos($clean_html, '<img '));
+		$img_src = substr($img_src, 0, stripos($img_src, '>'));
+		
+		$item['content'] = '<a href="' . $item['url'] . '">' . $img_src . '</a>';
+		
+		return $item;
 	}
 }

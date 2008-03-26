@@ -4,7 +4,7 @@
 class ContactsController extends AppController {
     var $uses = array('Contact');
     var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
-    var $components = array('cluster');
+    var $components = array('cluster', 'api');
     
     /**
      * Method description
@@ -80,9 +80,10 @@ class ContactsController extends AppController {
             if(isset($this->params['form']['add'])) {
                 # this is a contact with a NoseRub-ID
                 $identity_username = trim($this->data['Contact']['noserub_id']);
-                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username);
+                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username, false);
+
                 # so, check, if this is really the case
-                if(strpos($identity_username_splitted['username'], '/') === false || $identity_username === '') {
+                if($identity_username === '') {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
                     exit;
@@ -133,9 +134,13 @@ class ContactsController extends AppController {
                     exit;
                 }
                 
-                $contact = array('identity_id'      => $session_identity['id'],
-                                 'with_identity_id' => $new_identity_id);
-                $this->saveContactAndRedirect($contact, $splitted['local_username']);
+                if($this->Contact->add($session_identity['id'], $new_identity_id)) {
+                    $this->flashMessage('success', 'New contact added.');
+    			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+    			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
+			    } else {
+			        $this->flashMessage('error', 'Could not add contact');
+			    }
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
                 # create the username with the special namespace
@@ -150,12 +155,14 @@ class ContactsController extends AppController {
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
                     $saveable = array('is_local', 'username', 'created', 'modified');
-                    # no validation, as we have no password.
-                    if($this->Contact->Identity->save($identity, false, $saveable)) {
-                        $contact = array('identity_id'      => $session_identity['id'],
-                                         'with_identity_id' => $this->Contact->Identity->id);
-                        $this->saveContactAndRedirect($contact, $splitted['local_username']);
-                    }
+                    
+                    if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
+                        $this->flashMessage('success', 'New contact added.');
+        			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+        			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
+    			    } else {
+        			    $this->flashMessage('error', 'Could not add contact');
+        			}
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
                     $this->render();
@@ -497,14 +504,84 @@ class ContactsController extends AppController {
         $this->redirect('/' . $splitted['local_username']);
     }
     
-    private function saveContactAndRedirect($contactData, $localUsername) {
-		$this->Contact->create();
+    /**
+     * returns list of all contacts for this user
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
 
-		$saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-		if($this->Contact->save($contactData, true, $saveable)) {
-			$this->flashMessage('success', 'New contact added.');
-			$this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-			$this->redirect('/' . $localUsername . '/contacts/' . $this->Contact->id . '/edit/');
-		}
+        $sex = array(
+            'img' => array(
+                0 => Router::url('/images/profile/avatar/noinfo.gif'),
+                1 => Router::url('/images/profile/avatar/female.gif'),
+                2 => Router::url('/images/profile/avatar/male.gif')
+            ),
+            'img-small' => array(
+                0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
+                1 => Router::url('/images/profile/avatar/female-small.gif'),
+                2 => Router::url('/images/profile/avatar/male-small.gif')
+            )
+        );
+        
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+
+                                     
+        # get all noserub contacts
+        $this->Contact->recursive = 1;
+        $this->Contact->expects(
+            'Contact.Contact', 
+            'Contact.WithIdentity', 
+            'WithIdentity.WithIdentity', 
+            'NoserubContactType.NoserubContactType'
+        );
+        
+        $conditions = array(
+            'Contact.identity_id' => $identity['Identity']['id'],
+            'WithIdentity.username NOT LIKE "%@%"'
+        );
+        
+        $data = $this->Contact->findAll($conditions, null, 'WithIdentity.last_activity DESC');
+        
+        $contacts = array();
+        foreach($data as $item) {
+            $xfn = array();
+            foreach($item['NoserubContactType'] as $nct) {
+                if($nct['is_xfn']) {
+                    $xfn[] = $nct['name'];
+                }
+            }
+            if(!$xfn) {
+                $xfn[] = 'contact';
+            }
+            
+            if($item['WithIdentity']['photo']) {
+                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
+                   strpos($item['WithIdentity']['photo'], 'https://') === 0) {
+                       # contains a complete path, eg. from not local identities
+                       $profile_photo = $item['WithIdentity']['photo'];
+                   } else {
+                       $profile_photo = $static_base_url . $item['WithIdentity']['photo'] . '.jpg';
+                   }
+            } else {
+                $profile_photo = $sex['img-small'][$item['WithIdentity']['sex']];
+            }
+            
+            $contact = array(
+                'url' => 'http://' . $item['WithIdentity']['username'],
+                'firstname' => $item['WithIdentity']['firstname'],
+                'lastname'  => $item['WithIdentity']['lastname'],
+                'photo'     => $profile_photo,
+                'xfn'       => join(' ', $xfn)
+            );
+            $contacts[] = $contact;
+        }
+        
+        $this->set('data', $contacts);
+        $this->api->render();
     }
 }

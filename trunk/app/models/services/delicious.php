@@ -18,7 +18,7 @@ class DeliciousService extends AbstractService {
 	}
 	
 	function getFeedUrl($username) {
-		return 'http://del.icio.us/rss/'.$username;
+		return 'http://feeds.delicious.com/rss/'.$username;
 	}
 }
 ?>

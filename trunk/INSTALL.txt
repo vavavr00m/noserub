@@ -13,9 +13,9 @@ INSTALL
 0. What do I need?
 ------------------
 You need MySQL and PHP 5. MySQL 5 is strongly advised. PHP 5 must have 
-enabled either the GMP extension or the Bcmath extension plus the GD extension. 
-Your webserver (I assume Apache, never tried something else) should have
-mod_rewrite installed and made available for the directory, NoseRub is
+enabled either the GMP extension or the Bcmath extension plus the GD and curl
+extensions. Your webserver (I assume Apache, never tried something else) should 
+have mod_rewrite installed and made available for the directory, NoseRub is
 installed at. This is important, so that the URLs are the same on all
 servers in the NoseRub "universe".
 

@@ -4,7 +4,7 @@
  * SocialGraph API
  * eg. Google SocialGraph API
  */
-vendor('social_graph/google_api');
+vendor('microformat/google_social_graph');
 App::import('Component', 'Json');
 
 class SocialGraphComponent extends JsonComponent {

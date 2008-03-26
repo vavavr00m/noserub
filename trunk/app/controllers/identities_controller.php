@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     var $uses = array('Identity');
     var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'upload', 'cdn', 'Cookie');
+    var $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api');
     
     /**
      * Displays profile page of an identity
@@ -42,6 +42,22 @@ class IdentitiesController extends AppController {
             if($location_id > 0) {
                 $this->Identity->Location->setTo($session_identity['id'], $location_id);                
                 $this->flashMessage('success', 'Location updated');
+            }
+        }
+
+        # check, if we need to redirect. only, when the user is not
+        # logged in.
+        $this->Identity->recursive = 0;
+        $this->Identity->expects('Identity');
+        $identity = $this->Identity->findByUsername($username);        
+        if(strpos($identity['Identity']['redirect_url'], 'http://')  === 0 ||
+           strpos($identity['Identity']['redirect_url'], 'https://') === 0) {
+            # there is a redirect set
+            if($identity['Identity']['id'] != $session_identity['id']) {
+                $this->redirect($identity['Identity']['redirect_url'], '301');
+            } else {
+                $this->flashMessage('info', 'There is a redirect URL given!');
+                $this->redirect('http://' . $username . '/settings/account/');
             }
         }
         
@@ -194,6 +210,8 @@ class IdentitiesController extends AppController {
      * Displays the social stream of the whole plattform.
      */
     function social_stream() {
+    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
+    	
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
         $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         $session_identity = $this->Session->read('Identity');
@@ -373,7 +391,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -402,8 +420,6 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['longitude'] = $identity['Identity']['longitude'];
             }
             
-            $path = STATIC_DIR . 'avatars' . DS;
-            
             # check, if photo should be removed
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
                 @unlink($path . $identity['Identity']['photo'] . '.jpg');
@@ -415,19 +431,19 @@ class IdentitiesController extends AppController {
             if($this->data['Identity']['photo']['error'] != 0) {
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else {                
-                $filename = $this->upload->add($this->data['Identity']['photo'], $identity, $path);
+                $this->Identity->id = $session_identity['id'];
+                $filename = $this->Identity->uploadPhotoByForm($this->data['Identity']['photo']);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
-                    
                     if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                         # store to CDN
-                        $this->cdn->copyTo($path . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
-                        $this->cdn->copyTo($path . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
+                        $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
+                        $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
                     }
                 }
             }   
              
-            $saveable = array('firstname', 'lastname', 'about', 'photo', 'sex', 'address', 'address_shown', 'latitude', 'longitude', 'modified');
+            $saveable = array('firstname', 'lastname', 'about', 'sex', 'photo', 'address', 'address_shown', 'latitude', 'longitude', 'modified');
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
@@ -579,7 +595,7 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function account_settings() {
+    public function account_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -596,9 +612,125 @@ class IdentitiesController extends AppController {
             $this->ensureSecurityToken();
             
 			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->recursive = 0;
+            $this->Identity->expects('Identity');
+            $this->data = $this->Identity->read();
         }
         
-        $this->set('headline', 'Delete your account');
+        $this->set('headline', 'Manage your account');
+    }
+    
+    public function account_settings_redirect() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
+            $redirect_url = $this->data['Identity']['redirect_url'];
+            if($redirect_url &&
+               strpos($redirect_url, 'http://') !== 0 &&
+               strpos($redirect_url, 'https://') !== 0) {
+                $redirect_url = 'http://' . $redirect_url;
+            }
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->saveField('redirect_url', $redirect_url);
+            $this->flashMessage('success', 'Redirect URL saved.');
+        }
+        
+        $this->redirect('/' . $username . '/settings/account/');
+    }
+    
+    public function account_settings_export() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+            
+        $this->id = $session_identity['id'];
+		$data = $this->Identity->export();
+		$this->set('data', $data);
+        $this->layout = 'empty';
+    }
+    
+    public function account_settings_import() {
+        $this->Session->delete('Import.data');
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        
+        
+        if($this->data) {
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+
+            if($this->data['Import']['data']['error']) {
+                $this->flashMessage('alert', 'There was an error while uploading');
+            } else {
+                $filename = $this->data['Import']['data']['tmp_name'];
+                $data = $this->Identity->readImport($filename);
+                if($data) {
+                    $this->Session->write('Import.data', $data);
+                    $this->set('data', $data);
+                    $this->set('headline', 'Importing NoseRub data');
+                    $this->render();
+                    exit;
+                } else {
+                    $this->flashMessage('alert', 'Couldn\'t import the data');
+                }
+            }
+        } 
+            
+        $this->redirect('/' . $username . '/settings/account/');
+    }
+    
+    public function account_settings_import_data() {
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+            # this is not the logged in user
+            $url = $this->url->http('/');
+            $this->redirect($url, null, true);
+        }
+        $data = $this->Session->read('Import.data');
+        if(!$data) {
+            $this->flashMessage('alert', 'Couldn\'t import the data!');
+        } else {
+            $this->Identity->id = $session_identity['id'];
+            if($this->Identity->import($data)) {
+                $this->flashMessage('success', 'Import completed');
+            } else {
+                $this->flashMessage('alert', 'There was an error during import!');
+            }
+        }
+            
+        $this->redirect('/' . $username . '/settings/account/');
     }
     
     /**
@@ -608,7 +740,7 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function login() {
+    public function login() {
         $this->checkSecure();
         $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
         
@@ -644,7 +776,7 @@ class IdentitiesController extends AppController {
     
     function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
-    	$returnTo = $this->webroot.'/pages/login/withopenid';
+    	$returnTo = $this->webroot.'pages/login/withopenid';
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
@@ -722,7 +854,7 @@ class IdentitiesController extends AppController {
     
     function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
-		$returnTo = $this->webroot.'/pages/register/withopenid';
+		$returnTo = $this->webroot.'pages/register/withopenid';
     	
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
@@ -848,7 +980,23 @@ class IdentitiesController extends AppController {
             return false;
         }
         
-        return $this->Identity->sync($identity_id, $identity['Identity']['username']);
+        $result = $this->Identity->sync($identity_id, $identity['Identity']['username']);
+        if($result) {
+            # check, if there is a new photo
+            $this->Identity->id = $identity_id;
+            $this->recursive = 0;
+            $data = $this->Identity->read();
+            if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
+                $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
+                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                    # store to CDN
+                    $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
+                    $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');
+                }
+            }
+        }
+        
+        return $result;
     }
     
     /**
@@ -891,6 +1039,12 @@ class IdentitiesController extends AppController {
         $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
+    }
+    
+    public function yadis() {
+    	$this->layout = 'xml';
+    	header('Content-type: application/xrds+xml');
+		$this->set('server', Router::url('/', true));
     }
     
     private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
@@ -945,5 +1099,57 @@ class IdentitiesController extends AppController {
 	    $this->Session->delete('Registration.openid_identity');
 	    $this->Session->delete('Registration.openid_server_url');
 	    $this->Session->delete('Registration.email');
+    }
+    
+    /**
+     * returns a "vcard" of the authenticated user
+     */
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $this->Identity->recursive = 1;
+        $this->Identity->expects('Location');
+        $this->Identity->id = $identity['Identity']['id'];
+        $data = $this->Identity->read();
+        $this->set(
+            'data', 
+            array(
+                'firstname'     => $data['Identity']['firstname'],
+                'lastname'      => $data['Identity']['lastname'],
+                'url'           => 'http://' . $data['Identity']['username'],
+                'photo'         => $data['Identity']['photo'],
+                'about'         => $data['Identity']['about'],
+                'address'       => $data['Identity']['address_shown'],
+                'last_location' => array(
+                    'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
+                    'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
+                )
+            )
+        );
+        
+        $this->api->render();
+    }
+    
+    /**
+     * returns information about the last location
+     */
+    public function api_get_last_location() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $this->Identity->recursive = 1;
+        $this->Identity->expects('Identity', 'Location');
+        $this->Identity->id = $identity['Identity']['id'];
+        $data = $this->Identity->read();
+        $this->set(
+            'data', 
+            array(
+                'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
+                'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
+            )
+        );
+        
+        $this->api->render();
     }
 }

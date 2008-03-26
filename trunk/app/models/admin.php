@@ -32,10 +32,10 @@ class Admin extends AppModel {
                                'values' => array(true, false))
                           );
     
-    var $directories;
+    private $directories;
     
     function __construct() {
-    	$this->directories = array('tmp', 'webroot'.DS.'static'.DS.'avatars');
+    	$this->directories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
     }
     
     /**
@@ -44,8 +44,8 @@ class Admin extends AppModel {
     function checkWriteable() {
         $out = array();
         foreach($this->directories as $directory) {
-            if(!is_writeable(APP.$directory)) {
-                $out[] = APP.$directory;
+            if(!is_writeable($directory)) {
+                $out[] = $directory;
             }
         }
         
@@ -95,6 +95,10 @@ class Admin extends AppModel {
     function checkExtensions() {
         $result = array();
     	
+        if (!extension_loaded('curl')) {
+        	$result = am($result, array('curl' => 'needed for communicating with other servers'));
+        }
+        
     	if (!extension_loaded('gd')) {
         	$result = am($result, array('GD' => 'needed for image handling')); 
         }

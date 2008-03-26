@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity');
+    var $hasMany = array('Account', 'Contact', 'ContactType', 'OpenidSite', 'Location', 'Activity', 'Syndication');
     var $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
     
@@ -27,6 +27,8 @@ class Identity extends AppModel {
     }
 
     function validateUniqueOpenID($value, $params = array()) {
+        $this->recursive = 0;
+        $this->expects('Identity');
     	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
     		return false;
     	} else {
@@ -66,7 +68,7 @@ class Identity extends AppModel {
             $email == '') {
             return true;
         }
-        list($local, $host) = explode('@', $email);
+        list($local, $host) = explode('@', $email['email']);
         return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
     }
     
@@ -82,7 +84,7 @@ class Identity extends AppModel {
         # afterFinds could be catched, too
         if(is_array($data)) {
             if(isset($data['username'])) {
-                $username = Identity::splitUsername($data['username']);
+                $username = Identity::splitUsername($data['username'], false);
                 $data['local_username']  = $username['local_username'];
                 $data['single_username'] = $username['single_username'];
                 $data['username']        = $username['username'];
@@ -95,7 +97,7 @@ class Identity extends AppModel {
                     $checkModels = array('WithIdentity', 'Identity');
                     foreach($checkModels as $modelName) {
                         if(isset($item[$modelName]['username'])) {
-                            $username = Identity::splitUsername($item[$modelName]['username']);
+                            $username = Identity::splitUsername($item[$modelName]['username'], false);
                             $item[$modelName]['local_username']  = $username['local_username'];
                             $item[$modelName]['single_username'] = $username['single_username'];
                             $item[$modelName]['username']        = $username['username'];
@@ -284,87 +286,137 @@ class Identity extends AppModel {
             return false;
         }
 
-        preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
-        preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
-        preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
-        preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
-        preg_match('/<foaf:img>(.*)<\/foaf:img>/i', $content, $photo);
-        preg_match('/<foaf:address>(.*)<\/foaf:address>/i', $content, $address);
-        preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
-        preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
-        preg_match('/<foaf:about><!\[CDATA\[(.*)\]\]><\/foaf:about>/ims', $content, $about);
-        preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
-        preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
-        preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
-        
-        
-        #echo 'NOSERUB-ID<pre>'; print_r($noserub_id); echo '</pre>';
-        #echo 'FIRSTNAME<pre>'; print_r($firstname); echo '</pre>';
-        #echo 'LASTNAME<pre>'; print_r($lastname); echo '</pre>';
-        #echo 'GENDER<pre>'; print_r($gender); echo '</pre>';
-        #echo 'PHOTO<pre>'; print_r($photo); echo '</pre>';
-        #echo 'ADDRESS<pre>'; print_r($address); echo '</pre>';
-        #echo 'LATITUDE<pre>'; print_r($latitude); echo '</pre>';
-        #echo 'LONGITUDE<pre>'; print_r($longitude); echo '</pre>';
-        #echo 'ABOUT<pre>'; print_r($about); echo '</pre>';
-        #echo 'ACCOUNTS<pre>'; print_r($accounts); echo '</pre>';
-        #echo 'SERVICES<pre>'; print_r($services); echo '</pre>';
-        #echo 'USERNAMES<pre>'; print_r($usernames); echo '</pre>';
-        
-        if(empty($noserub_id)) {
-            return false;
-        }
-        
         $result = array('accounts' => array(),
                         'Identity' => array());
         
-        $result['Identity']['firstname'] = $firstname ? $firstname[1] : '';
-        $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
-        if($gender) {
-            switch($gender[1]) {
-                case 'female': $result['Identity']['sex'] = 1; break;
-                case 'male'  : $result['Identity']['sex'] = 2; break;
-                default      : $result['Identity']['sex'] = 0;
-            }
-        } else {
-            $result['identity']['sex'] = 0;
-        }
-        $result['Identity']['photo']         = $photo     ? $photo[1]     : '';
-        $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
-        $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
-        $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
-        $result['Identity']['about']         = $about     ? html_entity_decode($about[1], ENT_COMPAT, 'UTF-8') : '';
-        
-        if(is_array($accounts)) {
-            # gather all account data
-            foreach($accounts[1] as $idx => $account_url) {
-                $account = array();
-                
-                if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
-                    # this is service_id 8 => any RSS-Feed
-                    $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
-                    $account['account_url'] =  $account_url;
-                    $account['service_id']  = 8;
-                    $splitted = split(':', $services[1][$idx]);
-                    $account['service_type_id'] = $splitted[1];
-                    $account['username'] = 'RSS-Feed';
-                } else {
-                    $account['account_url'] = $account_url;
-                    $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
-                    $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
-                    $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
-                    $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
-                    $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
-                    $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
+        preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
+        if(empty($noserub_id)) {
+            vendor('microformat/hcard');
+            vendor('microformat/xfn');
+            $hcard_obj = new hcard;
+        	$hcards = $hcard_obj->getByURL($url);
+        	$hcard = $this->getOwner($hcards, $url);
+        	if($hcard) {
+        	    if(!isset($hvcard['n'])) {
+        	        $result['Identity']['firstname']     = '';
+                    $result['Identity']['lastname']      = $hcard['fn'];
+        	        $this->log(print_r($hcard, 1));
+        	    } else {
+                    $result['Identity']['firstname']     = $hcard['n']['given-name'];
+                    $result['Identity']['lastname']      = $hcard['n']['family-name'];
+                    $result['Identity']['gender']        = 0;
                 }
                 
-                $result['accounts'][] = $account; 
-            }
+                # because of bug in hKit for relative URLs
+                $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
+                $photo = str_replace(':///', '', $photo);
+                if(strpos($photo, 'ttp://') === false) {
+                    $photo = $url . '/' . $photo;
+                }
+                $result['Identity']['photo'] = $photo;
+                
+                $result['Identity']['address_shown'] = '';
+                $result['Identity']['latitude']      = 0;
+                $result['Identity']['longitude']     = 0;
+        	}
+        	$xfn = new xfn;
+        	$xfn = $xfn->getByUrl($url);
+        	$splitted = $this->splitUsername($url, false);
+        	foreach($xfn as $xfn_url) {
+        	    $serviceData = $this->Account->Service->detectService($xfn_url);
+        	    if(!$serviceData) {
+        	        $serviceData = array(
+    		            'service_id' => 8,
+    		            'username'   => $xfn_url
+    		        );
+        	    }
+        	    $account = $this->Account->Service->getInfoFromService(
+        	        $splitted['username'], 
+        	        $serviceData['service_id'], 
+        	        $serviceData['username']
+        	    );
+        	    if(!$account) {
+        	        # as we don't know the service type id, we set the id to 3 for Text/Blog 
+        			$account = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $xfn_url);
+        		}
+        		if($account) {	
+                    $result['accounts'][] = $account; 
+                }
+        	}
         } else {
-            return false;
+            preg_match('/<foaf:firstname>(.*)<\/foaf:firstname>/i', $content, $firstname);
+            preg_match('/<foaf:surname>(.*)<\/foaf:surname>/i', $content, $lastname);
+            preg_match('/<foaf:gender>(.*)<\/foaf:gender>/i', $content, $gender);
+            preg_match('/<foaf:img>(.*)<\/foaf:img>/i', $content, $photo);
+            preg_match('/<foaf:address>(.*)<\/foaf:address>/i', $content, $address);
+            preg_match('/<geo:lat>(.*)<\/geo:lat>/i', $content, $latitude);
+            preg_match('/<geo:long>(.*)<\/geo:long>/i', $content, $longitude);
+            preg_match('/<foaf:about><!\[CDATA\[(.*)\]\]><\/foaf:about>/ims', $content, $about);
+            preg_match_all('/<foaf:OnlineAccount rdf:about="(.*)".*\/>/i', $content, $accounts);
+            preg_match_all('/<foaf:accountServiceHomepage rdf:resource="(.*)".*\/>/iU', $content, $services);
+            preg_match_all('/<foaf:accountName>(.*)<\/foaf:accountName>/i', $content, $usernames);
+               
+            $result['Identity']['firstname'] = $firstname ? $firstname[1] : '';
+            $result['Identity']['lastname']  = $lastname  ? $lastname[1]  : '';
+            if($gender) {
+                switch($gender[1]) {
+                    case 'female': $result['Identity']['sex'] = 1; break;
+                    case 'male'  : $result['Identity']['sex'] = 2; break;
+                    default      : $result['Identity']['sex'] = 0;
+                }
+            } else {
+                $result['identity']['sex'] = 0;
+            }
+            $result['Identity']['photo']         = $photo     ? $photo[1]     : '';
+            $result['Identity']['address_shown'] = $address   ? $address[1]   : '';
+            $result['Identity']['latitude']      = $latitude  ? $latitude[1]  : 0;
+            $result['Identity']['longitude']     = $longitude ? $longitude[1] : 0;
+            
+            if(is_array($accounts)) {
+                # gather all account data
+                foreach($accounts[1] as $idx => $account_url) {
+                    $account = array();
+
+                    if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
+                        # this is service_id 8 => any RSS-Feed
+                        $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
+                        $account['account_url'] =  $account_url;
+                        $account['service_id']  = 8;
+                        $splitted = split(':', $services[1][$idx]);
+                        $account['service_type_id'] = $splitted[1];
+                        $account['username'] = 'RSS-Feed';
+                    } else {
+                        $account['account_url'] = $account_url;
+                        $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
+                        $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
+                        $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
+                        $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
+                        $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
+                        $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
+                    }
+
+                    $result['accounts'][] = $account; 
+                }
+            }
         }
         
         return $result;
+    }
+    
+    private function getOwner($hcards, $url) {
+        if(count($hcards) > 1) {
+            foreach($hcards as $hcard) {
+                if(isset($hcard['uid']) && isset($hcard['url']) && 
+                   $hcard['uid'] && $hcard['url']) {
+                    if(in_array($url, $hcard['url']) || in_array($url . '/', $hcard['url'])) {
+                        return $hcard;
+                    }
+                }
+            }
+        }
+        
+        # just take the first one...
+        return isset($hcards[0]) ? $hcards[0] : false;
     }
     
     /**
@@ -457,7 +509,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function splitUsername($username) {
+    public function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
         $username = $this->removeHttpWww($username);
         
@@ -471,7 +523,7 @@ class Identity extends AppModel {
             return false;
         }
         
-        if(count($splitted) == 1) {
+        if(count($splitted) == 1 && $assume_local) {
             # just a username was given. so we assume it should
             # be for this server
             $local_username = $splitted[0];
@@ -481,7 +533,11 @@ class Identity extends AppModel {
         } else {
             $servername = $splitted[0];
             $local_username = array_pop($splitted);
-            $username = join('/', $splitted) . '/' . $local_username;
+            $username = join('/', $splitted);
+            if($username) {
+                $username .= '/';
+            } 
+            $username .= $local_username;
         }
 
         # test, wether we have a namespace here, or not
@@ -496,7 +552,7 @@ class Identity extends AppModel {
                         'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
                         'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
                         'servername'      => $servername,
-                        'local'           => $local);
+                        'local'           => $local ? 1 : 0);
         
         return $result;
     }
@@ -563,15 +619,15 @@ class Identity extends AppModel {
      */
     function sync($identity_id, $username) {
         $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
-        # get the data from the remote server. try https:// and
-        # http://
-        $protocols = array('https://', 'http://');
+        # get the data from the remote server. try http:// and
+        # http2://
+        $protocols = array('http://', 'https://');
         foreach($protocols as $protocol) {
             $data = $this->parseNoseRubPage($protocol . $username);
             if($data) {
                 # we had success, so we don't need to try
                 # the remaining protocol(s)
-                continue;
+                break;
             }
         }
         
@@ -582,7 +638,7 @@ class Identity extends AppModel {
         
         # update all accounts for that identity
         # @todo: not so nice to update another model here
-        $this->Account->update($identity_id, $data['accounts']);
+        $this->Account->replace($identity_id, $data['accounts']);
 
         # update 'last_sync' field and also identity information
         $this->id = $identity_id;
@@ -599,7 +655,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function verify($hash) {
+    public function verify($hash) {
         # check, if there is a username with that hash
         $this->recursive = 0;
         $this->expects = array('Identity');
@@ -610,6 +666,224 @@ class Identity extends AppModel {
             return $this->saveField('hash', '');
         } else {
             return false;
+        }
+    }
+    
+    public function export() {
+        $this->recursive = 0;
+        $data = $this->read();
+        $vcard = $data['Identity'];  
+        $vcard['username'] = $vcard['local_username'];      
+        $to_remove = array(
+            'id', 'is_local', 'password', 'openid', 'openid_identity', 
+            'openid_server_url', 'email', 'last_location_id', 
+            'api_hash', 'api_active', 'hash', 'security_token',
+            'last_activity', 'last_sync', 'created', 'modified',
+            'local_username', 'single_username', 'namespace',
+            'local', 'servername', 'name', 'overview_filters',
+            'frontpage_updates', 'allow_emails'
+        );
+        foreach($to_remove as $key) {
+            unset($vcard[$key]);
+        }
+        $server = array(
+            'base_url' => trim($this->removeHttpWww(FULL_BASE_URL . Router::url('/')), '/'),
+            'version'  => 1
+        );
+        
+        # make the photo hash an external url
+        if($vcard['photo']) {
+            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+            } else {
+                $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+            }
+            $vcard['photo'] = $static_base_url . $vcard['photo'] . '.jpg';
+        }
+    
+        return array(
+            'server'    => $server,
+            'vcard'     => $vcard,
+            'contacts'  => $this->Contact->export($this->id),
+            'accounts'  => $this->Account->export($this->id),
+            'locations' => $this->Location->export($this->id)
+        );
+    }
+    
+    public function import($data) {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        if(!isset($data['server']['version']) || $data['server']['version'] != 1) {
+            return false;
+        }
+
+        $vcard = isset($data['vcard']) ? $data['vcard'] : null;
+        if(!$vcard) {
+            return false;
+        }
+        
+        $username = isset($vcard['username']) ? $vcard['username'] : '';
+        if(!$username) {
+            return false;
+        }
+        
+        # get current identity, so we can check what
+        # to update
+        $this->recursive = 0;
+        $this->expects('Identity');
+        $identity = $this->read();
+        $identity = $identity['Identity'];
+        $saveable = array();
+        if(!$identity['firstname'])     { $saveable[] = 'firstname'; }
+        if(!$identity['lastname'])      { $saveable[] = 'lastname'; }
+        if(!$identity['about'])         { $saveable[] = 'about'; }
+        if(!$identity['address'])       { $saveable = array_merge($saveable, array('address', 'latitude', 'longitude'));}
+        if(!$identity['address_shown']) { $saveable[] = 'address_shown'; }
+        if(!$identity['birthday'])      { $saveable[] = 'birthday'; }
+        if(!$identity['sex'])           { $saveable[] = 'sex'; }
+        $vcard['openid'] = null;
+        $saveable[] = 'openid';
+        if(!$this->save($vcard, false, $saveable)) {
+            $this->log('error on saving vcard');
+            return false;
+        }
+        if(!$identity['photo']) {
+            if($vcard['photo']) {
+                $this->uploadPhotoByUrl($vcard['photo']);
+            }
+        }
+        
+        $contacts = isset($data['contacts']) ? $data['contacts'] : array();
+        if(!$this->Contact->import($this->id, $contacts)) {
+            $this->log('error on importing contacts');
+            return false;
+        }
+        
+        $accounts = isset($data['contacts']) ? $data['accounts'] : array();
+        if(!$this->Account->import($this->id, $accounts)) {
+            $this->log('error on importing accounts');
+            return false;
+        }
+        
+        $locations = isset($data['locations']) ? $data['locations'] : array();
+        if(!$this->Location->import($this->id, $locations)) {
+            $this->log('error on importing locations');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function readImport($filename) {
+        $content = @file_get_contents($filename);
+        if(!$content) {
+            return false;
+        }
+        vendor('Zend/Json');
+        $zend_json = new Zend_Json();
+        $zend_json->useBuiltinEncoderDecoder = true;
+        
+        $data = $zend_json->decode($content);
+
+        if(!is_array($data) || 
+           !isset($data['server']['base_url']) || 
+           !isset($data['vcard']['username'])) {
+            return false;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     */
+    private function uploadPhoto($local_filename) {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        $imageinfo = getimagesize($local_filename);
+        switch($imageinfo[2]) {
+            case IMAGETYPE_GIF:
+                $picture = imageCreateFromGIF($local_filename);
+                break;
+                
+            case IMAGETYPE_JPEG:
+                $picture = imageCreateFromJPEG($local_filename);
+                break;
+                
+            case IMAGETYPE_PNG:
+                $picture = imageCreateFromPNG($local_filename);
+                break;
+                
+            default:
+                $picture = null;
+        }
+        
+        if($picture) {
+            $filename = $this->field('photo');
+            if(!$filename) {
+                # get random name for new photo and make sure it is unqiue
+                $filename = '';
+                $seed = $this->id . $local_filename;
+                while($filename == '') {
+                    $filename = md5($seed);
+                    if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
+                        $filename = '';
+                        $seed = md5($seed . time());
+                    }
+                }
+                $this->saveField('photo', $filename);
+            }
+            
+            $original_width  = $imageinfo[0];
+            $original_height = $imageinfo[1];
+
+            $this->save_scaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
+            $this->save_scaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            
+            return $filename;
+        }
+        
+        return false;
+    }
+    
+    public function uploadPhotoByForm($upload_form) {
+       return $this->uploadPhoto($upload_form['tmp_name']);
+    }
+       
+    public function uploadPhotoByUrl($url) {
+        # get the file first
+        $content = @file_get_contents($url);
+        if($content) {
+            $filename = AVATAR_DIR . $this->id . '.tmp';
+            file_put_contents($filename, $content);
+            $this->saveField('photo', '');
+            $result = $this->uploadPhoto($filename);
+            @unlink($filename);
+            return $result;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Method description
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    function save_scaled($picture, $original_width, $original_height, $width, $height, $filename) {
+        if($original_width==$width && $original_height==$height) {
+            # original picture
+            imagejpeg($picture, $filename, 100); # best quality
+        } else {
+            # resampling picture
+            $resampled = imagecreatetruecolor($width, $height);
+            imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
+            imagejpeg($resampled, $filename, 100); # best quality 
         }
     }
     

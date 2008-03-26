@@ -141,7 +141,8 @@ class AccountsController extends AppController {
 		    } else {
 		        $serviceData = array(
 		            'service_id' => $this->data['Account']['service_id'],
-		            'username'   => $this->data['Account']['username']);
+		            'username'   => $this->data['Account']['username']
+		        );
 		    }
 		    
     		if($serviceData) {
@@ -216,7 +217,7 @@ class AccountsController extends AppController {
                     # save the new account
                     $data['identity_id'] = $identity_id;
 					
-                    if (isset($this->data['Account']['title']) and !empty($this->data['Account']['title'])) {
+                    if (isset($this->data['Account']['title']) && !empty($this->data['Account']['title'])) {
 						$data['title'] = $this->data['Account']['title'];
 					}
                     
