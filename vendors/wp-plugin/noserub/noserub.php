@@ -48,14 +48,44 @@ function nr_show_NoseRub_location(){
 	print("Noserub: ".$url);
 }
 
-function nr_update_locations(){
+function nr_update_locations($cached = true){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
 	$urlex = explode("/",$nr_url);
 	$nr_domain = $urlex["2"];
 	$nr_user = $urlex["3"];
 	$locations = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/locations";
-	nr_apicall($locations,"locations");
+	nr_apicall($locations,"locations",$cached);
+}
+
+function nr_update_vcard($cached = true){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$vcard = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/vcard";
+	nr_apicall($vcard,"vcard",$cached);
+}
+
+function nr_update_contacts($cached = true){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$contacts = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/contacts";
+	nr_apicall($contacts,"contacts",$cached);
+}
+
+function nr_set_location($id){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$locations = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/locations/set/$id";
+	nr_apicall($locations,"setlocation",false);
 }
 
 function nr_update_feeds(){
@@ -77,14 +107,41 @@ function nr_apicall($nrapi_url,$nrapi_name = false,$cached = true){
 	}
 	$nrapi_lastcall = get_option("nr_".$nrapi_name."_lastcall");
 	if(($cached == false)||((time()-$nrapi_lastcall) > 3600)){
-		$data = file_get_contents($nrapi_url);
+		if(nr_url_exists($nrapi_url)){
+			$data = file_get_contents($nrapi_url);
+		} else {
+			echo '<div id="message" class="error fade">';
+			echo '<p>There was an error: Either your NoseRub is down or your API-Key is wrong.</p>';
+			echo '</div>';
+		}
 		if($data){
 			update_option("nr_".$nrapi_name."_data",$data);
 			update_option("nr_".$nrapi_name."_lastcall",time());
 		}
 	}
 	$data = unserialize(get_option("nr_".$nrapi_name."_data"));
+	if($data["code"] > 0){
+		echo '<div id="message" class="error fade">';
+		echo '<p>There was an error:'.$data["msg"].'</p>';
+		echo '</div>';
+	}
 	return $data;
+}
+
+function nr_url_exists($url) {
+    // Version 4.x supported
+    $handle   = curl_init($url);
+    if (false === $handle)
+    {
+        return false;
+    }
+    curl_setopt($handle, CURLOPT_HEADER, false);
+    curl_setopt($handle, CURLOPT_FAILONERROR, true);  // this works
+    curl_setopt($handle, CURLOPT_NOBODY, true);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
+    $connectable = curl_exec($handle);
+    curl_close($handle);   
+    return $connectable;
 }
 
 add_action('admin_menu','nr_Noserub_menu');
