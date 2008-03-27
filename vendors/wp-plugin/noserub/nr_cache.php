@@ -28,7 +28,11 @@
 		}
 		
 		function mtime(){
-			return get_option("nr_feedache_ts");
+			$x = get_option("nr_feedache_ts");
+			if(!$x){
+				$x = false;
+			}
+			return $x;
 		}
 		
 		function touch(){
