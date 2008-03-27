@@ -2,28 +2,36 @@
 /*
 Plugin Name: NoseRub for WordPress
 Plugin URI: http://noserub.com/
-Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.
-Version: 0.0.1
+Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.<br />We advise you to install the <a href="http://wordpress.org/extend/plugins/simplepie-core">SimplePie Core</a> plugin, too. If you don't, NoseRub will still work, though.
+Version: 0.0.2
 Author: Dominik Schwind
 Author URI: http://identoo.com/dominik
 */
-
-require_once (ABSPATH . WPINC . '/rss.php');
-
 function the_NoseRub_lifestream(){
+	if(!class_exists('SimplePie')){
+		require_once(dirname(__FILE__)."/simplepie/simplepie.inc");
+	}
+	
+	require_once(dirname(__FILE__)."/nr_cache.php");
+	
 	$nr_url = get_option("nr_url");
 	$nr_feed_url = get_option("nr_feed");
 	$urlex = explode("/",$nr_url);
 	$nr_domain = $urlex["2"];
 	$nr_feed = "http://".$nr_domain.$nr_feed_url;
-	$rss = fetch_rss($nr_feed);
-//	print_r($rss);
-	foreach($rss->items as $item){
-		$i = "<div class='nr_item'>
-			<a href='".$item["link"]."'>".$item["title"]."</a><br />
-			".strftime("%c",strtotime($item["pubdate"]))."
-		</div>";
-		print($i);
+	$feed = new SimplePie();
+	$feed->set_cache_class("NoseRub_cache");
+	$feed->set_feed_url($nr_feed);
+	$feed->init();
+	$feed->handle_content_type();
+	foreach($feed->get_items() as $item){ ?>
+		<h3 class="title"><a href="<?php echo $item->get_permalink(); ?>"><?php echo $item->get_title(); ?></a></h3>
+
+		<?php echo $item->get_content(); ?>
+
+		<p class="footnote"><?php echo $item->get_date(); ?></p>
+		
+		<?php
 	}
 }
 
@@ -126,6 +134,12 @@ function nr_update_NoseRub_options() {
 	}
 }
 function nr_print_NoseRub_options_form(){
+	if(!class_exists('SimplePie')){
+		echo '<div class="notice"><p>You might want to install the ';
+		echo '<a href="http://wordpress.org/extend/plugins/simplepie-core">SimplePie Core</a> plugin to avoid ';
+		echo 'possible problems with other plugins.';
+		echo '</p</div>';
+	}
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
 	$nr_feed = get_option("nr_feed");
