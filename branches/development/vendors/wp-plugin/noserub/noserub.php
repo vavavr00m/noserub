@@ -42,10 +42,52 @@ function the_NoseRub_lifestream(){
 	}
 }
 
-function nr_show_NoseRub_location(){
-	$apikey = get_option("nr_apikey");
-	$url = get_option("nr_url");
-	print("Noserub: ".$url);
+function widget_NoseRub_lifestream($args){
+	extract($args);
+	echo $before_widget;
+	echo $before_title . 'NoseRub Lifestream'. $after_title;
+	if(!class_exists('SimplePie')){
+		require_once(dirname(__FILE__)."/simplepie/simplepie.inc");
+	}
+	
+	require_once(dirname(__FILE__)."/nr_cache.php");
+	
+	$nr_url = get_option("nr_url");
+	$nr_feed_url = get_option("nr_feed");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	if(substr($nr_feed_url,0,7) != "http://"){
+		$nr_feed = "http://".$nr_domain.$nr_feed_url;
+	} else {
+		$nr_feed = $nr_feed_url;
+	}
+	$feed = new SimplePie();
+	$feed->set_cache_class("NoseRub_cache");
+	$feed->set_feed_url($nr_feed);
+	$feed->init();
+	$feed->handle_content_type();
+	echo "<ul>";
+	foreach($feed->get_items() as $item){
+		echo "<li><a href='".$item->get_permalink()."'>".$item->get_title()."</a></li>\n";
+	}
+	echo "</ul>";
+	echo $after_widget;
+}
+
+function widget_NoseRub_location($args){
+	extract($args);
+	nr_update_locations();
+	echo $before_widget;
+	echo $before_title . 'NoseRub Location'. $after_title;
+	$nr_locations = get_option("nr_locations_data");
+	$nr_locs = unserialize($nr_locations);
+	$nr_loc_array = array();
+	foreach($nr_locs["data"]["Locations"] as $nr_loc){
+		$nr_loc_array[$nr_loc["Location"]["id"]] = $nr_loc["Location"]["name"];
+	}
+	$nr_loc_now = $nr_locs["data"]["Identity"]["last_location_id"];
+	echo "I am at ".$nr_loc_array[$nr_loc_now];
+	echo $after_widget;
 }
 
 function nr_update_locations($cached = true){
@@ -144,7 +186,13 @@ function nr_url_exists($url) {
     return $connectable;
 }
 
+function nr_init(){
+	register_sidebar_widget('NoseRub Lifestream','widget_NoseRub_lifestream');
+	register_sidebar_widget('NoseRub Location','widget_NoseRub_location');
+}
+
 add_action('admin_menu','nr_Noserub_menu');
+add_action('widgets_init','nr_init');
 
 register_activation_hook(__FILE__,"nr_set_NoseRub_options");
 register_deactivation_hook(__FILE__,"nr_unset_NoseRub_options");
