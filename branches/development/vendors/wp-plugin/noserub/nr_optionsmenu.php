@@ -8,6 +8,12 @@ function nr_Noserub_options () {
 		nr_update_NoseRub_options();
 	}
 	nr_print_NoseRub_options_form();
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	if(($nr_apikey != "")&&($nr_url != "")){
+		nr_print_NoseRub_vcard();
+		nr_print_NoseRub_contacts();
+	}
 	echo '</div>';
 }
 function nr_Noserub_menu () {
@@ -25,12 +31,6 @@ function nr_update_NoseRub_options() {
 		update_option('nr_apikey', $_REQUEST['nr_apikey']);
 		$updated = true;
 	}
-	if ($_REQUEST['nr_feed']) {
-		update_option('nr_feed', $_REQUEST['nr_feed']);
-		delete_option("nr_feedcache");
-		delete_option("nr_feedcache_ts");
-		$updated = true;
-	}
 	if ($_REQUEST['nr_url']) {
 		$nrurl = trim($_REQUEST['nr_url']);
 		if((strpos($nrurl,"http://") === FALSE)||(strpos($nrurl,"http://") > 0)){
@@ -39,9 +39,16 @@ function nr_update_NoseRub_options() {
 		update_option('nr_url', $_REQUEST['nr_url']);
 		$updated = true;
 	}
+	if ($_REQUEST['nr_feed']) {
+		update_option('nr_feed', $_REQUEST['nr_feed']);
+		delete_option("nr_feedcache");
+		delete_option("nr_feedcache_ts");
+		$updated = true;
+	}
 	if($_REQUEST['nr_location']){
 		if(is_numeric($_REQUEST['nr_location'])){
-			
+			nr_set_location($_REQUEST['nr_location']);
+			nr_update_locations(false);
 		}
 	}
 	if ($updated) {
@@ -64,43 +71,63 @@ function nr_print_NoseRub_options_form(){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
 	$nr_feed = get_option("nr_feed");
-	$f = "<form method='post'>
-		<table class='optiontable'>
-		<tr>
+	$f .= "<h3>Settings</h3>";
+	$f .= "<form method='post'>
+		<table class='form-table'>
+		<tr valign='top'>
 			<th scope='row'>Noserub-URL:</th>
 			<td><input type='text' id='nr_url' name='nr_url' value='".$nr_url."'/></td>
 		</tr>
-		<tr>
+		<tr valign='top'>
 			<th scope='row'>Noserub API-key:</th>
 			<td><input type='text' id='nr_apikey' name='nr_apikey' value='".$nr_apikey."'/></td>
-		</tr>
-		</table>
-		<p class='submit'>
+		</tr>";
+	$f .= "</table>";
+	$f .= "<p class='submit'>
 			<input type='submit' value='Update Options &raquo;' name='submit' />
 		</p>";
+	$f .= "</form>";
 	if(($nr_apikey != "")&&($nr_url != "")){
-		nr_update_locations();
+		$f .= "<h3>Location</h3>";
+		$f .= "<form method='post'>
+			<table class='form-table'>";
+
+		nr_update_locations(false);
 		$nr_locations = get_option("nr_locations_data");
 		$nr_locs = unserialize($nr_locations);
-		$l = "<!-- <table class='optiontable'>
-			<tr>
-				<th scope='row'>Locations:</th>
+		$nr_loc_array = array();
+		foreach($nr_locs["data"]["Locations"] as $nr_loc){
+			$nr_loc_array[$nr_loc["Location"]["id"]] = $nr_loc["Location"]["name"];
+		}
+		$nr_loc_now = $nr_locs["data"]["Identity"]["last_location_id"];
+		$l = "<tr>
+				<th scope='row'>Location:</th>
 				<td>
 				<select name='nr_location' size='1'>
 					<option value=''></option>";
-		foreach($nr_locs["data"] as $ns_loc){
-			$l.="<option value='".$ns_loc["Location"]["id"]."'>".$ns_loc["Location"]["name"]."</option>";
+		foreach($nr_loc_array as $nr_loc_id => $nr_loc_name){
+			$l.="<option value='".$nr_loc_id."'";
+			if($nr_loc_id == $nr_loc_now){
+				$l.= " selected='selected' ";
+			}
+			$l.=">".$nr_loc_name."</option>";
 		}
-		$l.="</select>
+		$l.="</select><br />Where are you <em>now</em>?
 				</td>
-			</tr>
-		</table> -->";
+			</tr>";
 		$f .= $l;
+		$f .= "</table>";
+		$f .= "<p class='submit'>
+				<input type='submit' value='Update Options &raquo;' name='submit' />
+			</p>";
+		$f .= "</form>";
+		$f .= "<h3>Feed</h3>";
+		$f .= "<form method='post'>
+			<table class='form-table'>";
 		nr_update_feeds();
 		$nr_feeds = get_option("nr_feeds_data");
 		$nr_feeds = unserialize($nr_feeds);
-		$l = "<table class='optiontable'>
-			<tr>
+		$l = "<tr>
 				<th scope='row'>Feed:</th>
 				<td>
 				<select name='nr_feed' size='1'>
@@ -112,13 +139,52 @@ function nr_print_NoseRub_options_form(){
 			}
 			$l.=">".$nr_feeddata["Syndication"]["name"]."</option>";
 		}
-		$l.="</select>
+		$l.="</select><br />Which feed do you want to use?
 				</td>
-			</tr>
-		</table>";
+			</tr>";
 		$f .= $l;
+		$f .= "</table>";
+		$f .= "<p class='submit'>
+				<input type='submit' value='Update Options &raquo;' name='submit' />
+			</p>";
+		$f .= "</form>";
 	}
-	$f .= "</form>";
 	print $f;
 }
+
+function nr_print_NoseRub_vcard(){
+	nr_update_vcard(false);
+	$nr_vcard_data = unserialize(get_option("nr_vcard_data"));
+	$f .= "<h3>vCard</h3>";
+	$f .= "<div class='vcard'>";
+	$f .= 	"<h4><a class='fn url' href='".$nr_vcard_data["data"]["url"]."'>".
+			$nr_vcard_data["data"]["firstname"]." ".
+			$nr_vcard_data["data"]["lastname"]."</a></h4>\n";
+	$f .= "<address>".$nr_vcard_data["data"]["address"]."</address>";
+	$f .= "</div>";
+	print $f;
+}
+
+function nr_print_NoseRub_contacts(){
+	nr_update_contacts(false);
+	$nr_contacts_data = unserialize(get_option("nr_contacts_data"));
+	$f = "<h3>Contacts</h3>";
+	foreach($nr_contacts_data["data"] as $nr_contact){
+		$f .= "<div class='vcard'>";
+		$f .= 	"<h4><a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
+		if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
+			$f .=	$nr_contact["url"];
+		} else {
+			$f .=	$nr_contact["firstname"]." ".
+					$nr_contact["lastname"];
+		}
+		$f .=	"</a></h4>\n";
+		if(substr($nr_contact["photo"],0,7) == "http://"){
+			$f .= "<img src='".$nr_contact["photo"]."' alt='".$nr_contact["firstname"]." ".$nr_contact["lastname"]."' class='photo' />\n";
+		}
+		$f .= "</div>";
+	}
+	print $f;
+}
+
 ?>
