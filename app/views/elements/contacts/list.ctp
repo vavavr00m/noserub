@@ -81,7 +81,7 @@ foreach($data as $item) {
                 
             $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
             if($identity_id == $session_identity_id && $session_identity_id != 0) { ?>
-                <?php if(!$is_private) { ?>
+                <?php if(!$is_private && !$item['WithIdentity']['local']) { ?>
                     <dd class="contact_option"><?php echo $html->link('Info', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/info/'); ?></dd>
                 <?php } ?>
                 <dd class="contact_option"><?php echo $html->link('Remove Contact', '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
