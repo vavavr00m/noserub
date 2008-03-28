@@ -156,6 +156,7 @@
 			}
 			
 			$menuItems[] = new MenuItem('Manage', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
+			$menuItems[] = new MenuItem('OAuth', $link . 'oauth/', $controller == 'Oauth');
 			
 			return $menuItems;
 		}
@@ -175,7 +176,7 @@
 		}
 		
 		private function showSettingsSubMenu($controller, $action) {
-			$controllers = array('Accounts', 'Locations', 'OpenidSites', 'Syndications');
+			$controllers = array('Accounts', 'Locations', 'Oauth', 'OpenidSites', 'Syndications');
 			
 			if (in_array($controller, $controllers)) {
 				return true;
@@ -296,7 +297,7 @@
 		}
 		
 		function isActive() {
-			$controllers = array('Locations', 'Accounts', 'OpenidSites', 'Syndications');
+			$controllers = array('Locations', 'Accounts', 'Oauth', 'OpenidSites', 'Syndications');
 			
 			if(in_array($this->controller, $controllers)) {
 				return true;

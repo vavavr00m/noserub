@@ -142,14 +142,14 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	function testGetSettingsSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
-		$this->assertEqual(9, count($subMenu->getMenuItems()));
+		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 	}
 	
 	function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
-		$this->assertEqual(8, count($subMenu->getMenuItems()));
+		$this->assertEqual(9, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, true, 'testuser', $settingState);		
 	}
@@ -245,6 +245,7 @@ class MenuFactoryTest extends CakeTestCase {
 			$this->assertMenuItem($menuItems[$i++], 'Password', $link . 'password/', $settingState->isPasswordActive());
 		}
 		$this->assertMenuItem($menuItems[$i++], 'Manage', $link . 'account/', $settingState->isManageActive());
+		$this->assertMenuItem($menuItems[$i++], 'OAuth', $link . 'oauth/', $settingState->isOAuthActive());
 	}
 }
 
@@ -339,6 +340,10 @@ class SettingState {
 	
 	public function isManageActive() {
 		return ($this->activeItem == 'Manage');
+	}
+	
+	public function isOAuthActive() {
+		return ($this->activeItem == 'OAuth');
 	}
 }
 
