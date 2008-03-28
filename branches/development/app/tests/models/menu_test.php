@@ -143,22 +143,13 @@ class MenuFactoryTest extends CakeTestCase {
 	function testGetSettingsSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
 		$this->assertEqual(9, count($subMenu->getMenuItems()));
-		$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, false, false, true, false, false, false, false);
+		$this->assertSettingsSubMenu($subMenu, false, 'testuser', false, false, false, false, true, false, false, false, false);
 	}
 	
 	function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
 		$this->assertEqual(8, count($subMenu->getMenuItems()));
-		$menuItems = $subMenu->getMenuItems();
-		$link = '/testuser/settings/';
-		$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', false);
-		$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', false);
-		$this->assertMenuItem($menuItems[2], 'Locations', $link . 'locations/', false);
-		$this->assertMenuItem($menuItems[3], 'Display', $link . 'display/', false);
-		$this->assertMenuItem($menuItems[4], 'Privacy', $link . 'privacy/', true);
-		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', false);
-		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', false);
-		$this->assertMenuItem($menuItems[7], 'Manage', $link . 'account/', false);
+		$this->assertSettingsSubMenu($subMenu, true, 'testuser', false, false, false, false, true, false, false, false, false);		
 	}
 	
 	function testGetSettingsSubMenuWithOneItemSelected() {
@@ -166,14 +157,14 @@ class MenuFactoryTest extends CakeTestCase {
 		
 		foreach ($controllers as $controller) {
 			$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => $controller));
-			$this->assertSettingsSubMenu($subMenu, 'testuser', false, $controller == 'Accounts', false, false, false, $controller == 'Syndications', $controller == 'OpenidSites', false, false);
+			$this->assertSettingsSubMenu($subMenu, false, 'testuser', false, $controller == 'Accounts', false, false, false, $controller == 'Syndications', $controller == 'OpenidSites', false, false);
 		}
 		
 		$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
 		
 		foreach ($identityActions as $action) {
 			$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
-			$this->assertSettingsSubMenu($subMenu, 'testuser', $action == 'profile_settings', false, false, false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
+			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $action == 'profile_settings', false, false, false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
 		}
 	}
 	
@@ -211,18 +202,21 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
 	
-	private function assertSettingsSubMenu(Menu $subMenu, $localUsername, $profileActive, $accountsActive, $locationsActive, $displayActive, $privacyActive, $feedsActive, $openidActive, $passwordActive, $deleteAccountActive) {
+	private function assertSettingsSubMenu(Menu $subMenu, $isMenuForOpenIDUser, $localUsername, $profileActive, $accountsActive, $locationsActive, $displayActive, $privacyActive, $feedsActive, $openidActive, $passwordActive, $deleteAccountActive) {
 		$menuItems = $subMenu->getMenuItems();
 		$link = '/' . $localUsername . '/settings/';
-		$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', $profileActive);
-		$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', $accountsActive);
-		$this->assertMenuItem($menuItems[2], 'Locations', $link . 'locations/', $locationsActive);
-		$this->assertMenuItem($menuItems[3], 'Display', $link . 'display/', $displayActive);
-		$this->assertMenuItem($menuItems[4], 'Privacy', $link . 'privacy/', $privacyActive);
-		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', $feedsActive);
-		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', $openidActive);
-		$this->assertMenuItem($menuItems[7], 'Password', $link . 'password/', $passwordActive);
-		$this->assertMenuItem($menuItems[8], 'Manage', $link . 'account/', $deleteAccountActive);
+		$i = 0;
+		$this->assertMenuItem($menuItems[$i++], 'Profile', $link . 'profile/', $profileActive);
+		$this->assertMenuItem($menuItems[$i++], 'Accounts', $link . 'accounts/', $accountsActive);
+		$this->assertMenuItem($menuItems[$i++], 'Locations', $link . 'locations/', $locationsActive);
+		$this->assertMenuItem($menuItems[$i++], 'Display', $link . 'display/', $displayActive);
+		$this->assertMenuItem($menuItems[$i++], 'Privacy', $link . 'privacy/', $privacyActive);
+		$this->assertMenuItem($menuItems[$i++], 'Feeds', $link . 'feeds/', $feedsActive);
+		$this->assertMenuItem($menuItems[$i++], 'OpenID', $link . 'openid/', $openidActive);
+		if (!$isMenuForOpenIDUser) {
+			$this->assertMenuItem($menuItems[$i++], 'Password', $link . 'password/', $passwordActive);
+		}
+		$this->assertMenuItem($menuItems[$i++], 'Manage', $link . 'account/', $deleteAccountActive);
 	}
 }
 
