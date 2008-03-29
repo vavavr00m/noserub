@@ -150,13 +150,13 @@
 			$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
 			$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
 			$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
+			$menuItems[] = new MenuItem('OAuth', $link . 'oauth/', $controller == 'Oauth');
 			
 			if (!$isOpenIDUser) {
-				$menuItems[] = new MenuItem('Password', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+				$menuItems[] = new MenuItem('Password & API', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
 			}
 			
 			$menuItems[] = new MenuItem('Manage', $link . 'account/', $controller == 'Identities' && $action == 'account_settings');
-			$menuItems[] = new MenuItem('OAuth', $link . 'oauth/', $controller == 'Oauth');
 			
 			return $menuItems;
 		}
