@@ -37,7 +37,7 @@
                 <td>
                 	<ul>
                    		<li class="delete icon"><a href="<?php echo  $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
-                   		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>">Edit</li>
+                   		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>">Edit</a></li>
                    	</ul>
                 </td>
             </tr>
