@@ -13,6 +13,7 @@ class SyndicationsController extends AppController {
      * @access 
      */
     function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
+        $this->checkUnsecure();
         $feed_types = array(
             'rss'  => 'text/xml', 
             'js'   => 'text/javascript',

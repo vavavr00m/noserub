@@ -17,6 +17,8 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
+        $this->checkUnsecure();
+        
         $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -210,6 +212,7 @@ class IdentitiesController extends AppController {
      * Displays the social stream of the whole plattform.
      */
     function social_stream() {
+        $this->checkUnsecure();
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
