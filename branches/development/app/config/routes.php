@@ -102,6 +102,9 @@ Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'a
 Router::connect('/:username/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
 Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
 
+Router::connect('/:username/settings/oauth/add', array('controller' => 'oauth', 'action' => 'add'));
+Router::connect('/:username/settings/oauth/:oauth_consumer_id/delete/:security_token', array('controller' => 'oauth', 'action' => 'delete'));
+Router::connect('/:username/settings/oauth/:oauth_consumer_id/edit/', array('controller' => 'oauth', 'action' => 'edit'));
 Router::connect('/:username/settings/oauth', array('controller' => 'oauth', 'action' => 'index'));
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
