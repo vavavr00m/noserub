@@ -241,11 +241,11 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[$i++], 'Privacy', $link . 'privacy/', $settingState->isPrivacyActive());
 		$this->assertMenuItem($menuItems[$i++], 'Feeds', $link . 'feeds/', $settingState->isFeedsActive());
 		$this->assertMenuItem($menuItems[$i++], 'OpenID', $link . 'openid/', $settingState->isOpenIDActive());
+		$this->assertMenuItem($menuItems[$i++], 'OAuth', $link . 'oauth/', $settingState->isOAuthActive());
 		if (!$isMenuForOpenIDUser) {
-			$this->assertMenuItem($menuItems[$i++], 'Password', $link . 'password/', $settingState->isPasswordActive());
+			$this->assertMenuItem($menuItems[$i++], 'Password & API', $link . 'password/', $settingState->isPasswordActive());
 		}
 		$this->assertMenuItem($menuItems[$i++], 'Manage', $link . 'account/', $settingState->isManageActive());
-		$this->assertMenuItem($menuItems[$i++], 'OAuth', $link . 'oauth/', $settingState->isOAuthActive());
 	}
 }
 
