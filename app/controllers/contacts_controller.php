@@ -14,6 +14,8 @@ class ContactsController extends AppController {
      * @access 
      */
     function index() {
+        $this->checkUnsecure();
+        
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -416,6 +418,8 @@ class ContactsController extends AppController {
      * @access 
      */
     function network() {
+        $this->checkUnsecure();
+        
         $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
