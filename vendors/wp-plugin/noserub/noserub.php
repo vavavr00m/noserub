@@ -90,6 +90,31 @@ function widget_NoseRub_location($args){
 	echo $after_widget;
 }
 
+function widget_NoseRub_contacts($args){
+	extract($args);
+	nr_update_contacts();
+	echo $before_widget;
+	echo $before_title . 'NoseRub Location'. $after_title;
+	$nr_contacts_data = unserialize(get_option("nr_contacts_data"));
+	$f = "<ul>";
+	foreach($nr_contacts_data["data"] as $nr_contact){
+		$f .= "<li class='vcard'>";
+		$f .= 	"<a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
+		if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
+			$f .=	$nr_contact["url"];
+		} else {
+			$f .=	$nr_contact["firstname"]." ".
+					$nr_contact["lastname"];
+		}
+		$f .=	"</a>\n";
+		$f .= "</li>";
+	}
+	$f .= "</ul>";
+	print $f;
+	
+	echo $after_widget;
+}
+
 function nr_update_locations($cached = true){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
@@ -189,6 +214,7 @@ function nr_url_exists($url) {
 function nr_init(){
 	register_sidebar_widget('NoseRub Lifestream','widget_NoseRub_lifestream');
 	register_sidebar_widget('NoseRub Location','widget_NoseRub_location');
+	register_sidebar_widget('NoseRub Contacts','widget_NoseRub_contacts');
 }
 
 add_action('admin_menu','nr_Noserub_menu');
