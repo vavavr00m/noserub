@@ -94,7 +94,7 @@ function widget_NoseRub_contacts($args){
 	extract($args);
 	nr_update_contacts();
 	echo $before_widget;
-	echo $before_title . 'NoseRub Location'. $after_title;
+	echo $before_title . 'NoseRub Contacts'. $after_title;
 	$nr_contacts_data = unserialize(get_option("nr_contacts_data"));
 	$f = "<ul>";
 	foreach($nr_contacts_data["data"] as $nr_contact){
