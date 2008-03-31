@@ -173,7 +173,9 @@ function nr_print_NoseRub_contacts(){
 		$f .= "<div class='vcard'>";
 		$f .= 	"<h4><a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
 		if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
-			$f .=	$nr_contact["url"];
+			$fu = explode("/",$nr_contact["url"]);
+			$c = (count($fu)-1);
+			$f .=	$fu[$c];
 		} else {
 			$f .=	$nr_contact["firstname"]." ".
 					$nr_contact["lastname"];
