@@ -1,6 +1,6 @@
 <?php
 
-class OauthController extends AppController {
+class OauthConsumersController extends AppController {
 	public $uses = array('OauthConsumer');
 	public $helpers = array('flashmessage', 'form');
 	private $session_identity = null;
