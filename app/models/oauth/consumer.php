@@ -1,6 +1,6 @@
 <?php
 
-class OauthConsumer extends AppModel {
+class Consumer extends AppModel {
 	public $belongsTo = array('Identity');
 	
 	public function add($identity_id, $application_name) {

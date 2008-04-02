@@ -1,7 +1,7 @@
 <?php
 
 class OauthConsumersController extends AppController {
-	public $uses = array('OauthConsumer');
+	public $uses = array('Consumer');
 	public $helpers = array('flashmessage', 'form');
 	private $session_identity = null;
 	
@@ -9,7 +9,7 @@ class OauthConsumersController extends AppController {
 		parent::beforeFilter();
 		
 		$username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->OauthConsumer->Identity->splitUsername($username);
+        $splitted = $this->Consumer->Identity->splitUsername($username);
         $this->session_identity = $this->Session->read('Identity');
         
         if(!$this->session_identity || $this->session_identity['username'] != $splitted['username']) {
@@ -20,23 +20,23 @@ class OauthConsumersController extends AppController {
 	}
 	
 	public function index() {
-		$this->OauthConsumer->expects('OauthConsumer');
-		$this->set('consumers', $this->OauthConsumer->findAllByIdentityId($this->session_identity['id']));
+		$this->Consumer->expects('Consumer');
+		$this->set('consumers', $this->Consumer->findAllByIdentityId($this->session_identity['id']));
 		$this->set('session_identity', $this->session_identity);
 		$this->set('headline', 'OAuth');
 	}
 	
 	public function add() {
 		if ($this->data) {
-			if ($this->data['OauthConsumer']['application_name']) {
-				if ($this->OauthConsumer->add($this->session_identity['id'], $this->data['OauthConsumer']['application_name'])) {
+			if ($this->data['Consumer']['application_name']) {
+				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'])) {
 					$this->flashMessage('success', 'Application registered.');
 					$this->redirect($this->getOAuthSettingsUrl());
 				} else {
 					$this->flashMessage('error', 'Application could not be registered.');
 				}
 			} else {
-				$this->OauthConsumer->invalidate('application_name');
+				$this->Consumer->invalidate('application_name');
 			}
 		}
 		
@@ -45,14 +45,14 @@ class OauthConsumersController extends AppController {
 	}
 	
 	public function edit() {
-		$consumer_id = isset($this->params['oauth_consumer_id']) ? $this->params['oauth_consumer_id'] : false;
+		$consumer_id = isset($this->params['consumer_id']) ? $this->params['consumer_id'] : false;
 		
 		if (!$consumer_id) {
             $this->redirect($this->url->http('/'));
 		}
 		
-		$this->OauthConsumer->expects('OauthConsumer');
-		$consumer = $this->OauthConsumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
+		$this->Consumer->expects('Consumer');
+		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
 		
 		if (!$consumer) {
 			$this->flashMessage('error', 'Application could not be edited.');
@@ -60,16 +60,16 @@ class OauthConsumersController extends AppController {
 		}
 		
 		if ($this->data) {
-			if ($this->data['OauthConsumer']['application_name']) {
-				$this->OauthConsumer->id = $consumer['OauthConsumer']['id'];
-				if ($this->OauthConsumer->saveField('application_name', $this->data['OauthConsumer']['application_name'])) {
+			if ($this->data['Consumer']['application_name']) {
+				$this->Consumer->id = $consumer['Consumer']['id'];
+				if ($this->Consumer->saveField('application_name', $this->data['Consumer']['application_name'])) {
                     $this->flashMessage('success', 'Application updated.');
                 } else {
                     $this->flashMessage('error', 'Application could not be updated.');
                 }
                 $this->redirect($this->getOAuthSettingsUrl());
 			} else {
-				$this->OauthConsumer->invalidate('application_name');
+				$this->Consumer->invalidate('application_name');
 			}
 		} else {
 			$this->data = $consumer;
@@ -81,7 +81,7 @@ class OauthConsumersController extends AppController {
 	}
 	
 	public function delete() {
-		$consumer_id = isset($this->params['oauth_consumer_id']) ? $this->params['oauth_consumer_id'] : false;
+		$consumer_id = isset($this->params['consumer_id']) ? $this->params['consumer_id'] : false;
 		
 		if (!$consumer_id) {
             $this->redirect($this->url->http('/'));
@@ -89,9 +89,9 @@ class OauthConsumersController extends AppController {
 		
 		$this->ensureSecurityToken();
 		
-		$this->OauthConsumer->expects('OauthConsumer');
-		if (1 == $this->OauthConsumer->findCount(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
-            $this->OauthConsumer->delete($consumer_id);
+		$this->Consumer->expects('Consumer');
+		if (1 == $this->Consumer->findCount(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
+            $this->Consumer->delete($consumer_id);
             
             $this->flashMessage('success', 'Application deleted.');            
         } else {

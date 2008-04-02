@@ -23,13 +23,13 @@
 		</thead>
 		<?php foreach($consumers as $consumer): ?>
 			<tr>
-				<td><?php echo $consumer['OauthConsumer']['application_name']; ?></td>
-				<td><?php echo $consumer['OauthConsumer']['consumer_key']; ?></td>
-				<td><?php echo $consumer['OauthConsumer']['consumer_secret']; ?></td>
+				<td><?php echo $consumer['Consumer']['application_name']; ?></td>
+				<td><?php echo $consumer['Consumer']['consumer_key']; ?></td>
+				<td><?php echo $consumer['Consumer']['consumer_secret']; ?></td>
 				<td>
 					<ul>
-                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/oauth/'.  $consumer['OauthConsumer']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
-                   		<li class="edit icon"><a href="<?php echo $url . '/settings/oauth/'.  $consumer['OauthConsumer']['id'] . '/edit/'; ?>">Edit</a></li>
+                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
+                   		<li class="edit icon"><a href="<?php echo $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>">Edit</a></li>
                    	</ul>
 				</td>
 			</tr>
