@@ -6,10 +6,7 @@ class DataStore extends AppModel {
 	public $useTable = false;
 	
 	public function lookup_consumer($consumer_key) {
-		App::import('Model', 'Consumer');
-		$consumer = new Consumer();
-		$consumer->recursive = -1;
-		$data = $consumer->findByConsumerKey($consumer_key);
+		$data = $this->get_consumer_data($consumer_key);
 	
 		if (!empty($data)) {
 			return new OAuthConsumer($data['Consumer']['consumer_key'], $data['Consumer']['consumer_secret']);
@@ -31,12 +28,31 @@ class DataStore extends AppModel {
 	}
 	
 	public function new_request_token($consumer) {
-		// TODO save token data in database
-		$key = md5(time());
-    	$secret = time() + time();
-    	$token = new OAuthToken($key, md5(md5($secret)));
-    	
-    	return $token;
+		$consumerData = $this->get_consumer_data($consumer->key);
+  		
+  		if (!empty($consumerData)) {
+  			$key = md5(time());
+    		$secret = md5(md5(time() + time()));
+  			
+  			$data['RequestToken']['consumer_id'] = $consumerData['Consumer']['id'];
+  			$data['RequestToken']['token_key'] = $key;
+  			$data['RequestToken']['token_secret'] = $secret;
+  			App::import('Model', 'RequestToken');
+  			$requestToken = new RequestToken();
+  			$requestToken->save($data);
+  			
+  			return new OAuthToken($key, $secret);
+  		}
+  		
+  		return null;
+	}
+	
+	private function get_consumer_data($consumer_key) {
+		App::import('Model', 'Consumer');
+		$consumer = new Consumer();
+		$consumer->recursive = -1;
+		
+		return $consumer->findByConsumerKey($consumer_key);
 	}
 }
 ?>

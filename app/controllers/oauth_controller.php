@@ -3,7 +3,7 @@
 App::import('Vendor', 'oauth', array('file' => 'oauth'.DS.'OAuth.php'));
 
 class OauthController extends AppController {
-	public $uses = array('DataStore');
+	public $uses = array('DataStore', 'RequestToken');
 	
 	public function request_token() {
 		Configure::write('debug', 0);
@@ -28,7 +28,14 @@ class OauthController extends AppController {
 	}
 	
 	public function authorize() {
-		// TODO add implemententation
+		// TODO replace this "dummy" implementation with real implementation 
+		if (empty($this->params['form'])) {
+			$this->set('oauth_token', $this->params['url']['oauth_token']);
+			$this->set('oauth_callback', $this->params['url']['oauth_callback']);
+		} else {
+			$this->RequestToken->authorize($this->params['form']['oauth_token']);
+			$this->redirect($this->params['form']['oauth_callback'].'?oauth_token='.$this->params['form']['oauth_token']);
+		}
 	}
 }
 ?>

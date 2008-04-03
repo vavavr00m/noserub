@@ -2,6 +2,7 @@
 
 class Consumer extends AppModel {
 	public $belongsTo = array('Identity');
+	public $hasMany = array('AccessToken', 'RequestToken');
 	
 	public function add($identity_id, $application_name) {
 		$data[$this->name]['identity_id'] = $identity_id;
