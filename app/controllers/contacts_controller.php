@@ -157,6 +157,7 @@ class ContactsController extends AppController {
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
                     $saveable = array('is_local', 'username', 'created', 'modified');
+                    $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
                         $this->flashMessage('success', 'New contact added.');
