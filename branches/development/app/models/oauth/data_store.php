@@ -20,28 +20,39 @@ class DataStore extends AppModel {
 	}
 	
 	public function lookup_token($consumer, $token_type, $token) {
-		// TODO add implementation
+		$tokenName = ucfirst($token_type).'Token';
+		
+		App::import('Model', $tokenName);
+		$theToken = new $tokenName();
+		$data = $theToken->find(array($tokenName.'.token_key' => $token));
+		
+		if (!empty($data)) {
+			return new OAuthToken($data[$tokenName]['token_key'], $data[$tokenName]['token_secret']);
+		}
+		
+		return null;
 	}
 	
 	public function new_access_token($token, $consumer) {
-		// TODO add implementation
+		$consumerData = $this->get_consumer_data($consumer->key);
+		App::import('Model', 'RequestToken');
+  		$requestToken = new RequestToken();
+		
+		if (!empty($consumerData) && $requestToken->isAuthorized($token->key)) {
+			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken');
+  			$requestToken->delete(array('RequestToken.token_key' => $token->key));
+  			
+  			return $accessToken;
+		}
+		
+		return null;
 	}
 	
 	public function new_request_token($consumer) {
 		$consumerData = $this->get_consumer_data($consumer->key);
   		
   		if (!empty($consumerData)) {
-  			$key = md5(time());
-    		$secret = md5(md5(time() + time()));
-  			
-  			$data['RequestToken']['consumer_id'] = $consumerData['Consumer']['id'];
-  			$data['RequestToken']['token_key'] = $key;
-  			$data['RequestToken']['token_secret'] = $secret;
-  			App::import('Model', 'RequestToken');
-  			$requestToken = new RequestToken();
-  			$requestToken->save($data);
-  			
-  			return new OAuthToken($key, $secret);
+  			return $this->new_token($consumerData['Consumer']['id'], 'RequestToken');
   		}
   		
   		return null;
@@ -53,6 +64,20 @@ class DataStore extends AppModel {
 		$consumer->recursive = -1;
 		
 		return $consumer->findByConsumerKey($consumer_key);
+	}
+	
+	private function new_token($consumerId, $tokenType) {
+		$key = md5(time());
+    	$secret = md5(md5(time() + time()));
+  		
+  		$data[$tokenType]['consumer_id'] = $consumerId;
+  		$data[$tokenType]['token_key'] = $key;
+  		$data[$tokenType]['token_secret'] = $secret;
+  		App::import('Model', $tokenType);
+  		$token = new $tokenType();
+  		$token->save($data);
+  		
+  		return new OAuthToken($key, $secret);
 	}
 }
 ?>

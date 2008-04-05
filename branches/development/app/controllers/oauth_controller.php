@@ -7,9 +7,7 @@ class OauthController extends AppController {
 	
 	public function request_token() {
 		Configure::write('debug', 0);
-		$server = new OAuthServer($this->DataStore);
-		$sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
-		$server->add_signature_method($sha1_method);
+		$server = $this->get_server();
 
 		try {
 			$request = OAuthRequest::from_request('POST', Router::url($this->here, true));
@@ -24,7 +22,19 @@ class OauthController extends AppController {
 	}
 	
 	public function access_token() {
-		// TODO add implemententation
+		Configure::write('debug', 0);
+		$server = $this->get_server();
+		
+		try {
+  			$request = OAuthRequest::from_request('POST', Router::url($this->here, true));
+  			$access_token = $server->fetch_access_token($request);
+  			print $access_token;
+  			exit;
+		} catch (OAuthException $e) {
+  			print($e->getMessage() . "\n<hr />\n");
+  			print_r($request);
+  			die();
+		}
 	}
 	
 	public function authorize() {
@@ -36,6 +46,13 @@ class OauthController extends AppController {
 			$this->RequestToken->authorize($this->params['form']['oauth_token']);
 			$this->redirect($this->params['form']['oauth_callback'].'?oauth_token='.$this->params['form']['oauth_token']);
 		}
+	}
+	
+	private function get_server() {
+		$server = new OAuthServer($this->DataStore);
+		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
+		
+		return $server;
 	}
 }
 ?>
