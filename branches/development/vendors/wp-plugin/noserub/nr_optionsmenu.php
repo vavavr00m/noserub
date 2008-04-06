@@ -49,6 +49,7 @@ function nr_update_NoseRub_options() {
 		if(is_numeric($_REQUEST['nr_location'])){
 			nr_set_location($_REQUEST['nr_location']);
 			nr_update_locations(false);
+			$updated = true;
 		}
 	}
 	if ($updated) {
