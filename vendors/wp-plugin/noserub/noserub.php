@@ -176,16 +176,14 @@ function nr_apicall($nrapi_url,$nrapi_name = false,$cached = true){
 	}
 	$nrapi_lastcall = get_option("nr_".$nrapi_name."_lastcall");
 	if(($cached == false)||((time()-$nrapi_lastcall) > 3600)){
-		if(nr_url_exists($nrapi_url)){
-			$data = file_get_contents($nrapi_url);
+		$data = nr_url_get_contents($nrapi_url);
+		if($data){
+			update_option("nr_".$nrapi_name."_data",$data);
+			update_option("nr_".$nrapi_name."_lastcall",time());
 		} else {
 			echo '<div id="message" class="error fade">';
 			echo '<p>There was an error: Either your NoseRub is down or your API-Key is wrong.</p>';
 			echo '</div>';
-		}
-		if($data){
-			update_option("nr_".$nrapi_name."_data",$data);
-			update_option("nr_".$nrapi_name."_lastcall",time());
 		}
 	}
 	$data = unserialize(get_option("nr_".$nrapi_name."_data"));
@@ -197,20 +195,22 @@ function nr_apicall($nrapi_url,$nrapi_name = false,$cached = true){
 	return $data;
 }
 
-function nr_url_exists($url) {
-    // Version 4.x supported
-    $handle   = curl_init($url);
-    if (false === $handle)
-    {
-        return false;
-    }
-    curl_setopt($handle, CURLOPT_HEADER, false);
-    curl_setopt($handle, CURLOPT_FAILONERROR, true);  // this works
-    curl_setopt($handle, CURLOPT_NOBODY, true);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
-    $connectable = curl_exec($handle);
-    curl_close($handle);   
-    return $connectable;
+function nr_url_get_contents($url){
+	$ch = curl_init();
+	if($ch === false){
+		return false;
+	}
+	$timeout = 20;
+	curl_setopt ($ch, CURLOPT_URL, $url);
+	curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+
+	ob_start();
+	curl_exec($ch);
+	curl_close($ch);
+	$file_contents = ob_get_contents();
+	ob_end_clean();
+
+	return $file_contents;
 }
 
 function nr_init(){
