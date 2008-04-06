@@ -74,6 +74,22 @@ function widget_NoseRub_lifestream($args){
 	echo $after_widget;
 }
 
+function widget_NoseRub_vcard($args){
+	extract($args);
+	nr_update_vcard();
+	echo $before_widget;
+	echo $before_title . 'My NoseRub'. $after_title;
+	$nr_vcard_data = unserialize(get_option("nr_vcard_data"));
+	$f .= "<div class='vcard'>";
+	$f .= 	"<a class='fn url' href='".$nr_vcard_data["data"]["url"]."' rel='me'>".
+			$nr_vcard_data["data"]["firstname"]." ".
+			$nr_vcard_data["data"]["lastname"]."</a><br />\n";
+	$f .= "<address class='adr'><span class='locality'>".$nr_vcard_data["data"]["address"]."</span></address></div>";
+	print $f;
+	
+	echo $after_widget;
+}
+
 function widget_NoseRub_location($args){
 	extract($args);
 	nr_update_locations();
@@ -217,6 +233,7 @@ function nr_init(){
 	register_sidebar_widget('NoseRub Lifestream','widget_NoseRub_lifestream');
 	register_sidebar_widget('NoseRub Location','widget_NoseRub_location');
 	register_sidebar_widget('NoseRub Contacts','widget_NoseRub_contacts');
+	register_sidebar_widget('NoseRub vCard','widget_NoseRub_vcard');
 }
 
 add_action('admin_menu','nr_Noserub_menu');
