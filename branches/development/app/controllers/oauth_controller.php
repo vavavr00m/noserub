@@ -6,6 +6,7 @@ class OauthController extends AppController {
 	public $uses = array('DataStore', 'RequestToken');
 	
 	public function request_token() {
+		exit('Not fully implemented yet');
 		Configure::write('debug', 0);
 		$server = $this->get_server();
 
@@ -22,6 +23,7 @@ class OauthController extends AppController {
 	}
 	
 	public function access_token() {
+		exit('Not fully implemented yet');
 		Configure::write('debug', 0);
 		$server = $this->get_server();
 		
@@ -38,6 +40,7 @@ class OauthController extends AppController {
 	}
 	
 	public function authorize() {
+		exit('Not fully implemented yet');
 		// TODO replace this "dummy" implementation with real implementation 
 		if (empty($this->params['form'])) {
 			$this->set('oauth_token', $this->params['url']['oauth_token']);

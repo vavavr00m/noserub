@@ -2,6 +2,9 @@
     $url = Router::url('/' . $session_identity['local_username']);
 	$flashmessage->render(); 
 ?>
+<p class="infotext">
+	Currently, our API doesn't support OAuth, but it's coming soon.
+</p>
 
 <h3>Your applications</h3>
 <p class="infotext">
