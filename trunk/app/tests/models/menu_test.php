@@ -142,23 +142,16 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	function testGetSettingsSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
-		$this->assertEqual(9, count($subMenu->getMenuItems()));
-		$this->assertSettingsSubMenu($subMenu, 'testuser', false, false, false, false, true, false, false, false, false);
+		$this->assertEqual(10, count($subMenu->getMenuItems()));
+		$settingState = new SettingState('Privacy');
+		$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 	}
 	
 	function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
-		$this->assertEqual(8, count($subMenu->getMenuItems()));
-		$menuItems = $subMenu->getMenuItems();
-		$link = '/testuser/settings/';
-		$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', false);
-		$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', false);
-		$this->assertMenuItem($menuItems[2], 'Locations', $link . 'locations/', false);
-		$this->assertMenuItem($menuItems[3], 'Display', $link . 'display/', false);
-		$this->assertMenuItem($menuItems[4], 'Privacy', $link . 'privacy/', true);
-		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', false);
-		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', false);
-		$this->assertMenuItem($menuItems[7], 'Manage', $link . 'account/', false);
+		$this->assertEqual(9, count($subMenu->getMenuItems()));
+		$settingState = new SettingState('Privacy');
+		$this->assertSettingsSubMenu($subMenu, true, 'testuser', $settingState);		
 	}
 	
 	function testGetSettingsSubMenuWithOneItemSelected() {
@@ -166,14 +159,40 @@ class MenuFactoryTest extends CakeTestCase {
 		
 		foreach ($controllers as $controller) {
 			$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => $controller));
-			$this->assertSettingsSubMenu($subMenu, 'testuser', false, $controller == 'Accounts', false, false, false, $controller == 'Syndications', $controller == 'OpenidSites', false, false);
+			
+			$activeItem = '';
+			switch ($controller) {
+				case 'Accounts':     $activeItem = 'Accounts';
+								     break;
+				case 'Syndications': $activeItem = 'Feeds';
+									 break;
+				case 'OpenidSites':  $activeItem = 'OpenID';
+									 break;
+			}
+			
+			$settingState = new SettingState($activeItem);
+			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 		}
 		
 		$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
 		
 		foreach ($identityActions as $action) {
 			$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
-			$this->assertSettingsSubMenu($subMenu, 'testuser', $action == 'profile_settings', false, false, false, $action == 'privacy_settings', false, false, $action == 'password_settings', $action == 'account_settings');
+			
+			$activeItem = '';
+			switch ($action) {
+				case 'profile_settings':  $activeItem = 'Profile';
+										  break;
+				case 'privacy_settings':  $activeItem = 'Privacy';
+										  break;
+				case 'password_settings': $activeItem = 'Password';
+										  break;
+				case 'account_settings':  $activeItem = 'Manage';
+										  break;
+			}
+			
+			$settingState = new SettingState($activeItem);
+			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 		}
 	}
 	
@@ -211,18 +230,22 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
 	
-	private function assertSettingsSubMenu(Menu $subMenu, $localUsername, $profileActive, $accountsActive, $locationsActive, $displayActive, $privacyActive, $feedsActive, $openidActive, $passwordActive, $deleteAccountActive) {
+	private function assertSettingsSubMenu(Menu $subMenu, $isMenuForOpenIDUser, $localUsername, SettingState $settingState) {
 		$menuItems = $subMenu->getMenuItems();
 		$link = '/' . $localUsername . '/settings/';
-		$this->assertMenuItem($menuItems[0], 'Profile', $link . 'profile/', $profileActive);
-		$this->assertMenuItem($menuItems[1], 'Accounts', $link . 'accounts/', $accountsActive);
-		$this->assertMenuItem($menuItems[2], 'Locations', $link . 'locations/', $locationsActive);
-		$this->assertMenuItem($menuItems[3], 'Display', $link . 'display/', $displayActive);
-		$this->assertMenuItem($menuItems[4], 'Privacy', $link . 'privacy/', $privacyActive);
-		$this->assertMenuItem($menuItems[5], 'Feeds', $link . 'feeds/', $feedsActive);
-		$this->assertMenuItem($menuItems[6], 'OpenID', $link . 'openid/', $openidActive);
-		$this->assertMenuItem($menuItems[7], 'Password', $link . 'password/', $passwordActive);
-		$this->assertMenuItem($menuItems[8], 'Manage', $link . 'account/', $deleteAccountActive);
+		$i = 0;
+		$this->assertMenuItem($menuItems[$i++], 'Profile', $link . 'profile/', $settingState->isProfileActive());
+		$this->assertMenuItem($menuItems[$i++], 'Accounts', $link . 'accounts/', $settingState->isAccountsActive());
+		$this->assertMenuItem($menuItems[$i++], 'Locations', $link . 'locations/', $settingState->isLocationsActive());
+		$this->assertMenuItem($menuItems[$i++], 'Display', $link . 'display/', $settingState->isDisplayActive());
+		$this->assertMenuItem($menuItems[$i++], 'Privacy', $link . 'privacy/', $settingState->isPrivacyActive());
+		$this->assertMenuItem($menuItems[$i++], 'Feeds', $link . 'feeds/', $settingState->isFeedsActive());
+		$this->assertMenuItem($menuItems[$i++], 'OpenID', $link . 'openid/', $settingState->isOpenIDActive());
+		$this->assertMenuItem($menuItems[$i++], 'OAuth', $link . 'oauth/', $settingState->isOAuthActive());
+		if (!$isMenuForOpenIDUser) {
+			$this->assertMenuItem($menuItems[$i++], 'Password & API', $link . 'password/', $settingState->isPasswordActive());
+		}
+		$this->assertMenuItem($menuItems[$i++], 'Manage', $link . 'account/', $settingState->isManageActive());
 	}
 }
 
@@ -272,6 +295,55 @@ class FilterState {
 	
 	function isLocationActive() {
 		return ($this->activeItem == 'location');
+	}
+}
+
+// helper class
+class SettingState {
+	private $activeItem = '';
+	
+	public function __construct($activeItem = '') {
+		$this->activeItem = $activeItem;
+	}
+	
+	public function isProfileActive() {
+		return ($this->activeItem == 'Profile');
+	}
+	
+	public function isAccountsActive() {
+		return ($this->activeItem == 'Accounts');
+	}
+	
+	public function isLocationsActive() {
+		return ($this->activeItem == 'Locations');
+	}
+	
+	public function isDisplayActive() {
+		return ($this->activeItem == 'Display');
+	}
+	
+	public function isPrivacyActive() {
+		return ($this->activeItem == 'Privacy');
+	}
+	
+	public function isFeedsActive() {
+		return ($this->activeItem == 'Feeds');
+	}
+	
+	public function isOpenIDActive() {
+		return ($this->activeItem == 'OpenID');
+	}
+	
+	public function isPasswordActive() {
+		return ($this->activeItem == 'Password');
+	}
+	
+	public function isManageActive() {
+		return ($this->activeItem == 'Manage');
+	}
+	
+	public function isOAuthActive() {
+		return ($this->activeItem == 'OAuth');
 	}
 }
 

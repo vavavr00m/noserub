@@ -51,6 +51,22 @@ class AppController extends Controller {
         }
     }
     
+    /**
+        * Makes sure we redirect to the http url,
+        * when we're not on a secure page
+        *
+        * @param  
+        * @return 
+        * @access 
+        */
+       public function checkUnsecure() {
+           $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
+           if($server_port != 80) {
+               $this->redirect(str_replace('https://', 'http://', FULL_BASE_URL) . $this->here);
+               exit;
+           }
+       }
+       
     private function auto_login() {
         $li = $this->Cookie->read('li'); # login id
             

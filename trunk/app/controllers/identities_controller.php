@@ -17,6 +17,8 @@ class IdentitiesController extends AppController {
      * @access 
      */
     function index() {
+        $this->checkUnsecure();
+        
         $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -210,6 +212,7 @@ class IdentitiesController extends AppController {
      * Displays the social stream of the whole plattform.
      */
     function social_stream() {
+        $this->checkUnsecure();
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
         $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
@@ -548,6 +551,22 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
+     /*
+     if($this->data) {
+     	$this->ensureSecurityToken();
+     	$this->data['Identity']['id'] = $session_identity['id'];
+     	
+     	if (!isset($this->data['Identity']['api_active'])) {
+     		$this->data['Identity']['api_active'] = false;
+     	}
+     	
+     	$this->Location->Identity->save($this->data, false, array('api_hash', 'api_active'));
+     	$this->Session->write('Identity.api_hash', $this->data['Identity']['api_hash']);
+     	$this->Session->write('Identity.api_active', $this->data['Identity']['api_active']);
+     	$session_identity = $this->Session->read('Identity');
+     	$this->flashMessage('success', 'API options have been saved.');
+     }
+     */
     function password_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -563,29 +582,45 @@ class IdentitiesController extends AppController {
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
-            
-            $data = $this->data;
-            $data['Identity']['username'] = $splitted['username'];
-            $data['Identity']['password'] = $data['Identity']['old_passwd'];
-            if($this->Identity->check($data)) {
-                # old password is ok, now check the new
-                if(!$data['Identity']['passwd']) {
-                    $this->flashMessage('alert', 'You need to specify a new password.');
-                } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
-                    $this->flashMessage('alert', 'The new password was not entered twice the same.');
-                } else {
-                    $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
-                    $this->Identity->id = $session_identity['id'];
-                    $this->Identity->save($this->data, true, array('password'));
-                
-                    $this->flashMessage('success', 'The new password has been saved.');
-                }
+
+            # test, if this is about changing password, or api setting
+            if(isset($this->params['form']['api'])) {
+                 $this->data['Identity']['id'] = $session_identity['id'];
+
+              	if(!isset($this->data['Identity']['api_active'])) {
+              		$this->data['Identity']['api_active'] = false;
+              	}
+
+              	$this->Identity->save($this->data, false, array('api_hash', 'api_active'));
+              	$this->Session->write('Identity.api_hash', $this->data['Identity']['api_hash']);
+              	$this->Session->write('Identity.api_active', $this->data['Identity']['api_active']);
+              	$session_identity = $this->Session->read('Identity');
+              	$this->flashMessage('success', 'API options have been saved.');
             } else {
-                $this->flashMessage('alert', 'The old password was not correct.');
+                $data = $this->data;
+                $data['Identity']['username'] = $splitted['username'];
+                $data['Identity']['password'] = $data['Identity']['old_passwd'];
+                if($this->Identity->check($data)) {
+                    # old password is ok, now check the new
+                    if(!$data['Identity']['passwd']) {
+                        $this->flashMessage('alert', 'You need to specify a new password.');
+                    } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
+                        $this->flashMessage('alert', 'The new password was not entered twice the same.');
+                    } else {
+                        $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
+                        $this->Identity->id = $session_identity['id'];
+                        $this->Identity->save($this->data, true, array('password'));
+                
+                        $this->flashMessage('success', 'The new password has been saved.');
+                    }
+                } else {
+                    $this->flashMessage('alert', 'The old password was not correct.');
+                }
             }
         }
         
-        $this->set('headline', 'Change your password');
+        $this->set('session_identity', $session_identity);
+        $this->set('headline', 'Password settings');
     }
     
     /**

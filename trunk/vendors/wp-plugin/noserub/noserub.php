@@ -2,45 +2,175 @@
 /*
 Plugin Name: NoseRub for WordPress
 Plugin URI: http://noserub.com/
-Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.
-Version: 0.0.1
+Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.<br />We advise you to install the <a href="http://wordpress.org/extend/plugins/simplepie-core">SimplePie Core</a> plugin, too. If you don't, NoseRub will still work, though.
+Version: 0.0.2
 Author: Dominik Schwind
 Author URI: http://identoo.com/dominik
 */
-
-require_once (ABSPATH . WPINC . '/rss.php');
+require_once(dirname(__FILE__)."/nr_db_functions.php");
+require_once(dirname(__FILE__)."/nr_optionsmenu.php");
 
 function the_NoseRub_lifestream(){
+	if(!class_exists('SimplePie')){
+		require_once(dirname(__FILE__)."/simplepie/simplepie.inc");
+	}
+	
+	require_once(dirname(__FILE__)."/nr_cache.php");
+	
 	$nr_url = get_option("nr_url");
 	$nr_feed_url = get_option("nr_feed");
 	$urlex = explode("/",$nr_url);
 	$nr_domain = $urlex["2"];
-	$nr_feed = "http://".$nr_domain.$nr_feed_url;
-	$rss = fetch_rss($nr_feed);
-//	print_r($rss);
-	foreach($rss->items as $item){
-		$i = "<div class='nr_item'>
-			<a href='".$item["link"]."'>".$item["title"]."</a><br />
-			".strftime("%c",strtotime($item["pubdate"]))."
-		</div>";
-		print($i);
+	if(substr($nr_feed_url,0,7) != "http://"){
+		$nr_feed = "http://".$nr_domain.$nr_feed_url;
+	} else {
+		$nr_feed = $nr_feed_url;
+	}
+	$feed = new SimplePie();
+	$feed->set_cache_class("NoseRub_cache");
+	$feed->set_feed_url($nr_feed);
+	$feed->init();
+	$feed->handle_content_type();
+	foreach($feed->get_items() as $item){ ?>
+		<h3 class="title"><a href="<?php echo $item->get_permalink(); ?>"><?php echo $item->get_title(); ?></a></h3>
+
+		<?php echo $item->get_content(); ?>
+
+		<p class="footnote"><?php echo $item->get_date(); ?></p>
+		
+		<?php
 	}
 }
 
-function nr_show_NoseRub_location(){
-	$apikey = get_option("nr_apikey");
-	$url = get_option("nr_url");
-	print("Noserub: ".$url);
+function widget_NoseRub_lifestream($args){
+	extract($args);
+	echo $before_widget;
+	echo $before_title . 'NoseRub Lifestream'. $after_title;
+	if(!class_exists('SimplePie')){
+		require_once(dirname(__FILE__)."/simplepie/simplepie.inc");
+	}
+	
+	require_once(dirname(__FILE__)."/nr_cache.php");
+	
+	$nr_url = get_option("nr_url");
+	$nr_feed_url = get_option("nr_feed");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	if(substr($nr_feed_url,0,7) != "http://"){
+		$nr_feed = "http://".$nr_domain.$nr_feed_url;
+	} else {
+		$nr_feed = $nr_feed_url;
+	}
+	$feed = new SimplePie();
+	$feed->set_cache_class("NoseRub_cache");
+	$feed->set_feed_url($nr_feed);
+	$feed->init();
+	$feed->handle_content_type();
+	echo "<ul>";
+	foreach($feed->get_items() as $item){
+		echo "<li><a href='".$item->get_permalink()."'>".$item->get_title()."</a></li>\n";
+	}
+	echo "</ul>";
+	echo $after_widget;
 }
 
-function nr_update_locations(){
+function widget_NoseRub_vcard($args){
+	extract($args);
+	nr_update_vcard();
+	echo $before_widget;
+	echo $before_title . 'My NoseRub'. $after_title;
+	$nr_vcard_data = unserialize(get_option("nr_vcard_data"));
+	$f .= "<div class='vcard'>";
+	$f .= 	"<a class='fn url' href='".$nr_vcard_data["data"]["url"]."' rel='me'>".
+			$nr_vcard_data["data"]["firstname"]." ".
+			$nr_vcard_data["data"]["lastname"]."</a><br />\n";
+	$f .= "<address class='adr'><span class='locality'>".$nr_vcard_data["data"]["address"]."</span></address></div>";
+	print $f;
+	
+	echo $after_widget;
+}
+
+function widget_NoseRub_location($args){
+	extract($args);
+	nr_update_locations();
+	echo $before_widget;
+	echo $before_title . 'NoseRub Location'. $after_title;
+	$nr_locations = get_option("nr_locations_data");
+	$nr_locs = unserialize($nr_locations);
+	$nr_loc_array = array();
+	foreach($nr_locs["data"]["Locations"] as $nr_loc){
+		$nr_loc_array[$nr_loc["Location"]["id"]] = $nr_loc["Location"]["name"];
+	}
+	$nr_loc_now = $nr_locs["data"]["Identity"]["last_location_id"];
+	echo "I am at ".$nr_loc_array[$nr_loc_now];
+	echo $after_widget;
+}
+
+function widget_NoseRub_contacts($args){
+	extract($args);
+	nr_update_contacts();
+	echo $before_widget;
+	echo $before_title . 'NoseRub Contacts'. $after_title;
+	$nr_contacts_data = unserialize(get_option("nr_contacts_data"));
+	$f = "<ul>";
+	foreach($nr_contacts_data["data"] as $nr_contact){
+		$f .= "<li class='vcard'>";
+		$f .= 	"<a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
+		if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
+			$fu = explode("/",$nr_contact["url"]);
+			$c = (count($fu)-1);
+			$f .=	$fu[$c];
+		} else {
+			$f .=	$nr_contact["firstname"]." ".
+					$nr_contact["lastname"];
+		}
+		$f .=	"</a>\n";
+		$f .= "</li>";
+	}
+	$f .= "</ul>";
+	print $f;
+	
+	echo $after_widget;
+}
+
+function nr_update_locations($cached = true){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
 	$urlex = explode("/",$nr_url);
 	$nr_domain = $urlex["2"];
 	$nr_user = $urlex["3"];
 	$locations = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/locations";
-	nr_apicall($locations,"locations");
+	nr_apicall($locations,"locations",$cached);
+}
+
+function nr_update_vcard($cached = true){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$vcard = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/vcard";
+	nr_apicall($vcard,"vcard",$cached);
+}
+
+function nr_update_contacts($cached = true){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$contacts = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/contacts";
+	nr_apicall($contacts,"contacts",$cached);
+}
+
+function nr_set_location($id){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$locations = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/locations/set/$id";
+	nr_apicall($locations,"setlocation",false);
 }
 
 function nr_update_feeds(){
@@ -62,146 +192,52 @@ function nr_apicall($nrapi_url,$nrapi_name = false,$cached = true){
 	}
 	$nrapi_lastcall = get_option("nr_".$nrapi_name."_lastcall");
 	if(($cached == false)||((time()-$nrapi_lastcall) > 3600)){
-		$data = file_get_contents($nrapi_url);
+		$data = nr_url_get_contents($nrapi_url);
 		if($data){
 			update_option("nr_".$nrapi_name."_data",$data);
 			update_option("nr_".$nrapi_name."_lastcall",time());
+		} else {
+			echo '<div id="message" class="error fade">';
+			echo '<p>There was an error: Either your NoseRub is down or your API-Key is wrong.</p>';
+			echo '</div>';
 		}
 	}
 	$data = unserialize(get_option("nr_".$nrapi_name."_data"));
+	if($data["code"] > 0){
+		echo '<div id="message" class="error fade">';
+		echo '<p>There was an error:'.$data["msg"].'</p>';
+		echo '</div>';
+	}
 	return $data;
 }
 
-/**
- * Utility functions to show the menu
- */
-function nr_Noserub_options () {
-	echo '<div class="wrap"><h2>NoseRub</h2>';
-	if ($_REQUEST['submit']) {
-		nr_update_NoseRub_options();
+function nr_url_get_contents($url){
+	$ch = curl_init();
+	if($ch === false){
+		return false;
 	}
-	nr_print_NoseRub_options_form();
-	echo '</div>';
+	$timeout = 20;
+	curl_setopt ($ch, CURLOPT_URL, $url);
+	curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+
+	ob_start();
+	curl_exec($ch);
+	curl_close($ch);
+	$file_contents = ob_get_contents();
+	ob_end_clean();
+
+	return $file_contents;
 }
-function nr_Noserub_menu () {
-	add_options_page(
-		'Noserub',	//Title
-		'Noserub',	//Sub-menu title
-		'manage_options',	//Security
-		__FILE__,	//File to open
-		'nr_NoseRub_options'	//Function to call
-	);  
-}
-function nr_update_NoseRub_options() {
-	$updated = false;
-	if ($_REQUEST['nr_apikey']) {
-		update_option('nr_apikey', $_REQUEST['nr_apikey']);
-		$updated = true;
-	}
-	if ($_REQUEST['nr_feed']) {
-		update_option('nr_feed', $_REQUEST['nr_feed']);
-		$updated = true;
-	}
-	if ($_REQUEST['nr_url']) {
-		$nrurl = trim($_REQUEST['nr_url']);
-		if((strpos($nrurl,"http://") === FALSE)||(strpos($nrurl,"http://") > 0)){
-			$_REQUEST['nr_url'] = "http://".$_REQUEST['nr_url'];
-		}
-		update_option('nr_url', $_REQUEST['nr_url']);
-		$updated = true;
-	}
-	if($_REQUEST['nr_location']){
-		if(is_numeric($_REQUEST['nr_location'])){
-			
-		}
-	}
-	if ($updated) {
-		echo '<div id="message" class="updated fade">';
-		echo '<p>Options Updated</p>';
-		echo '</div>';
-	} else {
-		echo '<div id="message" class="error fade">';
-		echo '<p>Unable to update options</p>';
-		echo '</div>';
-	}
-}
-function nr_print_NoseRub_options_form(){
-	$nr_apikey = get_option("nr_apikey");
-	$nr_url = get_option("nr_url");
-	$nr_feed = get_option("nr_feed");
-	$f = "<form method='post'>
-		<table class='optiontable'>
-		<tr>
-			<th scope='row'>Noserub-URL:</th>
-			<td><input type='text' id='nr_url' name='nr_url' value='".$nr_url."'/></td>
-		</tr>
-		<tr>
-			<th scope='row'>Noserub API-key:</th>
-			<td><input type='text' id='nr_apikey' name='nr_apikey' value='".$nr_apikey."'/></td>
-		</tr>
-		</table>
-		<p class='submit'>
-			<input type='submit' value='Update Options &raquo;' name='submit' />
-		</p>";
-	if(($nr_apikey != "")&&($nr_url != "")){
-		nr_update_locations();
-		$nr_locations = get_option("nr_locations_data");
-		$nr_locs = unserialize($nr_locations);
-		$l = "<!-- <table class='optiontable'>
-			<tr>
-				<th scope='row'>Locations:</th>
-				<td>
-				<select name='nr_location' size='1'>
-					<option value=''></option>";
-		foreach($nr_locs["data"] as $ns_loc){
-			$l.="<option value='".$ns_loc["Location"]["id"]."'>".$ns_loc["Location"]["name"]."</option>";
-		}
-		$l.="</select>
-				</td>
-			</tr>
-		</table> -->";
-		$f .= $l;
-		nr_update_feeds();
-		$nr_feeds = get_option("nr_feeds_data");
-		$nr_feeds = unserialize($nr_feeds);
-		$l = "<table class='optiontable'>
-			<tr>
-				<th scope='row'>Feed:</th>
-				<td>
-				<select name='nr_feed' size='1'>
-					<option value=''></option>";
-		foreach($nr_feeds["data"] as $nr_feeddata){
-			$l.="<option value='".$nr_feeddata["Syndication"]["url"]["rss"]."'";
-			if($nr_feeddata["Syndication"]["url"]["rss"] == $nr_feed){
-				$l .= " selected='selected' ";
-			}
-			$l.=">".$nr_feeddata["Syndication"]["name"]."</option>";
-		}
-		$l.="</select>
-				</td>
-			</tr>
-		</table>";
-		$f .= $l;
-	}
-	$f .= "</form>";
-	print $f;
-}
-/**
- * Utility functions for setting and unsetting the database options.
- */
-function nr_set_NoseRub_options () {
-	add_option("nr_apikey");
-	add_option("nr_url");
-	add_option("nr_feed");
-	update_option('nr_url', "http://");
-}
-function nr_unset_NoseRub_options () {
-	delete_option("nr_apikey");
-	delete_option("nr_url");
-	delete_option("nr_feed");
+
+function nr_init(){
+	register_sidebar_widget('NoseRub Lifestream','widget_NoseRub_lifestream');
+	register_sidebar_widget('NoseRub Location','widget_NoseRub_location');
+	register_sidebar_widget('NoseRub Contacts','widget_NoseRub_contacts');
+	register_sidebar_widget('NoseRub vCard','widget_NoseRub_vcard');
 }
 
 add_action('admin_menu','nr_Noserub_menu');
+add_action('widgets_init','nr_init');
 
 register_activation_hook(__FILE__,"nr_set_NoseRub_options");
 register_deactivation_hook(__FILE__,"nr_unset_NoseRub_options");

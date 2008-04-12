@@ -14,6 +14,8 @@ class ContactsController extends AppController {
      * @access 
      */
     function index() {
+        $this->checkUnsecure();
+        
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -155,6 +157,7 @@ class ContactsController extends AppController {
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
                     $saveable = array('is_local', 'username', 'created', 'modified');
+                    $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
                         $this->flashMessage('success', 'New contact added.');
@@ -244,6 +247,42 @@ class ContactsController extends AppController {
         $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
     }
     
+    /**
+     * Display some information about the contact. Especially for the
+     * external contacts, we want to show their accounts and maybe other
+     * data we have about that identity.
+     */
+    public function info() {
+        $contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
+    	$username   = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted   = $this->Contact->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
+            # this is not the logged in user
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+        }
+        
+        # get the contact
+        $this->Contact->recursive = 1;
+	    $this->Contact->expects('Contact', 'Identity', 'WithIdentity');
+	    $contact = $this->Contact->findById($contact_id);
+	    
+        if($session_identity['id'] != $contact['Contact']['identity_id']) {
+            # this is not a contact of the logged in user
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+        }
+        
+        $this->set('contact', $contact);
+        
+        # get contact's accounts
+        $this->Contact->Identity->Account->recursive = 1;
+        $this->Contact->Identity->Account->expects('Account', 'Service');
+        $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
+        
+        $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);
+    }
+    
     function edit() {
     	$contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$username   = isset($this->params['username']) ? $this->params['username'] : '';
@@ -272,7 +311,6 @@ class ContactsController extends AppController {
 	    $this->set('selected_noserub_contact_types', $selected_noserub_contact_types);
 	    
     	if($this->data) {
-    	    #pr($this->data); exit;
     	    if($this->data['Contact']['note'] != $contact['Contact']['note']) {
     	        $this->Contact->id = $contact_id;
     	        $this->Contact->saveField('note', $this->data['Contact']['note']);
@@ -381,6 +419,8 @@ class ContactsController extends AppController {
      * @access 
      */
     function network() {
+        $this->checkUnsecure();
+        
         $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);

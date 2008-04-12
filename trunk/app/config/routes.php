@@ -53,6 +53,9 @@ Router::connect('/pages/account/deleted/', array('controller' => 'identities', '
 Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
+Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'action' => 'request_token'));
+Router::connect('/pages/oauth/access_token', array('controller' => 'oauth', 'action' => 'access_token'));
+Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action' => 'authorize'));
 
 Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
@@ -67,6 +70,7 @@ Router::connect('/auth/:action', array('controller' => 'auth'));
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));
+Router::connect('/:username/contacts/:contact_id/info/', array('controller' => 'contacts', 'action' => 'info'));
 Router::connect('/:username/contacts/:contact_id/delete/:security_token', array('controller' => 'contacts', 'action' => 'delete'));
 Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
@@ -100,6 +104,11 @@ Router::connect('/:username/settings/accounts/add/friends/', array('controller' 
 Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
 Router::connect('/:username/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
 Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
+
+Router::connect('/:username/settings/oauth/add', array('controller' => 'oauth_consumers', 'action' => 'add'));
+Router::connect('/:username/settings/oauth/:consumer_id/delete/:security_token', array('controller' => 'oauth_consumers', 'action' => 'delete'));
+Router::connect('/:username/settings/oauth/:consumer_id/edit/', array('controller' => 'oauth_consumers', 'action' => 'edit'));
+Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 

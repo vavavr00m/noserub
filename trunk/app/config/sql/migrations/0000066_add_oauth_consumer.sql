@@ -1,0 +1,1 @@
+CREATE TABLE  `oauth_consumers` ( `id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `identity_id` INT( 11 ) NOT NULL, `application_name` VARCHAR( 255 ) NOT NULL , `consumer_key` VARCHAR( 255 ) NOT NULL, `consumer_secret` VARCHAR( 255 ) NOT NULL , `created` DATETIME NOT NULL , `modified` DATETIME NOT NULL) ENGINE = MYISAM ;
