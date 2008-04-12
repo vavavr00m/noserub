@@ -34,7 +34,7 @@ PHP, please look here:
 ------------------------------------
 Therefore you should just extract the archive to the document root of your
 webserver:
-    tar -zxf noserub_0.4.tar.gz
+    tar -zxf noserub_<version>.tar.gz
 
 Make sure that /noserub/app/tmp and /noserub/app/webroot/static/avatars are 
 writeable by the webserver. If you don't want to have your NoseRub installation 
@@ -85,7 +85,17 @@ depending on how you set it up in step #2.
 
 
 
-5. What now?
+5. Set up cron job
+------------------
+If you left the default value (which is "true") for NOSERUB_USE_FEED_CACHE 
+in step #3, you have to run the following command via cron to update the
+feed cache:
+
+    php noserub/app/webroot/shell_dispatcher.php /cache/feed/refresh/ 
+
+
+
+6. What now?
 ------------
 Do you have questions, or just want to know more about NoseRub? Just visit the
 following sites:
