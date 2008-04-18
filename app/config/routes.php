@@ -45,12 +45,12 @@ Router::connect('/social_stream/:filter/:output/', array('controller' => 'identi
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/login/withopenid', array('controller' => 'identities', 'action' => 'login_with_openid'));
 Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
-Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
-Router::connect('/pages/register/withopenid/', array('controller' => 'identities', 'action' => 'register_with_openid_step_1'));
-Router::connect('/pages/register/withopenid/step2', array('controller' => 'identities', 'action' => 'register_with_openid_step_2'));
-Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+Router::connect('/pages/register/', array('controller' => 'registration', 'action' => 'register'));
+Router::connect('/pages/register/withopenid/', array('controller' => 'registration', 'action' => 'register_with_openid_step_1'));
+Router::connect('/pages/register/withopenid/step2', array('controller' => 'registration', 'action' => 'register_with_openid_step_2'));
+Router::connect('/pages/register/thanks/', array('controller' => 'registration', 'action' => 'register_thanks'));
+Router::connect('/pages/verify/:hash/', array('controller' => 'registration', 'action' => 'verify'));
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
-Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
 Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'action' => 'request_token'));
