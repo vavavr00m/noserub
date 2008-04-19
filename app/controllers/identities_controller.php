@@ -5,18 +5,14 @@
 class Auth_OpenID_CheckIDRequest {}
 
 class IdentitiesController extends AppController {
-    var $uses = array('Identity');
-    var $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    var $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api');
+    public $uses = array('Identity');
+    public $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
+    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api');
     
     /**
-     * Displays profile page of an identity
-     *
-     * @param  
-     * @return 
-     * @access 
+     * Displays profile page of an identity 
      */
-    function index() {
+    public function index() {
         $this->checkUnsecure();
         
         $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
@@ -211,7 +207,7 @@ class IdentitiesController extends AppController {
     /**
      * Displays the social stream of the whole plattform.
      */
-    function social_stream() {
+    public function social_stream() {
         $this->checkUnsecure();
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
@@ -299,7 +295,7 @@ class IdentitiesController extends AppController {
         }
     }
     
-    function send_message() {
+    public function send_message() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -378,14 +374,7 @@ class IdentitiesController extends AppController {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function profile_settings() {
+    public function profile_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -462,14 +451,7 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Settings for my NoseRub Account');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function display_settings() {
+    public function display_settings() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -508,14 +490,7 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Configure your display options');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function privacy_settings() {
+    public function privacy_settings() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -567,7 +542,7 @@ class IdentitiesController extends AppController {
      	$this->flashMessage('success', 'API options have been saved.');
      }
      */
-    function password_settings() {
+    public function password_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -623,13 +598,6 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Password settings');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function account_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -768,13 +736,6 @@ class IdentitiesController extends AppController {
         $this->redirect('/' . $username . '/settings/account/');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function login() {
         $this->checkSecure();
         $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
@@ -809,7 +770,7 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Login with existing NoseRub account');
     }
     
-    function login_with_openid() {
+    public function login_with_openid() {
     	$this->set('headline', 'Login with OpenID');
     	$returnTo = $this->webroot.'pages/login/withopenid';
     	
@@ -832,14 +793,7 @@ class IdentitiesController extends AppController {
     	}
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function logout() {
+    public function logout() {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
@@ -851,14 +805,7 @@ class IdentitiesController extends AppController {
         $this->redirect($this->url->http('/'), null, true);
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function account_deleted() {
+    public function account_deleted() {
         $this->set('headline', 'Account deleted');
     }
     
@@ -871,7 +818,7 @@ class IdentitiesController extends AppController {
      * @return 
      * @access 
      */
-    function jobs_sync() {
+    public function jobs_sync() {
         $admin_hash  = isset($this->params['admin_hash'])  ? $this->params['admin_hash'] : '';
         $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
         
@@ -913,13 +860,9 @@ class IdentitiesController extends AppController {
     }
     
     /**
-     * sync all identities with their remote server
-     *
-     * @param  
-     * @return 
-     * @access 
+     * sync all identities with their remote server 
      */
-    function jobs_sync_all() {
+    public function jobs_sync_all() {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
         if($admin_hash != NOSERUB_ADMIN_HASH ||
@@ -941,14 +884,7 @@ class IdentitiesController extends AppController {
         $this->set('data', $synced);
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function shell_sync_all() {
+    public function shell_sync_all() {
         $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
