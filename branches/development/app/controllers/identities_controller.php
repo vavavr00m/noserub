@@ -735,22 +735,25 @@ class IdentitiesController extends AppController {
             
         $this->redirect('/' . $username . '/settings/account/');
     }
-    
+
     public function login() {
-        $this->checkSecure();
-        $sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
-        
-        if(!empty($this->data)) {
-            $identity = $this->Identity->check($this->data);
-            if($identity) {
+    	$this->checkSecure();
+    	$sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
+    	
+    	if (!empty($this->data) || count($this->params['url']) > 1) {
+    		if (isset($this->data['Identity']['username'])) {
+    			$identity = $this->Identity->check($this->data);
+    		} else {
+    			$identity = $this->loginWithOpenID();
+    		}
+    		
+    		if($identity) {
                 $this->Session->write('Identity', $identity['Identity']);
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth', null, true);
                 } else {
                     # check, if we should remember this user
                     if($this->data['Identity']['remember'] == 1) {
-                        
-                        # set cookie
                         $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
@@ -760,39 +763,33 @@ class IdentitiesController extends AppController {
             } else {
                 $this->set('form_error', 'Login not possible');
             }
-        } else {
-        	if ($this->Session->check($sessionKeyForOpenIDRequest)) {
+    	} else {
+    		if ($this->Session->check($sessionKeyForOpenIDRequest)) {
         		$request = $this->Session->read($sessionKeyForOpenIDRequest);
         		$this->data['Identity']['username'] = $request->identity;
         	}
-        }
-        
-        $this->set('headline', 'Login with existing NoseRub account');
+    	}
+    	
+    	$this->set('headline', 'Login with existing NoseRub account');
     }
     
-    public function login_with_openid() {
-    	$this->set('headline', 'Login with OpenID');
-    	$returnTo = $this->webroot.'pages/login/withopenid';
+    // this method hides the fact that two requests are necessary when login 
+    // with an OpenID 
+    private function loginWithOpenID() {
+    	$returnTo = $this->webroot.'pages/login';
     	
     	if (!empty($this->data)) {
+    		$this->Session->write('OpenidLogin.remember', $this->data['Identity']['remember']);
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
+    		exit;
     	} else {
-    		if (count($this->params['url']) > 1) {
-    			$response = $this->getOpenIDResponseIfSuccess($returnTo);
-    			$identity = $this->Identity->checkOpenID($response);
- 
-    			if ($identity) {
-    				$this->Session->write('Identity', $identity['Identity']);
-    				$this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
-    				$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
-                	$this->redirect($url, null, true);
-    			} else {
-    				$this->set('form_error', 'Login not possible');
-    			}
-    		}
+    		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
+    		$this->Session->delete('OpenidLogin.remember');
+    		$response = $this->getOpenIDResponseIfSuccess($returnTo);
+    		return $this->Identity->checkOpenID($response);
     	}
     }
-    
+        
     public function logout() {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
