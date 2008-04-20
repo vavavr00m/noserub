@@ -5,7 +5,7 @@
 	<XRD>
 		<Service priority="0">
 			<Type>http://specs.openid.net/auth/2.0/return_to</Type>
-			<URI><?php echo $server; ?>pages/login/withopenid</URI>
+			<URI><?php echo $server; ?>pages/login</URI>
 		</Service>
 		<Service priority="0">
 			<Type>http://specs.openid.net/auth/2.0/return_to</Type>
