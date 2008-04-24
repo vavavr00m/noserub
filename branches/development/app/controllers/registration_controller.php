@@ -37,9 +37,10 @@ class RegistrationController extends AppController {
 	public function register_with_openid_step_1() {
     	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
 		$returnTo = $this->webroot.'pages/register/withopenid';
+		$sregFields = array('email', 'nickname');
     	
     	if (!empty($this->data)) {
-    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, array('email'));
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, $sregFields);
     	} else {
     		if (count($this->params['url']) > 1) {
     			$response = $this->getOpenIDResponseIfSuccess($returnTo);
@@ -59,9 +60,11 @@ class RegistrationController extends AppController {
     				$this->Session->write('Registration.openid_identity', $response->message->getArg('http://openid.net/signon/1.0', 'identity'));
 					$this->Session->write('Registration.openid_server_url', $response->endpoint->server_url);
     				
-	    			if (@$sreg['email']) {
-	    				$this->Session->write('Registration.email', $sreg['email']);
-	    			}
+					foreach ($sregFields as $sregField) {
+						if (@$sreg[$sregField]) {
+	    					$this->Session->write('Registration.'.$sregField, $sreg[$sregField]);
+	    				}
+					}
 	
 	    			$this->redirect('/pages/register/withopenid/step2');
     			}
@@ -88,6 +91,10 @@ class RegistrationController extends AppController {
     	} else {
     		if ($this->Session->check('Registration.email')) {
     			$this->data['Identity']['email'] = $this->Session->read('Registration.email');
+    		}
+    		
+    		if ($this->Session->check('Registration.nickname')) {
+    			$this->data['Identity']['username'] = $this->Session->read('Registration.nickname');
     		}
     		
     		$this->data['Identity']['frontpage_updates'] = 1;
@@ -144,6 +151,7 @@ class RegistrationController extends AppController {
 	    $this->Session->delete('Registration.openid_identity');
 	    $this->Session->delete('Registration.openid_server_url');
 	    $this->Session->delete('Registration.email');
+	    $this->Session->delete('Registration.nickname');
     }
 }
 ?>
