@@ -14,7 +14,10 @@ INSTALL
 ------------------
 You need MySQL and PHP 5. MySQL 5 is strongly advised. PHP 5 must have 
 enabled either the GMP extension or the Bcmath extension plus the GD and curl
-extensions. Your webserver (I assume Apache, never tried something else) should 
+extensions. Also make sure that the value for "memory_limit" in your php.ini is
+higher than 8MB. 
+
+Your webserver (I assume Apache, never tried something else) should 
 have mod_rewrite installed and made available for the directory, NoseRub is
 installed at. This is important, so that the URLs are the same on all
 servers in the NoseRub "universe".
