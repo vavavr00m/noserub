@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Generator.php';
-
 /**
  * Error collection class that enables HTML Purifier to report HTML
  * problems back to the user
@@ -17,7 +15,7 @@ class HTMLPurifier_ErrorCollector
     public function __construct($context) {
         $this->locale    =& $context->get('Locale');
         $this->generator =& $context->get('Generator');
-        $this->context   =& $context;
+        $this->context   = $context;
     }
     
     /**

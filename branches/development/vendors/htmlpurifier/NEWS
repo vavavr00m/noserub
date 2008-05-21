@@ -9,6 +9,150 @@ NEWS ( CHANGELOG and HISTORY )                                     HTMLPurifier
     . Internal change
 ==========================
 
+3.1.0, released 2008-05-18
+# Unnecessary references to objects (vestiges of PHP4) removed from method
+  signatures.  The following methods do not need references when assigning from
+  them and will result in E_STRICT errors if you try:
+    + HTMLPurifier_Config->get*Definition() [* = HTML, CSS]
+    + HTMLPurifier_ConfigSchema::instance()
+    + HTMLPurifier_DefinitionCacheFactory::instance()
+    + HTMLPurifier_DefinitionCacheFactory->create()
+    + HTMLPurifier_DoctypeRegistry->register()
+    + HTMLPurifier_DoctypeRegistry->get()
+    + HTMLPurifier_HTMLModule->addElement()
+    + HTMLPurifier_HTMLModule->addBlankElement()
+    + HTMLPurifier_LanguageFactory::instance()
+# Printer_ConfigForm's get*() functions were static-ified
+# %HTML.ForbiddenAttributes requires attribute declarations to be in the
+  form of tag@attr, NOT tag.attr (which will throw an error and won't do
+  anything). This is for forwards compatibility with XML; you'd do best
+  to migrate an %HTML.AllowedAttributes directives to this syntax too.
+! Allow index to be false for config from form creation
+! Added HTMLPurifier::VERSION constant
+! Commas, not dashes, used for serializer IDs. This change is forwards-compatible
+  and allows for version numbers like "3.1.0-dev".
+! %HTML.Allowed deals gracefully with whitespace anywhere, anytime!
+! HTML Purifier's URI handling is a lot more robust, with much stricter
+  validation checks and better percent encoding handling.
+! Bootstrap autoloader deals more robustly with classes that don't exist,
+  preventing class_exists($class, true) from barfing.
+- InterchangeBuilder now alphabetizes its lists
+- Validation error in configdoc output fixed
+- Iconv and other encoding errors muted even with custom error handlers that
+  do not honor error_reporting
+- Add protection against imagecrash attack with CSS height/width
+- HTMLPurifier::instance() created for consistency, is equivalent to getInstance()
+- Fixed and revamped broken ConfigForm smoketest
+- Bug with bool/null fields in Printer_ConfigForm fixed
+- Bug with global forbidden attributes fixed
+- Improved error messages for allowed and forbidden HTML elements and attributes
+- Missing (or null) in configdoc documentation restored
+- If DOM throws and exception during parsing with PH5P (occurs in newer versions
+  of DOM), HTML Purifier punts to DirectLex
+- Fatal error with unserialization of ScriptRequired
+- Created directories are now chmod'ed properly
+- Fixed bug with fallback languages in LanguageFactory
+- Standalone testing setup properly with autoload
+. Out-of-date documentation revised
+. UTF-8 encoding check optimization as suggested by Diego
+. HTMLPurifier_Error removed in favor of exceptions
+. More copy() function removed; should use clone instead
+. More extensive unit tests for HTMLDefinition
+. assertPurification moved to central harness
+. HTMLPurifier_Generator accepts $config and $context parameters during
+  instantiation, not runtime
+. Double-quotes outside of attribute values are now unescaped
+
+3.1.0rc1, released 2008-04-22
+# Autoload support added. Internal require_once's removed in favor of an
+  explicit require list or autoloading. To use HTML Purifier,
+  you must now either use HTMLPurifier.auto.php
+  or HTMLPurifier.includes.php; setting the include path and including
+  HTMLPurifier.php is insufficient--in such cases include HTMLPurifier.autoload.php
+  as well to register our autoload handler (or modify your autoload function
+  to check HTMLPurifier_Bootstrap::getPath($class)). You can also use
+  HTMLPurifier.safe-includes.php for a less performance friendly but more
+  user-friendly library load.
+# HTMLPurifier_ConfigSchema static functions are officially deprecated. Schema
+  information is stored in the ConfigSchema directory, and the
+  maintenance/generate-schema-cache.php generates the schema.ser file, which
+  is now instantiated. Support for userland schema changes coming soon!
+# HTMLPurifier_Config will now throw E_USER_NOTICE when you use a directive
+  alias; to get rid of these errors just modify your configuration to use
+  the new directive name.
+# HTMLPurifier->addFilter is deprecated; built-in filters can now be
+  enabled using %Filter.$filter_name or by setting your own filters using
+  %Filter.Custom
+# Directive-level safety properties superceded in favor of module-level
+  safety. Internal method HTMLModule->addElement() has changed, although 
+  the externally visible HTMLDefinition->addElement has *not* changed.
+! Extra utility classes for testing and non-library operations can
+  be found in extras/. Specifically, these are FSTools and ConfigDoc.
+  You may find a use for these in your own project, but right now they
+  are highly experimental and volatile.
+! Integration with PHPT allows for automated smoketests
+! Limited support for proprietary HTML elements, namely <marquee>, sponsored
+  by Chris. You can enable them with %HTML.Proprietary if your client
+  demands them.
+! Support for !important CSS cascade modifier. By default, this will be stripped
+  from CSS, but you can enable it using %CSS.AllowImportant
+! Support for display and visibility CSS properties added, set %CSS.AllowTricky
+  to true to use them.
+! HTML Purifier now has its own Exception hierarchy under HTMLPurifier_Exception.
+  Developer error (not enduser error) can cause these to be triggered.
+! Experimental kses() wrapper introduced with HTMLPurifier.kses.php
+! Finally %CSS.AllowedProperties for tweaking allowed CSS properties without
+  mucking around with HTMLPurifier_CSSDefinition
+! ConfigDoc output has been enhanced with version and deprecation info.
+! %HTML.ForbiddenAttributes and %HTML.ForbiddenElements implemented.
+- Autoclose now operates iteratively, i.e. <span><span><div> now has
+  both span tags closed.
+- Various HTMLPurifier_Config convenience functions now accept another parameter
+  $schema which defines what HTMLPurifier_ConfigSchema to use besides the
+  global default.
+- Fix bug with trusted script handling in libxml versions later than 2.6.28.
+- Fix bug in ExtractStyleBlocks with comments in style tags
+- Fix bug in comment parsing for DirectLex
+- Flush output now displayed when in command line mode for unit tester
+- Fix bug with rgb(0, 1, 2) color syntax with spaces inside shorthand syntax
+- HTMLPurifier_HTMLDefinition->addAttribute can now be called multiple times
+  on the same element without emitting errors.
+- Fixed fatal error in PH5P lexer with invalid tag names
+. Plugins now get their own changelogs according to project conventions.
+. Convert tokens to use instanceof, reducing memory footprint and
+  improving comparison speed.
+. Dry runs now supported in SimpleTest; testing facilities improved
+. Bootstrap class added for handling autoloading functionality
+. Implemented recursive glob at FSTools->globr
+. ConfigSchema now has instance methods for all corresponding define* 
+  static methods.
+. A couple of new historical maintenance scripts were added.
+. HTMLPurifier/HTMLModule/Tidy/XHTMLAndHTML4.php split into two files
+. tests/index.php can now be run from any directory.
+. HTMLPurifier_Token subclasses split into seperate files
+. HTMLPURIFIER_PREFIX now is defined in Bootstrap.php, NOT HTMLPurifier.php
+. HTMLPURIFIER_PREFIX can now be defined outside of HTML Purifier
+. New --php=php flag added, allows PHP executable to be specified (command
+  line only!)
+. htmlpurifier_add_test() preferred method to translate test files in to
+  classes, because it handles PHPT files too.
+. Debugger class is deprecated and will be removed soon.
+. Command line argument parsing for testing scripts revamped, now --opt value
+  format is supported.
+. Smoketests now cleanup after magic quotes
+. Generator now can output comments (however, comments are still stripped
+  from HTML Purifier output)
+. HTMLPurifier_ConfigSchema->validate() deprecated in favor of
+  HTMLPurifier_VarParser->parse()
+. Integers auto-cast into float type by VarParser.
+. HTMLPURIFIER_STRICT removed; no validation is performed on runtime, only 
+  during cache generation
+. Reordered script calls in maintenance/flush.php
+. Command line scripts now honor exit codes
+. When --flush fails in unit testers, abort tests and print message
+. Improved documentation in docs/dev-flush.html about the maintenance scripts
+. copy() methods removed in favor of clone keyword
+
 3.0.0, released 2008-01-06
 # HTML Purifier is PHP 5 only! The 2.1.x branch will be maintained
   until PHP 4 is completely deprecated, but no new features will be added

@@ -1,24 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Strategy.php';
-require_once 'HTMLPurifier/HTMLDefinition.php';
-require_once 'HTMLPurifier/Generator.php';
-
-require_once 'HTMLPurifier/Injector/AutoParagraph.php';
-require_once 'HTMLPurifier/Injector/Linkify.php';
-require_once 'HTMLPurifier/Injector/PurifierLinkify.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'AutoFormat', 'Custom', array(), 'list', '
-<p>
-  This directive can be used to add custom auto-format injectors.
-  Specify an array of injector names (class name minus the prefix)
-  or concrete implementations. Injector class must exist. This directive
-  has been available since 2.0.1.
-</p>
-'
-);
-
 /**
  * Takes tokens makes them well-formed (balance end tags, etc.)
  */
@@ -110,7 +91,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
             
             // quick-check: if it's not a tag, no need to process
             if (empty( $token->is_tag )) {
-                if ($token->type === 'text') {
+                if ($token instanceof HTMLPurifier_Token_Text) {
                      // injector handler code; duplicated for performance reasons
                      foreach ($this->injectors as $i => $injector) {
                          if (!$injector->skip) $injector->handleText($token);
@@ -128,21 +109,21 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
             
             // quick tag checks: anything that's *not* an end tag
             $ok = false;
-            if ($info->type == 'empty' && $token->type == 'start') {
+            if ($info->type === 'empty' && $token instanceof HTMLPurifier_Token_Start) {
                 // test if it claims to be a start tag but is empty
                 $token = new HTMLPurifier_Token_Empty($token->name, $token->attr);
                 $ok = true;
-            } elseif ($info->type != 'empty' && $token->type == 'empty' ) {
+            } elseif ($info->type !== 'empty' && $token instanceof HTMLPurifier_Token_Empty) {
                 // claims to be empty but really is a start tag
                 $token = array(
                     new HTMLPurifier_Token_Start($token->name, $token->attr),
                     new HTMLPurifier_Token_End($token->name)
                 );
                 $ok = true;
-            } elseif ($token->type == 'empty') {
+            } elseif ($token instanceof HTMLPurifier_Token_Empty) {
                 // real empty token
                 $ok = true;
-            } elseif ($token->type == 'start') {
+            } elseif ($token instanceof HTMLPurifier_Token_Start) {
                 // start tag
                 
                 // ...unless they also have to close their parent
@@ -156,10 +137,9 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                     // the parent
                     if (!isset($parent_info->child->elements[$token->name])) {
                         if ($e) $e->send(E_NOTICE, 'Strategy_MakeWellFormed: Tag auto closed', $parent);
-                        // close the parent, then append the token
+                        // close the parent, then re-loop to reprocess token
                         $result[] = new HTMLPurifier_Token_End($parent->name);
-                        $result[] = $token;
-                        $this->currentNesting[] = $token;
+                        $this->inputIndex--;
                         continue;
                     }
                     
@@ -182,7 +162,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
             }
             
             // sanity check: we should be dealing with a closing tag
-            if ($token->type != 'end') continue;
+            if (!$token instanceof HTMLPurifier_Token_End) continue;
             
             // make sure that we have something open
             if (empty($this->currentNesting)) {
@@ -305,9 +285,9 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
         } elseif ($token) {
             // regular case
             $this->outputTokens[] = $token;
-            if ($token->type == 'start') {
+            if ($token instanceof HTMLPurifier_Token_Start) {
                 $this->currentNesting[] = $token;
-            } elseif ($token->type == 'end') {
+            } elseif ($token instanceof HTMLPurifier_Token_End) {
                 array_pop($this->currentNesting); // not actually used
             }
         }

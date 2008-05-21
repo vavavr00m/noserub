@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/ConfigDef.php';
-
 /**
  * Structure object containing definition of a directive.
  * @note This structure does not contain default values
@@ -13,16 +11,14 @@ class HTMLPurifier_ConfigDef_Directive extends HTMLPurifier_ConfigDef
     
     public function __construct(
         $type = null,
-        $descriptions = null,
         $allow_null = null,
         $allowed = null,
         $aliases = null
     ) {
-        if (        $type !== null)         $this->type = $type;
-        if ($descriptions !== null) $this->descriptions = $descriptions;
-        if (  $allow_null !== null)   $this->allow_null = $allow_null;
-        if (     $allowed !== null)      $this->allowed = $allowed;
-        if (     $aliases !== null)      $this->aliases = $aliases;
+        if (       $type !== null)        $this->type = $type;
+        if ( $allow_null !== null)  $this->allow_null = $allow_null;
+        if (    $allowed !== null)     $this->allowed = $allowed;
+        if (    $aliases !== null)     $this->aliases = $aliases;
     }
     
     /**
@@ -40,12 +36,6 @@ class HTMLPurifier_ConfigDef_Directive extends HTMLPurifier_ConfigDef
     public $type = 'mixed';
     
     /**
-     * Plaintext descriptions of the configuration entity is. Organized by
-     * file and line number, so multiple descriptions are allowed.
-     */
-    public $descriptions = array();
-    
-    /**
      * Is null allowed? Has no effect for mixed type.
      * @bool
      */
@@ -60,20 +50,6 @@ class HTMLPurifier_ConfigDef_Directive extends HTMLPurifier_ConfigDef
      * Hash of value aliases, i.e. values that are equivalent.
      */
     public $aliases = array();
-    
-    /**
-     * Advisory list of directive aliases, i.e. other directives that
-     * redirect here
-     */
-    public $directiveAliases = array();
-    
-    /**
-     * Adds a description to the array
-     */
-    public function addDescription($file, $line, $description) {
-        if (!isset($this->descriptions[$file])) $this->descriptions[$file] = array();
-        $this->descriptions[$file][$line] = $description;
-    }
     
 }
 

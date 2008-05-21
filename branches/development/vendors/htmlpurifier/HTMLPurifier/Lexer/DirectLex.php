@@ -1,21 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Lexer.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'Core', 'DirectLexLineNumberSyncInterval', 0, 'int', '
-<p>
-  Specifies the number of tokens the DirectLex line number tracking
-  implementations should process before attempting to resyncronize the
-  current line count by manually counting all previous new-lines. When
-  at 0, this functionality is disabled. Lower values will decrease
-  performance, and this is only strictly necessary if the counting
-  algorithm is buggy (in which case you should report it as a bug).
-  This has no effect when %Core.MaintainLineNumbers is disabled or DirectLex is
-  not being used. This directive has been available since 2.0.0.
-</p>
-');
-
 /**
  * Our in-house implementation of a parser.
  * 
@@ -79,16 +63,10 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             $e =& $context->get('ErrorCollector');
         }
         
-        // infinite loop protection
-        // has to be pretty big, since html docs can be big
-        // we're allow two hundred thousand tags... more than enough?
-        // NOTE: this is also used for synchronization, so watch out
+        // for testing synchronization
         $loops = 0;
         
-        while(true) {
-            
-            // infinite loop protection
-            if (++$loops > 200000) return array();
+        while(++$loops) {
             
             // recalculate lines
             if (
@@ -319,7 +297,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
     }
     
     /**
-     * PHP 4 compatible substr_count that implements offset and length
+     * PHP 5.0.x compatible substr_count that implements offset and length
      */
     protected function substrCount($haystack, $needle, $offset, $length) {
         static $oldVersion;
@@ -397,15 +375,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         // space, so let's guarantee that there's always a terminating space.
         $string .= ' ';
         
-        // infinite loop protection
-        $loops = 0;
         while(true) {
-            
-            // infinite loop protection
-            if (++$loops > 1000) {
-                trigger_error('Infinite loop detected in attribute parsing', E_USER_WARNING);
-                return array();
-            }
             
             if ($cursor >= $size) {
                 break;

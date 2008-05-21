@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/ChildDef.php';
-
 /**
  * Custom validation class, accepts DTD child definitions
  * 
@@ -69,9 +67,9 @@ class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
             
             $is_child = ($nesting == 0); // direct
             
-            if ($token->type == 'start') {
+            if ($token instanceof HTMLPurifier_Token_Start) {
                 $nesting++;
-            } elseif ($token->type == 'end') {
+            } elseif ($token instanceof HTMLPurifier_Token_End) {
                 $nesting--;
             }
             
