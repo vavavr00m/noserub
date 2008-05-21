@@ -1,53 +1,5 @@
 <?php
 
-HTMLPurifier_ConfigSchema::define(
-    'Core', 'Encoding', 'utf-8', 'istring', 
-    'If for some reason you are unable to convert all webpages to UTF-8, '. 
-    'you can use this directive as a stop-gap compatibility change to '. 
-    'let HTML Purifier deal with non UTF-8 input.  This technique has '. 
-    'notable deficiencies: absolutely no characters outside of the selected '. 
-    'character encoding will be preserved, not even the ones that have '. 
-    'been ampersand escaped (this is due to a UTF-8 specific <em>feature</em> '.
-    'that automatically resolves all entities), making it pretty useless '.
-    'for anything except the most I18N-blind applications, although '.
-    '%Core.EscapeNonASCIICharacters offers fixes this trouble with '.
-    'another tradeoff. This directive '.
-    'only accepts ISO-8859-1 if iconv is not enabled.'
-);
-
-HTMLPurifier_ConfigSchema::define(
-    'Core', 'EscapeNonASCIICharacters', false, 'bool',
-    'This directive overcomes a deficiency in %Core.Encoding by blindly '.
-    'converting all non-ASCII characters into decimal numeric entities before '.
-    'converting it to its native encoding. This means that even '.
-    'characters that can be expressed in the non-UTF-8 encoding will '.
-    'be entity-ized, which can be a real downer for encodings like Big5. '.
-    'It also assumes that the ASCII repetoire is available, although '.
-    'this is the case for almost all encodings. Anyway, use UTF-8! This '.
-    'directive has been available since 1.4.0.'
-);
-
-if ( !function_exists('iconv') ) {
-    // only encodings with native PHP support
-    HTMLPurifier_ConfigSchema::defineAllowedValues(
-        'Core', 'Encoding', array(
-            'utf-8',
-            'iso-8859-1'
-        )
-    );
-    HTMLPurifier_ConfigSchema::defineValueAliases(
-        'Core', 'Encoding', array(
-            'iso8859-1' => 'iso-8859-1'
-        )
-    );
-}
-
-HTMLPurifier_ConfigSchema::define(
-    'Test', 'ForceNoIconv', false, 'bool', 
-    'When set to true, HTMLPurifier_Encoder will act as if iconv does not '.
-    'exist and use only pure PHP implementations.'
-);
-
 /**
  * A UTF-8 specific character encoder that handles cleaning and transforming.
  * @note All functions in this class should be static.
@@ -61,6 +13,11 @@ class HTMLPurifier_Encoder
     private function __construct() {
         trigger_error('Cannot instantiate encoder, call methods statically', E_USER_ERROR);
     }
+    
+    /**
+     * Error-handler that mutes errors, alternative to shut-up operator.
+     */
+    private static function muteErrorHandler() {}
     
     /**
      * Cleans a UTF-8 string for well-formedness and SGML validity
@@ -105,9 +62,18 @@ class HTMLPurifier_Encoder
         static $iconv = null;
         if ($iconv === null) $iconv = function_exists('iconv');
         
+        // UTF-8 validity is checked since PHP 4.3.5
+        // This is an optimization: if the string is already valid UTF-8, no
+        // need to do iconv/php stuff. 99% of the time, this will be the case.
+        if (preg_match('/^.{1}/us', $str)) {
+            return strtr($str, $non_sgml_chars);
+        }
+        
         if ($iconv && !$force_php) {
             // do the shortcut way
-            $str = @iconv('UTF-8', 'UTF-8//IGNORE', $str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = iconv('UTF-8', 'UTF-8//IGNORE', $str);
+            restore_error_handler();
             return strtr($str, $non_sgml_chars);
         }
         
@@ -315,9 +281,15 @@ class HTMLPurifier_Encoder
         $encoding = $config->get('Core', 'Encoding');
         if ($encoding === 'utf-8') return $str;
         if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
-            return @iconv($encoding, 'utf-8//IGNORE', $str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = iconv($encoding, 'utf-8//IGNORE', $str);
+            restore_error_handler();
+            return $str;
         } elseif ($encoding === 'iso-8859-1') {
-            return @utf8_encode($str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = utf8_encode($str);
+            restore_error_handler();
+            return $str;
         }
         trigger_error('Encoding not supported', E_USER_ERROR);
     }
@@ -336,9 +308,15 @@ class HTMLPurifier_Encoder
             $str = HTMLPurifier_Encoder::convertToASCIIDumbLossless($str);
         }
         if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
-            return @iconv('utf-8', $encoding . '//IGNORE', $str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = iconv('utf-8', $encoding . '//IGNORE', $str);
+            restore_error_handler();
+            return $str;
         } elseif ($encoding === 'iso-8859-1') {
-            return @utf8_decode($str);
+            set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
+            $str = utf8_decode($str);
+            restore_error_handler();
+            return $str;
         }
         trigger_error('Encoding not supported', E_USER_ERROR);
     }

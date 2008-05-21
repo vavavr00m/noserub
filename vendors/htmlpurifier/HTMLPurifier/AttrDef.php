@@ -70,10 +70,19 @@ abstract class HTMLPurifier_AttrDef
      * @return Created AttrDef object corresponding to $string
      */
     public function make($string) {
-        // default implementation, return flyweight of this object
-        // if overloaded, it is *necessary* for you to clone the
-        // object (usually by instantiating a new copy) and return that
+        // default implementation, return a flyweight of this object.
+        // If $string has an effect on the returned object (i.e. you
+        // need to overload this method), it is best
+        // to clone or instantiate new copies. (Instantiation is safer.)
         return $this;
+    }
+    
+    /**
+     * Removes spaces from rgb(0, 0, 0) so that shorthand CSS properties work
+     * properly. THIS IS A HACK!
+     */
+    protected function mungeRgb($string) {
+        return preg_replace('/rgb\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\)/', 'rgb(\1,\2,\3)', $string);
     }
     
 }

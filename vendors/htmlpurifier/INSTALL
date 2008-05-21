@@ -7,16 +7,16 @@ library is extremely easy.  (Although... if you were looking for a
 step-by-step installation GUI, you've downloaded the wrong software!)
 
 While the impatient can get going immediately with some of the sample
-code at the bottom of this library, it's well worth performing some
-basic sanity checks to get the most out of this library.
+code at the bottom of this library, it's well worth reading this entire
+document--most of the other documentation assumes that you are familiar
+with these contents.
 
 
 ---------------------------------------------------------------------------
 1.  Compatibility
 
-HTML Purifier is PHP 5 only, and is actively tested from PHP 5.0.0 and 
-up (see tests/multitest.php for the specific versions that are being 
-actively tested). It has no core dependencies with other libraries. PHP 
+HTML Purifier is PHP 5 only, and is actively tested from PHP 5.0.5 and 
+up. It has no core dependencies with other libraries. PHP 
 4 support was deprecated on December 31, 2007 with HTML Purifier 3.0.0. 
 Essential security fixes will be issued for the 2.1.x branch until 
 August 8, 2008. 
@@ -48,7 +48,7 @@ HTML Purifier can process these doctypes:
 * UTF-8 (default)
 * Any encoding iconv supports (with crippled internationalization support)
 
-These defaults reflect what my choices where be if I were authoring an
+These defaults reflect what my choices would be if I were authoring an
 HTML document, however, what you choose depends on the nature of your
 codebase.  If you don't know what doctype you are using, you can determine
 the doctype from this identifier at the top of your source code:
@@ -63,8 +63,8 @@ the doctype from this identifier at the top of your source code:
 If the character encoding declaration is missing, STOP NOW, and
 read 'docs/enduser-utf8.html' (web accessible at
 http://htmlpurifier.org/docs/enduser-utf8.html).  In fact, even if it is
-present, read this document anyway, as most websites specify character
-encoding incorrectly.
+present, read this document anyway, as many websites specify their
+document's character encoding incorrectly.
 
 
 ---------------------------------------------------------------------------
@@ -74,25 +74,142 @@ The procedure is quite simple:
 
     require_once '/path/to/library/HTMLPurifier.auto.php';
 
-I recommend only including HTML Purifier when you need it, because that
-call represents the inclusion of a lot of PHP files which constitute
-the bulk of HTML Purifier's memory usage.
-
-If you don't like your include_path to be fiddled around with, simply set
-HTML Purifier's library/ directory to the include path yourself and then:
-
-    require_once 'HTMLPurifier.php';
+This will setup an autoloader, so the library's files are only included
+when you use them.
 
 Only the contents in the library/ folder are necessary, so you can remove
-everything else when using HTML Purifier in a production environment. 
+everything else when using HTML Purifier in a production environment.
+
+If you installed HTML Purifier via PEAR, all you need to do is:
+
+    require_once 'HTMLPurifier.auto.php';
+
+Please note that the usual PEAR practice of including just the classes you
+want will not work with HTML Purifier's autoloading scheme.
+
+Advanced users, read on; other users can skip to section 4.
+
+Autoload compatibility
+----------------------
+
+    HTML Purifier attempts to be as smart as possible when registering an
+    autoloader, but there are some cases where you will need to change
+    your own code to accomodate HTML Purifier. These are those cases:
+    
+    PHP VERSION IS LESS THAN 5.1.2, AND YOU'VE DEFINED __autoload
+        Because spl_autoload_register() doesn't exist in early versions
+        of PHP 5, HTML Purifier has no way of adding itself to the autoload
+        stack. Modify your __autoload function to test
+        HTMLPurifier_Bootstrap::autoload($class)
+        
+        For example, suppose your autoload function looks like this:
+        
+            function __autoload($class) {
+                require str_replace('_', '/', $class) . '.php';
+                return true;
+            }
+        
+        A modified version with HTML Purifier would look like this:
+        
+            function __autoload($class) {
+                if (HTMLPurifier_Bootstrap::autoload($class)) return true;
+                require str_replace('_', '/', $class) . '.php';
+                return true;
+            }
+        
+        Note that there *is* some custom behavior in our autoloader; the
+        original autoloader in our example would work for 99% of the time,
+        but would fail when including language files.
+    
+    AN __autoload FUNCTION IS DECLARED AFTER OUR AUTOLOADER IS REGISTERED
+        spl_autoload_register() has the curious behavior of disabling
+        the existing __autoload() handler. Users need to explicitly
+        spl_autoload_register('__autoload'). Because we use SPL when it
+        is available, __autoload() will ALWAYS be disabled. If __autoload()
+        is declared before HTML Purifier is loaded, this is not a problem:
+        HTML Purifier will register the function for you. But if it is
+        declared afterwards, it will mysteriously not work. This
+        snippet of code (after your autoloader is defined) will fix it:
+        
+            spl_autoload_register('__autoload')
+    
+    Users should also be on guard if they use a version of PHP previous
+    to 5.1.2 without an autoloader--HTML Purifier will define __autoload()
+    for you, which can collide with an autoloader that was added by *you*
+    later.
+    
+
+For better performance
+----------------------
+
+    Opcode caches, which greatly speed up PHP initialization for scripts
+    with large amounts of code (HTML Purifier included), don't like
+    autoloaders. We offer an include file that includes all of HTML Purifier's
+    files in one go in an opcode cache friendly manner:
+    
+        // If /path/to/library isn't already in your include path, uncomment
+        // the below line:
+        // require '/path/to/library/HTMLPurifier.path.php';
+        
+        require 'HTMLPurifier.includes.php';
+    
+    Optional components still need to be included--you'll know if you try to
+    use a feature and you get a class doesn't exists error! The autoloader
+    can be used in conjunction with this approach to catch classes that are
+    missing. Simply add this afterwards:
+    
+        require 'HTMLPurifier.autoload.php';
+
+Standalone version
+------------------
+
+    HTML Purifier has a standalone distribution; you can also generate
+    a standalone file from the full version by running the script
+    maintenance/generate-standalone.php . The standalone version has the
+    benefit of having most of its code in one file, so parsing is much
+    faster and the library is easier to manage.
+    
+    If HTMLPurifier.standalone.php exists in the library directory, you
+    can use it like this:
+    
+        require '/path/to/HTMLPurifier.standalone.php';
+    
+    This is equivalent to including HTMLPurifier.includes.php, except that
+    the contents of standalone/ will be added to your path. To override this
+    behavior, specify a new HTMLPURIFIER_PREFIX where standalone files can
+    be found (usually, this will be one directory up, the "true" library
+    directory in full distributions). Don't forget to set your path too!
+    
+    The autoloader can be added to the end to ensure the classes are
+    loaded when necessary; otherwise you can manually include them.
+    To use the autoloader, use this:
+    
+        require 'HTMLPurifier.autoload.php';
+
+For advanced users
+------------------
+
+    HTMLPurifier.auto.php performs a number of operations that can be done
+    individually. These are:
+    
+        HTMLPurifier.path.php
+            Puts /path/to/library in the include path. For high performance,
+            this should be done in php.ini.
+        
+        HTMLPurifier.autoload.php
+            Registers our autoload handler HTMLPurifier_Bootstrap::autoload($class).
+    
+    You can do these operations by yourself--in fact, you must modify your own
+    autoload handler if you are using a version of PHP earlier than PHP 5.1.2
+    (See "Autoload compatibility" above).
 
 
 ---------------------------------------------------------------------------
 4. Configuration
 
 HTML Purifier is designed to run out-of-the-box, but occasionally HTML
-Purifier needs to be told what to do.  If you answered no to any of these
-questions, read on, otherwise, you can skip to the next section (or, if you're
+Purifier needs to be told what to do.  If you answer no to any of these
+questions, read on; otherwise, you can skip to the next section (or, if you're
 into configuring things just for the heck of it, skip to 4.3).
 
 * Am I using UTF-8?

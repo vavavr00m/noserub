@@ -2,19 +2,6 @@
 
 // does not support network paths
 
-require_once 'HTMLPurifier/URIFilter.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'URI', 'MakeAbsolute', false, 'bool', '
-<p>
-    Converts all URIs into absolute forms. This is useful when the HTML
-    being filtered assumes a specific base path, but will actually be
-    viewed in a different context (and setting an alternate base URI is
-    not possible). %URI.Base must be set for this directive to work.
-    This directive has been available since 2.1.0.
-</p>
-');
-
 class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
 {
     public $name = 'MakeAbsolute';
@@ -40,7 +27,7 @@ class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
             is_null($uri->host) && is_null($uri->query) && is_null($uri->fragment)
         ) {
             // reference to current document
-            $uri = $this->base->copy();
+            $uri = clone $this->base;
             return true;
         }
         if (!is_null($uri->scheme)) {
