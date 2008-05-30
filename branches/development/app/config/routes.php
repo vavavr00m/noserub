@@ -63,6 +63,7 @@ Router::connect('/api/:username/:api_hash/:result_type/locations/', array('contr
 Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('controller' => 'contacts', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
