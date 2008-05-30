@@ -951,13 +951,14 @@ class IdentitiesController extends AppController {
         $this->Identity->expects('Location');
         $this->Identity->id = $identity['Identity']['id'];
         $data = $this->Identity->read();
+        
         $this->set(
             'data', 
             array(
                 'firstname'     => $data['Identity']['firstname'],
                 'lastname'      => $data['Identity']['lastname'],
                 'url'           => 'http://' . $data['Identity']['username'],
-                'photo'         => $data['Identity']['photo'],
+                'photo'         => $this->Identity->getPhotoUrl($data),
                 'about'         => $data['Identity']['about'],
                 'address'       => $data['Identity']['address_shown'],
                 'last_location' => array(

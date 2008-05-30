@@ -918,4 +918,34 @@ class Identity extends AppModel {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
         }
     }
+    
+    public function getPhotoUrl($data) {
+        $sex = array(
+            'img' => array(
+                0 => Router::url('/images/profile/avatar/noinfo.gif'),
+                1 => Router::url('/images/profile/avatar/female.gif'),
+                2 => Router::url('/images/profile/avatar/male.gif')
+            )
+        );
+                                    
+        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+
+        if($data['Identity']['photo']) {
+            if(strpos($data['Identity']['photo'], 'http://') === 0 ||
+               strpos($data['Identity']['photo'], 'https://') === 0) {
+                   # contains a complete path, eg. from not local identities
+                   $profile_photo = $data['Identity']['photo'];
+               } else {
+                   $profile_photo = $static_base_url . $data['Identity']['photo'] . '.jpg';
+               }
+        } else {
+            $profile_photo = $sex['img'][$data['Identity']['sex']];
+        }
+        
+        return $profile_photo;
+    }
 }
