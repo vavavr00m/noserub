@@ -42,7 +42,7 @@ class AppController extends Controller {
      * @access 
      */
     public function checkSecure() {
-        if(SHELL_DISPATCHER) {
+        if(defined('SHELL_DISPATCHER')) {
             return;
         }
         
@@ -63,7 +63,7 @@ class AppController extends Controller {
      * @access 
      */
     public function checkUnsecure() {
-        if(SHELL_DISPATCHER) {
+        if(defined('SHELL_DISPATCHER')) {
             return;
         }
         
