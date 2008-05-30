@@ -4,6 +4,7 @@
 class AccountsController extends AppController {
     var $uses = array('Account');
     var $helpers = array('form', 'flashmessage');
+    var $components = array('api');
     
     /**
      * Method description
@@ -518,5 +519,27 @@ class AccountsController extends AppController {
     	$this->Session->write('Service.add.data', $data);
 		$this->Session->write('Service.add.type', $data['service_type_id']);
 		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
+    }
+    
+    public function api_get() {
+        $identity = $this->api->getIdentity();
+        $this->api->exitWith404ErrorIfInvalid($identity);
+
+        $this->Account->recursive = 1;
+        $this->Account->expects('Account', 'ServiceType', 'Service');
+        $accounts = $this->Account->findAllByIdentityId($identity['Identity']['id']);
+
+        $data = array();
+        foreach($accounts as $item) {
+            $data[] = array(
+                'title' => $item['Account']['title'],
+                'url'   => $item['Account']['account_url'],
+                'icon'  => $item['Service']['icon'],
+                'type'  => $item['ServiceType']['name']
+            );
+        }
+        $this->set('data', $data);
+        
+        $this->api->render();
     }
 }
