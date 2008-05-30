@@ -284,7 +284,7 @@ class SyndicationsController extends AppController {
 
         if(!defined('NOSERUB_USE_CDN') || !NOSERUB_USE_CDN) {
             # we don't need to do any upload
-            $this->set('data', $uploaded);
+            $this->set('uploaded', $uploaded);
             $this->render();
             exit;
         }
