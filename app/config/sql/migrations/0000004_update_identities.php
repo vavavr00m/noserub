@@ -3,5 +3,5 @@ foreach($identities as $identity) {
     App::import('Model', 'Identity');
     $splitted = Identity::splitUsername($identity['identities']['username']);
     $sql = 'UPDATE identities SET username="'.$splitted['username'].'" WHERE id='.$identity['identities']['id'];
-    $this->execute($sql);
+    $this->query($sql);
 }
