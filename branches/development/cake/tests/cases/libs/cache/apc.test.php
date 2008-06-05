@@ -26,27 +26,44 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'apc');
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.cache
  */
-class APCEngineTest extends UnitTestCase {
-
+class ApcEngineTest extends UnitTestCase {
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$skip = true;
-		if($result = Cache::engine('Apc')) {
+		if (Cache::engine('Apc')) {
 			$skip = false;
 		}
-		$this->skipif ($skip, 'APCEngineTest not implemented');
+		$this->skipif($skip, 'Apc is not installed or configured properly');
 	}
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
-		Cache::config('apc', array('engine'=>'Apc'));
+		Cache::config('apc', array('engine'=>'Apc', 'prefix' => 'cake_'));
 	}
-
+/**
+ * testReadAndWriteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
 		$expecting = '';
@@ -60,7 +77,12 @@ class APCEngineTest extends UnitTestCase {
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testExpiry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExpiry() {
 		sleep(2);
 		$result = Cache::read('test');

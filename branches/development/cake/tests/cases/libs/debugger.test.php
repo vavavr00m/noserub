@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('debugger');
+App::import('Core', 'Debugger');
 /**
  * Short description for class.
  *
@@ -36,86 +36,97 @@ uses('debugger');
 class DebuggerTest extends UnitTestCase {
 
 	//do not move code below or it change line numbers which are used in the tests
-	function testOutput() {
-		if (file_exists(APP . DS . 'vendors' . DS . 'simpletest' . DS . 'reporter.php')) {
-			define('SIMPLETESTVENDORPATH', 'APP' . DS . 'vendors');
-		} else {
-			define('SIMPLETESTVENDORPATH', 'CORE' . DS . 'vendors');
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		Configure::write('log', false);
+		if (!defined('SIMPLETESTVENDORPATH')) {
+			if (file_exists(APP . DS . 'vendors' . DS . 'simpletest' . DS . 'reporter.php')) {
+				define('SIMPLETESTVENDORPATH', 'APP' . DS . 'vendors');
+			} else {
+				define('SIMPLETESTVENDORPATH', 'CORE' . DS . 'vendors');
+			}
 		}
+	}
+	/**
+ * testDocRef method
+ * 
+ * @access public
+ * @return void
+ */
+	function testDocRef() {
+	   ini_set('docref_root', '');
+	   $this->assertEqual(ini_get('docref_root'), '');
+	   $debugger = new Debugger();
+	   $this->assertEqual(ini_get('docref_root'), 'http://php.net/');
+	}
+/**
+ * testOutput method
+ * 
+ * @access public
+ * @return void
+ */
+	function testOutput() {
 		Debugger::invoke(Debugger::getInstance());
 		$result = Debugger::output(false);
 		$this->assertEqual($result, '');
 		$out .= '';
 		$result = Debugger::output(true);
-		$expected = array(array(
-						'error' => 'Notice', 'code' => '8', 'description' => 'Undefined variable: out', 'line' => '48', 'file' => 'CORE/cake/tests/cases/libs/debugger.test.php',
-						'context' => array("\$result\t=\tnull"),
-						'trace' => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
-SimpleInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 135
-TestSuite::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 588
-TestSuite::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 591
-TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - APP/webroot/test.php, line 240"
-						)
-				);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+	
+		$this->assertEqual($result[0]['error'], 'Notice');
+		$this->assertEqual($result[0]['description'], 'Undefined variable: out');
+		$this->assertPattern('/DebuggerTest::testOutput/', $result[0]['trace']);
+		$this->assertPattern('/SimpleInvoker::invoke/', $result[0]['trace']);
+		
 		ob_start();
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
-		$expected = "Notice: 8 :: Undefined variable: other on line 71 of CORE/cake/tests/cases/libs/debugger.test.php\n";
-		$expected .= 'Context:
-$result	=	array(array("error" => "Notice","code" => 8,"description" => "Undefined variable: out","line" => 48,"file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
-SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
-TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - APP/webroot/test.php, line 240"))
-$out	=	"[empty string]"
-$expected	=	array(array("error" => "Notice","code" => "8","description" => "Undefined variable: out","line" => "48","file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
-SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
-TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - APP/webroot/test.php, line 240"))
-';
-	$expected .= 'Trace:
-DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 71
-SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
-TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
-TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - APP/webroot/test.php, line 240';
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+		
+		$this->assertPattern('/Undefined variable: other/', $result);
+		$this->assertPattern('/Context:/', $result);
+		$this->assertPattern('/DebuggerTest::testOutput/', $result);
+		$this->assertPattern('/SimpleInvoker::invoke/', $result);
+		
+		ob_start();
+		Debugger::output('html');
+		$wrong .= '';
+		$result = ob_get_clean();
+		$this->assertPattern('/<pre class="cake-debug">.+<\/pre>/', $result);
+		$this->assertPattern('/<b>Notice<\/b>/', $result);
+		$this->assertPattern('/variable: wrong/', $result);
+		
+		ob_start();
+		Debugger::output('js');
+		$buzz .= '';
+		$result = ob_get_clean();
+		$this->assertPattern("/<a href\='javascript:void\(0\);' onclick\='/", $result);
+		$this->assertPattern('/<b>Notice<\/b>/', $result);
+		$this->assertPattern('/Undefined variable: buzz/', $result);
+		$this->assertPattern('/<a[^>]+>Code<\/a>/', $result);
+		$this->assertPattern('/<a[^>]+>Context<\/a>/', $result);		
 		set_error_handler('simpleTestErrorHandler');
 	}
-
-
+/**
+ * testTrimPath method
+ * 
+ * @access public
+ * @return void
+ */
+	function testTrimPath() {
+		$this->assertEqual(Debugger::trimPath(APP), 'APP/');
+		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
+	}
+/**
+ * testExportVar method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExportVar() {
 		App::import('Controller');
 		$Controller = new Controller();
@@ -125,14 +136,14 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		$expected = 'ViewView::$base = NULL
 		View::$here = NULL
 		View::$plugin = NULL
-		View::$name = "[empty string]"
+		View::$name = ""
 		View::$action = NULL
-		View::$params = array()
-		View::$passedArgs = array()
-		View::$data = array()
-		View::$helpers = array("Html","Form")
-		View::$viewPath = "[empty string]"
-		View::$viewVars = array()
+		View::$params = array
+		View::$passedArgs = array
+		View::$data = array
+		View::$helpers = array
+		View::$viewPath = ""
+		View::$viewVars = array
 		View::$layout = "default"
 		View::$layoutPath = NULL
 		View::$pageTitle = false
@@ -142,44 +153,31 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		View::$subDir = NULL
 		View::$themeWeb = NULL
 		View::$cacheAction = false
-		View::$validationErrors = array()
+		View::$validationErrors = array
 		View::$hasRendered = false
-		View::$loaded = array()
+		View::$loaded = array
 		View::$modelScope = false
 		View::$model = NULL
 		View::$association = NULL
 		View::$field = NULL
 		View::$fieldSuffix = NULL
 		View::$modelId = NULL
-		View::$uuids = array()
-		View::$__passedVars = array("viewVars","action","autoLayout","autoRender","ext","base","webroot","helpers","here","layout","name","pageTitle","layoutPath","viewPath","params","data","webservices","plugin","passedArgs","cacheAction")
-		View::$__scripts = array()
-		View::$__paths = array()
+		View::$uuids = array
+		View::$__passedVars = array
+		View::$__scripts = array
+		View::$__paths = array
 		View::$_log = NULL
-		View::$webroot = NULL
-		View::$webservices = NULL
-		View::element()
-		View::render()
-		View::renderElement()
-		View::renderLayout()
-		View::renderCache()
-		View::getVars()
-		View::getVar()
-		View::addScript()
-		View::uuid()
-		View::entity()
-		View::set()
-		View::error()
-		View::Object()
-		View::toString()
-		View::requestAction()
-		View::log()
-		View::cakeError()';
+		View::$webroot = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLog method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLog() {
 		if (file_exists(LOGS . 'debug.log')) {
 			unlink(LOGS . 'debug.log');
@@ -200,10 +198,28 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);
 	}
-
-	function setUp() {
-		Configure::write('log', false);
+	
+	function testDump() {
+		$var = array('People' => array(
+					array(
+					'name' => 'joeseph',
+					'coat' => 'technicolor',
+					'hair_color' => 'brown'
+					),
+					array(
+					'name' => 'Shaft',
+					'coat' => 'black',
+					'hair' => 'black'
+					)	
+				)
+			);
+		ob_start();
+		Debugger::dump($var);
+		$result = ob_get_clean();
+		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
+		$this->assertEqual($expected, $result);
 	}
+	
 	function tearDown() {
 		Configure::write('log', true);
 	}

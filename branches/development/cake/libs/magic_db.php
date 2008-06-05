@@ -110,7 +110,7 @@ class MagicDb extends Object {
 		$format = array();
 		while (!empty($lines)) {
 			$line = array_shift($lines);
-			if (strpos($line, '#') === 0 || empty($line)) {
+			if ($line[0] == '#' || empty($line)) {
 				continue;
 			}
 
@@ -216,7 +216,22 @@ class MagicFileResource extends Object{
  * @access public
  */
 	function test($magic) {
-		@list($offset, $type, $expected, $comment) = $magic;
+		$offset = null;
+		$type = null;
+		$expected = null;
+		$comment = null;
+		if (isset($magic[0])) {
+			$offset = $magic[0];
+		}
+		if (isset($magic[1])) {
+			$type = $magic[1];
+		}
+		if (isset($magic[2])) {
+			$expected = $magic[2];
+		}
+		if (isset($magic[3])) {
+			$comment = $magic[3];
+		}
 		$val = $this->extract($offset, $type, $expected);
 		return $val == $expected;
 	}

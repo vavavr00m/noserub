@@ -38,15 +38,37 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model.datasources
 	 */
+/**
+ * DboMssqlTestDb class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.datasources.dbo
+ */
 	class DboMssqlTestDb extends DboMssql {
-
+/**
+ * simulated property
+ * 
+ * @var array
+ * @access public
+ */
 		var $simulated = array();
-
+/**
+ * execute method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
 		function _execute($sql) {
 			$this->simulated[] = $sql;
 			return null;
 		}
-
+/**
+ * getLastQuery method
+ * 
+ * @access public
+ * @return void
+ */
 		function getLastQuery() {
 			return $this->simulated[count($this->simulated) - 1];
 		}
@@ -59,18 +81,52 @@
 	 * @subpackage	cake.tests.cases.libs.model.datasources
 	 */
 	class MssqlTestModel extends Model {
-
+/**
+ * name property
+ * 
+ * @var string 'MssqlTestModel'
+ * @access public
+ */
 		var $name = 'MssqlTestModel';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 		var $useTable = false;
-
+/**
+ * find method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 		function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 			return $conditions;
 		}
-
+/**
+ * findAll method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 		function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 			return $conditions;
 		}
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 		function schema() {
 			$this->_schema = array(
 				'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -116,8 +172,8 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$this->skipif ($db->config['driver'] != 'mssql', 'SQL Server connection not available');
+		$this->_initDb();
+		$this->skipif ($this->db->config['driver'] != 'mssql', 'SQL Server connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -135,7 +191,12 @@ class DboMssqlTest extends CakeTestCase {
 	 *
 	 * @access public
 	 */
-
+/**
+ * testQuoting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testQuoting() {
 		$result = $this->db->fields($this->model);
 		$expected = array(
@@ -154,9 +215,9 @@ class DboMssqlTest extends CakeTestCase {
 			'[MssqlTestModel].[url] AS [MssqlTestModel__12]',
 			'[MssqlTestModel].[email] AS [MssqlTestModel__13]',
 			'[MssqlTestModel].[comments] AS [MssqlTestModel__14]',
-			'[MssqlTestModel].[last_login] AS [MssqlTestModel__15]',
+			'CONVERT(VARCHAR(20), [MssqlTestModel].[last_login], 20) AS [MssqlTestModel__15]',
 			'[MssqlTestModel].[created] AS [MssqlTestModel__16]',
-			'[MssqlTestModel].[updated] AS [MssqlTestModel__17]'
+			'CONVERT(VARCHAR(20), [MssqlTestModel].[updated], 20) AS [MssqlTestModel__17]'
 		);
 		$this->assertEqual($result, $expected);
 
@@ -167,6 +228,29 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = "'1,2'";
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+	}
+
+	function testDistinctFields() {
+		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testDistinctWithLimit() {
+		$this->db->read($this->model, array(
+			'fields' => array('DISTINCT MssqlTestModel.city', 'MssqlTestModel.country'),
+			'limit' => 5
+		));
+		$result = $this->db->getLastQuery();
+		$this->assertPattern('/^SELECT DISTINCT TOP 5/', $result);
+	}
+
+	function tearDown() {
+		unset($this->model);
 	}
 }
 ?>

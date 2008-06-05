@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: file.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -91,6 +91,7 @@ class File extends Object {
 		if (!is_dir($path)) {
 			$this->name = basename($path);
 		}
+
 		if (!$this->exists()) {
 			if ($create === true) {
 				if ($this->safe($path) && $this->create() === false) {
@@ -141,6 +142,7 @@ class File extends Object {
 				return false;
 			}
 		}
+
 		$this->handle = fopen($this->pwd(), $mode);
 		if (is_resource($this->handle)) {
 			return true;
@@ -207,12 +209,12 @@ class File extends Object {
  * @return string
  * @access public
  */
-	function prepare($data) {
+	function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
-		if (substr(PHP_OS,0,3) == "WIN") {
+		if (substr(PHP_OS,0,3) == "WIN" || $forceWindows === true) {
 			$lineBreak = "\r\n";
-	    }
-	    return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+		}
+		return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
 	}
 
 /**
@@ -236,7 +238,7 @@ class File extends Object {
 			if (fwrite($this->handle, $data) !== false) {
 				$success = true;
 			}
-			if($this->lock !== null) {
+			if ($this->lock !== null) {
 				flock($this->handle, LOCK_UN);
 			}
 		}

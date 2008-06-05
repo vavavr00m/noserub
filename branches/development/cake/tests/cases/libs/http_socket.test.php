@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.test.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: http_socket.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
 /**
  * Short description for file.
  *
@@ -22,11 +22,11 @@
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: AD7six $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('http_socket');
+App::import('Core', 'HttpSocket');
 /**
  * Short description for class.
  *
@@ -34,9 +34,19 @@ uses('http_socket');
  * @subpackage	cake.tests.cases.libs
  */
 class HttpSocketTest extends UnitTestCase {
-
+/**
+ * Socket property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $Socket = null;
-
+/**
+ * RequestSocket property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $RequestSocket = null;
 /**
  * This function sets up a TestHttpSocket instance we are going to use for testing
@@ -78,6 +88,10 @@ class HttpSocketTest extends UnitTestCase {
 		$baseConfig['port']	 = 23;
 		$baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
+		$this->assertIdentical($this->Socket->config, $baseConfig);
+		
+		$this->Socket->reset();
+		$this->Socket->__construct(array('request' => array('uri' => 'http://www.cakephp.org:23/')));
 		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
 
@@ -388,7 +402,7 @@ class HttpSocketTest extends UnitTestCase {
 
 		$this->Socket->reset();
 		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
-		unset($this->Socket->_mock->_return_sequence['read']);
+		unset($this->Socket->_mock->_actions->_at['read']);
 		$this->Socket->_mock->_call_counts['read'] = 0;
 		$this->Socket->setReturnValueAt(0, 'read', $serverResponse);
 		$this->Socket->connected = true;
@@ -403,7 +417,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertEqual($this->Socket->config['request']['cookies'], $expect);
 		$this->assertFalse($this->Socket->connected);
 	}
-
+/**
+ * testUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrl() {
 		$this->Socket->reset(true);
 
@@ -452,7 +471,12 @@ class HttpSocketTest extends UnitTestCase {
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'http://www.google.com:8080/search?q=socket');
 	}
-
+/**
+ * testGet method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGet() {
 		$this->RequestSocket->reset();
 
@@ -471,7 +495,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/', 'auth' => array('user' => 'foo', 'pass' => 'bar'))));
 		$this->RequestSocket->get('http://www.google.com/', null, array('auth' => array('user' => 'foo', 'pass' => 'bar')));
 	}
-
+/**
+ * testPostPutDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPostPutDelete() {
 		$this->RequestSocket->reset();
 
@@ -561,10 +590,10 @@ class HttpSocketTest extends UnitTestCase {
 
 		foreach ($tests as $name => $test) {
 
-			$testResponse = am($testResponse, $test['response']);
+			$testResponse = array_merge($testResponse, $test['response']);
 			$testResponse['response'] = $testResponse['status-line'].$testResponse['header']."\r\n".$testResponse['body'];
 			$r = $this->Socket->parseResponse($testResponse['response']);
-			$expectations = am($expectations, $test['expectations']);
+			$expectations = array_merge($expectations, $test['expectations']);
 
 			foreach ($expectations as $property => $expectedVal) {
 				$val = Set::extract($r, $property);
@@ -635,6 +664,10 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($r['body'], $decoded);
 		$this->assertIdentical($r['header'], false);
 
+		$encoded = "19 \r\nThis is a chunked message\r\n0\r\n";
+		$r = $this->Socket->decodeChunkedBody($encoded);
+		$this->assertIdentical($r['body'], $decoded);
+
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n0\r\n";
 		$decoded = "This is a chunked message\nThat is cool\n";
 		$r = $this->Socket->decodeChunkedBody($encoded);
@@ -666,7 +699,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($r['body'], $decoded);
 		$this->assertIdentical($r['header'], array('Foo-Header' => 'bar', 'Cake' => 'PHP'));
 	}
-
+/**
+ * testBuildRequestLine method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBuildRequestLine() {
 		$this->Socket->reset();
 
@@ -796,7 +834,7 @@ class HttpSocketTest extends UnitTestCase {
 			'user' => null,
 			'pass' => null,
 			'path' => '/query',
-			'query' => array('foo' => null),
+			'query' => array('foo' => ""),
 			'fragment' => null
 		));
 
@@ -912,10 +950,10 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($query, array('framework' => 'cakephp'));
 
 		$query = $this->Socket->parseQuery('a&b&c');
-		$this->assertIdentical($query, array('a' => null, 'b' => null, 'c' => null));
+		$this->assertIdentical($query, array('a' => '', 'b' => '', 'c' => ''));
 
 		$query = $this->Socket->parseQuery('value=12345');
-		$this->assertIdentical($query, array('value' => 12345));
+		$this->assertIdentical($query, array('value' => '12345'));
 
 		$query = $this->Socket->parseQuery('a[0]=foo&a[1]=bar&a[2]=cake');
 		$this->assertIdentical($query, array('a' => array(0 => 'foo', 1 => 'bar', 2 => 'cake')));
@@ -989,9 +1027,9 @@ class HttpSocketTest extends UnitTestCase {
 						'ball'
 					)
 				),
-				'count' => 2
+				'count' => '2'
 			),
-			'empty' => null
+			'empty' => ''
 		);
 		$this->assertIdentical($query, $expectedQuery);
 	}

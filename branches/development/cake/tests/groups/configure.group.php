@@ -33,13 +33,29 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * ConfigureGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class ConfigureGroupTest extends GroupTest {
-
-	var $label = 'Configure and Loader Tests';
-
+/**
+ * label property
+ * 
+ * @var string 'Configure, Loader, ClassRegistry Tests'
+ * @access public
+ */
+	var $label = 'Configure, Loader, ClassRegistry Tests';
+/**
+ * ConfigureGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function ConfigureGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'configure');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'loader');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry');
 	}
 }
 ?>

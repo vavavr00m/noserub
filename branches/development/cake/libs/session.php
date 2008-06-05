@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: session.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: session.php 7084 2008-06-01 22:03:29Z mark_story $ */
 /**
  * Session class for Cake.
  *
@@ -25,7 +25,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v .0.10.0.1222
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: mark_story $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -71,7 +71,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $path = false;
+	var $path = '/';
 /**
  * Error number of last occurred error
  *
@@ -555,6 +555,7 @@ class CakeSession extends Object {
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 			return true;
 		} else {
+			session_start();
 			return true;
 		}
 	}
@@ -769,7 +770,7 @@ class CakeSession extends Object {
 	function __destroy($key) {
 		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'));
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key, 'integer'));
+		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key));
 		return true;
 	}
 /**

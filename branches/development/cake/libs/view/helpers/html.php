@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: html.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: html.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Html Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.9.1
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -54,7 +54,6 @@ class HtmlHelper extends AppHelper {
 		'input' => '<input name="%s" %s/>',
 		'textarea' => '<textarea name="%s" %s>%s</textarea>',
 		'hidden' => '<input type="hidden" name="%s" %s/>',
-		'textarea' => '<textarea name="%s" %s>%s</textarea>',
 		'checkbox' => '<input type="checkbox" name="%s" %s/>',
 		'checkboxmultiple' => '<input type="checkbox" name="%s[]"%s />',
 		'radio' => '<input type="radio" name="%s" id="%s" %s />%s',
@@ -81,10 +80,13 @@ class HtmlHelper extends AppHelper {
 		'block' => '<div%s>%s</div>',
 		'blockstart' => '<div%s>',
 		'blockend' => '</div>',
+		'tag' => '<%s%s>%s</%s>',
+		'tagstart' => '<%s%s>',
+		'tagend' => '</%s>',
 		'para' => '<p%s>%s</p>',
 		'parastart' => '<p%s>',
 		'label' => '<label for="%s"%s>%s</label>',
-		'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
+		'fieldset' => '<fieldset%s>%s</fieldset>',
 		'fieldsetstart' => '<fieldset><legend>%s</legend>',
 		'fieldsetend' => '</fieldset>',
 		'legend' => '<legend>%s</legend>',
@@ -184,6 +186,7 @@ class HtmlHelper extends AppHelper {
 		if (isset($this->__docTypes[$type])) {
 			return $this->output($this->__docTypes[$type]);
 		}
+		return null;
 	}
 /**
  * Creates a link to an external resource and handles basic meta tags
@@ -194,7 +197,7 @@ class HtmlHelper extends AppHelper {
  * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
  */
-	function meta($type = null, $url = null, $attributes = array(), $inline = true) {
+	function meta($type, $url = null, $attributes = array(), $inline = true) {
 		if (!is_array($type)) {
 			$types = array(
 				'rss'	=> array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
@@ -210,7 +213,7 @@ class HtmlHelper extends AppHelper {
 
 			if (isset($types[$type])) {
 				$type = $types[$type];
-			} elseif (!isset($types['type']) && !isset($attributes['type']) && $url !== null) {
+			} elseif (!isset($attributes['type']) && $url !== null) {
 				if (is_array($url) && isset($url['ext'])) {
 					$type = $types[$url['ext']];
 				} else {
@@ -218,16 +221,14 @@ class HtmlHelper extends AppHelper {
 				}
 			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
 				$type = $types[$attributes['type']];
+				unset($attributes['type']);
 			}
-		} else {
-			if ($url !== null) {
-				$inline = $url;
-			}
+		} elseif ($url !== null) {
+			$inline = $url;
 		}
-
 		$attributes = array_merge($type, $attributes);
-
 		$out = null;
+
  		if (isset($attributes['link'])) {
 			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
 				$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
@@ -254,13 +255,7 @@ class HtmlHelper extends AppHelper {
  * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
-		if (is_null($charset)) {
-			$charset = Configure::read('charset');
-			if (is_null($charset)) {
-				$charset = 'utf-8';
-			}
-		}
-
+		$charset = current(array_filter(array($charset, strtolower(Configure::read('App.encoding')), 'utf-8')));
 		return $this->output(sprintf($this->tags['charset'], $charset));
 	}
 /**
@@ -306,15 +301,13 @@ class HtmlHelper extends AppHelper {
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '\"', $confirmMessage);
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
-		} elseif (isset($htmlAttributes['default'])) {
-			if ($htmlAttributes['default'] == false) {
-				if (isset($htmlAttributes['onclick'])) {
-					$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
-				} else {
-					$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
-				}
-				unset($htmlAttributes['default']);
+		} elseif (isset($htmlAttributes['default']) && $htmlAttributes['default'] == false) {
+			if (isset($htmlAttributes['onclick'])) {
+				$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
+			} else {
+				$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
 			}
+			unset($htmlAttributes['default']);
 		}
 		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
@@ -350,7 +343,7 @@ class HtmlHelper extends AppHelper {
 				if (strpos($path, '.css') === false) {
 			 		$path .= '.css';
 				}
-				if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 					$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 				}
 			}
@@ -463,31 +456,6 @@ class HtmlHelper extends AppHelper {
 		return $this->output($image);
 	}
 /**
- * Creates a set of radio widgets.
- *
- * @deprecated
- */
-	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
-
-		$this->setEntity($fieldName);
-		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
-		$out = array();
-
-		foreach ($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);
- 	        if (!empty($value) && $optValue == $value) {
- 	        	$optionsHere['checked'] = 'checked';
- 	        }
-			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
-			$individualTagName = $this->field() . "_{$optValue}";
-			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
-		}
-
-		$out = join($inbetween, $out);
-		return $this->output($out ? $out : null);
-	}
-/**
  * Returns a row of formatted and named TABLE headers.
  *
  * @param array $names		Array of tablenames.
@@ -510,23 +478,37 @@ class HtmlHelper extends AppHelper {
  * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
  * @param array $evenTrOptions HTML options for even TR elements
  * @param bool $useCount adds class "column-$i"
+ * @param bool $continueOddEven If false, will use a non-static $count variable, so that the odd/even count is reset to zero just for that call
  * @return string	Formatted HTML
  */
-	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false) {
+	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
-		static $count = 0;
 
 		if ($oddTrOptions === true) {
 			$useCount = true;
 			$oddTrOptions = null;
 		}
+
+		if ($evenTrOptions === false) {
+			$continueOddEven = false;
+			$evenTrOptions = null;
+		}
+
+		if ($continueOddEven) {
+			static $count = 0;
+		} else {
+			$count = 0;
+	    }
+
 		foreach ($data as $line) {
 			$count++;
-			$cellsOut = $cellOptions = array();
+			$cellsOut = array();
 			$i = 0;
 			foreach ($line as $cell) {
+				$cellOptions = array();
+
 				if (is_array($cell)) {
 					$cellOptions = $cell[1];
 					$cell = $cell[0];
@@ -541,6 +523,30 @@ class HtmlHelper extends AppHelper {
 		return $this->output(join("\n", $out));
 	}
 /**
+ * Returns a formatted block tag, i.e DIV, SPAN, P.
+ *
+ * @param string $name Tag name.
+ * @param string $text String content that will appear inside the div element.
+ *			If null, only a start tag will be printed
+ * @param array $attributes Additional HTML attributes of the DIV tag
+ * @param boolean $escape If true, $text will be HTML-escaped
+ * @return string The formatted tag element
+ */
+	function tag($name, $text = null, $attributes = array(), $escape = false) {
+		if ($escape) {
+			$text = h($text);
+		}
+		if (!is_array($attributes)) {
+		  $attributes = array('class' => $attributes);
+		}
+		if ($text === null) {
+			$tag = 'tagstart';
+		} else {
+			$tag = 'tag';
+		}
+		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
+    }
+/**
  * Returns a formatted DIV tag for HTML FORMs.
  *
  * @param string $class CSS class name of the div element.
@@ -551,18 +557,10 @@ class HtmlHelper extends AppHelper {
  * @return string The formatted DIV element
  */
 	function div($class = null, $text = null, $attributes = array(), $escape = false) {
-		if ($escape) {
-			$text = h($text);
-		}
 		if ($class != null && !empty($class)) {
 			$attributes['class'] = $class;
 		}
-		if ($text === null) {
-			$tag = 'blockstart';
-		} else {
-			$tag = 'block';
-		}
-		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
+	    return $this->tag('div', $text, $attributes, $escape);
 	}
 /**
  * Returns a formatted P tag.
@@ -639,6 +637,7 @@ class HtmlHelper extends AppHelper {
  *
  * @deprecated 1.2.0.5147
  * @see FormHelper::input or FormHelper::password
+ * @codeCoverageIgnoreStart
  */
 	function password($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method password() is deprecated in %s: see FormHelper::input or FormHelper::password', true), get_class($this)), E_USER_NOTICE);
@@ -648,6 +647,31 @@ class HtmlHelper extends AppHelper {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
 		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates a set of radio widgets.
+ *
+ * @deprecated
+ */
+	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
+
+		$this->setEntity($fieldName);
+		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
+		$out = array();
+
+		foreach ($options as $optValue => $optTitle) {
+			$optionsHere = array('value' => $optValue);
+			if (!empty($value) && $optValue == $value) {
+				$optionsHere['checked'] = 'checked';
+			}
+			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
+			$individualTagName = $this->field() . "_{$optValue}";
+			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
+		}
+
+		$out = join($inbetween, $out);
+		return $this->output($out ? $out : null);
 	}
 /**
  * Creates a textarea widget.
@@ -691,7 +715,7 @@ class HtmlHelper extends AppHelper {
 			}
 		} else {
 			$model = $this->model();
-			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
+			if (isset($htmlAttributes['value']) || (!class_exists($model) && !App::import('Model', $model))) {
 				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value) {
 					$htmlAttributes['checked'] = 'checked';
 				} else {
@@ -753,7 +777,7 @@ class HtmlHelper extends AppHelper {
  * @see Helper::value
  */
 	function tagValue($fieldName) {
-		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
+	    trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
 		$this->setEntity($fieldName);
 		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);
@@ -807,5 +831,8 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
+/*
+ * @codeCoverageIgnoreEnd
+ */
 }
 ?>

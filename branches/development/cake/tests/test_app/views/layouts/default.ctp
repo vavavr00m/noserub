@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: default.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: default.ctp 7062 2008-05-30 11:29:53Z nate $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,21 +18,20 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.pages
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 6311 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
+ * @version			$Revision: 7062 $
+ * @modifiedby		$LastChangedBy: nate $
+ * @lastmodified	$Date: 2008-05-30 04:29:53 -0700 (Fri, 30 May 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<?php echo $html->charset();?>
 	<title>
 		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout;?>
 	</title>
-
-	<?php echo $html->charset();?>
 
 	<link rel="icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />

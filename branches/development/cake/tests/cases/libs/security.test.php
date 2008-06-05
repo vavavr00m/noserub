@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('security');
+App::import('Core', 'Security');
 /**
  * Short description for class.
  *
@@ -34,9 +34,115 @@ uses('security');
  * @subpackage cake.tests.cases.libs
  */
 class SecurityTest extends UnitTestCase {
+/**
+ * sut property
+ * 
+ * @var mixed null
+ * @access public
+ */
+	var $sut = null;
+	/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		$this->sut =& Security::getInstance();
+	}
+	/**
+ * testInactiveMins method
+ * 
+ * @access public
+ * @return void
+ */
+	function testInactiveMins() {
+		Configure::write('Security.level', 'high');
+		$this->assertEqual(10, Security::inactiveMins());
 
-	function skip() {
-		$this->skipif (true, 'SecurityTest not implemented');
+		Configure::write('Security.level', 'medium');
+		$this->assertEqual(100, Security::inactiveMins());
+
+		Configure::write('Security.level', 'low');
+		$this->assertEqual(300, Security::inactiveMins());
+	}
+	/**
+ * testGenerateAuthkey method
+ * 
+ * @access public
+ * @return void
+ */
+	function testGenerateAuthkey() {
+		$this->assertEqual(strlen(Security::generateAuthKey()), 40);
+	}
+	/**
+ * testValidateAuthKey method
+ * 
+ * @access public
+ * @return void
+ */
+	function testValidateAuthKey() {
+		$authKey = Security::generateAuthKey();
+		$this->assertTrue(Security::validateAuthKey($authKey));
+	}
+/**
+ * testHash method
+ * 
+ * @access public
+ * @return void
+ */
+	function testHash() {
+		$key = 'someKey';
+		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
+		$this->assertIdentical(strlen(Security::hash($key, 'sha1', false)), 40);
+		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
+		$this->assertIdentical(strlen(Security::hash($key, 'sha1', true)), 40);
+
+		$hashType = 'sha1';
+		Security::setHash($hashType);
+		$this->assertIdentical($this->sut->hashType, $hashType);
+		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
+		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
+
+		$this->assertIdentical(strlen(Security::hash($key, 'md5', false)), 32);
+		$this->assertIdentical(strlen(Security::hash($key, 'md5', true)), 32);
+
+		$hashType = 'md5';
+		Security::setHash($hashType);
+		$this->assertIdentical($this->sut->hashType, $hashType);
+		$this->assertIdentical(strlen(Security::hash($key, null, false)), 32);
+		$this->assertIdentical(strlen(Security::hash($key, null, true)), 32);
+
+
+		if (function_exists('mhash')) {
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 64);
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 64);
+		} else {
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 32);
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 32);
+		}
+	}
+
+	function testCipher() {
+		$length = 10;
+		$txt = '';
+		for ($i = 0; $i < $length; $i++) { 
+			$txt .= rand(0, 255);
+		}
+		$key = 'my_key';
+		$result = Security::cipher($txt, $key);
+		$this->assertEqual(Security::cipher($result, $key), $txt);
+
+		$txt = '';
+		$key = 'my_key';
+		$result = Security::cipher($txt, $key);
+		$this->assertEqual(Security::cipher($result, $key), $txt);
+
+		$txt = 'some_text';
+		$key = '';
+		$result = Security::cipher($txt, $key);
+		$this->assertError();
+		$this->assertIdentical($result, '');
 	}
 }
 ?>

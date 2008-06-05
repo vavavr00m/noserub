@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: rss.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: rss.php 7111 2008-06-03 22:40:35Z TommyO $ */
 /**
  * RSS Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: TommyO $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -111,8 +111,6 @@ class RssHelper extends XmlHelper {
 		if (!isset($attrib['version']) || empty($attrib['version'])) {
 			$attrib['version'] = $this->version;
 		}
-
-		$attrib = array_reverse(array_merge($this->__prepareNamespaces(), $attrib));
 		return $this->elem('rss', $attrib, $content);
 	}
 /**
@@ -146,7 +144,7 @@ class RssHelper extends XmlHelper {
 			}
 			$elems .= $this->elem($elem, $attributes, $data);
 		}
-		return $this->elem('channel', $attrib, $elems . $this->__composeContent($content), !($content === null));
+		return $this->elem('channel', $attrib, $elems . $content, !($content === null));
 	}
 /**
  * Transforms an array of data using an optional callback, and maps it to a set

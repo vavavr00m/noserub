@@ -124,11 +124,11 @@ class ExtractTask extends Shell{
  */
 	var $__output = null;
 /**
- * Override initialize
+ * Execution method always used for tasks
  *
  * @access public
  */
-	function initialize() {
+	function execute() {
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->files = explode(',', $this->params['files']);
 		}
@@ -140,7 +140,7 @@ class ExtractTask extends Shell{
 				$response = $this->in("What is the full path you would like to extract?\nExample: " . $this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
-					exit();
+					$this->_stop();
 				}
 			}
 
@@ -148,7 +148,7 @@ class ExtractTask extends Shell{
 				$this->path = $response;
 			} else {
 				$this->err('The directory path you supplied was not found. Please try again.');
-				$this->initialize();
+				$this->execute();
 			}
 		}
 
@@ -165,7 +165,7 @@ class ExtractTask extends Shell{
 				$response = $this->in("What is the full path you would like to output?\nExample: " . $this->path . DS . "locale\n[Q]uit", null, $this->path . DS . "locale");
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
-					exit();
+					$this->_stop();
 				}
 			}
 
@@ -173,27 +173,21 @@ class ExtractTask extends Shell{
 				$this->__output = $response . DS;
 			} else {
 				$this->err('The directory path you supplied was not found. Please try again.');
-				$this->initialize();
+				$this->execute();
 			}
 		}
 
 		if (empty($this->files)) {
 			$this->files = $this->__searchDirectory();
 		}
+		$this->__extract();
 	}
 /**
- * Override startup
+ * Extract text
  *
- * @access public
+ * @access private
  */
-	function startup() {
-	}
-/**
- * Execution method always used for tasks
- *
- * @access public
- */
-	function execute() {
+	function __extract() {
 		$this->out('');
 		$this->out('');
 		$this->out(__('Extracting...', true));
@@ -532,7 +526,7 @@ class ExtractTask extends Shell{
 					$response = $this->in("\n\nError: ".$file . ' already exists in this location. Overwrite?', array('y','n', 'q'), 'n');
 					if (strtoupper($response) === 'Q') {
 						$this->out('Extract Aborted');
-						exit();
+						$this->_stop();
 					} elseif (strtoupper($response) === 'N') {
 						$response = '';
 						while ($response == '') {

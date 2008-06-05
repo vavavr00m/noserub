@@ -26,30 +26,53 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'memcache');
-/**
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}/**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.cache
  */
+/**
+ * MemcacheEngineTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.cache
+ */
 class MemcacheEngineTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$skip = true;
 		if($result = Cache::engine('Memcache')) {
 			$skip = false;
 		}
-		$this->skipif ($skip, 'Memcache not available');
+		$this->skipif($skip, 'Memcache is not installed or configured properly');
 	}
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
-		Cache::config('memcache', array('engine'=>'Memcache'));
+		Cache::config('memcache', array('engine'=>'Memcache', 'prefix' => 'cake_'));
 	}
-
+/**
+ * testSettings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600,
+		$expecting = array('prefix' => 'cake_',
+						'duration'=> 3600,
 						'probability' => 100,
 						'servers' => array('127.0.0.1'),
 						'compress' => false,
@@ -57,14 +80,24 @@ class MemcacheEngineTest extends UnitTestCase {
 						);
 		$this->assertEqual($settings, $expecting);
 	}
-
+/**
+ * testConnect method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConnect() {
 		$Cache =& Cache::getInstance();
 		$result = $Cache->_Engine['Memcache']->connect('127.0.0.1');
 		$this->assertTrue($result);
 	}
 
-
+/**
+ * testReadAndWriteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
 		$expecting = '';
@@ -78,7 +111,12 @@ class MemcacheEngineTest extends UnitTestCase {
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testExpiry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExpiry() {
 		sleep(2);
 		$result = Cache::read('test');

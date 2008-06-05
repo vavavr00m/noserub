@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: socket.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: socket.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Cake Socket connection class.
  *
@@ -20,11 +20,11 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('validation');
+App::import('Core', 'Validation');
 
 /**
  * Cake network socket connection class.
@@ -69,7 +69,6 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connection = null;
-
 /**
  * This boolean contains the current state of the CakeSocket class
  *
@@ -77,15 +76,13 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connected = false;
-
 /**
  * This variable contains an array with the last error number (num) and string (str)
  *
  * @var array
  * @access public
  */
-	var $error = array();
-
+	var $lastError = array();
 /**
  * Constructor.
  *
@@ -94,11 +91,7 @@ class CakeSocket extends Object {
 	function __construct($config = array()) {
 		parent::__construct();
 
-		$classVars = get_class_vars(__CLASS__);
-		$baseConfig = $classVars['_baseConfig'];
-
-		$this->config = array_merge($baseConfig, $config);
-
+		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
 		}
@@ -123,16 +116,14 @@ class CakeSocket extends Object {
 			$tmp = null;
 			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
-			$this->connection = fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = @fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		}
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errStr, $errNum);
 		}
 
-		$this->connected = is_resource($this->connection);
-
-		return $this->connected;
+		return $this->connected = is_resource($this->connection);
 	}
 
 /**
@@ -181,8 +172,8 @@ class CakeSocket extends Object {
  * @access public
  */
 	function lastError() {
-		if (!empty($this->error)) {
-			return $this->error['num'].': '.$this->error['str'];
+		if (!empty($this->lastError)) {
+			return $this->lastError['num'].': '.$this->lastError['str'];
 		} else {
 			return null;
 		}
@@ -269,6 +260,26 @@ class CakeSocket extends Object {
  	function __destruct() {
  		$this->disconnect();
  	}
+/**
+ * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
+ *
+ * @return boolean True on success
+ * @access public
+ */
+	function reset($state = null) {
+		if (empty($state)) {
+			static $initalState = array();
+			if (empty($initalState)) {
+				$initalState = get_class_vars(__CLASS__);
+			}
+			$state = $initalState;
+		}
+
+		foreach ($state as $property => $value) {
+			$this->{$property} = $value;
+		}
+		return true;
+	}
 }
 
 ?>

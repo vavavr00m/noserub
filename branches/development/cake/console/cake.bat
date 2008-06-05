@@ -17,9 +17,9 @@
 :: @package			cake
 :: @subpackage		cake.cake.console
 :: @since			CakePHP(tm) v 1.2.0.5012
-:: @version			$Revision: 5811 $
-:: @modifiedby		$LastChangedBy: phpnut $
-:: @lastmodified	$Date: 2007-10-20 01:39:14 -0500 (Sat, 20 Oct 2007) $
+:: @version			$Revision: 7062 $
+:: @modifiedby		$LastChangedBy: nate $
+:: @lastmodified	$Date: 2008-05-30 04:29:53 -0700 (Fri, 30 May 2008) $
 :: @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

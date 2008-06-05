@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error404.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: error404.ctp 7073 2008-05-31 04:50:38Z gwoo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,14 +18,14 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.errors
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 6311 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
+ * @version			$Revision: 7073 $
+ * @modifiedby		$LastChangedBy: gwoo $
+ * @lastmodified	$Date: 2008-05-30 21:50:38 -0700 (Fri, 30 May 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <h2><?php echo $name; ?></h2>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo $message; ?>
+	<?php echo sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$message}'</strong>")?>
 </p>

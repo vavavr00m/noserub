@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: apc.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: apc.php 7089 2008-06-02 17:35:56Z gwoo $ */
 /**
  * APC storage engine for cache.
  *
@@ -21,7 +21,7 @@
  * @subpackage		cake.cake.libs.cache
  * @since			CakePHP(tm) v 1.2.0.4933
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -31,7 +31,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.cache
  */
-class APCEngine extends CacheEngine {
+class ApcEngine extends CacheEngine {
 /**
  * Initialize the Cache Engine
  *
@@ -44,7 +44,7 @@ class APCEngine extends CacheEngine {
  * @access public
  */
 	function init($settings = array()) {
-		parent::init($settings);
+		parent::init(array_merge(array('engine' => 'Apc', 'prefix' => Inflector::slug(APP_DIR) . '_'), $settings));
 		return function_exists('apc_cache_info');
 	}
 /**

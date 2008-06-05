@@ -33,13 +33,25 @@
  * @subpackage	cake.tests.fixtures
  */
 class FeatureSetFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'FeatureSet'
+ * @access public
+ */
 	var $name = 'FeatureSet';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'name' => 'FeatureSet 1')
+		array('name' => 'FeatureSet 1')
 	);
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: home.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: home.ctp 7062 2008-05-30 11:29:53Z nate $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,9 +18,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.pages
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 6311 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
+ * @version			$Revision: 7062 $
+ * @modifiedby		$LastChangedBy: nate $
+ * @lastmodified	$Date: 2008-05-30 04:29:53 -0700 (Fri, 30 May 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
@@ -105,9 +105,8 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 </p>
 <h3><?php __('Getting Started'); ?></h3>
 <p>
-	<a href="http://tempdocs.cakephp.org">Working copy of the <strong>new</strong> CakePHP 1.2 Manual (temporary)</a>
-	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
-	<a href="http://cakephp.org/files/OCPHP.pdf"><?php __('The OCPHP presentation on new features in 1.2'); ?></a><br />
+	<a href="http://book.cakephp.org"><strong>new</strong> CakePHP 1.2 Docs</a>
+	<a href="http://book.cakephp.org/view/219/the-cakephp-blog-tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
 </p>
 <h3><?php __('More about Cake'); ?></h3>
 <p>

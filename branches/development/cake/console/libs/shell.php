@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: shell.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: shell.php 7116 2008-06-04 19:04:58Z gwoo $ */
 /**
  * Base class for Shells
  *
@@ -22,11 +22,10 @@
  * @subpackage		cake.cake.console.libs
  * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-require_once CAKE . 'console' . DS . 'error.php';
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
@@ -124,7 +123,7 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch) {
-		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
+		$vars = array('params', 'args', 'shell', 'shellCommand'=> 'command');
 		foreach ($vars as $key => $var) {
 			if (is_string($key)) {
 				$this->{$var} =& $dispatch->{$key};
@@ -133,15 +132,25 @@ class Shell extends Object {
 			}
 		}
 
-		$shellKey = Inflector::underscore($this->name);
+		$this->className = get_class($this);
+
+		if ($this->name == null) {
+			$this->name = str_replace(array('shell', 'Shell', 'task', 'Task'), '', $this->className);
+		}
+
+		$shellKey = Inflector::underscore($this->className);
 		ClassRegistry::addObject($shellKey, $this);
 		ClassRegistry::map($shellKey, $shellKey);
-		if (!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
-			$dispatch->shiftArgs();
+
+		if (!PHP5 && isset($this->args[0])) {
+			if(strpos($this->className, low(Inflector::camelize($this->args[0]))) !== false) {
+				$dispatch->shiftArgs();
+			}
+			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
+				$dispatch->shiftArgs();
+			}
 		}
-		if (!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
-			$dispatch->shiftArgs();
-		}
+
 		$this->Dispatch =& $dispatch;
 	}
 /**
@@ -170,6 +179,8 @@ class Shell extends Object {
  * @access protected
  */
 	function _welcome() {
+		$this->out("\nWelcome to CakePHP v" . Configure::version() . " Console");
+		$this->out("---------------------------------------------------------------");
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
 		$this->hr();
@@ -204,12 +215,12 @@ class Shell extends Object {
 			return;
 		}
 
-		uses ('model'.DS.'connection_manager',
-			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
-		);
+		App::import(array(
+			'model'.DS.'connection_manager', 'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
+		));
 
 		if ($this->uses === true && App::import('Model', 'AppModel')) {
-			$this->AppModel = & new AppModel(false, false, false);
+			$this->AppModel =& new AppModel(false, false, false);
 			return true;
 		}
 
@@ -218,18 +229,10 @@ class Shell extends Object {
 			$this->modelClass = $uses[0];
 
 			foreach ($uses as $modelClass) {
-				$modelKey = Inflector::underscore($modelClass);
-
-				if (!class_exists($modelClass)) {
-					App::import('Model', $modelClass);
-				}
-				if (class_exists($modelClass)) {
-					$model =& new $modelClass();
-					$this->modelNames[] = $modelClass;
-					$this->{$modelClass} =& $model;
-					ClassRegistry::addObject($modelKey, $model);
+				if (PHP5) {
+					$this->{$modelClass} = ClassRegistry::init($modelClass);
 				} else {
-					return $this->cakeError('missingModel', array(array('className' => $modelClass)));
+					$this->{$modelClass} =& ClassRegistry::init($modelClass);
 				}
 			}
 			return true;
@@ -255,11 +258,13 @@ class Shell extends Object {
 			}
 
 			foreach ($tasks as $taskName) {
-				$taskKey = Inflector::underscore($taskName);
+				$task = Inflector::underscore($taskName);
 				$taskClass = Inflector::camelize($taskName.'Task');
+				$taskKey = Inflector::underscore($taskClass);
+
 				if (!class_exists($taskClass)) {
 					foreach ($this->Dispatch->shellPaths as $path) {
-						$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
+						$taskPath = $path . 'tasks' . DS . $task.'.php';
 						if (file_exists($taskPath)) {
 							require_once $taskPath;
 							break;
@@ -276,6 +281,7 @@ class Shell extends Object {
 						ClassRegistry::map($taskName, $taskKey);
 					}
 				} else {
+
 					$this->taskNames[] = $taskName;
 					if (!PHP5) {
 						$this->{$taskName} =& new $taskClass($this->Dispatch);
@@ -286,7 +292,7 @@ class Shell extends Object {
 
 				if (!isset($this->{$taskName})) {
 					$this->err("Task '".$taskName."' could not be loaded");
-					exit();
+					$this->_stop();
 				}
 			}
 		}
@@ -303,7 +309,11 @@ class Shell extends Object {
  * @access public
  */
 	function in($prompt, $options = null, $default = null) {
+		if (!$this->interactive) {
+			return $default;
+		}
 		$in = $this->Dispatch->getInput($prompt, $options, $default);
+
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
 				$options = explode(',', $options);
@@ -382,7 +392,7 @@ class Shell extends Object {
 		$out .= "$msg\n";
 		$out .= "\n";
 		$this->err($out);
-		exit();
+		$this->_stop();
 	}
 /**
  * Will check the number args matches otherwise throw an error
@@ -415,8 +425,6 @@ class Shell extends Object {
 			if (low($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} elseif (low($key) == 'a') {
-				$this->dont_ask = true;
 			} elseif (low($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
@@ -500,7 +508,7 @@ class Shell extends Object {
 			if ($this->Project->cakeAdmin($admin) !== true) {
 				$this->out('Unable to write to /app/config/core.php.');
 				$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-				exit();
+				$this->_stop();
 			} else {
 				$cakeAdmin = $admin . '_';
 			}
@@ -556,7 +564,7 @@ class Shell extends Object {
  */
 	function _modelNameFromKey($key) {
 		$name = str_replace('_id', '',$key);
-		return $this->_modelName($name);
+		return Inflector::camelize($name);
 	}
 /**
  * creates the singular name for use in views.

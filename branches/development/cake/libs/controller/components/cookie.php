@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cookie.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: cookie.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.controller.components
  * @since			CakePHP(tm) v 1.2.0.4213
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */

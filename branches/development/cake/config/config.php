@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: config.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: config.php 7119 2008-06-04 21:01:51Z gwoo $ */
 /**
  * Core Configurations.
  *
@@ -20,9 +20,9 @@
  * @subpackage		cake.app.config
  * @since			CakePHP(tm) v 1.1.11.4062
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-return $config['Cake.version'] = '1.2.0.6311 beta';
+return $config['Cake.version'] = '1.2.0.7119 RC1';
 ?>

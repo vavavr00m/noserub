@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: class_registry.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: class_registry.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Class collections.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.9.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -127,7 +127,12 @@ class ClassRegistry {
 				if (App::import($type, $plugin . $class)) {
 					${$class} =& new $class($options);
 				} elseif ($type === 'Model') {
-					${$class} =& new AppModel($options);
+					if ($plugin && class_exists($plugin .'AppModel')) {
+						$appModel = $plugin .'AppModel';
+					} else {
+						$appModel = 'AppModel';
+					}
+					${$class} =& new $appModel($options);
 				}
 
 				if (!isset(${$class})) {

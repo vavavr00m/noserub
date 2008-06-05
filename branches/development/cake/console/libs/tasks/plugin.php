@@ -61,7 +61,7 @@ class PluginTask extends Shell {
  *
  * @return void
  */
-    function execute() {
+	function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
 			if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
@@ -73,18 +73,25 @@ class PluginTask extends Shell {
 
 		if(isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
-			$this->Dispatch->shiftArgs();
-			$this->out(sprintf('Plugin: %s', $plugin));
 			$pluginPath = Inflector::underscore($plugin) . DS;
-			$this->out(sprintf('Plugin: %s', $this->path . $pluginPath));
-
+			$this->Dispatch->shiftArgs();
+			if (is_dir($this->path . $pluginPath)) {
+				$this->out(sprintf('Plugin: %s', $plugin));
+				$this->out(sprintf('Path: %s', $this->path . $pluginPath));
+				$this->hr();
+			} elseif (isset($this->args[0])) {
+				$this->err(sprintf('%s in path %s not found.', $plugin, $this->path . $pluginPath));
+				$this->_stop();
+			} else {
+				$this->__interactive($plugin);
+			}
 		}
-
-		if (isset($this->args[0]) && isset($plugin)) {
+		
+		if(isset($this->args[0])) {
 			$task = Inflector::classify($this->args[0]);
 			$this->Dispatch->shiftArgs();
-
 			if (in_array($task, $this->tasks)) {
+				$this->{$task}->plugin = $plugin;
 				$this->{$task}->path = $this->path . $pluginPath . Inflector::underscore(Inflector::pluralize($task)) . DS;
 
 				if (!is_dir($this->{$task}->path)) {
@@ -93,11 +100,7 @@ class PluginTask extends Shell {
 				$this->{$task}->loadTasks();
 				$this->{$task}->execute();
 			}
-			exit();
 		}
-
-		$this->__interactive($plugin);
-
 	}
 
 /**
@@ -107,9 +110,9 @@ class PluginTask extends Shell {
  * @return void
  */
 	function __interactive($plugin = null) {
-        while ($plugin === null) {
-            $plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
-        }
+		while ($plugin === null) {
+			$plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
+		}
 
 		if (!$this->bake($plugin)) {
 			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
@@ -155,28 +158,28 @@ class PluginTask extends Shell {
 			if (!empty($errors)) {
 				return false;
 			}
+
+			$controllerFileName = $pluginPath . '_app_controller.php';
+
+			$out = "<?php\n\n";
+			$out .= "class {$plugin}AppController extends AppController {\n\n";
+			$out .= "}\n\n";
+			$out .= "?>\n";
+			$this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
+
+			$modelFileName = $pluginPath . '_app_model.php';
+
+			$out = "<?php\n\n";
+			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
+			$out .= "}\n\n";
+			$out .= "?>\n";
+			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
+
+			$this->hr();
+			$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
+			$this->hr();
 		}
-
-        $controllerFileName = $pluginPath . '_app_controller.php';
-
-        $out = "<?php\n\n";
-        $out .= "class {$plugin}AppController extends AppController {\n\n";
-        $out .= "}\n\n";
-        $out .= "?>\n";
-        $this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
-
-        $modelFileName = $pluginPath . '_app_model.php';
-
-        $out = "<?php\n\n";
-        $out .= "class {$plugin}AppModel extends AppModel {\n\n";
-        $out .= "}\n\n";
-        $out .= "?>\n";
-        $this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
-
-		$this->hr();
-		$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
-		$this->hr();
-
+		
 		return true;
 	}
 /**
@@ -195,7 +198,7 @@ class PluginTask extends Shell {
 		$this->out("\n\tplugin <name> controller\n\t\tbakes controller. Run 'cake bake controller help' for more info.");
 		$this->out("\n\tplugin <name> view\n\t\tbakes view. Run 'cake bake view help' for more info.");
 		$this->out("");
-		exit();
+		$this->_stop();
 	}
 }
 ?>

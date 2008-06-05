@@ -27,19 +27,58 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('controller' . DS . 'scaffold');
+/**
+ * ScaffoldMockController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class ScaffoldMockController extends Controller {
-
+/**
+ * name property
+ * 
+ * @var string 'ScaffoldMock'
+ * @access public
+ */
 	var $name = 'ScaffoldMock';
-
+/**
+ * scaffold property
+ * 
+ * @var mixed 
+ * @access public
+ */
 	var $scaffold;
 }
+/**
+ * ScaffoldMock class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class ScaffoldMock extends CakeTestModel {
-
+/**
+ * useTable property
+ * 
+ * @var string 'posts'
+ * @access public
+ */
 	var $useTable = 'posts';
 
 }
+/**
+ * TestScaffoldView class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class TestScaffoldView extends ScaffoldView {
-
+/**
+ * testGetFilename method
+ * 
+ * @param mixed $action 
+ * @access public
+ * @return void
+ */
 	function testGetFilename($action) {
 		return $this->_getViewFileName($action);
 	}
@@ -58,9 +97,6 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller = new ScaffoldMockController();
 	}
 
-	function tearDown() {
-		unset($this->Controller);
-	}
 	function testGetViewFilename() {
 		$this->Controller->action = 'index';
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
@@ -68,10 +104,14 @@ class ScaffoldViewTest extends CakeTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'index.ctp';
 		$this->assertEqual($result, $expected);
 
-
 		$result = $ScaffoldView->testGetFilename('error');
 		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 	}
+
+	function tearDown() {
+		unset($this->Controller);
+	}
 }
+
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: aros_aco_fixture.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: aros_aco_fixture.php 7094 2008-06-02 19:22:55Z AD7six $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: AD7six $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -33,18 +33,29 @@
  * @subpackage	cake.tests.fixtures
  */
 class ArosAcoFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ArosAco'
+ * @access public
+ */
 	var $name = 'ArosAco';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'aro_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
 		'aco_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
-		'_create' => array('type' => 'string', 'length' => 2, 'null' => false, 'default' => '0'),
-		'_read' => array('type' => 'string', 'length' => 2, 'null' => false, 'default' => '0'),
-		'_update' => array('type' => 'string', 'length' => 2, 'null' => false, 'default' => '0'),
-		'_delete' => array('type' => 'string', 'length' => 2, 'null' => false, 'default' => '0')
+		'_create' => array('type' => 'string', 'length' => 2, 'default' => 0),
+		'_read' => array('type' => 'string', 'length' => 2, 'default' => 0),
+		'_update' => array('type' => 'string', 'length' => 2, 'default' => 0),
+		'_delete' => array('type' => 'string', 'length' => 2, 'default' => 0)
 	);
-	var $records = array(
-	);
+	var $records = array();
 }
 
 ?>

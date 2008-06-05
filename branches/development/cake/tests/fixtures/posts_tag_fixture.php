@@ -33,17 +33,29 @@
  * @subpackage	cake.tests.fixtures
  */
 class PostsTagFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'PostsTag'
+ * @access public
+ */
 	var $name = 'PostsTag';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'post_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_TAG' => array('column'=> array('post_id', 'tag_id'), 'unique'=> 1))
+		'tag_id' => array('type' => 'string', 'null' => false),
 	);
+
 	var $records = array(
-		array('post_id' => 1, 'tag_id' => 1),
-		array('post_id' => 1, 'tag_id' => 2),
-		array('post_id' => 2, 'tag_id' => 1),
-		array('post_id' => 2, 'tag_id' => 3)
+		array('post_id' => 1, 'tag_id' => 'tag1'),
+		array('post_id' => 1, 'tag_id' => 'tag2'),
+		array('post_id' => 2, 'tag_id' => 'tag1'),
+		array('post_id' => 2, 'tag_id' => 'tag3')
 	);
 }
 

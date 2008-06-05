@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_firebird.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: dbo_firebird.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Firebird/Interbase layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.dbo
  * @since			CakePHP(tm) v 1.2.0.5152
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -97,7 +97,7 @@ class DboFirebird extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'integer IDENTITY (1, 1) NOT NULL'),
+		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name'	 => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'BLOB SUB_TYPE 1 SEGMENT SIZE 100 CHARACTER SET NONE'),
 		'integer'	=> array('name' => 'integer'),
@@ -147,10 +147,9 @@ class DboFirebird extends DboSource {
 /**
  * Returns a row from given resultset as an array .
  *
- * @param boolean $assoc Associative array only, or both?
  * @return array The fetched row as an array
  */
-	function fetchRow($assoc = false) {
+	function fetchRow() {
 		if (is_resource($this->_result)) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
@@ -400,7 +399,9 @@ class DboFirebird extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = null;
-		@list($col, $limit)=explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
 		if (in_array($col, array('DATE', 'TIME'))) {
 			return strtolower($col);
@@ -502,16 +503,6 @@ class DboFirebird extends DboSource {
 		} else {
 			return false;
 		}
-	}
-/**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
 	}
 }
 ?>
