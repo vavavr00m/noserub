@@ -490,7 +490,6 @@ class ContactsController extends AppController {
         $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
         
         $this->render('../identities/social_stream');
-        exit;
     }
     
     /**
