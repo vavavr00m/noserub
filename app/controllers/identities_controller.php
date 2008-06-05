@@ -143,7 +143,7 @@ class IdentitiesController extends AppController {
                 
                 # get list of locations, if this is the logged in user
                 if($relationship_status == 'self') {
-                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'id, name', 'conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
+                    $this->set('locations', $this->Identity->Location->find('list', array('fields' => 'Location.id, Location.name', 'conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
                 }
                 
                 # create $about_identity for the view
