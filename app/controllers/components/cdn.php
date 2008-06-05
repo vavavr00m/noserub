@@ -4,7 +4,7 @@
  * CDN - Content Delivery Network
  * eg. Amazon S3
  */
-vendor('s3/s3.class');
+App::import('Vendor', 's3', array('file' => 's3'.DS.'s3.class.php'));
 
 class CdnComponent extends Object {
 

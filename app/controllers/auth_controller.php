@@ -4,7 +4,9 @@
 	$path = $pathExtra . PATH_SEPARATOR . $path;
 	ini_set('include_path', $path);
 
-	vendor('Auth'.DS.'OpenID'.DS.'Server', 'Auth'.DS.'OpenID'.DS.'FileStore', 'Auth'.DS.'OpenID'.DS.'SReg');
+	App::import('Vendor', 'server', array('file' => 'Auth'.DS.'OpenID'.DS.'Server.php'));
+	App::import('Vendor', 'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
+	App::import('Vendor', 'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'));
 
 	class AuthController extends AppController {
 		const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';

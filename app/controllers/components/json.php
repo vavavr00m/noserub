@@ -1,6 +1,6 @@
 <?php
 
-vendor('Zend/Json');
+App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
 
 class JsonComponent extends Object {
 
