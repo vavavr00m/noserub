@@ -219,9 +219,9 @@ class ContactsController extends AppController {
         
         # remove contact_type relationships
         $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactTypesContact->execute($sql);
+        $this->Contact->ContactTypesContact->query($sql);
         $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactsNoserubContactType->execute($sql);
+        $this->Contact->ContactsNoserubContactType->query($sql);
         
         # remove this contact
         $with_identity_id = $contact['Contact']['with_identity_id'];
@@ -357,7 +357,7 @@ class ContactsController extends AppController {
                 } else if(!$marked && in_array($id, $selected_noserub_contact_types)) {
                     $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE ' .
                            'contact_id=' . $contact_id . ' AND noserub_contact_type_id=' . $id;
-                    $this->Contact->ContactsNoserubContactType->execute($sql);
+                    $this->Contact->ContactsNoserubContactType->query($sql);
                 }
             }
             
@@ -388,7 +388,7 @@ class ContactsController extends AppController {
                 } else if(!$marked && in_array($id, $selected_contact_types)) {
                     $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE ' .
                            'contact_id=' . $contact_id . ' AND contact_type_id=' . $id;
-                    $this->Contact->ContactTypesContact->execute($sql);
+                    $this->Contact->ContactTypesContact->query($sql);
                     
                     $this->Contact->ContactType->removeIfUnused($id);
                 }

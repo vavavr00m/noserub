@@ -165,7 +165,7 @@ class Admin extends AppModel {
      */
     function getCurrentMigration() {
         # check, if schema_info is there:
-		$tables = $this->execute('SHOW TABLES');
+		$tables = $this->query('SHOW TABLES');
 		
 		$is_present = false;
 		foreach($tables as $table) {
@@ -181,8 +181,8 @@ class Admin extends AppModel {
 		}
 		
 		if(!$is_present) {
-	        $this->execute('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
-		    $this->execute('INSERT INTO `schema_info` (`value`) VALUES (0)');
+	        $this->query('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
+		    $this->query('INSERT INTO `schema_info` (`value`) VALUES (0)');
 	        return 0;
 	    } 
 	    

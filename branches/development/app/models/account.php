@@ -76,7 +76,7 @@ class Account extends AppModel {
             # delete account and feed cache
             $account_id = $item['Account']['id'];
             $this->delete($account_id, false);
-            $this->execute('DELETE FROM ' . $this->tablePrefix . 'feeds WHERE account_id=' . $item['Account']['id']);
+            $this->query('DELETE FROM ' . $this->tablePrefix . 'feeds WHERE account_id=' . $item['Account']['id']);
         }
     }
     
