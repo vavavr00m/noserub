@@ -138,14 +138,10 @@ class Service extends AppModel {
         $token = $this->ServiceType->field('token');
 		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type_id);
         
-        vendor('simplepie/simplepie');
         $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
         $items = array();
 
-        $feed = new SimplePie();
-        $feed->set_cache_location(CACHE . 'simplepie');
-        $feed->set_feed_url($feed_url);
-        $feed->set_autodiscovery_level(SIMPLEPIE_LOCATOR_NONE);
+		$feed = $this->createSimplePie($feed_url);
         $feed->init();
         if($feed->error() || $feed->feed_url != $feed_url ) {
             return false;
@@ -214,11 +210,7 @@ class Service extends AppModel {
      */
     function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
         # needed for autodiscovery of feed
-        vendor('simplepie/simplepie');
-        $feed = new SimplePie();
-        $feed->set_cache_location(CACHE . 'simplepie');
-        $feed->set_feed_url($feed_url);
-        $feed->set_autodiscovery_level(SIMPLEPIE_LOCATOR_ALL);
+    	$feed = $this->createSimplePie($feed_url, true);
         @$feed->init();
         if($feed->error()) {
             return false;
@@ -312,6 +304,22 @@ class Service extends AppModel {
     	}
     	
     	return new $class_name($service_id);
+    }
+    
+    private function createSimplePie($feed_url, $autodiscovery = false) {
+    	App::import('Vendor', 'simplepie'.DS.'simplepie');
+        $feed = new SimplePie();
+        $feed->set_cache_location(CACHE . 'simplepie');
+        $feed->set_feed_url($feed_url);
+        
+        $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
+        if ($autodiscovery) {
+        	$autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
+        }
+        
+        $feed->set_autodiscovery_level($autodiscovery_level);
+        
+        return $feed;
     }
     
     private function getAllServices() {
@@ -480,7 +488,7 @@ class DummyFilter implements IServiceTypeFilter {
 
 class PhotoFilter implements IServiceTypeFilter {
 	public function __construct() {
-		vendor('htmlpurifier'.DS.'HTMLPurifier.auto');		
+		App::import('Vendor', 'htmlpurifier', array('file' => 'htmlpurifier'.DS.'HTMLPurifier.auto.php'));		
 	}
 	
 	public function filter($item) {

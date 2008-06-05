@@ -291,8 +291,8 @@ class Identity extends AppModel {
         
         preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         if(empty($noserub_id)) {
-            vendor('microformat/hcard');
-            vendor('microformat/xfn');
+            App::import('Vendor', 'microformat'.DS.'hcard');
+            App::import('Vendor', 'microformat'.DS.'xfn');
             $hcard_obj = new hcard;
         	$hcards = $hcard_obj->getByURL($url);
         	$hcard = $this->getOwner($hcards, $url);
@@ -781,7 +781,7 @@ class Identity extends AppModel {
         if(!$content) {
             return false;
         }
-        vendor('Zend/Json');
+        App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         $zend_json = new Zend_Json();
         $zend_json->useBuiltinEncoderDecoder = true;
         

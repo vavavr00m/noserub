@@ -4,7 +4,9 @@
 	$path = $pathExtra . PATH_SEPARATOR . $path;
 	ini_set('include_path', $path);
 	
-	vendor('Auth'.DS.'OpenID'.DS.'Consumer', 'Auth'.DS.'OpenID'.DS.'FileStore', 'Auth'.DS.'OpenID'.DS.'SReg');
+	App::import('Vendor', 'consumer', array('file' => 'Auth'.DS.'OpenID'.DS.'Consumer.php'));
+	App::import('Vendor', 'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
+	App::import('Vendor', 'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'));
 
 	class OpenidComponent extends Object {
 		private $controller = null;

@@ -2,7 +2,7 @@
 header('Content-type: text/javascript');
 header('Content-Disposition: attachment; filename="noserub_json"');
 
-vendor('Zend/Json');
+App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
 $zend_json = new Zend_Json();
 $zend_json->useBuiltinEncoderDecoder = true;
 
