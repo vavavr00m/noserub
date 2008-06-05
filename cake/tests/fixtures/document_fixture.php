@@ -33,14 +33,26 @@
  * @subpackage	cake.tests.fixtures
  */
 class DocumentFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Document'
+ * @access public
+ */
 	var $name = 'Document';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'document_directory_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1')
+		array('document_directory_id' => 1, 'name' => 'Document 1')
 	);
 }
 ?>

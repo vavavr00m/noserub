@@ -33,17 +33,37 @@
  * @subpackage	cake.tests.fixtures
  */
 class TranslateTableFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'TranslateTable'
+ * @access public
+ */
 	var $name = 'TranslateTable';
+/**
+ * table property
+ * 
+ * @var string 'another_i18n'
+ * @access public
+ */
 	var $table = 'another_i18n';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-			'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+			'id' => array('type' => 'integer', 'key' => 'primary'),
 			'locale' => array('type' => 'string', 'length' => 6, 'null' => false),
 			'model' => array('type' => 'string', 'null' => false),
 			'foreign_key' => array('type' => 'integer', 'null' => false),
 			'field' => array('type' => 'string', 'null' => false),
 			'content' => array('type' => 'text'));
 	var $records = array(
-			array('id' => 1, 'locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-			array('id' => 2, 'locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1'));
+		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
+		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+	);
 }
+
 ?>

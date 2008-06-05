@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: project.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: project.php 7116 2008-06-04 19:04:58Z gwoo $ */
 /**
  * The Project Task handles creating the base application
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.scripts.bake
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -36,20 +36,6 @@ if (!class_exists('File')) {
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ProjectTask extends Shell {
-/**
- * Override
- *
- * @access public
- */
-	function initialize() {
-	}
-/**
- * Override
- *
- * @access public
- */
-	function startup() {
-	}
 /**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
@@ -65,15 +51,10 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		if($project) {
-			if($project{0} == '/' || $project{0} == DS) {
-				$this->Dispatch->parseParams(array('-working', $project));
-			} else {
-				$this->Dispatch->parseParams(array('-app', $project));
-			}
+		if ($project) {
+			$this->Dispatch->parseParams(array('-app', $project));
+			$project = $this->params['working'];
 		}
-
-		$project = $this->params['working'];
 
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
@@ -82,36 +63,18 @@ class ProjectTask extends Shell {
 			}
 		}
 
+		while (!$project) {
+			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['working'] . DS . "myapp", null, $this->params['working'] . DS . 'myapp');
+		}
+
 		if ($project) {
 			$response = false;
-			while ($response == false && is_dir($project) === true && config('core') === true) {
+			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
-				if (low($response) === 'n') {
-					$response = false;
-
-					while (!$response) {
-						$response = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
-						if (strtoupper($response) === 'Q') {
-							$this->out('Bake Aborted');
-							exit();
-						}
-						$this->params['working'] = null;
-						$this->params['app'] = null;
-						$this->execute($response);
-						exit();
-					}
+				if (strtolower($response) === 'n') {
+					$response = $project = false;
 				}
 			}
-		}
-
-		while (!$project) {
-			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp", null, $this->params['root'] . DS . 'myapp');
-			$this->execute($project);
-			exit();
-		}
-
-		if (!is_dir($this->params['root'])) {
-			$this->err(__('The directory path you supplied was not found. Please try again.', true));
 		}
 
 		if($this->bake($project)) {
@@ -130,7 +93,9 @@ class ProjectTask extends Shell {
 
 			$corePath = $this->corePath($path);
 			if ($corePath === true ) {
-				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s'), true,  CAKE_CORE_INCLUDE_PATH));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', true), CAKE_CORE_INCLUDE_PATH));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', true), CAKE_CORE_INCLUDE_PATH));
+				$this->out(__('Remember to check these value after moving to production server', true));
 			} elseif ($corePath === false) {
 				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', true), $path . 'webroot' .DS .'index.php'));
 			}
@@ -139,8 +104,8 @@ class ProjectTask extends Shell {
 				$this->err(sprintf(__('Could not set permissions on %s', true), $path . DS .'tmp'));
 				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
 			}
+			return true;
 		}
-		exit();
 	}
 /**
  * Looks for a skeleton template of a Cake application,
@@ -157,6 +122,7 @@ class ProjectTask extends Shell {
 		if(!$skel) {
 			$skel = $this->params['skel'];
 		}
+
 		while (!$skel) {
 			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
@@ -200,9 +166,8 @@ class ProjectTask extends Shell {
 		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
 			$this->out('Bake Aborted.');
 		} else {
-			$this->params['working'] = null;
-			$this->params['app'] = null;
 			$this->execute(false);
+			return false;
 		}
 	}
 /**
@@ -254,9 +219,7 @@ class ProjectTask extends Shell {
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if ($File->write($result)) {
-					return true;
-				} else {
+				if (!$File->write($result)) {
 					return false;
 				}
 			} else {
@@ -267,14 +230,13 @@ class ProjectTask extends Shell {
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if ($File->write($result)) {
-					return true;
-				} else {
+				if (!$File->write($result)) {
 					return false;
 				}
 			} else {
 				return false;
 			}
+			return true;
 		}
 	}
 /**
@@ -312,7 +274,7 @@ class ProjectTask extends Shell {
 		$this->out('Commands:');
 		$this->out("\n\tproject <name>\n\t\tbakes app directory structure.\n\t\tif <name> begins with '/' path is absolute.");
 		$this->out("");
-		exit();
+		$this->_stop();
 	}
 
 }

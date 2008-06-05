@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: no_database.group.php 4696 2007-03-27 05:17:49Z phpnut $ */
+/* SVN FILE: $Id: no_database.group.php 7094 2008-06-02 19:22:55Z AD7six $ */
 /**
  * Short description for file.
  *
@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,13 +16,13 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.groups
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: AD7six $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -33,9 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AllCoreWithOutDatabaseGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AllCoreWithOutDatabaseGroupTest extends GroupTest {
+/**
+ * label property
+ * 
+ * @var string 'All tests without a database connection'
+ * @access public
+ */
 	var $label = 'All tests without a database connection';
-
+/**
+ * AllCoreWithOutDatabaseGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCoreWithOutDatabaseGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');

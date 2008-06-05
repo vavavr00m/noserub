@@ -33,15 +33,27 @@
  * @subpackage	cake.tests.fixtures
  */
 class ProjectFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Project'
+ * @access public
+ */
 	var $name = 'Project';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'name' => 'Project 1'),
-		array ('id' => 2, 'name' => 'Project 2'),
-		array ('id' => 3, 'name' => 'Project 3')
+		array('name' => 'Project 1'),
+		array('name' => 'Project 2'),
+		array('name' => 'Project 3')
 	);
 }
 ?>

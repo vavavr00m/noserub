@@ -33,14 +33,26 @@
  * @subpackage	cake.tests.fixtures
  */
 class ExteriorTypeCategoryFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ExteriorTypeCategory'
+ * @access public
+ */
 	var $name = 'ExteriorTypeCategory';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'image_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'image_id' => 1, 'name' => 'ExteriorTypeCategory 1')
+		array('image_id' => 1, 'name' => 'ExteriorTypeCategory 1')
 	);
 }
 ?>

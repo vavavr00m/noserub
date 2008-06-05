@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: session.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: session.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.controller.components
  * @since			CakePHP(tm) v 0.10.0.1232
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -88,7 +88,7 @@ class SessionComponent extends CakeSession {
  * @access public
  */
 	function startup(&$controller) {
-		if ($this->__started === false) {
+		if ($this->__started === false && $this->__active === true) {
 			$this->__start();
 		}
 	}
@@ -294,13 +294,11 @@ class SessionComponent extends CakeSession {
  */
 	function __start(){
 		if ($this->__started === false) {
-			if ($this->__bare === 0) {
-				if (!$this->id() && parent::start()) {
-					$this->__started = true;
-					parent::_checkValid();
-				} else {
-					$this->__started = parent::start();
-				}
+			if (!$this->id() && parent::start()) {
+				$this->__started = true;
+				parent::_checkValid();
+			} else {
+				$this->__started = parent::start();
 			}
 		}
 		return $this->__started;

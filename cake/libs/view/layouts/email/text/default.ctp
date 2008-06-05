@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: default.ctp 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: default.ctp 7062 2008-05-30 11:29:53Z nate $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,13 +18,12 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.layouts.email.text
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 6311 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-02 00:33:52 -0600 (Wed, 02 Jan 2008) $
+ * @version			$Revision: 7062 $
+ * @modifiedby		$LastChangedBy: nate $
+ * @lastmodified	$Date: 2008-05-30 04:29:53 -0700 (Fri, 30 May 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-
 <?php echo $content_for_layout;?>
 
 This email was sent using the CakePHP Framework, http://cakephp.org.

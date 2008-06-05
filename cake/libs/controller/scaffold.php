@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: scaffold.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: scaffold.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Scaffold.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.controller
  * @since		Cake v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -121,7 +121,7 @@ class Scaffold extends Object {
  * @var array
  * @access private
  */
-	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'cacheAction');
+	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction');
 /**
  * Title HTML element for current scaffolded view
  *
@@ -191,7 +191,16 @@ class Scaffold extends Object {
 			$this->controller->view = 'scaffold';
 		}
 		$this->__scaffold($params);
-	 }
+	}
+/**
+ * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
+ *
+ * @access private
+ */
+	function _output() {
+		$this->controller->afterFilter();
+		e($this->controller->output);
+	}
 /**
  * Renders a view action of scaffolded model.
  *
@@ -204,7 +213,7 @@ class Scaffold extends Object {
 
 			if (isset($params['pass'][0])) {
 				$this->ScaffoldModel->id = $params['pass'][0];
-			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+			} elseif (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)));
 				$this->controller->redirect($this->redirect);
 			} else {
@@ -215,6 +224,7 @@ class Scaffold extends Object {
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
 			$this->controller->render($this->action, $this->layout);
+			$this->_output();
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->__scaffoldError();
 		}
@@ -231,6 +241,7 @@ class Scaffold extends Object {
 	 		$this->ScaffoldModel->recursive = 0;
 	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
 	 		$this->controller->render($this->action, $this->layout);
+	 		$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -244,6 +255,7 @@ class Scaffold extends Object {
  */
 	function __scaffoldForm($action = 'edit') {
 		$this->controller->render($action, $this->layout);
+		$this->_output();
 	}
 /**
  * Saves or updates the scaffolded model.
@@ -268,7 +280,7 @@ class Scaffold extends Object {
 				}
 
 				if(!$this->ScaffoldModel->exists()) {
-					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+					if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 						$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
 						$this->controller->redirect($this->redirect);
 					} else {
@@ -284,7 +296,7 @@ class Scaffold extends Object {
 
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
-						if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+						if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 							$this->controller->Session->setFlash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success));
 							$this->controller->redirect($this->redirect);
 						} else {
@@ -294,7 +306,7 @@ class Scaffold extends Object {
 						return $this->controller->_afterScaffoldSaveError($action);
 					}
 				} else {
-					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+					if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 						$this->controller->Session->setFlash(__('Please correct errors below.', true));
 					}
 				}
@@ -333,7 +345,7 @@ class Scaffold extends Object {
 		if ($this->controller->_beforeScaffold('delete')) {
 			if (isset($params['pass'][0])) {
 				$id = $params['pass'][0];
-			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+			} elseif (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)));
 				$this->controller->redirect($this->redirect);
 			} else {
@@ -342,14 +354,14 @@ class Scaffold extends Object {
 			}
 
 			if ($this->ScaffoldModel->del($id)) {
-				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+				if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 					$this->controller->Session->setFlash(sprintf(__('The %1$s with id: %2$d has been deleted.', true), Inflector::humanize($this->modelClass), $id));
 					$this->controller->redirect($this->redirect);
 				} else {
 					return $this->controller->flash(sprintf(__('The %1$s with id: %2$d has been deleted.', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
 				}
 			} else {
-				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+				if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 					$this->controller->Session->setFlash(sprintf(__('There was an error deleting the %1$s with id: %2$d', true), Inflector::humanize($this->modelClass), $id));
 					$this->controller->redirect($this->redirect);
 				} else {
@@ -368,6 +380,7 @@ class Scaffold extends Object {
  */
 	function __scaffoldError() {
 		return $this->controller->render('error', $this->layout);
+		$this->_output();
 	}
 /**
  * When methods are now present in a controller
@@ -383,8 +396,8 @@ class Scaffold extends Object {
  */
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
+		$admin = Configure::read('Routing.admin');
 
-        $admin = Configure::read('Routing.admin');
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
@@ -455,13 +468,14 @@ class Scaffold extends Object {
 }
 /**
  * Scaffold View.
-  *
+ *
  * @package		cake
  * @subpackage	cake.cake.libs.controller
 */
 if (!class_exists('ThemeView')) {
 	App::import('View', 'Theme');
 }
+
 class ScaffoldView extends ThemeView {
 /**
  * Override _getViewFileName
@@ -476,11 +490,6 @@ class ScaffoldView extends ThemeView {
 		$name = Inflector::underscore($name);
 		$scaffoldAction = 'scaffold.'.$name;
 
-		if (!is_null($this->webservices)) {
-			$subDir = strtolower($this->webservices) . DS;
-		} else {
-			$subDir = null;
-		}
 		if (!is_null($this->subDir)) {
 			$subDir = strtolower($this->subDir) . DS;
 		} else {

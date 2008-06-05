@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysqli.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: dbo_mysqli.php 7093 2008-06-02 19:00:11Z joelmoss $ */
 /**
  * MySQLi layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 1.1.4.2974
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: joelmoss $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -55,33 +55,44 @@ class DboMysqli extends DboSource {
  */
 	var $endQuote = "`";
 /**
+ * index definition, standard cake, primary, index, unique
+ *
+ * @var array
+ */
+	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
+
+/**
  * Base configuration settings for Mysqli driver
  *
  * @var array
  */
-	var $_baseConfig = array('persistent' => true,
-								'host' => 'localhost',
-								'login' => 'root',
-								'password' => '',
-								'database' => 'cake',
-								'port' => '3306',
-								'connect' => 'mysqli_connect');
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '3306',
+		'connect' => 'mysqli_connect'
+	);
 /**
  * Mysqli column definition
  *
  * @var array
  */
-	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
-						'string' => array('name' => 'varchar', 'limit' => '255'),
-						'text' => array('name' => 'text'),
-						'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
-						'float' => array('name' => 'float', 'formatter' => 'floatval'),
-						'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
-						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-						'binary' => array('name' => 'blob'),
-						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
+	var $columns = array(
+		'primary_key' => array('name' => 'DEFAULT NULL auto_increment'),
+		'string' => array('name' => 'varchar', 'limit' => '255'),
+		'text' => array('name' => 'text'),
+		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'blob'),
+		'boolean' => array('name' => 'tinyint', 'limit' => '1')
+	);
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -90,7 +101,15 @@ class DboMysqli extends DboSource {
 	function connect() {
 		$config = $this->config;
 		$this->connected = false;
-		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port']);
+		
+		if (is_numeric($config['port'])) {
+			$config['socket'] = null;
+		} else {
+			$config['socket'] = $config['port'];
+			$config['port'] = null;
+		}
+		
+		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port'], $config['socket']);
 
 		if ($this->connection !== false) {
 			$this->connected = true;
@@ -195,6 +214,9 @@ class DboMysqli extends DboSource {
 					'default'	=> $column[0]['Default'],
 					'length'	=> $this->length($column[0]['Type'])
 				);
+				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
+				}
 			}
 		}
 
@@ -249,40 +271,9 @@ class DboMysqli extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('START TRANSACTION')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
-		}
-		return false;
-	}
-/**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
+		if (parent::begin($model) && $this->execute('START TRANSACTION')) {
+			$this->_transactionStarted = true;
+			return true;
 		}
 		return false;
 	}
@@ -352,7 +343,9 @@ class DboMysqli extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
-		@list($col,$vals) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $vals) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
@@ -433,7 +426,10 @@ class DboMysqli extends DboSource {
 			$resultRow = array();
 			$i = 0;
 			foreach ($row as $index => $field) {
-				@list($table, $column) = $this->map[$index];
+				$table = $column = null;
+				if (count($this->map[$index]) == 2) {
+					list($table, $column) = $this->map[$index];
+				}
 				$resultRow[$table][$column] = $row[$index];
 				$i++;
 			}

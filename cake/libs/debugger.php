@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: debugger.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: debugger.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Framework debugging and PHP error-handling class
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.4560
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -357,7 +357,7 @@ class Debugger extends Object {
 			break;
 			case 'string':
 				if (trim($var) == "") {
-					return '"[empty string]"';
+					return '""';
 				}
 				return '"' . h($var) . '"';
 			break;
@@ -367,10 +367,13 @@ class Debugger extends Object {
 				$out = "array(";
 				$vars = array();
 				foreach ($var as $key => $val) {
-					if (is_numeric($key)) {
-						$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
-					} else {
-						$vars[] = "\n\t" .$_this->exportVar($key) . ' => ' . $_this->exportVar($val, $recursion - 1);
+					if ($recursion >= 0) {
+						if (is_numeric($key)) {
+							$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
+						} else {
+							$vars[] = "\n\t" .$_this->exportVar($key, $recursion - 1)
+										. ' => ' . $_this->exportVar($val, $recursion - 1);
+						}
 					}
 				}
 				$n = null;
@@ -394,42 +397,25 @@ class Debugger extends Object {
  * @access private
  */
 	function __object($var) {
-		static $history = array();
-		$serialized = serialize($var);
-		array_push($history, $serialized);
 		$out = array();
+
 		if(is_object($var)) {
 			$className = get_class($var);
 			$objectVars = get_object_vars($var);
 
 			foreach($objectVars as $key => $value) {
-				$inline = null;
-				if(strpos($key, '_', 0) !== 0) {
-					$inline = "$className::$key = ";
+				if(is_object($value)) {
+					$value = get_class($value) . ' object';
+				} elseif (is_array($value)) {
+					$value = 'array';
+				} elseif ($value === null) {
+					$value = 'NULL';
+				} elseif (in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource'))) {
+					$value = Debugger::exportVar($value);
 				}
-
-				if(is_object($value) || is_array($value)) {
-					$serialized = serialize($value);
-
-					if(in_array($serialized, $history, true)) {
-						$value = ife(is_object($value), "*RECURSION* -> " . get_class($value), "*RECURSION*");
-					}
-				}
-				if(in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource', 'object', 'null'))) {
-					$out[] = "$className::$$key = " . Debugger::exportVar($value);
-				} else {
-					$out[] = "$className::$$key = " . var_export($value, true);
-				}
-			}
-
-			$objectMethods = get_class_methods($className);
-			foreach($objectMethods as $key => $value) {
-				if(strpos($value, '_', 0) !== 0) {
-					$out[] = "$className::$value()";
-				}
+				$out[] = "$className::$$key = " . $value;
 			}
 		}
-		array_pop($history);
 		return join("\n", $out);
 	}
 /**
@@ -493,9 +479,11 @@ class Debugger extends Object {
 							e("</pre>");
 						}
 
-						e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-							pr(implode("\n", $listing) . "\n", false);
-						e('</div>');
+						if (!empty($listing)) {
+							e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
+								pr(implode("\n", $listing) . "\n", false);
+							e('</div>');
+						}
 						pr($trace, false);
 					e('</div>');
 				}
@@ -523,7 +511,6 @@ class Debugger extends Object {
 				$this->__data[] = compact('error', 'code', 'description', 'line', 'file', 'context', 'trace');
 			break;
 		}
-
 	}
 /**
  * Verify that the application's salt has been changed from the default value

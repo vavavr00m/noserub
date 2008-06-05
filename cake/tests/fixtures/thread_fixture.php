@@ -33,16 +33,28 @@
  * @subpackage	cake.tests.fixtures
  */
 class ThreadFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Thread'
+ * @access public
+ */
 	var $name = 'Thread';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-		array ('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2'),
-		array ('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1')
+		array('project_id' => 1, 'name' => 'Project 1, Thread 1'),
+		array('project_id' => 1, 'name' => 'Project 1, Thread 2'),
+		array('project_id' => 2, 'name' => 'Project 2, Thread 1')
 	);
 }
 ?>

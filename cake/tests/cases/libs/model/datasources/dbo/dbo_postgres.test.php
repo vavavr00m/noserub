@@ -32,6 +32,8 @@ require_once LIBS.'model'.DS.'model.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_postgres.php';
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
+
 
 /**
  * Short description for class.
@@ -40,14 +42,30 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_postgres.php';
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class DboPostgresTestDb extends DboPostgres {
-
+/**
+ * simulated property
+ * 
+ * @var array
+ * @access public
+ */
 	var $simulated = array();
-
+/**
+ * execute method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
 	function _execute($sql) {
 		$this->simulated[] = $sql;
 		return null;
 	}
-
+/**
+ * getLastQuery method
+ * 
+ * @access public
+ * @return void
+ */
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
@@ -59,18 +77,52 @@ class DboPostgresTestDb extends DboPostgres {
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class PostgresTestModel extends Model {
-
+/**
+ * name property
+ * 
+ * @var string 'PostgresTestModel'
+ * @access public
+ */
 	var $name = 'PostgresTestModel';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * find method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * findAll method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -102,30 +154,53 @@ class PostgresTestModel extends Model {
  */
 class DboPostgresTest extends CakeTestCase {
 /**
- * The Dbo instance to be tested
+ * Do not automatically load fixtures for each test, they will be loaded manually using CakeTestCase::loadFixtures
+ *
+ * @var boolean
+ * @access public
+ */
+	var $autoFixtures = false;
+/**
+ * Actual DB connection used in testing
  *
  * @var object
  * @access public
  */
-	var $Db = null;
+	var $db = null;
+/**
+ * Simulated DB connection used in testing
+ *
+ * @var object
+ * @access public
+ */
+	var $db2 = null;
 /**
  * Skip if cannot connect to postgres
  *
  * @access public
  */
 	function skip() {
-		$db = ConnectionManager::getDataSource('test_suite');
-		$this->skipif ($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
+		$this->_initDb();
+		$this->skipif($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
 	}
-
+/**
+ * Set up test suite database connection
+ *
+ * @access public
+ */
+	function startTest() {
+		$this->_initDb();
+	}
 /**
  * Sets up a Dbo class instance for testing
  *
  * @access public
  */
 	function setUp() {
-		$db = ConnectionManager::getDataSource('test_suite');
-		$this->db = new DboPostgresTestDb($db->config);
+		Configure::write('Cache.disable', true);
+		$this->startTest();
+		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->db2 = new DboPostgresTestDb($this->db->config, false);
 		$this->model = new PostgresTestModel();
 	}
 /**
@@ -134,15 +209,16 @@ class DboPostgresTest extends CakeTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->db);
+		Configure::write('Cache.disable', false);
+		unset($this->db2);
 	}
 /**
- * Test Dbo value method
+ * Test field and value quoting method
  *
  * @access public
  */
 	function testQuoting() {
-		$result = $this->db->fields($this->model);
+		$result = $this->db2->fields($this->model);
 		$expected = array(
 			'"PostgresTestModel"."id" AS "PostgresTestModel__id"',
 			'"PostgresTestModel"."client_id" AS "PostgresTestModel__client_id"',
@@ -166,12 +242,28 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$expected = "'1.2'";
-		$result = $this->db->value(1.2, 'float');
+		$result = $this->db2->value(1.2, 'float');
 		$this->assertIdentical($expected, $result);
 
 		$expected = "'1,2'";
-		$result = $this->db->value('1,2', 'float');
+		$result = $this->db2->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+	}
+
+	function testColumnParsing() {
+		$this->assertEqual($this->db2->column('text'), 'text');
+		$this->assertEqual($this->db2->column('date'), 'date');
+		$this->assertEqual($this->db2->column('boolean'), 'boolean');
+		$this->assertEqual($this->db2->column('character varying'), 'string');
+		$this->assertEqual($this->db2->column('time without time zone'), 'time');
+		$this->assertEqual($this->db2->column('timestamp without time zone'), 'datetime');
+	}
+
+	function testValueQuoting() {
+		$this->assertEqual($this->db2->value('0', 'integer'), "'0'");
+		$this->assertEqual($this->db2->value('', 'integer'), "DEFAULT");
+		$this->assertEqual($this->db2->value('', 'float'), "DEFAULT");
+		$this->assertEqual($this->db2->value('0.0', 'float'), "'0.0'");
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: inflections.php 5118 2007-05-18 17:19:53Z phpnut $ */
+/* SVN FILE: $Id: inflections.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * Custom Inflected Words.
  *
@@ -9,7 +9,7 @@
  * PHP versions 4 and %
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -17,13 +17,13 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.app.config
  * @since			CakePHP(tm) v 1.0.0.2312
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */

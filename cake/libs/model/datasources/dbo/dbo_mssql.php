@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mssql.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: dbo_mssql.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * MS SQL layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.10.5.1790
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -54,7 +54,7 @@ class DboMssql extends DboSource {
  * @var string
  */
 	var $endQuote = "]";
- /**
+/**
  * Creates a map between field aliases and numeric indexes.  Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
@@ -80,11 +80,11 @@ class DboMssql extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'int IDENTITY (1, 1) NOT NULL'),
+		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name' => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'text'),
 		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
-		'float'		=> array('name' => 'float', 'formatter' => 'floatval'),
+		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
 		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
@@ -122,10 +122,6 @@ class DboMssql extends DboSource {
 		} else {
 			$sep = ':';
 		}
-		$connect = 'mssql_connect';
-		if ($config['persistent']) {
-			$connect = 'mssql_pconnect';
-		}
 		$this->connected = false;
 
 		if (is_numeric($config['port'])) {
@@ -136,15 +132,17 @@ class DboMssql extends DboSource {
 			$port = '\\' . $config['port'];	// Named pipe
 		}
 
-		if (!$config['persistent'] || (isset($config['connect']) && $config['connect'] === 'mssql_connect')) {
-			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password'], true);
+		if (!$config['persistent']) {
+			$this->connection = mssql_connect($config['host'] . $port, $config['login'], $config['password'], true);
 		} else {
-			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+			$this->connection = mssql_pconnect($config['host'] . $port, $config['login'], $config['password']);
 		}
 
 		if (mssql_select_db($config['database'], $this->connection)) {
+			$this->_execute("SET DATEFORMAT ymd");
 			$this->connected = true;
 		}
+		return $this->connected;
 	}
 /**
  * Disconnects from database.
@@ -177,7 +175,6 @@ class DboMssql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-
 		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES');
 
 		if (!$result || empty($result)) {
@@ -210,12 +207,25 @@ class DboMssql extends DboSource {
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
 
 		foreach ($cols as $column) {
-			$fields[$column[0]['Field']] = array(
+			$field = $column[0]['Field'];
+			$fields[$field] = array(
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => $column[0]['Default'],
+				'default' => preg_replace("/^\('?([^']*)?'?\)$/", "$1", $column[0]['Default']),
 				'length' => intval($column[0]['Length']),
+				'key'	=> ($column[0]['Key'] == '1')
 			);
+			if (in_array($fields[$field]['default'], array('null', '(null)'))) {
+				$fields[$field]['default'] = null;
+			}
+			if ($fields[$field]['key'] && $fields[$field]['type'] == 'integer') {
+				$fields[$field]['length'] = 11;
+			} elseif (!$fields[$field]['key']) {
+				unset($fields[$field]['key']);
+			}
+			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
+				$fields[$field]['length'] = null;
+			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
@@ -244,11 +254,6 @@ class DboMssql extends DboSource {
 		switch($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
-			break;
-			case 'datetime':
-				if ($data && (($timestamp = strtotime($data)) !== false)) {
-					$data =	date('Y-m-d\TH:i:s', $timestamp);
-				}
 			break;
 			default:
 				if (get_magic_quotes_gpc()) {
@@ -281,17 +286,31 @@ class DboMssql extends DboSource {
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
 			for ($i = 0; $i < $count; $i++) {
-				$dot = strrpos($fields[$i], '.');
+				$prepend = '';
+
+				if (strpos($fields[$i], 'DISTINCT') !== false) {
+					$prepend = 'DISTINCT ';
+					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
+				}
 				$fieldAlias = count($this->__fieldMappings);
 
-				if ($dot === false && !preg_match('/\s+AS\s+/i', $fields[$i])) {
-					$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
-					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fieldAlias);
-				} elseif (!preg_match('/\s+AS\s+/i', $fields[$i])) {
-					$build = explode('.', $fields[$i]);
-					$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $build[0] . '.' . $build[1];
-					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
+				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
+					if (strpos($fields[$i], '.') === false) {
+						$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
+						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldAlias = $this->name($alias . '__' . $fieldAlias);
+					} else {
+						$build = explode('.', $fields[$i]);
+						$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
+						$fieldName  = $this->name($build[0] . '.' . $build[1]);
+						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $fieldAlias);
+					}
+					if ($model->getColumnType($fields[$i]) == 'datetime') {
+						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
+					}
+					$fields[$i] =  "{$fieldName} AS {$fieldAlias}";
 				}
+				$fields[$i] = $prepend . $fields[$i];
 			}
 		}
 		return $fields;
@@ -304,60 +323,60 @@ class DboMssql extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('BEGIN TRANSACTION')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
+		if (parent::begin($model) && $this->execute('BEGIN TRANSACTION')) {
+			$this->_transactionStarted = true;
+			return true;
 		}
 		return false;
 	}
 /**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
-		}
-		return false;
-	}
-/**
- * Removes Identity (primary key) column from update data before returning to parent
+ * Generates and executes an SQL INSERT statement for given model, fields, and values.
+ * Removes Identity (primary key) column from update data before returning to parent, if
+ * value is empty.
  *
  * @param Model $model
  * @param array $fields
  * @param array $values
+ * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = array()) {
-		foreach ($fields as $i => $field) {
-			if ($field == $model->primaryKey) {
-				unset ($fields[$i]);
-				unset ($values[$i]);
-				break;
+	function create(&$model, $fields = null, $values = null) {
+		if (!empty($values)) {
+			$fields = array_combine($fields, $values);
+		}
+
+		if (array_key_exists($model->primaryKey, $fields)) {
+			if (empty($fields[$model->primaryKey])) {
+				unset($fields[$model->primaryKey]);
+			} else {
+				$this->_execute("SET IDENTITY_INSERT " . $this->fullTableName($model) . " ON");
 			}
 		}
-		return parent::update($model, $fields, $values);
+		$result = parent::create($model, array_keys($fields), array_values($fields));
+		if (array_key_exists($model->primaryKey, $fields) && !empty($fields[$model->primaryKey])) {
+			$this->_execute("SET IDENTITY_INSERT " . $this->fullTableName($model) . " OFF");
+		}
+		return $result;
+	}
+
+/**
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ * Removes Identity (primary key) column from update data before returning to parent.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if (!empty($values)) {
+			$fields = array_combine($fields, $values);
+		}
+		if (isset($fields[$model->primaryKey])) {
+			unset($fields[$model->primaryKey]);
+		}
+		return parent::update($model, array_keys($fields), array_values($fields), $conditions);
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -446,33 +465,29 @@ class DboMssql extends DboSource {
 		}
 		$col                = str_replace(')', '', $real);
 		$limit              = null;
-		@list($col, $limit) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-
 		if ($col == 'bit') {
 			return 'boolean';
 		}
-
-		if (strpos($col, 'int') !== false || $col == 'numeric') {
+		if (strpos($col, 'int') !== false) {
 			return 'integer';
 		}
-
 		if (strpos($col, 'char') !== false) {
 			return 'string';
 		}
-
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-
 		if (strpos($col, 'binary') !== false || $col == 'image') {
 			return 'binary';
 		}
-
-		if (in_array($col, array('float', 'real', 'decimal'))) {
+		if (in_array($col, array('float', 'real', 'decimal', 'numeric'))) {
 			return 'float';
 		}
 		return 'text';
@@ -515,9 +530,15 @@ class DboMssql extends DboSource {
  * @return string
  */
 	function renderStatement($type, $data) {
-		extract($data);
-
 		if (strtolower($type) == 'select') {
+			extract($data);
+			$fields = trim($fields);
+
+			if (strpos($limit, 'TOP') !== false && strpos($fields, 'DISTINCT ') === 0) {
+				$limit = 'DISTINCT ' . trim($limit);
+				$fields = substr($fields, 9);
+			}
+
 			if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
 				$limit = preg_replace('/\s*offset.*$/i', '', $limit);
 				preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
@@ -596,14 +617,24 @@ class DboMssql extends DboSource {
 		}
 	}
 /**
- * Inserts multiple values into a join table
+ * Generate a database-native column schema string
  *
- * @param string $table
- * @param string $fields
- * @param array $values
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
  */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
+	function buildColumn($column) {
+		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		$null = (
+			(isset($column['null']) && $column['null'] == true) ||
+			(array_key_exists('default', $column) && $column['default'] === null) ||
+			(array_keys($column) == array('type', 'name'))
+		);
+		$stringKey = (isset($column['key']) && $column['key'] == 'primary' && $column['type'] != 'integer');
+		if ($null) {
+			$result .= " NULL";
+		}
+		return $result;
 	}
 }
 

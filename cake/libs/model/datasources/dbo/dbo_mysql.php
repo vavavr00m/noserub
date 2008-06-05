@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: dbo_mysql.php 7097 2008-06-03 02:26:40Z nate $ */
 /**
  * MySQL layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.10.5.1790
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -55,6 +55,17 @@ class DboMysql extends DboSource {
  */
 	var $endQuote = "`";
 /**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'START TRANSACTION',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+/**
  * Base configuration settings for MySQL driver
  *
  * @var array
@@ -74,7 +85,7 @@ class DboMysql extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
@@ -96,7 +107,7 @@ class DboMysql extends DboSource {
 		$connect = $config['connect'];
 		$this->connected = false;
 
-		if (!$config['persistent'] || $config['connect'] === 'mysql_connect') {
+		if (!$config['persistent']) {
 			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
 		} else {
 			$this->connection = $connect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
@@ -185,9 +196,6 @@ class DboMysql extends DboSource {
 				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
 					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
 				}
-				if(!empty($column[0]['Extra'])) {
-					$fields[$column[0]['Field']]['extra'] = $column[0]['Extra'];
-				}
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
@@ -206,77 +214,96 @@ class DboMysql extends DboSource {
 
 		if ($parent != null) {
 			return $parent;
-		}
-
-		if ($data === null) {
+		} elseif ($data === null) {
 			return 'NULL';
-		}
-
-		if ($data === '') {
+		} elseif ($data === '') {
 			return  "''";
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
-			case 'integer' :
-			case 'float' :
-			case null :
-				if (is_numeric($data) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false) {
-					break;
+			case 'integer':
+			case 'float':
+				if ((is_int($data) || is_float($data)) || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false
+				)) {
+					return $data;
 				}
 			default:
 				$data = "'" . mysql_real_escape_string($data, $this->connection) . "'";
 			break;
 		}
-
 		return $data;
 	}
 /**
- * Begin a transaction
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
  */
-	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('START TRANSACTION')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if ($values == null) {
+			$combined = $fields;
+		} else {
+			$combined = array_combine($fields, $values);
 		}
-		return false;
+
+		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
+		$fields = join(', ', $fields);
+		$table = $this->fullTableName($model);
+		$alias = $this->name($model->alias);
+		$joins = implode(' ', $this->_getJoins($model));
+
+		if (empty($conditions)) {
+			$alias = $joins = false;
+		}
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
+
+		if ($conditions === false) {
+			return false;
+		}
+
+		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
+			$model->onError();
+			return false;
+		}
+		return true;
 	}
 /**
- * Commit a transaction
+ * Generates and executes an SQL DELETE statement for given id/conditions on given model.
  *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
+ * @param Model $model
+ * @param mixed $conditions
+ * @return boolean Success
  */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
+	function delete(&$model, $conditions = null) {
+		$alias = $this->name($model->alias);
+		$table = $this->fullTableName($model);
+		$joins = implode(' ', $this->_getJoins($model));
+
+		if (empty($conditions)) {
+			$alias = $joins = false;
 		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
+
+		if ($conditions === false) {
+			return false;
 		}
-		return false;
+
+		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
+			$model->onError();
+			return false;
+		}
+		return true;
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -344,7 +371,9 @@ class DboMysql extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
-		@list($col,$vals) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $vals) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
@@ -432,6 +461,21 @@ class DboMysql extends DboSource {
  */
 	function getEncoding() {
 		return mysql_client_encoding($this->connection);
+	}
+/**
+ * Inserts multiple values into a table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$table = $this->fullTableName($table);
+		if (is_array($fields)) {
+			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
+		}
+		$values = implode(', ', $values);
+		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
 	}
 /**
  * Returns an array of the indexes in given table name.
@@ -528,33 +572,6 @@ class DboMysql extends DboSource {
 			}
 		}
 		return $out;
-	}
-/**
- * Format indexes for create table
- *
- * @param array $indexes
- * @return string
- */
-	function buildIndex($indexes) {
-		$join = array();
-		foreach ($indexes as $name => $value) {
-			$out = '';
-			if ($name == 'PRIMARY') {
-				$out .= 'PRIMARY ';
-				$name = null;
-			} else {
-				if (!empty($value['unique'])) {
-					$out .= 'UNIQUE ';
-				}
-			}
-			if (is_array($value['column'])) {
-				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
-			}
-			$join[] = $out;
-		}
-		return join(",\n\t", $join);
 	}
 }
 ?>

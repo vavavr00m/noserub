@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: acl.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: acl.php 7062 2008-05-30 11:29:53Z nate $ */
 /**
  * ACL behavior class.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.behaviors
  * @since			CakePHP v 1.2.0.4487
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */

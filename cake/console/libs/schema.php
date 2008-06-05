@@ -27,7 +27,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('file', 'model' . DS . 'schema');
+App::import('File');
+App::import('Model', 'Schema');
 /**
  * Schema is a command-line database management utility for automating programmer chores.
  *
@@ -48,6 +49,7 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function initialize() {
+		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
 	}
@@ -69,8 +71,11 @@ class SchemaShell extends Shell {
 		if (!empty($this->params['file'])) {
 		 	$file = $this->params['file'];
 		}
-
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file'));
+		$connection = null;
+		if (!empty($this->params['connection'])) {
+		 	$connection = $this->params['connection'];
+		}
+		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
 /**
  * Override main
@@ -90,10 +95,10 @@ class SchemaShell extends Shell {
 		$File = new File($this->Schema->path . DS .'schema.php');
 		if ($File->exists()) {
 			$this->out($File->read());
-			exit();
+			$this->_stop();
 		} else {
 			$this->err(__('Schema could not be found', true));
-			exit();
+			$this->_stop();
 		}
 	}
 /**
@@ -118,7 +123,7 @@ class SchemaShell extends Shell {
 			$snapshot = true;
 			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
 			if ($result === 'q') {
-				exit();
+				$this->_stop();
 			}
 			if ($result === 'o') {
 				$snapshot = false;
@@ -144,10 +149,10 @@ class SchemaShell extends Shell {
 
 		if ($this->Schema->write($content)) {
 			$this->out(sprintf(__('Schema file: %s generated', true), $content['file']));
-			exit();
+			$this->_stop();
 		} else {
 			$this->err(__('Schema file: %s generated', true));
-			exit();
+			$this->_stop();
 		}
 	}
 /**
@@ -162,7 +167,7 @@ class SchemaShell extends Shell {
 		$Schema = $this->Schema->load();
 		if (!$Schema) {
 			$this->err(__('Schema could not be loaded', true));
-			exit();
+			$this->_stop();
 		}
 		if (!empty($this->args[0])) {
 			if ($this->args[0] == 'true') {
@@ -181,10 +186,10 @@ class SchemaShell extends Shell {
 			$File = new File($this->Schema->path . DS . $write, true);
 			if ($File->write($contents)) {
 				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
-				exit();
+				$this->_stop();
 			} else {
 				$this->err(__('SQL dump could not be created', true));
-				exit();
+				$this->_stop();
 			}
 		}
 		$this->out($contents);
@@ -198,7 +203,7 @@ class SchemaShell extends Shell {
 	function run() {
 		if (!isset($this->args[0])) {
 			$this->err('command not found');
-			exit();
+			$this->_stop();
 		}
 
 		$command = $this->args[0];
@@ -224,7 +229,7 @@ class SchemaShell extends Shell {
 
 		if (!$Schema) {
 			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
-			exit();
+			$this->_stop();
 		}
 
 		$table = null;
@@ -241,7 +246,7 @@ class SchemaShell extends Shell {
 			break;
 			default:
 				$this->err(__('command not found', true));
-			exit();
+			$this->_stop();
 		}
 	}
 /**
@@ -266,10 +271,10 @@ class SchemaShell extends Shell {
 		}
 		if (empty($drop) || empty($create)) {
 			$this->out(__('Schema is up to date.', true));
-			exit();
+			$this->_stop();
 		}
 
-		$this->out("\n" . __('The following tables will drop.', true));
+		$this->out("\n" . __('The following tables will be dropped.', true));
 		$this->out(array_keys($drop));
 
 		if ('y' == $this->in(__('Are you sure you want to drop the tables?', true), array('y', 'n'), 'n')) {
@@ -277,7 +282,7 @@ class SchemaShell extends Shell {
 			$this->__run($drop, 'drop');
 		}
 
-		$this->out("\n" . __('The following tables will create.', true));
+		$this->out("\n" . __('The following tables will be created.', true));
 		$this->out(array_keys($create));
 
 		if ('y' == $this->in(__('Are you sure you want to create the tables?', true), array('y', 'n'), 'y')) {
@@ -302,7 +307,7 @@ class SchemaShell extends Shell {
 
 		$contents = array();
 
-		if (!$table) {
+		if (empty($table)) {
 			foreach ($compare as $table => $changes) {
 				$contents[$table] = $db->alterSchema(array($table => $changes), $table);
 			}
@@ -312,7 +317,7 @@ class SchemaShell extends Shell {
 
 		if (empty($contents)) {
 			$this->out(__('Schema is up to date.', true));
-			exit();
+			$this->_stop();
 		}
 
 		$this->out("\n" . __('The following statements will run.', true));
@@ -388,10 +393,10 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
 		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force genaration of all tables into the schema, use the -f param.");
 		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is true, default will use the app directory name.");
-		$this->out("\n\tschema run create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out("\n\tschema run update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");
-		exit();
+		$this->_stop();
 	}
 }
 ?>

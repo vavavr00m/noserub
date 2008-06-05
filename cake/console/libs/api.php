@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: api.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: api.php 7116 2008-06-04 19:04:58Z gwoo $ */
 /**
  * API shell to get CakePHP core method signatures.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.console.libs
  * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -47,7 +47,7 @@ class ApiShell extends Shell {
  * @access public
  */
 	function initialize () {
-		$this->paths = am($this->paths, array(
+		$this->paths = array_merge($this->paths, array(
 			'behavior' => LIBS . 'model' . DS . 'behaviors' . DS,
 			'cache' => LIBS . 'cache' . DS,
 			'controller' => LIBS . 'controller' . DS,
@@ -94,7 +94,7 @@ class ApiShell extends Shell {
 
 		} else {
 			$this->err(sprintf(__("%s not found", true), $class));
-			exit();
+			$this->_stop();
 		}
 
 		$parsed = $this->__parseClass($path . $file .'.php');
@@ -103,7 +103,7 @@ class ApiShell extends Shell {
 			if (isset($this->params['m'])) {
 				if (!isset($parsed[$this->params['m']])) {
 					$this->err(sprintf(__("%s::%s() could not be found", true), $class, $this->params['m']));
-					exit();
+					$this->_stop();
 				}
 				$method = $parsed[$this->params['m']];
 				$this->out($class .'::'.$method['method'] . $method['parameters']);
@@ -122,7 +122,7 @@ class ApiShell extends Shell {
 				while ($number = $this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.', true), null, 'q')) {
 					if ($number === 'q') {
 						$this->out(__('Done', true));
-						exit();
+						$this->_stop();
 					}
 
 					if ($number === 'l') {
@@ -147,7 +147,7 @@ class ApiShell extends Shell {
  * @access public
  */
 	function help() {
-		$head  = "Usage: cake api [<type>] <className> <-m method>\n";
+		$head  = "Usage: cake api [<type>] <className> [-m <method>]\n";
 		$head .= "-----------------------------------------------\n";
 		$head .= "Parameters:\n\n";
 
@@ -193,7 +193,7 @@ class ApiShell extends Shell {
 		$File = new File($path);
 		if (!$File->exists()) {
 			$this->err(sprintf(__("%s could not be found", true), $File->name));
-			exit();
+			$this->_stop();
 		}
 
 		$contents = $File->read();
@@ -202,7 +202,7 @@ class ApiShell extends Shell {
 			foreach($result[2] as $key => $method) {
 				$method = str_replace('function ', '', trim($method));
 
-				if (strpos($method, '__') === false && strpos($method, '_') !== 0) {
+				if (strpos($method, '__') === false && $method[0] != '_') {
 					$parsed[$method] = array(
 											'comment' => r(array('/*', '*/', '*'), '', trim($result[1][$key])),
 											'method' => $method,

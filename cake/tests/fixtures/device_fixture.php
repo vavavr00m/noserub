@@ -33,17 +33,29 @@
  * @subpackage	cake.tests.fixtures
  */
 class DeviceFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Device'
+ * @access public
+ */
 	var $name = 'Device';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'device_type_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false),
 		'typ' => array('type' => 'integer', 'null' => false),
 	);
 	var $records = array(
-		array('id' => 1, 'device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
-		array('id' => 2, 'device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),
-		array('id' => 3, 'device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)
+		array('device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
+		array('device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),
+		array('device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)
 	);
 }
 ?>
