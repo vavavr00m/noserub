@@ -35,11 +35,10 @@
 
 	eval($model);
 	
-	vendor('simpletest'.DS.'test_case');
-	vendor('simpletest'.DS.'unit_tester');
-	vendor('simpletest'.DS.'reporter');
-	vendor('testsuite'.DS.'cake_test_case');
-	vendor('testsuite'.DS.'cake_group_test');
+	App::import('Vendor', 'simpletest'.DS.'test_case');
+	App::import('Vendor', 'simpletest'.DS.'unit_tester');
+	App::import('Vendor', 'testsuite'.DS.'cake_test_case');
+	App::import('Vendor', 'testsuite'.DS.'cake_group_test');
 
 	class TestTask {
 		var $test = null;
