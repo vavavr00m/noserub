@@ -92,7 +92,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 		
 		foreach ($registerActions as $action) {
-			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all', 'controller' => 'Identities', 'action' => $action));
+			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all', 'controller' => 'Registration', 'action' => $action));
 			$this->assertMenuForAnonymousUser($mainMenu, false, true);
 		}
 	}
@@ -411,7 +411,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 		$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 		
 		foreach ($registerActions as $action) {
-			$menuItem = new RegisterMenuItem('Identities', $action);
+			$menuItem = new RegisterMenuItem('Registration', $action);
 			$this->assertMenuItem($menuItem, true);
 		}
 	}
