@@ -326,7 +326,7 @@ class Service extends AppModel {
     	$serviceObjects = array();
 
     	$this->recursive = 0;
-    	$services = $this->findAll(array('service_type_id' => '> 0'), array('id', 'internal_name'));
+    	$services = $this->findAll(array('service_type_id >' => 0), array('id', 'internal_name'));
     	
     	foreach($services as $service) {
     		$serviceObjects[] = $this->createService($service['Service']['id'], $service['Service']['internal_name']);
