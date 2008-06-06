@@ -21,12 +21,12 @@
 /**
  * Zend_Json
  */
-vendor('Zend/Json');
+App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
 
 /**
  * Zend_Json_Exception
  */
-vendor('Zend/Json/Exception');
+App::import('Vendor', 'exception', array('file' => 'Zend'.DS.'Json'.DS.'Exception.php'));
 
 
 /**

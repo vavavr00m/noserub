@@ -21,12 +21,12 @@
 	eval($dispatcher);
 	
 	uses('security', 'session', 'sanitize', 'string');
-	vendor('simpletest'.DS.'mock_objects');
-	vendor('testsuite'.DS.'test_dispatcher');
-	vendor('testsuite'.DS.'session');
-	vendor('testsuite'.DS.'error');
-	vendor('testsuite'.DS.'cookie');
-	vendor('testsuite'.DS.'session_helper');
+	App::import('Vendor', 'simpletest'.DS.'mock_objects');
+	App::import('Vendor', 'testsuite'.DS.'test_dispatcher');
+	App::import('Vendor', 'testsuite'.DS.'session');
+	App::import('Vendor', 'testsuite'.DS.'error');
+	App::import('Vendor', 'testsuite'.DS.'cookie');
+	App::import('Vendor', 'testsuite'.DS.'session_helper');
 	
 	class CakeTestCase extends UnitTestCase {
 		var $fixtures = array();
