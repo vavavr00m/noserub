@@ -30,23 +30,23 @@
 	<?php } ?>
 
 <!-- CSS -->
-	 <?php echo $this->renderElement('css'); ?>
+	 <?php echo $this->element('css'); ?>
 	                   
 <!-- JavaScript -->
-	<?php echo $this->renderElement('javascript'); ?>
+	<?php echo $this->element('javascript'); ?>
        
     </head>
 	<body>
 <!-- Revision $Revision$ -->
 	<div id="top"></div>
-	<?php echo $this->renderElement('metanav'); ?>
+	<?php echo $this->element('metanav'); ?>
 
 		<div id="header" class="wrapper">
 			<div id="logo">
 				<h1><a title="<?php echo $app_name; ?>" href="/"><?php echo $app_name; ?></a></h1>
 	  		</div>
 	  	
-	  			<?php echo $this->renderElement('mainnav'); ?>
+	  			<?php echo $this->element('mainnav'); ?>
 		</div>
 	
 		<div id="headline">
@@ -56,7 +56,7 @@
 		</div>
 		<?php 
 			if (is_a($mainMenu->getActiveMenuItem(), 'SettingsMenuItem')) {
-				echo $this->renderElement('subnav');
+				echo $this->element('subnav');
 		    } 
 		?>
 		

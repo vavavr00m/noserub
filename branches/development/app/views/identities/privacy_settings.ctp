@@ -1,6 +1,6 @@
 <?php $flashmessage->render(); ?>
 <form id="IdentityPrivacySettingsForm" method="post" action="<?php echo $this->here; ?>">
-    <?php echo $this->renderElement('identities/privacy_settings'); ?>
+    <?php echo $this->element('identities/privacy_settings'); ?>
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
         <input class="submitbutton" type="submit" value="Save changes"/>
