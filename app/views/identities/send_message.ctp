@@ -1,4 +1,4 @@
-<?php echo $this->renderElement('identities/mini_profile'); ?>
+<?php echo $this->element('identities/mini_profile'); ?>
 
 <br class="clear" />
 

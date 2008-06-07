@@ -28,7 +28,7 @@ If you have an <img src="<?php echo Router::url('/images/openid_small.gif'); ?>"
         ?>
     </fieldset>
 
-    <?php echo $this->renderElement('identities/privacy_settings'); ?>
+    <?php echo $this->element('identities/privacy_settings'); ?>
         <p class="infotext">
         (You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in.)
     </p>

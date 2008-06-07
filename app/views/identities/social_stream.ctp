@@ -21,25 +21,25 @@
 ?>
 
 <?php if(isset($about_identity)) {
-    echo $this->renderElement('identities/mini_profile', array('data' => $about_identity));
+    echo $this->element('identities/mini_profile', array('data' => $about_identity));
 } ?>
 
     <div class="vcard">
         <div>
             <h4>Social activity</h4>
-            <?php echo $this->renderElement('subnav', array('no_wrapper' => true)); ?>
-            <?php echo $this->renderElement('identities/items', array('data' => $items, 'filter' => $filter)); ?>
+            <?php echo $this->element('subnav', array('no_wrapper' => true)); ?>
+            <?php echo $this->element('identities/items', array('data' => $items, 'filter' => $filter)); ?>
         </div>
     </div>
 
     <div id="sidebar">
-    	<?php echo $this->renderElement('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if($menu['logged_in'] && isset($contacts)) { ?>
     	    <hr />
-    	    <?php echo $this->renderElement('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url, 'manage' => true)); ?>
+    	    <?php echo $this->element('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url, 'manage' => true)); ?>
     	<?php } ?>
     	<?php if(isset($newbies)) { ?>
     	    <hr />
-            <?php echo $this->renderElement('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $static_base_url)); ?>
+            <?php echo $this->element('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $static_base_url)); ?>
         <?php } ?>
     </div>

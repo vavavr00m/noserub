@@ -15,12 +15,12 @@ if(empty($noserub_contacts) && empty($private_contacts)) { ?>
 	}
     if(!empty($noserub_contacts)) {
         echo '<h3 class="contactsheadline">NoseRub Contacts</h3>';
-        echo $this->renderElement('contacts/list', array('data' => $noserub_contacts, 'show_photo' => true));
+        echo $this->element('contacts/list', array('data' => $noserub_contacts, 'show_photo' => true));
     }
     
     if(!empty($private_contacts)) {
         echo '<br class="clear" /><h3 class="contactsheadline">Private Contacts</h3>';
-        echo $this->renderElement('contacts/list', array('data' => $private_contacts, 'show_photo' => false));
+        echo $this->element('contacts/list', array('data' => $private_contacts, 'show_photo' => false));
     }
 }
 if($identity['id'] == $session_identity_id) { ?>

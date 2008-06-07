@@ -17,7 +17,7 @@
         	$openid->serverLink('/auth', false);
         }
         
-        echo $this->renderElement('foaf');
+        echo $this->element('foaf');
     
         $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
                                     1 => Router::url('/images/profile/avatar/female.gif'),
@@ -164,8 +164,8 @@
 
         <div>
             <h4>Social activity</h4>
-            <?php echo $this->renderElement('subnav', array('no_wrapper' => true)); ?>
-            <?php echo $this->renderElement('identities/items', array('data' => $items, 'filter' => $filter)); ?>
+            <?php echo $this->element('subnav', array('no_wrapper' => true)); ?>
+            <?php echo $this->element('identities/items', array('data' => $items, 'filter' => $filter)); ?>
         </div>
 
     <!-- // profile -->
@@ -201,7 +201,7 @@
 	    <?php if($relationship_status == 'self') { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
     	<?php } ?>
-    	<?php echo $this->renderElement('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
     	<p class="morefriends">
     		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
@@ -214,7 +214,7 @@
         <hr />
 	
 	    <?php if(isset($mutual_contacts)) {
-	        echo $this->renderElement('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $static_base_url));
+	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $static_base_url));
 	        echo '<hr />';
 	    } ?>
 	    
