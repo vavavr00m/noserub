@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: basics.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: basics.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Basic Cake functionality.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -627,7 +627,7 @@ if (!function_exists('clone')) {
 		} else {
 			return I18n::translate($msg, null, $domain);
 		}
-    }
+	}
 /**
  * Allows you to override the current domain for a single plural message lookup
  * Returns correct plural form of message identified by $singular and $plural for count $count
@@ -761,7 +761,7 @@ if (!function_exists('clone')) {
 		} else {
 			return I18n::translate($msg, null, null, $category);
 		}
-    }
+	}
 /**
  * Computes the difference of arrays using keys for comparison
  *

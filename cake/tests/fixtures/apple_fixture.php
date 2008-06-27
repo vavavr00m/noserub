@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: apple_fixture.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: apple_fixture.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -35,14 +35,14 @@
 class AppleFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Apple'
  * @access public
  */
 	var $name = 'Apple';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -56,6 +56,12 @@ class AppleFixture extends CakeTestFixture {
 		'modified' => 'datetime',
 		'mytime' => 'time'
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
 		array('apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),

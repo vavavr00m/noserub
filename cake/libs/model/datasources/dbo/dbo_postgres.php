@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_postgres.php 7097 2008-06-03 02:26:40Z nate $ */
+/* SVN FILE: $Id: dbo_postgres.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * PostgreSQL layer for DBO.
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.9.1.114
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -132,7 +132,7 @@ class DboPostgres extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		if (is_resource($this->_result)) {
+		if ($this->hasResult()) {
 			pg_free_result($this->_result);
 		}
 		if (is_resource($this->connection)) {
@@ -272,12 +272,12 @@ class DboPostgres extends DboSource {
 				$data = pg_escape_bytea($data);
 			break;
 			case 'boolean':
-				if ($data === true) {
+				if ($data === true || $data === 't') {
 					return 'TRUE';
-				} elseif ($data === false) {
+				} elseif ($data === false || $data === 'f') {
 					return 'FALSE';
 				}
-				return 'DEFAULT';
+				return (!empty($data) ? 'TRUE' : 'FALSE');
 			break;
 			default:
 				$data = pg_escape_string($data);
@@ -332,7 +332,7 @@ class DboPostgres extends DboSource {
  */
 	function lastInsertId($source, $field = 'id') {
 		$seq = $this->getSequence($source, $field);
-		$data = $this->fetchRow("SELECT last_value AS max FROM \"{$seq}\"");
+		$data = $this->fetchRow("SELECT currval('{$seq}') as max");
 		return $data[0]['max'];
 	}
 /**

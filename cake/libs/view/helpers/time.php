@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: time.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: time.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Time Helper class file.
@@ -21,7 +21,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -54,9 +54,9 @@ class TimeHelper extends AppHelper {
  * @return int Offset
  */
 	function serverOffset() {
- 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
+		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer); 	
- 		$offset = $timezoneServer->getOffset($timeServer);
+		$offset = $timezoneServer->getOffset($timeServer);
 		return $offset;
 	}
 /**

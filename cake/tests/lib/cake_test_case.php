@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_case.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: cake_test_case.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.tests.libs
  * @since			CakePHP(tm) v 1.2.0.4667
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -77,6 +77,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
 	var $__truncated = true;
+	var $__savedGetData = array();
 /**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
  * Set this to false to handle manually
@@ -128,7 +129,6 @@ class CakeTestCase extends UnitTestCase {
  */
 	function endTest($method) {
 	}
-
 /**
  * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
  */
@@ -138,7 +138,6 @@ class CakeTestCase extends UnitTestCase {
 		}
 		return parent::assert($expectation, $compare, $message);
 	}
-
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  */
@@ -146,7 +145,6 @@ class CakeTestCase extends UnitTestCase {
 		parent::skipIf($shouldSkip, $message);
 		return $shouldSkip;
 	}
-
 /**
  * Callback issued when a controller's action is about to be invoked through testAction().
  *
@@ -158,18 +156,16 @@ class CakeTestCase extends UnitTestCase {
 			if (!isset($this->db)) {
 				$this->_initDb();
 			}
-
 			$classRegistry =& ClassRegistry::getInstance();
 			$models = array();
 
 			foreach ($classRegistry->__map as $key => $name) {
 				$object =& $classRegistry->getObject(Inflector::camelize($key));
 				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->alias, $params['fixturize'])) || $params['fixturize'] === true)) {
-					$models[$object->alias] = array (
+					$models[$object->alias] = array(
 						'table' => $object->table,
 						'model' => $object->alias,
-						'key' => Inflector::camelize($key)
-					);
+						'key' => Inflector::camelize($key));
 				}
 			}
 
@@ -268,14 +264,28 @@ class CakeTestCase extends UnitTestCase {
 
 		$params = array_merge($default, $params);
 
-		if (!empty($params['data'])) {
-			$data = array('data' => $params['data']);
+		$toSave = array(
+			'case' => null,
+			'group' => null,
+			'app' => null,
+			'output' => null,
+			'show' => null,
+			'plugin' => null
+		);
+		$this->__savedGetData = (empty($this->__savedGetData))
+				? array_intersect_key($_GET, $toSave)
+				: $this->__savedGetData;
 
-			if (strtolower($params['method']) == 'get') {
-				$_GET = $data;
-			} else {
-				$_POST = $data;
-			}
+		$data = (!empty($params['data']))
+					? array('data' => $params['data'])
+					: array();
+
+		if (strtolower($params['method']) == 'get') {
+			$_GET = array_merge($this->__savedGetData, $data);
+			$_POST = array();
+		} else {
+			$_POST = $data;
+			$_GET = $this->__savedGetData;
 		}
 
 		$return = $params['return'];
@@ -365,10 +375,12 @@ class CakeTestCase extends UnitTestCase {
 			$this->db->cacheSources = false;
 			$sources = $this->db->listSources();
 			$this->db->cacheSources = $cacheSources;
+
 			foreach ($this->_fixtures as $fixture) {
 				if (in_array($fixture->table, $sources)) {
 					$fixture->drop($this->db);
 				}
+
 				$fixture->create($this->db);
 			}
 		}
@@ -434,6 +446,7 @@ class CakeTestCase extends UnitTestCase {
 		foreach ($args as $class) {
 			if (isset($this->_fixtureClassMap[$class])) {
 				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
+
 				$fixture->truncate($this->db);
 				$fixture->insert($this->db);
 			} else {

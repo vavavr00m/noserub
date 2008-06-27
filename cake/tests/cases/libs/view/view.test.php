@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.test.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: view.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -33,28 +33,28 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 /**
  * ViewPostsController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ViewPostsController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'Posts'
  * @access public
  */
 	var $name = 'Posts';
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $uses = null;
 /**
  * index method
- * 
+ *
  * @access public
  * @return void
  */
@@ -64,17 +64,27 @@ class ViewPostsController extends Controller {
 		$test3 = 'even more data';
 		$this->set(compact('test2', 'test3'));
 	}
+/**
+ * nocache_tags_with_element method
+ *
+ * @access public
+ * @return void
+ */
+	function nocache_multiple_element() {
+		$this->set('foo', 'this is foo var');
+		$this->set('bar', 'this is bar var');
+	}
 }
 /**
  * ViewTestErrorHandler class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ViewTestErrorHandler extends ErrorHandler {
 /**
  * stop method
- * 
+ *
  * @access public
  * @return void
  */
@@ -84,16 +94,16 @@ class ViewTestErrorHandler extends ErrorHandler {
 }
 /**
  * TestView class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class TestView extends View {
 /**
  * renderElement method
- * 
- * @param mixed $name 
- * @param array $params 
+ *
+ * @param mixed $name
+ * @param array $params
  * @access public
  * @return void
  */
@@ -102,8 +112,8 @@ class TestView extends View {
 	}
 /**
  * getViewFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -112,8 +122,8 @@ class TestView extends View {
 	}
 /**
  * getLayoutFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -122,10 +132,10 @@ class TestView extends View {
 	}
 /**
  * loadHelpers method
- * 
- * @param mixed $loaded 
- * @param mixed $helpers 
- * @param mixed $parent 
+ *
+ * @param mixed $loaded
+ * @param mixed $helpers
+ * @param mixed $parent
  * @access public
  * @return void
  */
@@ -134,9 +144,9 @@ class TestView extends View {
 	}
 /**
  * cakeError method
- * 
- * @param mixed $method 
- * @param mixed $messages 
+ *
+ * @param mixed $method
+ * @param mixed $messages
  * @access public
  * @return void
  */
@@ -147,21 +157,21 @@ class TestView extends View {
 }
 /**
  * TestAfterHelper class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class TestAfterHelper extends Helper {
 /**
  * property property
- * 
+ *
  * @var string ''
  * @access public
  */
 	var $property = '';
 /**
  * beforeLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -170,7 +180,7 @@ class TestAfterHelper extends Helper {
 	}
 /**
  * afterLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -188,7 +198,7 @@ class TestAfterHelper extends Helper {
 class ViewTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -202,7 +212,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testPluginGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -226,7 +236,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -249,6 +259,10 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getViewFileName('/posts/index');
 		$this->assertEqual($result, $expected);
 
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'posts' . DS .'index.ctp';
+		$result = $View->getViewFileName('../posts/index');
+		$this->assertEqual($result, $expected);
+
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
@@ -265,7 +279,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testMissingView method
- * 
+ *
  * @access public
  * @return void
  */
@@ -282,11 +296,11 @@ class ViewTest extends CakeTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 
 		$this->assertPattern("/PagesController::/", $expected);
-		$this->assertPattern("/pages\/does_not_exist.ctp/", $expected);
+		$this->assertPattern("/pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
 /**
  * testMissingLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -302,12 +316,11 @@ class ViewTest extends CakeTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 
 		$this->assertPattern("/Missing Layout/", $expected);
-		$this->assertPattern("/layouts\/whatever.ctp/", $expected);
-
+		$this->assertPattern("/layouts(\/|\\\)whatever.ctp/", $expected);
 	}
 /**
  * testViewVars method
- * 
+ *
  * @access public
  * @return void
  */
@@ -316,7 +329,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testUUIDGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -330,7 +343,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testAddInlineScripts method
- * 
+ *
  * @access public
  * @return void
  */
@@ -344,7 +357,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testElement method
- * 
+ *
  * @access public
  * @return void
  */
@@ -358,7 +371,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testElementCacheHelperNoCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -373,7 +386,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testElementCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -420,7 +433,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testLoadHelpers method
- * 
+ *
  * @access public
  * @return void
  */
@@ -441,7 +454,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testBeforeLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -453,7 +466,7 @@ class ViewTest extends CakeTestCase {
 	}
 /**
  * testAfterLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -469,7 +482,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern('/modified in the afterlife/', $result);
 		$this->assertPattern('/This is my view output/', $result);
 	}
-
+/**
+ * testRenderLoadHelper method
+ *
+ * @access public
+ * @return void
+ */
 	function testRenderLoadHelper() {
 		$this->PostsController->helpers = array('Html', 'Form', 'Ajax');
 		$View = new TestView($this->PostsController);
@@ -496,7 +514,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 		$this->assertTrue(is_object($helpers['testPluginHelper']->TestPluginOtherHelper));
 	}
-
+/**
+ * testRender method
+ *
+ * @access public
+ * @return void
+ */
 	function testRender() {
 		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
@@ -530,18 +553,38 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 	}
-/*
-	function testRenderElement() {
-		$View = new View($this->PostsController);
-		$element = 'element_name';
-		$result = $View->renderElement($element);
-		$this->assertPattern('/Not Found/i', $result);
+/**
+ * testGetViewFileName method
+ *
+ * @access public
+ * @return void
+ */
+	function testViewFileName() {
+		$View = new TestView($this->PostsController);
 
-		$element = 'test_element';
-		$result = $View->renderElement($element);
-		$this->assertPattern('/this is the test element/i', $result);
+		$result = $View->getViewFileName('index');
+		$this->assertPattern('/posts(\/|\\\)index.ctp/', $result);
+
+		$result = $View->getViewFileName('/pages/home');
+		$this->assertPattern('/pages(\/|\\\)home.ctp/', $result);
+
+		$result = $View->getViewFileName('../elements/test_element');
+		$this->assertPattern('/elements(\/|\\\)test_element.ctp/', $result);
+
+		$result = $View->getViewFileName('../themed/test_theme/posts/index');
+		$this->assertPattern('/themed(\/|\\\)test_theme(\/|\\\)posts(\/|\\\)index.ctp/', $result);
+
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'posts' . DS .'index.ctp';
+		$result = $View->getViewFileName('../posts/index');
+		$this->assertEqual($result, $expected);
+
 	}
-*/
+/**
+ * testRenderCache method
+ *
+ * @access public
+ * @return void
+ */
 	function testRenderCache() {
 		$view = 'test_view';
 		$View = new View($this->PostsController);
@@ -566,7 +609,49 @@ class ViewTest extends CakeTestCase {
 		$this->assertFalse(empty($result));
 		@unlink($path);
 	}
+/**
+ * testRenderNocache method 
+ *
+ * @access public
+ * @return void
+ */
+/* This is a new test case for a pending enhancement
+	function testRenderNocache() {
+		$this->PostsController->helpers = array('Cache', 'Html');
+		$this->PostsController->constructClasses();
+		$this->PostsController->cacheAction = 21600;
+		$this->PostsController->here = '/posts/nocache_multiple_element';
+		$this->PostsController->action = 'nocache_multiple_element';
+		$this->PostsController->nocache_multiple_element();
+		Configure::write('Cache.check', true);
+		Configure::write('Cache.disable', false);
 
+		$filename = CACHE . 'views' . DS . 'posts_nocache_multiple_element.php';
+
+		$View = new TestView($this->PostsController);
+		$View->render();
+
+		ob_start();
+		$View->renderCache($filename, getMicroTime());
+		$result = ob_get_clean();
+		@unlink($filename);
+
+		$this->assertPattern('/php echo \$foo;/', $result);
+		$this->assertPattern('/php echo \$bar;/', $result);
+		$this->assertPattern('/php \$barfoo = \'in sub2\';/', $result);
+		$this->assertPattern('/php echo \$barfoo;/', $result);
+		$this->assertPattern('/printing: "in sub2"/', $result);
+		$this->assertPattern('/php \$foobar = \'in sub1\';/', $result);
+		$this->assertPattern('/php echo \$foobar;/', $result);
+		$this->assertPattern('/printing: "in sub1"/', $result);
+	}
+*/
+/**
+ * testSet method
+ *
+ * @access public
+ * @return void
+ */
 	function testSet() {
 		$View = new TestView($this->PostsController);
 		$View->viewVars = array();
@@ -589,8 +674,13 @@ class ViewTest extends CakeTestCase {
 		$View->set(array('key3' => 'value3'));
 		$this->assertIdentical($View->getVar('key3'), 'value3');
 	}
-
-    function testEntityReference() {
+/**
+ * testEntityReference method
+ *
+ * @access public
+ * @return void
+ */
+	function testEntityReference() {
 		$View = new TestView($this->PostsController);
 		$View->model = 'Post';
 		$View->field = 'title';
@@ -599,8 +689,13 @@ class ViewTest extends CakeTestCase {
 		$View->association = 'Comment';
 		$View->field = 'user_id';
 		$this->assertEqual($View->entity(), array('Comment', 'user_id'));
-    }
-
+	}
+/**
+ * testBadExt method
+ *
+ * @access public
+ * @return void
+ */
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
@@ -612,9 +707,21 @@ class ViewTest extends CakeTestCase {
 		set_error_handler('simpleTestErrorHandler');
 
 		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
-		$this->assertPattern("/posts\/this_is_missing.whatever/", $result);
-	}
+		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);
 
+		$this->PostsController->ext = ".bad";
+		$View = new TestView($this->PostsController);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+
+		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->View);
 		unset($this->PostsController);

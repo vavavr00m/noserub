@@ -30,22 +30,34 @@
  * @subpackage           cake.tests.fixtures
  */
 class CampaignFixture extends CakeTestFixture {
-    var $name = 'Campaign';    
-        /**
+/**
+ * name property
+ * 
+ * @var string 'Campaign'
+ * @access public
+ */
+	var $name = 'Campaign';    
+/**
  * fields property
  * 
  * @var array
  * @access public
  */
-    var $fields = array(
-        'id' => array('type' => 'integer', 'key' => 'primary'),
-        'name' => array('type' => 'string', 'length' => 255, 'null' => false),
-    ); 
-    
-    var $records = array(
-        array( 'id' => 1 , 'name' => 'Hurtigruten' ),
-        array( 'id' => 2 , 'name' => 'Colorline' ),
-        array( 'id' => 3 , 'name' => 'Queen of Scandinavia' )    
-    );
-} 
-?> 
+	var $fields = array(
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'name' => array('type' => 'string', 'length' => 255, 'null' => false),
+	); 
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
+	var $records = array(
+		array('name' => 'Hurtigruten'),
+		array('name' => 'Colorline'),
+		array('name' => 'Queen of Scandinavia')
+	);
+}
+
+?>

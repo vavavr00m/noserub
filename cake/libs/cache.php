@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 7089 2008-06-02 17:35:56Z gwoo $ */
+/* SVN FILE: $Id: cache.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Caching for CakePHP.
  *
@@ -124,8 +124,8 @@ class Cache extends Object {
 				return false;
 			}
 			$_this->__name = $name;
-		}
 
+		}
 		$settings = $_this->__config[$name] = $_this->settings($engine);
 		return compact('engine', 'settings');
 	}

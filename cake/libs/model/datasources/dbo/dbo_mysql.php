@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.php 7097 2008-06-03 02:26:40Z nate $ */
+/* SVN FILE: $Id: dbo_mysql.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * MySQL layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.10.5.1790
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -98,6 +98,12 @@ class DboMysql extends DboSource {
 		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
 /**
+ * use alias for update and delete. Set to true if version >= 4.1
+ *
+ * @var boolean
+ */
+	var $__useAlias = true;
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -120,6 +126,8 @@ class DboMysql extends DboSource {
 		if (isset($config['encoding']) && !empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
+
+		$this->__useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
 
 		return $this->connected;
 	}
@@ -214,7 +222,7 @@ class DboMysql extends DboSource {
 
 		if ($parent != null) {
 			return $parent;
-		} elseif ($data === null) {
+		} elseif ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		} elseif ($data === '') {
 			return  "''";
@@ -251,6 +259,10 @@ class DboMysql extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if (!$this->__useAlias) {
+			return parent::update($model, $fields, $values, $conditions);
+		}
+
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -286,6 +298,9 @@ class DboMysql extends DboSource {
  * @return boolean Success
  */
 	function delete(&$model, $conditions = null) {
+		if (!$this->__useAlias) {
+			return parent::delete($model, $conditions);
+		}
 		$alias = $this->name($model->alias);
 		$table = $this->fullTableName($model);
 		$joins = implode(' ', $this->_getJoins($model));
@@ -335,7 +350,7 @@ class DboMysql extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_resource($this->_result)) {
+		if ($this->_result) {
 			return @mysql_num_rows($this->_result);
 		}
 		return null;
@@ -485,7 +500,7 @@ class DboMysql extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model);
 		if($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
 			$keys = Set::extract($indexes, '{n}.STATISTICS');

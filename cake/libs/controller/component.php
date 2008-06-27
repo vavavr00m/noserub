@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: component.php 7112 2008-06-04 02:39:05Z mark_story $ */
+/* SVN FILE: $Id: component.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -19,7 +19,7 @@
  * @subpackage		cake.cake.libs.controller
  * @since			CakePHP(tm) v TBD
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: mark_story $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -43,7 +43,7 @@ class Component extends Object {
  * @var object
  * @access private
  */
-	var $__loaded = array();	
+	var $__loaded = array();
 /**
  * Settings for loaded components.
  *
@@ -76,7 +76,8 @@ class Component extends Object {
  * @access public
  */
 	function initialize(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'initialize') && $component->enabled === true) {
 				$settings = array();
 				if (isset($this->__settings[$name])) {
@@ -93,7 +94,8 @@ class Component extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'startup') && $component->enabled === true) {
 				$component->startup($controller);
 			}
@@ -106,7 +108,8 @@ class Component extends Object {
  * @access public
  */
 	function beforeRender(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'beforeRender') && $component->enabled === true) {
 				$component->beforeRender($controller);
 			}
@@ -120,14 +123,15 @@ class Component extends Object {
  */
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
 		$response = array();
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'beforeRedirect') && $component->enabled === true) {
 				$resp = $component->beforeRedirect($controller, $url, $status, $exit);
 				if ($resp === false) {
 					return false;
 				}
 				$response[] = $resp;
- 			}
+			}
 		}
 		return $response;
 	}
@@ -138,7 +142,8 @@ class Component extends Object {
  * @access public
  */
 	function shutdown(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'shutdown') && $component->enabled === true) {
 				$component->shutdown($controller);
 			}
@@ -155,7 +160,7 @@ class Component extends Object {
 	function _loadComponents(&$object, $parent = null) {
 		$components = $object->components;
 		$base = $this->__controllerVars['base'];
-		
+
 		if (is_array($object->components)) {
 			$normal = Set::normalize($object->components);
 			foreach ($normal as $component => $config) {
@@ -194,10 +199,10 @@ class Component extends Object {
 						return false;
 					}
 				}
-				
+
 				if (isset($this->__loaded[$component])) {
 					$object->{$component} =& $this->__loaded[$component];
-					
+
 					if (!empty($config) && isset($this->__settings[$component])) {
 						$this->__settings[$component] = array_merge($this->__settings[$component], $config);
 					} elseif (!empty($config)) {
@@ -215,12 +220,13 @@ class Component extends Object {
 						$this->__settings[$component] = $config;
 					}
 				}
-				
-				if (isset($object->{$component}->components) && is_array($object->{$component}->components)) {
-					$this->_loadComponents($object->{$component});
+
+				if (isset($object->{$component}->components) && is_array($object->{$component}->components) && (!isset($object->{$component}->{$parent}))) {
+					$this->_loadComponents($object->{$component}, $component);
 				}
 			}
 		}
 	}
 }
+
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: file.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -213,7 +213,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testOpeningNonExistantFileCreatesIt() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertEqual($someFile->read(), '');
 		$someFile->close();
@@ -240,7 +240,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testReadable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertTrue($someFile->readable());
 		$someFile->close();
@@ -253,7 +253,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testWritable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertTrue($someFile->writable());
 		$someFile->close();
@@ -266,7 +266,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testExecutable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertFalse($someFile->executable());
 		$someFile->close();
@@ -279,7 +279,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testLastAccess() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
 		$this->assertEqual($someFile->lastAccess(), time());
@@ -293,7 +293,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testLastChange() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
 		$this->assertEqual($someFile->lastChange(), time());
@@ -384,7 +384,13 @@ class FileTest extends UnitTestCase {
 		$result = $TmpFile->delete();
 		$this->assertFalse($result);
 	}
-
+/**
+ * getTmpFile method
+ * 
+ * @param bool $paintSkip 
+ * @access protected
+ * @return void
+ */
 	function _getTmpFile($paintSkip = true) {
 		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
@@ -405,66 +411,6 @@ class FileTest extends UnitTestCase {
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
-	}
-
-	function testGetFullPathIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getFullPath();
-		$this->assertError();
-	}
-
-	function testGetNameIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getName();
-		$this->assertError();
-	}
-
-	function testFilenameIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->filename();
-		$this->assertError();
-	}
-
-	function testGetExtIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getExt();
-		$this->assertError();
-	}
-
-	function testGetMd5IsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getMd5();
-		$this->assertError();
-	}
-
-	function testGetSizeIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getSize();
-		$this->assertError();
-	}
-
-	function testGetOwnerIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getOwner();
-		$this->assertError();
-	}
-
-	function testGetGroupIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getGroup();
-		$this->assertError();
-	}
-
-	function testGetChmodIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getChmod();
-		$this->assertError();
-	}
-
-	function testGetFolderIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getFolder();
-		$this->assertError();
 	}
 }
 ?>

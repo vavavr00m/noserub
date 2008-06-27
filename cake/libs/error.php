@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: error.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -26,6 +26,31 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Controller', 'App');
+/**
+ * Short description for file.
+ *
+ * Long description for file
+ *
+ * @package		cake
+ * @subpackage	cake.cake.libs
+ */
+class CakeErrorController extends AppController {
+
+	var $name = 'CakeError';
+
+	var $uses = array();
+
+	function __construct() {
+		parent::__construct();
+		$this->_set(Router::getPaths());
+		$this->params = Router::getParams();
+		$this->constructClasses();
+		$this->Component->initialize($this);
+		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
+	}
+
+}
 /**
  * Short description for file.
  *
@@ -50,15 +75,9 @@ class ErrorHandler extends Object {
  * @param array $messages Error messages
  */
 	function __construct($method, $messages) {
-		App::import('Controller', 'App');
 		App::import('Core', 'Sanitize');
 
-		$this->controller =& new AppController();
-		$this->controller->_set(Router::getPaths());
-		$this->controller->params = Router::getParams();
-		$this->controller->constructClasses();
-		$this->controller->Component->initialize($this->controller);
-		$this->controller->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
+		$this->controller =& new CakeErrorController();
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
 		if (substr(PHP_OS, 0, 3) == "WIN") {
@@ -79,19 +98,16 @@ class ErrorHandler extends Object {
 			$method = 'error';
 		}
 
-		if ($method == 'error') {
-			$this->dispatchMethod($method, $messages);
-			$this->_stop();
-		} elseif (Configure::read() == 0 && (isset($code) && $code == 500)) {
-			$this->dispatchMethod('error500', $messages);
-			exit();
-		} elseif (Configure::read() == 0) {
-			$this->dispatchMethod('error404', $messages);
-			$this->_stop();
-		} else {
-			$this->dispatchMethod($method, $messages);
-			$this->_stop();
+		if ($method !== 'error') {
+			if (Configure::read() == 0){
+				$method = 'error404';
+				if(isset($code) && $code == 500) {
+					$method = 'error500';
+				}
+			}
 		}
+		$this->dispatchMethod($method, $messages);
+		$this->_stop();
 	}
 /**
  * Displays an error page (e.g. 404 Not found).
@@ -324,7 +340,7 @@ class ErrorHandler extends Object {
 	function __outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
-		e($this->controller->output);
+		echo $this->controller->output;
 	}
 }
 ?>

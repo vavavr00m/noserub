@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: shell.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: shell.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Base class for Shells
  *
@@ -215,10 +215,6 @@ class Shell extends Object {
 			return;
 		}
 
-		App::import(array(
-			'model'.DS.'connection_manager', 'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
-		));
-
 		if ($this->uses === true && App::import('Model', 'AppModel')) {
 			$this->AppModel =& new AppModel(false, false, false);
 			return true;
@@ -325,7 +321,7 @@ class Shell extends Object {
 		}
 		if (is_array($options)) {
 			while ($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
-				 $in = $this->Dispatch->getInput($prompt, $options, $default);
+				$in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
 		if ($in) {

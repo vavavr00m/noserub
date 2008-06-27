@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: configure.php 7089 2008-06-02 17:35:56Z gwoo $ */
+/* SVN FILE: $Id: configure.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -207,7 +207,9 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
-		App::import('Folder');
+		if (!class_exists('Folder')) {
+			uses('folder');
+		}
 		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
@@ -265,7 +267,7 @@ class Configure extends Object {
 			}
 		}
 
-		if ($config == 'debug' || (is_array($config) && in_array('debug', $config))) {
+		if (array_key_exists('debug', $config)) {
 			if ($_this->debug) {
 				error_reporting(E_ALL);
 
@@ -274,9 +276,11 @@ class Configure extends Object {
 				}
 
 				if (!class_exists('Debugger')) {
-					require LIBS . 'debugger.php';
+					uses('debugger');
 				}
-				App::import('CakeLog');
+				if (!class_exists('CakeLog')) {
+					uses('cake_log');
+				}
 				Configure::write('log', LOG_NOTICE);
 			} else {
 				error_reporting(0);
@@ -469,7 +473,7 @@ class Configure extends Object {
 
 			foreach ($all as $path) {
 				$path = rtrim($path, DS);
-				if ($path == '.' || in_array(realpath($path), $used)) {
+				if (empty($path) || $path == '.' || in_array(realpath($path), $used)) {
 					continue;
 				}
 				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
@@ -538,7 +542,9 @@ class Configure extends Object {
 		}
 
 		if ($write === true) {
-			App::import('File');
+			if (!class_exists('File')) {
+				uses('file');
+			}
 			$fileClass = new File($file);
 
 			if ($fileClass->writable()) {
@@ -669,6 +675,8 @@ class Configure extends Object {
 						)
 					));
 				}
+
+				Cache::config('default');
 			}
 
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
@@ -1010,9 +1018,7 @@ class App extends Object {
  * @access private
  */
 	function __overload($type, $name) {
-		$overload = array('Model', 'Helper');
-
-		if (in_array($type, $overload) && low($name) != 'schema') {
+		if (($type ==='Model' || $type === 'Helper') && strtolower($name) != 'schema') {
 			Overloadable::overload($name);
 		}
 	}
@@ -1036,11 +1042,9 @@ class App extends Object {
 		if ($plugin) {
 			$plugin = Inflector::underscore($plugin);
 			$name = Inflector::camelize($plugin);
-			$path = $plugin . DS;
-
 		}
-		$load = strtolower($type);
 		$path = null;
+		$load = strtolower($type);
 
 		switch ($load) {
 			case 'model':
@@ -1120,22 +1124,22 @@ class App extends Object {
 			}
 			return $paths;
 		}
- 		$paths = Configure::read(strtolower($type) . 'Paths');
+		$paths = Configure::read(strtolower($type) . 'Paths');
 
- 		if (empty($paths)) {
- 			if (strtolower($type) === 'plugin') {
- 				$paths = array(APP . 'plugins' . DS);
- 			} elseif (strtolower($type) === 'vendor') {
- 				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
- 			} elseif (strtolower($type) === 'controller') {
- 				$paths = array(APP . 'controllers' . DS, APP);
- 			} elseif (strtolower($type) === 'model') {
- 				$paths = array(APP . 'models' . DS, APP);
- 			} elseif (strtolower($type) === 'view') {
- 				$paths = array(APP . 'views' . DS);
- 			}
- 		}
- 		return $paths;
+		if (empty($paths)) {
+			if (strtolower($type) === 'plugin') {
+				$paths = array(APP . 'plugins' . DS);
+			} elseif (strtolower($type) === 'vendor') {
+				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
+			} elseif (strtolower($type) === 'controller') {
+				$paths = array(APP . 'controllers' . DS, APP);
+			} elseif (strtolower($type) === 'model') {
+				$paths = array(APP . 'models' . DS, APP);
+			} elseif (strtolower($type) === 'view') {
+				$paths = array(APP . 'views' . DS);
+			}
+		}
+		return $paths;
 	}
 /**
  * Removes file location from map if file has been deleted

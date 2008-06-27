@@ -31,43 +31,43 @@ App::import('Component', 'Security');
 App::import('Component', 'Cookie');
 /**
  * ControllerPost class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'ControllerPost'
  * @access public
  */
 	var $name = 'ControllerPost';
 /**
  * useTable property
- * 
+ *
  * @var string 'posts'
  * @access public
  */
 	var $useTable = 'posts';
 /**
  * invalidFields property
- * 
+ *
  * @var array
  * @access public
  */
 	var $invalidFields = array('name' => 'error_msg');
 /**
  * lastQuery property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $lastQuery = null;
 /**
  * beforeFind method
- * 
- * @param mixed $query 
+ *
+ * @param mixed $query
  * @access public
  * @return void
  */
@@ -76,51 +76,52 @@ class ControllerPost extends CakeTestModel {
 	}
 /**
  * find method
- * 
- * @param mixed $type 
- * @param array $options 
+ *
+ * @param mixed $type
+ * @param array $options
  * @access public
  * @return void
  */
 	function find($type, $options = array()) {
 		if ($type == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey => '> 1');
-			return parent::find('all', Set::merge($options, compact('conditions')));
+			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
+			$options = Set::merge($options, compact('conditions'));
+			return parent::find('all', $options);
 		}
 		return parent::find($type, $options);
 	}
 }
 /**
  * ControllerComment class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'ControllerComment'
  * @access public
  */
 	var $name = 'ControllerComment';
 /**
  * useTable property
- * 
+ *
  * @var string 'comments'
  * @access public
  */
 	var $useTable = 'comments';
 /**
  * data property
- * 
+ *
  * @var array
  * @access public
  */
 	var $data = array('name' => 'Some Name');
 /**
  * alias property
- * 
+ *
  * @var string 'ControllerComment'
  * @access public
  */
@@ -129,69 +130,69 @@ class ControllerComment extends CakeTestModel {
 if (!class_exists('AppController')) {
 /**
  * AppController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 	class AppController extends Controller {
 /**
  * helpers property
- * 
+ *
  * @var array
  * @access public
  */
 		var $helpers = array('Html', 'Javascript');
 /**
  * uses property
- * 
+ *
  * @var array
  * @access public
  */
 		var $uses = array('ControllerPost');
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
 		var $components = array('Cookie');
 	}
-} else {
-	define('AppControllerExists', true);
+} else if (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
  * TestController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class TestController extends AppController {
 /**
  * helpers property
- * 
+ *
  * @var array
  * @access public
  */
 	var $helpers = array('Xml');
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
 	var $components = array('Security');
 /**
  * uses property
- * 
+ *
  * @var array
  * @access public
  */
 	var $uses = array('ControllerComment');
 /**
  * index method
- * 
- * @param mixed $testId 
- * @param mixed $test2Id 
+ *
+ * @param mixed $testId
+ * @param mixed $test2Id
  * @access public
  * @return void
  */
@@ -202,14 +203,14 @@ class TestController extends AppController {
 }
 /**
  * TestComponent class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class TestComponent extends Object {
 /**
  * beforeRedirect method
- * 
+ *
  * @access public
  * @return void
  */
@@ -226,14 +227,14 @@ class TestComponent extends Object {
 class ControllerTest extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.post', 'core.comment');
 /**
  * testConstructClasses method
- * 
+ *
  * @access public
  * @return void
  */
@@ -257,7 +258,7 @@ class ControllerTest extends CakeTestCase {
 	}
 /**
  * testPersistent method
- * 
+ *
  * @access public
  * @return void
  */
@@ -275,7 +276,7 @@ class ControllerTest extends CakeTestCase {
 	}
 /**
  * testPaginate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -302,10 +303,30 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'asc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(3, 2, 1));
+
+		$Controller->passedArgs = array('sort' => 'id', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(3, 2, 1));
+
+		$Controller->passedArgs = array('sort' => 'NotExisting.field', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(1, 2, 3));
 	}
 /**
  * testPaginateExtraParams method
- * 
+ *
  * @access public
  * @return void
  */
@@ -327,16 +348,16 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
-		$this->assertFalse(!isset($Controller->ControllerPost->lastQuery['contain']));
+		$this->assertTrue(isset($Controller->ControllerPost->lastQuery['contain']));
 
 		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
-		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id' => '> 1'));
+		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
 	}
 /**
  * testDefaultPaginateParams method
- * 
+ *
  * @access public
  * @return void
  */
@@ -353,7 +374,7 @@ class ControllerTest extends CakeTestCase {
 	}
 /**
  * testFlash method
- * 
+ *
  * @access public
  * @return void
  */
@@ -377,13 +398,13 @@ class ControllerTest extends CakeTestCase {
 		<p><a href="/flash">this should work</a></p>
 		</body>
 		</html>';
- 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
 /**
  * testControllerSet method
- * 
+ *
  * @access public
  * @return void
  */
@@ -416,7 +437,7 @@ class ControllerTest extends CakeTestCase {
 	}
 /**
  * testRender method
- * 
+ *
  * @access public
  * @return void
  */
@@ -434,7 +455,7 @@ class ControllerTest extends CakeTestCase {
 	}
 /**
  * testToBeInheritedGuardmethods method
- * 
+ *
  * @access public
  * @return void
  */
@@ -446,65 +467,8 @@ class ControllerTest extends CakeTestCase {
 		$this->assertFalse($Controller->_scaffoldError(''));
 	}
 /**
- * test__postConditionMatch method
- * 
- * @access public
- * @return void
- */
-	function test__postConditionMatch() {
-		$Controller =& new Controller();
-		$value = 'val';
-
-		$result = $Controller->__postConditionMatch('=', $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('', $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch(null, $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('LIKE', $value);
-		$expected = 'LIKE %'.$value.'%';
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('>', $value);
-		$expected = '> '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<', $value);
-		$expected = '< '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('>=', $value);
-		$expected = '>= '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<=', $value);
-		$expected = '<= '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<>', $value);
-		$expected = '<> '.$value;
-		$this->assertIdentical($result, $expected);
-	}
-/**
- * testCleanUpFields method
- * 
- * @access public
- * @return void
- */
-	function testCleanUpFields() {
-		$Controller =& new Controller();
-		$Controller->cleanUpFields();
-		$this->assertError();
-	}
-/**
  * testRedirect method
- * 
+ *
  * @access public
  * @return void
  */
@@ -564,16 +528,21 @@ class ControllerTest extends CakeTestCase {
 			$MockController->redirect($url, (int) $code, false);
 		}
 	}
-
+/**
+ * testMergeVars method
+ *
+ * @access public
+ * @return void
+ */
 	function testMergeVars() {
-		$this->skipIf(defined('AppControllerExists'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
 
 		$TestController =& new TestController();
 		$TestController->constructClasses();
 
 		$testVars = get_class_vars('TestController');
 		$appVars = get_class_vars('AppController');
-		
+
 		$components = is_array($appVars['components'])
 						? array_merge($appVars['components'], $testVars['components'])
 						: $testVars['components'];
@@ -586,12 +555,17 @@ class ControllerTest extends CakeTestCase {
 		$uses = is_array($appVars['uses'])
 					? array_merge($appVars['uses'], $testVars['uses'])
 					: $testVars['uses'];
-					
+
 		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 	}
-
+/**
+ * testReferer method
+ *
+ * @access public
+ * @return void
+ */
 	function testReferer() {
 		$Controller =& new Controller();
 		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
@@ -625,20 +599,35 @@ class ControllerTest extends CakeTestCase {
 		$expected = '/some/path';
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testSetAction method
+ *
+ * @access public
+ * @return void
+ */
 	function testSetAction() {
 		$TestController =& new TestController();
 		$TestController->setAction('index', 1, 2);
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertidentical($TestController->data, $expected);
 	}
-
+/**
+ * testUnimplementedIsAuthorized method
+ *
+ * @access public
+ * @return void
+ */
 	function testUnimplementedIsAuthorized() {
 		$TestController =& new TestController();
 		$TestController->isAuthorized();
 		$this->assertError();
 	}
-
+/**
+ * testValidateErrors method
+ *
+ * @access public
+ * @return void
+ */
 	function testValidateErrors() {
 		$TestController =& new TestController();
 		$TestController->constructClasses();
@@ -654,7 +643,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 		$this->assertEqual($TestController->validate($comment), 2);
 	}
-
+/**
+ * testPostConditions method
+ *
+ * @access public
+ * @return void
+ */
 	function testPostConditions() {
 		$Controller =& new Controller();
 
@@ -706,12 +700,31 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '<=',
 		);
 		$expected = array(
-			'Model1.field1' => '> 23',
-			'Model2.field2' => "LIKE %string%",
-			'Model3.field3' => '<= 23',
+			'Model1.field1 >' => '23',
+			'Model2.field2 LIKE' => "%string%",
+			'Model3.field3 <=' => '23',
 		);
 		$result = $Controller->postConditions($data, $ops);
 		$this->assertIdentical($result, $expected);
+	}
+/**
+ * testRequestHandlerPrefers method
+ *
+ * @access public
+ * @return void
+ */
+	function testRequestHandlerPrefers(){
+		$Controller =& new Controller();
+		$Controller->components = array("RequestHandler");
+		$Controller->modelClass='ControllerPost';
+		$Controller->params['url']['ext'] = 'rss';
+		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+		$Controller->beforeFilter();
+		$Controller->Component->startup($Controller);
+
+		$this->assertEqual($Controller->RequestHandler->prefers(), 'rss');
+		unset($Controller);
 	}
 }
 ?>

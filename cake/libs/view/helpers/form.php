@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.php 7067 2008-05-30 16:06:49Z joelmoss $ */
+/* SVN FILE: $Id: form.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: joelmoss $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -81,7 +81,7 @@ class FormHelper extends AppHelper {
  *			'type' Form method defaults to POST
  * 			'action'  The Action the form submits to. Can be a string or array,
  *			'url'  The url the form submits to. Can be a string or a url array,
- *			'default'  Allows for the creation of Ajax forms.  
+ *			'default'  Allows for the creation of Ajax forms.
  *			'onsubmit' Used with 'default' to create ajax forms.
  *
  * @return string An formatted opening FORM tag.
@@ -133,8 +133,17 @@ class FormHelper extends AppHelper {
 			$validates = array();
 			if (!empty($object->validate)) {
 				foreach ($object->validate as $validateField => $validateProperties) {
-					if (!isset($validateProperties['required']) || (isset($validateProperties['required']) && $validateProperties['required'] !== false)) {
-						$validates[] = $validateField;
+					if (is_array($validateProperties)) {
+						$dims = Set::countDim($validateProperties);
+						if (($dims == 1 && !isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
+							$validates[] = $validateField;
+						} elseif ($dims > 1) {
+							foreach ($validateProperties as $rule => $validateProp) {
+								if (is_array($validateProp) && (array_key_exists('required', $validateProp) && $validateProp['required'] !== false)) {
+									$validates[] = $validateField;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -382,7 +391,7 @@ class FormHelper extends AppHelper {
  * @param array $options	Rendering options for <div /> wrapper tag
  *			'escape'  bool  Whether or not to html escape the contents of the error.
  *			'wrap'  mixed  Whether or not the error message should be wrapped in a div. If a string, will be used as the HTML tag to use.
- *			'class'  string  The classname for the error message 
+ *			'class'  string  The classname for the error message
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
  */
@@ -406,7 +415,7 @@ class FormHelper extends AppHelper {
 			if (is_array($text) && isset($text[$error])) {
 				$text = $text[$error];
 			} elseif (is_array($text)) {
-			    $options = array_merge($options, $text);
+				$options = array_merge($options, $text);
 				$text = null;
 			}
 
@@ -420,7 +429,7 @@ class FormHelper extends AppHelper {
 				unset($options['escape']);
 			}
 			if ($options['wrap']) {
-			    $tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
+				$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
 				unset($options['wrap']);
 				return $this->Html->tag($tag, $error, $options);
 			} else {
@@ -634,8 +643,8 @@ class FormHelper extends AppHelper {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
-			    $divOptions['tag'] = 'div';
-		    }
+				$divOptions['tag'] = 'div';
+			}
 		}
 
 		$label = null;
@@ -657,11 +666,11 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($label !== false) {
-			$labelAttributes = array();
-
+			$labelAttributes = $this->domId(array(), 'for');
 			if (in_array($options['type'], array('date', 'datetime'))) {
-				$labelAttributes = $this->domId($labelAttributes, 'for');
 				$labelAttributes['for'] .= 'Month';
+			} else if ($options['type'] === 'time') {
+				$labelAttributes['for'] .= 'Hour';
 			}
 
 			if (is_array($label)) {
@@ -707,13 +716,13 @@ class FormHelper extends AppHelper {
 			$timeFormat = $options['timeFormat'];
 			unset($options['timeFormat']);
 		}
-		
+
 		$dateFormat = 'MDY';
 		if (isset($options['dateFormat'])) {
 			$dateFormat = $options['dateFormat'];
 			unset($options['dateFormat']);
 		}
-		
+
 		$type	 = $options['type'];
 		$before	 = $options['before'];
 		$between = $options['between'];
@@ -770,9 +779,9 @@ class FormHelper extends AppHelper {
 			}
 		}
 		if (isset($divOptions) && isset($divOptions['tag'])) {
-	        $tag = $divOptions['tag'];
-	        unset($divOptions['tag']);
-	        $out = $this->Html->tag($tag, $out, $divOptions);
+			$tag = $divOptions['tag'];
+			unset($divOptions['tag']);
+			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
 	}
@@ -1043,25 +1052,13 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($divOptions)) {
-		    $tag = $divOptions['tag'];
-		    unset($divOptions['tag']);
+			$tag = $divOptions['tag'];
+			unset($divOptions['tag']);
 			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
 	}
 /**
- * @deprecated
- */
-	function submitImage($path, $options = array()) {
-		trigger_error("FormHelper::submitImage() is deprecated. Use \$form->submit('path/to/img.gif')", E_USER_WARNING);
-		if (strpos($path, '://')) {
-			$url = $path;
-		} else {
-			$url = $this->webroot(IMAGES_URL . $path);
-		}
-		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($options, null, '', ' ')));
-	}
- /**
  * Returns a formatted SELECT element.
  *
  * @param string $fieldName Name attribute of the SELECT
@@ -1236,7 +1233,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		
+
 		if (strlen($selected) > 2) {
 			$selected = date('m', strtotime($selected));
 		} elseif ($selected === false) {
@@ -1246,7 +1243,7 @@ class FormHelper extends AppHelper {
 		$attributes = array_merge($defaults, (array) $attributes);
 		$monthNames = $attributes['monthNames'];
 		unset($attributes['monthNames']);
-		
+
 		return $this->select($fieldName . ".month", $this->__generateOptions('month', array('monthNames' => $monthNames)), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -1420,7 +1417,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		
+
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
 		$defaults = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$attributes = array_merge($defaults, (array) $attributes);
@@ -1548,7 +1545,7 @@ class FormHelper extends AppHelper {
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
 						$select[] = $this->Html->tags['fieldsetend'];
-					} else{
+					} else {
 						$select[] = $this->Html->tags['optiongroupend'];
 					}
 					$parents[] = $name;
@@ -1557,7 +1554,7 @@ class FormHelper extends AppHelper {
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
 						$select[] = sprintf($this->Html->tags['fieldsetstart'], $name);
-					} else{
+					} else {
 						$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
 					}
 				}
@@ -1644,17 +1641,15 @@ class FormHelper extends AppHelper {
 				$data = array('am' => 'am', 'pm' => 'pm');
 			break;
 			case 'day':
-				if (!isset($options['min'])) {
-					$min = 1;
-				} else {
+				$min = 1;
+				$max = 31;
+
+				if (isset($options['min'])) {
 					$min = $options['min'];
 				}
-
-				if (!isset($options['max'])) {
-					$max = 31;
-				} else {
+				if (isset($options['max'])) {
 					$max = $options['max'];
- 				}
+				}
 
 				for ($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
@@ -1707,4 +1702,5 @@ class FormHelper extends AppHelper {
 		return $this->__options[$name];
 	}
 }
+
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: number.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: number.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Number Helper.
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -132,25 +132,30 @@ class NumberHelper extends AppHelper {
  * Formats a number into a currency format.
  *
  * @param float $number
- * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
+ * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
+ *               set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  */
 	function currency($number, $currency = 'USD', $options = array()) {
-		$default = array('before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true);
-		$currencies = array('USD' => array('before'=>'$', 'after' => 'c', 'zero' => 0,
-										'places' => 2, 'thousands' => ',', 'decimals' => '.',
-										'negative' => '()', 'escape' => true
-										),
-						'GBP' => array('before'=>'&#163;', 'after' => 'p', 'zero' => 0,
-										'places' => 2, 'thousands' => ',', 'decimals' => '.',
-										'negative' => '()','escape' => false
-										),
-						'EUR' => array('before'=>'&#8364;', 'after' => 'c', 'zero' => 0,
-										'places' => 2, 'thousands' => '.', 'decimals' => ',',
-										'negative' => '()', 'escape' => false
-										)
-					);
+		$default = array(
+			'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
+			'decimals' => '.','negative' => '()', 'escape' => true
+		);
+		$currencies = array(
+			'USD' => array(
+				'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
+				'decimals' => '.', 'negative' => '()', 'escape' => true
+			),
+			'GBP' => array(
+				'before'=>'&#163;', 'after' => 'p', 'zero' => 0, 'places' => 2, 'thousands' => ',',
+				'decimals' => '.', 'negative' => '()','escape' => false
+			),
+			'EUR' => array(
+				'before'=>'&#8364;', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => '.',
+				'decimals' => ',', 'negative' => '()', 'escape' => false
+			)
+		);
 
 		if (isset($currencies[$currency])) {
 			$default = $currencies[$currency];

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xml.php 7110 2008-06-03 22:35:44Z TommyO $ */
+/* SVN FILE: $Id: xml.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * XML Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: TommyO $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -43,6 +43,15 @@ class XmlHelper extends AppHelper {
  * @var string
  */
 	var $encoding = 'UTF-8';
+/**
+ * Constructor
+ * @return void
+ */
+	function __construct() {
+		parent::__construct();
+		$this->Xml =& new Xml();
+		$this->Xml->options(array('verifyNs' => false));
+	}
 /**
  * Returns an XML document header
  *
@@ -114,6 +123,7 @@ class XmlHelper extends AppHelper {
 			$children = $content;
 			$content = null;
 		}
+
 		$elem =& $this->Xml->createElement($name, $content, $attrib, $namespace);
 		foreach ($children as $child) {
 			$elem->createElement($child);
@@ -125,6 +135,11 @@ class XmlHelper extends AppHelper {
 		}
 		return $this->output($out);
 	}
+/**
+ * Create closing tag for current element
+ *
+ * @return string
+ */
 	function closeElem() {
 		$name = $this->Xml->name();
 		if ($parent =& $this->Xml->parent()) {
@@ -140,14 +155,8 @@ class XmlHelper extends AppHelper {
  * @return string A copy of $data in XML format
  */
 	function serialize($data, $options = array()) {
-		$data = new Xml($data, array_merge(array('attributes' => false, 'format' => 'attributes'), $options));
+		$data =& new Xml($data, array_merge(array('attributes' => false, 'format' => 'attributes'), $options));
 		return $data->toString(array_merge(array('header' => false), $options));
 	}
-	
-	function beforeRender() {
-		$this->Xml =& new Xml();
-		$this->Xml->options(array('verifyNs' => false));
-	}
 }
-
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_acl.php 7075 2008-05-31 12:36:38Z nate $ */
+/* SVN FILE: $Id: db_acl.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * This is core configuration file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -117,7 +117,7 @@ class AclNode extends AppModel {
 					'conditions' => array(
 						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
 						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
-						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias)
+						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string')
 					)
 				);
 
@@ -241,7 +241,7 @@ class AcoAction extends AppModel {
  * @var array
  * @access public
  */
-	 var $belongsTo = array('Aco');
+	var $belongsTo = array('Aco');
 }
 /**
  * Access Request Object
@@ -292,21 +292,21 @@ class Permission extends AppModel {
  * @var string
  * @access public
  */
-	 var $useTable = 'aros_acos';
+	var $useTable = 'aros_acos';
 /**
  * Permissions link AROs with ACOs
  *
  * @var array
  * @access public
  */
-	 var $belongsTo = array('Aro', 'Aco');
+	var $belongsTo = array('Aro', 'Aco');
 /**
  * No behaviors for this model
  *
  * @var array
  * @access public
  */
-	 var $actsAs = null;
+	var $actsAs = null;
 /**
  * Constructor, used to tell this model to use the
  * database configured for ACL

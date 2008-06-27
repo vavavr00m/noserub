@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: number.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: number.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs.view.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -312,7 +312,12 @@ class NumberTest extends UnitTestCase {
 		$expected = sprintf("%01.2f", $float/1024/1024/1024/1024).' TB';
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testToPercentage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToPercentage() {
 		$result = $this->Number->toPercentage(45, 0);
 		$expected = '45%';
@@ -333,7 +338,12 @@ class NumberTest extends UnitTestCase {
 
 
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Number);
 	}

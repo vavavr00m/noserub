@@ -29,38 +29,65 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
+require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_oracle.php';
+
 /**
  * DboOracleTest class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources.dbo
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources.dbo
  */
 class DboOracleTest extends CakeTestCase {
 /**
- * skip method
- * 
+ * setup method
+ *
  * @access public
  * @return void
  */
-	function skip() {
+	function setUp() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'oracle', 'Oracle connection not available');
+	}
+/**
+ * skip method
+ *
+ * @access public
+ * @return void
+ */
+	function skip($case = null) {
+		$this->_initDb();
+		if ($this->db->config['driver'] != 'oracle' && $case) {
+			pr("Oracle connection not available not available for " . $case);
+			return true;
+		}
 	}
 /**
  * testLastErrorStatement method
- * 
+ *
  * @access public
  * @return void
  */
 	function testLastErrorStatement() {
+		if ($this->skip('testLastErrorStatement')) {
+			return;
+		}
+
 		$this->expectError();
 		$this->db->execute("SELECT ' FROM dual");
 		$e = $this->db->lastError();
 		$r = 'ORA-01756: quoted string not properly terminated';
 		$this->assertEqual($e, $r);
 	}
-
+/**
+ * testLastErrorConnect method
+ *
+ * @access public
+ * @return void
+ */
 	function testLastErrorConnect() {
+		if ($this->skip('testLastErrorConnect')) {
+			return;
+		}
+
 		$config = $this->db->config;
 		$this->db->config['password'] = 'keepmeout';
 		$this->db->connect();
@@ -69,8 +96,37 @@ class DboOracleTest extends CakeTestCase {
 		$this->assertEqual($e, $r);
 	}
 
+/**
+ * testName method
+ *
+ * @access public
+ * @return void
+ */
+	function testName() {
+		$Db = $this->db;
+		#$Db =& new DboOracle($config = null, $autoConnect = false);
 
+		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
+		$e = 'foo.last_update_date';
+		$this->assertEqual($e, $r);
+
+		$r = $Db->name($Db->name($Db->name('foo._update')));
+		$e = 'foo."_update"';
+		$this->assertEqual($e, $r);
+
+		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
+		$e = 'foo.last_update_date';
+		$this->assertEqual($e, $r);
+
+		$r = $Db->name($Db->name($Db->name('last_update_date')));
+		$e = 'last_update_date';
+		$this->assertEqual($e, $r);
+
+		$r = $Db->name($Db->name($Db->name('_update')));
+		$e = '"_update"';
+		$this->assertEqual($e, $r);
+
+	}
 }
-
 
 ?>

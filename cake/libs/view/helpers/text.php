@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: text.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: text.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Text Helper
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -34,7 +34,7 @@
  */
 
 if (!class_exists('HtmlHelper')) {
-	uses('view' . DS . 'helpers' . DS . 'html');
+	App::import('Helper', 'Html');
 }
 
 /**

@@ -61,19 +61,19 @@ class SchemaShell extends Shell {
 	function startup() {
 		$name = null;
 		if (!empty($this->params['name'])) {
-		 	$name = $this->params['name'];
+			$name = $this->params['name'];
 		}
 		$path = null;
 		if (!empty($this->params['path'])) {
-		 	$path = $this->params['path'];
+			$path = $this->params['path'];
 		}
 		$file = null;
 		if (!empty($this->params['file'])) {
-		 	$file = $this->params['file'];
+			$file = $this->params['file'];
 		}
 		$connection = null;
 		if (!empty($this->params['connection'])) {
-		 	$connection = $this->params['connection'];
+			$connection = $this->params['connection'];
 		}
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
@@ -221,7 +221,7 @@ class SchemaShell extends Shell {
 		}
 
 		$options = array('name' => $name, 'file' => $this->Schema->file);
- 		if (isset($this->params['s'])) {
+		if (isset($this->params['s'])) {
 			$options = array('file' => 'schema_'.$this->params['s'].'.php');
 		}
 
@@ -357,13 +357,13 @@ class SchemaShell extends Shell {
 						return false;
 					}
 					if (!$db->_execute($sql)) {
-						$error = $db->lastError();
+						$error = $table . ': '  . $db->lastError();
 					}
 
 					$this->Schema->after(array($event => $table, 'errors'=> $errors));
 
 					if (isset($error)) {
-						$this->out($errors);
+						$this->out($error);
 					} elseif ($this->__dry !== true) {
 						$this->out(sprintf(__('%s updated.', true), $table));
 					}

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mssql.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: dbo_mssql.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * MS SQL layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.10.5.1790
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -91,6 +91,17 @@ class DboMssql extends DboSource {
 		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary'	=> array('name' => 'image'),
 		'boolean'	=> array('name' => 'bit')
+	);
+/**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'BEGIN TRANSACTION',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
 	);
 /**
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
@@ -215,9 +226,12 @@ class DboMssql extends DboSource {
 				'length' => intval($column[0]['Length']),
 				'key'	=> ($column[0]['Key'] == '1')
 			);
-			if (in_array($fields[$field]['default'], array('null', '(null)'))) {
+			if ($fields[$field]['default'] === 'null') {
 				$fields[$field]['default'] = null;
+			} else {
+				$this->value($fields[$field]['default'], $fields[$field]['type']);
 			}
+
 			if ($fields[$field]['key'] && $fields[$field]['type'] == 'integer') {
 				$fields[$field]['length'] = 11;
 			} elseif (!$fields[$field]['key']) {
@@ -316,20 +330,6 @@ class DboMssql extends DboSource {
 		return $fields;
 	}
 /**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model) && $this->execute('BEGIN TRANSACTION')) {
-			$this->_transactionStarted = true;
-			return true;
-		}
-		return false;
-	}
-/**
  * Generates and executes an SQL INSERT statement for given model, fields, and values.
  * Removes Identity (primary key) column from update data before returning to parent, if
  * value is empty.
@@ -387,7 +387,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (strpos(strtolower($error), 'changed database') === false) {
+			if (!preg_match('/contesto di database|changed database/i', $error)) {
 				return $error;
 			}
 		}
@@ -530,27 +530,47 @@ class DboMssql extends DboSource {
  * @return string
  */
 	function renderStatement($type, $data) {
-		if (strtolower($type) == 'select') {
-			extract($data);
-			$fields = trim($fields);
+		switch (strtolower($type)) {
+			case 'select':
+				extract($data);
+				$fields = trim($fields);
 
-			if (strpos($limit, 'TOP') !== false && strpos($fields, 'DISTINCT ') === 0) {
-				$limit = 'DISTINCT ' . trim($limit);
-				$fields = substr($fields, 9);
-			}
+				if (strpos($limit, 'TOP') !== false && strpos($fields, 'DISTINCT ') === 0) {
+					$limit = 'DISTINCT ' . trim($limit);
+					$fields = substr($fields, 9);
+				}
 
-			if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
-				$limit = preg_replace('/\s*offset.*$/i', '', $limit);
-				preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
-				$offset = intval($offset[1]) + intval($limitVal[1]);
-				$rOrder = $this->__switchSort($order);
-				list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
-				return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
-			} else {
-				return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
-			}
-		} else {
-			return parent::renderStatement($type, $data);
+				if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
+					$limit = preg_replace('/\s*offset.*$/i', '', $limit);
+					preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
+					$offset = intval($offset[1]) + intval($limitVal[1]);
+					$rOrder = $this->__switchSort($order);
+					list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
+					return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
+				} else {
+					return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
+				}
+			break;
+			case "schema":
+				extract($data);
+
+				foreach ($indexes as $i => $index) {
+					if (preg_match('/PRIMARY KEY/', $index)) {
+						unset($indexes[$i]);
+						break;
+					}
+				}
+
+				foreach (array('columns', 'indexes') as $var) {
+					if (is_array(${$var})) {
+						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+					}
+				}
+				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
+			break;
+			default:
+				return parent::renderStatement($type, $data);
+			break;
 		}
 	}
 /**
@@ -635,6 +655,33 @@ class DboMssql extends DboSource {
 			$result .= " NULL";
 		}
 		return $result;
+	}
+/**
+ * Format indexes for create table
+ *
+ * @param array $indexes
+ * @param string $table
+ * @return string
+ */
+	function buildIndex($indexes, $table = null) {
+		$join = array();
+
+		foreach ($indexes as $name => $value) {
+			if ($name == 'PRIMARY') {
+				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
+			} else {
+				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
+
+				if (is_array($value['column'])) {
+					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+				} else {
+					$value['column'] = $this->name($value['column']);
+				}
+				$out .= "({$value['column']});";
+			}
+			$join[] = $out;
+		}
+		return $join;
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: set.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: set.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Library of array functions for Cake.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -517,7 +517,7 @@ class Set extends Object {
 			}
 			if (!preg_match('/(.+?)([><!]?[=]|[><])(.*)/', $condition, $match)) {
 				if (ctype_digit($condition)) {
-					 if ($i != $condition) {
+					if ($i != $condition) {
 						return false;
 					}
 				} elseif (preg_match_all('/(?:^[0-9]+|(?<=,)[0-9]+)/', $condition, $matches)) {
@@ -752,26 +752,28 @@ class Set extends Object {
  * @access public
  */
 	function diff($val1, $val2 = null) {
-		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+		if ($val2 == null && is_a($this, 'set')) {
 			$val2 = $val1;
 			$val1 = $this->get();
 		}
 
-		if (is_object($val2) && (is_a($val2, 'set') || is_a($val2, 'Set'))) {
+		if (is_a($val2, 'set')) {
 			$val2 = $val2->get();
 		}
-		$out = array();
 
 		if (empty($val1)) {
 			return (array)$val2;
 		} elseif (empty($val2)) {
 			return (array)$val1;
 		}
+		$out = array();
 
 		foreach ($val1 as $key => $val) {
-			if (array_key_exists($key, $val2) && $val2[$key] != $val) {
+			$exists = array_key_exists($key, $val2);
+
+			if ($exists && $val2[$key] != $val) {
 				$out[$key] = $val;
-			} elseif (!array_key_exists($key, $val2)) {
+			} elseif (!$exists) {
 				$out[$key] = $val;
 			}
 			unset($val2[$key]);
@@ -922,10 +924,10 @@ class Set extends Object {
  * @access public
  */
 	function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
-	    if (empty($data)) {
-	       return array();
-	    }
-	    
+		if (empty($data)) {
+			return array();
+		}
+
 		if (is_a($this, 'set') && is_string($data) && is_string($path1) && is_string($path2)) {
 			$groupPath = $path2;
 			$path2 = $path1;
@@ -1112,5 +1114,4 @@ class Set extends Object {
 		return $sorted;
 	}
 }
-
 ?>

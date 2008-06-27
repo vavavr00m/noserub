@@ -36,7 +36,7 @@ App::import('Core', 'i18n');
 class I18nTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -45,7 +45,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testDefaultStrings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -114,7 +114,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesZero method
- * 
+ *
  * @access public
  * @return void
  */
@@ -185,7 +185,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesZero method
- * 
+ *
  * @access public
  * @return void
  */
@@ -256,7 +256,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -327,7 +327,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -398,7 +398,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTwo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -469,7 +469,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTwo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -540,7 +540,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesThree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -611,7 +611,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesThree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -682,7 +682,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesFour method
- * 
+ *
  * @access public
  * @return void
  */
@@ -753,7 +753,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesFour method
- * 
+ *
  * @access public
  * @return void
  */
@@ -824,7 +824,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesFive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -897,7 +897,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesFive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -970,7 +970,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesSix method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1041,7 +1041,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesSix method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1112,7 +1112,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesSeven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1183,7 +1183,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesSeven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1254,7 +1254,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesEight method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1325,7 +1325,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesEight method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1396,7 +1396,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesNine method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1470,7 +1470,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesNine method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1544,7 +1544,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1617,7 +1617,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1690,7 +1690,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesEleven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1699,7 +1699,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesEleven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1708,7 +1708,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTwelve method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1717,30 +1717,55 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTwelve method
- * 
+ *
  * @access public
  * @return void
  */
 	function testMoRulesTwelve() {
 
 	}
-
+/**
+ * testPoRulesThirteen method
+ *
+ * @access public
+ * @return void
+ */
 	function testPoRulesThirteen() {
 
 	}
-
+/**
+ * testMoRulesThirteen method
+ *
+ * @access public
+ * @return void
+ */
 	function testMoRulesThirteen() {
 
 	}
-
+/**
+ * testPoRulesFourteen method
+ *
+ * @access public
+ * @return void
+ */
 	function testPoRulesFourteen() {
 
 	}
-
+/**
+ * testMoRulesFourteen method
+ *
+ * @access public
+ * @return void
+ */
 	function testMoRulesFourteen() {
 
 	}
-
+/**
+ * testSetLanguageWithSession method
+ *
+ * @access public
+ * @return void
+ */
 	function testSetLanguageWithSession () {
 		$_SESSION['Config']['language'] = 'po';
 		$singular = $this->__Singular();
@@ -1775,7 +1800,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
 		unset($_SESSION['Config']['language']);
 	}
-
+/**
+ * testNoCoreTranslation method
+ *
+ * @access public
+ * @return void
+ */
 	function testNoCoreTranslation () {
 		Configure::write('Config.language', 'po');
 		$singular = $this->__Singular();
@@ -1812,7 +1842,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoMultipleLineTranslation method
+ *
+ * @access public
+ * @return void
+ */
 	function testPoMultipleLineTranslation () {
 		Configure::write('Config.language', 'po');
 		$string = <<<EOD
@@ -1830,18 +1865,43 @@ This is the forth line. (translated)
 EOD;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPoNoTranslationNeeded method
+ *
+ * @access public
+ * @return void
+ */
 	function testPoNoTranslationNeeded () {
 		Configure::write('Config.language', 'po');
 		$result = __('No Translation needed', true);
 		$this->assertEqual($result, 'No Translation needed');
 	}
-
+/**
+ * testPoQuotedString method
+ *
+ * @access public
+ * @return void
+ */
+	function testPoQuotedString () {
+		$expected = 'this is a "quoted string" (translated)';
+		$this->assertEqual(__('this is a "quoted string"', true), $expected);
+	}
+/**
+ * Singular method
+ *
+ * @access private
+ * @return void
+ */
 	function __Singular() {
 		$singular = __('Plural Rule 1', true);
 		return $singular;
 	}
-
+/**
+ * Plural method
+ *
+ * @access private
+ * @return void
+ */
 	function __Plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
@@ -1849,12 +1909,22 @@ EOD;
 		}
 		return $plurals;
 	}
-
+/**
+ * singularFromCore method
+ *
+ * @access private
+ * @return void
+ */
 	function __singularFromCore() {
 		$singular = __('Plural Rule 1 (from core)', true);
 		return $singular;
 	}
-
+/**
+ * pluralFromCore method
+ *
+ * @access private
+ * @return void
+ */
 	function __pluralFromCore() {
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', $number, true), $number );

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: class_registry.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: class_registry.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Class collections.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.9.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -62,7 +62,7 @@ class ClassRegistry {
 		if (!$instance) {
 			$instance[0] =& new ClassRegistry();
 		}
-		 return $instance[0];
+		return $instance[0];
 	}
 /**
  * Loads a class, registers the object in the registry and returns instance of the object.

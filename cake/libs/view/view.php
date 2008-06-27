@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: view.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Methods for displaying presentation data in the view.
@@ -21,7 +21,7 @@
  * @subpackage		cake.cake.libs.view
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -427,7 +427,9 @@ class View extends Object {
 		}
 
 		if (!empty($this->loaded)) {
-			foreach ($this->loaded as $helper) {
+			$helpers = array_keys($this->loaded);
+			foreach ($helpers as $helperName) {
+				$helper =& $this->loaded[$helperName];
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
 						$helper->beforeLayout();
@@ -449,7 +451,9 @@ class View extends Object {
 		}
 
 		if (!empty($this->loaded)) {
-			foreach ($this->loaded as $helper) {
+			$helpers = array_keys($this->loaded);
+			foreach ($helpers as $helperName) {
+				$helper =& $this->loaded[$helperName];
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
 						$helper->afterLayout();
@@ -634,6 +638,7 @@ class View extends Object {
 				}
 			}
 		}
+
 		extract($___dataForView, EXTR_SKIP);
 		ob_start();
 
@@ -657,10 +662,6 @@ class View extends Object {
 		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
-
-				if ($cached === true) {
-					$cache->view = &$this;
-				}
 				$cache->base = $this->base;
 				$cache->here = $this->here;
 				$cache->helpers = $this->helpers;
@@ -766,7 +767,7 @@ class View extends Object {
 		}
 		$name = str_replace('/', DS, $name);
 
-		if (strpos($name, DS) === false && strpos($name, '..') === false) {
+		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
 			if ($name{0} === DS || $name{1} === ':') {
@@ -774,16 +775,13 @@ class View extends Object {
 					return $name;
 				}
 				$name = trim($name, DS);
+			} else if ($name[0] === '.') {
+				$name = substr($name, 3);
 			} else {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
-		} elseif (strpos($name, '..') !== false) {
-			$name = explode('/', $name);
-			$i = array_search('..', $name);
-			unset($name[$i - 1]);
-			unset($name[$i]);
-			$name = '..' . DS . implode(DS, $name);
 		}
+
 		$paths = $this->_paths($this->plugin);
 
 		foreach ($paths as $path) {
@@ -830,7 +828,7 @@ class View extends Object {
 		foreach ($paths as $path) {
 			if (file_exists($path . $file . $this->ext)) {
 				return $path . $file . $this->ext;
-			} elseif (file_exists($path . $name . '.ctp')) {
+			} elseif (file_exists($path . $file . '.ctp')) {
 				return $path . $file . '.ctp';
 			} elseif (file_exists($path . $file . '.thtml')) {
 				return $path . $file . '.thtml';

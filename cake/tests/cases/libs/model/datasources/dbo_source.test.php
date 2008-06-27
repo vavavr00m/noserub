@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_source.test.php 7117 2008-06-04 19:27:55Z nate $ */
+/* SVN FILE: $Id: dbo_source.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -12,8 +12,8 @@
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ *	Licensed under The Open Group Test Suite License
+ *	Redistributions of files must retain the above copyright notice.
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs.model.datasources
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -44,21 +44,21 @@ require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 class TestModel extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel'
  * @access public
  */
 	var $name = 'TestModel';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema property
- * 
+ *
  * @var array
  * @access protected
  */
@@ -84,11 +84,11 @@ class TestModel extends CakeTestModel {
 	);
 /**
  * find method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -97,11 +97,11 @@ class TestModel extends CakeTestModel {
 	}
 /**
  * findAll method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -118,14 +118,14 @@ class TestModel extends CakeTestModel {
 class TestModel2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel2'
  * @access public
  */
 	var $name = 'TestModel2';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -140,14 +140,14 @@ class TestModel2 extends CakeTestModel {
 class TestModel3 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel3'
  * @access public
  */
 	var $name = 'TestModel3';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -162,28 +162,28 @@ class TestModel3 extends CakeTestModel {
 class TestModel4 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel4'
  * @access public
  */
 	var $name = 'TestModel4';
 /**
  * table property
- * 
+ *
  * @var string 'test_model4'
  * @access public
  */
 	var $table = 'test_model4';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -195,7 +195,7 @@ class TestModel4 extends CakeTestModel {
 	);
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
@@ -207,7 +207,7 @@ class TestModel4 extends CakeTestModel {
 	);
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -219,7 +219,7 @@ class TestModel4 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -244,28 +244,28 @@ class TestModel4 extends CakeTestModel {
 class TestModel5 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel5'
  * @access public
  */
 	var $name = 'TestModel5';
 /**
  * table property
- * 
+ *
  * @var string 'test_model5'
  * @access public
  */
 	var $table = 'test_model5';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -275,7 +275,7 @@ class TestModel5 extends CakeTestModel {
 	));
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -285,7 +285,7 @@ class TestModel5 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -311,28 +311,28 @@ class TestModel5 extends CakeTestModel {
 class TestModel6 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel6'
  * @access public
  */
 	var $name = 'TestModel6';
 /**
  * table property
- * 
+ *
  * @var string 'test_model6'
  * @access public
  */
 	var $table = 'test_model6';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -342,7 +342,7 @@ class TestModel6 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -368,28 +368,28 @@ class TestModel6 extends CakeTestModel {
 class TestModel7 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel7'
  * @access public
  */
 	var $name = 'TestModel7';
 /**
  * table property
- * 
+ *
  * @var string 'test_model7'
  * @access public
  */
 	var $table = 'test_model7';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -414,28 +414,28 @@ class TestModel7 extends CakeTestModel {
 class TestModel8 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel8'
  * @access public
  */
 	var $name = 'TestModel8';
 /**
  * table property
- * 
+ *
  * @var string 'test_model8'
  * @access public
  */
 	var $table = 'test_model8';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
@@ -448,7 +448,7 @@ class TestModel8 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -474,28 +474,28 @@ class TestModel8 extends CakeTestModel {
 class TestModel9 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel9'
  * @access public
  */
 	var $name = 'TestModel9';
 /**
  * table property
- * 
+ *
  * @var string 'test_model9'
  * @access public
  */
 	var $table = 'test_model9';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -506,7 +506,7 @@ class TestModel9 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -525,35 +525,35 @@ class TestModel9 extends CakeTestModel {
 }
 /**
  * Level class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Level extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Level'
  * @access public
  */
 	var $name = 'Level';
 /**
  * table property
- * 
+ *
  * @var string 'level'
  * @access public
  */
 	var $table = 'level';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -567,7 +567,7 @@ class Level extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -583,49 +583,49 @@ class Level extends CakeTestModel {
 }
 /**
  * Group class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Group extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Group'
  * @access public
  */
 	var $name = 'Group';
 /**
  * table property
- * 
+ *
  * @var string 'group'
  * @access public
  */
 	var $table = 'group';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array('Level');
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
 	var $hasMany = array('Category2', 'User2');
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -643,35 +643,35 @@ class Group extends CakeTestModel {
 }
 /**
  * User2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class User2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'User2'
  * @access public
  */
 	var $name = 'User2';
 /**
  * table property
- * 
+ *
  * @var string 'user'
  * @access public
  */
 	var $table = 'user';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -685,7 +685,7 @@ class User2 extends CakeTestModel {
 	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -696,7 +696,7 @@ class User2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -714,35 +714,35 @@ class User2 extends CakeTestModel {
 }
 /**
  * Category2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Category2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Category2'
  * @access public
  */
 	var $name = 'Category2';
 /**
  * table property
- * 
+ *
  * @var string 'category'
  * @access public
  */
 	var $table = 'category';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -758,7 +758,7 @@ class Category2 extends CakeTestModel {
 	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -775,7 +775,7 @@ class Category2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -796,49 +796,45 @@ class Category2 extends CakeTestModel {
 }
 /**
  * Article2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Article2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Article2'
  * @access public
  */
 	var $name = 'Article2';
 /**
  * table property
- * 
+ *
  * @var string 'article'
  * @access public
  */
 	var $table = 'article';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array(
-		'Category2' => array(
-  			'className' => 'Category2'
-		),
-		'User2' => array(
-			'className' => 'User2'
- 		)
- 	);
+		'Category2' => array('className' => 'Category2'),
+		'User2' => array('className' => 'User2')
+	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -861,7 +857,7 @@ class Article2 extends CakeTestModel {
 				'moderate_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
 				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
 				'multipage' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
- 				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
 				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
 				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
 			);
@@ -871,35 +867,35 @@ class Article2 extends CakeTestModel {
 }
 /**
  * CategoryFeatured2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class CategoryFeatured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'CategoryFeatured2'
  * @access public
  */
 	var $name = 'CategoryFeatured2';
 /**
  * table property
- * 
+ *
  * @var string 'category_featured'
  * @access public
  */
 	var $table = 'category_featured';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -918,35 +914,35 @@ class CategoryFeatured2 extends CakeTestModel {
 }
 /**
  * Featured2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Featured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Featured2'
  * @access public
  */
 	var $name = 'Featured2';
 /**
  * table property
- * 
+ *
  * @var string 'featured2'
  * @access public
  */
 	var $table = 'featured2';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -957,7 +953,7 @@ class Featured2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -975,42 +971,42 @@ class Featured2 extends CakeTestModel {
 }
 /**
  * Comment2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Comment2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Comment2'
  * @access public
  */
 	var $name = 'Comment2';
 /**
  * table property
- * 
+ *
  * @var string 'comment'
  * @access public
  */
 	var $table = 'comment';
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array('ArticleFeatured2', 'User2');
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1028,58 +1024,54 @@ class Comment2 extends CakeTestModel {
 }
 /**
  * ArticleFeatured2 class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ *
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class ArticleFeatured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'ArticleFeatured2'
  * @access public
  */
 	var $name = 'ArticleFeatured2';
 /**
  * table property
- * 
+ *
  * @var string 'article_featured'
  * @access public
  */
 	var $table = 'article_featured';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array(
-		'CategoryFeatured2' => array(
-  			'className' => 'CategoryFeatured2'
-		),
-		'User2' => array(
-			'className' => 'User2'
- 		)
- 	);
+		'CategoryFeatured2' => array('className' => 'CategoryFeatured2'),
+		'User2' => array('className' => 'User2')
+	);
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
- 	var $hasOne = array(
- 		'Featured2' => array('className' => 'Featured2')
- 	);
+	var $hasOne = array(
+		'Featured2' => array('className' => 'Featured2')
+	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1088,7 +1080,7 @@ class ArticleFeatured2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1119,21 +1111,21 @@ class ArticleFeatured2 extends CakeTestModel {
 class DboSourceTest extends CakeTestCase {
 /**
  * debug property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $debug = null;
 /**
  * autoFixtures property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $autoFixtures = false;
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1143,7 +1135,7 @@ class DboSourceTest extends CakeTestCase {
 	);
 /**
  * startTest method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1157,8 +1149,8 @@ class DboSourceTest extends CakeTestCase {
 				var \$simulated = array();
 /**
  * execute method
- * 
- * @param \$sql 
+ *
+ * @param \$sql
  * @access protected
  * @return void
  */
@@ -1168,7 +1160,7 @@ class DboSourceTest extends CakeTestCase {
 				}
 /**
  * getLastQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1185,7 +1177,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * endTest method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1196,7 +1188,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testFieldDoubleEscaping method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1234,7 +1226,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoin method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1324,7 +1316,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateInnerJoinAssociationQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1347,7 +1339,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1374,7 +1366,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1400,7 +1392,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1462,7 +1454,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1494,7 +1486,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasOneWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1523,7 +1515,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryBelongsTo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1554,7 +1546,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryBelongsToWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1585,7 +1577,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasMany method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1605,7 +1597,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE/', $result);
-		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1614,7 +1606,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1633,23 +1625,27 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		$this->assertPattern('/^SELECT\s+' .
-												 '`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+'.
-												 'FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+' .
-												 '`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)\s*'.
-												 'LIMIT \d*'.
-												 '\s*$/', $result);
+		$this->assertPattern(
+			'/^SELECT\s+' .
+			'`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+'.
+			'FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+' .
+			'`TestModel6`.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)\s*'.
+			'LIMIT \d*'.
+			'\s*$/', $result
+		);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
-		$this->assertPattern('/^SELECT\s+'.
-												 '`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+'.
-												 'FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+'.
-												 '(?:\()?\s*1 = 1\s*(?:\))?'.
-												 '\s*$/', $result);
+		$this->assertPattern(
+			'/^SELECT\s+'.
+			'`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+'.
+			'FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+'.
+			'(?:\()?\s*1 = 1\s*(?:\))?'.
+			'\s*$/', $result
+		);
 	}
 /**
  * testGenerateAssociationQueryHasManyWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1668,7 +1664,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1677,7 +1673,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithOffsetAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1702,7 +1698,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 		$this->assertPattern('/\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1714,7 +1710,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithPageAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1738,7 +1734,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 		$this->assertPattern('/\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1750,7 +1746,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1769,7 +1765,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`name`, `TestModel5`\.`id`\s+/', $result);
@@ -1786,7 +1782,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1803,7 +1799,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`id`\s+/', $result);
@@ -1822,7 +1818,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1843,7 +1839,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1864,7 +1860,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`test_model5_id`, `TestModel6`\.`name`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1875,7 +1871,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToMany method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1892,10 +1888,11 @@ class DboSourceTest extends CakeTestCase {
 		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+AND/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\)/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+AND/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1905,7 +1902,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1924,8 +1921,8 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -1933,7 +1930,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1958,8 +1955,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1970,7 +1967,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1995,8 +1992,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -2007,8 +2004,8 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * buildRelatedModels method
- * 
- * @param mixed $model 
+ *
+ * @param mixed $model
  * @access protected
  * @return void
  */
@@ -2027,10 +2024,10 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * &_prepareAssociationQuery method
- * 
- * @param mixed $model 
- * @param mixed $queryData 
- * @param mixed $binding 
+ *
+ * @param mixed $model
+ * @param mixed $queryData
+ * @param mixed $binding
  * @access public
  * @return void
  */
@@ -2049,7 +2046,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testSelectDistict method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2060,7 +2057,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testStringConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2096,7 +2093,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->testDb->conditions(array('score' => array(2=>1, 2, 10)));
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
@@ -2176,7 +2173,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testQuotesInStringConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2200,7 +2197,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testParenthesisInStringConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2249,7 +2246,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testParenthesisInArrayConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2298,7 +2295,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testArrayConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2350,6 +2347,14 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array('score' => array()));
+		$expected = " WHERE `score` IS NULL";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('score !=' => array()));
+		$expected = " WHERE `score` IS NOT NULL";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->conditions(array('score !=' => '20'));
 		$expected = " WHERE `score` != '20'";
 		$this->assertEqual($result, $expected);
@@ -2362,44 +2367,63 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `client_id` > 20";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array(
+					'OR' => array(
+						array('User.user' => 'mariano'),
+						array('User.user' => 'nate')
+					)
+				));
+
+		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), 'rating >' => '20'
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR (`rating` > '20')";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`rating` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR ((`score` > '20'))";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('and' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') AND ((`score` > '20'))";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') AND (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(
 			'published' => 1, 'or' => array('score >' => '2', array('score >' => '20'))
 		));
-		$expected = " WHERE `published` = 1 AND (`score` > '2') OR ((`score` > '20'))";
+		$expected = " WHERE `published` = 1 AND ((`score` > '2') OR (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => false)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+0\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` = 0";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => true)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+1\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` = 1";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => null)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NULL\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` IS NULL";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array(array('Project.removed !=' => null)));
+		$expected = " WHERE `Project`.`removed` IS NOT NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('(Usergroup.permissions) & 4' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+&\s+4\s+=\s+4\s*$/', $result);
+		$expected = " WHERE (`Usergroup`.`permissions`) & 4 = 4";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('((Usergroup.permissions) & 4)' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+		$expected = " WHERE ((`Usergroup`.`permissions`) & 4) = 4";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.modified >=' => 'DATE_SUB(NOW(), INTERVAL 7 DAY)'));
 		$expected = " WHERE `Post`.`modified` >= 'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
@@ -2413,7 +2437,7 @@ class DboSourceTest extends CakeTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted >' => '0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('id <>' => '8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
@@ -2466,10 +2490,18 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array("Book.book_name" => 'Java(TM) '));
 		$expected = " WHERE `Book`.`book_name` = 'Java(TM) '";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array("Book.id" => 0));
+		$expected = " WHERE `Book`.`id` = 0";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array("Book.id" => NULL));
+		$expected = " WHERE `Book`.`id` IS NULL";
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testMixedConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2477,7 +2509,7 @@ class DboSourceTest extends CakeTestCase {
 		$conditions[] = 'User.first_name = \'Firstname\'';
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `User`.`first_name` = 'Firstname' AND (`User`.`last_name` = 'Lastname')";
+		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name` = 'Lastname'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array(
@@ -2490,7 +2522,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testConditionsOptionalArguments method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2503,7 +2535,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testFieldParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2600,346 +2632,368 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('`TestModel`.`field` AS `AnotherName`');
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * testMergeAssociations method
+ *
+ * @access public
+ * @return void
+ */
+	function testMergeAssociations() {
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			'Topic' => array(
+				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+			)
+		);
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Topic' => array(
+				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
+		$this->assertEqual($data, $expected);
 
- 	function testMergeAssociations() {
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			'Topic' => array(
- 				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 			)
- 		);
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Topic' => array(
- 				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			'User2' => array(
+				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+			)
+		);
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'User2' => array(
+				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			'User2' => array(
- 				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 			)
- 		);
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'User2' => array(
- 				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(array('Comment' => false));
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array()
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(array('Comment' => false));
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array()
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					)
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					)
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					)
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					)
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'Tag' => array(
+					array('id' => 1, 'tag' => 'Tag 1'),
+					array('id' => 2, 'tag' => 'Tag 2')
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'Tag' => array()
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					),
+					'Tag' => array(
+						array('id' => 1, 'tag' => 'Tag 1'),
+						array('id' => 2, 'tag' => 'Tag 2')
+					)
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					),
+					'Tag' => array()
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'Tag' => array(
- 					array('id' => 1, 'tag' => 'Tag 1'),
- 					array('id' => 2, 'tag' => 'Tag 2')
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'Tag' => array()
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					),
- 					'Tag' => array(
- 						array('id' => 1, 'tag' => 'Tag 1'),
- 						array('id' => 2, 'tag' => 'Tag 2')
- 					)
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					),
- 					'Tag' => array()
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Tag' => array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Tag' => array(
+				array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Tag' => array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Tag' => array(
- 				array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
- 		$this->assertEqual($data, $expected);
-
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Tag' => array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
- 		$this->assertEqual($data, $expected);
- 	}
-
- 	function testRenderStatement() {
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Tag' => array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
+		$this->assertEqual($data, $expected);
+	}
+/**
+ * testRenderStatement method
+ *
+ * @access public
+ * @return void
+ */
+	function testRenderStatement() {
 		$result = $this->testDb->renderStatement('select', array(
 			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
 			'alias' => '', 'joins' => '', 'order' => '', 'limit' => '', 'group' => ''
 		));
- 		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
- 		$this->assertPattern('/^\s*UPDATE\s+table\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
- 		$this->assertPattern('/^\s*UPDATE\s+table\s+AS\s+alias\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+AS\s+alias\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
- 		$this->assertPattern('/^\s*DELETE\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
- 		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
- 	}
+		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
+	}
+/**
+ * testStatements method
+ *
+ * @access public
+ * @return void
+ */
+	function testStatements() {
+		$Article =& ClassRegistry::init('Article');
 
- 	function testStatements() {
- 		$Article =& ClassRegistry::init('Article');
+		$result = $this->testDb->update($Article, array('field1'), array('value1'));
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
 
- 		$result = $this->testDb->update($Article, array('field1'), array('value1'));
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
- 		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->testDb->delete($Article);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article);
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->testDb->delete($Article, true);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article, true);
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
+		$result = $this->testDb->delete($Article, '2=2');
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article, '2=2');
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->testDb->hasAny($Article, '1=2');
+		$this->assertFalse($result);
 
- 		$result = $this->testDb->hasAny($Article, '1=2');
- 		$this->assertFalse($result);
+		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
+	}
+/**
+ * testSchema method
+ *
+ * @access public
+ * @return void
+ */
+	function testSchema() {
+		$Schema =& new CakeSchema();
+		$Schema->tables = array('table' => array(), 'anotherTable' => array());
 
- 		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
- 	}
+		$this->expectError();
+		$result = $this->testDb->dropSchema(null);
+		$this->assertTrue($result === null);
 
- 	function testSchema() {
- 		$Schema =& new CakeSchema();
- 		$Schema->tables = array(
- 			'table' => array(),
- 			'anotherTable' => array()
- 		);
+		$result = $this->testDb->dropSchema($Schema, 'non_existing');
+		$this->assertTrue(empty($result));
 
- 		$this->expectError();
- 		$result = $this->testDb->dropSchema(null);
- 		$this->assertTrue($result === null);
-
- 		$result = $this->testDb->dropSchema($Schema, 'non_existing');
- 		$this->assertTrue(empty($result));
-
- 		$result = $this->testDb->dropSchema($Schema, 'table');
- 		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->testDb->fullTableName('table') . ';\s*$/s', $result);
- 	}
-
+		$result = $this->testDb->dropSchema($Schema, 'table');
+		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->testDb->fullTableName('table') . ';\s*$/s', $result);
+	}
+/**
+ * testMagicMethodQuerying method
+ *
+ * @access public
+ * @return void
+ */
 	function testMagicMethodQuerying() {
 		$result = $this->testDb->query('findByFieldName', array('value'), $this->Model);
 		$expected = array('TestModel.field_name' => 'value');
@@ -2978,7 +3032,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->query('directCall', false, $this->Model);
 		$this->assertFalse($result);
 	}
-
+/**
+ * testOrderParsing method
+ *
+ * @access public
+ * @return void
+ */
 	function testOrderParsing() {
 		$result = $this->testDb->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
@@ -3040,7 +3099,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testCalculations method
+ *
+ * @access public
+ * @return void
+ */
 	function testCalculations() {
 		$result = $this->testDb->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
@@ -3069,7 +3133,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->calculate($this->Model, 'min', 'left');
 		$this->assertEqual($result, 'MIN(`left`) AS `left`');
 	}
-
+/**
+ * testLength method
+ *
+ * @access public
+ * @return void
+ */
 	function testLength() {
 		$result = $this->testDb->length('varchar(255)');
 		$expected = 255;
@@ -3098,16 +3167,21 @@ class DboSourceTest extends CakeTestCase {
 		$this->expectError();
 		$result = $this->testDb->length(false);
 		$this->assertTrue($result === null);
-				
+
 		$result = $this->testDb->length('datetime');
 		$expected = null;
 		$this->assertIdentical($result, $expected);
-		
+
 		$result = $this->testDb->length('text');
 		$expected = null;
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testBuildIndex method
+ *
+ * @access public
+ * @return void
+ */
 	function testBuildIndex() {
 		$data = array(
 			'PRIMARY' => array('column' => 'id')
@@ -3130,7 +3204,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('UNIQUE KEY MyIndex (`id`, `name`)');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testBuildColumn method
+ *
+ * @access public
+ * @return void
+ */
 	function testBuildColumn() {
 		$this->expectError();
 		$data = array(
@@ -3154,7 +3233,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = '`testName`  DEFAULT NULL';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testIntrospectType method
+ *
+ * @access public
+ * @return void
+ */
 	function testIntrospectType() {
 		$this->assertEqual($this->testDb->introspectType(0), 'integer');
 		$this->assertEqual($this->testDb->introspectType(2), 'integer');
@@ -3211,104 +3295,109 @@ class DboSourceTest extends CakeTestCase {
 
 		$data = array(2, 2.2);
 		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-		
-		
+
+
 		// NULL
 		$result = $this->testDb->value(null, 'boolean');
 		$this->assertEqual($result, 'NULL');
-		
+
 		// EMPTY STRING
 		$result = $this->testDb->value('', 'boolean');
 		$this->assertEqual($result, "''");
-		
+
 		// BOOLEAN
 		$result = $this->testDb->value('true', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value('false', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(true, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(false, 'boolean');
 		$this->assertEqual($result, 0);
-		
+
 		$result = $this->testDb->value(1, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(0, 'boolean');
 		$this->assertEqual($result, 0);
-		
+
 		$result = $this->testDb->value('abc', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(1.234, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value('1.234e05', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		// NUMBERS
 		$result = $this->testDb->value(123, 'integer');
 		$this->assertEqual($result, 123);
-		
+
 		$result = $this->testDb->value('123', 'integer');
 		$this->assertEqual($result, '123');
-		
+
 		$result = $this->testDb->value('0123', 'integer');
 		$this->assertEqual($result, "'0123'");
-		
+
 		$result = $this->testDb->value('0x123ABC', 'integer');
 		$this->assertEqual($result, "'0x123ABC'");
-		
+
 		$result = $this->testDb->value('0x123', 'integer');
 		$this->assertEqual($result, "'0x123'");
-		
+
 		$result = $this->testDb->value(1.234, 'float');
 		$this->assertEqual($result, 1.234);
-		
+
 		$result = $this->testDb->value('1.234', 'float');
 		$this->assertEqual($result, '1.234');
-		
+
 		$result = $this->testDb->value(' 1.234 ', 'float');
 		$this->assertEqual($result, "' 1.234 '");
-		
+
 		$result = $this->testDb->value('1.234e05', 'float');
 		$this->assertEqual($result, "'1.234e05'");
-		
+
 		$result = $this->testDb->value('1.234e+5', 'float');
 		$this->assertEqual($result, "'1.234e+5'");
-		
+
 		$result = $this->testDb->value('1,234', 'float');
 		$this->assertEqual($result, "'1,234'");
-		
+
 		$result = $this->testDb->value('FFF', 'integer');
 		$this->assertEqual($result, "'FFF'");
-		
+
 		$result = $this->testDb->value('abc', 'integer');
 		$this->assertEqual($result, "'abc'");
-		
+
 		// STRINGS
 		$result = $this->testDb->value('123', 'string');
 		$this->assertEqual($result, "'123'");
-		
+
 		$result = $this->testDb->value(123, 'string');
 		$this->assertEqual($result, "'123'");
-		
+
 		$result = $this->testDb->value(1.234, 'string');
 		$this->assertEqual($result, "'1.234'");
-		
+
 		$result = $this->testDb->value('abc', 'string');
 		$this->assertEqual($result, "'abc'");
-		
+
 		$result = $this->testDb->value(' abc ', 'string');
 		$this->assertEqual($result, "' abc '");
-		
+
 		$result = $this->testDb->value('a bc', 'string');
 		$this->assertEqual($result, "'a bc'");
 	}
-
+/**
+ * testValue method
+ *
+ * @access public
+ * @return void
+ */
 	function testValue() {
 		$result = $this->testDb->value('{$__cakeForeignKey__$}');
 		$this->assertEqual($result, '{$__cakeForeignKey__$}');
@@ -3317,12 +3406,22 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('\'first\'', 2, '\'third\'');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testReconnect method
+ *
+ * @access public
+ * @return void
+ */
 	function testReconnect() {
 		$this->testDb->reconnect();
 		$this->assertTrue($this->testDb->connected);
 	}
-
+/**
+ * testRealQueries method
+ *
+ * @access public
+ * @return void
+ */
 	function testRealQueries() {
 		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag');
 
@@ -3385,7 +3484,12 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
 		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
 	}
-
+/**
+ * testName method
+ *
+ * @access public
+ * @return void
+ */
 	function testName() {
 		$result = $this->testDb->name('name');
 		$expected = '`name`';
@@ -3403,7 +3507,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = '`(sm)`';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLog method
+ *
+ * @access public
+ * @return void
+ */
 	function testLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
@@ -3424,8 +3533,7 @@ class DboSourceTest extends CakeTestCase {
 
 		ob_start();
 		$this->testDb->showLog();
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
@@ -3433,8 +3541,7 @@ class DboSourceTest extends CakeTestCase {
 
 		ob_start();
 		$this->testDb->showLog(true);
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
@@ -3447,16 +3554,15 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->error = false;
 		ob_start();
 		$this->testDb->showQuery('Query 3');
-		$contents = ob_get_contents();
-		ob_end_clean();
-		$this->assertPattern('/Query 3/s', $contents);
+		$contents = ob_get_clean();
+		$this->assertNoPattern('/Query 3/s', $contents);
 
 		$this->testDb->error = true;
 		$this->expectError();
 		ob_start();
 		$this->testDb->showQuery('Error 2');
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
+
 		$this->assertPattern('/Error 2/s', $contents);
 
 		$this->testDb->error = $oldError;

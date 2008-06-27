@@ -46,7 +46,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testNoTestCaseSupplied method
- * 
+ *
  * @access public
  * @return void
  */
@@ -71,8 +71,8 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			$contents = $folder->ls();
 /**
  * remove method
- * 
- * @param mixed $var 
+ *
+ * @param mixed $var
  * @access public
  * @return void
  */
@@ -90,7 +90,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testGetTestObjectFileNameFromTestCaseFile method
- * 
+ *
  * @access public
  * @return void
  */
@@ -127,7 +127,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testOfHtmlReport method
- * 
+ *
  * @access public
  * @return void
  */
@@ -136,19 +136,19 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$code = <<<PHP
 /**
  * Set class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 		class Set extends Object {
-		/**
+/**
 		 * Value of the Set object.
 		 *
 		 * @var array
 		 * @access public
 		 */
 			var \$value = array();
-		/**
+/**
 		 * Constructor. Defaults to an empty array.
 		 *
 		 * @access public
@@ -160,7 +160,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 					\$this->value = func_get_args();
 				}
 			}
-		/**
+/**
 		 * Returns the contents of the Set object
 		 *
 		 * @return array
@@ -169,7 +169,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			function &get() {
 				return \$this->value;
 			}
-		/**
+/**
 		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
 		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
 		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
@@ -254,7 +254,7 @@ PHP;
 			34 => -2,
 			35 => -2,
 			36 => -2,
-		 	37=> -2,
+			37 => -2,
 			38 => -2,
 			39 => -2,
 			40 => -2,
@@ -284,7 +284,7 @@ PHP;
 	}
 /**
  * testOfHtmlDiffReport method
- * 
+ *
  * @access public
  * @return void
  */
@@ -293,19 +293,19 @@ PHP;
 		$code = <<<PHP
 /**
  * Set class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 		class Set extends Object {
-		/**
+/**
 		 * Value of the Set object.
 		 *
 		 * @var array
 		 * @access public
 		 */
 			var \$value = array();
-		/**
+/**
 		 * Constructor. Defaults to an empty array.
 		 *
 		 * @access public
@@ -317,7 +317,7 @@ PHP;
 					\$this->value = func_get_args();
 				}
 			}
-		/**
+/**
 		 * Returns the contents of the Set object
 		 *
 		 * @return array
@@ -326,7 +326,7 @@ PHP;
 			function &get() {
 				return \$this->value;
 			}
-		/**
+/**
 		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
 		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
 		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
@@ -411,7 +411,7 @@ PHP;
 			34 => -2,
 			35 => -2,
 			36 => -2,
-		 	37=> -2,
+			37 => -2,
 			38 => -2,
 			39 => -2,
 			40 => -2,
@@ -424,7 +424,7 @@ PHP;
 			47 => -2,
 			48 => 1,
 			49 => 1,
-		 	50 => -1,
+			50 => -1,
 			51 => 1,
 			52 => 1,
 			53 => -2,
@@ -437,7 +437,7 @@ PHP;
 			60 => 1,
 			61 => 1,
 			62 => -2,
-		 	63 => -2,
+			63 => -2,
 			64 => 1,
 			65 => -2,
 			66 => 1,
@@ -486,7 +486,7 @@ PHP;
 			34 => 'ignored',
 			35 => 'ignored',
 			36 => 'ignored',
-		 	37 => 'ignored',
+			37 => 'ignored',
 			38 => 'ignored',
 			39 => 'ignored',
 			40 => 'ignored show start',
@@ -502,7 +502,7 @@ PHP;
 			47 => 'ignored show',
 			48 => 'covered show',
 			49 => 'covered show',
-		 	50 => 'uncovered show',
+			50 => 'uncovered show',
 			51 => 'covered show',
 			52 => 'covered show',
 			53 => 'ignored show end',
@@ -515,7 +515,7 @@ PHP;
 			60 => 'covered show',
 			61 => 'covered show',
 			62 => 'ignored show end',
-		 	63 => 'ignored',
+			63 => 'ignored',
 			64 => 'covered show start',
 			65 => 'ignored show',
 			66 => 'covered show show',
@@ -524,7 +524,8 @@ PHP;
 			69 => 'uncovered show',
 			70 => 'uncovered show',
 			71 => 'covered show',
-			72 => 'ignored show end',
+			72 => 'ignored show',
+			73 => 'ignored show end end',
 		);
 		$execCodeLines = range(0, 72);
 		$result = explode("</div>", $report = $manager->reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, 3));
@@ -538,12 +539,12 @@ PHP;
 			$num = $matches[1];
 			$class = $expected[$num];
 			$pattern = '/<div class="code-line '.$class.'">/';
-			$this->assertTrue(preg_match($pattern, $line), $num.': '.$line." fails");
+			$this->assertPattern($pattern, $line, $num.': '.$line." fails");
 		}
 	}
 /**
  * testArrayStrrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -575,7 +576,7 @@ PHP;
 	}
 /**
  * testGetExecutableLines method
- * 
+ *
  * @access public
  * @return void
  */
@@ -610,7 +611,12 @@ HTML;
 			$this->assertIdentical(trim($line), '');
 		}
 	}
-
+/**
+ * testCalculateCodeCoverage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCalculateCodeCoverage() {
 		$manager =& CodeCoverageManager::getInstance();
 		$data = array(

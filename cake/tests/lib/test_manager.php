@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: test_manager.php 7103 2008-06-03 12:58:20Z nate $ */
+/* SVN FILE: $Id: test_manager.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.tests.lib
  * @since			CakePHP(tm) v 1.2.0.4433
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -33,8 +33,8 @@ define ('APP_TEST_GROUPS', APP . 'tests' .DS. 'groups');
 /**
  * Short description for class.
  *
- * @package    cake
- * @subpackage cake.cake.tests.lib
+ * @package		cake
+ * @subpackage	cake.cake.tests.lib
  */
 class TestManager {
 	var $_testExtension = '.test.php';
@@ -117,12 +117,12 @@ class TestManager {
 		}
 	}
 
-	function addTestFile(&$groupTest, $file, $isGroupTest = false) {
+	function addTestFile(&$groupTest, $file) {
 		$manager =& new TestManager();
-		
-		if (!$isGroupTest) {
+
+		if (file_exists($file.'.test.php')) {
 			$file .= '.test.php';
-		} else {
+		} elseif (file_exists($file.'.group.php')) {
 			$file .= '.group.php';
 		}
 		$groupTest->addTestFile($file);
@@ -243,8 +243,8 @@ class TestManager {
 /**
  * Short description for class.
  *
- * @package    cake
- * @subpackage cake.cake.tests.lib
+ * @package		cake
+ * @subpackage	cake.cake.tests.lib
  */
 class CliTestManager extends TestManager {
 
@@ -273,8 +273,8 @@ class CliTestManager extends TestManager {
 /**
  * Short description for class.
  *
- * @package    cake
- * @subpackage cake.cake.tests.lib
+ * @package		cake
+ * @subpackage	cake.cake.tests.lib
  */
 class TextTestManager extends TestManager {
 	var $_url;
@@ -302,7 +302,7 @@ class TextTestManager extends TestManager {
 			$urlExtra = '&plugin=' . $manager->pluginTest;
 		}
 
-		$buffer .=  "All tests\n" . $_SERVER['SERVER_NAME'] . $manager->getBaseURL() . "?group=all&output=txt{$urlExtra}\n";
+		$buffer .= "All tests\n" . $_SERVER['SERVER_NAME'] . $manager->getBaseURL() . "?group=all&output=txt{$urlExtra}\n";
 
 		foreach ((array)$groupTests as $groupTest) {
 			$buffer .= $_SERVER['SERVER_NAME']. $manager->getBaseURL()."?group=" . $groupTest . "&output=txt{$urlExtra}"."\n";
@@ -341,8 +341,8 @@ class TextTestManager extends TestManager {
 /**
  * Short description for class.
  *
- * @package    cake
- * @subpackage cake.cake.tests.lib
+ * @package		cake
+ * @subpackage	cake.cake.tests.lib
  */
 class HtmlTestManager extends TestManager {
 	var $_url;
@@ -376,7 +376,7 @@ class HtmlTestManager extends TestManager {
 		foreach ((array)$groupTests as $groupTest) {
 			$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}" . "{$urlExtra}'>" . $groupTest . "</a></li>\n";
 		}
-		$buffer  .=  "</ul>\n";
+		$buffer .= "</ul>\n";
 		return $buffer;
 	}
 
@@ -407,7 +407,7 @@ class HtmlTestManager extends TestManager {
 
 				$buffer .= "<li><a href='" . $manager->getBaseURL() . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
 		}
-		$buffer  .=  "</ul>\n";
+		$buffer .= "</ul>\n";
 		return $buffer;
 	}
 }
@@ -465,6 +465,7 @@ if (function_exists('caketestsgetreporter')) {
 						$query .= '&amp;plugin=' . $_GET['plugin'];
 					}
 				}
+				ob_start();
 				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
 			break;
 		}
@@ -489,6 +490,7 @@ if (function_exists('caketestsgetreporter')) {
 					}
 				}
 				$query .= '&amp;code_coverage=true';
+				ob_start();
 				echo " <a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
 			break;
 		}
@@ -497,6 +499,7 @@ if (function_exists('caketestsgetreporter')) {
 	function CakePHPTestCaseList() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
+				ob_start();
 				echo HtmlTestManager::getTestCaseList();
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:
@@ -521,6 +524,10 @@ if (function_exists('caketestsgetreporter')) {
 	function CakePHPTestHeader() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
+				ob_start();
+				if (!class_exists('dispatcher')) {
+					require CAKE . 'dispatcher.php';
+				}
 				$dispatch =& new Dispatcher();
 				$dispatch->baseUrl();
 				define('BASE', $dispatch->webroot);
@@ -538,6 +545,7 @@ if (function_exists('caketestsgetreporter')) {
 	function CakePHPTestSuiteHeader() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
+				ob_start();
 				$groups = $_SERVER['PHP_SELF'].'?show=groups';
 				$cases = $_SERVER['PHP_SELF'].'?show=cases';
 				$plugins = Configure::listObjects('plugin');
@@ -549,6 +557,7 @@ if (function_exists('caketestsgetreporter')) {
 	function CakePHPTestSuiteFooter() {
 		switch ( CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
+				ob_start();
 				$baseUrl = BASE;
 				include CAKE_TESTS_LIB . 'footer.php';
 			break;

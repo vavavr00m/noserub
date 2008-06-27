@@ -42,7 +42,7 @@ App::import('Helper', array('Session'));
 class SessionHelperTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -79,7 +79,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -89,7 +89,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * testRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -102,7 +102,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * testCheck method
- * 
+ *
  * @access public
  * @return void
  */
@@ -117,7 +117,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * testWrite method
- * 
+ *
  * @access public
  * @return void
  */
@@ -127,7 +127,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * testFlash method
- * 
+ *
  * @access public
  * @return void
  */
@@ -146,7 +146,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->Session->flash('classy');
 		$result = ob_get_clean();
 		$this->assertEqual($result, $expected);
-		
+
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
@@ -156,6 +156,7 @@ class SessionHelperTest extends CakeTestCase {
 		$result = ob_get_contents();
 		ob_clean();
 
+		$result = str_replace("\r\n", "\n", $result);
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.notification'));
@@ -171,7 +172,7 @@ class SessionHelperTest extends CakeTestCase {
 	}
 /**
  * testID method
- * 
+ *
  * @access public
  * @return void
  */
@@ -180,7 +181,12 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->id();
 		$this->assertEqual($id, $result);
 	}
-
+/**
+ * testError method
+ *
+ * @access public
+ * @return void
+ */
 	function testError() {
 		$result = $this->Session->error();
 		$this->assertFalse($result);
@@ -190,7 +196,12 @@ class SessionHelperTest extends CakeTestCase {
 		$expected = "CauseError doesn't exist";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDisabling method
+ *
+ * @access public
+ * @return void
+ */
 	function testDisabling() {
 		Configure::write('Session.start', false);
 		$this->Session = new SessionHelper();
@@ -206,7 +217,12 @@ class SessionHelperTest extends CakeTestCase {
 		ob_clean();
 		$this->assertFalse($result);
 	}
-
+/**
+ * testValid method
+ *
+ * @access public
+ * @return void
+ */
 	function testValid() {
 		//wierd it always ends up false in the test suite
 		//$this->assertFalse($this->Session->valid());

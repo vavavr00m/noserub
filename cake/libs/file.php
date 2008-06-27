@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: file.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -29,11 +29,11 @@
  *
  */
 if (!class_exists('Object')) {
-	 uses ('object');
+	uses ('object');
 }
 
 if (!class_exists('Folder')) {
-	 uses ('folder');
+	uses('folder');
 }
 /**
  * Convenience class for reading, writing and appending to files.
@@ -278,7 +278,7 @@ class File extends Object {
 			return unlink($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns the File extension.
  *
@@ -441,7 +441,7 @@ class File extends Object {
 			return fileowner($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns the File group.
  *
@@ -453,7 +453,7 @@ class File extends Object {
 			return filegroup($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns last access time.
  *
@@ -465,7 +465,7 @@ class File extends Object {
 			return fileatime($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns last modified time.
  *
@@ -486,87 +486,6 @@ class File extends Object {
  */
 	function &Folder() {
 		return $this->Folder;
-	}
-/* Deprecated methods */
-/**
- * @deprecated
- * @see File::pwd
- */
-	function getFullPath() {
-		trigger_error('Deprecated: Use File::pwd() instead.', E_USER_WARNING);
-		return $this->pwd();
-	}
-/**
- * @deprecated
- * @see File::name
- */
-	function getName() {
-		trigger_error('Deprecated: Use File::name() instead.', E_USER_WARNING);
-		return $this->name;
-	}
-/**
- * @deprecated
- * @see File::name()
- */
-	function filename() {
-		trigger_error('Deprecated: Use File::name() instead.', E_USER_WARNING);
-		return $this->name();
-	}
-/**
- * @deprecated
- * @see File::ext()
- */
-	function getExt() {
-		trigger_error('Deprecated: Use File::ext() instead.', E_USER_WARNING);
-		return $this->ext();
-	}
-/**
- * @deprecated
- * @see File::md5()
- */
-	function getMd5() {
-		trigger_error('Deprecated: Use File::md5() instead.', E_USER_WARNING);
-		return $this->md5();
-	}
-/**
- * @deprecated
- * @see File::size()
- */
-	function getSize() {
-		trigger_error('Deprecated: Use File::size() instead.', E_USER_WARNING);
-		return $this->size();
-	}
-/**
- * @deprecated
- * @see File::owner()
- */
-	function getOwner() {
-		trigger_error('Deprecated: Use File::owner() instead.', E_USER_WARNING);
-		return $this->owner();
-	}
-/**
- * @deprecated
- * @see File::group()
- */
-	function getGroup() {
-		trigger_error('Deprecated: Use File::group() instead.', E_USER_WARNING);
-		return $this->group();
-	}
-/**
- * @deprecated
- * @see File::perms()
- */
-	function getChmod() {
-		trigger_error('Deprecated: Use File::perms() instead.', E_USER_WARNING);
-		return $this->perms();
-	}
-/**
- * @deprecated
- * @see File::Folder()
- */
-	function getFolder() {
-		trigger_error('Deprecated: Use File::Folder() instead.', E_USER_WARNING);
-		return $this->Folder();
 	}
 }
 ?>

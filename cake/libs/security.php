@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: security.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: security.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v .0.10.0.1233
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -52,10 +52,10 @@ class Security extends Object {
   */
 	function &getInstance() {
 		static $instance = array();
-	 	if (!$instance) {
-	 		$instance[0] =& new Security;
-	 	}
-	 	return $instance[0];
+		if (!$instance) {
+			$instance[0] =& new Security;
+		}
+		return $instance[0];
 	}
 /**
   * Get allowed minutes of inactivity based on security level.
@@ -142,7 +142,7 @@ class Security extends Object {
 				return $return;
 			} else {
 				$type = 'md5';
-	 		}
+			}
 		}
 
 		if ($type == 'md5') {
