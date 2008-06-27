@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: aro_fixture.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: aro_fixture.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -55,7 +55,12 @@ class AroFixture extends CakeTestFixture {
 		'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'ROOT', 'lft' => 1, 'rght' => 8),
 		array('parent_id' => '1', 'model' => 'Group', 'foreign_key' => '1', 'alias' => 'admins', 'lft' => 2, 'rght' => 7),

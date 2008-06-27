@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: helper.php 7079 2008-05-31 22:01:47Z mariano.iglesias $ */
+/* SVN FILE: $Id: helper.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Backend for helpers.
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.view
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: mariano.iglesias $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -302,12 +302,6 @@ class Helper extends Overloadable {
 		return $attribute;
 	}
 /**
- * @deprecated
- */
-	function setFormTag($tagValue, $setScope = false) {
-		return $this->setEntity($tagValue, $setScope);
-	}
-/**
  * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
  *
  * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
@@ -381,7 +375,7 @@ class Helper extends Overloadable {
 					}
 				}
 			break;
-		 	case 2:
+			case 2:
 				if ($view->modelScope === false) {
 					list($view->model, $view->field) = $parts;
 				} elseif ($sameScope === true && $hasField === 0) {
@@ -758,6 +752,14 @@ class Helper extends Overloadable {
 			$oldstring = $this->__cleaned;
 			$this->__cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i',"",$this->__cleaned);
 		} while ($oldstring != $this->__cleaned);
+	}
+
+/**
+ * @deprecated
+ */
+	function setFormTag($tagValue, $setScope = false) {
+		trigger_error(__('Helper::setFormTag() Deprecated, use Helper::setEntity()', true), E_USER_WARNING);
+		return $this->setEntity($tagValue, $setScope);
 	}
 }
 ?>

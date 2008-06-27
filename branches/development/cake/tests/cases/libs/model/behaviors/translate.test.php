@@ -38,21 +38,21 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 class TranslateTestModel extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TranslateTestModel'
  * @access public
  */
 	var $name = 'TranslateTestModel';
 /**
  * useTable property
- * 
+ *
  * @var string 'i18n'
  * @access public
  */
 	var $useTable = 'i18n';
 /**
  * displayField property
- * 
+ *
  * @var string 'field'
  * @access public
  */
@@ -67,28 +67,28 @@ class TranslateTestModel extends CakeTestModel {
 class TranslatedItem extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TranslatedItem'
  * @access public
  */
 	var $name = 'TranslatedItem';
 /**
  * cacheQueries property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $cacheQueries = false;
 /**
  * actsAs property
- * 
+ *
  * @var array
  * @access public
  */
 	var $actsAs = array('Translate' => array('content', 'title'));
 /**
  * translateModel property
- * 
+ *
  * @var string 'TranslateTestModel'
  * @access public
  */
@@ -103,42 +103,42 @@ class TranslatedItem extends CakeTestModel {
 class TranslatedItemWithTable extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TranslatedItemWithTable'
  * @access public
  */
 	var $name = 'TranslatedItemWithTable';
 /**
  * useTable property
- * 
+ *
  * @var string 'translated_items'
  * @access public
  */
 	var $useTable = 'translated_items';
 /**
  * cacheQueries property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $cacheQueries = false;
 /**
  * actsAs property
- * 
+ *
  * @var array
  * @access public
  */
 	var $actsAs = array('Translate' => array('content', 'title'));
 /**
  * translateModel property
- * 
+ *
  * @var string 'TranslateTestModel'
  * @access public
  */
 	var $translateModel = 'TranslateTestModel';
 /**
  * translateTable property
- * 
+ *
  * @var string 'another_i18n'
  * @access public
  */
@@ -153,21 +153,21 @@ class TranslatedItemWithTable extends CakeTestModel {
 class TranslateTest extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.translated_item', 'core.translate', 'core.translate_table');
 /**
  * Model property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $Model = null;
 /**
  * startCase method
- * 
+ *
  * @access public
  * @return void
  */
@@ -177,7 +177,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleFalsePlain method
- * 
+ *
  * @access public
  * @return void
  */
@@ -197,7 +197,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleFalseAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -222,7 +222,7 @@ class TranslateTest extends CakeTestCase {
 
 		$this->Model->hasMany['Title']['fields'] = $this->Model->hasMany['Content']['fields'] = array('content');
 		$this->Model->hasMany['Title']['conditions']['locale'] = $this->Model->hasMany['Content']['conditions']['locale'] = 'eng';
-
+		
 		$result = $this->Model->find('all', array('fields' => array('TranslatedItem.slug')));
 		$expected = array(
 				array('TranslatedItem' => array('id' => 1, 'slug' => 'first_translated'),
@@ -244,7 +244,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleSingle method
- * 
+ *
  * @access public
  * @return void
  */
@@ -284,7 +284,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleSingleWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -313,7 +313,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleSingleAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -366,7 +366,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testLocaleMultiple method
- * 
+ *
  * @access public
  * @return void
  */
@@ -413,7 +413,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testTranslatedFindList method
- * 
+ *
  * @access public
  * @return void
  */
@@ -425,7 +425,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testReadSelectedFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -455,7 +455,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testSaveCreate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -470,7 +470,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testSaveUpdate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -489,7 +489,7 @@ class TranslateTest extends CakeTestCase {
 	}
 /**
  * testMultipleCreate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -525,7 +525,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testMultipleUpdate method
+ *
+ * @access public
+ * @return void
+ */
 	function testMultipleUpdate() {
 		$this->Model->locale = 'eng';
 		$this->Model->validate['title'] = VALID_NOT_EMPTY;
@@ -559,7 +564,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testMixedCreateUpdateWithArrayLocale method
+ *
+ * @access public
+ * @return void
+ */
 	function testMixedCreateUpdateWithArrayLocale() {
 		$this->Model->locale = array('cze', 'deu');
 		$data = array('TranslatedItem' => array(
@@ -594,7 +604,40 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
+/**
+ * testValidation method
+ *
+ * @access public
+ * @return void
+ */
+	function testValidation() {
+		$this->Model->locale = 'eng';
+		$this->Model->validate['title'] = '/Only this title/';
+		$data = array('TranslatedItem' => array(
+			'id' => 1,
+			'title' => array('eng' => 'New Title #1', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),
+			'content' => array('eng' => 'New Content #1', 'deu' => 'Neue Inhalt #1', 'cze' => 'Novy Obsah #1')
+		));
+		$this->Model->create();
+		$this->assertFalse($this->Model->save($data));
+		$this->assertEqual($this->Model->validationErrors['title'], 'This field cannot be left blank');
 
+		$this->Model->locale = 'eng';
+		$this->Model->validate['title'] = '/Only this title/';
+		$data = array('TranslatedItem' => array(
+			'id' => 1,
+			'title' => array('eng' => 'Only this title', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),
+			'content' => array('eng' => 'New Content #1', 'deu' => 'Neue Inhalt #1', 'cze' => 'Novy Obsah #1')
+		));
+		$this->Model->create();
+		$this->assertTrue($this->Model->save($data));
+	}
+/**
+ * testAttachDetach method
+ *
+ * @access public
+ * @return void
+ */
 	function testAttachDetach() {
 		$Behavior = $this->Model->Behaviors->Translate;
 
@@ -640,7 +683,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testAnotherTranslateTable method
+ *
+ * @access public
+ * @return void
+ */
 	function testAnotherTranslateTable() {
 		$Model =& new TranslatedItemWithTable();
 		$Model->locale = 'eng';

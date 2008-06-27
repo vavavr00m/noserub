@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: session.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: session.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.1.7.3328
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -35,9 +35,10 @@
  * @subpackage	cake.cake.libs.view.helpers
  *
  */
-if(!class_exists('cakesession')) {
+if (!class_exists('cakesession')) {
 	uses('session');
 }
+
 class SessionHelper extends CakeSession {
 /**
  * List of helpers used by this helper
@@ -148,7 +149,7 @@ class SessionHelper extends CakeSession {
 					$out = $view->renderLayout($flash['message']);
 					list($view->layout, $view->viewVars, $view->pageTitle) = array($tmpLayout, $tmpVars, $tmpTitle);
 				}
-				e($out);
+				echo($out);
 				parent::del('Message.' . $key);
 				return true;
 			}

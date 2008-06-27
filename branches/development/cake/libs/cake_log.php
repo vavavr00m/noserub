@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_log.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: cake_log.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Logging.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -31,7 +31,7 @@
  *
  */
 	if (!class_exists('File')) {
-		 uses('file');
+		uses('file');
 	}
 /**
  * Set up error level constants to be used within the framework if they are not defined within the

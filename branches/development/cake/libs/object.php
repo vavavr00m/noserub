@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: object.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -97,7 +97,7 @@ class Object {
 		$params = am(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
 		$dispatcher = new Dispatcher;
 		return $dispatcher->dispatch($url, $params);
- 	}
+	}
 /**
  * Calls a method on this object with the given parameters. Provides an OO wrapper
  * for call_user_func_array, and improves performance by using straight method calls

@@ -1,6 +1,6 @@
 #!/usr/bin/php -q
 <?php
-/* SVN FILE: $Id: cake.php 7100 2008-06-03 05:11:04Z gwoo $ */
+/* SVN FILE: $Id: cake.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -154,6 +154,7 @@ class ShellDispatcher {
 			define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 			define('CAKEPHP_SHELL', true);
 		}
+		require_once(CORE_PATH . 'cake' . DS . 'basics.php');
 	}
 /**
  * Defines current working environment.
@@ -164,6 +165,13 @@ class ShellDispatcher {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
+
+		if (!$this->__bootstrap()) {
+			$this->stderr("\nCakePHP Console: ");
+			$this->stderr("\nUnable to load Cake core:");
+			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
+			exit();
+		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$this->stderr("\nCakePHP Console: ");
@@ -180,13 +188,6 @@ class ShellDispatcher {
 			if ($this->getInput('Continue anyway?', array('y', 'n'), 'y') == 'n') {
 				exit();
 			}
-		}
-
-		if (!$this->__bootstrap()) {
-			$this->stderr("\nCakePHP Console: ");
-			$this->stderr("\nUnable to load Cake core:");
-			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
-			exit();
 		}
 
 		$this->shiftArgs();
@@ -211,10 +212,9 @@ class ShellDispatcher {
 		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
 
 		$includes = array(
-			CORE_PATH . 'cake' . DS . 'basics.php',
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
-		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'file.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
@@ -234,6 +234,7 @@ class ShellDispatcher {
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+			Configure::buildPaths(array());
 		}
 
 		Configure::write('debug', 1);
@@ -448,19 +449,20 @@ class ShellDispatcher {
 		$params = str_replace('\\', '/', $params);
 
 		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if ($params['app'] === 'app') {
+			if (empty($this->params['app']) && $params['working'] != $params['root']) {
 				$params['root'] = dirname($params['working']);
 				$params['app'] = basename($params['working']);
 			} else {
 				$params['root'] = $params['working'];
 			}
- 		}
+		}
 
 		if($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);
 		}
+
 		$params['app'] = basename($params['app']);
 		$params['working'] = $params['root'] . '/' . $params['app'];
 

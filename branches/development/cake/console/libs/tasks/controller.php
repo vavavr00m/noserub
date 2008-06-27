@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: controller.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: controller.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * The ControllerTask handles creating and updating controller files.
  *
@@ -287,7 +287,6 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('{$currentModelName} saved.', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {
@@ -327,7 +326,6 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash(__('Invalid {$singularHumanName}', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
@@ -337,7 +335,6 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('The ".$singularHumanName." has been saved.', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {

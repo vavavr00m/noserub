@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: controller.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: controller.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Base controller class.
  *
@@ -298,6 +298,7 @@ class Controller extends Object {
  * @see Component::init()
  */
 	function _initComponents() {
+		trigger_error(__('Controller::_initComponents(); deprecated, use $this->Component->init($this);', true), E_USER_WARNING);
 		$this->Component->init($this);
 	}
 /**
@@ -375,6 +376,7 @@ class Controller extends Object {
 /**
  * Loads Model classes based on the the uses property
  * see Controller::loadModel(); for more info
+ * Loads Components and prepares them for initailization
  *
  * @return mixed true if models found and instance created, or cakeError if models not found.
  * @access public
@@ -384,22 +386,21 @@ class Controller extends Object {
 		$this->__mergeVars();
 		$this->Component->init($this);
 
-		if ($this->uses === null || ($this->uses === array())) {
-			return false;
-		}
-		if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
-			$id = false;
-		} else {
-			$id = $this->passedArgs['0'];
-		}
+		if ($this->uses !== null || ($this->uses !== array())) {
+			if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
+				$id = false;
+			} else {
+				$id = $this->passedArgs['0'];
+			}
 
-		if ($this->uses === false) {
-			$this->loadModel($this->modelClass, $id);
-		} elseif ($this->uses) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-			$this->modelClass = $uses[0];
-			foreach ($uses as $modelClass) {
-				$this->loadModel($modelClass);
+			if ($this->uses === false) {
+				$this->loadModel($this->modelClass, $id);
+			} elseif ($this->uses) {
+				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+				$this->modelClass = $uses[0];
+				foreach ($uses as $modelClass) {
+					$this->loadModel($modelClass);
+				}
 			}
 		}
 		return true;
@@ -632,7 +633,7 @@ class Controller extends Object {
  * @return bool true if authorized, false otherwise
  * @access public
  */
- 	function isAuthorized() {
+	function isAuthorized() {
 		trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), $this->name), E_USER_WARNING);
 		return false;
 	}
@@ -682,7 +683,7 @@ class Controller extends Object {
  * @param string $action Action name to render
  * @param string $layout Layout to use
  * @param string $file File to use for rendering
- * @return boolean Success
+ * @return string Full output string of view contents
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
@@ -818,62 +819,32 @@ class Controller extends Object {
 
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
-				$key = $model . '.' . $field;
-				if (is_string($op)) {
-					$cond[$key] = $this->__postConditionMatch($op, $value);
+				$key = $model.'.'.$field;
+				$fieldOp = $op;
+				if (is_array($op) && array_key_exists($key, $op)) {
+					$fieldOp = $op[$key];
+				} elseif (is_array($op) && array_key_exists($field, $op)) {
+					$fieldOp = $op[$field];
 				} elseif (is_array($op)) {
-					$opFields = array_keys($op);
-					if (in_array($key, $opFields) || in_array($field, $opFields)) {
-						if (in_array($key, $opFields)) {
-							$cond[$key] = $this->__postConditionMatch($op[$key], $value);
-						} else {
-							$cond[$key] = $this->__postConditionMatch($op[$field], $value);
-						}
-					} elseif (!$exclusive) {
-						$cond[$key] = $this->__postConditionMatch(null, $value);
-					}
+					$fieldOp = false;
 				}
+				if ($exclusive && $fieldOp === false) {
+					continue;
+				}
+				$fieldOp = strtoupper(trim($fieldOp));
+				if ($fieldOp == 'LIKE') {
+					$key = $key.' LIKE';
+					$value = '%'.$value.'%';
+				} elseif ($fieldOp && $fieldOp != '=') {
+					$key = $key.' '.$fieldOp;
+				}
+				$cond[$key] = $value;
 			}
 		}
 		if ($bool != null && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;
-	}
-/**
- * Builds a matching condition using the specified operator and value, used by postConditions
- *
- * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
- * @param string $value Value to check against
- * @access private
- */
-	function __postConditionMatch($op, $value) {
-		if (is_string($op)) {
-			$op = strtoupper(trim($op));
-		}
-
-		switch($op) {
-			case '':
-			case '=':
-			case null:
-				return $value;
-			break;
-			case 'LIKE':
-				return 'LIKE %' . $value . '%';
-			break;
-			default:
-				return $op . ' ' . $value;
-			break;
-		}
-	}
-/**
- * Deprecated, see Model::deconstruct();
- *
- * @see Model::deconstruct()
- * @deprecated as of 1.2.0.5970
- */
-	function cleanUpFields($modelClass = null) {
-		trigger_error(__('Controller::cleanUpFields() - Deprecated: this functionality has been moved to Model and is handled automatically', true), E_USER_WARNING);
 	}
 /**
  * Handles automatic pagination of model records.
@@ -930,6 +901,7 @@ class Controller extends Object {
 			return array();
 		}
 		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
+
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
 		} else {
@@ -947,13 +919,21 @@ class Controller extends Object {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
-			$key = key($options['order']);
-			if (strpos($key, '.') === false && $object->hasField($key)) {
-				$options['order'][$object->alias . '.' . $key] = $options['order'][$key];
-				unset($options['order'][$key]);
+			$alias = $object->alias ;
+			$key = $field = key($options['order']);
+
+			if (strpos($key, '.') !== false) {
+				list($alias, $field) = explode('.', $key);
+			}
+			$value = $options['order'][$key];
+			unset($options['order'][$key]);
+
+			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
+			} elseif ($object->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
-
 		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
 		$keys = array_keys($options);
 		$count = count($keys);
@@ -968,13 +948,13 @@ class Controller extends Object {
 				unset($options[$keys[$i]]);
 			}
 		}
-
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
+
 		if (!isset($defaults['conditions'])) {
 			$defaults['conditions'] = array();
 		}
-
 		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
+
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = array_merge($conditions, $scope);
 		} elseif (is_string($scope)) {
@@ -984,10 +964,12 @@ class Controller extends Object {
 			$recursive = $object->recursive;
 		}
 		$type = 'all';
+
 		if (isset($defaults[0])) {
 			$type = array_shift($defaults);
 		}
 		$extra = array_diff_key($defaults, compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);
 		} else {
@@ -1024,13 +1006,11 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-
 		$this->params['paging'][$object->alias] = $paging;
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
 		}
-
 		return $results;
 	}
 /**

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: model.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * The ModelTask handles creating and updating models files.
  *
@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Model', 'ConnectionManager');
 /**
  * Task class for creating and updating model files.
  *

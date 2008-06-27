@@ -29,27 +29,74 @@
 App::import('Core', array('Component', 'Controller'));
 
 if (!class_exists('AppController')) {
+/**
+ * AppController class
+ *
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
+ */
 	class AppController extends Controller {
+/**
+ * name property
+ *
+ * @var string 'App'
+ * @access public
+ */
 		var $name = 'App';
+/**
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
 		var $uses = array();
+/**
+ * helpers property
+ *
+ * @var array
+ * @access public
+ */
 		var $helpers = array();
+/**
+ * components property
+ *
+ * @var array
+ * @access public
+ */
 		var $components = array('Orange' => array('colour' => 'blood orange'));
-		
+
 	}
 } else {
-	define('AppControllerExists', true);
+	define('APP_CONTROLLER_EXISTS', true);
 }
-
 /**
  * ParamTestComponent
  *
  * @package cake.tests.cases.libs.controller
  */
 class ParamTestComponent extends Object {
+/**
+ * name property
+ *
+ * @var string 'ParamTest'
+ * @access public
+ */
 	var $name = 'ParamTest';
-	
+/**
+ * components property
+ *
+ * @var array
+ * @access public
+ */
 	var $components = array('Banana' => array('config' => 'value'));
-		
+/**
+ * initialize method
+ *
+ * @param mixed $controller
+ * @param mixed $settings
+ * @access public
+ * @return void
+ */
 	function initialize(&$controller, $settings) {
 		foreach ($settings as $key => $value) {
 			if (is_numeric($key)) {
@@ -59,26 +106,24 @@ class ParamTestComponent extends Object {
 			}
 		}
 	}
-	
 }
-
 /**
  * Short description for class.
  *
- * @package    cake.tests
- * @subpackage cake.tests.cases.libs.controller
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ComponentTestController extends AppController {
 /**
  * name property
- * 
+ *
  * @var string 'ComponentTest'
  * @access public
  */
 	var $name = 'ComponentTest';
 /**
  * uses property
- * 
+ *
  * @var array
  * @access public
  */
@@ -86,55 +131,54 @@ class ComponentTestController extends AppController {
 }
 /**
  * AppleComponent class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ *
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class AppleComponent extends Object {
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
 	var $components = array('Orange');
 /**
  * testName property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $testName = null;
 /**
  * startup method
- * 
- * @param mixed $controller 
+ *
+ * @param mixed $controller
  * @access public
  * @return void
  */
 	function startup(&$controller) {
 		$this->testName = $controller->name;
 	}
-
 }
 /**
  * OrangeComponent class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ *
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class OrangeComponent extends Object {
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
 	var $components = array('Banana');
 /**
  * initialize method
- * 
- * @param mixed $controller 
+ *
+ * @param mixed $controller
  * @access public
  * @return void
  */
@@ -145,30 +189,47 @@ class OrangeComponent extends Object {
 }
 /**
  * BananaComponent class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ *
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class BananaComponent extends Object {
 /**
  * testField property
- * 
+ *
  * @var string 'BananaField'
  * @access public
  */
 	var $testField = 'BananaField';
-
+}
+/**
+ * MutuallyReferencingOneComponent class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+class MutuallyReferencingOneComponent extends Object {
+	var $components = array('MutuallyReferencingTwo');
+}
+/**
+ * MutuallyReferencingTwoComponent class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+class MutuallyReferencingTwoComponent extends Object {
+	var $components = array('MutuallyReferencingOne');
 }
 /**
  * ComponentTest class
- * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ *
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ComponentTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -177,7 +238,7 @@ class ComponentTest extends CakeTestCase {
 	}
 /**
  * testLoadComponents method
- * 
+ *
  * @access public
  * @return void
  */
@@ -231,6 +292,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Apple');
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
@@ -245,24 +307,22 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Apple');
 		$Controller->constructClasses();
-
-		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
-		$this->assertEqual($Controller->Apple->testName, null);
-
+		$Controller->Component->initialize($Controller);
+		$Controller->beforeFilter();
 		$Controller->Component->startup($Controller);
 
+		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
 	}
 /**
  * test a component being used more than once.
- * 
+ *
  * @return void
  */
 	function testMultipleComponentInitialize() {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Orange', 'Banana');
 		$Controller->constructClasses();
-
 		$Controller->Component->initialize($Controller);
 
 		$this->assertEqual($Controller->Banana->testField, 'OrangeField');
@@ -273,16 +333,16 @@ class ComponentTest extends CakeTestCase {
  * tests merging of component parameters and merging / construction of components.
  *
  * @return void
- */	
+ */
 	function testComponentsWithParams() {
-		$this->skipIf(defined('AppControllerExists'), 'Components with Params test will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
-		
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'Components with Params test will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ParamTest' => array('test' => 'value', 'flag'), 'Apple');
-		
+
 		$Controller->constructClasses();
 		$Controller->Component->initialize($Controller);
-		
+
 		$this->assertTrue(is_a($Controller->ParamTest, 'ParamTestComponent'));
 		$this->assertTrue(is_a($Controller->ParamTest->Banana, 'BananaComponent'));
 		$this->assertTrue(is_a($Controller->Orange, 'OrangeComponent'));
@@ -296,9 +356,24 @@ class ComponentTest extends CakeTestCase {
 		$Controller->components = array('ParamTest' => array('test' => 'value'), 'Orange' => array('ripeness' => 'perfect'));
 		$Controller->constructClasses();
 		$Controller->Component->initialize($Controller);
-		
+
 		$this->assertEqual($Controller->Orange->settings, array('colour' => 'blood orange', 'ripeness' => 'perfect'));
 		$this->assertEqual($Controller->ParamTest->test, 'value');
+	}
+/**
+ * Test mutually referencing components.
+ *
+ *
+ */
+	function testMutuallyReferencingComponents() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('MutuallyReferencingOne');
+		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+
+		$this->assertTrue(is_a($Controller->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
+		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo, 'MutuallyReferencingTwoComponent'));
+		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
 	}
 }
 ?>

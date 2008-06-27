@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: view.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * The View Tasks handles creating and updating view files.
  *
@@ -370,20 +370,21 @@ class ViewTask extends Shell {
  * @return  array $associations
  * @access private
  */
-	 function __associations($model) {
-	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
-	 	$associations = array();
+	function __associations($model) {
+		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+		$associations = array();
 
-	 	foreach ($keys as $key => $type){
-	 		foreach ($model->{$type} as $assocKey => $assocData) {
-	 			$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
-	 			$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
-	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
-	 			$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema());
-	 		}
-	 	}
-	 	return $associations;
-	 }
+		foreach ($keys as $key => $type){
+			foreach ($model->{$type} as $assocKey => $assocData) {
+				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
+				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
+				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
+				$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema());
+			}
+		}
+		return $associations;
+	}
 }
+
 ?>

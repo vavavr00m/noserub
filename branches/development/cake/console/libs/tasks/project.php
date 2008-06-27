@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: project.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: project.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * The Project Task handles creating the base application
  *
@@ -194,7 +194,9 @@ class ProjectTask extends Shell {
 		$File =& new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.salt\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-			uses('Security');
+			if (!class_exists('Security')) {
+				uses('Security');
+			}
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \''.$string.'\');', $contents);
 			if ($File->write($result)) {

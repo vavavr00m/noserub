@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: acl.php 7072 2008-05-31 04:31:30Z gwoo $ */
+/* SVN FILE: $Id: acl.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Access Control List factory class.
  *
@@ -244,7 +244,9 @@ class DbAcl extends AclBase {
  */
 	function __construct() {
 		parent::__construct();
-		uses('model' . DS . 'db_acl');
+		if (!class_exists('AclNode')) {
+			uses('model' . DS . 'db_acl');
+		}
 		$this->Aro =& ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
 		$this->Aco =& ClassRegistry::init(array('class' => 'Aco', 'alias' => 'Aco'));
 	}

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: folder.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: folder.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Convenience class for handling directories.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -137,7 +137,7 @@ class Folder extends Object{
 			return $this->path = $path;
 		}
 		return false;
-	 }
+	}
 /**
  * Returns an array of the contents of the current directory, or false on failure.
  * The returned array holds two arrays: one of dirs and one of files.
@@ -302,7 +302,7 @@ class Folder extends Object{
 			return $path;
 		}
 		return $path . Folder::correctSlashFor($path);
-	 }
+	}
 /**
  * Returns $path with $element added, with correct slash in-between.
  *
@@ -326,7 +326,7 @@ class Folder extends Object{
 		$newdir = $dir . $path;
 
 		return $this->inPath($newdir);
-	 }
+	}
 /**
  * Returns true if the File is in given path.
  *
@@ -358,44 +358,44 @@ class Folder extends Object{
  * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */
- 	function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
- 		if (!$mode) {
- 			$mode = $this->mode;
- 		}
+	function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
+		if (!$mode) {
+			$mode = $this->mode;
+		}
 
- 		if ($recursive === false && is_dir($path)) {
- 				if (chmod($path, intval($mode, 8))) {
- 					$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
- 					return true;
- 				} else {
- 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
- 					return false;
- 				}
- 		}
+		if ($recursive === false && is_dir($path)) {
+			if (chmod($path, intval($mode, 8))) {
+				$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
+				return true;
+			} else {
+				$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
+				return false;
+			}
+		}
 
- 		if (is_dir($path)) {
- 			list($paths) = $this->tree($path);
+		if (is_dir($path)) {
+			list($paths) = $this->tree($path);
 
- 			foreach ($paths as $key => $fullpath) {
- 				$check = explode(DS, $fullpath);
- 				$count = count($check);
+			foreach ($paths as $key => $fullpath) {
+				$check = explode(DS, $fullpath);
+				$count = count($check);
 
- 				if (in_array($check[$count - 1], $exceptions)) {
- 					continue;
- 				}
+				if (in_array($check[$count - 1], $exceptions)) {
+					continue;
+				}
 
- 				if (chmod($fullpath, intval($mode, 8))) {
- 					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
- 				} else {
- 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
- 				}
- 			}
- 			if (empty($this->__errors)) {
- 				return true;
- 			}
- 		}
- 		return false;
- 	}
+				if (chmod($fullpath, intval($mode, 8))) {
+					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
+				} else {
+					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+				}
+			}
+			if (empty($this->__errors)) {
+				return true;
+			}
+		}
+		return false;
+	}
 /**
  * Returns an array of nested directories and files in each directory
  *
@@ -777,24 +777,6 @@ class Folder extends Object{
 			return true;
 		}
 		return false;
-	}
-/**
- *
- * @deprecated
- * @see chmod
- * @access public
- */
-	function chmodr($pathname, $mode = 0755) {
-		return $this->chmod($pathname, $mode);
-	}
-/**
- *
- * @deprecated
- * @see mkdir or create
- * @access public
- */
-	function mkdirr($pathname, $mode = 0755) {
-		return $this->create($pathname, $mode);
 	}
 }
 ?>

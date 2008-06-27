@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: socket.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: socket.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -138,13 +138,23 @@ class SocketTest extends UnitTestCase {
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
 	}
-
+/**
+ * testLastError method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastError() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->setLastError(4, 'some error here');
 		$this->assertEqual($this->Socket->lastError(), '4: some error here');
 	}
-
+/**
+ * testReset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReset() {
 		$config = array(
 			'persistent'	=> true,
@@ -157,7 +167,12 @@ class SocketTest extends UnitTestCase {
 		$anotherSocket->reset();
 		$this->assertEqual(array(), $anotherSocket->config);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Socket);
 	}

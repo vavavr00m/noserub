@@ -180,6 +180,28 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
+	
+/**
+ * testSetErrorReporting Level
+ *
+ * @return void
+ **/
+	function testSetErrorReportingLevel() {
+		$this->Configure->write('debug', 0);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, 0);
+		
+		$this->Configure->write('debug', 2);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, E_ALL);
+		
+		$result = ini_get('display_errors');
+		$this->assertEqual($result, 1);
+		
+		$this->Configure->write('debug', 0);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, 0);
+	}
 /**
  * testDelete method
  * 
@@ -406,7 +428,12 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import('File', 'AnotherNewName', false, array(LIBS), 'config.php');
 		$this->assertFalse($file);
 	}
-
+/**
+ * testLoadingWithSearchArray method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoadingWithSearchArray () {
 		$type = array('type' => 'File', 'name' => 'RandomName', 'parent' => false, 'file' => 'config.php', 'search' => array(TEST_CAKE_CORE_INCLUDE_PATH ));
 		$file = App::import($type);
@@ -416,7 +443,12 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
-
+/**
+ * testMultipleLoading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleLoading() {
 		$toLoad = array('I18n', 'Socket');
 

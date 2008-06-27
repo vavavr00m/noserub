@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: debugger.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: debugger.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Framework debugging and PHP error-handling class
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.4560
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -31,7 +31,7 @@
  *
  */
 	if (!class_exists('Object')) {
-		 uses('object');
+		uses('object');
 	}
 	if (!class_exists('CakeLog')) {
 		uses('cake_log');
@@ -115,7 +115,7 @@ class Debugger extends Object {
 /**
  *  neatly logs a given var
 */
-	function log($var, $level = 7) {
+	function log($var, $level = LOG_DEBUG) {
 		$_this = Debugger::getInstance();
 		$trace = $_this->trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
 		$source = null;

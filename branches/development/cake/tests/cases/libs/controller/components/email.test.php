@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: email.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Series of tests for email component.
  *
@@ -22,35 +22,35 @@
  * @subpackage		cake.cake.tests.cases.libs.controller.components
  * @since			CakePHP(tm) v 1.2.0.5347
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('controller' . DS . 'components' . DS .'email');
 /**
  * EmailTestController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller.components
  */
 class EmailTestController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'EmailTest'
  * @access public
  */
 	var $name = 'EmailTest';
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $uses = null;
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
@@ -58,21 +58,21 @@ class EmailTestController extends Controller {
 }
 /**
  * EmailTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller.components
  */
 class EmailTest extends CakeTestCase {
 /**
  * name property
- * 
+ *
  * @var string 'Email'
  * @access public
  */
 	var $name = 'Email';
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -88,7 +88,7 @@ class EmailTest extends CakeTestCase {
 	}
 /**
  * testBadSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -99,7 +99,7 @@ class EmailTest extends CakeTestCase {
 	}
 /**
  * testSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -151,7 +151,7 @@ TEMPDOC;
 	}
 /**
  * testAuthenticatedSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -186,7 +186,7 @@ TEMPDOC;
 	}
 /**
  * testSendFormats method
- * 
+ *
  * @access public
  * @return void
  */
@@ -238,7 +238,12 @@ TEMPDOC;
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 		}
 	}
-
+/**
+ * testSendDebug method
+ *
+ * @access public
+ * @return void
+ */
 	function testSendDebug() {
 		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
@@ -253,7 +258,12 @@ TEMPDOC;
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 		}
 	}
-
+/**
+ * testContentStripping method
+ *
+ * @access public
+ * @return void
+ */
 	function testContentStripping() {
 		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
 		$content .= "\n\n<p>My own html content</p>";

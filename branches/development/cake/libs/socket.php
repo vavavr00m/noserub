@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: socket.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: socket.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Cake Socket connection class.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -257,9 +257,9 @@ class CakeSocket extends Object {
  *
  * @access private
  */
- 	function __destruct() {
- 		$this->disconnect();
- 	}
+	function __destruct() {
+		$this->disconnect();
+	}
 /**
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *

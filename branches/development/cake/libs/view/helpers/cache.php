@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: cache.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -42,7 +42,7 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	 var $__replace = array();
+	var $__replace = array();
 /**
  * Array of string that are replace with there var replace above.
  * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
@@ -50,21 +50,21 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	 var $__match = array();
+	var $__match = array();
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
  * @var object
  * @access public
  */
-	 var $view;
+	var $view;
 /**
  * cache action time
  *
  * @var object
  * @access public
  */
-	 var $cacheAction;
+	var $cacheAction;
 /**
  * Main method used to cache a view
  *
@@ -75,7 +75,7 @@ class CacheHelper extends AppHelper {
  */
 	function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
-		$useCallbacks = true;
+		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
 			$check = str_replace('/', '_', $this->here);
 			$replace = str_replace('/', '_', $this->base);
@@ -134,7 +134,6 @@ class CacheHelper extends AppHelper {
 
 		if ($cacheTime != '' && $cacheTime > 0) {
 			$this->__parseFile($file, $out);
-
 			if ($cache === true) {
 				$cached = $this->__parseOutput($out);
 				$this->__writeFile($cached, $cacheTime, $useCallbacks);
@@ -222,7 +221,11 @@ class CacheHelper extends AppHelper {
 		} else {
 			$cacheTime = strtotime($timestamp, $now);
 		}
-		$cache = Inflector::slug($this->here);
+		$path = $this->here;
+		if ($this->here == '/') {
+			$path = 'home';
+		}
+		$cache = Inflector::slug($path);
 
 		if (empty($cache)) {
 			return;
@@ -255,13 +258,15 @@ class CacheHelper extends AppHelper {
 				$controller->themeWeb = $this->themeWeb = \'' . $this->themeWeb . '\';';
 
 		if ($useCallbacks == true) {
-			$file .= '$controller->constructClasses();
+			$file .= '
+				$controller->constructClasses();
 				$controller->Component->initialize($controller);
 				$controller->beforeFilter();
 				$controller->Component->startup($controller);';
 		}
 
 		$file .= '
+				Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));
 				$loadedHelpers = array();
 				$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 				foreach (array_keys($loadedHelpers) as $helper) {
@@ -270,9 +275,10 @@ class CacheHelper extends AppHelper {
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 				}
 		?>';
-        $content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
-        $file .= $content;
-        return cache('views' . DS . $cache, $file, $timestamp);
-	 }
+		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
+		$file .= $content;
+		return cache('views' . DS . $cache, $file, $timestamp);
+	}
 }
+
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: javascript.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: javascript.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs.view.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -577,7 +577,12 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertTrue(empty($result));
 	}
-
+/**
+ * testEscapeScript method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEscapeScript() {
 		$result = $this->Javascript->escapeScript('');
 		$expected = '';
@@ -599,7 +604,12 @@ class JavascriptTest extends UnitTestCase {
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testEscapeString method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEscapeString() {
 		$result = $this->Javascript->escapeString('');
 		$expected = '';
@@ -621,7 +631,12 @@ class JavascriptTest extends UnitTestCase {
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testAfterRender method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAfterRender() {
 		$this->Javascript->cacheEvents();
 		$result = $this->Javascript->event('myId', 'click', 'something();');

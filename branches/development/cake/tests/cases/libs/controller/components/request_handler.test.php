@@ -30,22 +30,22 @@ App::import('Core', array('Controller'));
 App::import('Component', array('RequestHandler'));
 /**
  * RequestHandlerTestController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller.components
  */
 class RequestHandlerTestController extends Controller {
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $uses = null;
 /**
  * construct method
- * 
- * @param array $params 
+ *
+ * @param array $params
  * @access private
  * @return void
  */
@@ -56,7 +56,38 @@ class RequestHandlerTestController extends Controller {
 		parent::__construct();
 	}
 }
+/**
+ * RequestHandlerTestDisabledController class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller.components
+ */
+class RequestHandlerTestDisabledController extends Controller {
+/**
+ * uses property
+ *
+ * @var mixed null
+ * @access public
+ */
+	var $uses = null;
+/**
+ * construct method
+ *
+ * @param array $params
+ * @access private
+ * @return void
+ */
+	function __construct($params = array()) {
+		foreach ($params as $key => $val) {
+			$this->{$key} = $val;
+		}
+		parent::__construct();
+	}
 
+	function beforeFilter() {
+		$this->RequestHandler->enabled = false;
+	}
+}
 /**
  * Short description for class.
  *
@@ -66,7 +97,7 @@ class RequestHandlerTestController extends Controller {
 class RequestHandlerComponentTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -75,7 +106,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * init method
- * 
+ *
  * @access protected
  * @return void
  */
@@ -86,7 +117,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testInitializeCallback method
- * 
+ *
  * @access public
  * @return void
  */
@@ -100,26 +131,29 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testDisabling method
- * 
+ *
  * @access public
  * @return void
  */
 	function testDisabling() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-		$this->assertEqual($this->Controller->params, array());
-		$this->RequestHandler->startup($this->Controller);
+		$this->_init();
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
+		$this->Controller->Component->startup($this->Controller);
 		$this->assertEqual($this->Controller->params, array('isAjax' => true));
 
-		$this->_init();
-		$this->assertEqual($this->Controller->params, array());
-		$this->RequestHandler->enabled = false;
-		$this->RequestHandler->startup($this->Controller);
+		$this->Controller = new RequestHandlerTestDisabledController(array('components' => array('RequestHandler')));
+		$this->Controller->constructClasses();
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
+		$this->Controller->Component->startup($this->Controller);
 		$this->assertEqual($this->Controller->params, array());
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 /**
  * testAutoResponseType method
- * 
+ *
  * @access public
  * @return void
  */
@@ -132,7 +166,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testStartupCallback method
- * 
+ *
  * @access public
  * @return void
  */
@@ -145,7 +179,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testNonAjaxRedirect method
- * 
+ *
  * @access public
  * @return void
  */
@@ -156,7 +190,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testRenderAs method
- * 
+ *
  * @access public
  * @return void
  */
@@ -167,7 +201,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testRequestClientTypes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -189,7 +223,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testRequestContentTypes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -232,7 +266,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testResponseContentType method
- * 
+ *
  * @access public
  * @return void
  */
@@ -243,7 +277,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testMobileDeviceDetection method
- * 
+ *
  * @access public
  * @return void
  */
@@ -254,7 +288,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testRequestProperties method
- * 
+ *
  * @access public
  * @return void
  */
@@ -273,7 +307,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 /**
  * testRequestMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -302,7 +336,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertFalse($this->RequestHandler->isPut());
 		$this->assertTrue($this->RequestHandler->isDelete());
 	}
-
+/**
+ * testClientContentPreference method
+ *
+ * @access public
+ * @return void
+ */
 	function testClientContentPreference() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 		$this->_init();
@@ -321,7 +360,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'html');
 	}
-
+/**
+ * testCustomContent method
+ *
+ * @access public
+ * @return void
+ */
 	function testCustomContent() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/x-mobile,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5';
 		$this->_init();
@@ -334,7 +378,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEqual($this->RequestHandler->prefers(), 'mobile');
 	}
-
+/**
+ * testClientProperties method
+ *
+ * @access public
+ * @return void
+ */
 	function testClientProperties() {
 		$_SERVER['HTTP_HOST'] = 'localhost:80';
 		$this->assertEqual($this->RequestHandler->getReferrer(), 'localhost');
@@ -356,7 +405,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
 		$this->assertEqual($this->RequestHandler->getClientIP(), '10.0.1.2');
 	}
-
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysqli.php 7093 2008-06-02 19:00:11Z joelmoss $ */
+/* SVN FILE: $Id: dbo_mysqli.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * MySQLi layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 1.1.4.2974
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: joelmoss $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -152,15 +152,14 @@ class DboMysqli extends DboSource {
  * @access protected
  */
 	function _executeProcedure($sql) {
-	    $answer = mysqli_multi_query($this->connection, $sql);
+		$answer = mysqli_multi_query($this->connection, $sql);
 
-	    $firstResult = mysqli_store_result($this->connection);
+		$firstResult = mysqli_store_result($this->connection);
 
-        if (mysqli_more_results($this->connection)) {
-            while($lastResult = mysqli_next_result($this->connection));
-        }
-
-        return $firstResult;
+		if (mysqli_more_results($this->connection)) {
+			while($lastResult = mysqli_next_result($this->connection));
+		}
+		return $firstResult;
 	}
 /**
  * Returns an array of sources (tables) in the database.
@@ -307,7 +306,7 @@ class DboMysqli extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_object($this->_result)) {
+		if ($this->hasResult()) {
 			return @mysqli_num_rows($this->_result);
 		}
 		return null;
@@ -454,5 +453,13 @@ class DboMysqli extends DboSource {
 	function getEncoding() {
 		return mysqli_client_encoding($this->connection);
 	}
+/**
+ * Checks if the result is valid
+ *
+ * @return boolean True if the result is valid, else false
+ */
+	function hasResult() {
+		return is_object($this->_result);
+	}	
 }
 ?>

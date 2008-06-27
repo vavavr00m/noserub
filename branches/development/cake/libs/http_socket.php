@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: http_socket.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * HTTP Socket connection class.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -95,8 +95,8 @@ class HttpSocket extends CakeSocket {
 		'raw' => array(
 			'status-line' => null,
 			'header' => null,
-			 'body' => null,
-			 'response' => null
+			'body' => null,
+			'response' => null
 		),
 		'status' => array(
 			'http-version' => null,

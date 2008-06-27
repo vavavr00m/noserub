@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: scaffold.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: scaffold.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Scaffold.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.controller
  * @since		Cake v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -137,13 +137,13 @@ class Scaffold extends Object {
  */
 	function __construct(&$controller, $params) {
 		$this->controller =& $controller;
-
+		
 		$count = count($this->__passedVars);
 		for ($j = 0; $j < $count; $j++) {
 			$var = $this->__passedVars[$j];
 			$this->{$var} = $controller->{$var};
 		}
-
+		
 		$this->redirect = array('action'=> 'index');
 
 		if (!in_array('Form', $this->controller->helpers)) {
@@ -199,7 +199,7 @@ class Scaffold extends Object {
  */
 	function _output() {
 		$this->controller->afterFilter();
-		e($this->controller->output);
+		echo($this->controller->output);
 	}
 /**
  * Renders a view action of scaffolded model.
@@ -220,7 +220,7 @@ class Scaffold extends Object {
 				return $this->controller->flash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
 																		'/' . Inflector::underscore($this->controller->viewPath));
 			}
-
+			$this->ScaffoldModel->recursive = 1;
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
 			$this->controller->render($this->action, $this->layout);
@@ -238,10 +238,10 @@ class Scaffold extends Object {
  */
 	function __scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
-	 		$this->ScaffoldModel->recursive = 0;
-	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
-	 		$this->controller->render($this->action, $this->layout);
-	 		$this->_output();
+			$this->ScaffoldModel->recursive = 0;
+			$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 	
+			$this->controller->render($this->action, $this->layout);
+			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -451,21 +451,22 @@ class Scaffold extends Object {
  * @return array Associations for model
  * @access private
  */
-	 function __associations() {
-	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
-	 	$associations = array();
+	function __associations() {
+		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+		$associations = array();
 
-	 	foreach ($keys as $key => $type){
-	 		foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
-	 			$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
-	 			$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;
-	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
-	 		}
-	 	}
-	 	return $associations;
-	 }
+		foreach ($keys as $key => $type){
+			foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
+				$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
+				$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;
+				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
+			}
+		}
+		return $associations;
+	}
 }
+
 /**
  * Scaffold View.
  *
@@ -502,7 +503,11 @@ class ScaffoldView extends ThemeView {
 
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
 		$names[] = 'scaffolds' . DS . $subDir . $name;
-
+		
+		$admin = Configure::read('Routing.admin');
+		if (!empty($admin) && strpos($name, $admin.'_') !== false) {
+			$names[] = 'scaffolds' . DS . $subDir . substr($name, strlen($admin) +1);
+		}
 		$paths = $this->_paths($this->plugin);
 
 		foreach ($paths as $path) {

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: javascript.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: javascript.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * Javascript Helper class file.
@@ -21,7 +21,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -261,7 +261,7 @@ class JavascriptHelper extends AppHelper {
 			}
 			if (strpos($url, '?') === false) {
 				if (strpos($url, '.js') === false) {
-			 		$url .= '.js';
+					$url .= '.js';
 				}
 				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 					$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));

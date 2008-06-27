@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 7089 2008-06-02 17:35:56Z gwoo $ */
+/* SVN FILE: $Id: file.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * File Storage engine for cache
  *
@@ -77,11 +77,24 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function init($settings = array()) {
-		parent::init(array_merge(array('engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true), $settings));
+		parent::init(array_merge(
+			array(
+				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false,
+				'serialize'=> true, 'isWindows' => false
+			),
+			$settings
+		));
 		if(!isset($this->__File)) {
-			App::import('File');
+			if (!class_exists('File')) {
+				uses('file');
+			}
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
+
+		if(substr(PHP_OS, 0, 3) == "WIN") {
+			$this->settings['isWindows'] = true;
+		}
+
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
 		if(empty($this->settings['path'])) {
 			return false;
@@ -118,16 +131,14 @@ class FileEngine extends CacheEngine {
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
-		$windows = false;
 		$lineBreak = "\n";
 
-		if (substr(PHP_OS, 0, 3) == "WIN") {
+		if ($this->settings['isWindows']) {
 			$lineBreak = "\r\n";
-			$windows = true;
 		}
 
 		if (!empty($this->settings['serialize'])) {
-			if ($windows) {
+			if ($this->settings['isWindows']) {
 				$data = str_replace('\\', '\\\\\\\\', serialize($data));
 			} else {
 				$data = serialize($data);
@@ -167,10 +178,9 @@ class FileEngine extends CacheEngine {
 		$data = $this->__File->read(true);
 
 		if ($data !== '' && !empty($this->settings['serialize'])) {
-			if (substr(PHP_OS, 0, 3) == "WIN") {
+			if ($this->settings['isWindows']) {
 				$data = str_replace('\\\\\\\\', '\\', $data);
 			}
-			$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
 			$data = unserialize($data);
 		}
 		$this->__File->close();

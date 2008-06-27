@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_config.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: db_config.php 7118 2008-06-04 20:49:29Z gwoo $ */
 /**
  * The DbConfig Task handles creating and updating the database.php
  *

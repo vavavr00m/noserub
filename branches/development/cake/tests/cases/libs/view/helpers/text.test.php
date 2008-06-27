@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: text.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: text.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs.view.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -125,15 +125,15 @@ class TextTest extends UnitTestCase {
  * @access public
  * @return void
  */
-    function testHighlightConsiderHtml() {
-        $text1 = '<p>strongbow isn&rsquo;t real cider</p>';
-        $text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
-        $text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+	function testHighlightConsiderHtml() {
+		$text1 = '<p>strongbow isn&rsquo;t real cider</p>';
+		$text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
+		$text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
 
-        $this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow isn&rsquo;t real cider</p>');
-        $this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
-        $this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
-    }
+		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow isn&rsquo;t real cider</p>');
+		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
+		$this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
+	}
 /**
  * testStripLinks method
  * 
@@ -254,7 +254,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testExcerpt method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExcerpt() {
 		$text = 'This is a phrase with test text to play with';
 
@@ -278,7 +283,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testExcerptCaseInsensitivity method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExcerptCaseInsensitivity() {
 		$text = 'This is a phrase with test text to play with';
 
@@ -290,7 +300,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->excerpt($text, 'NOT_FOUND', 9, '...');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testListGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testListGeneration() {
 		$result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
 		$this->assertEqual($result, 'Larry, Curly and Moe');
@@ -298,7 +313,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
 		$this->assertEqual($result, 'Dusty, Lucky y Ned');
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Text);
 	}

@@ -33,21 +33,21 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 /**
  * ThemePostsController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ThemePostsController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'ThemePosts'
  * @access public
  */
 	var $name = 'ThemePosts';
 /**
  * index method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,14 +60,14 @@ class ThemePostsController extends Controller {
 }
 /**
  * ThemeViewTestErrorHandler class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ThemeViewTestErrorHandler extends ErrorHandler {
 /**
  * stop method
- * 
+ *
  * @access public
  * @return void
  */
@@ -77,16 +77,16 @@ class ThemeViewTestErrorHandler extends ErrorHandler {
 }
 /**
  * TestThemeView class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class TestThemeView extends ThemeView {
 /**
  * renderElement method
- * 
- * @param mixed $name 
- * @param array $params 
+ *
+ * @param mixed $name
+ * @param array $params
  * @access public
  * @return void
  */
@@ -95,8 +95,8 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * getViewFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -105,8 +105,8 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * getLayoutFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -115,14 +115,14 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * cakeError method
- * 
- * @param mixed $method 
- * @param mixed $messages 
+ *
+ * @param mixed $method
+ * @param mixed $messages
  * @access public
  * @return void
  */
 	function cakeError($method, $messages) {
-		$error =& new ViewTestErrorHandler($method, $messages);
+		$error =& new ThemeViewTestErrorHandler($method, $messages);
 		return $error;
 	}
 }
@@ -136,7 +136,7 @@ class TestThemeView extends ThemeView {
 class ThemeViewTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -150,7 +150,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testPluginGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -175,7 +175,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -214,7 +214,12 @@ class ThemeViewTest extends UnitTestCase {
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMissingView method
+ *
+ * @access public
+ * @return void
+ */
 	function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
@@ -231,9 +236,14 @@ class ThemeViewTest extends UnitTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/PagesController::/", $expected);
-		$this->assertPattern("/views\/themed\/my_theme\/pages\/does_not_exist.ctp/", $expected);
+		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
-
+/**
+ * testMissingLayout method
+ *
+ * @access public
+ * @return void
+ */
 	function testMissingLayout() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
@@ -248,14 +258,18 @@ class ThemeViewTest extends UnitTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
-		$this->assertPattern("/views\/themed\/my_theme\/layouts\/whatever.ctp/", $expected);
+		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
-
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
-
 	}
 }
 ?>

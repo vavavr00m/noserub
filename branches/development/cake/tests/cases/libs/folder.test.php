@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: folder.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: folder.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,12 +22,11 @@
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Folder');
-App::import('Core', 'File');
+uses('file', 'folder');
 /**
  * Short description for class.
  *
@@ -37,14 +36,14 @@ App::import('Core', 'File');
 class FolderTest extends UnitTestCase {
 /**
  * Folder property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $Folder = null;
 /**
  * testBasic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -65,7 +64,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testInPath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -92,7 +91,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testOperations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -155,7 +154,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testRealPathForWebroot method
- * 
+ *
  * @access public
  * @return void
  */
@@ -165,7 +164,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testZeroAsDirectory method
- * 
+ *
  * @access public
  * @return void
  */
@@ -188,7 +187,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFolderRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -200,7 +199,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFolderTree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -240,22 +239,22 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testWindowsPath method
- * 
+ *
  * @access public
  * @return void
  */
-	function testWindowsPath(){
+	function testWindowsPath() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isWindowsPath('C:\cake'));
 		$this->assertTrue($Folder->isWindowsPath('c:\cake'));
 	}
 /**
  * testIsAbsolute method
- * 
+ *
  * @access public
  * @return void
  */
-	function testIsAbsolute(){
+	function testIsAbsolute() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isAbsolute('C:\cake'));
 		$this->assertTrue($Folder->isAbsolute('/usr/local'));
@@ -263,11 +262,11 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testIsSlashTerm method
- * 
+ *
  * @access public
  * @return void
  */
-	function testIsSlashTerm(){
+	function testIsSlashTerm() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isSlashTerm('C:\cake\\'));
 		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));
@@ -275,7 +274,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testStatic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -285,7 +284,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testNormalizePath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -304,7 +303,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * correctSlashFor method
- * 
+ *
  * @access public
  * @return void
  */
@@ -323,7 +322,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testInCakePath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -347,7 +346,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -370,6 +369,8 @@ class FolderTest extends UnitTestCase {
 		$expected = array('paths.php');
 		$this->assertIdentical($result, $expected);
 
+		$folder->cd(TMP);
+		$file = new File($folder->pwd().DS.'paths.php', true);
 		$folder->mkdir($folder->pwd().DS.'testme');
 		$folder->cd('testme');
 		$result = $folder->find('paths\.php');
@@ -380,9 +381,17 @@ class FolderTest extends UnitTestCase {
 		$result = $folder->find('paths\.php');
 		$expected = array('paths.php');
 		$this->assertIdentical($result, $expected);
-		$folder->delete($folder->pwd().DS.'testme');
-	}
 
+		$folder->cd(TMP);
+		$folder->delete($folder->pwd().DS.'testme');
+		$file->delete();
+	}
+/**
+ * testFindRecursive method
+ *
+ * @access public
+ * @return void
+ */
 	function testFindRecursive() {
 		$folder =& new Folder();
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
@@ -393,37 +402,53 @@ class FolderTest extends UnitTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 
-		$folder->cd('config');
+		$folder->cd(TMP);
 		$folder->mkdir($folder->pwd().DS.'testme');
 		$folder->cd('testme');
+		$file =& new File($folder->pwd().DS.'paths.php');
+		$file->create();
+		$folder->cd(TMP.'sessions');
 		$result = $folder->findRecursive('paths\.php');
 		$expected = array();
 		$this->assertIdentical($result, $expected);
 
+		$folder->cd(TMP.'testme');
 		$file =& new File($folder->pwd().DS.'my.php');
 		$file->create();
 		$folder->cd($folder->pwd().'/../..');
 
 		$result = $folder->findRecursive('(paths|my)\.php');
 		$expected = array(
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php',
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'testme'.DS.'my.php'
+			TMP.'testme'.DS.'my.php',
+			TMP.'testme'.DS.'paths.php'
 		);
 		$this->assertIdentical($result, $expected);
 
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH.'config');
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().DS.'testme');
+		$file->delete();
 	}
-
+/**
+ * testConstructWithNonExistantPath method
+ *
+ * @access public
+ * @return void
+ */
 	function testConstructWithNonExistantPath() {
-		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
-		$this->assertTrue(is_dir(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant'));
-		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder =& new Folder(TMP.'config_non_existant', true);
+		$this->assertTrue(is_dir(TMP.'config_non_existant'));
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
-
+/**
+ * testDirSize method
+ *
+ * @access public
+ * @return void
+ */
 	function testDirSize() {
-		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
+		$folder =& new Folder(TMP.'config_non_existant', true);
 		$this->assertEqual($folder->dirSize(), 0);
 
 		$file =& new File($folder->pwd().DS.'my.php', true, 0777);
@@ -432,7 +457,7 @@ class FolderTest extends UnitTestCase {
 		$file->close();
 		$this->assertEqual($folder->dirSize(), 14);
 
-		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
 }

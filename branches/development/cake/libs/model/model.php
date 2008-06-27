@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.php 7079 2008-05-31 22:01:47Z mariano.iglesias $ */
+/* SVN FILE: $Id: model.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Object-relational mapper.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model
  * @since			CakePHP(tm) v 0.10.0.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: mariano.iglesias $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -303,7 +303,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true);
+	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true);
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -331,7 +331,6 @@ class Model extends Overloadable {
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
-
 		ClassRegistry::addObject($this->alias, $this);
 
 		$this->id = $id;
@@ -535,35 +534,38 @@ class Model extends Overloadable {
 				}
 			}
 
-			foreach ($this->{$type} as $assoc => $value) {
-				$plugin = null;
-				if (is_numeric($assoc)) {
-					unset ($this->{$type}[$assoc]);
-					$assoc = $value;
-					$value = array();
-					$this->{$type}[$assoc] = $value;
+			if (!empty($this->{$type})) {
+				foreach ($this->{$type} as $assoc => $value) {
+					$plugin = null;
 
-					if (strpos($assoc, '.') !== false) {
-						$value = $this->{$type}[$assoc];
-						unset($this->{$type}[$assoc]);
-						list($plugin, $assoc) = explode('.', $assoc);
+					if (is_numeric($assoc)) {
+						unset ($this->{$type}[$assoc]);
+						$assoc = $value;
+						$value = array();
 						$this->{$type}[$assoc] = $value;
-						$plugin = $plugin . '.';
-					}
-				}
-				$className =  $assoc;
 
-				if (isset($value['className']) && !empty($value['className'])) {
-					$className = $value['className'];
-					if (strpos($className, '.') !== false) {
-						list($plugin, $className) = explode('.', $className);
-						$plugin = $plugin . '.';
-						$this->{$type}[$assoc]['className'] = $className;
+						if (strpos($assoc, '.') !== false) {
+							$value = $this->{$type}[$assoc];
+							unset($this->{$type}[$assoc]);
+							list($plugin, $assoc) = explode('.', $assoc);
+							$this->{$type}[$assoc] = $value;
+							$plugin = $plugin . '.';
+						}
 					}
+					$className =  $assoc;
+
+					if (isset($value['className']) && !empty($value['className'])) {
+						$className = $value['className'];
+						if (strpos($className, '.') !== false) {
+							list($plugin, $className) = explode('.', $className);
+							$plugin = $plugin . '.';
+							$this->{$type}[$assoc]['className'] = $className;
+						}
+					}
+					$this->__constructLinkedModel($assoc, $plugin . $className);
 				}
-				$this->__constructLinkedModel($assoc, $plugin . $className);
+				$this->__generateAssociation($type);
 			}
-			$this->__generateAssociation($type);
 		}
 	}
 /**
@@ -583,15 +585,17 @@ class Model extends Overloadable {
 		if(empty($className)) {
 			$className = $assoc;
 		}
-		$model = array('class' => $className, 'alias' => $assoc);
 
-		if (PHP5) {
-			$this->{$assoc} = ClassRegistry::init($model);
-		} else {
-			$this->{$assoc} =& ClassRegistry::init($model);
-		}
-		if ($assoc) {
-			$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		if (!isset($this->{$assoc})) {
+			$model = array('class' => $className, 'alias' => $assoc);
+			if (PHP5) {
+				$this->{$assoc} = ClassRegistry::init($model);
+			} else {
+				$this->{$assoc} =& ClassRegistry::init($model);
+			}
+			if ($assoc) {
+				$this->tableToModel[$this->{$assoc}->table] = $assoc;
+			}
 		}
 	}
 /**
@@ -725,10 +729,12 @@ class Model extends Overloadable {
 		}
 
 		if (is_array($one)) {
-			if (Set::countDim($one) == 1) {
-				$data = array($this->alias => $one);
-			} else {
-				$data = $one;
+			$data = $one;
+			if (empty($one[$this->alias])) {
+				$keys = array_keys($one);
+				if (in_array($keys[0], array_keys($this->_schema))) {
+					$data = array($this->alias => $one);
+				}
 			}
 		} else {
 			$data = array($this->alias => array($one => $two));
@@ -830,22 +836,6 @@ class Model extends Overloadable {
 			}
 		}
 		return $this->_schema;
-	}
-/**
- * @deprecated
- * @see Model::schema()
- */
-	function loadInfo($clear = false) {
-		trigger_error(__('(Model::loadInfo) Deprecated - See Model::schema()', true), E_USER_WARNING);
-		$info = $this->schema($clear);
-		if (is_array($info)) {
-			$fields = array();
-			foreach($info as $field => $value) {
-				$fields[] = array_merge(array('name'=> $field), $value);
-			}
-			unset($info);
-			return new Set($fields);
-		}
 	}
 /**
  * Returns an associative array of field names and column types.
@@ -1018,18 +1008,24 @@ class Model extends Overloadable {
  *
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
- * @param boolean $validate Whether or not this model should validate before saving (defaults to false)
- * @return boolean True on success save
+ * @param array $options See $options param in Model::save(). Does not respect 'fieldList' key if passed
+ * @return boolean See Model::save()
  * @access public
  * @see Model::save()
  */
 	function saveField($name, $value, $validate = false) {
 		$id = $this->id;
 		$this->create(false);
-		return $this->save(array($this->alias => array(
-			$this->primaryKey => $id,
-			$name => $value,
-		)), $validate, array($name));
+
+		if (is_array($validate)) {
+			$options = array_merge(array('validate' => false, 'fieldList' => array($name)), $options);
+		} else {
+			$options = array('validate' => $validate, 'fieldList' => array($name));
+		}
+
+		return $this->save(
+			array($this->alias => array($this->primaryKey => $id, $name => $value)), $options
+		);
 	}
 /**
  * Saves model data to the database. By default, validation occurs before save.
@@ -1068,10 +1064,11 @@ class Model extends Overloadable {
 				unset($this->data[$this->alias][$field]);
 			}
 		}
-		$exists = $this->exists();
+
+		$this->exists();
 		$dateFields = array('modified', 'updated');
 
-		if (!$exists) {
+		if (!$this->__exists) {
 			$dateFields[] = 'created';
 		}
 		if (isset($this->data[$this->alias])) {
@@ -1097,7 +1094,7 @@ class Model extends Overloadable {
 			}
 		}
 
-		if ($options['callbacks'] === true || $options['callbacks'] == 'before') {
+		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
 			if (!$this->Behaviors->trigger($this, 'beforeSave', array($options), array('break' => true, 'breakOn' => false)) || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
 				return false;
@@ -1133,7 +1130,7 @@ class Model extends Overloadable {
 		}
 		$count = count($fields);
 
-		if (!$exists && $count > 0) {
+		if (!$this->__exists && $count > 0) {
 			$this->id = false;
 		}
 		$success = true;
@@ -1176,7 +1173,7 @@ class Model extends Overloadable {
 			if (!empty($this->data)) {
 				$success = $this->data;
 			}
-			if ($options['callbacks'] === true || $options['callbacks'] == 'after') {
+			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$this->Behaviors->trigger($this, 'afterSave', array($created, $options));
 				$this->afterSave($created);
 			}
@@ -1337,7 +1334,7 @@ class Model extends Overloadable {
 
 				switch (true) {
 					case ($options['validate'] === 'only'):
-						return $validates;
+						return ($options['atomic'] ? $validates : $return);
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
@@ -1382,7 +1379,7 @@ class Model extends Overloadable {
 				$validates = false;
 			}
 			if (!$options['atomic']) {
-				$return[$this->alias][] = $validates;
+				$return[$this->alias] = $validates;
 			}
 			$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
 
@@ -1428,21 +1425,21 @@ class Model extends Overloadable {
 									$return[$association][] = $val;
 								}
 							} else {
-							    $return[$association] = $_return;
+								$return[$association] = $_return;
 							}
 						break;
 					}
 				}
 			}
-
 			$this->validationErrors = $validationErrors;
+
 			if (isset($validationErrors[$this->alias])) {
 				$this->validationErrors = $validationErrors[$this->alias];
 			}
 
 			switch (true) {
 				case ($options['validate'] === 'only'):
-					return $validates;
+					return ($options['atomic'] ? $validates : $return);
 				break;
 				case ($options['validate'] === 'first'):
 					$options['validate'] = true;
@@ -1570,13 +1567,16 @@ class Model extends Overloadable {
 			if ($data['dependent'] === true && $cascade === true) {
 
 				$model =& $this->{$assoc};
-				$field = $model->escapeField($data['foreignKey']);
+				$conditions = array($model->escapeField($data['foreignKey']) => $id);
+				if ($data['conditions']) {
+					$conditions = am($data['conditions'], $conditions);
+				}
 				$model->recursive = -1;
 
 				if (isset($data['exclusive']) && $data['exclusive']) {
-					$model->deleteAll(array($field => $id));
+					$model->deleteAll($conditions);
 				} else {
-					$records = $model->find('all', array('conditions' => array($field => $id), 'fields' => $model->primaryKey));
+					$records = $model->find('all', array('conditions' => $conditions, 'fields' => $model->primaryKey));
 
 					if (!empty($records)) {
 						foreach ($records as $record) {
@@ -1680,15 +1680,23 @@ class Model extends Overloadable {
  * @access public
  */
 	function exists($reset = false) {
+		if (is_array($reset)) {
+			extract($reset, EXTR_OVERWRITE);
+		}
+
 		if ($this->getID() === false || $this->useTable === false) {
 			return false;
 		}
 		if ($this->__exists !== null && $reset !== true) {
 			return $this->__exists;
 		}
-		return $this->__exists = ($this->find('count', array(
-			'conditions' => array($this->alias . '.' . $this->primaryKey => $this->getID()), 'recursive' => -1
-		)) > 0);
+		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
+		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
+
+		if (is_array($reset)) {
+			$query = array_merge($query, $reset);
+		}
+		return $this->__exists = ($this->find('count', $query) > 0);
 	}
 /**
  * Returns true if a record that meets given conditions exists
@@ -1745,10 +1753,10 @@ class Model extends Overloadable {
 
 		$query = array_merge(
 			array(
-				'conditions' => null, 'fields' => null, 'joins' => array(),
-				'limit' => null, 'offset' => null, 'order' => null, 'page' => null, 'group' => null
+				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
+				'offset' => null, 'order' => null, 'page' => null, 'group' => null, 'callbacks' => true
 			),
-			$query
+			(array)$query
 		);
 
 		if ($type != 'all') {
@@ -1768,18 +1776,20 @@ class Model extends Overloadable {
 		}
 		$query['order'] = array($query['order']);
 
-		$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
-		$query = ife(is_array($return), $return, $query);
+		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
+			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
+			$query = ife(is_array($return), $return, $query);
 
-		if ($return === false) {
-			return null;
-		}
+			if ($return === false) {
+				return null;
+			}
 
-		$return = $this->beforeFind($query);
-		$query = ife(is_array($return), $return, $query);
+			$return = $this->beforeFind($query);
+			$query = ife(is_array($return), $return, $query);
 
-		if ($return === false) {
-			return null;
+			if ($return === false) {
+				return null;
+			}
 		}
 
 		$results = $db->read($this, $query);
@@ -1787,7 +1797,10 @@ class Model extends Overloadable {
 		$this->findQueryType = null;
 
 		if ($type === 'all') {
-			return $this->__filterResults($results);
+			if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
+				return $this->__filterResults($results);
+			}
+			return $results;
 		} else {
 			if ($this->__findMethods[$type] === true) {
 				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
@@ -1862,12 +1875,29 @@ class Model extends Overloadable {
 				if (!is_array($query['fields'])) {
 					$query['fields'] = String::tokenize($query['fields']);
 				}
+
 				if (count($query['fields']) == 1) {
+					if (strpos($query['fields'][0], '.') === false) {
+						$query['fields'][0] = $this->alias . '.' . $query['fields'][0];
+					}
+
 					$list = array("{n}.{$this->alias}.{$this->primaryKey}", '{n}.' . $query['fields'][0], null);
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
 				} elseif (count($query['fields']) == 3) {
+					for ($i = 0; $i < 3; $i++) {
+						if (strpos($query['fields'][$i], '.') === false) {
+							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
+						}
+					}
+
 					$list = array('{n}.' . $query['fields'][0], '{n}.' . $query['fields'][1], '{n}.' . $query['fields'][2]);
 				} else {
+					for ($i = 0; $i < 2; $i++) {
+						if (strpos($query['fields'][$i], '.') === false) {
+							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
+						}
+					}
+
 					$list = array('{n}.' . $query['fields'][0], '{n}.' . $query['fields'][1], null);
 				}
 			}
@@ -1889,12 +1919,96 @@ class Model extends Overloadable {
 		}
 	}
 /**
- * @deprecated
- * @see Model::find('all')
+ * findNeighbors method
+ *
+ * The before logic will find the previous field value, the after logic will then find the 'wrapping'
+ * rows and return them
+ *
+ * @param string $state Either "before" or "after"
+ * @param mixed $query
+ * @param array $results
+ * @return void
+ * @access protected
  */
-	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
-		//trigger_error(__('(Model::findAll) Deprecated, use Model::find("all")', true), E_USER_WARNING);
-		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+	function _findNeighbors($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query = array_merge(array('recursive' => 0), $query);
+			extract($query);
+			$conditions = (array)$conditions;
+			if (isset($field) && isset($value)) {
+				if (strpos($field, '.') === false) {
+					$field = $this->alias . '.' . $field;
+				}
+			} else {
+				$field = $this->alias . '.' . $this->primaryKey;
+				$value = $this->id;
+			}
+			$query['conditions'] = 	array_merge($conditions, array($field . ' <' => $value));
+			$query['order'] = $field . ' DESC';
+			$query['limit'] = 1;
+			$query['field'] = $field;
+			$query['value'] = $value;
+			return $query;
+		} elseif ($state == 'after') {
+			extract($query);
+			unset($query['conditions'][$field . ' <']);
+			$return = array();
+			if (isset($results[0])) {
+				$prevVal = Set::extract('/' . str_replace('.', '/', $field), $results[0]);
+				$query['conditions'][$field . ' >='] = $prevVal[0];
+				$query['conditions'][$field . ' !='] = $value;
+				$query['limit'] = 2;
+			} else {
+				$return['prev'] = null;
+				$query['conditions'][$field . ' >'] = $value;
+				$query['limit'] = 1;
+			}
+			$query['order'] = $field . ' ASC';
+			$return2 = $this->find('all', $query);
+			if (!array_key_exists('prev', $return)) {
+				$return['prev'] = $return2[0];
+			}
+			if (count($return2) == 2) {
+				$return['next'] = $return2[1];
+			} elseif (count($return2) == 1 && !$return['prev']) {
+				$return['next'] = $return2[0];
+			} else {
+				$return['next'] = null;
+			}
+			return $return;
+		}
+	}
+/**
+ * findThreaded method
+ *
+ * @param mixed $state
+ * @param mixed $query
+ * @param array $results
+ * @return array Threaded results
+ * @access protected
+ */
+	function _findThreaded($state, $query, $results = array()) {
+		if ($state == 'before') {
+			return $query;
+		} elseif ($state == 'after') {
+			$return = $idMap = array();
+			foreach ($results as $result) {
+				$result['children'] = array();
+				$id = $result[$this->alias]['id'];
+				$parentId = $result[$this->alias]['parent_id'];
+				if (isset($idMap[$id]['children'])) {
+					$idMap[$id] = am($result, $idMap[$id]);
+				} else {
+					$idMap[$id] = am($result, array('children' => array()));
+				}
+				if ($parentId) {
+					$idMap[$parentId]['children'][] =& $idMap[$id];
+				} else {
+					$return[] =& $idMap[$id];
+				}
+			}
+			return $return;
+		}
 	}
 /**
  * Passes query results through model and behavior afterFilter() methods
@@ -1940,36 +2054,6 @@ class Model extends Overloadable {
 		return true;
 	}
 /**
- * @deprecated
- * @see Model::query
- */
-	function execute($data) {
-		trigger_error(__('(Model::execute) Deprecated, use Model::query', true), E_USER_WARNING);
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$data = $db->fetchAll($data, $this->cacheQueries);
-
-		foreach ($data as $key => $value) {
-			foreach ($this->tableToModel as $key1 => $value1) {
-				if (isset($data[$key][$key1])) {
-					$newData[$key][$value1] = $data[$key][$key1];
-				}
-			}
-		}
-
-		if (!empty($newData)) {
-			return $newData;
-		}
-		return $data;
-	}
-/**
- * @deprecated
- * @see Model::find('count')
- */
-	function findCount($conditions = null, $recursive = 0) {
-		//trigger_error(__('(Model::findCount) Deprecated, use Model::find("count")', true), E_USER_WARNING);
-		return $this->find('count', compact('conditions', 'recursive'));
-	}
-/**
  * False if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
@@ -2010,81 +2094,6 @@ class Model extends Overloadable {
 			$fields[$this->alias . '.' . $this->primaryKey . ' !='] =  $this->id;
 		}
 		return ($this->find('count', array('conditions' => $fields)) == 0);
-	}
-/**
- * Special findAll variation for tables joined to themselves.
- * The table needs the fields id and parent_id to work.
- *
- * @param array $conditions Conditions for the findAll() call
- * @param array $fields Fields for the findAll() call
- * @param string $sort SQL ORDER BY statement
- * @return array Threaded results
- * @access public
- * @todo Perhaps create a Component with this logic
- */
-	function findAllThreaded($conditions = null, $fields = null, $sort = null) {
-		return $this->__doThread(Model::findAll($conditions, $fields, $sort), null);
-	}
-/**
- * Private, recursive helper method for findAllThreaded.
- *
- * @param array $data Results of find operation
- * @param string $root NULL or id for root node of operation
- * @return array Threaded results
- * @access private
- * @see Model::findAllThreaded()
- */
-	function __doThread($data, $root) {
-		$out = array();
-		$sizeOf = sizeof($data);
-
-		for ($ii = 0; $ii < $sizeOf; $ii++) {
-			if (($data[$ii][$this->alias]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->alias]['parent_id'] == '0'))) {
-				$tmp = $data[$ii];
-
-				if (isset($data[$ii][$this->alias][$this->primaryKey])) {
-					$tmp['children'] = $this->__doThread($data, $data[$ii][$this->alias][$this->primaryKey]);
-				} else {
-					$tmp['children'] = null;
-				}
-
-				$out[] = $tmp;
-			}
-		}
-
-		return $out;
-	}
-/**
- * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
- * which is useful when creating paged lists.
- *
- * @param string $conditions SQL conditions for matching rows
- * @param string $field Field name (parameter for find())
- * @param integer $value Value from where to find neighbours
- * @return array Array with keys "prev" and "next" that holds the id's
- * @access public
- */
-	function findNeighbours($conditions = null, $field, $value) {
-		$conditions = (array)$conditions;
-
-		if (is_array($field)) {
-			$fields = $field;
-			$field = $fields[0];
-		} else {
-			$fields = $field;
-		}
-
-		$prev = $next = null;
-
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' <' => $value))), $fields, $field . ' DESC', 1, null, 0);
-		if (isset($result[0])) {
-			$prev = $result[0];
-		}
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' >' => $value))), $fields, $field . ' ASC', 1, null, 0);
-		if (isset($result[0])) {
-			$next = $result[0];
-		}
-		return compact('prev', 'next');
 	}
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.
@@ -2138,7 +2147,7 @@ class Model extends Overloadable {
 		}
 
 		$Validation =& Validation::getInstance();
-		$exists = $this->exists();
+		$this->exists();
 
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
@@ -2158,7 +2167,7 @@ class Model extends Overloadable {
 					$message = __('This field cannot be left blank', true);
 				}
 
-				if (empty($validator['on']) || ($validator['on'] == 'create' && !$exists) || ($validator['on'] == 'update' && $exists)) {
+				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->__exists) || ($validator['on'] == 'update' && $this->__exists)) {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 						if ($validator['last']) {
@@ -2250,41 +2259,6 @@ class Model extends Overloadable {
  */
 	function getDisplayField() {
 		return $this->displayField;
-	}
-/**
- * @deprecated
- */
-	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
-		trigger_error(__('(Model::generateList) Deprecated, use Model::find("list") or Model::find("all") and Set::combine()', true), E_USER_WARNING);
-
-		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
-			$fields = array($this->primaryKey, $this->displayField);
-		} else {
-			$fields = null;
-		}
-		$recursive = $this->recursive;
-
-		if ($groupPath == null && $recursive >= 1) {
-			$this->recursive = -1;
-		} elseif ($groupPath && $recursive >= 1) {
-			$this->recursive = 0;
-		}
-		$result = $this->findAll($conditions, $fields, $order, $limit);
-		$this->recursive = $recursive;
-
-		if (!$result) {
-			return false;
-		}
-
-		if ($keyPath == null) {
-			$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
-		}
-
-		if ($valuePath == null) {
-			$valuePath = "{n}.{$this->alias}.{$this->displayField}";
-		}
-
-		return Set::combine($result, $keyPath, $valuePath, $groupPath);
 	}
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.
@@ -2440,7 +2414,7 @@ class Model extends Overloadable {
 /**
  * Sets the DataSource to which this model is bound
  *
- * @param string $dataSource The name of the DataSource, as defined in Connections.php
+ * @param string $dataSource The name of the DataSource, as defined in app/config/database.php
  * @return boolean True on success
  * @access public
  */
@@ -2647,6 +2621,43 @@ class Model extends Overloadable {
  * @access private
  */
 	function __wakeup() {
+	}
+/**
+ * @deprecated
+ * @see Model::find('all')
+ */
+	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
+		//trigger_error(__('(Model::findAll) Deprecated, use Model::find("all")', true), E_USER_WARNING);
+		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('count')
+ */
+	function findCount($conditions = null, $recursive = 0) {
+		//trigger_error(__('(Model::findCount) Deprecated, use Model::find("count")', true), E_USER_WARNING);
+		return $this->find('count', compact('conditions', 'recursive'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('threaded')
+ */
+	function findAllThreaded($conditions = null, $fields = null, $order = null) {
+		//trigger_error(__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true), E_USER_WARNING);
+		return $this->find('threaded', compact('conditions', 'fields', 'order'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('neighbors')
+ */
+	function findNeighbours($conditions = null, $field, $value) {
+		//trigger_error(__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true), E_USER_WARNING);
+		$query = compact('conditions', 'field', 'value');
+		$query['fields'] = $field;
+		if (is_array($field)) {
+			$query['field'] = $field[0];
+		}
+		return $this->find('neighbors', $query);
 	}
 }
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {

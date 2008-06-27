@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: paginator.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: paginator.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Pagination Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.2.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -140,6 +140,9 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		if (isset($options['sort']) && !empty($options['sort'])) {
+			if (preg_match('/(?:\w+\.)?(\w+)/', $options['sort'], $result) && isset($result[1])) {
+				return $result[1];
+			}
 			return $options['sort'];
 		} elseif (isset($options['order']) && is_array($options['order'])) {
 			return preg_replace('/.*\./', '', key($options['order']));
@@ -219,16 +222,20 @@ class PaginatorHelper extends AppHelper {
 			$key = $title;
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
 		}
-
 		$dir = 'asc';
+		$model = null;
+
+		if (strpos($key, '.') !== false) {
+			list($model, $key) = explode('.', $key);
+			$model = $model . '.';
+		}
 		if ($this->sortKey($options['model']) == $key && $this->sortDir($options['model']) == 'asc') {
 			$dir = 'desc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
-
-		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
+		$url = array_merge(array('sort' => $model . $key, 'direction' => $dir), $url, array('order' => null));
 		return $this->link($title, $url, $options);
 	}
 /**
@@ -281,7 +288,7 @@ class PaginatorHelper extends AppHelper {
 		if ($asArray) {
 			return $url;
 		}
-		return Router::url($url);
+		return parent::url($url);
 	}
 /**
  * Protected method for generating prev/next links

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.php 7105 2008-06-03 17:26:30Z gwoo $ */
+/* SVN FILE: $Id: email.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -242,7 +242,7 @@ class EmailComponent extends Object{
  * @var string
  * @access protected
  */
-	var $_newLine = "\r\n";
+	var $_newLine = "\n";
 /**
  * Enter description here...
  *
@@ -331,7 +331,12 @@ class EmailComponent extends Object{
 			return $this->__debug();
 		}
 		$__method = '__'.$this->delivery;
-		return $this->$__method();
+		$sent = $this->$__method();
+
+		$this->__header = '';
+		$this->__message = '';
+
+		return $sent;
 	}
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
@@ -431,8 +436,8 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header = '';
 		if ($this->delivery == 'smtp') {
+			$this->_newLine = "\r\n";
 			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
 		}
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
@@ -497,7 +502,6 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __formatMessage($message) {
-		$this->__message = '';
 		if (!empty($this->attachments)) {
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
@@ -589,10 +593,10 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		if (low($this->charset) !== 'iso-8859-15') {
+		if (strtolower($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
-			$spacer = $end . "\n " . $start;
+			$spacer = $end . $this->_newLine . $start;
 
 			$length = 75 - strlen($start) - strlen($end);
 			$length = $length - ($length % 4);

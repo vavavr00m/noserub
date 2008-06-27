@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: translate.php 7075 2008-05-31 12:36:38Z nate $ */
+/* SVN FILE: $Id: translate.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.behaviors
  * @since			CakePHP(tm) v 1.2.0.4525
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -233,7 +233,14 @@ class TranslateBehavior extends ModelBehavior {
 
 			if (isset($model->data[$model->alias][$field])) {
 				$tempData[$field] = $model->data[$model->alias][$field];
-				unset($model->data[$model->alias][$field]);
+				if (is_array($model->data[$model->alias][$field])) {
+					if (is_string($locale) && !empty($model->data[$model->alias][$field][$locale])) {
+						$model->data[$model->alias][$field] = $model->data[$model->alias][$field][$locale];
+					} else {
+						$values = array_values($model->data[$model->alias][$field]);
+						$model->data[$model->alias][$field] = $values[0];
+					}
+				}
 			}
 		}
 		$this->runtime[$model->alias]['beforeSave'] = $tempData;

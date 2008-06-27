@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_adodb.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: dbo_adodb.php 7296 2008-06-27 09:09:03Z gwoo $ */
 
 /**
  * AdoDB layer for DBO.
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -47,24 +47,22 @@ class DboAdodb extends DboSource {
  *
  * @var string
  */
-	 var $description = "ADOdb DBO Driver";
-
+	var $description = "ADOdb DBO Driver";
 /**
  * ADOConnection object with which we connect.
  *
  * @var ADOConnection The connection object.
  * @access private
  */
-	 var $_adodb = null;
-
+	var $_adodb = null;
 /**
  * Array translating ADOdb column MetaTypes to cake-supported metatypes
  *
  * @var array
  * @access private
  */
-	 var $_adodbColumnTypes = array(
-	 	'string' => 'C',
+	var $_adodbColumnTypes = array(
+		'string' => 'C',
 		'text' => 'X',
 		'date' => 'D',
 		'timestamp' => 'T',
@@ -84,12 +82,12 @@ class DboAdodb extends DboSource {
 		'primary_key' => array('name' => 'R', 'limit' => 11),
 		'string' => array('name' => 'C', 'limit' => '255'),
 		'text' => array('name' => 'X'),
-		'integer' => array('name' => 'I', 'limit' => '11', 'formatter' => 'intval',),
+		'integer' => array('name' => 'I', 'limit' => '11', 'formatter' => 'intval'),
 		'float' => array('name' => 'N', 'formatter' => 'floatval'),
 		'timestamp' => array('name' => 'T', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'T',  'format' => 'H:i:s', 'formatter' => 'date'),
 		'datetime' => array('name' => 'T', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'date' => array('name' => 'D', 'format' => 'Y-m-d', 'formatter' => 'date'),		
+		'date' => array('name' => 'D', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'B'),
 		'boolean' => array('name' => 'L', 'limit' => '1')
 	);
@@ -98,7 +96,7 @@ class DboAdodb extends DboSource {
  *
  * @param array $config Configuration array for connecting
  */
-	 function connect() {
+	function connect() {
 		$config = $this->config;
 		$persistent = strrpos($config['connect'], '|p');
 
@@ -109,11 +107,11 @@ class DboAdodb extends DboSource {
 			$adodb_driver = substr($config['connect'], 0, $persistent);
 			$connect = 'PConnect';
 		}
-		
+
 		$this->_adodb = NewADOConnection($adodb_driver);
-		
+
 		$this->_adodbDataDict = NewDataDictionary($this->_adodb, $adodb_driver);
-		
+
 		$this->startQuote = $this->_adodb->nameQuote;
 		$this->endQuote = $this->_adodb->nameQuote;
 
@@ -126,9 +124,9 @@ class DboAdodb extends DboSource {
  *
  * @return boolean True if the database could be disconnected, else false
  */
-	 function disconnect() {
-		  return $this->_adodb->Close();
-	 }
+	function disconnect() {
+		return $this->_adodb->Close();
+	}
 /**
  * Executes given SQL statement.
  *
@@ -137,7 +135,7 @@ class DboAdodb extends DboSource {
  */
 	function _execute($sql) {
 		global $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;	
+		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		return $this->_adodb->execute($sql);
 	}
 /**
@@ -158,7 +156,7 @@ class DboAdodb extends DboSource {
 			}
 		}
 
-		if (!is_object($this->_result) || $this->_result->EOF) {
+		if (!$this->hasResult()) {
 			return null;
 		} else {
 			$resultRow = $this->_result->FetchRow();
@@ -219,13 +217,12 @@ class DboAdodb extends DboSource {
 	function listSources() {
 		$tables = $this->_adodb->MetaTables('TABLES');
 
-		  if (!sizeof($tables) > 0) {
-				trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
-				exit;
-		  }
-
-		  return $tables;
-	 }
+		if (!sizeof($tables) > 0) {
+			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
+			exit;
+		}
+		return $tables;
+	}
 /**
  * Returns an array of the fields in the table used by the given model.
  *
@@ -240,8 +237,8 @@ class DboAdodb extends DboSource {
 
 		$fields = false;
 		$cols = $this->_adodb->MetaColumns($this->fullTableName($model, false));
-		
-		foreach ($cols as $column) {	
+
+		foreach ($cols as $column) {
 			$fields[$column->name] = array(
 										'type' => $this->column($column->type),
 										'null' => !$column->not_null,
@@ -289,10 +286,9 @@ class DboAdodb extends DboSource {
  *
  * @Returns the last autonumbering ID inserted. Returns false if function not supported.
  */
-	 function lastInsertId() {
-		  return $this->_adodb->Insert_ID();
-	 }
-
+	function lastInsertId() {
+		return $this->_adodb->Insert_ID();
+	}
 /**
  * Returns a LIMIT statement in the correct format for the particular database.
  *
@@ -301,7 +297,7 @@ class DboAdodb extends DboSource {
  * @return string SQL limit/offset statement
  * @todo Please change output string to whatever select your database accepts. adodb doesn't allow us to get the correct limit string out of it.
  */
-	 function limit($limit, $offset = null) {
+	function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0) {
@@ -316,10 +312,9 @@ class DboAdodb extends DboSource {
 			return $rt;
 		}
 		return null;
-	 // please change to whatever select your database accepts
-	 // adodb doesn't allow us to get the correct limit string out of it
-	 }
-
+		// please change to whatever select your database accepts
+		// adodb doesn't allow us to get the correct limit string out of it
+	}
 /**
  * Converts database-layer column types to basic types
  *
@@ -328,9 +323,9 @@ class DboAdodb extends DboSource {
  */
 	function column($real) {
 		$metaTypes = array_flip($this->_adodbColumnTypes);
-		
+
 		$interpreted_type = $this->_adodbMetatyper->MetaType($real);
-		
+
 		if (!isset($metaTypes[$interpreted_type])) {
 			return 'text';
 		}
@@ -414,7 +409,7 @@ class DboAdodb extends DboSource {
 
 		while ($j < $num_fields) {
 			$columnName = $fields[$j];
-				
+
 			if (strpos($columnName, '__')) {
 				$parts = explode('__', $columnName);
 				$this->map[$index++] = array($parts[0], $parts[1]);
@@ -444,7 +439,7 @@ class DboAdodb extends DboSource {
 			return false;
 		}
 	}
-	
+
 /**
  * Generate a database-native column schema string
  *
@@ -460,23 +455,23 @@ class DboAdodb extends DboSource {
 			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
 			return null;
 		}
-		
+
 		//$metaTypes = array_flip($this->_adodbColumnTypes);
 		if (!isset($this->_adodbColumnTypes[$type])) {
 			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
 			return null;
 		}
-		$metaType = $this->_adodbColumnTypes[$type];		
+		$metaType = $this->_adodbColumnTypes[$type];
 		$concreteType = $this->_adodbDataDict->ActualType($metaType);
 		$real = $this->columns[$type];
-		
+
 		//UUIDs are broken so fix them.
 		if ($type == 'string' && isset($real['length']) && $real['length'] == 36) {
 			$concreteType = 'CHAR';
 		}
-		
+
 		$out = $this->name($name) . ' ' . $concreteType;
-	
+
 		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
 			if (isset($column['length'])) {
 				$length = $column['length'];
@@ -490,7 +485,7 @@ class DboAdodb extends DboSource {
 			$out .= '(' . $length . ')';
 		}
 		$_notNull = $_default = $_autoInc = $_constraint = $_unsigned = false;
-		
+
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			$_constraint = '';
 			$_autoInc = true;
@@ -513,6 +508,14 @@ class DboAdodb extends DboSource {
 		$out .=	$this->_adodbDataDict->_CreateSuffix($out, $metaType, $_notNull, $_default, $_autoInc, $_constraint, $_unsigned);
 		return $out;
 
-	}	
+	}
+/**
+ * Checks if the result is valid
+ *
+ * @return boolean True if the result is valid, else false
+ */
+	function hasResult() {
+		return is_object($this->_result) && !$this->_result->EOF;
+	}
 }
 ?>

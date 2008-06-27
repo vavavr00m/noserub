@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: html.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: html.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs.view.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -632,7 +632,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom')));
-
+		
 		$result = $this->Html->meta('non-existing');
 		$this->assertTags($result, array('<meta'));
 
@@ -694,7 +694,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$tr = array(
 			'td content 1',
 			array('td content 2', array("width" => "100px")),
-        	array('td content 3', "width=100px")
+			array('td content 3', "width=100px")
 		);
 		$result = $this->Html->tableCells($tr);
 		$expected = array(
@@ -729,49 +729,59 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
-	    $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
-	    $result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
+		$this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
+		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * testTag method
+ * 
+ * @access public
+ * @return void
+ */
+	function testTag() {
+		$result = $this->Html->tag('div');
+		$this->assertTags($result, '<div');
 
-    function testTag() {
-        $result = $this->Html->tag('div');
-        $this->assertTags($result, '<div');
-        
 		$result = $this->Html->tag('div', 'text');
 		$this->assertTags($result, '<div', 'text', '/div');
 
 		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name'), true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
-		
+
 		$result = $this->Html->tag('div', '<text>', 'class-name', true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
-    }
-
+	}
+/**
+ * testDiv method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDiv() {
 		$result = $this->Html->div('class-name');
 		$this->assertTags($result, array('div' => array('class' => 'class-name')));
@@ -783,9 +793,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
 
-
+/**
+ * testPara method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPara() {
-		$result = $this->Html->para('class-name');
+		$result = $this->Html->para('class-name', '');
 		$this->assertTags($result, array('p' => array('class' => 'class-name')));
 
 		$result = $this->Html->para('class-name', 'text');
@@ -794,7 +809,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->para('class-name', '<text>', array(), true);
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Html);
 	}

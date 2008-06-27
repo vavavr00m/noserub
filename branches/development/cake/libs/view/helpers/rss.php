@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: rss.php 7111 2008-06-03 22:40:35Z TommyO $ */
+/* SVN FILE: $Id: rss.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * RSS Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: TommyO $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -32,7 +32,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-uses('view' . DS . 'helpers' . DS . 'xml');
+App::import('Helper', 'Xml');
 
 class RssHelper extends XmlHelper {
 
@@ -111,6 +111,7 @@ class RssHelper extends XmlHelper {
 		if (!isset($attrib['version']) || empty($attrib['version'])) {
 			$attrib['version'] = $this->version;
 		}
+
 		return $this->elem('rss', $attrib, $content);
 	}
 /**
@@ -196,14 +197,14 @@ class RssHelper extends XmlHelper {
 						unset($attrib['url']);
 						$val = $val['url'];
 					}
-					$val = Router::url($val, true);
+					$val = $this->url($val, true);
 				break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
-						$attrib['url'] = Router::url($val['url'], true);
+						$attrib['url'] = $this->url($val['url'], true);
 						$val = $val['title'];
 					} elseif (is_array($val)) {
-						$attrib['url'] = Router::url($val[0], true);
+						$attrib['url'] = $this->url($val[0], true);
 						$val = $val[1];
 					}
 				break;
@@ -216,12 +217,17 @@ class RssHelper extends XmlHelper {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
 						}
 					}
-					$val['url'] = Router::url($val['url'], true);
+					$val['url'] = $this->url($val['url'], true);
 					$attrib = $val;
 					$val = null;
 				break;
 			}
-			if ($val != null) {
+			$escape = true;
+			if (is_array($val) && isset($val['convertEntities'])) {
+				$escape = $val['convertEntities'];
+				unset($val['convertEntities']);
+			}
+			if (!is_null($val) && $escape) {
 				$val = h($val);
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
@@ -239,8 +245,8 @@ class RssHelper extends XmlHelper {
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  */
- 	function time($time) {
+	function time($time) {
 		return $this->Time->toRSS($time);
- 	}
+	}
 }
 ?>

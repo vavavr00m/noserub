@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sybase.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: dbo_sybase.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Sybase layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 1.2.0.3097
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -287,7 +287,7 @@ class DboSybase extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_resource($this->_result)) {
+		if ($this->hasResult()) {
 			return @sybase_num_rows($this->_result);
 		}
 		return null;

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: router.test.php 7094 2008-06-02 19:22:55Z AD7six $ */
+/* SVN FILE: $Id: router.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: AD7six $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -41,7 +41,7 @@ if (!defined('FULL_BASE_URL')) {
 class RouterTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testReturnedInstanceReference method
- * 
+ *
  * @access public
  * @return void
  */
@@ -62,7 +62,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testFullBaseURL method
- * 
+ *
  * @access public
  * @return void
  */
@@ -72,7 +72,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRouteWriting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -132,7 +132,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRouteDefaultParams method
- * 
+ *
  * @access public
  * @return void
  */
@@ -142,7 +142,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRouterIdentity method
- * 
+ *
  * @access public
  * @return void
  */
@@ -152,7 +152,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testResourceRoutes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -208,7 +208,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testMultipleResourceRoute method
- * 
+ *
  * @access public
  * @return void
  */
@@ -225,7 +225,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlNormalization method
- * 
+ *
  * @access public
  * @return void
  */
@@ -249,12 +249,27 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlGeneration method
- * 
+ *
  * @access public
  * @return void
  */
 	function testUrlGeneration() {
 		extract(Router::getNamedExpressions());
+
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'subscribe',
+				'admin' => true, 'url' => array('url' => '')
+			),
+			array(
+				'base' => '/magazine', 'here' => '/magazine',
+				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
+			)
+		));
+		$result = Router::url();
+		$this->assertEqual('/magazine', $result);
+
+		Router::reload();
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$out = Router::url(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -405,10 +420,7 @@ class RouterTest extends UnitTestCase {
 
 		Router::reload();
 		Router::connect('/:language/pages',
-			array(
-				  'controller' => 'pages',
-				  'action' => 'index'
-			),
+			array('controller' => 'pages', 'action' => 'index'),
 			array('language' => '[a-z]{3}')
 		);
 
@@ -596,7 +608,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlGenerationWithPrefix method
- * 
+ *
  * @access public
  * @return void
  */
@@ -623,7 +635,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlGenerationWithExtensions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -647,7 +659,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testPluginUrlGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -668,7 +680,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -811,7 +823,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUuidRoutes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -827,7 +839,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRouteSymmetry method
- * 
+ *
  * @access public
  * @return void
  */
@@ -865,7 +877,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testAdminRouting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -930,7 +942,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testExtensionParsingSetting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -943,7 +955,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testExtensionParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -984,7 +996,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testQuerystringGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1000,7 +1012,7 @@ class RouterTest extends UnitTestCase {
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEqual($result, $expected);
 
-		// Test bug #4614
+// Test bug #4614
 		$restore = ini_get('arg_separator.output');
 		ini_set('arg_separator.output', '&amp;');
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
@@ -1009,7 +1021,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testConnectNamed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1017,10 +1029,24 @@ class RouterTest extends UnitTestCase {
 		$named = Router::connectNamed(false, array('default' => true));
 		$this->assertFalse($named['greedy']);
 		$this->assertEqual(array_keys($named['rules']), $named['default']);
+
+		Router::reload();
+		Router::connect('/foo/*', array('controller' => 'bar', 'action' => 'fubar'));
+		Router::connectNamed(array(), array('argSeparator' => '='));
+		$result = Router::parse('/foo/param1=value1/param2=value2');
+		$expected = array('pass' => array(), 'named' => array('param1' => 'value1', 'param2' => 'value2'), 'controller' => 'bar', 'action' => 'fubar', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connect('/controller/action/*', array('controller' => 'controller', 'action' => 'action'), array('named' => array('param1' => 'value[\d]')));
+		Router::connectNamed(array(), array('greedy' => false, 'argSeparator' => '='));
+		$result = Router::parse('/controller/action/param1=value1/param2=value2');
+		$expected = array('pass' => array('param2=value2'), 'named' => array('param1' => 'value1'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testNamedArgsUrlGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1073,7 +1099,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testNamedArgsUrlParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1139,7 +1165,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testUrlGenerationWithPrefixes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1168,7 +1194,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRemoveBase method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1192,7 +1218,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testParamsUrlParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1220,7 +1246,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testPagesUrlParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1279,7 +1305,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass'=>array('contact'), 'named' => array(), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testParsingWithPrefixes method
+ *
+ * @access public
+ * @return void
+ */
 	function testParsingWithPrefixes() {
 		$adminParams = array('prefix' => 'admin', 'admin' => true);
 		Router::connect('/admin/:controller', $adminParams);
@@ -1306,7 +1337,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('admin');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPassedArgsOrder method
+ *
+ * @access public
+ * @return void
+ */
 	function testPassedArgsOrder() {
 		Router::connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		Router::connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
@@ -1342,7 +1378,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('protected', 'admin');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testRegexRouteMatching method
+ *
+ * @access public
+ * @return void
+ */
 	function testRegexRouteMatching() {
 		Router::connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
 

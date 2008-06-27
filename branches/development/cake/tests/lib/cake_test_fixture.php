@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_fixture.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: cake_test_fixture.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.tests.libs
  * @since			CakePHP(tm) v 1.2.0.4667
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -55,7 +55,7 @@ class CakeTestFixture extends Object {
  */
 	function __construct(&$db) {
 		App::import('Model', 'Schema');
-		$this->Schema = new CakeSchema(array('name'=>'TestSuite', 'connection'=>'test_suite'));
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
 
 		$this->init();
 	}
@@ -79,6 +79,7 @@ class CakeTestFixture extends Object {
 
 			if (isset($import['model']) && (class_exists($import['model']) || App::import('Model', $import['model']))) {
 				$model =& new $import['model'];
+
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
@@ -102,7 +103,8 @@ class CakeTestFixture extends Object {
 					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,
-					'limit' => null
+					'limit' => null,
+					'group' => null
 				);
 
 				foreach ($query['fields'] as $index => $field) {
@@ -125,7 +127,7 @@ class CakeTestFixture extends Object {
 		}
 	}
 /**
- * Run before all tests execute, should return SQL statement to create table for this fixture.
+ * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
@@ -135,6 +137,7 @@ class CakeTestFixture extends Object {
 		if (!isset($this->fields) || empty($this->fields)) {
 			return false;
 		}
+
 		$this->Schema->_build(array($this->table => $this->fields));
 		return ($db->execute($db->createSchema($this->Schema)) !== false);
 	}
@@ -150,7 +153,8 @@ class CakeTestFixture extends Object {
 		return ($db->execute($db->dropSchema($this->Schema)) !== false);
 	}
 /**
- * Run before each tests is executed, should return a set of SQL statements to insert records for the table of this fixture.
+ * Run before each tests is executed, should return a set of SQL statements to insert records for the table 
+ * of this fixture could be executed successfully.
  *
  * @param object $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
@@ -179,7 +183,7 @@ class CakeTestFixture extends Object {
  * @access public
  */
 	function truncate(&$db) {
-		$db->truncate($this->table);
+		return $db->truncate($this->table);
 	}
 }
 ?>
