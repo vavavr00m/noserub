@@ -2,22 +2,21 @@
 /* SVN FILE: $Id:$ */
  
 class Service extends AppModel {
-    var $hasMany = array('Account');
-    var $belongsTo = array('ServiceType');
+    public $hasMany = array('Account');
+    public $belongsTo = array('ServiceType');
+    public $actsAs = array('Containable');
 
     /**
      * returns all accounts with is_contact=1
      *
      * @return array
      */
-    function getContactAccounts() {
-        $this->recursive = 0;
-        $this->expects('Service');
-        
+    public function getContactAccounts() {
+        $this->contain();
         return $this->findAllByIsContact(1);
     }
     
-    function detectService($url) {
+    public function detectService($url) {
     	$url = trim($url);
     	if($url == '') {
     		return false;
@@ -38,40 +37,15 @@ class Service extends AppModel {
     }
     
     /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function getSelect($type = 'all') {
-        $this->recursive = 0;
-        $this->expects = array('Service');
-        if($type == 'all') {
-            $data = $this->findAll();
-        } else {
-            $data = $this->findAll(array('type' => $type));
-        }
-        
-        $services = array();
-        foreach($data as $item) {
-            $services[$item['Service']['id']] = $item['Service']['name'];
-        }
-        
-        return $services;
-    }
-    
-    /**
      * Used by Identity::parseNoseRubPage()
      *
      * @param  
      * @return array with feed_url, service_id and service_type_id
      * @access 
      */
-    function getInfo($service_url, $username) {
+    public function getInfo($service_url, $username) {
         # get service
-        $this->recursive = 0;
-        $this->expects('Service');
+        $this->contain();
         $service = $this->findByUrl($service_url);
         
         $result = array();
@@ -92,9 +66,8 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getServiceTypeId($service_id) {
-        $this->recursive = 0;
-        $this->expects('Service');
+    public function getServiceTypeId($service_id) {
+        $this->contain();
         $service = $this->findById($service_id);
         return isset($service['Service']['service_type_id']) ? $service['Service']['service_type_id']: 0;
     }
@@ -106,7 +79,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getFeedUrl($service_id, $username) {
+    public function getFeedUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 		
     	if($service) {
@@ -127,7 +100,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
+    public function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
         if(!$feed_url || strpos($feed_url, '//friendfeed.com/') > 0) {
             return false;
         }
@@ -190,7 +163,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getAccountUrl($service_id, $username) {
+    public function getAccountUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 
     	if ($service) {
@@ -208,7 +181,7 @@ class Service extends AppModel {
      * @return array
      * @access 
      */
-    function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
+    public function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
         # needed for autodiscovery of feed
     	$feed = $this->createSimplePie($feed_url, true);
         @$feed->init();
@@ -248,9 +221,8 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getInfoFromService($username, $service_id, $account_username) {
-        $this->recursive = 0;
-        $this->expects('Service');
+    public function getInfoFromService($username, $service_id, $account_username) {
+        $this->contain();
         $service = $this->findById($service_id);
         $data = array();
         $data['service_id']      = $service_id;
@@ -282,7 +254,7 @@ class Service extends AppModel {
      * @return 
      * @access 
      */
-    function getContactsFromService($account_id) {
+    public function getContactsFromService($account_id) {
         $this->Account->recursive = 0;
         $this->Account->expects('Account');
         $account = $this->Account->findById($account_id);
@@ -363,8 +335,7 @@ class Service extends AppModel {
 }
 
 class ContactExtractor {
-
-	static function getContactsFromSinglePage($url, $pattern) {
+	public static function getContactsFromSinglePage($url, $pattern) {
 		$data = array();
         $content = @file_get_contents($url);
         if($content && preg_match_all($pattern, $content, $matches)) {
@@ -379,7 +350,7 @@ class ContactExtractor {
 	}
 	
 	// TODO better names for the parameters
-	static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
+	public static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
 		$data = array();
         $i = 2;
         $page_url = $url;
@@ -420,7 +391,7 @@ class ContactExtractor {
 abstract class AbstractService {
 	private $service_id;
 	
-	function __construct($service_id) {
+	public function __construct($service_id) {
 		$this->service_id = $service_id;
 	}
 
@@ -428,7 +399,7 @@ abstract class AbstractService {
 	 * Implementations of this function have to return boolean false if 
 	 * the service couldn't be detected, or a string with the username.
 	 */
-	abstract function detectService($url);
+	public abstract function detectService($url);
 	
 	protected function extractUsername($url, $patterns) {
 		foreach ($patterns as $pattern) {
@@ -445,23 +416,23 @@ abstract class AbstractService {
 		return false;
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return '';
 	}
 	
-	function getContacts($username) {
+	public function getContacts($username) {
 		return array();
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return false;
 	}
 	
-	final function getServiceId() {
+	public final function getServiceId() {
 		return $this->service_id; 
 	}
 }
