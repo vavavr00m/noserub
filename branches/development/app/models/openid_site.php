@@ -1,7 +1,8 @@
 <?php
 
 class OpenidSite extends AppModel {
-	var $belongsTo = array('Identity');
+	public $belongsTo = array('Identity');
+	public $actsAs = array('Containable');
 	
 	public function updateAllAllowedStates($openidSites, $identityId) {
 		$iterator = new FilterOpenidSites($openidSites);
