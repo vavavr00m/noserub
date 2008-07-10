@@ -2,12 +2,12 @@
 /* SVN FILE: $Id:$ */
  
 class Location extends AppModel {
-    var $belongsTo = array('Identity');                                                   
+    public $belongsTo = array('Identity');
+    public $actsAs = array('Containable');                                                   
 
     public function setTo($identity_id, $location_id) {
         # check, that this location belongs to that identity
-        $this->recursive = 0;
-        $this->expects('Location');
+        $this->contain();
         $location = $this->findById($location_id);
         if($location['Location']['identity_id'] != $identity_id) {
             return false;
@@ -22,8 +22,7 @@ class Location extends AppModel {
     }
     
     public function export($identity_id) {
-        $this->recursive = 0;
-        $this->expects('Location');
+        $this->contain();
         $data = $this->findAllByIdentityId($identity_id);
         $locations = array();
         foreach($data as $item) {
@@ -40,13 +39,12 @@ class Location extends AppModel {
     public function import($identity_id, $data) {
         foreach($data as $item) {
             # first check, if we already have a location by this name
-            $this->recursive = 0;
-            $this->expects('Location');
+            $this->contain();
             $conditions = array(
                 'Location.identity_id' => $identity_id,
                 'Location.name' => $item['name']
             );
-            if($this->findCount($conditions) == 0) {
+            if (!$this->hasAny($conditions)) {
                 $this->create();
                 $saveable = array('identity_id', 'name', 'address', 'latitude', 'longitude');
                 $item['identity_id'] = $identity_id;
