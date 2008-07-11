@@ -15,8 +15,7 @@ class LocationsController extends AppController {
             $this->redirect($url, null, true);
         }
         
-        $this->Location->recursive = 0;
-        $this->Location->expects('Location');
+        $this->Location->contain();
         $data = $this->Location->findAllByIdentityId($session_identity['id']);
         
         $this->set('data', $data);
@@ -92,14 +91,13 @@ class LocationsController extends AppController {
         }
         
         # get the location and check, if it is this user's location
-            $this->Location->recursive = 0;
-            $this->Location->expects('Location');
-            $location = $this->Location->find(array('id' => $location_id, 'identity_id' => $session_identity['id']));
-            if(!$location) {
-                $this->flashMessage('error', 'Location could not be edited.');
-                $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
-            	$this->redirect($url, null, true);
-            }
+        $this->Location->contain();
+        $location = $this->Location->find(array('id' => $location_id, 'identity_id' => $session_identity['id']));
+        if(!$location) {
+            $this->flashMessage('error', 'Location could not be edited.');
+            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+            $this->redirect($url, null, true);
+        }
             
         if($this->data) {
             if($this->data['Location']['name']) {
@@ -156,9 +154,7 @@ class LocationsController extends AppController {
         $this->ensureSecurityToken();
         
         # check, if the location_id belongs to the logged in user
-        $this->Location->recursive = 0;
-        $this->Location->expects('Location');
-        if(1 == $this->Location->findCount(array('id' => $location_id, 'identity_id' => $session_identity['id']))) {
+        if($this->Location->hasAny(array('id' => $location_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Location->delete($location_id);
             
@@ -175,8 +171,7 @@ class LocationsController extends AppController {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
         
-        $this->Location->recursive = 0;
-        $this->Location->expects('Location');
+        $this->Location->contain();
         $data = $this->Location->findAllByIdentityId($identity['Identity']['id'], array('id', 'name'));
         
         $this->Location->Identity->recursive = 0;
@@ -221,13 +216,11 @@ class LocationsController extends AppController {
             $this->set('msg', 'parameter wrong');
         } else {
             # test, wether we already have this location
-            $this->Location->recursive = 0;
-            $this->Location->expects('Location');
             $conditions = array(
                 'identity_id' => $identity['Identity']['id'],
                 'name'        => $name
             );
-            if($this->Location->findCount($conditions) > 0) {
+            if($this->Location->hasAny($conditions)) {
                 $this->set('code', -3);
                 $this->set('msg', 'duplicate dataset');
             } else {
