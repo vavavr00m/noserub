@@ -2,7 +2,8 @@
 /* SVN FILE: $Id:$ */
  
 class Feed extends AppModel {
-    var $belongsTo = array('Account');
+    public $belongsTo = array('Account');
+    public $actsAs = array('Containable');
     
     /**
      * Store $data for $account_id to feed cache
@@ -25,8 +26,7 @@ class Feed extends AppModel {
         }
         
         # check, if there already is a feed for this account in the feed
-        $this->recursive = 0;
-        $this->expects('Feed');
+        $this->contain();
         $feed = $this->findByAccountId($account_id);
         if($feed) {
             $this->id = $feed['Feed']['id'];
@@ -52,9 +52,8 @@ class Feed extends AppModel {
      * @return 
      * @access 
      */
-    function access($account_id, $num_items = 5, $items_max_age = '-14 days') {
-        $this->recursive = 0;
-        $this->expects('Feed');
+    public function access($account_id, $num_items = 5, $items_max_age = '-14 days') {
+        $this->contain();
         $feed = $this->findByAccountId($account_id);
         
         if(!$feed) {
@@ -95,8 +94,7 @@ class Feed extends AppModel {
      * @param int $new_service_id
      */
     public function updateServiceType($account_id, $new_service_id) {
-        $this->recursive = 0;
-        $this->expects('Feed');
+        $this->contain();
         $feed = $this->findByAccountId($account_id);
         $data = @unserialize($feed['Feed']['content']);
         if($data) {
