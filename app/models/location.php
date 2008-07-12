@@ -2,8 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Location extends AppModel {
-    public $belongsTo = array('Identity');
-    public $actsAs = array('Containable');                                                   
+    public $belongsTo = array('Identity');                                                   
 
     public function setTo($identity_id, $location_id) {
         # check, that this location belongs to that identity

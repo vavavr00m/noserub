@@ -9,8 +9,8 @@
  * @subpackage models
  */
 class AppModel extends Model {
-
-    private $sanitizeExclusion = array('Feed');
+	public $actsAs = array('Containable');
+	private $sanitizeExclusion = array('Feed');
     
     /**
      * 	configure sanitization details based on the model and the 
@@ -18,7 +18,7 @@ class AppModel extends Model {
      * 
      * 	@var array $sanitization
      */
-    var $sanitization = array (
+    public $sanitization = array (
         /*
         'Task' => array (
             'ignore_keys' => null, # define an array of the keys you don't want to sanitize
