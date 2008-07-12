@@ -45,7 +45,7 @@ class Contact extends AppModel {
 		    # check, if we already have that
 		    $this->ContactTypesContact->cacheQueries = false;
 		    $conditions = $data;
-		    if($this->ContactTypesContact->findCount($conditions) == 0) {
+		    if(!$this->ContactTypesContact->hasAny($conditions)) {
 			    $this->ContactTypesContact->create();
 			    $this->ContactTypesContact->save($data);
 		    }
@@ -61,7 +61,7 @@ class Contact extends AppModel {
 			# check, if we already have that
 		    $this->ContactsNoserubContactType->cacheQueries = false;
 		    $conditions = $data;
-		    if($this->ContactsNoserubContactType->findCount($conditions) == 0) {
+		    if(!$this->ContactsNoserubContactType->hasAny($conditions)) {
 			    $this->ContactsNoserubContactType->create();
 			    $this->ContactsNoserubContactType->save($data);
 		    }

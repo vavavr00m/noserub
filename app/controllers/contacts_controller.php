@@ -125,11 +125,7 @@ class ContactsController extends AppController {
                 # now create the contact relationship
                 
                 # but first make sure, that this connection is not already there
-                $this->Contact->recursive = 0;
-                $this->Contact->expects('Contact');
-                $num_of_contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
-                                                                   'with_identity_id' => $new_identity_id));
-                if($num_of_contacts > 0) {
+                if ($this->Contact->hasAny(array('identity_id' => $session_identity['id'], 'with_identity_id' => $new_identity_id))) {
                     $this->Contact->invalidate('noserub_id', 'unique');
                     $this->render();
                     exit;
@@ -149,9 +145,7 @@ class ContactsController extends AppController {
                 $new_splitted = $this->Contact->Identity->splitUsername($new_identity_username);
                 
                 # check, if this is unique
-                $this->Contact->Identity->recursive = 0;
-                $this->Contact->Identity->expects('Contact');
-                if($this->Contact->Identity->findCount(array('username' => $new_splitted['username'])) == 0) {
+                if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
                     $this->Contact->Identity->create();
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
@@ -518,12 +512,10 @@ class ContactsController extends AppController {
         }
         
         # test, if there isn't already a contact
-        $this->Contact->recursive = 0;
-        $this->Contact->expects('Contact');
-        $contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
+        $hasContact = $this->Contact->hasAny(array('identity_id'      => $session_identity['id'],
                                                     'with_identity_id' => $identity['Identity']['id']));
-                                           
-        if($contacts == 0) {
+
+        if (!$hasContact) {
             # now create the contact relationship
             $this->Contact->create();
             $contact = array('identity_id'      => $session_identity['id'],
