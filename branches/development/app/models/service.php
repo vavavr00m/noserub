@@ -4,7 +4,6 @@
 class Service extends AppModel {
     public $hasMany = array('Account');
     public $belongsTo = array('ServiceType');
-    public $actsAs = array('Containable');
 
     /**
      * returns all accounts with is_contact=1

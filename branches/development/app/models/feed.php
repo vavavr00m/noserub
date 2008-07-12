@@ -3,7 +3,6 @@
  
 class Feed extends AppModel {
     public $belongsTo = array('Account');
-    public $actsAs = array('Containable');
     
     /**
      * Store $data for $account_id to feed cache
