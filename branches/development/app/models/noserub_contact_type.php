@@ -16,8 +16,7 @@ class NoserubContactType extends AppModel {
 	    $remaining_tags = array();
 	    foreach($tags as $tag) {
 	        if($tag) {
-	            $this->recursive = 0;
-	            $this->expects('NoserubContactType');
+	            $this->contain();
 	            $data = $this->findByName($tag, array('id'));
                 if($data) {
                     $ids[$data['NoserubContactType']['id']] = 1;

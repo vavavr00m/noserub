@@ -17,8 +17,7 @@ class ContactType extends AppModel {
 	    $remaining_tags = array();
 	    foreach($tags['tags'] as $tag) {
 	        if($tag) {
-	            $this->recursive = 0;
-	            $this->expects('ContactType');
+	            $this->contain();
 	            $data = $this->findByName($tag, array('id'));
                 if($data) {
                     $ids[$data['ContactType']['id']] = 1;
@@ -65,8 +64,7 @@ class ContactType extends AppModel {
 		
 		foreach ($contact_types as $contact_type_name) {
 		    # check, if we already have it
-		    $this->recursive = 0;
-		    $this->expects('ContactType');
+		    $this->contain();
 		    $conditions = array(
 		        'identity_id' => $identity_id,
 		        'name'        => $contact_type_name
