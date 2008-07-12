@@ -27,9 +27,7 @@ class Identity extends AppModel {
     }
 
     function validateUniqueOpenID($value, $params = array()) {
-        $this->recursive = 0;
-        $this->expects('Identity');
-    	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
+    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#'))) {
     		return false;
     	} else {
     		return true;
@@ -50,9 +48,7 @@ class Identity extends AppModel {
             return false;
         }
 
-        $this->recursive = 0;
-        $this->expects('Identity');
-        if($this->findCount(array('Identity.username' => $value)) > 0) {
+        if($this->hasAny(array('Identity.username' => $value))) {
             return false;
         } else {
             return true;
@@ -159,16 +155,14 @@ class Identity extends AppModel {
     public function check($data) {
         $splitted = $this->splitUsername($data['Identity']['username']);
         $username = $splitted['username'];
-        $this->recursive = 0;
-        $this->expects('Identity');
+        $this->contain();
         return $this->find(array('Identity.hash' => '',
                                  'Identity.username' => $username, 
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
     public function checkOpenID($openIDResponse) {
-    	$this->recursive = 0;
-    	$this->expects('Identity');    	
+    	$this->contain();
     	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
     	
     	if ($identity) {
@@ -657,8 +651,7 @@ class Identity extends AppModel {
      */
     public function verify($hash) {
         # check, if there is a username with that hash
-        $this->recursive = 0;
-        $this->expects = array('Identity');
+        $this->contain();
         $identity = $this->find(array('Identity.hash' => $hash));
         if($hash && $identity) {
             # update the identity

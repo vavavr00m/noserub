@@ -254,8 +254,7 @@ class Service extends AppModel {
      * @access 
      */
     public function getContactsFromService($account_id) {
-        $this->Account->recursive = 0;
-        $this->Account->expects('Account');
+        $this->Account->contain();
         $account = $this->Account->findById($account_id);
         
     	$service = $this->getService($account['Account']['service_id']);

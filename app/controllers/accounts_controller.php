@@ -173,8 +173,7 @@ class AccountsController extends AppController {
     		}
     	}
     	
-    	$this->Account->Service->recursive = 0;
-    	$this->Account->Service->expects('Service');
+    	$this->Account->Service->contain();
     	$this->set('services', $this->Account->Service->find('list', array(
     	    'conditions' => array(
     	        'is_contact' => '0',
@@ -257,8 +256,7 @@ class AccountsController extends AppController {
                 $this->redirect('/' . $username . '/settings/accounts/', null, true);
             } else {
                 # new account for a private contact. redirect to his/her profile
-                $this->Account->Identity->recursive = 0;
-                $this->Account->Identity->expects('Identity');
+                $this->Account->Identity->contain();
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
                 $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
             }
@@ -431,8 +429,7 @@ class AccountsController extends AppController {
         }
 
         # get the account
-        $this->Account->recursive = 0;
-        $this->Account->expects('Account');
+        $this->Account->contain();
         $data = $this->Account->find(array('id' => $account_id, 'identity_id' => $identity_id));
         if(!$data) {
             # the account for this identity could not be found
@@ -494,9 +491,7 @@ class AccountsController extends AppController {
             }
         }
         # check, wether the account belongs to the identity
-        $this->Account->recursive = 0;
-        $this->Account->expects('Account');
-        if(1 == $this->Account->findCount(array('identity_id' => isset($identity_id) ? $identity_id : $session_identity['id'],
+        if ($this->Account->hasAny(array('identity_id' => isset($identity_id) ? $identity_id : $session_identity['id'],
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();

@@ -21,8 +21,7 @@ class ContactsController extends AppController {
         $session_identity = $this->Session->read('Identity');
         
         # get identity of displayed user
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $identity = $this->Contact->Identity->findByUsername($splitted['username']);
         if(!$identity) {
             # identity not found
@@ -207,8 +206,7 @@ class ContactsController extends AppController {
         $this->ensureSecurityToken();
         
         # check, if the contact belongs to the identity
-        $this->Contact->recursive = 0;
-        $this->Contact->expects('Contact');
+        $this->Contact->contain();
         $contact = $this->Contact->find(array('id'          => $contact_id,
                                               'identity_id' => $session_identity['id']));
     
@@ -231,8 +229,7 @@ class ContactsController extends AppController {
         
         # get the other identity in order to determine, if
         # this was a local identity and therefore can be deleted
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $with_identity = $this->Contact->WithIdentity->findById($with_identity_id);
         
         if($with_identity['WithIdentity']['namespace'] == $session_identity['local_username']) {
@@ -402,12 +399,10 @@ class ContactsController extends AppController {
     	
     	$this->set('headline', 'Edit the contact details');
     	
-    	$this->Contact->NoserubContactType->recursive = 0;
-    	$this->Contact->NoserubContactType->expects('NoserubContactType');
-	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->findAll());	    
+    	$this->Contact->NoserubContactType->contain();
+	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
 	    
-	    $this->Contact->ContactType->recursive = 0;
-	    $this->Contact->ContactType->expects('ContactType');
+	    $this->Contact->ContactType->contain();
 	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
     }
     
@@ -435,9 +430,8 @@ class ContactsController extends AppController {
         } else {
             $filter = array($filter);
         }
-            
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+
+        $this->Contact->Identity->contain();
         $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
         $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
         
@@ -513,8 +507,7 @@ class ContactsController extends AppController {
         $this->ensureSecurityToken();
         
         # get id for this username
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $identity = $this->Contact->Identity->findByUsername($splitted['username'], array('Identity.id'));
         
         if($session_identity['id'] == $identity['Identity']['id']) {

@@ -17,8 +17,7 @@ class Contact extends AppModel {
      * creates a contact, when it's not already there
      */
     public function add($identity_id, $with_identity_id) {
-        $this->recursive = 0;
-        $this->expects('Contact');
+        $this->contain();
         $conditions = array(
             'identity_id'      => $identity_id,
             'with_identity_id' => $with_identity_id
@@ -161,8 +160,7 @@ class Contact extends AppModel {
             $new_splitted = $this->Identity->splitUsername($username, $item['is_local']);
         
             # check, if we already have that username
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $new_identity = $this->Identity->findByUsername($new_splitted['username']);
             
             if(!$new_identity) {

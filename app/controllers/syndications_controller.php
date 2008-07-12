@@ -101,8 +101,7 @@ class SyndicationsController extends AppController {
         }
         
         # get all the syndications for logged in user
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Syndication');
+        $this->Syndication->contain();
         $this->set('data', $this->Syndication->findAllByIdentityId($session_identity['id']));
         
         $this->set('session_identity', $session_identity);
@@ -133,9 +132,7 @@ class SyndicationsController extends AppController {
         $this->ensureSecurityToken();
         
         # check, if the syndication_id belongs to the logged in user
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Syndication');
-        if(1 == $this->Syndication->findCount(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
+        if($this->Syndication->hasAny(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Syndication->delete($syndication_id);
             $this->flashMessage('success', 'Feed deleted.');

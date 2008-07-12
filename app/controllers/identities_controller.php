@@ -45,8 +45,7 @@ class IdentitiesController extends AppController {
 
         # check, if we need to redirect. only, when the user is not
         # logged in.
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
         $identity = $this->Identity->findByUsername($username);        
         if(strpos($identity['Identity']['redirect_url'], 'http://')  === 0 ||
            strpos($identity['Identity']['redirect_url'], 'https://') === 0) {
@@ -308,8 +307,7 @@ class IdentitiesController extends AppController {
         }
         
         # get Identity
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
         $about_identity = $this->Identity->findByUsername($splitted['username']);
         $name = empty($about_identity['Identity']['name']) ? $about_identity['Identity']['single_username'] : $about_identity['Identity']['name'];
         $this->set('headline', 'Send a message to ' . $name);
@@ -391,8 +389,7 @@ class IdentitiesController extends AppController {
             $this->ensureSecurityToken();
             
             # get identity again to check, where we have changes
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $identity = $this->Identity->findById($session_identity['id']);
 
             # geocode the address, if neccessary
@@ -443,8 +440,7 @@ class IdentitiesController extends AppController {
             $this->flashMessage('success', 'Changes have been saved.');
             
         } else {
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $this->data = $this->Identity->findById($session_identity['id']);
         }
         
@@ -828,8 +824,7 @@ class IdentitiesController extends AppController {
         
         # see, if we can find the identity.
         # it should be in our database already.
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
         $identity = $this->Identity->findById($identity_id);
 
         if(!$identity || $identity['Identity']['is_local'] == 1) {
