@@ -213,7 +213,7 @@ class AccountsController extends AppController {
 
             if(isset($this->params['form']['submit'])) {
                 # check if the acccount is not already there
-                if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
+                if(!$this->Account->hasAny(array('identity_id' => $identity_id, 'account_url' => $data['account_url']))) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
 					

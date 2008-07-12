@@ -319,13 +319,10 @@ class IdentitiesController extends AppController {
             $this->flashMessage('alert', 'You may not send a message to ' . $name);
             $send_allowed = false;
         } else if($about_identity['Identity']['allow_emails'] == 1) {
-            # only contacts
-            $this->Identity->Contact->recursive = 0;
-            $this->Identity->Contact->expects('Contact');
-            $has_contact = $this->Identity->Contact->findCount(array('identity_id'      => $about_identity['Identity']['id'],
-                                                                     'with_identity_id' => $session_identity['id']));
+            $has_contact = $this->Identity->Contact->hasAny(array('identity_id'      => $about_identity['Identity']['id'],
+                                                                  'with_identity_id' => $session_identity['id']));
         
-            if($has_contact == 0) {
+            if(!$has_contact) {
                 $this->flashMessage('alert', 'You may not send a message to ' . $name);
                 $send_allowed = false;
             }

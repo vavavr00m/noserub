@@ -89,8 +89,7 @@ class OauthConsumersController extends AppController {
 		
 		$this->ensureSecurityToken();
 		
-		$this->Consumer->expects('Consumer');
-		if (1 == $this->Consumer->findCount(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
+		if ($this->Consumer->hasAny(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
             $this->Consumer->delete($consumer_id);
             
             $this->flashMessage('success', 'Application deleted.');            
