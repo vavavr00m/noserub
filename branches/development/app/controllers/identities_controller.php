@@ -62,12 +62,7 @@ class IdentitiesController extends AppController {
             # don't display local contacts to anyone else, but the owner
             $data = null;
         } else {
-            $this->Identity->recursive = 2;
-            $this->Identity->expects('Identity.Identity', 'Identity.Account', 'Identity.Location',
-                                     'Account.Account', 'Account.Service', 'Account.ServiceType',
-                                     'Service.Service',
-                                     'ServiceType.ServiceType',
-                                     'Location.Location');
+        	$this->Identity->contain(array('Location', 'Account', 'Account.Service', 'Account.ServiceType'));
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
                                                 'hash'      => ''));
@@ -78,9 +73,8 @@ class IdentitiesController extends AppController {
                 if($data['Identity']['id'] == $session_identity['id']) {
                     $relationship_status = 'self';
                 } else {
-                    $this->Identity->Contact->recursive = 1;
-                    $this->Identity->Contact->expects('Contact', 'ContactType', 'NoserubContactType');
-                    $contact = $this->Identity->Contact->find(
+                    $this->Identity->Contact->contain(array('ContactType', 'NoserubContactType'));
+                	$contact = $this->Identity->Contact->find(
                         array(
                             'identity_id'      => $session_identity['id'],
                             'with_identity_id' => $data['Identity']['id']));
@@ -214,12 +208,9 @@ class IdentitiesController extends AppController {
         $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
-        
-        $this->Identity->recursive = 2;
-        $this->Identity->expects('Identity.Identity', 'Identity.Account', 
-                                 'Account.Account', 'Account.Service', 'Account.ServiceType',
-                                 'Service.Service',
-                                 'ServiceType.ServiceType');
+
+        $this->Identity->contain(array('Account', 'Account.Service', 'Account.ServiceType'));
+        // TODO replace findAll with find('all')
         $data = $this->Identity->findAll(array('frontpage_updates' => 1,
                                                'is_local'  => 1,
                                                'hash'      => '',
@@ -610,8 +601,7 @@ class IdentitiesController extends AppController {
 			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
         } else {
             $this->Identity->id = $session_identity['id'];
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $this->data = $this->Identity->read();
         }
         
@@ -861,8 +851,8 @@ class IdentitiesController extends AppController {
         }
         
         # get all not local identities
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
+        // TODO replace findAll with find('all')
         $identities = $this->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
         $synced = array();
         foreach($identities as $identity) {
@@ -939,8 +929,7 @@ class IdentitiesController extends AppController {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
 
-        $this->Identity->recursive = 1;
-        $this->Identity->expects('Location');
+        $this->Identity->contain('Location');
         $this->Identity->id = $identity['Identity']['id'];
         $data = $this->Identity->read();
         
@@ -970,8 +959,7 @@ class IdentitiesController extends AppController {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
 
-        $this->Identity->recursive = 1;
-        $this->Identity->expects('Identity', 'Location');
+        $this->Identity->contain('Location');
         $this->Identity->id = $identity['Identity']['id'];
         $data = $this->Identity->read();
         $this->set(
