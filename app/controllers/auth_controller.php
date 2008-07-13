@@ -65,7 +65,7 @@
 				$sregRequest = Auth_OpenID_SRegRequest::fromOpenIDRequest($request);
 				$identity = $this->Session->read('Identity');
 				
-				$this->OpenidSite->expects('OpenidSite');
+				$this->OpenidSite->contain();
 				$openidSite = $this->OpenidSite->findByIdentityIdAndUrl($identity['id'], $request->trust_root);
 
 				if (isset($openidSite['OpenidSite']['allowed']) && $openidSite['OpenidSite']['allowed']) {
