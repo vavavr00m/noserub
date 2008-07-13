@@ -253,10 +253,9 @@ class ContactsController extends AppController {
             # this is not the logged in user
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
-        
+ 
         # get the contact
-        $this->Contact->recursive = 1;
-	    $this->Contact->expects('Contact', 'Identity', 'WithIdentity');
+		$this->Contact->contain('Identity', 'WithIdentity');
 	    $contact = $this->Contact->findById($contact_id);
 	    
         if($session_identity['id'] != $contact['Contact']['identity_id']) {
@@ -267,8 +266,7 @@ class ContactsController extends AppController {
         $this->set('contact', $contact);
         
         # get contact's accounts
-        $this->Contact->Identity->Account->recursive = 1;
-        $this->Contact->Identity->Account->expects('Account', 'Service');
+        $this->Contact->Identity->Account->contain('Service');
         $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
         
         $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);

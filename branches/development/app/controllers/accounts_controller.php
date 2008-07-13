@@ -25,11 +25,10 @@ class AccountsController extends AppController {
             $this->redirect('/', null, true);
         }
         $this->set('about_identity', $identity['Identity']);
-        
+
         # get all accounts
-        $this->Account->recursive = 1;
-        $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
-        $data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
+		$this->Account->contain('Service');
+		$data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
         $this->set('data', $data);
         $this->set('session_identity', $session_identity);
         
@@ -503,8 +502,7 @@ class AccountsController extends AppController {
     }
     
     private function getIdentity($username) {
-        $this->Account->Identity->recursive = 0;
-        $this->Account->Identity->expects('Identity');
+        $this->Account->Identity->contain();
         $identity = $this->Account->Identity->findByUsername($username);
 
         return $identity;

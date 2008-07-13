@@ -24,8 +24,7 @@ class ApiComponent extends Object {
     	$username = isset($this->controller->params['username']) ? $this->controller->params['username'] : '';
     	$splitted = $this->controller->Identity->splitUsername($username);
     	
-    	$this->controller->Identity->recursive = 0;
-        $this->controller->Identity->expects('Identity');
+        $this->controller->Identity->contain();
         $fields = array(
             'id',
             'api_hash',
