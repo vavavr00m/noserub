@@ -20,7 +20,7 @@ class OauthConsumersController extends AppController {
 	}
 	
 	public function index() {
-		$this->Consumer->expects('Consumer');
+		$this->Consumer->contain();
 		$this->set('consumers', $this->Consumer->findAllByIdentityId($this->session_identity['id']));
 		$this->set('session_identity', $this->session_identity);
 		$this->set('headline', 'OAuth');
@@ -51,7 +51,7 @@ class OauthConsumersController extends AppController {
             $this->redirect($this->url->http('/'));
 		}
 		
-		$this->Consumer->expects('Consumer');
+		$this->Consumer->contain();
 		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
 		
 		if (!$consumer) {

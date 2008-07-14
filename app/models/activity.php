@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Activity extends AppModel {
-    var $belongsTo = array('Identity', 'ServiceType');
+    public $belongsTo = array('Identity', 'ServiceType');
     
     public function getLatest($identity_id, $filter) {
         $items = array();
@@ -17,8 +17,7 @@ class Activity extends AppModel {
     public function getLocations($identity_id) {
         $items = array();
         
-        $this->recursive = 1;
-        $this->expects('Location', 'ServiceType', 'Identity');
+        $this->contain(array('ServiceType', 'Identity'));
         $data = $this->findAllByIdentityId($identity_id);
         
         foreach($data as $activity) {

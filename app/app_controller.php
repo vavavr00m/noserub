@@ -10,8 +10,8 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    var $helpers = array('javascript', 'html');
-    var $components = array('menu', 'Cookie');
+    public $helpers = array('javascript', 'html');
+    public $components = array('menu', 'Cookie');
     
     /**
      * Never ever "use" something here, or the migrations will fail.
@@ -24,9 +24,9 @@ class AppController extends Controller {
      *  Because if you do so, Cake will complain and you have no chance of doing
      *  the migrations in /system/update.)
      */
-    var $uses = array(); 
+    public $uses = array(); 
     
-    function flashMessage($type, $message) {
+    public function flashMessage($type, $message) {
         $flash_messages = $this->Session->read('FlashMessages');
         $flash_messages[$type][] = $message;
         $this->Session->write('FlashMessages', $flash_messages);
@@ -82,8 +82,7 @@ class AppController extends Controller {
                 $this->Identity = new Identity();
             }
             
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $identity = $this->Identity->findById($li);
 
             if(!$identity) {
@@ -97,14 +96,8 @@ class AppController extends Controller {
         }
             
     }
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function beforeFilter() {
+
+    public function beforeFilter() {
         # check for auto-login
         if(!$this->Session->check('Identity.id')) {
             $this->auto_login();
@@ -135,14 +128,7 @@ class AppController extends Controller {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function ensureSecurityToken() {
+    public function ensureSecurityToken() {
         if(!isset($this->Identity)) {
             App::import('Model', 'Identity');
             $this->Identity = new Identity();
@@ -175,5 +161,4 @@ class AppController extends Controller {
     public function afterFilter() {
         $this->Session->write('FlashMessages', array());
     }
-    
 }

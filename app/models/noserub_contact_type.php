@@ -45,8 +45,7 @@ class NoserubContactType extends AppModel {
 	}
 	
 	function getIDsForContact($contact_id) {
-	    $this->ContactsNoserubContactType->recursive = 0;
-	    $this->ContactsNoserubContactType->expects('ContactsNoserubContactType');
+	    $this->ContactsNoserubContactType->contain();
 		$noserub_contact_types    = $this->ContactsNoserubContactType->findAllByContactId($contact_id);
     	return(Set::extract($noserub_contact_types, '{n}.ContactsNoserubContactType.noserub_contact_type_id'));
 	}

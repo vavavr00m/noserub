@@ -33,8 +33,7 @@ class SyndicationsController extends AppController {
             }
             
             # find syndication
-            $this->Syndication->recursive = 1;
-            $this->Syndication->expects('Syndication', 'Account', 'Identity');
+            $this->Syndication->contain(array('Account', 'Identity'));
             $data = $this->Syndication->findByHash($hash);
 
             # get all items for those accounts
@@ -199,23 +198,21 @@ class SyndicationsController extends AppController {
         	$this->redirect($url, null, true);
         } else {
             # get all accounts from this user, that have feeds
-            $this->Syndication->Account->recursive = 1;
-            $this->Syndication->Account->expects('Account', 'Service');
+            $this->Syndication->Account->contain('Service');
+            // TODO replace findAll with find('all')
             $accounts = $this->Syndication->Account->findAll(array('Account.identity_id' => $session_identity['id'],
                                                                    'Account.feed_url <> ""'));
             $this->set('accounts', $accounts);
 
             # get all accounts from this users contacts
-            $this->Syndication->Identity->Contact->recursive = 1;
-            $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
-                                                           'WithIdentity.Account.Service');
+            $this->Syndication->Identity->Contact->contain(array('WithIdentity', 'WithIdentity.Account.Service'));
            
             $contacts = $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']);
             
             # now go through all contacts to get accounts and services
             foreach($contacts as $key => $value) {
-                $this->Syndication->Account->recursive = 1;
-                $this->Syndication->Account->expects('Account', 'Service');
+                $this->Syndication->Account->contain('Service');
+                // TODO replace findAll with find('all')
                 $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->findAll(array('identity_id' => $value['WithIdentity']['id'], 'feed_url != ""')); 
             }
             $this->set('contacts', $contacts);
@@ -244,8 +241,7 @@ class SyndicationsController extends AppController {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
         
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Location');
+        $this->Syndication->contain();
         $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
         
         $url = Router::url('/' . $identity['Identity']['local_username']);
@@ -292,8 +288,8 @@ class SyndicationsController extends AppController {
             # no two refresh's within 14 minutes
             $last_upload = date('Y-m-d H:i:s', strtotime('-15 minutes'));
             
-            $this->Syndication->recursive = 0;
-            $this->Syndication->expects('Syndication');
+            $this->Syndication->contain();
+            // TODO replace findAll with find('all')
             $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.last_upload ASC, Syndication.modified DESC', 1);
             foreach($data as $item) {
                 # save the old last_update timestamp
