@@ -1,11 +1,11 @@
 <?php
 class YimService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#edit.yahoo.com/config/send_webmesg\?.target=(.+)&.src=pg#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
 	}
 }

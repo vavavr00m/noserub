@@ -3,7 +3,7 @@
 class MenuComponent extends Object {
 	public $components = array('Session');
     
-    function setViewData($controller) {
+    public function setViewData($controller) {
         App::import('Model', 'Menu');
         $factory = new MenuFactory();
         

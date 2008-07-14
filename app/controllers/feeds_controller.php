@@ -1,6 +1,6 @@
 <?php
 class FeedsController extends AppController {
-    var $uses = array('Feed');
+    public $uses = array('Feed');
     
     /**
      * Go through all accounts and create

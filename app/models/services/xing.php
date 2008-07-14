@@ -1,11 +1,11 @@
 <?php
 class XingService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#xing.com/profile/(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'https://www.xing.com/profile/'.$username;
 	}
 }

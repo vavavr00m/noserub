@@ -3,8 +3,8 @@
  * Helper to format SReg data.
  */
 class NiceSRegHelper extends AppHelper {
-	var $helpers = array('Form');
-	var $supportedFields = array('gender', 'email', 'fullname');
+	public $helpers = array('Form');
+	public $supportedFields = array('gender', 'email', 'fullname');
 	
 	// TODO maybe a better name is needed?
 	public function checkboxForSupportedFields($key, $openidSiteData = false) {

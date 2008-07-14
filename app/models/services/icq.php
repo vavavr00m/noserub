@@ -1,11 +1,11 @@
 <?php
 class IcqService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#icq.com/(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://www.icq.com/'.$username;
 	}
 }

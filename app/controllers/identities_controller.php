@@ -503,29 +503,6 @@ class IdentitiesController extends AppController {
         $this->set('headline', 'Your privacy settings');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-     /*
-     if($this->data) {
-     	$this->ensureSecurityToken();
-     	$this->data['Identity']['id'] = $session_identity['id'];
-     	
-     	if (!isset($this->data['Identity']['api_active'])) {
-     		$this->data['Identity']['api_active'] = false;
-     	}
-     	
-     	$this->Location->Identity->save($this->data, false, array('api_hash', 'api_active'));
-     	$this->Session->write('Identity.api_hash', $this->data['Identity']['api_hash']);
-     	$this->Session->write('Identity.api_active', $this->data['Identity']['api_active']);
-     	$session_identity = $this->Session->read('Identity');
-     	$this->flashMessage('success', 'API options have been saved.');
-     }
-     */
     public function password_settings() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';

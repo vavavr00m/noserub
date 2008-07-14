@@ -3,7 +3,7 @@
  * Helper to display flash messages
  */
 class FlashMessageHelper extends AppHelper {
-    var $helpers = array('Session');
+    public $helpers = array('Session');
     
     public function render() {
         $flash_messages = $this->Session->read('FlashMessages');

@@ -2,18 +2,11 @@
 /* SVN FILE: $Id:$ */
  
 class ContactsController extends AppController {
-    var $uses = array('Contact');
-    var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
-    var $components = array('cluster', 'api');
+    public $uses = array('Contact');
+    public $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
+    public $components = array('cluster', 'api');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $this->checkUnsecure();
         
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
@@ -63,7 +56,7 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function add() {
+    public function add() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -176,14 +169,7 @@ class ContactsController extends AppController {
         }
     }
         
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $contact_id        = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
         $username          = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted          = $this->Contact->Identity->splitUsername($username);
@@ -270,7 +256,7 @@ class ContactsController extends AppController {
         $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);
     }
     
-    function edit() {
+    public function edit() {
     	$contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$username   = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted   = $this->Contact->Identity->splitUsername($username);
@@ -402,7 +388,7 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function network() {
+    public function network() {
         $this->checkUnsecure();
         
         $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
@@ -474,14 +460,7 @@ class ContactsController extends AppController {
         $this->render('../identities/social_stream');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_as_contact() {
+    public function add_as_contact() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');

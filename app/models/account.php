@@ -2,24 +2,15 @@
 /* SVN FILE: $Id:$ */
  
 class Account extends AppModel {
-    var $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $hasOne = array('Feed');
+    public $hasAndBelongsToMany = array('Syndication');
     
-    var $hasOne = array('Feed');
-    
-    var $hasAndBelongsToMany = array('Syndication');
-    
-    var $validate = array(
+    public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function update($identity_id, $data, $replace = false) {
+    public function update($identity_id, $data, $replace = false) {
         if($replace) {
             # remove old account data
             $this->deleteByIdentityId($identity_id);
@@ -56,7 +47,7 @@ class Account extends AppModel {
         return true;
     }
         
-    function replace($identity_id, $data) {
+    public function replace($identity_id, $data) {
         return $this->update($identity_id, $data, true);
     }
     
@@ -67,7 +58,7 @@ class Account extends AppModel {
      * @return 
      * @access 
      */
-    function deleteByIdentityId($identity_id) {
+    public function deleteByIdentityId($identity_id) {
         $this->contain();
         $data = $this->findAllByIdentityId($identity_id);
         foreach($data as $item) {

@@ -2,18 +2,11 @@
 /* SVN FILE: $Id:$ */
  
 class AccountsController extends AppController {
-    var $uses = array('Account');
-    var $helpers = array('form', 'flashmessage');
-    var $components = array('api');
+    public $uses = array('Account');
+    public $helpers = array('form', 'flashmessage');
+    public $components = array('api');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -96,7 +89,7 @@ class AccountsController extends AppController {
         }
     }
     
-    function add_step_1() {
+    public function add_step_1() {
     	$username = isset($this->params['username']) ? $this->params['username'] : '';
     	$session_identity = $this->Session->read('Identity');
     	$splitted = $this->Account->Identity->splitUsername($username);
@@ -181,14 +174,7 @@ class AccountsController extends AppController {
     	$this->set('headline', 'Specify the service url');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_2_preview() {
+    public function add_step_2_preview() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -268,14 +254,7 @@ class AccountsController extends AppController {
         $this->set('headline', 'Preview the data');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_3_friends() {
+    public function add_step_3_friends() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -410,14 +389,7 @@ class AccountsController extends AppController {
         $this->set('contacts', $contacts);
     }
         
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function edit($account_id) {
+    public function edit($account_id) {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $session_identity = $this->Session->read('Identity');
         $identity_id      = $session_identity['id'];
@@ -450,14 +422,7 @@ class AccountsController extends AppController {
         $this->render('edit');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $account_id       = isset($this->params['account_id']) ? $this->params['account_id'] : '';
         $username         = isset($this->params['username'])   ? $this->params['username']   : '';
         $splitted         = $this->Account->Identity->splitUsername($username);

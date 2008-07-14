@@ -4,9 +4,9 @@
  * Model for all the admin stuff in NoseRub.
  */
 class Admin extends AppModel {
-    var $useTable = false;
+    public $useTable = false;
 
-    var $constants = array('!NOSERUB_DOMAIN' => array(
+    public $constants = array('!NOSERUB_DOMAIN' => array(
                                 'file' => 'noserub.php'),
                            'NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
@@ -34,14 +34,14 @@ class Admin extends AppModel {
     
     private $directories;
     
-    function __construct() {
+    public function __construct() {
     	$this->directories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
     }
     
     /**
      * checks if some directories are writeable
      */
-    function checkWriteable() {
+    public function checkWriteable() {
         $out = array();
         foreach($this->directories as $directory) {
             if(!is_writeable($directory)) {
@@ -59,7 +59,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function checkConstants() {
+    public function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
             if(strpos($constant, '!') === 0) {
@@ -85,14 +85,7 @@ class Admin extends AppModel {
         return $out;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function checkExtensions() {
+    public function checkExtensions() {
         $result = array();
     	
         if (!extension_loaded('curl')) {
@@ -118,7 +111,7 @@ class Admin extends AppModel {
      *          0 = connect not working
      *          1 = everything fine
      */
-    function getDatabaseStatus() {
+    public function getDatabaseStatus() {
         $filePresent = file_exists(CONFIGS.'database.php');
         if(!$filePresent) {
             return -1;
@@ -139,7 +132,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getMostRecentMigration() {
+    public function getMostRecentMigration() {
         $files = scandir(APP . '/config/sql/migrations/');
         $most_recent_migration = 0;
         foreach($files as $filename) {
@@ -163,7 +156,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getCurrentMigration() {
+    public function getCurrentMigration() {
         # check, if schema_info is there:
 		$tables = $this->query('SHOW TABLES');
 		
@@ -197,7 +190,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getOpenMigrations($current_migration) {
+    public function getOpenMigrations($current_migration) {
         $migrations = array('sql' => array(), 'php' => array());
         $files = scandir(APP . '/config/sql/migrations/');
         foreach($files as $filename) {
@@ -234,7 +227,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function migrate($migrations, $current_migration, $most_recent_migration) {
+    public function migrate($migrations, $current_migration, $most_recent_migration) {
         for($i=$current_migration+1; $i<=$most_recent_migration; $i++) {
             if(isset($migrations['sql'][$i])) {
                 foreach($migrations['sql'][$i]['content'] as $sql) {

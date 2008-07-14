@@ -1,18 +1,11 @@
 <?php
  
 class SyndicationsController extends AppController {
-    var $uses = array('Syndication');
-    var $helpers = array('form', 'html', 'nicetime', 'flashmessage');
-    var $components = array('url', 'cdn', 'api');
+    public $uses = array('Syndication');
+    public $helpers = array('form', 'html', 'nicetime', 'flashmessage');
+    public $components = array('url', 'cdn', 'api');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
+    public function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
         $this->checkUnsecure();
         $feed_types = array(
             'rss'  => 'text/xml', 
@@ -81,14 +74,7 @@ class SyndicationsController extends AppController {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Syndication->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -107,14 +93,7 @@ class SyndicationsController extends AppController {
         $this->set('headline', 'Configure Feeds from your activities and accounts');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $username       = isset($this->params['username'])       ? $this->params['username']       : '';
         $syndication_id = isset($this->params['syndication_id']) ? $this->params['syndication_id'] :  0;
         $splitted = $this->Syndication->Identity->splitUsername($username);
@@ -140,14 +119,7 @@ class SyndicationsController extends AppController {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add() {
+    public function add() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Syndication->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -265,14 +237,7 @@ class SyndicationsController extends AppController {
         $this->api->render();
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function shell_upload() {
+    public function shell_upload() {
         $uploaded = array();
 
         if(!defined('NOSERUB_USE_CDN') || !NOSERUB_USE_CDN) {
