@@ -86,8 +86,8 @@ class Contact extends AppModel {
      * @access 
      */
     function deleteByIdentityId($identity_id, $local_username) {
-        $this->recursive = 1;
-        $this->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
+        $this->contain('WithIdentity');
+        // TODO replace findAll with find('all')
         $contacts = $this->findAll(array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id));
         foreach($contacts as $contact) {
             if($contact['Contact']['identity_id'] == $identity_id &&
@@ -104,8 +104,7 @@ class Contact extends AppModel {
     }
     
     public function export($identity_id) {
-        $this->recursive = 1;
-        $this->expects('Contact', 'WithIdentity', 'NoserubContactType', 'ContactType');
+        $this->contain(array('WithIdentity', 'NoserubContactType', 'ContactType'));
         $data = $this->findAllByIdentityId($identity_id);
         $contacts = array();
         foreach($data as $item) {
@@ -146,8 +145,7 @@ class Contact extends AppModel {
      */
     public function import($identity_id, $data) {
         # get identity first
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
         $this->Identity->id = $identity_id;
         $identity = $this->Identity->read();
 
@@ -185,8 +183,7 @@ class Contact extends AppModel {
 
             # just make sure, that we keep the note
             if(isset($item['note']) && $item['note']) {
-                $this->recursive = 0;
-                $this->expects('Contact');
+                $this->contain();
                 $this->cacheQueries = false;
                 $contact = $this->read();
                 if(!$contact['Contact']['note']) {
@@ -206,8 +203,7 @@ class Contact extends AppModel {
             # add noserub contact types
             # but only, if there are none set here right now
             if(isset($item['noserub_contact_types']) && $item['noserub_contact_types']) {
-                $this->recursive = 1;
-                $this->expects('Contact', 'NoserubContactType');
+                $this->contain(array('Contact', 'NoserubContactType'));
                 $this->cacheQueries = false;
                 $contact = $this->read();
                 if(count($contact['NoserubContactType']) == 0) {

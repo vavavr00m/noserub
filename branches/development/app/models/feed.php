@@ -98,8 +98,7 @@ class Feed extends AppModel {
         $data = @unserialize($feed['Feed']['content']);
         if($data) {
             # get intro for new service
-            $this->Account->ServiceType->recursive = 0;
-            $this->Account->ServiceType->expects('ServiceType');
+            $this->Account->ServiceType->contain();
             $this->Account->ServiceType->id = $new_service_id;
             $new_intro = $this->Account->ServiceType->field('intro');
 

@@ -12,9 +12,8 @@ class FeedsController extends AppController {
      * @access 
      */
     public function shell_create() {
-        $this->Feed->Account->recursive = 1;
-        $this->Feed->Account->expects('Account.Account', 'Account.Identity', 'Identity.Identity', 'Account.Feed', 'Feed.Feed');
-        $data = $this->Feed->Account->findAll();
+        $this->Feed->Account->contain(array('Identity', 'Feed'));
+        $data = $this->Feed->Account->find('all');
 
         $created = array();
         foreach($data as $item) {
@@ -44,8 +43,8 @@ class FeedsController extends AppController {
             # no two refresh's within 30 minutes
             $last_refresh = date('Y-m-d H:i:s', strtotime('-30 minutes'));
             
-            $this->Feed->recursive = 2;
-            $this->Feed->expects('Feed.Feed', 'Feed.Account', 'Account.Account', 'Account.Identity', 'Identity.Identity');
+            $this->Feed->contain(array('Account', 'Identity'));
+            // TODO replace findAll with find('all')
             $data = $this->Feed->findAll(array('Feed.updated < "' . $last_refresh . '"'), null, 'Feed.updated ASC', 1);
             foreach($data as $item) {
                 # set the updated right now, so a parallel running task

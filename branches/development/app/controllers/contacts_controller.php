@@ -30,18 +30,16 @@ class ContactsController extends AppController {
         $this->set('identity', $identity['Identity']);
         
         # get all noserub contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
-        
+        $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
+        // TODO replace findAll with find('all')
         $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                      'WithIdentity.username NOT LIKE "%@%"'), 
                                                                null, 
                                                                'WithIdentity.username ASC'));
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
-            $this->Contact->recursive = 1;
-            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
-
+            $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
+			// TODO replace findAll with find('all')
             $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
                                                                          'WithIdentity.username LIKE "%@%"'), 
                                                                          null, 
@@ -284,8 +282,7 @@ class ContactsController extends AppController {
         }
         
         # get the contact
-        $this->Contact->recursive = 2;
-	    $this->Contact->expects('Contact.Contact', 'Identity.Identity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
+	    $this->Contact->contain(array('Identity', 'WithIdentity', 'ContactType', 'NoserubContactType'));
 	    $contact = $this->Contact->findById($contact_id);
 	    
         if($session_identity['id'] != $contact['Contact']['identity_id']) {
@@ -428,14 +425,14 @@ class ContactsController extends AppController {
         $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
         
         # get all contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact', 'Contact.WithIdentity');
+        $this->Contact->contain('WithIdentity');
         if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
             # this is my network, so I can show every contact
             $data = $this->Contact->findAllByIdentityId($session_identity['id']);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            $data = $this->Contact->findAll(array('Contact.identity_id' => $about_identity['id'],
+            // TODO replace findAll with find('all')
+        	$data = $this->Contact->findAll(array('Contact.identity_id' => $about_identity['id'],
                                                   'WithIdentity.username NOT LIKE "%@%"'));
         }
 
@@ -444,8 +441,7 @@ class ContactsController extends AppController {
         $contacts = array();
         foreach($data as $key => $value) {
             $contacts[] = $value['WithIdentity'];
-            $this->Contact->Identity->Account->recursive = 1;
-            $this->Contact->Identity->Account->expects('Account.Acount', 'Account.Service', 'Account.ServiceType');
+            $this->Contact->Identity->Account->contain(array('Service', 'ServiceType'));
             $accounts = $this->Contact->Identity->Account->findAllByIdentityId($value['WithIdentity']['id']);
             $data[$key]['WithIdentity']['Account'] = $accounts;
         }
@@ -554,19 +550,13 @@ class ContactsController extends AppController {
 
                                      
         # get all noserub contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects(
-            'Contact.Contact', 
-            'Contact.WithIdentity', 
-            'WithIdentity.WithIdentity', 
-            'NoserubContactType.NoserubContactType'
-        );
+        $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
         
         $conditions = array(
             'Contact.identity_id' => $identity['Identity']['id'],
             'WithIdentity.username NOT LIKE "%@%"'
         );
-        
+    	// TODO replace findAll with find('all')    
         $data = $this->Contact->findAll($conditions, null, 'WithIdentity.last_activity DESC');
         
         $contacts = array();

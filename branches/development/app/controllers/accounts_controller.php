@@ -361,8 +361,8 @@ class AccountsController extends AppController {
             $this->flashMessage('success', 'Account added.');
             $this->redirect('/' . $username . '/settings/accounts/', null, true);
         }
-        $this->Account->recursive = 1;
-        $this->Account->expects('Account', 'Service');
+
+        $this->Account->contain('Service');
         $account = $this->Account->findById($this->Session->read('Service.add.account_id'));
         $this->set('headline', 'Import your social network from ' . $account['Service']['name']);
 
@@ -373,8 +373,8 @@ class AccountsController extends AppController {
         # database. We therefore can remove them from the list
         foreach($data as $username => $item) {
             # try to find accounts with that username first
-            $this->Account->recursive = 1;
-            $this->Account->expects('Account', 'Identity');
+            $this->Account->contain('Identity');
+            // TODO replace findAll with find('all')
             $accounts = $this->Account->findAll(array('Account.username'        => $username,
                                                       'Account.service_id'      => $service_id,
                                                       'Account.service_type_id' => $service_type_id));
@@ -397,8 +397,8 @@ class AccountsController extends AppController {
         # now give the data to the view
         $this->set('data', $data);
         
-        $this->Account->Identity->Contact->recursive = 1;
-        $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
+        $this->Account->Identity->Contact->contain('WithIdentity');
+        // TODO replace findAll with find('all')
         $data = $this->Account->Identity->Contact->findAll(array('Contact.identity_id'   => $identity_id,
                                                                  'WithIdentity.is_local' => 1,
                                                                  'WithIdentity.username LIKE "%@%"'), 
@@ -518,8 +518,7 @@ class AccountsController extends AppController {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
 
-        $this->Account->recursive = 1;
-        $this->Account->expects('Account', 'ServiceType', 'Service');
+        $this->Account->contain(array('ServiceType', 'Service'));
         $accounts = $this->Account->findAllByIdentityId($identity['Identity']['id']);
 
         $data = array();
