@@ -1,7 +1,7 @@
 <?php
 class JabberService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		// GTalk Jabber addresses are not handled by this service
 		if (strpos($url, '@gmail.com') !== false) {
 			return false;
@@ -10,7 +10,7 @@ class JabberService extends AbstractService {
 		return $this->extractUsername($url, array('#xmpp:(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'xmpp:'.$username;
 	}
 }

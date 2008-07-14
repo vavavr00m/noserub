@@ -2,13 +2,13 @@
 /* SVN FILE: $Id:$ */
  
 class Contact extends AppModel {
-    var $belongsTo = array('Identity',
+    public $belongsTo = array('Identity',
                            'WithIdentity' => array('className' => 'Identity',
                                                    'foreignKey' => 'with_identity_id'));
 
-    var $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
+    public $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
     
-    var $validate = array(
+    public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'required' => VALID_NOT_EMPTY)
         );
@@ -36,7 +36,7 @@ class Contact extends AppModel {
         return true;
     }
     
-	function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
+	public function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		
 		foreach($contact_type_ids as $contact_type_id) {
@@ -52,7 +52,7 @@ class Contact extends AppModel {
 		}
 	}
 
-	function createAssociationsToNoserubContactTypes($contact_id, $noserub_contact_type_ids) {
+	public function createAssociationsToNoserubContactTypes($contact_id, $noserub_contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		
 		foreach ($noserub_contact_type_ids as $noserub_contact_type_id) {
@@ -68,11 +68,11 @@ class Contact extends AppModel {
 		}
 	}
     
-	function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
+	public function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
 		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
 	}
 	
-	function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
+	public function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
 		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
 	}
 	
@@ -85,7 +85,7 @@ class Contact extends AppModel {
      * @return 
      * @access 
      */
-    function deleteByIdentityId($identity_id, $local_username) {
+    public function deleteByIdentityId($identity_id, $local_username) {
         $this->contain('WithIdentity');
         // TODO replace findAll with find('all')
         $contacts = $this->findAll(array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id));

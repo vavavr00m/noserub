@@ -1,23 +1,23 @@
 <?php
 class StumbleuponService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).stumbleupon.com#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://'.$username.'.stumbleupon.com/';
 	}
 	
-	function getContacts($username) {
+	public function getContacts($username) {
 		return ContactExtractor::getContactsFromSinglePage('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username;
 	}
 }

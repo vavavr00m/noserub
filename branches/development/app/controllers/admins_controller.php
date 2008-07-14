@@ -1,7 +1,7 @@
 <?php
  
 class AdminsController extends AppController {
-    var $uses = array('Admin');
+    public $uses = array('Admin');
     
     /**
      * Update the system. Check for new migrations
@@ -11,7 +11,7 @@ class AdminsController extends AppController {
      * @return 
      * @access 
      */
-    function system_update() {
+    public function system_update() {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
         if($admin_hash != NOSERUB_ADMIN_HASH ||

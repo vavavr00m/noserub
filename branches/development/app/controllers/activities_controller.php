@@ -1,5 +1,5 @@
 <?php
 class ActivitiesController extends AppController {
-    var $uses = array('Activity');
+    public $uses = array('Activity');
     
 }

@@ -1,8 +1,8 @@
 <?php
 class LocationsController extends AppController {
-    var $uses = array('Location');
-    var $helpers = array('form', 'flashmessage');
-    var $components = array('url', 'geocoder', 'api');
+    public $uses = array('Location');
+    public $helpers = array('form', 'flashmessage');
+    public $components = array('url', 'geocoder', 'api');
     
     public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -23,13 +23,6 @@ class LocationsController extends AppController {
         $this->set('headline', 'Manage your locations');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function add() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Location->Identity->splitUsername($username);
@@ -70,13 +63,6 @@ class LocationsController extends AppController {
         $this->set('headline', 'Add new Location');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function edit() {
         $location_id = isset($this->params['location_id']) ? $this->params['location_id'] :  0;
         $username    = isset($this->params['username']) ? $this->params['username'] : '';
@@ -130,14 +116,7 @@ class LocationsController extends AppController {
         $this->render('add');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $username    = isset($this->params['username'])    ? $this->params['username']    : '';
         $location_id = isset($this->params['location_id']) ? $this->params['location_id'] :  0;
         $splitted = $this->Location->Identity->splitUsername($username);

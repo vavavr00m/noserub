@@ -2,9 +2,9 @@
 /* SVN FILE: $Id:$ */
  
 class ServiceType extends AppModel {
-    var $belongsTo = array('Service');                                                   
+    public $belongsTo = array('Service');                                                   
 
-    var $allowedFilters = array('photo'        => 'Photos',
+    public $allowedFilters = array('photo'        => 'Photos',
 	                            'video'        => 'Videos',
 	                            'audio'        => 'Audio',
 	                            'link'         => 'Link',

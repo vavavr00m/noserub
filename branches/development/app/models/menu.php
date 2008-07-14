@@ -3,11 +3,11 @@
 class Menu {
 	private $menuItems = null;
 	
-	function __construct($menuItems) {
+	public function __construct($menuItems) {
 		$this->menuItems = $menuItems;
 	}
 	
-	function getActiveMenuItem() {
+	public function getActiveMenuItem() {
 		foreach ($this->menuItems as $menuItem) {
 			if ($menuItem->isActive()) {
 				return $menuItem;
@@ -17,14 +17,14 @@ class Menu {
 		return false;
 	}
 	
-	function getMenuItems() {
+	public function getMenuItems() {
 		return $this->menuItems;
 	}
 }
 
 class MenuFactory {
 	
-	function getMainMenu($options) {
+	public function getMainMenu($options) {
 		$menuItems = array();
 		$controller = $this->value($options, 'controller');
 		$action = $this->value($options, 'action');
@@ -43,7 +43,7 @@ class MenuFactory {
 		return new Menu($menuItems);
 	}
 	
-	function getSubMenu($options) {
+	public function getSubMenu($options) {
 		$menuItems = array();
 		$controller = $this->value($options, 'controller');
 		$action = $this->value($options, 'action');
@@ -203,21 +203,21 @@ class MenuItem {
 	private $link = null;
 	private $isActive = false;
 	
-	function __construct($label, $link, $isActive) {
+	public function __construct($label, $link, $isActive) {
 		$this->label = $label;
 		$this->link = $link;
 		$this->isActive = $isActive;
 	}
 	
-	function getLabel() {
+	public function getLabel() {
 		return $this->label;
 	}
 	
-	function getLink() {
+	public function getLink() {
 		return $this->link;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		return $this->isActive;
 	}
 }
@@ -226,13 +226,13 @@ class MyContactsMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	function __construct($controller, $action, $localUsername) {
+	public function __construct($controller, $action, $localUsername) {
 		parent::__construct('My Contacts', '/' . $localUsername . '/network/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		if ($this->controller == 'Contacts') {
 			return true;
 		}
@@ -245,7 +245,7 @@ class MyProfileMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	function __construct($controller, $action, $localUsername = null) {
+	public function __construct($controller, $action, $localUsername = null) {
 		// TODO adding link for profile of remote user
 		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/';
 		
@@ -254,7 +254,7 @@ class MyProfileMenuItem extends MenuItem {
 		$this->action = $action;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		if ($this->controller == 'Identities' && $this->action == 'index') {
 			return true;
 		}
@@ -267,13 +267,13 @@ class RegisterMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	function __construct($controller, $action) {
+	public function __construct($controller, $action) {
 		parent::__construct('Add me!', '/pages/register/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		if ($this->controller == 'Registration') {
 			$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 			
@@ -290,13 +290,13 @@ class SettingsMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	function __construct($controller, $action, $localUsername) {
+	public function __construct($controller, $action, $localUsername) {
 		parent::__construct('Settings', '/' . $localUsername . '/settings/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		$controllers = array('Locations', 'Accounts', 'OauthConsumers', 'OpenidSites', 'Syndications');
 		
 		if(in_array($this->controller, $controllers)) {
@@ -319,13 +319,13 @@ class SocialStreamMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	function __construct($controller, $action) {
+	public function __construct($controller, $action) {
 		parent::__construct('Social Stream', '/social_stream/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
 	
-	function isActive() {
+	public function isActive() {
 		if ($this->controller == 'Identities' && $this->action == 'social_stream') {
 			return true;
 		}

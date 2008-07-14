@@ -1,23 +1,23 @@
 <?php
 class WordpresscomService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).wordpress.com#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://'.$username.'.wordpress.com';
 	}
 	
-	function getContacts($username) {
+	public function getContacts($username) {
 		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'wordpress.com', '/<a href="http:\/\/(.*).wordpress.com" rel=".*">.*<\/a>/iU');
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return 'http://'.$username.'.wordpress.com/feed/';
 	}
 }

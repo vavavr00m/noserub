@@ -1,11 +1,11 @@
 <?php
 class AimService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('/^aim:goIM\?screenname=(.+)/'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'aim:goIM?screenname='.$username;
 	}
 }

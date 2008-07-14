@@ -1,11 +1,11 @@
 <?php
 class GadugaduService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('/^gg:(.+)/'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'gg:'.$username;
 	}
 }

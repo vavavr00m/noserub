@@ -1,11 +1,11 @@
 <?php
 class MsnService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('/^msnim:(.+)/'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'msnim:'.$username;
 	}
 }

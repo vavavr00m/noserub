@@ -58,26 +58,12 @@ class Service extends AppModel {
         return $result;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function getServiceTypeId($service_id) {
         $this->contain();
         $service = $this->findById($service_id);
         return isset($service['Service']['service_type_id']) ? $service['Service']['service_type_id']: 0;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function getFeedUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 		
@@ -155,13 +141,6 @@ class Service extends AppModel {
         return $items;
     }
 
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function getAccountUrl($service_id, $username) {
     	$service = $this->getService($service_id);
 
@@ -246,13 +225,6 @@ class Service extends AppModel {
         return $data;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function getContactsFromService($account_id) {
         $this->Account->contain();
         $account = $this->Account->findById($account_id);

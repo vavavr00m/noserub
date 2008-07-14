@@ -7,7 +7,11 @@
 App::import('Vendor', 's3', array('file' => 's3'.DS.'s3.class.php'));
 
 class CdnComponent extends Object {
-
+	private $bucket_name;
+    private $s3;
+    private $key_id;
+    private $secret_key;
+	
     public function __construct() {
         $this->key_id = defined('NOSERUB_CDN_S3_ACCESS_KEY') ? NOSERUB_CDN_S3_ACCESS_KEY : '';
         $this->secret_key = defined('NOSERUB_CDN_S3_SECRET_KEY') ? NOSERUB_CDN_S3_SECRET_KEY : '';
@@ -39,47 +43,21 @@ class CdnComponent extends Object {
         return $objects;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function copyTo($from_filename, $to_filename, $mime_type = 'image/jpeg') {
+    public function copyTo($from_filename, $to_filename, $mime_type = 'image/jpeg') {
         $content = file_get_contents($from_filename);
         if($content) {
             $this->writeContent($to_filename, $mime_type, $content);
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function getBuckets() {
+    public function getBuckets() {
         return $this->s3->ListBuckets();
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete($filename) {
+    public function delete($filename) {
         $s3object = new S3Object($filename, $this->bucket_name, $this->key_id, $this->secret_key);
         $s3object->Delete();
     }
-    
-    private $bucket_name;
-    private $s3;
-    private $key_id;
-    private $secret_key;   
 }
 
 ?>

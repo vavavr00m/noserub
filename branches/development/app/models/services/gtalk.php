@@ -1,7 +1,7 @@
 <?php
 class GtalkService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		if (strpos($url, '@gmail.com') === false) {
 			return false;
 		}
@@ -9,7 +9,7 @@ class GtalkService extends AbstractService {
 		return $this->extractUsername($url, array('#xmpp:(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'xmpp:'.$username;
 	}
 }
