@@ -68,32 +68,7 @@ class AppModel extends Model {
                     if (is_array($attributes)) {
                         foreach ($attributes as $fieldName => $field) {
                             if (!is_array($field) && !empty ($field)) {
-                                $replacements = array (
-                                    "&",
-                                    "%",
-                                    "<",
-                                    ">",
-                                    '"',
-                                    "'",
-                                    "(",
-                                    ")",
-                                    "+",
-                                    "-"
-                                );
-                                $patterns = array (
-                                    "/\&amp;/",
-                                    "/\&#37;/",
-                                    "/\&lt;/",
-                                    "/\&gt;/",
-                                    "/\&quot;/",
-                                    "/\&#39;/",
-                                    "/\&#40;/",
-                                    "/\&#41;/",
-                                    "/\&#43;/",
-                                    "/\&#45;/"
-                                );
-                                $field = preg_replace($patterns, $replacements, $field);
-                                $data[$key][$model][$fieldName] = $field;
+                                $data[$key][$model][$fieldName] = $this->deSanitize($field);
                             }
                         }
                     }
@@ -175,5 +150,34 @@ class AppModel extends Model {
         }
         
         return true;
+    }
+    
+    private function deSanitize($field) {
+    	$replacements = array (
+			"&",
+			"%",
+			"<",
+			">",
+			'"',
+			"'",
+			"(",
+			")",
+			"+",
+			"-"
+		);
+		$patterns = array (
+			"/\&amp;/",
+			"/\&#37;/",
+			"/\&lt;/",
+			"/\&gt;/",
+			"/\&quot;/",
+			"/\&#39;/",
+			"/\&#40;/",
+			"/\&#41;/",
+			"/\&#43;/",
+			"/\&#45;/"
+		);
+		
+		return preg_replace($patterns, $replacements, $field);
     }
 }
