@@ -650,12 +650,7 @@ class Identity extends AppModel {
         
         # make the photo hash an external url
         if($vcard['photo']) {
-            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-                $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-            } else {
-                $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-            }
-            $vcard['photo'] = $static_base_url . $vcard['photo'] . '.jpg';
+            $vcard['photo'] = $this->getBaseUrlForAvatars() . $vcard['photo'] . '.jpg';
         }
     
         return array(
@@ -794,8 +789,8 @@ class Identity extends AppModel {
             $original_width  = $imageinfo[0];
             $original_height = $imageinfo[1];
 
-            $this->save_scaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
-            $this->save_scaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            $this->saveScaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
+            $this->saveScaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
             
             return $filename;
         }
@@ -804,7 +799,7 @@ class Identity extends AppModel {
     }
     
     public function uploadPhotoByForm($upload_form) {
-       return $this->uploadPhoto($upload_form['tmp_name']);
+		return $this->uploadPhoto($upload_form['tmp_name']);
     }
        
     public function uploadPhotoByUrl($url) {
@@ -822,15 +817,17 @@ class Identity extends AppModel {
         }
     }
     
-    public function save_scaled($picture, $original_width, $original_height, $width, $height, $filename) {
-        if($original_width==$width && $original_height==$height) {
+    private function saveScaled($picture, $original_width, $original_height, $width, $height, $filename) {
+        $BEST_QUALITY = 100;
+    	
+    	if($original_width==$width && $original_height==$height) {
             # original picture
-            imagejpeg($picture, $filename, 100); # best quality
+            imagejpeg($picture, $filename, $BEST_QUALITY);
         } else {
             # resampling picture
             $resampled = imagecreatetruecolor($width, $height);
             imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-            imagejpeg($resampled, $filename, 100); # best quality 
+            imagejpeg($resampled, $filename, $BEST_QUALITY); 
         }
     }
     
@@ -867,32 +864,39 @@ class Identity extends AppModel {
     }
     
     public function getPhotoUrl($data) {
-        $sex = array(
-            'img' => array(
-                0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                1 => Router::url('/images/profile/avatar/female.gif'),
-                2 => Router::url('/images/profile/avatar/male.gif')
-            )
-        );
-                                    
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-        } else {
-            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-        }
-
         if($data['Identity']['photo']) {
             if(strpos($data['Identity']['photo'], 'http://') === 0 ||
                strpos($data['Identity']['photo'], 'https://') === 0) {
                    # contains a complete path, eg. from not local identities
                    $profile_photo = $data['Identity']['photo'];
                } else {
-                   $profile_photo = $static_base_url . $data['Identity']['photo'] . '.jpg';
+                   $profile_photo = $this->getBaseUrlForAvatars() . $data['Identity']['photo'] . '.jpg';
                }
         } else {
-            $profile_photo = $sex['img'][$data['Identity']['sex']];
+            $profile_photo = $this->getPhotoUrlForSex($data['Identity']['sex']);
         }
         
         return $profile_photo;
+    }
+    
+    private function getBaseUrlForAvatars() {
+    	$url = '';
+    	
+    	if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            $url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+        
+        return $url;
+    }
+    
+    private function getPhotoUrlForSex($sex) {
+    	$urls = array(Router::url('/images/profile/avatar/noinfo.gif'),
+			Router::url('/images/profile/avatar/female.gif'),
+			Router::url('/images/profile/avatar/male.gif')
+		);
+		
+		return $urls[$sex];
     }
 }
