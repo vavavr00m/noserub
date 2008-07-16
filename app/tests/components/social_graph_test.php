@@ -1,23 +1,23 @@
 <?php
 
 class SocialGraphComponentTestCase extends CakeTestCase {
-    var $component = null;
+    private $component = null;
     
-	function setUp() {
+	public function setUp() {
 		$this->component = new SocialGraphComponent();
 	}
 	
-	function skip() {
+	public function skip() {
 		$this->skipif(true, 'FIXME');
 	}
 	
-	function testLookup() {
+	public function testLookup() {
         $url = 'http://identoo.com/dirk.olbertz';
         $result = $this->component->lookup($url);
         $this->assertTrue(in_array('http://olbertz.de/blog', $result['nodes']['http://identoo.com/dirk.olbertz']['claimed_nodes']));
 	}
 		
-	function tearDown() {
+	public function tearDown() {
 	    unset($this->component);
 	}
 }	

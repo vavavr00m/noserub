@@ -1,7 +1,7 @@
 <?php
 
 class MenuTest extends CakeTestCase {
-	function testMenu() {
+	public function testMenu() {
 		$menuItems[] = new MenuItem('A', '', false);
 		$menuItems[] = new MenuItem('B', '', false);
 		$menuItems[] = new MenuItem('C', '', false);
@@ -14,7 +14,7 @@ class MenuTest extends CakeTestCase {
 		$this->assertIdentical(false, $menu->getActiveMenuItem());
 	}
 	
-	function testGetActiveMenuItem() {
+	public function testGetActiveMenuItem() {
 		$menuItems[] = new MenuItem('A', '', false);
 		$menuItems[] = new MenuItem('B', '', true);
 		$menuItems[] = new MenuItem('C', '', false);
@@ -27,29 +27,29 @@ class MenuTest extends CakeTestCase {
 class MenuFactoryTest extends CakeTestCase {
 	private $factory = null;
 	
-	function setUp() {
+	public function setUp() {
 		$this->factory = new MenuFactory();
 	}
 	
 	// local user
 	
-	function testGetMainMenuForLocalUser() {
+	public function testGetMainMenuForLocalUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
 		$this->assertEqual(4, count($mainMenu->getMenuItems()));
 		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false);
 	}
 	
-	function testGetMainMenuWithMyContactsSelected() {
+	public function testGetMainMenuWithMyContactsSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'action' => 'index', 'local_username' => 'test'));
 		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, true, false);
 	}
 	
-	function testGetMainMenuWithMyProfileSelected() {
+	public function testGetMainMenuWithMyProfileSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index', 'local_username' => 'test'));
 		$this->assertMenuForLocalUser($mainMenu, 'test', false, true, false, false);
 	}
 	
-	function testGetMainMenuWithSettingsSelected() {
+	public function testGetMainMenuWithSettingsSelected() {
 		$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
@@ -65,14 +65,14 @@ class MenuFactoryTest extends CakeTestCase {
 		}
 	}
 	
-	function testGetMainMenuWithSocialStreamSelected() {
+	public function testGetMainMenuWithSocialStreamSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream', 'local_username' => 'test'));
 		$this->assertMenuForLocalUser($mainMenu, 'test', true, false, false, false);
 	}		
 	
 	// remote user
 	
-	function testGetMainMenuForRemoteUser() {
+	public function testGetMainMenuForRemoteUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => false));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(2, count($menuItems));
@@ -82,13 +82,13 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	// anonymous user
 	
-	function testGetMainMenuForWebUsersWithRegistrationPossibility() {
+	public function testGetMainMenuForWebUsersWithRegistrationPossibility() {
 		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all'));
 		$this->assertEqual(2, count($mainMenu->getMenuItems()));
 		$this->assertMenuForAnonymousUser($mainMenu, false, false);
 	}
 
-	function testGetMainMenuWithRegisterSelected() {
+	public function testGetMainMenuWithRegisterSelected() {
 		$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 		
 		foreach ($registerActions as $action) {
@@ -97,7 +97,7 @@ class MenuFactoryTest extends CakeTestCase {
 		}
 	}
 	
-	function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
+	public function testGetMainMenuForWebUsersWithoutRegistrationPossibility() {
 		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'none'));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(1, count($menuItems));
@@ -106,31 +106,31 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	// sub menus
 	
-	function testGetNoSubMenuOnRegisterPage() {
+	public function testGetNoSubMenuOnRegisterPage() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'register'));
 		$this->assertIdentical(false, $subMenu);
 	}
 	
-	function testGetFilterSubMenu() {
+	public function testGetFilterSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'social_stream'));
 		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$filterState = new FilterState();
 		$this->assertFilterSubMenu($subMenu, '/social_stream/', $filterState);
 	}
 	
-	function testGetFilterSubMenuForMyProfile() {
+	public function testGetFilterSubMenuForMyProfile() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'index', 'local_username' => 'testuser'));
 		$filterState = new FilterState();
 		$this->assertFilterSubMenu($subMenu, '/testuser/', $filterState);
 	}
 	
-	function testGetFilterSubMenuForContactsNetwork() {
+	public function testGetFilterSubMenuForContactsNetwork() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Contacts', 'action' => 'network', 'local_username' => 'testuser'));
 		$filterState = new FilterState();
 		$this->assertFilterSubMenu($subMenu, '/testuser/network/', $filterState);
 	}
 	
-	function testGetFilterSubMenuWithOneItemSelected() {
+	public function testGetFilterSubMenuWithOneItemSelected() {
 		$filters = array('all', 'photo', 'video', 'audio', 'link', 'text', 'micropublish', 'event', 'document', 'location');
 		
 		foreach ($filters as $filter) {
@@ -140,21 +140,21 @@ class MenuFactoryTest extends CakeTestCase {
 		}
 	}
 	
-	function testGetSettingsSubMenu() {
+	public function testGetSettingsSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
 		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 	}
 	
-	function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
+	public function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
 		$this->assertEqual(9, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, true, 'testuser', $settingState);		
 	}
 	
-	function testGetSettingsSubMenuWithOneItemSelected() {
+	public function testGetSettingsSubMenuWithOneItemSelected() {
 		$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
@@ -253,47 +253,47 @@ class MenuFactoryTest extends CakeTestCase {
 class FilterState {
 	private $activeItem = '';
 	
-	function __construct($activeItem = '') {
+	public function __construct($activeItem = '') {
 		$this->activeItem = $activeItem;
 	}
 	
-	function isAllActive() {
+	public function isAllActive() {
 		return ($this->activeItem == 'all');
 	}
 	
-	function isPhotoActive() {
+	public function isPhotoActive() {
 		return ($this->activeItem == 'photo');
 	}
 	
-	function isVideoActive() {
+	public function isVideoActive() {
 		return ($this->activeItem == 'video');
 	}
 	
-	function isAudioActive() {
+	public function isAudioActive() {
 		return ($this->activeItem == 'audio');
 	}
 	
-	function isTextActive() {
+	public function isTextActive() {
 		return ($this->activeItem == 'text');
 	}
 	
-	function isLinkActive() {
+	public function isLinkActive() {
 		return ($this->activeItem == 'link');
 	}
 	
-	function isMicroPublishActive() {
+	public function isMicroPublishActive() {
 		return ($this->activeItem == 'micropublish');
 	}
 	
-	function isEventActive() {
+	public function isEventActive() {
 		return ($this->activeItem == 'event');
 	}
 	
-	function isDocumentActive() {
+	public function isDocumentActive() {
 		return ($this->activeItem == 'document');
 	}
 	
-	function isLocationActive() {
+	public function isLocationActive() {
 		return ($this->activeItem == 'location');
 	}
 }
@@ -348,7 +348,7 @@ class SettingState {
 }
 
 class MenuitemTest extends CakeTestCase {
-	function testMenuItem() {
+	public function testMenuItem() {
 		$label = 'A menu item';
 		$link = '/test';
 		$isActive = true;
@@ -361,7 +361,7 @@ class MenuitemTest extends CakeTestCase {
 }
 
 class MyContactsMenuItemTest extends CakeTestCase {
-	function testCreateActivatedMyContactsMenuItem() {
+	public function testCreateActivatedMyContactsMenuItem() {
 		$username = 'testuser';
 		$menuItem = new MyContactsMenuItem('Contacts', 'index', $username);
 		$this->assertMenuItem($menuItem, $username, true);
@@ -370,7 +370,7 @@ class MyContactsMenuItemTest extends CakeTestCase {
 		$this->assertMenuItem($menuItem, $username, true);
 	}
 	
-	function testCreateNotActivatedMyContactsMenuItem() {			
+	public function testCreateNotActivatedMyContactsMenuItem() {			
 		$username = 'test';
 		$menuItem = new MyContactsMenuItem('SomeController', 'someaction', $username);
 		$this->assertMenuItem($menuItem, $username, false);
@@ -384,17 +384,17 @@ class MyContactsMenuItemTest extends CakeTestCase {
 }
 
 class MyProfileMenuItemTest extends CakeTestCase {
-	function testCreateActivatedMyProfileMenuItem() {
+	public function testCreateActivatedMyProfileMenuItem() {
 		$menuItem = new MyProfileMenuItem('Identities', 'index', 'testuser');
 		$this->assertMenuItem($menuItem, '/testuser/', true);
 	}
 	
-	function testCreateNotActivatedMyProfileMenuItem() {
+	public function testCreateNotActivatedMyProfileMenuItem() {
 		$menuItem = new MyProfileMenuItem('SomeController', 'someaction', 'test');
 		$this->assertMenuItem($menuItem, '/test/', false);
 	}
 	
-	function testCreateMyProfileMenuItemWithoutUsername() {
+	public function testCreateMyProfileMenuItemWithoutUsername() {
 		$menuItem = new MyProfileMenuItem('SomeController', 'someaction');
 		$this->assertMenuItem($menuItem, '', false);
 	}
@@ -407,7 +407,7 @@ class MyProfileMenuItemTest extends CakeTestCase {
 }
 
 class RegisterMenuItemTest extends CakeTestCase {
-	function testCreateActivatedRegisterMenuItem() {
+	public function testCreateActivatedRegisterMenuItem() {
 		$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 		
 		foreach ($registerActions as $action) {
@@ -416,7 +416,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 		}
 	}
 	
-	function testCreateNotActivatedRegisterMenuItem() {			
+	public function testCreateNotActivatedRegisterMenuItem() {			
 		$menuItem = new RegisterMenuItem('SomeController', 'someaction');
 		$this->assertMenuItem($menuItem, false);
 	}
@@ -429,7 +429,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 }
 
 class SettingsMenuItemTest extends CakeTestCase {
-	function testCreateActivatedSettingsMenuItem() {
+	public function testCreateActivatedSettingsMenuItem() {
 		$controllers = array('Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
@@ -445,7 +445,7 @@ class SettingsMenuItemTest extends CakeTestCase {
 		}
 	}
 	
-	function testCreateNotActivatedSettingsMenuItem() {
+	public function testCreateNotActivatedSettingsMenuItem() {
 		$menuItem = new SettingsMenuItem('SomeController', 'someaction', 'test');
 		$this->assertMenuItem($menuItem, '/test/settings/', false);
 	}
@@ -458,12 +458,12 @@ class SettingsMenuItemTest extends CakeTestCase {
 }
 
 class SocialStreamMenuItemTest extends CakeTestCase {
-	function testCreateActivatedSocialStreamMenuItem() {
+	public function testCreateActivatedSocialStreamMenuItem() {
 		$menuItem = new SocialStreamMenuItem('Identities', 'social_stream');
 		$this->assertMenuItem($menuItem, true);
 	}
 	
-	function testCreateNotActivatedSocialStreamMenuItem() {			
+	public function testCreateNotActivatedSocialStreamMenuItem() {			
 		$menuItem = new SocialStreamMenuItem('SomeController', 'someaction');
 		$this->assertMenuItem($menuItem, false);
 	}
