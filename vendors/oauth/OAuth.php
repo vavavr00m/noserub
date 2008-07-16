@@ -123,6 +123,7 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {/*{{{*/
 
   public function build_signature(&$request, $consumer, $token) {/*{{{*/
     $base_string = $request->get_signature_base_string();
+    $request->base_string = $base_string;
   
     // Fetch the private key cert based on the request
     $cert = $this->fetch_private_cert($request);
@@ -200,7 +201,7 @@ class OAuthRequest {/*{{{*/
       if ($http_method == "GET") {
         $req_parameters = $_GET;
       } 
-      else if ($http_method = "POST") {
+      else if ($http_method == "POST") {
         $req_parameters = $_POST;
       } 
       $parameters = array_merge($header_parameters, $req_parameters);
@@ -325,11 +326,16 @@ class OAuthRequest {/*{{{*/
   public function get_normalized_http_url() {/*{{{*/
     $parts = parse_url($this->http_url);
 
-    // FIXME: port should handle according to http://groups.google.com/group/oauth/browse_thread/thread/1b203a51d9590226
-    $port = (isset($parts['port']) && $parts['port'] != '80') ? ':' . $parts['port'] : '';
-    $path = (isset($parts['path'])) ? $parts['path'] : '';
+    $port = (@$parts['port']) ? $parts['port'] : '80';
+    $scheme = $parts['scheme'];
+    $host = $parts['host'];
+    $path = @$parts['path'];
 
-    return $parts['scheme'] . '://' . $parts['host'] . $port . $path;
+    if (($scheme == 'https' && $port != '443')
+        || ($scheme == 'http' && $port != '80')) {
+      $host = "$host:$port";
+    }
+    return "$scheme://$host$path";
   }/*}}}*/
 
   /**
@@ -356,8 +362,8 @@ class OAuthRequest {/*{{{*/
   /**
    * builds the Authorization: header
    */
-  public function to_header() {/*{{{*/
-    $out ='"Authorization: OAuth realm="",';
+  public function to_header($realm="") {/*{{{*/
+    $out ='"Authorization: OAuth realm="' . $realm . '",';
     $total = array();
     foreach ($this->parameters as $k => $v) {
       if (substr($k, 0, 5) != "oauth") continue;
@@ -404,8 +410,10 @@ class OAuthRequest {/*{{{*/
    * parameters, has to do some unescaping
    */
   private static function split_header($header) {/*{{{*/
-    // this should be a regex
-    // error cases: commas in parameter values
+    // remove 'OAuth ' at the start of a header 
+    $header = substr($header, 6); 
+
+    // error cases: commas in parameter values?
     $parts = explode(",", $header);
     $out = array();
     foreach ($parts as $param) {
@@ -728,9 +736,15 @@ class SimpleOAuthDataStore extends OAuthDataStore {/*{{{*/
 
 class OAuthUtil {/*{{{*/
   public static function urlencodeRFC3986($string) {/*{{{*/
-    return str_replace('%7E', '~', rawurlencode($string));
+    return str_replace('+', '%20', 
+                       str_replace('%7E', '~', rawurlencode($string)));
+    
   }/*}}}*/
     
+
+  // This decode function isn't taking into consideration the above 
+  // modifications to the encoding process. However, this method doesn't 
+  // seem to be used anywhere so leaving it as is.
   public static function urldecodeRFC3986($string) {/*{{{*/
     return rawurldecode($string);
   }/*}}}*/
