@@ -436,7 +436,7 @@ class ContactsController extends AppController {
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(in_array($account['ServiceType']['token'], $filter)) {
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                    if(NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Contact->Identity->Account->Feed->access($account['Account']['id']);
                     } else {
                         $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['Account']['service_id'], $account['Account']['service_type_id'], $account['Account']['feed_url']);
