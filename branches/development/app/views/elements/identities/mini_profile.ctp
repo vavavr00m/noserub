@@ -16,19 +16,13 @@ $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'
                             1 => 'her',
                             2 => 'him'));
 
-if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-} else {
-    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-}
-
 if($data['photo']) {
     if(strpos($data['photo'], 'http://') === 0 ||
        strpos($data['photo'], 'https://') === 0) {
            # contains a complete path, eg. from not local identities
            $profile_photo = $data['photo'];
        } else {
-           $profile_photo = $static_base_url . $data['photo'] . '.jpg';
+           $profile_photo = $base_url_for_avatars . $data['photo'] . '.jpg';
        }
 } else {
     $profile_photo = $sex['img-small'][$data['sex']];

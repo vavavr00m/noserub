@@ -1,6 +1,6 @@
 <?php
     $url = Router::url('/' . $session_identity['local_username']);
-    if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+    if(NOSERUB_USE_CDN) {
         $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
     } else {
         $feed_url = $url . '/feeds/';

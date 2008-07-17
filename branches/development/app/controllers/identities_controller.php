@@ -191,6 +191,7 @@ class IdentitiesController extends AppController {
             $items = $this->cluster->create($items);
         }
     
+        $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
         $this->set('data', $data);
         $this->set('items', $items);
         $this->set('session_identity', $session_identity);
@@ -275,6 +276,7 @@ class IdentitiesController extends AppController {
             $this->layout = 'feed_rss';
             $this->render('../syndications/feed');
         } else {
+        	$this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
             $this->set('newbies', $this->Identity->getNewbies(9));
             $this->set('data', $data);
             $this->set('identities', $identities);
@@ -303,6 +305,7 @@ class IdentitiesController extends AppController {
         $name = empty($about_identity['Identity']['name']) ? $about_identity['Identity']['single_username'] : $about_identity['Identity']['name'];
         $this->set('headline', 'Send a message to ' . $name);
         $this->set('data', $about_identity);
+        $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
         
         $send_allowed = true;
         # check the users privacy setting
@@ -412,7 +415,7 @@ class IdentitiesController extends AppController {
                 $filename = $this->Identity->uploadPhotoByForm($this->data['Identity']['photo']);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
-                    if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                    if(NOSERUB_USE_CDN) {
                         # store to CDN
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
@@ -804,7 +807,7 @@ class IdentitiesController extends AppController {
             $data = $this->Identity->read();
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
-                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                if(NOSERUB_USE_CDN) {
                     # store to CDN
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');

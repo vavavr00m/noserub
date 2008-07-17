@@ -15,12 +15,6 @@ $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'
                             1 => 'her',
                             2 => 'him')
         );
-                                    
-if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-} else {
-    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-}
 
 foreach($data as $item) {
     if($item['WithIdentity']['namespace'] != '' && $session_local_username != $item['WithIdentity']['namespace']) {
@@ -50,7 +44,7 @@ foreach($data as $item) {
             # contains a complete path, eg. from not local identities
             $contact_photo = $item['WithIdentity']['photo'];
         } else {
-            $contact_photo = $static_base_url . $item['WithIdentity']['photo'].'.jpg';
+            $contact_photo = $base_url_for_avatars . $item['WithIdentity']['photo'].'.jpg';
         }	                
     } else {
         $contact_photo = $sex['img'][$item['WithIdentity']['sex']];

@@ -2,14 +2,7 @@
     # this is probably no valid FOAF!
     # in order to be able to just store simple RSS-Feeds (service_id = 8),
     # I just leave empty foaf:accountName and use foaf:OnlineAccount and
-    # foaf:accountServiceHomepage to store feed_url and account_url
-
-if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-} else {
-    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-}
-    
+    # foaf:accountServiceHomepage to store feed_url and account_url    
 ?>
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -29,7 +22,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
     <foaf:gender><?php echo $data['Identity']['sex'] == 1 ? 'female' : 'male'; ?></foaf:gender>
 <?php } ?>
 <?php if($data['Identity']['photo'] != '') { ?>
-    <foaf:img><?php echo $static_base_url . $data['Identity']['photo']; ?>.jpg</foaf:img>
+    <foaf:img><?php echo $base_url_for_avatars . $data['Identity']['photo']; ?>.jpg</foaf:img>
 <?php } ?>
 <?php if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude']) { ?>
     <foaf:based_near>

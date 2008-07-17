@@ -2,12 +2,6 @@
 $sex = array('img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
                                   1 => '/images/profile/avatar/female-small.gif',
                                   2 => '/images/profile/avatar/male-small.gif'));
-
-if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-} else {
-    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-}
 ?>
 <form id="SyndicationAddForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
@@ -49,7 +43,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
                            strpos($contact['WithIdentity']['photo'], 'http://') === 0) {
                             $contact_photo = str_replace('.jpg', '-small.jpg', $contact['WithIdentity']['photo']);
                         } else {
-                            $contact_photo = $static_base_url . $contact['WithIdentity']['photo'].'-small.jpg';
+                            $contact_photo = $base_url_for_avatars . $contact['WithIdentity']['photo'].'-small.jpg';
                         }
                     } else {
                         $contact_photo = $sex['img-small'][$contact['WithIdentity']['sex']];

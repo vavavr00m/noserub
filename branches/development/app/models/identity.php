@@ -879,10 +879,10 @@ class Identity extends AppModel {
         return $profile_photo;
     }
     
-    private function getBaseUrlForAvatars() {
+    public function getBaseUrlForAvatars() {
     	$url = '';
     	
-    	if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+    	if(NOSERUB_USE_CDN) {
             $url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
         } else {
             $url = FULL_BASE_URL . Router::url('/static/avatars/');

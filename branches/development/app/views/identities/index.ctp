@@ -17,7 +17,7 @@
         	$openid->serverLink('/auth', false);
         }
         
-        echo $this->element('foaf');
+        echo $this->element('foaf', array('base_url_for_avatars' => $base_url_for_avatars));
     
         $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
                                     1 => Router::url('/images/profile/avatar/female.gif'),
@@ -34,12 +34,6 @@
                      'his' => array(0 => 'his/her',
                                     1 => 'her',
                                     2 => 'his'));
-    
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-        } else {
-            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-        }
 
         if($data['Identity']['photo']) {
             if(strpos($data['Identity']['photo'], 'http://') === 0 ||
@@ -47,7 +41,7 @@
                    # contains a complete path, eg. from not local identities
                    $profile_photo = $data['Identity']['photo'];
                } else {
-                   $profile_photo = $static_base_url . $data['Identity']['photo'] . '.jpg';
+                   $profile_photo = $base_url_for_avatars . $data['Identity']['photo'] . '.jpg';
                }
         } else {
             $profile_photo = $sex['img'][$data['Identity']['sex']];
@@ -201,7 +195,7 @@
 	    <?php if($relationship_status == 'self') { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
     	<?php } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url)); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
     	<p class="morefriends">
     		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
@@ -214,7 +208,7 @@
         <hr />
 	
 	    <?php if(isset($mutual_contacts)) {
-	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $static_base_url));
+	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $base_url_for_avatars));
 	        echo '<hr />';
 	    } ?>
 	    

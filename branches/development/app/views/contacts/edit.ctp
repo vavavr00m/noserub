@@ -11,12 +11,6 @@ $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'
               'him' => array(0 => 'him/her',
                              1 => 'her',
                              2 => 'him'));
-                                    
-if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-    $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-} else {
-    $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-}
 ?>
 <?php $flashmessage->render(); ?>
 <?php if($contact['WithIdentity']['photo']) {
@@ -25,7 +19,7 @@ if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
         # contains a complete path, eg. from not local identities
         $contact_photo = $contact['WithIdentity']['photo'];
     } else {
-        $contact_photo = $static_base_url . $contact['WithIdentity']['photo'].'.jpg';
+        $contact_photo = $base_url_for_avatars . $contact['WithIdentity']['photo'].'.jpg';
     }	                
 } else {
     $contact_photo = $sex['img'][$contact['WithIdentity']['sex']];
