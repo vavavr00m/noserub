@@ -216,7 +216,7 @@ class AccountsController extends AppController {
                     $this->Account->create();
                     $this->Account->save($data, true, $saveable);
 
-                    if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                    if($this->Account->id && NOSERUB_USE_FEED_CACHE) {
                         # save feed information to cache
                         $this->Account->Feed->store($this->Account->id, $data['items']);
                         $this->Account->Feed->updateServiceType($this->Account->id, $data['service_type_id']);

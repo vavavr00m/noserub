@@ -33,7 +33,7 @@ class SyndicationsController extends AppController {
             $items = array();
             if(is_array($data['Account'])) {
                 foreach($data['Account'] as $account) {
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                    if(NOSERUB_USE_FEED_CACHE) {
                         $new_items = $this->Syndication->Account->Feed->access($account['id'], 5, false);
                     } else {
                         $new_items = $this->Syndication->Account->Service->feed2array($data['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
