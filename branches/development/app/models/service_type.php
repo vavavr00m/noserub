@@ -4,7 +4,7 @@
 class ServiceType extends AppModel {
     public $belongsTo = array('Service');                                                   
 
-    public $allowedFilters = array('photo'        => 'Photos',
+    private $allowedFilters = array('photo'        => 'Photos',
 	                            'video'        => 'Videos',
 	                            'audio'        => 'Audio',
 	                            'link'         => 'Link',

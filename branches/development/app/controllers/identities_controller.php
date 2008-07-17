@@ -174,7 +174,7 @@ class IdentitiesController extends AppController {
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
                 if(in_array($account['ServiceType']['token'], $filter)) {
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                    if($this->useFeedCache()) {
                         $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                     } else {
                         $new_items = $this->Identity->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
@@ -245,7 +245,7 @@ class IdentitiesController extends AppController {
             if(is_array($identity['Account'])) {
                 foreach($identity['Account'] as $account) {
                     if(in_array($account['ServiceType']['token'], $filter)) {
-                        if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
+                        if($this->useFeedCache()) {
                             $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
                         } else {
                             $new_items = $this->Identity->Account->Service->feed2array($identity['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
@@ -897,6 +897,10 @@ class IdentitiesController extends AppController {
     	} elseif ($response->status == Auth_OpenID_SUCCESS) {
     		return $response;
     	}
+    }
+    
+    private function useFeedCache() {
+    	return (defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE);
     }
     
     /**
