@@ -40,6 +40,7 @@ class ContactsController extends AppController {
         }
         
         $this->set('session_identity', $session_identity);
+		$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         
         if($session_identity['username'] == $splitted['username']) {
             $this->set('headline', 'My contacts');
@@ -248,6 +249,7 @@ class ContactsController extends AppController {
         }
         
         $this->set('contact', $contact);
+        $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         
         # get contact's accounts
         $this->Contact->Identity->Account->contain('Service');
@@ -371,6 +373,7 @@ class ContactsController extends AppController {
     	}
     	
     	$this->set('contact', $contact);
+    	$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
     	
     	$this->set('headline', 'Edit the contact details');
     	
@@ -520,13 +523,6 @@ class ContactsController extends AppController {
                 2 => Router::url('/images/profile/avatar/male-small.gif')
             )
         );
-        
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-        } else {
-            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-        }
-
                                      
         # get all noserub contacts
         $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
@@ -556,7 +552,7 @@ class ContactsController extends AppController {
                        # contains a complete path, eg. from not local identities
                        $profile_photo = $item['WithIdentity']['photo'];
                    } else {
-                       $profile_photo = $static_base_url . $item['WithIdentity']['photo'] . '.jpg';
+                       $profile_photo = $this->Contact->Identity->getBaseUrlForAvatars() . $item['WithIdentity']['photo'] . '.jpg';
                    }
             } else {
                 $profile_photo = $sex['img-small'][$item['WithIdentity']['sex']];

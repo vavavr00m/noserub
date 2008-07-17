@@ -7,7 +7,6 @@ if(empty($noserub_contacts) && empty($private_contacts)) { ?>
         No contacts yet.
     </p>
 <?php } else {
-
 	if($identity['id'] == $session_identity_id) {
     	echo '<p class="infotext">';
         echo $html->link('Add new contact', '/' . $identity['local_username'] . '/contacts/add/', array('class' => 'addmore'));
@@ -15,12 +14,12 @@ if(empty($noserub_contacts) && empty($private_contacts)) { ?>
 	}
     if(!empty($noserub_contacts)) {
         echo '<h3 class="contactsheadline">NoseRub Contacts</h3>';
-        echo $this->element('contacts/list', array('data' => $noserub_contacts, 'show_photo' => true));
+        echo $this->element('contacts/list', array('data' => $noserub_contacts, 'show_photo' => true, 'base_url_for_avatars' => $base_url_for_avatars));
     }
     
     if(!empty($private_contacts)) {
         echo '<br class="clear" /><h3 class="contactsheadline">Private Contacts</h3>';
-        echo $this->element('contacts/list', array('data' => $private_contacts, 'show_photo' => false));
+        echo $this->element('contacts/list', array('data' => $private_contacts, 'show_photo' => false, 'base_url_for_avatars' => $base_url_for_avatars));
     }
 }
 if($identity['id'] == $session_identity_id) { ?>

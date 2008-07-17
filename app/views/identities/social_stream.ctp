@@ -10,18 +10,11 @@
                                2 => 'he'),
                  'him' => array(0 => 'him/her',
                                 1 => 'her',
-                                2 => 'him'));
-
-    if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-        $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-    } else {
-        $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-    }
-        
+                                2 => 'him'));        
 ?>
 
 <?php if(isset($about_identity)) {
-    echo $this->element('identities/mini_profile', array('data' => $about_identity));
+    echo $this->element('identities/mini_profile', array('data' => $about_identity, 'base_url_for_avatars' => $base_url_for_avatars));
 } ?>
 
     <div class="vcard">
@@ -33,13 +26,13 @@
     </div>
 
     <div id="sidebar">
-    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $static_base_url, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'sex' => $sex, 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if($menu['logged_in'] && isset($contacts)) { ?>
     	    <hr />
-    	    <?php echo $this->element('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $static_base_url, 'manage' => true)); ?>
+    	    <?php echo $this->element('contacts/box', array('box_head' => 'My Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $base_url_for_avatars, 'manage' => true)); ?>
     	<?php } ?>
     	<?php if(isset($newbies)) { ?>
     	    <hr />
-            <?php echo $this->element('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $static_base_url)); ?>
+            <?php echo $this->element('contacts/box', array('box_head' => 'Newbies', 'sex' => $sex, 'data' => $newbies, 'static_base_url' => $base_url_for_avatars)); ?>
         <?php } ?>
     </div>

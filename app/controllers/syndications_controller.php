@@ -21,7 +21,7 @@ class SyndicationsController extends AppController {
         if($extension && isset($feed_types[$extension])) {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
-            if(!$internal_call && defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            if(!$internal_call && NOSERUB_USE_CDN) {
                 $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301', true);
             }
             
@@ -51,7 +51,7 @@ class SyndicationsController extends AppController {
 
             # decide, wether to render the feed directly,
             # or uploading it to the CDN.
-            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            if(NOSERUB_USE_CDN) {
                 # check, if the items are new enough, so we need
                 # to do an upload
                 $datetime_newest_item = isset($items[0]['datetime']) ? $items[0]['datetime'] : '2007-10-01';
@@ -160,7 +160,7 @@ class SyndicationsController extends AppController {
                 $this->Syndication->save($data);
                 
                 # no also create it initially, if we use a CDN
-                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                if(NOSERUB_USE_CDN) {
                     $this->feed($data['Syndication']['hash'].'.rss', true);
                 }
             } 
@@ -204,6 +204,7 @@ class SyndicationsController extends AppController {
         }
         
         $this->set('headline', 'Add new Feed');
+        $this->set('base_url_for_avatars', $this->Syndication->Identity->getBaseUrlForAvatars());
     }
     
     /**
@@ -217,7 +218,7 @@ class SyndicationsController extends AppController {
         $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
         
         $url = Router::url('/' . $identity['Identity']['local_username']);
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+        if(NOSERUB_USE_CDN) {
             $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
         } else {
             $feed_url = $url . '/feeds/';
@@ -240,7 +241,7 @@ class SyndicationsController extends AppController {
     public function shell_upload() {
         $uploaded = array();
 
-        if(!defined('NOSERUB_USE_CDN') || !NOSERUB_USE_CDN) {
+        if(!NOSERUB_USE_CDN) {
             # we don't need to do any upload
             $this->set('uploaded', $uploaded);
             $this->render();
