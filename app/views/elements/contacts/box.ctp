@@ -42,7 +42,8 @@
                     $contact_photo = $static_base_url . $item['photo'].'-small.jpg';
                 }	                
             } else {
-                $contact_photo = $sex['img-small'][$item['sex']];
+                App::import('Vendor', 'sex');
+            	$contact_photo = Sex::getImageUrl($item['sex'], true);
             } ?>
             <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
         </a>

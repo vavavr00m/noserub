@@ -4,7 +4,8 @@
     </p>
 <?php } else { ?>
     <?php 
-        $noserub_url = 'http://' . $data['Identity']['username'];
+        App::import('Vendor', 'sex');
+    	$noserub_url = 'http://' . $data['Identity']['username'];
         
         if (isset($data['Identity']['openid'])) {
         	# We delegate to the OpenID identity instead of the OpenID as the OpenID itself may be 
@@ -19,22 +20,6 @@
         
         echo $this->element('foaf', array('base_url_for_avatars' => $base_url_for_avatars));
     
-        $sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                                    1 => Router::url('/images/profile/avatar/female.gif'),
-                                    2 => Router::url('/images/profile/avatar/male.gif')),
-                     'img-small' => array(0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
-                                          1 => Router::url('/images/profile/avatar/female-small.gif'),
-                                          2 => Router::url('/images/profile/avatar/male-small.gif')),
-                     'he' => array(0 => 'he/she',
-                                   1 => 'she',
-                                   2 => 'he'),
-                     'him' => array(0 => 'him/her',
-                                    1 => 'her',
-                                    2 => 'him'),
-                     'his' => array(0 => 'his/her',
-                                    1 => 'her',
-                                    2 => 'his'));
-
         if($data['Identity']['photo']) {
             if(strpos($data['Identity']['photo'], 'http://') === 0 ||
                strpos($data['Identity']['photo'], 'https://') === 0) {
@@ -44,7 +29,7 @@
                    $profile_photo = $base_url_for_avatars . $data['Identity']['photo'] . '.jpg';
                }
         } else {
-            $profile_photo = $sex['img'][$data['Identity']['sex']];
+            $profile_photo = Sex::getImageUrl($data['Identity']['sex']);
         }
     ?>
 
@@ -66,14 +51,14 @@
         	<ul class="whoisstats">
         	    <?php if(isset($data['Identity']['age'])) { ?>
         		    <li class="bio icon">
-        		        <?php echo $sex['he'][$data['Identity']['sex']]; ?> is <?php echo $data['Identity']['age']; ?> years old.
+        		        <?php echo Sex::heOrShe($data['Identity']['sex']); ?> is <?php echo $data['Identity']['age']; ?> years old.
         		    </li>
 		        <?php } ?>
         		<?php if(isset($distance) || $data['Identity']['address_shown']) {
         		    if($relationship_status == 'self') {
         		        $label = 'you live ';
         		    } else {
-        		        $label = $sex['he'][$data['Identity']['sex']] . ' lives ';
+        		        $label = Sex::heOrShe($data['Identity']['sex']) . ' lives ';
     		        }
         		    if(isset($distance)) {
         		        $label .= ceil($distance) . ' km away from you';
@@ -88,7 +73,7 @@
 		            if($relationship_status == 'self') {
 		                $label = 'your last Location: ';
 		            } else {
-		                $label = $sex['his'][$data['Identity']['sex']] . ' last Location: ';
+		                $label = Sex::hisOrHer($data['Identity']['sex']) . ' last Location: ';
 		            }
 		            $label .= $data['Location']['name'] == '' ? '<em>Unknown</em>' : $data['Location']['name'];
 		        ?>
@@ -98,9 +83,9 @@
         		<?php if($menu['logged_in'] && isset($relationship_status) && $relationship_status != 'self') { ?>
                     <?php
                         if($relationship_status == 'contact') {
-                            echo '<li class="removecontact icon">' . $sex['he'][$data['Identity']['sex']] . ' is a contact of yours</li>';
+                            echo '<li class="removecontact icon">' . Sex::heOrShe($data['Identity']['sex']) . ' is a contact of yours</li>';
                         } else { 
-                            echo '<li class="addcontact icon">' . $html->link('Add ' . $sex['him'][$data['Identity']['sex']] . ' as your contact', '/' . $data['Identity']['local_username'] . '/add/as/contact/'.$security_token.'/').'</li>';
+                            echo '<li class="addcontact icon">' . $html->link('Add ' . Sex::himOrHer($data['Identity']['sex']) . ' as your contact', '/' . $data['Identity']['local_username'] . '/add/as/contact/'.$security_token.'/').'</li>';
                         }
                     ?>
                 <?php } ?>
@@ -110,7 +95,7 @@
         <hr class="clear" />
         
         <?php if($data['Identity']['about']) { ?>
-            <h4>About <?php echo $sex['him'][$data['Identity']['sex']]; ?></h4>
+            <h4>About <?php echo Sex::himOrHer($data['Identity']['sex']); ?></h4>
             <div id="about">
                 <p class="summary">
                     <?php if($data['Identity']['about']) {
@@ -195,7 +180,7 @@
 	    <?php if($relationship_status == 'self') { ?>
     	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
     	<?php } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'sex' => $sex, 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
     	<p class="morefriends">
     		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
@@ -208,7 +193,7 @@
         <hr />
 	
 	    <?php if(isset($mutual_contacts)) {
-	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'sex' => $sex, 'data' => $mutual_contacts, 'static_base_url' => $base_url_for_avatars));
+	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'data' => $mutual_contacts, 'static_base_url' => $base_url_for_avatars));
 	        echo '<hr />';
 	    } ?>
 	    

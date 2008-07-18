@@ -1,20 +1,6 @@
 <?php
 $session_local_username = isset($session_identity['local_username']) ? $session_identity['local_username'] : '';
 $session_identity_id    = isset($session_identity['id']) ? $session_identity['id'] : 0;
-    
-$sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                            1 => Router::url('/images/profile/avatar/female.gif'),
-                            2 => Router::url('/images/profile/avatar/male.gif')),
-             'img-small' => array(0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
-                                  1 => Router::url('/images/profile/avatar/female-small.gif'),
-                                  2 => Router::url('/images/profile/avatar/male-small.gif')),
-             'he' => array(0 => 'he/she',
-                           1 => 'she',
-                           2 => 'he'),
-             'him' => array(0 => 'him/her',
-                            1 => 'her',
-                            2 => 'him')
-        );
 
 foreach($data as $item) {
     if($item['WithIdentity']['namespace'] != '' && $session_local_username != $item['WithIdentity']['namespace']) {
@@ -47,7 +33,8 @@ foreach($data as $item) {
             $contact_photo = $base_url_for_avatars . $item['WithIdentity']['photo'].'.jpg';
         }	                
     } else {
-        $contact_photo = $sex['img'][$item['WithIdentity']['sex']];
+    	App::import('Vendor', 'sex');
+        $contact_photo = Sex::getImageUrl($item['WithIdentity']['sex']);
     } ?>
                 
     <dl id="hcard-<?php echo $item['WithIdentity']['local_username']; ?>" class="vcards <?php echo $show_photo ? 'contacts' : 'private'; ?> <?php echo $item['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">

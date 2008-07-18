@@ -866,7 +866,7 @@ class Identity extends AppModel {
     /**
      * @param $identityKey Either 'Identity' or 'WithIdentity'
      */
-    public function getPhotoUrl($data, $identityKey = 'Identity') {
+    public function getPhotoUrl($data, $identityKey = 'Identity', $smallSize = false) {
         if($data[$identityKey]['photo']) {
             if($this->startsWithHttp($data[$identityKey]['photo'])) {
                    # contains a complete path, eg. from not local identities
@@ -875,7 +875,8 @@ class Identity extends AppModel {
                    $profile_photo = $this->getBaseUrlForAvatars() . $data[$identityKey]['photo'] . '.jpg';
                }
         } else {
-            $profile_photo = $this->getPhotoUrlForSex($data[$identityKey]['sex']);
+            App::import('Vendor', 'sex');
+        	$profile_photo = Sex::getImageUrl($data[$identityKey]['sex'], $smallSize);
         }
         
         return $profile_photo;
@@ -891,15 +892,6 @@ class Identity extends AppModel {
         }
         
         return $url;
-    }
-    
-    private function getPhotoUrlForSex($sex) {
-    	$urls = array(Router::url('/images/profile/avatar/noinfo.gif'),
-			Router::url('/images/profile/avatar/female.gif'),
-			Router::url('/images/profile/avatar/male.gif')
-		);
-		
-		return $urls[$sex];
     }
     
     private function startsWithHttp($string) {
