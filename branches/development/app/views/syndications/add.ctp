@@ -1,8 +1,3 @@
-<?php
-$sex = array('img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif',
-                                  1 => '/images/profile/avatar/female-small.gif',
-                                  2 => '/images/profile/avatar/male-small.gif'));
-?>
 <form id="SyndicationAddForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <legend>Select a name. This is just visible for you and should help you to organize your feeds.</legend>
@@ -46,7 +41,8 @@ $sex = array('img-small' => array(0 => '/images/profile/avatar/noinfo-small.gif'
                             $contact_photo = $base_url_for_avatars . $contact['WithIdentity']['photo'].'-small.jpg';
                         }
                     } else {
-                        $contact_photo = $sex['img-small'][$contact['WithIdentity']['sex']];
+                    	App::import('Vendor', 'sex');
+                        $contact_photo = Sex::getImageUrl($contact['WithIdentity']['sex'], true);
                     }
                 ?>
                 <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" class="avatar" />

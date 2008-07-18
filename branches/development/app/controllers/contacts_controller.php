@@ -510,19 +510,6 @@ class ContactsController extends AppController {
     public function api_get() {
         $identity = $this->api->getIdentity();
         $this->api->exitWith404ErrorIfInvalid($identity);
-
-        $sex = array(
-            'img' => array(
-                0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                1 => Router::url('/images/profile/avatar/female.gif'),
-                2 => Router::url('/images/profile/avatar/male.gif')
-            ),
-            'img-small' => array(
-                0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
-                1 => Router::url('/images/profile/avatar/female-small.gif'),
-                2 => Router::url('/images/profile/avatar/male-small.gif')
-            )
-        );
                                      
         # get all noserub contacts
         $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
@@ -546,23 +533,11 @@ class ContactsController extends AppController {
                 $xfn[] = 'contact';
             }
             
-            if($item['WithIdentity']['photo']) {
-                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
-                   strpos($item['WithIdentity']['photo'], 'https://') === 0) {
-                       # contains a complete path, eg. from not local identities
-                       $profile_photo = $item['WithIdentity']['photo'];
-                   } else {
-                       $profile_photo = $this->Contact->Identity->getBaseUrlForAvatars() . $item['WithIdentity']['photo'] . '.jpg';
-                   }
-            } else {
-                $profile_photo = $sex['img-small'][$item['WithIdentity']['sex']];
-            }
-            
             $contact = array(
                 'url' => 'http://' . $item['WithIdentity']['username'],
                 'firstname' => $item['WithIdentity']['firstname'],
                 'lastname'  => $item['WithIdentity']['lastname'],
-                'photo'     => $profile_photo,
+                'photo'     => $this->Contact->Identity->getPhotoUrl($item, 'WithIdentity', true),
                 'xfn'       => join(' ', $xfn)
             );
             $contacts[] = $contact;
