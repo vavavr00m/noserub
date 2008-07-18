@@ -249,7 +249,7 @@ class ContactsController extends AppController {
         }
         
         $this->set('contact', $contact);
-        $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
+        $this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
         
         # get contact's accounts
         $this->Contact->Identity->Account->contain('Service');
@@ -373,7 +373,7 @@ class ContactsController extends AppController {
     	}
     	
     	$this->set('contact', $contact);
-    	$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
+    	$this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
     	
     	$this->set('headline', 'Edit the contact details');
     	

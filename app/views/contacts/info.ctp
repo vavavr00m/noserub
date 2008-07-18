@@ -1,29 +1,4 @@
-<?php
-$sex = array('img' => array(0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                             1 => Router::url('/images/profile/avatar/female.gif'),
-                             2 => Router::url('/images/profile/avatar/male.gif')),
-              'img-small' => array(0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
-                                   1 => Router::url('/images/profile/avatar/female-small.gif'),
-                                   2 => Router::url('/images/profile/avatar/male-small.gif')),
-              'he' => array(0 => 'he/she',
-                            1 => 'she',
-                            2 => 'he'),
-              'him' => array(0 => 'him/her',
-                             1 => 'her',
-                             2 => 'him'));
-?>
-<?php $flashmessage->render(); ?>
-<?php if($contact['WithIdentity']['photo']) {
-    if(strpos($contact['WithIdentity']['photo'], 'http://') === 0 ||
-       strpos($contact['WithIdentity']['photo'], 'https://') === 0) {
-        # contains a complete path, eg. from not local identities
-        $contact_photo = $contact['WithIdentity']['photo'];
-    } else {
-        $contact_photo = $base_url_for_avatars . $contact['WithIdentity']['photo'].'.jpg';
-    }	                
-} else {
-    $contact_photo = $sex['img'][$contact['WithIdentity']['sex']];
-} ?>         
+<?php $flashmessage->render(); ?>         
 <dl id="hcard-<?php echo $contact['WithIdentity']['local_username']; ?>" class="vcards contacts <?php echo $contact['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">
     <dt>
         <a href="<?php echo 'http://' . $contact['WithIdentity']['username']; ?>">
