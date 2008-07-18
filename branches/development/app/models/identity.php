@@ -863,17 +863,19 @@ class Identity extends AppModel {
         }
     }
     
-    public function getPhotoUrl($data) {
-        if($data['Identity']['photo']) {
-            if(strpos($data['Identity']['photo'], 'http://') === 0 ||
-               strpos($data['Identity']['photo'], 'https://') === 0) {
+    /**
+     * @param $identityKey Either 'Identity' or 'WithIdentity'
+     */
+    public function getPhotoUrl($data, $identityKey = 'Identity') {
+        if($data[$identityKey]['photo']) {
+            if($this->startsWithHttp($data[$identityKey]['photo'])) {
                    # contains a complete path, eg. from not local identities
-                   $profile_photo = $data['Identity']['photo'];
+                   $profile_photo = $data[$identityKey]['photo'];
                } else {
-                   $profile_photo = $this->getBaseUrlForAvatars() . $data['Identity']['photo'] . '.jpg';
+                   $profile_photo = $this->getBaseUrlForAvatars() . $data[$identityKey]['photo'] . '.jpg';
                }
         } else {
-            $profile_photo = $this->getPhotoUrlForSex($data['Identity']['sex']);
+            $profile_photo = $this->getPhotoUrlForSex($data[$identityKey]['sex']);
         }
         
         return $profile_photo;
@@ -898,5 +900,10 @@ class Identity extends AppModel {
 		);
 		
 		return $urls[$sex];
+    }
+    
+    private function startsWithHttp($string) {
+    	return (strpos($string, 'http://') === 0 ||
+                strpos($string, 'https://') === 0);
     }
 }
