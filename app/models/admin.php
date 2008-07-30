@@ -231,7 +231,7 @@ class Admin extends AppModel {
         for($i=$current_migration+1; $i<=$most_recent_migration; $i++) {
             if(isset($migrations['sql'][$i])) {
                 foreach($migrations['sql'][$i]['content'] as $sql) {
-                    $this->execute($sql);
+                    $this->query($sql);
                 }
             }
             if(isset($migrations['php'][$i]['name'])) {
@@ -239,7 +239,7 @@ class Admin extends AppModel {
             }
             
             # update schema_info
-            $this->execute('UPDATE schema_info SET value='.$i);
+            $this->query('UPDATE schema_info SET value='.$i);
         }
     }
 }
