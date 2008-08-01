@@ -353,10 +353,9 @@ class AccountsController extends AppController {
         foreach($data as $username => $item) {
             # try to find accounts with that username first
             $this->Account->contain('Identity');
-            // TODO replace findAll with find('all')
-            $accounts = $this->Account->findAll(array('Account.username'        => $username,
-                                                      'Account.service_id'      => $service_id,
-                                                      'Account.service_type_id' => $service_type_id));
+            $accounts = $this->Account->find('all', array('conditions' => array('Account.username' => $username,
+            																	'Account.service_id' => $service_id,
+            																	'Account.service_type_id' => $service_type_id)));
             
             # we might have several accounts found, because the same account 
             # could be stored at different local identities.
@@ -377,11 +376,10 @@ class AccountsController extends AppController {
         $this->set('data', $data);
         
         $this->Account->Identity->Contact->contain('WithIdentity');
-        // TODO replace findAll with find('all')
-        $data = $this->Account->Identity->Contact->findAll(array('Contact.identity_id'   => $identity_id,
-                                                                 'WithIdentity.is_local' => 1,
-                                                                 'WithIdentity.username LIKE "%@%"'), 
-                                                           null, 'WithIdentity.username ASC');
+        $data = $this->Account->Identity->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity_id,
+        																				   'WithIdentity.is_local' => 1,
+        																				   'WithIdentity.username LIKE "%@%"'),
+        															 'order' => array('WithIdentity.username ASC')));
         $contacts = array();
         foreach($data as $item) {
             $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['local_username'];

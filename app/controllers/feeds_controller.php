@@ -44,8 +44,9 @@ class FeedsController extends AppController {
             $last_refresh = date('Y-m-d H:i:s', strtotime('-30 minutes'));
             
             $this->Feed->contain(array('Account', 'Identity'));
-            // TODO replace findAll with find('all')
-            $data = $this->Feed->findAll(array('Feed.updated < "' . $last_refresh . '"'), null, 'Feed.updated ASC', 1);
+            $data = $this->Feed->find('all', array('conditions' => array('Feed.updated <' => $last_refresh),
+            									   'order' => array('Feed.updated ASC'),
+            									   'limit' => 1));
             foreach($data as $item) {
                 # set the updated right now, so a parallel running task
                 # would not get it, while we are fetching the feed

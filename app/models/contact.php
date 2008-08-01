@@ -87,8 +87,8 @@ class Contact extends AppModel {
      */
     public function deleteByIdentityId($identity_id, $local_username) {
         $this->contain('WithIdentity');
-        // TODO replace findAll with find('all')
-        $contacts = $this->findAll(array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id));
+        $contacts = $this->find('all', array('conditions' => array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id)));
+
         foreach($contacts as $contact) {
             if($contact['Contact']['identity_id'] == $identity_id &&
                $contact['WithIdentity']['namespace'] == $local_username) {

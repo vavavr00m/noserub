@@ -171,9 +171,8 @@ class SyndicationsController extends AppController {
         } else {
             # get all accounts from this user, that have feeds
             $this->Syndication->Account->contain('Service');
-            // TODO replace findAll with find('all')
-            $accounts = $this->Syndication->Account->findAll(array('Account.identity_id' => $session_identity['id'],
-                                                                   'Account.feed_url <> ""'));
+            $accounts = $this->Syndication->Account->find('all', array('conditions' => array('Account.identity_id' => $session_identity['id'],
+            																				 'Account.feed_url <> ""')));
             $this->set('accounts', $accounts);
 
             # get all accounts from this users contacts
@@ -184,8 +183,8 @@ class SyndicationsController extends AppController {
             # now go through all contacts to get accounts and services
             foreach($contacts as $key => $value) {
                 $this->Syndication->Account->contain('Service');
-                // TODO replace findAll with find('all')
-                $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->findAll(array('identity_id' => $value['WithIdentity']['id'], 'feed_url != ""')); 
+                $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->find('all', array('conditions' => array('identity_id' => $value['WithIdentity']['id'],
+                																												  'feed_url != ""')));  
             }
             $this->set('contacts', $contacts);
             
@@ -255,8 +254,9 @@ class SyndicationsController extends AppController {
             $last_upload = date('Y-m-d H:i:s', strtotime('-15 minutes'));
             
             $this->Syndication->contain();
-            // TODO replace findAll with find('all')
-            $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.last_upload ASC, Syndication.modified DESC', 1);
+            $data = $this->Syndication->find('all', array('conditions' => array('Syndication.last_upload <' => $last_upload),
+            											  'order' => array('Syndication.last_upload ASC', 'Syndication.modified DESC'),
+            											  'limit' => 1));
             foreach($data as $item) {
                 # save the old last_update timestamp
                 $datetime_last_upload = $item['Syndication']['last_upload'];

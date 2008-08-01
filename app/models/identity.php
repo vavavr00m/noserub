@@ -213,8 +213,9 @@ class Identity extends AppModel {
 			$mutualContactsIds = join(',', Set::extract($ids, '{n}.contacts.with_identity_id'));
 
 			$this->contain();
-			// TODO replace findAll with find('all')
-			$mutualContacts = $this->findAll(array('Identity.id IN (' . $mutualContactsIds . ')'), null, 'Identity.last_activity DESC', $limit);
+			$mutualContacts = $this->find('all', array('conditions' => array('Identity.id IN (' . $mutualContactsIds . ')'),
+													   'order' => array('Identity.last_activity DESC'),
+													   'limit' => $limit));
 			
 			return $mutualContacts;
 		}
@@ -227,11 +228,13 @@ class Identity extends AppModel {
      */
     public function getNewbies($limit = null) {
         $this->contain();
-        // TODO replace findAll with find('all')
-        $newbies = $this->findAll(array('is_local' => 1, 
-                                        'frontpage_updates' => 1,
-                                        'hash' => '',
-                                        'username NOT LIKE "%@%"'), null, 'Identity.created DESC', $limit);
+
+        $newbies = $this->find('all', array('conditions' => array('is_local' => 1,
+        														  'frontpage_updates' => 1,
+        														  'hash' => '',
+        														  'username NOT LIKE "%@%"'),
+        									'order' => array('Identity.created DESC'),
+        									'limit' => $limit));
         
         return $newbies;
     }

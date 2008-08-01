@@ -24,19 +24,16 @@ class ContactsController extends AppController {
         
         # get all noserub contacts
         $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
-        // TODO replace findAll with find('all')
-        $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
-                                                                     'WithIdentity.username NOT LIKE "%@%"'), 
-                                                               null, 
-                                                               'WithIdentity.username ASC'));
+        $this->set('noserub_contacts', $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity['Identity']['id'],
+        																					   'WithIdentity.username NOT LIKE "%@%"'),
+        																 'order' => array('WithIdentity.username ASC'))));
+
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
             $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
-			// TODO replace findAll with find('all')
-            $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
-                                                                         'WithIdentity.username LIKE "%@%"'), 
-                                                                         null, 
-                                                                         'WithIdentity.username ASC'));
+			$this->set('private_contacts', $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity['Identity']['id'],
+        																					       'WithIdentity.username LIKE "%@%"'),
+        																     'order' => array('WithIdentity.username ASC'))));
         }
         
         $this->set('session_identity', $session_identity);
@@ -420,9 +417,8 @@ class ContactsController extends AppController {
             $data = $this->Contact->findAllByIdentityId($session_identity['id']);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            // TODO replace findAll with find('all')
-        	$data = $this->Contact->findAll(array('Contact.identity_id' => $about_identity['id'],
-                                                  'WithIdentity.username NOT LIKE "%@%"'));
+            $data = $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $about_identity['id'],
+            																'WithIdentity.username NOT LIKE "%@%"')));
         }
 
         # we need to go through all this now and get Accounts and Services
@@ -518,8 +514,8 @@ class ContactsController extends AppController {
             'Contact.identity_id' => $identity['Identity']['id'],
             'WithIdentity.username NOT LIKE "%@%"'
         );
-    	// TODO replace findAll with find('all')    
-        $data = $this->Contact->findAll($conditions, null, 'WithIdentity.last_activity DESC');
+    	$data = $this->Contact->find('all', array('conditions' => $conditions,
+    											  'order' => array('WithIdentity.last_activity DESC')));   
         
         $contacts = array();
         foreach($data as $item) {
