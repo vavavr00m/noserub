@@ -211,13 +211,13 @@ class IdentitiesController extends AppController {
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
         $this->Identity->contain(array('Account', 'Account.Service', 'Account.ServiceType'));
-        // TODO replace findAll with find('all')
-        $data = $this->Identity->findAll(array('frontpage_updates' => 1,
-                                               'is_local'  => 1,
-                                               'hash'      => '',
-        									   'NOT last_activity = "0000-00-00 00:00:00"',
-                                               'username NOT LIKE "%@%"'),
-                                         null, 'Identity.last_activity DESC, Identity.modified DESC', 25);
+        $data = $this->Identity->find('all', array('conditions' => array('Identity.frontpage_updates' => 1,
+        																 'Identity.is_local' => 1,
+        																 'Identity.hash' => '',
+        																 'NOT Identity.last_activity = "0000-00-00 00:00:00"',
+        																 'Identity.username NOT LIKE "%@%"'),
+        										   'order' => array('Identity.last_activity DESC', 'Identity.modified DESC'),
+        										   'limit' => 25));
 
         # get filter
         $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
@@ -831,8 +831,7 @@ class IdentitiesController extends AppController {
         
         # get all not local identities
         $this->Identity->contain();
-        // TODO replace findAll with find('all')
-        $identities = $this->Identity->findAll(array('is_local' => 0), null, 'last_sync ASC');
+        $identities = $this->Identity->find('all', array('conditions' => array('is_local' => 0), 'order' => array('last_sync ASC')));
         $synced = array();
         foreach($identities as $identity) {
             $this->Identity->sync($identity['Identity']['id'], $identity['Identity']['username']);       
