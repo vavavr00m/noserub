@@ -108,15 +108,16 @@ class ContactType extends AppModel {
 	
 	public function getIDsOfContactTypes($identityId, $contactTypes) {
 		$this->contain();
-		// TODO replace findAll with find('all')
-		$contactTypeIDs = $this->findAll(array('ContactType.identity_id' => $identityId, 'ContactType.name' => $contactTypes), 'ContactType.id');
+		$contactTypeIDs = $this->find('all', array('conditions' => array('ContactType.identity_id' => $identityId,
+																		 'ContactType.name' => $contactTypes),
+												   'fields' => array('ContactType.id')));
 		$contactTypeIDs = Set::extract($contactTypeIDs, '{n}.ContactType.id');
 		
 		return $contactTypeIDs;
 	}
 	
 	public function getIDsOfUnusedContactTypes($contactTypeIDs) {
-		$usedContactTypeIDs = $this->ContactTypesContact->findAll(array('ContactTypesContact.contact_type_id' => $contactTypeIDs));
+		$usedContactTypeIDs = $this->ContactTypesContact->find('all', array('conditions' => array('ContactTypesContact.contact_type_id' => $contactTypeIDs)));
 		$usedContactTypeIDs = array_unique(Set::extract($usedContactTypeIDs, '{n}.ContactTypesContact.contact_type_id'));
 		
 		$unusedContactTypeIDS = array();
@@ -137,8 +138,7 @@ class ContactType extends AppModel {
 		$newContactTypes = array();
 		
 		$this->contain();
-		// TODO replace findAll with find('all')
-		$existingContactTypes = $this->findAll(array('ContactType.identity_id' => $identityId, 'ContactType.name' => $contactTypes));
+		$existingContactTypes = $this->find('all', array('conditions' => array('ContactType.identity_id' => $identityId, 'ContactType.name' => $contactTypes)));
 		$existingContactTypes = Set::extract($existingContactTypes, '{n}.ContactType.name');
 
 		foreach ($contactTypes as $contactType) {
