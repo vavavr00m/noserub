@@ -3,7 +3,7 @@ class PagesController extends AppController {
     public $uses = array();
     
     public function display() {
-        $this->redirect('/social_stream/', null, true);
+        $this->redirect('/social_stream/');
     }
     
     public function security_check() {

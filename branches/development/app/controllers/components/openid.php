@@ -40,7 +40,7 @@ class OpenidComponent extends Object {
 			if (Auth_OpenID::isFailure($redirectUrl)) {
 				throw new Exception('Could not redirect to server: '.$redirectUrl->message);
 			} else {
-				$this->controller->redirect($redirectUrl, null, true);
+				$this->controller->redirect($redirectUrl);
 			}
 		} else {
 			$formId = 'openid_message';

@@ -36,7 +36,7 @@ class AuthController extends AppController {
 							$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 						} else {
 							$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
-							$this->redirect('/auth/trust', null, true);
+							$this->redirect('/auth/trust');
 						}
 					} else {
 						$response = $request->answer(false);
@@ -46,7 +46,7 @@ class AuthController extends AppController {
 						$response = $request->answer(false, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
 					} else {
 						$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
-						$this->redirect('/pages/login/', null, true);
+						$this->redirect('/pages/login/');
 					}
 				}
 			} else {
@@ -209,7 +209,7 @@ class AuthController extends AppController {
 			exit;
 		}
 
-		$this->redirect($webResponse->headers['location'], null, true);
+		$this->redirect($webResponse->headers['location']);
 	}
 	
 	private function setDataForTrustForm($request, $sregRequest) {

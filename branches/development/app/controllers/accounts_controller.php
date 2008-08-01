@@ -15,7 +15,7 @@ class AccountsController extends AppController {
         $identity = $this->getIdentity($splitted['username']);
         if(!$identity) {
             # this identity is not here
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         $this->set('about_identity', $identity['Identity']);
 
@@ -185,7 +185,7 @@ class AccountsController extends AppController {
         if(!$identity_id || !$data) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         $data['service_id'] = $this->Session->read('Service.add.id');
@@ -228,7 +228,7 @@ class AccountsController extends AppController {
                         if(!empty($contacts)) {
                             $this->Session->write('Service.add.contacts', $contacts);
                             $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/', null, true);
+                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/');
                         }
                     }
                     
@@ -238,12 +238,12 @@ class AccountsController extends AppController {
             # we're done!
             if($identity_id == $session_identity['id']) {
                 # new account for the logged in user, so we redirect to his/her account settings
-                $this->redirect('/' . $username . '/settings/accounts/', null, true);
+                $this->redirect('/' . $username . '/settings/accounts/');
             } else {
                 # new account for a private contact. redirect to his/her profile
                 $this->Account->Identity->contain();
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
-                $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
+                $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/');
             }
         }
         // for feeds it must be possible to select the service type
@@ -266,13 +266,13 @@ class AccountsController extends AppController {
         if(!$identity_id || !$session_identity || !$service_id || !$service_type_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
             $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/', null, true);
+            $this->redirect('/' . $username . '/settings/accounts/');
         }
         
         if($this->data) {
@@ -338,7 +338,7 @@ class AccountsController extends AppController {
             }
             # we're done!
             $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/', null, true);
+            $this->redirect('/' . $username . '/settings/accounts/');
         }
 
         $this->Account->contain('Service');
@@ -396,7 +396,7 @@ class AccountsController extends AppController {
 
         # check the session vars
         if(!$session_identity) {
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         # get the account
@@ -404,7 +404,7 @@ class AccountsController extends AppController {
         $data = $this->Account->find(array('id' => $account_id, 'identity_id' => $identity_id));
         if(!$data) {
             # the account for this identity could not be found
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         if(!$this->data) {
@@ -415,7 +415,7 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
                 $this->Account->Feed->updateServiceType($this->Account->id, $this->data['Account']['service_type_id']);
-                $this->redirect('/' . $username . '/settings/accounts/', null, true);
+                $this->redirect('/' . $username . '/settings/accounts/');
             }
         }
         
@@ -431,7 +431,7 @@ class AccountsController extends AppController {
         # check the session vars
         if(!$username || !$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         # make sure, that the correct security token is set
@@ -444,14 +444,14 @@ class AccountsController extends AppController {
             if(!$about_identity) {
                 # could not find the identity
                 $this->flashMessage('alert', 'Could not find the user.');
-                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/');
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
                 # this logged in user is not allowed to change something
                 $this->flashMessage('alert', 'You may not delete this.');
-                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/');
             }
         }
         # check, wether the account belongs to the identity

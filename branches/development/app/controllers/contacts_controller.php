@@ -18,7 +18,7 @@ class ContactsController extends AppController {
         $identity = $this->Contact->Identity->findByUsername($splitted['username']);
         if(!$identity) {
             # identity not found
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         $this->set('identity', $identity['Identity']);
         
@@ -64,7 +64,7 @@ class ContactsController extends AppController {
         
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         if($this->data) {
@@ -178,7 +178,7 @@ class ContactsController extends AppController {
         
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
 
         # make sure, that the correct security token is set
@@ -191,7 +191,7 @@ class ContactsController extends AppController {
     
         if(!$contact) {
             # contact not found for logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
         
         # remove contact_type relationships
@@ -220,7 +220,7 @@ class ContactsController extends AppController {
             $this->Contact->Identity->Account->deleteByIdentityId($with_identity_id);
         }
 
-        $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+        $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
     }
     
     /**
@@ -470,7 +470,7 @@ class ContactsController extends AppController {
         
         if(!$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         # make sure, that the correct security token is set
@@ -484,7 +484,7 @@ class ContactsController extends AppController {
             # this is the logged in user. no reason to allow him to add
             # himself as contact.
             $this->flashMessage('alert', 'You cannot add yourself as a contact.');
-            $this->redirect('/' . $splitted['local_username'], null, true);
+            $this->redirect('/' . $splitted['local_username']);
         }
         
         # test, if there isn't already a contact
