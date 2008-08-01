@@ -22,7 +22,7 @@ class SyndicationsController extends AppController {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
             if(!$internal_call && NOSERUB_USE_CDN) {
-                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301', true);
+                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301');
             }
             
             # find syndication
@@ -82,7 +82,7 @@ class SyndicationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # get all the syndications for logged in user
@@ -103,7 +103,7 @@ class SyndicationsController extends AppController {
            $syndication_id == 0) {
             # this is not the logged in user, or invalid syndication_id
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # make sure, that the correct security token is set
@@ -115,7 +115,7 @@ class SyndicationsController extends AppController {
             $this->Syndication->delete($syndication_id);
             $this->flashMessage('success', 'Feed deleted.');
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
-        	$this->redirect($url, null, true);
+        	$this->redirect($url);
         }
     }
     
@@ -127,7 +127,7 @@ class SyndicationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -167,7 +167,7 @@ class SyndicationsController extends AppController {
             
             $this->flashMessage('success', 'Feed added.');            
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
-        	$this->redirect($url, null, true);
+        	$this->redirect($url);
         } else {
             # get all accounts from this user, that have feeds
             $this->Syndication->Account->contain('Service');

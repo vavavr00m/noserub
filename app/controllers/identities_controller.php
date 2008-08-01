@@ -296,7 +296,7 @@ class IdentitiesController extends AppController {
             # this user is not the logged in, or this is a private
             # contact, or not local
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # get Identity
@@ -356,8 +356,7 @@ class IdentitiesController extends AppController {
                 } else {
                     $this->log('mail sent: ' . $email . ' / ' . $clean_subject, LOG_DEBUG);
                     $this->flashMessage('success', 'Your Message was sent to ' . $name);
-                    $this->redirect('/' . $splitted['local_username'] . '/', null, true);
-                
+                    $this->redirect('/' . $splitted['local_username'] . '/');
                 }
             }
         }
@@ -446,7 +445,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -485,7 +484,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -515,7 +514,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username'] || isset($session_identity['openid'])) {
             # this is not the logged in user or the user used an OpenID to register
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -571,7 +570,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
 
         if($this->data) {
@@ -596,7 +595,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -625,7 +624,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # make sure, that the correct security token is set
@@ -646,7 +645,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         
@@ -682,7 +681,7 @@ class IdentitiesController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         $data = $this->Session->read('Import.data');
         if(!$data) {
@@ -713,7 +712,7 @@ class IdentitiesController extends AppController {
     		if($identity) {
                 $this->Session->write('Identity', $identity['Identity']);
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
-                	$this->redirect('/auth', null, true);
+                	$this->redirect('/auth');
                 } else {
                     # check, if we should remember this user
                     if($this->data['Identity']['remember'] == 1) {
@@ -721,7 +720,7 @@ class IdentitiesController extends AppController {
                     } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
                 	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
-                	$this->redirect($url, null, true);
+                	$this->redirect($url);
                 }
             } else {
                 $this->set('form_error', 'Login not possible');
@@ -762,7 +761,7 @@ class IdentitiesController extends AppController {
         $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
-        $this->redirect($this->url->http('/'), null, true);
+        $this->redirect($this->url->http('/'));
     }
     
     public function account_deleted() {
@@ -881,7 +880,7 @@ class IdentitiesController extends AppController {
 			$this->Identity->Contact->deleteByIdentityId($identityId, $identity['local_username']);
 			$this->Identity->block($identityId);
 			$this->Session->delete('Identity');
-			$this->redirect('/pages/account/deleted/', null, true);
+			$this->redirect('/pages/account/deleted/');
 		}
     }
     

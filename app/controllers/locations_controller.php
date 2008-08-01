@@ -12,7 +12,7 @@ class LocationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         $this->Location->contain();
@@ -31,7 +31,7 @@ class LocationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -51,7 +51,7 @@ class LocationsController extends AppController {
                 if($this->Location->save($this->data)) {
                     $this->flashMessage('success', 'Location added.');
                     $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
-                	$this->redirect($url, null, true);
+                	$this->redirect($url);
                 } else {
                     $this->flashMessage('error', 'Location could not be created.');
                 }
@@ -73,7 +73,7 @@ class LocationsController extends AppController {
            !$location_id) {
             # this is not the logged in user, or location_id not set
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # get the location and check, if it is this user's location
@@ -82,7 +82,7 @@ class LocationsController extends AppController {
         if(!$location) {
             $this->flashMessage('error', 'Location could not be edited.');
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
             
         if($this->data) {
@@ -104,7 +104,7 @@ class LocationsController extends AppController {
                     $this->flashMessage('error', 'Location could not be created.');
                 }
                 $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
-            	$this->redirect($url, null, true);
+            	$this->redirect($url);
             } else {
                 $this->Location->invalidate('name');
             }
@@ -126,7 +126,7 @@ class LocationsController extends AppController {
            $location_id == 0) {
             # this is not the logged in user, or invalid location_id
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # make sure, that the correct security token is set
@@ -143,7 +143,7 @@ class LocationsController extends AppController {
         }
         
         $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
-    	$this->redirect($url, null, true);
+    	$this->redirect($url);
     }
     
     public function api_get() {
