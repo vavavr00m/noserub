@@ -82,11 +82,11 @@ Router::connect('/:username/messages/new/*', array('controller' => 'identities',
 Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
-Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
-Router::connect('/:username/settings/account/export/:security_token/', array('controller' => 'identities', 'action' => 'account_settings_export'));
-Router::connect('/:username/settings/account/import_data/:security_token/', array('controller' => 'identities', 'action' => 'account_settings_import_data'));
-Router::connect('/:username/settings/account/import/', array('controller' => 'identities', 'action' => 'account_settings_import'));
-Router::connect('/:username/settings/account/redirect/', array('controller' => 'identities', 'action' => 'account_settings_redirect'));
+Router::connect('/:username/settings/account/', array('controller' => 'account_settings', 'action' => 'index'));
+Router::connect('/:username/settings/account/export/:security_token/', array('controller' => 'account_settings', 'action' => 'export'));
+Router::connect('/:username/settings/account/import_data/:security_token/', array('controller' => 'account_settings', 'action' => 'import_data'));
+Router::connect('/:username/settings/account/import/', array('controller' => 'account_settings', 'action' => 'import'));
+Router::connect('/:username/settings/account/redirect/', array('controller' => 'account_settings', 'action' => 'redirect_url'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));

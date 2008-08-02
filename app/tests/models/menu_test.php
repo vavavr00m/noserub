@@ -50,14 +50,14 @@ class MenuFactoryTest extends CakeTestCase {
 	}
 	
 	public function testGetMainMenuWithSettingsSelected() {
-		$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
 			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => $controller, 'local_username' => 'test'));
 			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, true);
 		}
 		
-		$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+		$identityActions = array('password_settings', 'privacy_settings', 'profile_settings');
 		
 		foreach ($identityActions as $action) {
 			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action, 'local_username' => 'test'));
@@ -162,19 +162,21 @@ class MenuFactoryTest extends CakeTestCase {
 			
 			$activeItem = '';
 			switch ($controller) {
-				case 'Accounts':     $activeItem = 'Accounts';
-								     break;
-				case 'Syndications': $activeItem = 'Feeds';
-									 break;
-				case 'OpenidSites':  $activeItem = 'OpenID';
-									 break;
+				case 'AccountSettings': $activeItem = 'Manage';
+										break;
+				case 'Accounts':     	$activeItem = 'Accounts';
+								     	break;
+				case 'Syndications': 	$activeItem = 'Feeds';
+									 	break;
+				case 'OpenidSites':  	$activeItem = 'OpenID';
+									 	break;
 			}
 			
 			$settingState = new SettingState($activeItem);
 			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 		}
 		
-		$identityActions = array('profile_settings', 'privacy_settings', 'password_settings', 'account_settings');
+		$identityActions = array('profile_settings', 'privacy_settings', 'password_settings');
 		
 		foreach ($identityActions as $action) {
 			$subMenu = $this->factory->getSubMenu(array('local_username' => 'testuser', 'controller' => 'Identities', 'action' => $action));
@@ -186,8 +188,6 @@ class MenuFactoryTest extends CakeTestCase {
 				case 'privacy_settings':  $activeItem = 'Privacy';
 										  break;
 				case 'password_settings': $activeItem = 'Password';
-										  break;
-				case 'account_settings':  $activeItem = 'Manage';
 										  break;
 			}
 			
@@ -430,14 +430,14 @@ class RegisterMenuItemTest extends CakeTestCase {
 
 class SettingsMenuItemTest extends CakeTestCase {
 	public function testCreateActivatedSettingsMenuItem() {
-		$controllers = array('Accounts', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
 			$menuItem = new SettingsMenuItem($controller, '', 'testuser');
 			$this->assertMenuItem($menuItem, '/testuser/settings/', true);
 		}
 		
-		$identityActions = array('account_settings', 'password_settings', 'privacy_settings', 'profile_settings');
+		$identityActions = array('password_settings', 'privacy_settings', 'profile_settings');
 		
 		foreach ($identityActions as $action) {
 			$menuItem = new SettingsMenuItem('Identities', $action, 'user');
