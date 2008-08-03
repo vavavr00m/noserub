@@ -4,26 +4,33 @@ class AccountSettingsController extends AppController {
 	public $uses = array('Identity');
 	public $components = array('url');
 	public $helpers = array('flashmessage', 'form');
+	private $session_identity = null;
+	private $username = null;
 
-	public function index() {
-        $this->checkSecure();
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
+	public function beforeFilter() {
+		parent::beforeFilter();
+
+		$this->username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($this->username);
+        $this->session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
+        if(!$this->session_identity || $this->session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
             $this->redirect($url);
         }
+	}
+	
+	public function index() {
+        $this->checkSecure();
 
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
             
-			$this->deleteAccount($session_identity, $this->data['Identity']['confirm']);
+			$this->deleteAccount($this->session_identity, $this->data['Identity']['confirm']);
         } else {
-            $this->Identity->id = $session_identity['id'];
+            $this->Identity->id = $this->session_identity['id'];
             $this->Identity->contain();
             $this->data = $this->Identity->read();
         }
@@ -32,20 +39,10 @@ class AccountSettingsController extends AppController {
     }
     
 	public function export() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
             
-        $this->id = $session_identity['id'];
+        $this->id = $this->session_identity['id'];
 		$data = $this->Identity->export();
 		$this->set('data', $data);
         $this->layout = 'empty';
@@ -53,15 +50,6 @@ class AccountSettingsController extends AppController {
     
 	public function import() {
         $this->Session->delete('Import.data');
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
         
         if($this->data) {
             # make sure, that the correct security token is set
@@ -84,24 +72,15 @@ class AccountSettingsController extends AppController {
             }
         } 
             
-        $this->redirect('/' . $username . '/settings/account/');
+        $this->redirect('/' . $this->username . '/settings/account/');
     }
     
 	public function import_data() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
         $data = $this->Session->read('Import.data');
         if(!$data) {
             $this->flashMessage('alert', 'Couldn\'t import the data!');
         } else {
-            $this->Identity->id = $session_identity['id'];
+            $this->Identity->id = $this->session_identity['id'];
             if($this->Identity->import($data)) {
                 $this->flashMessage('success', 'Import completed');
             } else {
@@ -109,20 +88,10 @@ class AccountSettingsController extends AppController {
             }
         }
             
-        $this->redirect('/' . $username . '/settings/account/');
+        $this->redirect('/' . $this->username . '/settings/account/');
     }
     
 	public function redirect_url() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -133,12 +102,12 @@ class AccountSettingsController extends AppController {
                strpos($redirect_url, 'https://') !== 0) {
                 $redirect_url = 'http://' . $redirect_url;
             }
-            $this->Identity->id = $session_identity['id'];
+            $this->Identity->id = $this->session_identity['id'];
             $this->Identity->saveField('redirect_url', $redirect_url);
             $this->flashMessage('success', 'Redirect URL saved.');
         }
         
-        $this->redirect('/' . $username . '/settings/account/');
+        $this->redirect('/' . $this->username . '/settings/account/');
     }
     
 	private function deleteAccount($identity, $confirm) {
