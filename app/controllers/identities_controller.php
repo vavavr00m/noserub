@@ -15,12 +15,9 @@ class IdentitiesController extends AppController {
     public function index() {
         $this->checkUnsecure();
         
-        $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $username = $splitted['username'];
-        
-        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         
         $session_identity = $this->Session->read('Identity');
         
@@ -159,13 +156,7 @@ class IdentitiesController extends AppController {
             $this->set('headline', 'Username could not be found!');
         }
 
-        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
-        if($filter == '') {
-            # no filter, that means "overview"
-            $filter = $show_in_overview;
-        } else {
-            $filter = array($filter);
-        }
+        $filter = $this->getFilter($session_identity);
         
         # get all activities
         $items = $this->Identity->Activity->getLatest($data['Identity']['id'], $filter);
@@ -205,8 +196,6 @@ class IdentitiesController extends AppController {
         $this->checkUnsecure();
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
     	
-        $filter = isset($this->params['filter']) ? $this->params['filter']   : '';
-        $filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
         $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
@@ -219,14 +208,7 @@ class IdentitiesController extends AppController {
         										   'order' => array('Identity.last_activity DESC', 'Identity.modified DESC'),
         										   'limit' => 25));
 
-        # get filter
-        $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
-        if($filter == '') {
-            # no filter, that means "overview"
-            $filter = $show_in_overview;
-        } else {
-            $filter = array($filter);
-        }
+        $filter = $this->getFilter($session_identity);
 
         # extract the identities
         $items      = array();
@@ -731,6 +713,19 @@ class IdentitiesController extends AppController {
     		echo $e->getMessage();
     		exit();
     	}
+    }
+    
+    private function getFilter($session_identity) {
+    	$filter = isset($this->params['filter']) ? $this->params['filter'] : '';
+    	$filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
+    	
+    	if($filter == '') {
+        	$filter = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        } else {
+            $filter = array($filter);
+        }
+        
+        return $filter;
     }
     
     private function getOpenIDResponseIfSuccess($returnTo) {
