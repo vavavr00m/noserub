@@ -20,6 +20,10 @@ class OpenidComponent extends Object {
 	 */
 	public function authenticate($openidUrl, $returnTo, $realm, $required = array(), $optional = array()) {
 		if (trim($openidUrl) != '') {
+			if ($this->isEmail($openidUrl)) {
+				$openidUrl = $this->transformEmailToOpenID($openidUrl);
+			}
+
 			$consumer = $this->getConsumer();
 			$authRequest = $consumer->begin($openidUrl);
 		}
@@ -40,7 +44,7 @@ class OpenidComponent extends Object {
 			if (Auth_OpenID::isFailure($redirectUrl)) {
 				throw new Exception('Could not redirect to server: '.$redirectUrl->message);
 			} else {
-				$this->controller->redirect($redirectUrl);
+				$this->controller->redirect($redirectUrl, null, true);
 			}
 		} else {
 			$formId = 'openid_message';
@@ -57,9 +61,9 @@ class OpenidComponent extends Object {
 		}
 	}
 	
-	public function getResponse($returnTo) {
+	public function getResponse($currentUrl) {
 		$consumer = $this->getConsumer();
-		$response = $consumer->complete($returnTo);
+		$response = $consumer->complete($currentUrl);
 		
 		return $response;
 	}
@@ -75,6 +79,18 @@ class OpenidComponent extends Object {
 		$consumer = new Auth_OpenID_Consumer($store);
 		
 		return $consumer;
+	}
+
+	private function isEmail($string) {
+		return strpos($string, '@');
+	}
+	
+	private function transformEmailToOpenID($email) {
+		if (App::import('Vendor', 'emailtoid', array('file' => 'Auth'.DS.'Yadis'.DS.'Email.php'))) {
+			return Auth_Yadis_Email_getID($email);
+		}
+		
+		throw new InvalidArgumentException('Invalid OpenID');
 	}
 }
 ?>
