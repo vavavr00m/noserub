@@ -1,5 +1,7 @@
 <?php
 
+define('MIGRATIONS_FOLDER', APP . 'config/sql/migrations/');
+
 /** 
  * Model for all the admin stuff in NoseRub.
  */
@@ -133,7 +135,7 @@ class Admin extends AppModel {
      * @access 
      */
     public function getMostRecentMigration() {
-        $files = scandir(APP . '/config/sql/migrations/');
+        $files = scandir(MIGRATIONS_FOLDER);
         $most_recent_migration = 0;
         foreach($files as $filename) {
             if(preg_match('/([0-9]+)_.*\.(sql|php)/i', $filename, $matches)) {
@@ -192,14 +194,14 @@ class Admin extends AppModel {
      */
     public function getOpenMigrations($current_migration) {
         $migrations = array('sql' => array(), 'php' => array());
-        $files = scandir(APP . '/config/sql/migrations/');
+        $files = scandir(MIGRATIONS_FOLDER);
         foreach($files as $filename) {
             # sql
             if(preg_match('/([0-9]+)_(.*)\.sql/i', $filename, $matches)) {
                 $num = intval($matches[1]);
                 if($num > $current_migration) {
                     $name = $matches[2];
-                    $content = file(APP . '/config/sql/migrations/' . $filename);
+                    $content = file(MIGRATIONS_FOLDER . $filename);
                     $migrations['sql'][$num] = array('name'    => $name,
                                                      'content' => $content);
                 }
@@ -209,7 +211,7 @@ class Admin extends AppModel {
                 $num = intval($matches[1]);
                 if($num > $current_migration) {
                     $name = $matches[2];
-                    $content = file_get_contents(APP . '/config/sql/migrations/' . $filename);
+                    $content = file_get_contents(MIGRATIONS_FOLDER . $filename);
                     $migrations['php'][$num] = array('name'    => $name,
                                                      'content' => $content);
                 }
