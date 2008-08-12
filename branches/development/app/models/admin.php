@@ -34,18 +34,14 @@ class Admin extends AppModel {
                                'values' => array(true, false))
                           );
     
-    private $directories;
-    
-    public function __construct() {
-    	$this->directories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
-    }
-    
     /**
      * checks if some directories are writeable
      */
     public function checkWriteable() {
+    	$writeableDirectories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
+    	
         $out = array();
-        foreach($this->directories as $directory) {
+        foreach($writeableDirectories as $directory) {
             if(!is_writeable($directory)) {
                 $out[] = $directory;
             }
