@@ -1,11 +1,36 @@
 <?php
-$pathExtra = APP.DS.'vendors'.DS.PATH_SEPARATOR.VENDORS;
+/**
+ * A simple OpenID consumer component for CakePHP.
+ * 
+ * Requires version 2.1.0 of PHP OpenID library from http://openidenabled.com/php-openid/
+ * 
+ * To make use of Email Address to URL Transformation (EAUT), you also need the
+ * EAUT library: http://code.google.com/p/eaut/
+ *
+ * To use the MySQLStore, the following steps are required:
+ * - get PEAR DB: http://pear.php.net/package/DB
+ * - run the openid.sql script to create the required tables 
+ * - add Configure::write('Openid.use_database', true); to the file which uses
+ *   the OpenID component (e.g. users_controller.php) or to app/config/bootstrap.php
+ * - if you want to use a database configuration other than "default", also add
+ *   Configure::write('Openid.database_config', 'name_of_database_config');
+ * 
+ * Copyright (c) by Daniel Hofstetter (http://cakebaker.42dh.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+$pathExtra = APP.DS.'vendors'.DS.PATH_SEPARATOR.APP.DS.'vendors'.DS.'pear'.DS.PATH_SEPARATOR.VENDORS;
 $path = ini_get('include_path');
 $path = $pathExtra . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
 App::import('Vendor', 'consumer', array('file' => 'Auth'.DS.'OpenID'.DS.'Consumer.php'));
-App::import('Vendor', 'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
 App::import('Vendor', 'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'));
 
 class OpenidComponent extends Object {
@@ -44,7 +69,7 @@ class OpenidComponent extends Object {
 			if (Auth_OpenID::isFailure($redirectUrl)) {
 				throw new Exception('Could not redirect to server: '.$redirectUrl->message);
 			} else {
-				$this->controller->redirect($redirectUrl, null, true);
+				$this->controller->redirect($redirectUrl);
 			}
 		} else {
 			$formId = 'openid_message';
@@ -69,18 +94,56 @@ class OpenidComponent extends Object {
 	}
 	
 	private function getConsumer() {
+		return new Auth_OpenID_Consumer($this->getStore());
+	}
+
+	private function getFileStore() {
+		App::import('Vendor', 'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
 		$storePath = TMP.'openid';
 
 		if (!file_exists($storePath) && !mkdir($storePath)) {
 		    throw new Exception('Could not create the FileStore directory '.$storePath.'. Please check the effective permissions.');
 		}
-
-		$store = new Auth_OpenID_FileStore($storePath);
-		$consumer = new Auth_OpenID_Consumer($store);
-		
-		return $consumer;
+	
+		return new Auth_OpenID_FileStore($storePath);
 	}
+	
+	private function getMySQLStore() {
+		App::import('Vendor', 'mysqlstore', array('file' => 'Auth'.DS.'OpenID'.DS.'MySQLStore.php'));
+		
+		$databaseConfig = Configure::read('Openid.database_config');
+		$databaseConfig = ($databaseConfig == null) ? 'default' : $databaseConfig;
+		$dataSource = ConnectionManager::getDataSource($databaseConfig);
+			
+		$dsn = array(
+	    	'phptype'  => 'mysql',
+	    	'username' => $dataSource->config['login'],
+	    	'password' => $dataSource->config['password'],
+	    	'hostspec' => $dataSource->config['host'],
+	    	'database' => $dataSource->config['database'],
+			'port'     => $dataSource->config['port']
+		);
 
+		$db = DB::connect($dsn);
+		if (PEAR::isError($db)) {
+		    die($db->getMessage());
+		}
+
+		return new Auth_OpenID_MySQLStore($db);
+	}
+	
+	private function getStore() {
+		$store = null;
+		
+		if (Configure::read('Openid.use_database') === true) { 
+			$store = $this->getMySQLStore();
+		} else {	
+			$store = $this->getFileStore();
+		}
+		
+		return $store;
+	}
+	
 	private function isEmail($string) {
 		return strpos($string, '@');
 	}
@@ -93,4 +156,3 @@ class OpenidComponent extends Object {
 		throw new InvalidArgumentException('Invalid OpenID');
 	}
 }
-?>
