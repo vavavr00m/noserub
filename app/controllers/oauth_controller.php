@@ -1,6 +1,6 @@
 <?php
 
-App::import('Vendor', 'oauth', array('file' => 'oauth'.DS.'OAuth.php'));
+App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 class OauthController extends AppController {
 	public $uses = array('DataStore', 'RequestToken');
