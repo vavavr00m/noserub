@@ -1,6 +1,6 @@
 <?php
 
-App::import('Vendor', 'oauth', array('file' => 'oauth'.DS.'OAuth.php'));
+App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 class DataStore extends AppModel {
 	public $useTable = false;
