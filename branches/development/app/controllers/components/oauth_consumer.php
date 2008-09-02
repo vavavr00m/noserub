@@ -33,29 +33,13 @@ class OauthConsumerComponent extends Object {
 	public function getAccessToken($consumerName, $accessTokenURL, $requestToken, $httpMethod = 'POST', $parameters = array()) {
 		$request = $this->prepareRequest($consumerName, $requestToken, $httpMethod, $accessTokenURL, $parameters);
 		
-		if ($httpMethod == 'POST') {
-			$data = $this->doPost($accessTokenURL, $request->to_postdata());
-		} else {
-			$data = $this->doGet($request->to_url());
-		}
-
-		parse_str($data);
-		
-		return new OAuthToken($oauth_token, $oauth_token_secret);
+		return $this->doRequest($request);
 	}
 	
 	public function getRequestToken($consumerName, $requestTokenURL, $httpMethod = 'POST', $parameters = array()) {
 		$request = $this->prepareRequest($consumerName, null, $httpMethod, $requestTokenURL, $parameters);
 		
-		if ($httpMethod == 'POST') {
-			$data = $this->doPost($requestTokenURL, $request->to_postdata());
-		} else {
-			$data = $this->doGet($request->to_url());
-		}
-		
-		parse_str($data);
-
-		return new OAuthToken($oauth_token, $oauth_token_secret);
+		return $this->doRequest($request);
 	}
 	
 	/**
@@ -91,6 +75,18 @@ class OauthConsumerComponent extends Object {
 	private function doPost($url, $data) {
 		$socket = new HttpSocket();
 		return $socket->post($url, $data);
+	}
+	
+	private function doRequest($request) {
+		if ($request->get_normalized_http_method() == 'POST') {
+			$data = $this->doPost($request->get_normalized_http_url(), $request->to_postdata());
+		} else {
+			$data = $this->doGet($request->to_url());
+		}
+		
+		parse_str($data);
+
+		return new OAuthToken($oauth_token, $oauth_token_secret);
 	}
 	
 	private function prepareRequest($consumerName, $token, $httpMethod, $url, $parameters) {
