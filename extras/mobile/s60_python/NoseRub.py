@@ -19,11 +19,6 @@ import httplib, urllib, json, appuifw, e32, os.path, os, socket, e32dbm, graphic
 #
 # The MIT License
 #
-# CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
-# Copyright 2005-2007,	Cake Software Foundation, Inc.
-#							1785 E. Sahara Avenue, Suite 490-204
-#							Las Vegas, Nevada 89104
-#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
