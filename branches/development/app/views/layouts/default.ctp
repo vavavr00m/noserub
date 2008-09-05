@@ -21,7 +21,7 @@
 
 
 
-    <?php  if (is_a($mainMenu->getActiveMenuItem(), 'SocialStreamMenuItem')) { ?>
+    <?php  if(isset($mainMenu) && is_a($mainMenu->getActiveMenuItem(), 'SocialStreamMenuItem')) { ?>
         <!-- RSS -->
         <?php
             $filter = $filter == '' ? 'all' : $filter;
@@ -55,7 +55,7 @@
 			</div>
 		</div>
 		<?php 
-			if (is_a($mainMenu->getActiveMenuItem(), 'SettingsMenuItem')) {
+			if(isset($mainMenu) && is_a($mainMenu->getActiveMenuItem(), 'SettingsMenuItem')) {
 				echo $this->element('subnav');
 		    } 
 		?>

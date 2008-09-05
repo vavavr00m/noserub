@@ -10,6 +10,33 @@ class Account extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
+    /**
+     * get's data from RSS (for example) of this
+     * account.
+     *
+     * @param int $account_id
+     *
+     * @return array
+     */
+    public function getData($account_id = null) {
+        if($account_id) {
+            $this->id = $account_id;
+        }
+        
+        $this->contain();
+        $account = $this->read();
+        $account = $account['Account'];
+        
+        return $this->Service->feed2array(
+            $account['username'],
+            $account['service_id'],
+            $account['service_type_id'],
+            $account['feed_url'],
+            50, # number of items
+            false # no maximum time period
+        );
+    }
+    
     public function update($identity_id, $data, $replace = false) {
         if($replace) {
             # remove old account data
