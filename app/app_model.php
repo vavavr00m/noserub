@@ -10,7 +10,7 @@
  */
 class AppModel extends Model {
 	public $actsAs = array('Containable');
-	private $sanitizeExclusion = array('Feed');
+	private $sanitizeExclusion = array('Feed', 'Entry');
     
     /**
      * 	configure sanitization details based on the model and the 
