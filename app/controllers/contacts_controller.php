@@ -435,11 +435,7 @@ class ContactsController extends AppController {
         foreach($data as $contact) {
             foreach($contact['WithIdentity']['Account'] as $account) {
                 if(in_array($account['ServiceType']['token'], $filter)) {
-                    if(NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Contact->Identity->Account->Feed->access($account['Account']['id']);
-                    } else {
-                        $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['Account']['service_id'], $account['Account']['service_type_id'], $account['Account']['feed_url']);
-                    }
+                    $new_items = $this->Contact->Identity->Entry->getForDisplay($account['Account']['id'], 5, true);
                     if($new_items) {
                         $items = array_merge($items, $new_items);
                     }
@@ -454,6 +450,7 @@ class ContactsController extends AppController {
         $this->set('identities', $contacts);
         $this->set('filter', $filter);
         $this->set('about_identity', $about_identity);
+        $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
         
         $this->render('../identities/social_stream');
