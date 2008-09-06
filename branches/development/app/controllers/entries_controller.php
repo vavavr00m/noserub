@@ -23,8 +23,13 @@ class EntriesController extends AppController {
             )
         );
 
+        $entries = array();
         foreach($data as $item) {
-            $this->Entry->updateByAccountId($item['Account']['id']);
+            $entries[] = $this->Entry->updateByAccountId($item['Account']['id']);
         }
+        
+        $msg = count($entries) . ' entries added/updated';
+        
+        $this->set('data', $msg);
     }
 }
