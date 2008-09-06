@@ -19,7 +19,10 @@ class EntriesController extends AppController {
         $data = $this->Entry->Account->find(
             'all',
             array(
-                'fields' => 'id',
+                'fields'     => 'id',
+                'conditions' => array(
+                    'next_update <= NOW()'
+                )
             )
         );
 
