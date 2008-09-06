@@ -101,6 +101,13 @@ class Entry extends AppModel {
         } else {
             # create
             $this->create();
+            
+            # find out, wether we need to restrict this entry.
+            # right now, we only look for the general setting
+            # in the identity.
+            $this->Identity->id = $identity_id;
+            $frontpage_updates = $this->Identity->field('frontpage_updates');
+            
             $entry = array(
                 'identity_id'     => $identity_id,
                 'account_id'      => $account_id,
@@ -109,7 +116,7 @@ class Entry extends AppModel {
                 'title'           => $item['title'] ? $item['title'] : '',
                 'url'             => $item['url'],
                 'content'         => $item['content'],
-                'restricted'      => 0
+                'restricted'      => !$frontpage_updates
             );
             $saveable = array_keys($entry);
             $this->save($entry, $saveable, true);
