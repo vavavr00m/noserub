@@ -147,7 +147,7 @@ class Entry extends AppModel {
     
     /**
      */
-    public function getForDisplay($account_id, $limit, $restricted = 0) {
+    public function getForDisplay($account_id, $limit, $with_restricted = false) {
         if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
             # update it before getting data
             $this->updateByAccountId($account_id, true);
@@ -162,14 +162,17 @@ class Entry extends AppModel {
                 'Identity.username'
             )
         );
+        $conditions = array(
+            'account_id' => $account_id
+        );
+        if(!$with_restricted) {
+            $conditions['restricted'] = 0;
+        }
         $new_items = $this->Identity->Entry->find(
             'all',
             array(
-                'conditions' => array(
-                    'account_id' => $account_id,
-                    'restricted' => $restricted
-                ),
-                'limit' => $limit
+                'conditions' => $conditions,
+                'limit'      => $limit
             )
         );
     
