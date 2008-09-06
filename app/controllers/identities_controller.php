@@ -158,18 +158,12 @@ class IdentitiesController extends AppController {
 
         $filter = $this->getFilter($session_identity);
         
-        # get all activities
-        $items = $this->Identity->Activity->getLatest($data['Identity']['id'], $filter);
-        
         # get all items for those accounts
+        $items = array();
         if(is_array($data['Account'])) {
             foreach($data['Account'] as $account) {
                 if(in_array($account['ServiceType']['token'], $filter)) {
-                    if(NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
-                    } else {
-                        $new_items = $this->Identity->Account->Service->feed2array($username, $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
-                    }
+                    $new_items = $this->Identity->Entry->getForDisplay($account['id'], 5);
                     if($new_items) {
                         $items = array_merge($items, $new_items);
                     }
@@ -219,20 +213,11 @@ class IdentitiesController extends AppController {
                 $identities[] = $identity['Identity'];
             }
 
-            # get all activities
-            $activity_items = $this->Identity->Activity->getLatest($identity['Identity']['id'], $filter);
-            if($activity_items) {
-                $items = array_merge($items, $activity_items);
-            }
             # get all items for those accounts
             if(is_array($identity['Account'])) {
                 foreach($identity['Account'] as $account) {
                     if(in_array($account['ServiceType']['token'], $filter)) {
-                        if(NOSERUB_USE_FEED_CACHE) {
-                            $new_items = $this->Identity->Account->Feed->access($account['id'], 5, false);
-                        } else {
-                            $new_items = $this->Identity->Account->Service->feed2array($identity['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
-                        }
+                        $new_items = $this->Identity->Entry->getForDisplay($account['id'], 5);
                         if($new_items) {
                             $items = array_merge($items, $new_items);
                         }

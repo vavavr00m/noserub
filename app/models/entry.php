@@ -13,55 +13,74 @@ class Entry extends AppModel {
      * updates the entries
      *
      * @param int $account_id
+     * @param bool $check_next_update
      * 
      * @return array added entries
      */
-    public function updateByAccountId($account_id) {
+    public function updateByAccountId($account_id, $check_next_update = false) {
         $this->Account->id = $account_id;
-        $identity_id     = $this->Account->field('identity_id');
-        $service_type_id = $this->Account->field('service_type_id');
-        
-        $account_data = $this->Account->getData();
-        if(!$account_data) {
+        $this->Account->contain(array('Service.minutes_between_updates'));
+        $account = $this->Account->read();
+
+        if($check_next_update &&
+           $account['Account']['next_update'] > date('Y-m-d H:i:s')) {
+            # no need for an update yet
             return array();
         }
         
-        # get date of newest item in db
-        $this->contain();
-        $conditions = array(
-            'identity_id' => $identity_id,
-            'account_id'  => $account_id
-        );
-        $fields = array('MAX(published_on)');
-        $entry_data = $this->find(
-            'all',
-            array(
-                'conditions' => array(
-                    'identity_id' => $identity_id,
-                    'account_id'  => $account_id
-                ),
-                'fields' => array(
-                    'MAX(published_on)'
-                )
-            )
-        ); 
+        $identity_id     = $account['Account']['identity_id'];
+        $service_type_id = $account['Account']['service_type_id'];
         
-        if(!$entry_data[0][0]['MAX(published_on)']) {
-            $date_newest_item = '2000-01-01 00:00:00';
-        } else {
-            $date_newest_item = $entry_data[0][0]['MAX(published_on)'];
-        }
-        
-        # get the new items
+        $account_data = $this->Account->getData();
         $entries = array();
-        foreach($account_data as $item) {
-            if($item['datetime'] >= $date_newest_item) {
-                $entry = $this->update($identity_id, $account_id, $service_type_id, $item);
-                if($entry) {
-                    $entries[] = $entry; 
-               }
+        if($account_data) {
+            # get date of newest item in db
+            $this->contain();
+            $conditions = array(
+                'identity_id' => $identity_id,
+                'account_id'  => $account_id
+            );
+            $fields = array('MAX(published_on)');
+            $entry_data = $this->find(
+                'all',
+                array(
+                    'conditions' => array(
+                        'identity_id' => $identity_id,
+                        'account_id'  => $account_id
+                    ),
+                    'fields' => array(
+                        'MAX(published_on)'
+                    )
+                )
+            ); 
+
+            if(!$entry_data[0][0]['MAX(published_on)']) {
+                $date_newest_item = '2000-01-01 00:00:00';
+            } else {
+                $date_newest_item = $entry_data[0][0]['MAX(published_on)'];
+            }
+
+            # get the new items
+            foreach($account_data as $item) {
+                if($item['datetime'] >= $date_newest_item) {
+                    $entry = $this->update($identity_id, $account_id, $service_type_id, $item);
+                    if($entry) {
+                        $entries[] = $entry; 
+                   }
+                }
             }
         }
+
+        # update account
+        $minutes_between_updates = $account['Service']['minutes_between_updates'];
+        if(!$minutes_between_updates) {
+            # this account is not properly attached to a service
+            $minutes_between_updates = 360; 
+        }
+        $next_update = date('Y-m-d H:i:s', strtotime('+' . $minutes_between_updates . ' minutes'));
+        $this->Account->id = $account_id;
+        $this->Account->saveField('next_update', $next_update);
+        
         return $entries;
     }
 
@@ -124,5 +143,36 @@ class Entry extends AppModel {
         }
         
         return $entry;
+    }
+    
+    /**
+     */
+    public function getForDisplay($account_id, $limit, $restricted = 0) {
+        if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
+            # update it before getting data
+            $this->updateByAccountId($account_id, true);
+        }
+        
+        $this->Identity->Entry->contain(
+            array(
+                'ServiceType.token',
+                'ServiceType.intro',
+                'Identity.firstname',
+                'Identity.lastname',
+                'Identity.username'
+            )
+        );
+        $new_items = $this->Identity->Entry->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'account_id' => $account_id,
+                    'restricted' => $restricted
+                ),
+                'limit' => $limit
+            )
+        );
+    
+        return $new_items;
     }
 }

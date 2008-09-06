@@ -76,5 +76,5 @@ define('AVATAR_DIR', STATIC_DIR . 'avatars' . DS);
 # suitable in /app/config/ either. So, as long as I don't know what to do with
 # it, I will leave it here.
 function sort_items($a, $b) {
-	return $a['datetime'] < $b['datetime'];
+	return $a['Entry']['published_on'] < $b['Entry']['published_on'];
 }

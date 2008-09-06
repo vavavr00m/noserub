@@ -124,6 +124,5 @@ Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'test
  * Shell routes that can only be accessed through the shell_dispatcher
  */ 
 Router::connect('/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
-Router::connect('/cache/feed/create/', array('controller' => 'feeds', 'action' => 'shell_create'));
-Router::connect('/cache/feed/refresh/', array('controller' => 'feeds', 'action' => 'shell_refresh'));
+Router::connect('/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));

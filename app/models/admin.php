@@ -26,7 +26,9 @@ class Admin extends AppModel {
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php'),
-                           'NOSERUB_USE_FEED_CACHE' => array(
+                           '!NOSERUB_USE_FEED_CACHE' => array(
+                               'file'       => 'noserub.php'),
+                           'NOSERUB_MANUAL_FEEDS_UPDATE' => array(
                                'file'   => 'noserub.php',
                                'values' => array(true, false)),
                            'NOSERUB_USE_CDN' => array(

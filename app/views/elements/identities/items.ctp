@@ -46,13 +46,13 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
             if($filter == 'photo') {
                 foreach($cluster as $item) { ?>
                     <span class="photothumb">
-                    <?php echo $item['content']; ?><br />
+                    <?php echo $item['Entry']['content']; ?><br />
                     <?php
-                        $splitted = split('/', $item['username']);
+                        $splitted = split('/', $item['Identity']['username']);
                         $splitted2 = split('@', $splitted[count($splitted)-1]);
                         $username = $splitted2[0];
                         $label = wordwrap($username, 12, '<br />', true);
-                        echo 'From <a href="http://' . $item['username'] . '">' . $label . '</a>';
+                        echo 'From <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
                     ?>
                     </span>
                 <?php } ?>
@@ -69,24 +69,24 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
                                 echo '<ul class="networklist extended">';
                             }
                         ?>
-                        <li class="<?php echo $item['type'] == 'photo' ? 'photos' : $item['type']; ?> icon">
+                        <li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
                             <span class="date">
                                 <?php if($date == $today) {
-                                    echo $nicetime->show($item['datetime']); 
+                                    echo $nicetime->show($item['Entry']['published_on']); 
                                 } else {
-                                    echo date('H:s', strtotime($item['datetime'])); 
+                                    echo date('H:s', strtotime($item['Entry']['published_on'])); 
                                 } ?>
                             </span>
                             <span>
                                 <?php
-                                    $splitted = split('/', $item['username']);
+                                    $splitted = split('/', $item['Identity']['username']);
                                     $splitted2 = split('@', $splitted[count($splitted)-1]);
                                     $username = $splitted2[0];
-                                    $intro = str_replace('@user@', '<a href="http://'.$item['username'].'">'.$username.'</a>', $item['intro']);
-                                    if($item['url']) {
-                                        $intro = str_replace('@item@', '»<a class="external" href="'.$item['url'].'">'.$item['title'].'</a>«', $intro);
+                                    $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $item['ServiceType']['intro']);
+                                    if($item['Entry']['url']) {
+                                        $intro = str_replace('@item@', '»<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>«', $intro);
                                     } else {
-                                        $intro = str_replace('@item@', '»'.$item['title'].'«', $intro);
+                                        $intro = str_replace('@item@', '»'.$item['Entry']['title'].'«', $intro);
                                     }
                                     echo $intro; 
                                 ?>

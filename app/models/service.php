@@ -251,11 +251,11 @@ class Service extends AppModel {
     private function createSimplePie($feed_url, $autodiscovery = false) {
     	App::import('Vendor', 'simplepie'.DS.'simplepie');
         $feed = new SimplePie();
-        $feed->set_cache_location(CACHE . 'simplepie');
         $feed->set_feed_url($feed_url);
+        $feed->enable_cache(false);
         
         $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
-        if ($autodiscovery) {
+        if($autodiscovery) {
         	$autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
         }
         

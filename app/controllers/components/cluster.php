@@ -16,7 +16,7 @@ class ClusterComponent extends Object {
         $today = date('Y-m-d');
         $clustered_data = array();
         foreach($data as $key => $value) {
-            $day = date('Y-m-d', strtotime($value['datetime']));
+            $day = date('Y-m-d', strtotime($value['Entry']['published_on']));
             if($with_future_dates === false && $day > $today) {
                 continue;
             }

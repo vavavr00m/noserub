@@ -29,13 +29,12 @@ define('NOSERUB_FULL_BASE_URL', 'http://');
 define('NOSERUB_ADMIN_HASH', '');
 
 /**
- * When set to true, all feed items are fetched from
- * the database upon display. This means a faster response,
- * but may not always display the newest items. You also
- * need to install a cronjob to update the feeds in the cache
- * on a regular base.
+ * If set to "false", NoseRub will update the entries
+ * for an account whenever you go to a user's page.
+ * For better performance, you should set this to
+ * "true" and add a cronjob for this purpose.
  */
-define('NOSERUB_USE_FEED_CACHE', true);
+define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
 
 /**
  * all = everyone can register
