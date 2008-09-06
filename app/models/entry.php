@@ -62,9 +62,7 @@ class Entry extends AppModel {
                }
             }
         }
-        if($entries) {
-            echo count($entries) . ' entries added/updated (account_id:' . $account_id . ')<br />';
-        }
+        return $entries;
     }
 
     /**
