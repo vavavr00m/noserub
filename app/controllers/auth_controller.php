@@ -187,7 +187,7 @@ class AuthController extends AppController {
 				case 'email':
 				case 'fullname':
 				case 'gender':
-					if ($data['OpenidSite'][$field] === '1') {
+					if (isset($data['OpenidSite'][$field]) && $data['OpenidSite'][$field] === '1') {
 						$result[] = $field;
 					}
 					
