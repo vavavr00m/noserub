@@ -29,7 +29,7 @@ class OauthConsumersController extends AppController {
 	public function add() {
 		if ($this->data) {
 			if ($this->data['Consumer']['application_name']) {
-				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'])) {
+				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'], $this->data['Consumer']['callback_url'])) {
 					$this->flashMessage('success', 'Application registered.');
 					$this->redirect($this->getOAuthSettingsUrl());
 				} else {
