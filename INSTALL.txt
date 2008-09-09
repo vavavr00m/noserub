@@ -90,7 +90,7 @@ depending on how you set it up in step #2.
 
 5. Set up cron job
 ------------------
-If you left the default value (which is "true") for NOSERUB_USE_FEED_CACHE 
+If you left the default value (which is "true") for NOSERUB_MANUAL_FEEDS_UPDATE 
 in step #3, you have to run the following command via cron to update the
 feed cache:
 
