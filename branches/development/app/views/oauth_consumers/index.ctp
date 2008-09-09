@@ -19,14 +19,16 @@
 		<thead>
 			<tr>
 				<th>Application name</th>
-				<th>Application key</th>
-				<th>Secret</th>
+				<th>Callback url</th>
+				<th>Consumer key</th>
+				<th>Consumer secret</th>
 				<th></th>
 			</tr>
 		</thead>
 		<?php foreach($consumers as $consumer): ?>
 			<tr>
 				<td><?php echo $consumer['Consumer']['application_name']; ?></td>
+				<td><?php echo $consumer['Consumer']['callback_url']; ?></td>
 				<td><?php echo $consumer['Consumer']['consumer_key']; ?></td>
 				<td><?php echo $consumer['Consumer']['consumer_secret']; ?></td>
 				<td>
