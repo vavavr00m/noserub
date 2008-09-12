@@ -50,8 +50,8 @@ class AppModel extends Model {
                 continue;
             }
 
-            foreach ($item as $model => $attributes) {
-                if (!in_array($model, $this->sanitizeExclusion)) {
+            foreach($item as $model => $attributes) {
+                if(!in_array($model, $this->sanitizeExclusion)) {
                     
                     # add pound links again
                     if($model == 'Task') {
