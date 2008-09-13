@@ -1,0 +1,1 @@
+UPDATE `services` SET `internal_name` = 'Bliptv' WHERE `services`.`id` =59 LIMIT 1 ;
