@@ -152,21 +152,21 @@ class IdentitiesController extends AppController {
                 }
                 $this->set('headline', $splitted['local_username'] . '\'s NoseRub page');
             }
+            
+            $filter = $this->getFilter($session_identity);
+
+            # get last 100 items
+            $conditions = array(
+                'identity_id' => $data['Identity']['id'],
+                'filter'      => $filter
+            );
+            $items = $this->Identity->Entry->getForDisplay($conditions, 100);
+            usort($items, 'sort_items');
+            $items = $this->cluster->create($items);
         } else {
             $this->set('headline', 'Username could not be found!');
         }
 
-        $filter = $this->getFilter($session_identity);
-        
-        # get last 100 items
-        $conditions = array(
-            'identity_id' => $session_identity['id'],
-            'filter'      => $filter
-        );
-        $items = $this->Identity->Entry->getForDisplay($conditions, 100);
-        usort($items, 'sort_items');
-        $items = $this->cluster->create($items);
-        
         $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
         $this->set('data', $data);
         $this->set('items', $items);
