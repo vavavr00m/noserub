@@ -37,7 +37,7 @@ class Xmpp extends AppModel {
             $payloads = $conn->processUntil(array('presence', 'end_stream', 'session_start'), 5);
             if(!$payloads) {
                 foreach($users as $user) {
-                    echo 'messaging to: ' . $user . "\n";
+                    #echo 'messaging to: ' . $user . "\n";
                     foreach($messages as $message) {
                         $conn->message($user, $message);
                     }
