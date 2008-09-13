@@ -192,6 +192,42 @@ class Entry extends AppModel {
     }
     
     /**
+     * New entry after setting a location
+     *
+     * @param int $identity_id
+     * @param array $location
+     * @param bool $restricted wether to show this entry on the
+     *             global social stream
+     * @return bool
+     */
+    public function setLocation($identity_id, $location, $restricted = false) {
+        if($location && 
+           isset($location['Location']['name']) && 
+           $location['Location']['name'] != '') {
+            $data = array(
+                'identity_id'     => $identity_id,
+                'account_id'      => 0,
+                'service_type_id' => 9,
+                'published_on'    => date('Y-m-d H:i:s'),
+                'title'           => $location['Location']['name'],
+                'url'             => '',
+                'content'         => $location['Location']['name'],
+                'restricted'      => $restricted
+            );
+                      
+            $this->create();
+            $this->save($data);
+            
+            # update user's last_activity
+            # not so nice to update user model data here
+            $this->Identity->updateLastActivity();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      */
     public function getMessage($entry) {
         $this->Identity->contain();
