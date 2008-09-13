@@ -311,18 +311,15 @@ function nr_openid_header(){
 		$xrds = $pu["scheme"]."://".$pu["host"]."/".$xp."/xrds";
 		$auth = $pu["scheme"]."://".$pu["host"]."/auth";
 		?>
-		
-	<meta http-equiv="X-XRDS-Location" content="<?php echo $xrds; ?>" />
-	<link rel="openid2.provider openid.server" href="<?php echo $auth; ?>" />
-	<link rel="openid.delegate" href="<?php echo $nr_url; ?>" />
-	<link rel="openid2.local_id" href="<?php echo $nr_url; ?>" />
+	<link href="<?php echo $auth; ?>" rel="openid2.provider openid.server" />
+	<link href="<?php echo $nr_url; ?>" rel="openid2.local_id openid.delegate" />
 		<?php
 	}
 }
 
 add_action('admin_menu','nr_Noserub_menu');
 add_action('widgets_init','nr_init');
-// add_action('wp_head', 'nr_openid_header');
+add_action('wp_head', 'nr_openid_header');
 
 register_activation_hook(__FILE__,"nr_set_NoseRub_options");
 register_deactivation_hook(__FILE__,"nr_unset_NoseRub_options");
