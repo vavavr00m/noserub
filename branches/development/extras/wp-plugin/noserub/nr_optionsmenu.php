@@ -12,6 +12,7 @@ function nr_Noserub_options () {
 	$nr_url = get_option("nr_url");
 	if(($nr_apikey != "")&&($nr_url != "")){
 		nr_print_NoseRub_vcard();
+		nr_print_NoseRub_accounts();
 		nr_print_NoseRub_contacts();
 	}
 	echo '</div>';
@@ -170,6 +171,34 @@ function nr_print_NoseRub_vcard(){
 		$f .= "</div>";
 		print $f;
 	}
+}
+
+function nr_print_NoseRub_accounts(){
+	nr_update_accounts(false);
+	$nr_accounts_data = unserialize(get_option("nr_accounts_data"));
+	if($nr_accounts_data){
+		$f = "<h3>Accounts</h3>";
+		$f .= "<ul>";
+		foreach($nr_accounts_data["data"] as $account){
+			$pu = parse_url($account["url"]);
+			$f .= "<li><a href='".$account["url"]."' rel='me'>";
+			$f .= "<img src='";
+			if($account["icon"] != "rss.gif"){
+				$f .= get_option('home')."/wp-content/plugins/noserub/icons/".$account["icon"];
+			} else {
+				$f .= "http://www.google.com/s2/favicons?domain=".$pu["host"];
+			}
+			$f .= "' alt='' style='width:16px; height:16px; '/>";
+			if($account["title"] != NULL){
+				$f .= $account["title"];
+			} else {
+				$f .= $pu["host"];
+			}
+			$f .= "</a></li>";
+		}
+		$f .= "</ul>";
+	}
+	print($f);
 }
 
 function nr_print_NoseRub_contacts(){
