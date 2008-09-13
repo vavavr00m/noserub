@@ -2,9 +2,13 @@
     $url = Router::url('/' . $session_identity['local_username']);
 	$flashmessage->render(); 
 ?>
-<p class="infotext">
-	Currently, our API doesn't support OAuth, but it's coming soon.
-</p>
+<h3>OAuth parameters</h3>
+<ul class="infotext">
+	<li>Request Token URL: <strong><?php echo Router::url('/pages/oauth/request_token', true); ?></strong></li>
+	<li>User Authorization URL: <strong><?php echo Router::url('/pages/oauth/authorize', true); ?></strong></li>
+	<li>Access Token URL: <strong><?php echo Router::url('/pages/oauth/access_token', true); ?></strong></li>
+	<li>Signature method: HMAC-SHA1</li>
+</ul>
 
 <h3>Your applications</h3>
 <p class="infotext">
