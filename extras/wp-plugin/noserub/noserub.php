@@ -311,8 +311,11 @@ function nr_openid_header(){
 		$xrds = $pu["scheme"]."://".$pu["host"]."/".$xp."/xrds";
 		$auth = $pu["scheme"]."://".$pu["host"]."/auth";
 		?>
+		
 	<meta http-equiv="X-XRDS-Location" content="<?php echo $xrds; ?>" />
 	<link rel="openid2.provider openid.server" href="<?php echo $auth; ?>" />
+	<link rel="openid.delegate" href="<?php echo $nr_url; ?>" />
+	<link rel="openid2.local_id" href="<?php echo $nr_url; ?>" />
 		<?php
 	}
 }
