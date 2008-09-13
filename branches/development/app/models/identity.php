@@ -897,6 +897,39 @@ class Identity extends AppModel {
         return $url;
     }
     
+    /**
+     * returns the last active identities
+     */
+    public function getLastActive($limit, $with_restricted = false) {
+        $this->Entry->contain();
+        $fields = array('DISTINCT Entry.identity_id');
+        $conditions = array();
+        if(!$with_restricted) {
+            $conditions['restricted'] = 0;
+        }
+        $entries = $this->Entry->find(
+            'all',
+            array(
+                'fields'     => $fields,
+                'conditions' => $conditions,
+                'order'      => 'Entry.published_on DESC',
+                'limit'      => $limit
+            )
+        );
+        $identity_ids = Set::extract($entries, '{n}.Entry.identity_id');
+
+        $this->contain();
+        return $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'id' => $identity_ids
+                ),
+                'limit' => $limit
+            )
+        );
+    }
+    
     private function startsWithHttp($string) {
     	return (strpos($string, 'http://') === 0 ||
                 strpos($string, 'https://') === 0);

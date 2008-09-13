@@ -426,23 +426,15 @@ class ContactsController extends AppController {
         $contacts = array();
         foreach($data as $key => $value) {
             $contacts[] = $value['WithIdentity'];
-            $this->Contact->Identity->Account->contain(array('Service', 'ServiceType'));
-            $accounts = $this->Contact->Identity->Account->findAllByIdentityId($value['WithIdentity']['id']);
-            $data[$key]['WithIdentity']['Account'] = $accounts;
         }
 
-        $items = array();
-        foreach($data as $contact) {
-            foreach($contact['WithIdentity']['Account'] as $account) {
-                if(in_array($account['ServiceType']['token'], $filter)) {
-                    $new_items = $this->Contact->Identity->Entry->getForDisplay($account['Account']['id'], 5, true);
-                    if($new_items) {
-                        $items = array_merge($items, $new_items);
-                    }
-                }
-            }
-        }        
-
+        $contact_ids = Set::extract($contacts, '{n}.id');
+        # get last 100 items
+        $conditions = array(
+            'filter'      => $filter,
+            'identity_id' => $contact_ids
+        );
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
         usort($items, 'sort_items');
         $items = $this->cluster->create($items);
                 

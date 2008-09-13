@@ -147,7 +147,7 @@ class Entry extends AppModel {
     
     /**
      */
-    public function getForDisplay($account_id, $limit, $with_restricted = false) {
+    public function getForDisplay($filter, $limit, $with_restricted = false) {
         if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
             # update it before getting data
             $this->updateByAccountId($account_id, true);
@@ -162,9 +162,18 @@ class Entry extends AppModel {
                 'Identity.username'
             )
         );
-        $conditions = array(
-            'account_id' => $account_id
-        );
+        $conditions = array();
+        if(isset($filter['account_id'])) {            
+            $conditions['account_id'] = $filter['account_id'];
+        }
+        if(isset($filter['filter'])) {
+            $ids = $this->ServiceType->getList($filter['filter'], $with_restricted);
+            $conditions['service_type_id'] = $ids;
+        }
+        if(isset($filter['identity_id'])) {
+            $conditions['identity_id'] = $filter['identity_id'];
+        }
+        
         if(!$with_restricted) {
             $conditions['restricted'] = 0;
         }
@@ -172,6 +181,7 @@ class Entry extends AppModel {
             'all',
             array(
                 'conditions' => $conditions,
+                'order'      => 'Entry.published_on DESC',
                 'limit'      => $limit
             )
         );

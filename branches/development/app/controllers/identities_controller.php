@@ -158,24 +158,15 @@ class IdentitiesController extends AppController {
 
         $filter = $this->getFilter($session_identity);
         
-        # get all items for those accounts
-        $items = array();
-        if(is_array($data['Account'])) {
-            foreach($data['Account'] as $account) {
-                if(in_array($account['ServiceType']['token'], $filter)) {
-                    $new_items = $this->Identity->Entry->getForDisplay($account['id'], 5);
-                    if($new_items) {
-                        $items = array_merge($items, $new_items);
-                    }
-                }
-            }
-            usort($items, 'sort_items');
-            if(isset($items[0]['datetime'])) {
-                $this->Identity->updateLastActivity($items[0]['datetime'], $data['Identity']['id']);
-            }
-            $items = $this->cluster->create($items);
-        }
-    
+        # get last 100 items
+        $conditions = array(
+            'identity_id' => $session_identity['id'],
+            'filter'      => $filter
+        );
+        $items = $this->Identity->Entry->getForDisplay($conditions, 100);
+        usort($items, 'sort_items');
+        $items = $this->cluster->create($items);
+        
         $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
         $this->set('data', $data);
         $this->set('items', $items);
@@ -193,39 +184,16 @@ class IdentitiesController extends AppController {
         $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
-        $this->Identity->contain(array('Account', 'Account.Service', 'Account.ServiceType'));
-        $data = $this->Identity->find('all', array('conditions' => array('Identity.frontpage_updates' => 1,
-        																 'Identity.is_local' => 1,
-        																 'Identity.hash' => '',
-        																 'NOT Identity.last_activity = "0000-00-00 00:00:00"',
-        																 'Identity.username NOT LIKE "%@%"'),
-        										   'order' => array('Identity.last_activity DESC', 'Identity.modified DESC'),
-        										   'limit' => 25));
-
         $filter = $this->getFilter($session_identity);
-
-        # extract the identities
-        $items      = array();
-        $identities = array();
-        foreach($data as $identity) {
-            # extract the identities
-            if(count($identities) < 9) {
-                $identities[] = $identity['Identity'];
-            }
-
-            # get all items for those accounts
-            if(is_array($identity['Account'])) {
-                foreach($identity['Account'] as $account) {
-                    if(in_array($account['ServiceType']['token'], $filter)) {
-                        $new_items = $this->Identity->Entry->getForDisplay($account['id'], 5);
-                        if($new_items) {
-                            $items = array_merge($items, $new_items);
-                        }
-                    }
-                }
-            }
-        }
+        # get last 100 items
+        $conditions = array(
+            'filter'      => $filter
+        );
+        $items = $this->Identity->Entry->getForDisplay($conditions, 100);
         usort($items, 'sort_items');
+        
+        $identities = $this->Identity->getLastActive(9);
+        
         if($output === 'html') {
             $items = $this->cluster->create($items);
         }
@@ -245,7 +213,7 @@ class IdentitiesController extends AppController {
         } else {
         	$this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
             $this->set('newbies', $this->Identity->getNewbies(9));
-            $this->set('data', $data);
+            #$this->set('data', $data);
             $this->set('identities', $identities);
             $this->set('items', $items);
             $this->set('filter', $filter);
