@@ -322,7 +322,7 @@ function nr_openid_header(){
 
 add_action('admin_menu','nr_Noserub_menu');
 add_action('widgets_init','nr_init');
-add_action('wp_head', 'nr_openid_header');
+// add_action('wp_head', 'nr_openid_header');
 
 register_activation_hook(__FILE__,"nr_set_NoseRub_options");
 register_deactivation_hook(__FILE__,"nr_unset_NoseRub_options");
