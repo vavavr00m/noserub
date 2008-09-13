@@ -3,7 +3,7 @@
 Plugin Name: NoseRub for WordPress
 Plugin URI: http://noserub.com/
 Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.<br />We advise you to install the <a href="http://wordpress.org/extend/plugins/simplepie-core">SimplePie Core</a> plugin, too. If you don't, NoseRub will still work, though.
-Version: 0.0.3
+Version: 0.0.4
 Author: Dominik Schwind
 Author URI: http://identoo.com/dominik
 */
@@ -19,26 +19,28 @@ function the_NoseRub_lifestream(){
 	
 	$nr_url = get_option("nr_url");
 	$nr_feed_url = get_option("nr_feed");
-	$urlex = explode("/",$nr_url);
-	$nr_domain = $urlex["2"];
-	if(substr($nr_feed_url,0,7) != "http://"){
-		$nr_feed = "http://".$nr_domain.$nr_feed_url;
-	} else {
-		$nr_feed = $nr_feed_url;
-	}
-	$feed = new SimplePie();
-	$feed->set_cache_class("NoseRub_cache");
-	$feed->set_feed_url($nr_feed);
-	$feed->init();
-	$feed->handle_content_type();
-	foreach($feed->get_items() as $item){ ?>
-		<h3 class="title"><a href="<?php echo $item->get_permalink(); ?>"><?php echo $item->get_title(); ?></a></h3>
+	if($nr_feed_url != ""){
+		$urlex = explode("/",$nr_url);
+		$nr_domain = $urlex["2"];
+		if(substr($nr_feed_url,0,7) != "http://"){
+			$nr_feed = "http://".$nr_domain.$nr_feed_url;
+		} else {
+			$nr_feed = $nr_feed_url;
+		}
+		$feed = new SimplePie();
+		$feed->set_cache_class("NoseRub_cache");
+		$feed->set_feed_url($nr_feed);
+		$feed->init();
+		$feed->handle_content_type();
+		foreach($feed->get_items() as $item){ ?>
+			<h3 class="title"><a href="<?php echo $item->get_permalink(); ?>"><?php echo $item->get_title(); ?></a></h3>
 
-		<?php echo $item->get_content(); ?>
+			<?php echo $item->get_content(); ?>
 
-		<p class="footnote"><?php echo $item->get_date(); ?></p>
-		
-		<?php
+			<p class="footnote"><?php echo $item->get_date(); ?></p>
+
+			<?php
+		}
 	}
 }
 
@@ -54,23 +56,25 @@ function widget_NoseRub_lifestream($args){
 	
 	$nr_url = get_option("nr_url");
 	$nr_feed_url = get_option("nr_feed");
-	$urlex = explode("/",$nr_url);
-	$nr_domain = $urlex["2"];
-	if(substr($nr_feed_url,0,7) != "http://"){
-		$nr_feed = "http://".$nr_domain.$nr_feed_url;
-	} else {
-		$nr_feed = $nr_feed_url;
+	if($nr_feed_url != ""){
+		$urlex = explode("/",$nr_url);
+		$nr_domain = $urlex["2"];
+		if(substr($nr_feed_url,0,7) != "http://"){
+			$nr_feed = "http://".$nr_domain.$nr_feed_url;
+		} else {
+			$nr_feed = $nr_feed_url;
+		}
+		$feed = new SimplePie();
+		$feed->set_cache_class("NoseRub_cache");
+		$feed->set_feed_url($nr_feed);
+		$feed->init();
+		$feed->handle_content_type();
+		echo "<ul>";
+		foreach($feed->get_items() as $item){
+			echo "<li><a href='".$item->get_permalink()."'>".$item->get_title()."</a></li>\n";
+		}
+		echo "</ul>";
 	}
-	$feed = new SimplePie();
-	$feed->set_cache_class("NoseRub_cache");
-	$feed->set_feed_url($nr_feed);
-	$feed->init();
-	$feed->handle_content_type();
-	echo "<ul>";
-	foreach($feed->get_items() as $item){
-		echo "<li><a href='".$item->get_permalink()."'>".$item->get_title()."</a></li>\n";
-	}
-	echo "</ul>";
 	echo $after_widget;
 }
 
@@ -144,6 +148,39 @@ function widget_NoseRub_contacts($args){
 	echo $after_widget;
 }
 
+function widget_NoseRub_accounts($args){
+	extract($args);
+	nr_update_accounts();
+	echo $before_widget;
+	echo $before_title . 'NoseRub Accounts'. $after_title;
+	$nr_accounts_data = unserialize(get_option("nr_accounts_data"));
+	if($nr_accounts_data){
+		$f = "<ul>";
+		foreach($nr_accounts_data["data"] as $account){
+			$pu = parse_url($account["url"]);
+			$f .= "<li><a href='".$account["url"]."' rel='me'>";
+			$f .= "<img src='";
+			if($account["icon"] != "rss.gif"){
+				$f .= get_option('home')."/wp-content/plugins/noserub/icons/".$account["icon"];
+			} else {
+				$f .= "http://www.google.com/s2/favicons?domain=".$pu["host"];
+			}
+			$f .= "' alt='' style='width:16px; height:16px; '/>";
+			if($account["title"] != NULL){
+				$f .= $account["title"];
+			} else {
+				$f .= $pu["host"];
+			}
+			$f .= "</a></li>";
+		}
+		$f .= "</ul>";
+	} else {
+		$f = "<div>"._("I don't seem to have any accounts, yet")."</div>";
+	}
+	print($f);
+	echo $after_widget;
+}
+
 function nr_update_locations($cached = true){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
@@ -172,6 +209,16 @@ function nr_update_contacts($cached = true){
 	$nr_user = $urlex["3"];
 	$contacts = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/contacts";
 	nr_apicall($contacts,"contacts",$cached);
+}
+
+function nr_update_accounts($cached = true){
+	$nr_apikey = get_option("nr_apikey");
+	$nr_url = get_option("nr_url");
+	$urlex = explode("/",$nr_url);
+	$nr_domain = $urlex["2"];
+	$nr_user = $urlex["3"];
+	$url = "http://".$nr_domain."/api/".$nr_user."/".$nr_apikey."/sphp/accounts";
+	nr_apicall($url,"accounts",$cached);
 }
 
 function nr_set_location($id){
@@ -245,6 +292,7 @@ function nr_init(){
 	register_sidebar_widget('NoseRub Location','widget_NoseRub_location');
 	register_sidebar_widget('NoseRub Contacts','widget_NoseRub_contacts');
 	register_sidebar_widget('NoseRub vCard','widget_NoseRub_vcard');
+	register_sidebar_widget('NoseRub Accounts','widget_NoseRub_accounts');
 }
 
 add_action('admin_menu','nr_Noserub_menu');
