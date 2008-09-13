@@ -270,20 +270,23 @@ function nr_apicall($nrapi_url,$nrapi_name = false,$cached = true){
 }
 
 function nr_url_get_contents($url){
-	$ch = curl_init();
-	if($ch === false){
-		return false;
+	if(function_exists("curl_init")){
+		$ch = curl_init();
+		if($ch === false){
+			return false;
+		}
+		$timeout = 20;
+		curl_setopt ($ch, CURLOPT_URL, $url);
+		curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+
+		ob_start();
+		curl_exec($ch);
+		curl_close($ch);
+		$file_contents = ob_get_contents();
+		ob_end_clean();
+	} elseif(function_exists("file_get_contents")){
+		$file_contents = file_get_contents($url);
 	}
-	$timeout = 20;
-	curl_setopt ($ch, CURLOPT_URL, $url);
-	curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-
-	ob_start();
-	curl_exec($ch);
-	curl_close($ch);
-	$file_contents = ob_get_contents();
-	ob_end_clean();
-
 	return $file_contents;
 }
 
@@ -310,12 +313,12 @@ function nr_openid_header(){
 		$xp = implode("/",$p);
 		$xrds = $pu["scheme"]."://".$pu["host"]."/".$xp."/xrds";
 		$auth = $pu["scheme"]."://".$pu["host"]."/auth";
-		print("/n");
+		print("\n");
 		?>
 	<link href="<?php echo $auth; ?>" rel="openid2.provider openid.server" />
 	<link href="<?php echo $nr_url; ?>" rel="openid2.local_id openid.delegate" />
 		<?php
-		print("/n");
+		print("\n");
 	}
 }
 
