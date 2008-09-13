@@ -18,7 +18,7 @@ class BliptvService extends AbstractService {
 	}
 	
 	public function getFeedUrl($username) {
-		return 'http://'.$username.'/blip.tv/rss/';
+		return 'http://'.$username.'.blip.tv/rss/';
 	}
 }
 ?>
