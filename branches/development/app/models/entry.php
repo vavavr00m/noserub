@@ -218,9 +218,11 @@ class Entry extends AppModel {
             $this->create();
             $this->save($data);
             
-            # update user's last_activity
-            # not so nice to update user model data here
-            $this->Identity->updateLastActivity();
+            App::import('Model', 'Xmpp');
+            $this->Xmpp = new Xmpp();
+            $message = $this->getMessage($data);
+            $this->Xmpp->broadcast($message);
+    
             return true;
         } else {
             return false;
