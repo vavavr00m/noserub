@@ -154,6 +154,8 @@ class MenuFactory {
 		
 		if (!$isOpenIDUser) {
 			$menuItems[] = new MenuItem('Password & API', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+		} else {
+			$menuItems[] = new MenuItem('API', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
 		}
 		
 		$menuItems[] = new MenuItem('Manage', $link . 'account/', $controller == 'AccountSettings' && $action == 'index');
