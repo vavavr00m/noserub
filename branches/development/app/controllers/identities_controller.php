@@ -768,13 +768,26 @@ class IdentitiesController extends AppController {
     /**
      * returns information about the last location
      */
-    public function api_get_last_location() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
-
-        $this->Identity->contain('Location');
-        $this->Identity->id = $identity['Identity']['id'];
-        $data = $this->Identity->read();
+	public function api_get_last_location() {
+		App::import('Vendor', 'oauth', array('file' => 'Oauth'.DS.'OAuth.php'));
+		
+		$server = $this->getServer();
+		
+		try {
+			unset($_GET['url']);
+			$request = OAuthRequest::from_request('GET', Router::url($this->here, true));
+			$server->verify_request($request);
+		} catch (OAuthException $e) {
+			print($e->getMessage());
+			die();
+		}
+		
+		$key = $request->get_parameter('oauth_token');
+		$accessToken = ClassRegistry::init('AccessToken');
+		$this->Identity->id = $accessToken->field('identity_id', array('token_key' => $key));
+		$this->Identity->contain('Location');
+		
+		$data = $this->Identity->read();
         $this->set(
             'data', 
             array(
@@ -784,5 +797,13 @@ class IdentitiesController extends AppController {
         );
         
         $this->api->render();
-    }
+	}
+    
+	private function getServer() {
+		App::import('Model', 'DataStore');
+		$server = new OAuthServer(new DataStore());
+		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
+		
+		return $server;
+	}
 }

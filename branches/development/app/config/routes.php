@@ -56,7 +56,7 @@ Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'ac
 Router::connect('/pages/oauth/access_token', array('controller' => 'oauth', 'action' => 'access_token'));
 Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action' => 'authorize'));
 
-Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
+Router::connect('/api/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/add/', array('controller' => 'locations', 'action' => 'api_add'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
