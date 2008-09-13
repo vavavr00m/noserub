@@ -13,8 +13,21 @@ class Xmpp extends AppModel {
             return;
         }
         
+        if(!defined('NOSERUB_XMPP_FULL_FEED_USER') || !NOSERUB_XMPP_FULL_FEED_USER) {
+            return true;
+        }
+        
         App::import('Vendor', 'xmpp2', array('file' => 'XMPPHP'.DS.'XMPP.php'));
-        $conn = new XMPPHP_XMPP('jabber.identoo.com', 5222, 'fullfeed', '123_noserub_456', 'xmpphp', 'jabber.identoo.com', $printlog = true, $loglevel=XMPPHP_Log::LEVEL_VERBOSE);
+        $conn = new XMPPHP_XMPP(
+                NOSERUB_XMPP_FULL_FEED_SERVER, 
+                NOSERUB_XMPP_FULL_FEED_PORT, 
+                NOSERUB_XMPP_FULL_FEED_USER, 
+                NOSERUB_XMPP_FULL_FEED_PASSWORD, 
+                'xmpphp', 
+                NOSERUB_XMPP_FULL_FEED_SERVER, 
+                $printlog = false, 
+                $loglevel = XMPPHP_Log::LEVEL_VERBOSE
+        );
         $conn->autoSubscribe();
         
         # get all the users that are online
