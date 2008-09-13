@@ -29,7 +29,7 @@
 <?php
 	if(!isset($session_identity["openid"])){
 ?>
-<div class="right">
+<div class="left">
     <form id="IdentityPassowrdSettingsForm" method="post" action="<?php echo $this->here; ?>">
         <fieldset>
             <legend>Change your password</legend>
