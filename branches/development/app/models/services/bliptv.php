@@ -6,7 +6,7 @@ class BliptvService extends AbstractService {
 	}
 	
 	public function getAccountUrl($username) {
-		return 'http://'.$username.'blip.tv/';
+		return 'http://'.$username.'.blip.tv/';
 	}
 	
 #	public function getContacts($username) {
