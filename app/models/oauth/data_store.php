@@ -39,7 +39,8 @@ class DataStore extends AppModel {
   		$requestToken = new RequestToken();
 		
 		if (!empty($consumerData) && $requestToken->isAuthorized($token->key)) {
-			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken');
+			$identityId = $requestToken->field('identity_id', array('token_key' => $token->key));
+			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken', $identityId);
   			$requestToken->delete(array('RequestToken.token_key' => $token->key));
   			
   			return $accessToken;
@@ -66,16 +67,21 @@ class DataStore extends AppModel {
 		return $consumer->findByConsumerKey($consumer_key);
 	}
 	
-	private function new_token($consumerId, $tokenType) {
+	private function new_token($consumer_id, $token_type, $identity_id = null) {
 		App::import('Core', 'Security');
 		$key = md5(time());
     	$secret = Security::hash(time(), null, true);
   		
-  		$data[$tokenType]['consumer_id'] = $consumerId;
-  		$data[$tokenType]['token_key'] = $key;
-  		$data[$tokenType]['token_secret'] = $secret;
-  		App::import('Model', $tokenType);
-  		$token = new $tokenType();
+  		$data[$token_type]['consumer_id'] = $consumer_id;
+  		$data[$token_type]['token_key'] = $key;
+  		$data[$token_type]['token_secret'] = $secret;
+  		
+  		if ($identity_id != null) {
+  			$data[$token_type]['identity_id'] = $identity_id;
+  		}
+  		
+  		App::import('Model', $token_type);
+  		$token = new $token_type();
   		$token->save($data);
   		
   		return new OAuthToken($key, $secret);
