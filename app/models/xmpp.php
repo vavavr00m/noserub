@@ -7,6 +7,7 @@ class Xmpp extends AppModel {
     public function broadcast($messages) {
         App::import('Vendor', 'xmpp2', array('file' => 'XMPPHP'.DS.'XMPP.php'));
         $conn = new XMPPHP_XMPP('jabber.identoo.com', 5222, 'fullfeed', '123_noserub_456', 'xmpphp', 'jabber.identoo.com', $printlog = false, $loglevel=XMPPHP_Log::LEVEL_VERBOSE);
+        $conn->autoSubscribe();
 
         if(!is_array($messages)) {
             $messages = array($messages);
