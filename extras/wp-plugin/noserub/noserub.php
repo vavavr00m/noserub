@@ -310,10 +310,12 @@ function nr_openid_header(){
 		$xp = implode("/",$p);
 		$xrds = $pu["scheme"]."://".$pu["host"]."/".$xp."/xrds";
 		$auth = $pu["scheme"]."://".$pu["host"]."/auth";
+		print("/n");
 		?>
 	<link href="<?php echo $auth; ?>" rel="openid2.provider openid.server" />
 	<link href="<?php echo $nr_url; ?>" rel="openid2.local_id openid.delegate" />
 		<?php
+		print("/n");
 	}
 }
 
