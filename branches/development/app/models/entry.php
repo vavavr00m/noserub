@@ -178,4 +178,35 @@ class Entry extends AppModel {
     
         return $new_items;
     }
+    
+    /**
+     */
+    public function getMessage($entry) {
+        $this->Identity->contain();
+        $fields = array(
+            'Identity.firstname',
+            'Identity.lastname',
+            'Identity.username'
+        );
+        $identity = $this->Identity->findById($entry['identity_id'], $fields);
+        
+        $this->ServiceType->contain();
+        $fields = array(
+            'ServiceType.token',
+            'ServiceType.intro'
+        );
+        $service_type = $this->ServiceType->findById($entry['service_type_id'], $fields);
+        
+        $splitted = split('/', $identity['Identity']['username']);
+        $splitted2 = split('@', $splitted[count($splitted)-1]);
+        $username = $splitted2[0];
+        $intro = str_replace('@user@', 'http://'.$identity['Identity']['username'], $service_type['ServiceType']['intro']);
+        if($entry['url']) {
+            $intro = str_replace('@item@', '»'.$entry['title'].' ('.$entry['url'].')«', $intro);
+        } else {
+            $intro = str_replace('@item@', '»'.$entry['title'].'«', $intro);
+        }
+        
+        return $intro;
+    }
 }
