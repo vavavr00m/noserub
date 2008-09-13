@@ -119,6 +119,7 @@ Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controll
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
+Router::connect('/jobs/:admin_hash/xmpp/start', array('controller' => 'xmpp', 'action' => 'shell_run'));
     
 /**
  * Shell routes that can only be accessed through the shell_dispatcher

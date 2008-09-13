@@ -1,6 +1,6 @@
 <?php
 class EntriesController extends AppController {
-    public $uses = array('Entry');
+    public $uses = array('Entry', 'Xmpp');
     
     /**
      * Go through all accounts and update
@@ -28,9 +28,16 @@ class EntriesController extends AppController {
 
         $entries = array();
         foreach($data as $item) {
-            $entries[] = $this->Entry->updateByAccountId($item['Account']['id']);
+            $new_entries = $this->Entry->updateByAccountId($item['Account']['id']);
+            if($new_entries) {
+                $entries = array_merge($entries, $new_entries);
+            }
         }
-        
+        $messages = array();
+        foreach($entries as $entry) {
+            $messages[] = $this->Entry->getMessage($entry);
+        }
+        $this->Xmpp->broadcast($messages);
         $msg = count($entries) . ' entries added/updated';
         
         $this->set('data', $msg);
