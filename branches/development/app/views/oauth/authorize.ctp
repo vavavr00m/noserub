@@ -1,5 +1,8 @@
+<p>
+	Application <strong><?php echo $applicationName; ?></strong> asked for 
+	permission to access your data
+</p>
 <form method="post" action="/pages/oauth/authorize">
-	<input type="hidden" name="oauth_token" value="<?php echo $oauth_token; ?>" />
-	<input type="hidden" name="oauth_callback" value="<?php echo $oauth_callback; ?>" />
-	<input type="submit" />
+	<input type="submit" value="allow" name="allow" />
+	<input type="submit" value="deny" name="deny" />
 </form>
