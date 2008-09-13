@@ -7,6 +7,10 @@ class RequestToken extends AppModel {
 		$this->updateAll(array('authorized' => true, 'identity_id' => $identity_id), array('RequestToken.token_key' => $token_key));
 	}
 	
+	public function deleteExpired() {
+		$this->deleteAll(array('RequestToken.modified <= DATE_SUB(NOW(), INTERVAL 24 HOUR)'));
+	}
+	
 	public function getApplicationName($token_key) {
 		$data = $this->find('first', array('conditions' => array('RequestToken.token_key' => $token_key)));
 		

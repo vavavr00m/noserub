@@ -22,20 +22,22 @@ class OauthController extends AppController {
 	}
 	
 	public function access_token() {
-		exit('Not fully implemented yet');
 		Configure::write('debug', 0);
 		$server = $this->get_server();
+		
+		// we do this here so we do not have to set up a cron job
+		$this->RequestToken->deleteExpired();
 		
 		try {
   			$request = OAuthRequest::from_request('POST', Router::url($this->here, true));
   			$access_token = $server->fetch_access_token($request);
-  			print $access_token;
-  			exit;
+  			echo $access_token;
 		} catch (OAuthException $e) {
   			print($e->getMessage() . "\n<hr />\n");
   			print_r($request);
-  			die();
 		}
+		
+		exit();
 	}
 	
 	public function authorize() {
