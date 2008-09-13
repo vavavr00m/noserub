@@ -5,21 +5,26 @@ class Xmpp extends AppModel {
     public $useTable = false;
     
     public function broadcast($messages) {
-        App::import('Vendor', 'xmpp2', array('file' => 'XMPPHP'.DS.'XMPP.php'));
-        $conn = new XMPPHP_XMPP('jabber.identoo.com', 5222, 'fullfeed', '123_noserub_456', 'xmpphp', 'jabber.identoo.com', $printlog = false, $loglevel=XMPPHP_Log::LEVEL_VERBOSE);
-        $conn->autoSubscribe();
-
         if(!is_array($messages)) {
             $messages = array($messages);
         }
+        
+        if(!$messages) {
+            return;
+        }
+        
+        App::import('Vendor', 'xmpp2', array('file' => 'XMPPHP'.DS.'XMPP.php'));
+        $conn = new XMPPHP_XMPP('jabber.identoo.com', 5222, 'fullfeed', '123_noserub_456', 'xmpphp', 'jabber.identoo.com', $printlog = true, $loglevel=XMPPHP_Log::LEVEL_VERBOSE);
+        $conn->autoSubscribe();
         
         # get all the users that are online
         $users = array();
         $conn->connect();
         while(!$conn->isDisconnected()) {
-            $payloads = $conn->processUntil(array('presence', 'end_stream', 'session_start'), 1);
+            $payloads = $conn->processUntil(array('presence', 'end_stream', 'session_start'), 5);
             if(!$payloads) {
                 foreach($users as $user) {
+                    echo 'messaging to: ' . $user . "\n";
                     foreach($messages as $message) {
                         $conn->message($user, $message);
                     }
@@ -37,8 +42,14 @@ class Xmpp extends AppModel {
                         $user = $event[1]['from'];
                         $user = substr($user, 0, strpos($user, '/'));
                         $users[] = $user;
+                        break;
+                    case 'end_stream':
+                        $conn->disconnect();
+                        return true;
                 }
             }
         }    
+        
+        return true;
     }
 }
