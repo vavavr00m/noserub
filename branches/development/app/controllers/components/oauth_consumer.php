@@ -86,7 +86,11 @@ class OauthConsumerComponent extends Object {
 		
 		parse_str($data);
 
-		return new OAuthToken($oauth_token, $oauth_token_secret);
+		if (isset($oauth_token) && isset($oauth_token_secret)) {
+			return new OAuthToken($oauth_token, $oauth_token_secret);
+		}
+		
+		return null;
 	}
 	
 	private function prepareRequest($consumerName, $token, $httpMethod, $url, $parameters) {
