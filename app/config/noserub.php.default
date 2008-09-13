@@ -110,3 +110,8 @@ define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
  * @name: NOSERUB_REGISTRATION_RESTRICTED_HOSTS
  */
 define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', false);
+
+define('NOSERUB_XMPP_FULL_FEED_USER', '');
+define('NOSERUB_XMPP_FULL_FEED_PASSWORD', '');
+define('NOSERUB_XMPP_FULL_FEED_SERVER', 'jabber.identoo.com');
+define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);

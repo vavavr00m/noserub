@@ -35,7 +35,9 @@ class EntriesController extends AppController {
         }
         $messages = array();
         foreach($entries as $entry) {
-            $messages[] = $this->Entry->getMessage($entry);
+            if(!$entry['restricted']) {
+                $messages[] = $this->Entry->getMessage($entry);
+            }
         }
         $this->Xmpp->broadcast($messages);
         $msg = count($entries) . ' entries added/updated';
