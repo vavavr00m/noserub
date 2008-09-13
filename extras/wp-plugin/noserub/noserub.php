@@ -295,8 +295,31 @@ function nr_init(){
 	register_sidebar_widget('NoseRub Accounts','widget_NoseRub_accounts');
 }
 
+function nr_openid_header(){
+	$nr_useas_openid = get_option("nr_useas_openid");
+	if($nr_useas_openid == "yes"){
+		$nr_url = get_option("nr_url");
+		$pu = parse_url($nr_url);
+		$xp = explode("/",$pu["path"]);
+		$p = array();
+		for($i = 0; $i < count($xp); $i++){
+			if($xp[$i] != ""){
+				$p[] = $xp[$i];
+			}
+		}
+		$xp = implode("/",$p);
+		$xrds = $pu["scheme"]."://".$pu["host"]."/".$xp."/xrds";
+		$auth = $pu["scheme"]."://".$pu["host"]."/auth";
+		?>
+	<meta http-equiv="X-XRDS-Location" content="<?php echo $xrds; ?>" />
+	<link rel="openid2.provider openid.server" href="<?php echo $auth; ?>" />
+		<?php
+	}
+}
+
 add_action('admin_menu','nr_Noserub_menu');
 add_action('widgets_init','nr_init');
+add_action('wp_head', 'nr_openid_header');
 
 register_activation_hook(__FILE__,"nr_set_NoseRub_options");
 register_deactivation_hook(__FILE__,"nr_unset_NoseRub_options");
