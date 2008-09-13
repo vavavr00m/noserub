@@ -36,4 +36,19 @@ class ServiceType extends AppModel {
 	    unset($default_filter['audio']);
 	    return array_keys($default_filter);
 	}
+	
+	/**
+	 * returns array of ids for an array of tokens
+	 */
+	public function getList($tokens) {
+	    $ids = array();
+	    foreach($tokens as $token) {
+	        $this->contain();
+	        $fields = array('id');
+	        $data = $this->findByToken($token);
+	        $ids[] = $data['ServiceType']['id'];
+	    }
+	    
+	    return $ids;
+	}
 }
