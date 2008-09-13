@@ -39,14 +39,44 @@ class OauthController extends AppController {
 	}
 	
 	public function authorize() {
-		exit('Not fully implemented yet');
-		// TODO replace this "dummy" implementation with real implementation 
+		if (!$this->Session->check('Identity')) {
+			$this->Session->write('OAuth.request_token', $this->params['url']['oauth_token']);
+			
+			if (isset($this->params['url']['oauth_callback'])) {
+				$this->Session->write('OAuth.callback_url', $this->params['url']['oauth_callback']);
+			}
+			
+			$this->redirect('/pages/login');
+		}
+		
 		if (empty($this->params['form'])) {
-			$this->set('oauth_token', $this->params['url']['oauth_token']);
-			$this->set('oauth_callback', $this->params['url']['oauth_callback']);
+			if (!$this->Session->check('OAuth.request_token')) {
+				if (isset($this->params['url']['oauth_token'])) {
+					$this->set('applicationName', $this->RequestToken->getApplicationName($this->params['url']['oauth_token']));
+					$this->Session->write('OAuth.request_token', $this->params['url']['oauth_token']);
+				} else {
+					$this->render('no_token');
+				}
+			} else {
+				$this->set('applicationName', $this->RequestToken->getApplicationName($this->Session->read('OAuth.request_token')));
+			}
 		} else {
-			$this->RequestToken->authorize($this->params['form']['oauth_token']);
-			$this->redirect($this->params['form']['oauth_callback'].'?oauth_token='.$this->params['form']['oauth_token']);
+			if (isset($this->params['form']['allow'])) {
+				$this->RequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
+				
+				if ($this->Session->check('OAuth.callback_url')) {
+					$redirectTo = $this->Session->read('OAuth.callback_url');
+				} else {
+					$redirectTo = $this->RequestToken->getCallbackUrl($this->Session->read('OAuth.request_token'));
+				}
+			} else {
+				$redirectTo = '/';
+			}
+			
+			$this->Session->delete('OAuth.request_token');
+			$this->Session->delete('OAuth.callback_url');
+			
+			$this->redirect($redirectTo);
 		}
 	}
 	
@@ -57,4 +87,3 @@ class OauthController extends AppController {
 		return $server;
 	}
 }
-?>
