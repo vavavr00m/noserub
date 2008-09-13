@@ -19,6 +19,8 @@ class AdminsController extends AppController {
      * and possible new constants. 
      */
     public function system_update() {
+    	// XXX security_token is set to avoid "undefined variable" error in view
+    	$this->set('security_token', '');
         $this->set('extensions', $this->Admin->checkExtensions());
         
         $directories = $this->Admin->checkWriteable();
