@@ -123,10 +123,11 @@ class Service extends AppModel {
             
             $service = $this->getService($service_id);
 
-            if ($service) {
+            if($service) {
             	$item['content'] = $service->getContent($feeditem);
             	
-            	if ($service instanceof TwitterService) {
+            	if($service instanceof TwitterService ||
+            	   $service instanceof IdenticaService) {
             		$item['title']   = $item['content'];
             	}
             } else {
