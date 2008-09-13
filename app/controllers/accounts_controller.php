@@ -216,10 +216,11 @@ class AccountsController extends AppController {
                     $this->Account->create();
                     $this->Account->save($data, true, $saveable);
 
-                    if($this->Account->id && NOSERUB_USE_FEED_CACHE) {
-                        # save feed information to cache
-                        $this->Account->Feed->store($this->Account->id, $data['items']);
-                        $this->Account->Feed->updateServiceType($this->Account->id, $data['service_type_id']);
+                    if($this->Account->id) {
+                        # save feed information to entry table
+                        $this->Account->Entry->updateByAccountId($this->Account->id);
+                        # update service type id
+                        $this->Account->saveField('service_type_id', $data['service_type_id']);
                     }
                     
                     if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
@@ -457,7 +458,7 @@ class AccountsController extends AppController {
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();
-            $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+            $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'entries WHERE account_id=' . $account_id);
             $this->flashMessage('success', 'Account deleted.');
         }
         

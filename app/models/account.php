@@ -3,6 +3,7 @@
  
 class Account extends AppModel {
     public $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $hasMany = array('Entry');
     public $hasAndBelongsToMany = array('Syndication');
     
     public $validate = array(
