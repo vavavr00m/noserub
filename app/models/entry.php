@@ -134,7 +134,7 @@ class Entry extends AppModel {
                 'published_on'    => $item['datetime'],
                 'title'           => $item['title'] ? $item['title'] : '',
                 'url'             => $item['url'],
-                'content'         => $item['content'],
+                'content'         => $item['content'] ? $item['content'] : '',
                 'restricted'      => !$frontpage_updates
             );
             $saveable = array_keys($entry);
