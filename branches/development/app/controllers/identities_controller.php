@@ -549,8 +549,13 @@ class IdentitiesController extends AppController {
                         $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
                     $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
-                	$url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
-                	$this->redirect($url);
+                	
+                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                	if ($this->Session->check('OAuth.request_token')) {
+                		$url = $this->url->http('/pages/oauth/authorize');
+                	}
+                    
+                    $this->redirect($url);
                 }
             } else {
                 $this->set('form_error', 'Login not possible');
