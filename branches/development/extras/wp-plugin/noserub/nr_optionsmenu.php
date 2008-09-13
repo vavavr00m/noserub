@@ -53,6 +53,15 @@ function nr_update_NoseRub_options() {
 			$updated = true;
 		}
 	}
+	if($_REQUEST['nr_useas_openid']){
+		if($_REQUEST['nr_useas_openid'] == "yes"){
+			update_option("nr_useas_openid","yes");
+			$updated = true;
+		}
+	} else {
+		update_option("nr_useas_openid","no");
+		$updated = true;
+	}
 	if ($updated) {
 		echo '<div id="message" class="updated fade">';
 		echo '<p>Options Updated</p>';
@@ -73,6 +82,7 @@ function nr_print_NoseRub_options_form(){
 	$nr_apikey = get_option("nr_apikey");
 	$nr_url = get_option("nr_url");
 	$nr_feed = get_option("nr_feed");
+	$nr_useas_openid = get_option("nr_useas_openid");
 	$f .= "<h3>Settings</h3>";
 	$f .= "<form method='post'>
 		<table class='form-table'>
@@ -84,6 +94,16 @@ function nr_print_NoseRub_options_form(){
 		<th scope='row'>Noserub API-key:</th>
 		<td><input type='text' id='nr_apikey' name='nr_apikey' value='".$nr_apikey."'/></td>
 		</tr>";
+	if(($nr_apikey != "")&&($nr_url != "")){
+	$f .= "<tr valign='top'>
+			<th scope='row'>Use this blog as OpenID:</th>
+			<td><input type='checkbox' id='nr_useas_openid' name='nr_useas_openid' value='yes' ";
+	if($nr_useas_openid == 'yes'){
+		$f .= "checked='checked'";
+	}
+	$f .="/>yes</td>
+		</tr>";
+	}
 	$f .= "</table>";
 	$f .= "<p class='submit'>
 		<input type='submit' value='Update Options &raquo;' name='submit' />
