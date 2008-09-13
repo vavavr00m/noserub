@@ -41,16 +41,13 @@ class OauthController extends AppController {
 	}
 	
 	public function authorize() {
+		$this->writeToSessionIfParameterIsSet('OAuth.request_token', 'oauth_token');
+		$this->writeToSessionIfParameterIsSet('OAuth.callback_url', 'oauth_callback');
+		
 		if (!$this->Session->check('Identity')) {
-			$this->Session->write('OAuth.request_token', $this->params['url']['oauth_token']);
-			
-			if (isset($this->params['url']['oauth_callback'])) {
-				$this->Session->write('OAuth.callback_url', $this->params['url']['oauth_callback']);
-			}
-			
 			$this->redirect('/pages/login');
 		}
-		
+
 		if (empty($this->params['form'])) {
 			if (!$this->Session->check('OAuth.request_token')) {
 				if (isset($this->params['url']['oauth_token'])) {
@@ -62,6 +59,8 @@ class OauthController extends AppController {
 			} else {
 				$this->set('applicationName', $this->RequestToken->getApplicationName($this->Session->read('OAuth.request_token')));
 			}
+			
+			$this->set('headline', 'Authorize access');
 		} else {
 			if (isset($this->params['form']['allow'])) {
 				$this->RequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
@@ -87,5 +86,11 @@ class OauthController extends AppController {
 		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
 		
 		return $server;
+	}
+	
+	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
+		if (isset($this->params['url'][$paramKey])) {
+			$this->Session->write($sessionKey, $this->params['url'][$paramKey]);
+		}
 	}
 }
