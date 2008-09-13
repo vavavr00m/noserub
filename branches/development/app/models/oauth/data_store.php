@@ -67,8 +67,9 @@ class DataStore extends AppModel {
 	}
 	
 	private function new_token($consumerId, $tokenType) {
+		App::import('Core', 'Security');
 		$key = md5(time());
-    	$secret = md5(md5(time() + time()));
+    	$secret = Security::hash(time(), null, true);
   		
   		$data[$tokenType]['consumer_id'] = $consumerId;
   		$data[$tokenType]['token_key'] = $key;

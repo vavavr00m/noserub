@@ -6,20 +6,19 @@ class OauthController extends AppController {
 	public $uses = array('DataStore', 'RequestToken');
 	
 	public function request_token() {
-		exit('Not fully implemented yet');
 		Configure::write('debug', 0);
 		$server = $this->get_server();
 
 		try {
 			$request = OAuthRequest::from_request('POST', Router::url($this->here, true));
 			$request_token = $server->fetch_request_token($request);
-		  	print $request_token;
-		  	exit;
+		  	echo $request_token;
 		} catch (OAuthException $e) {
 			print($e->getMessage() . "\n<hr />\n");
 		  	print_r($request);
-		  	die();
 		}
+		
+		exit();
 	}
 	
 	public function access_token() {
