@@ -3,7 +3,7 @@
 Plugin Name: NoseRub for WordPress
 Plugin URI: http://noserub.com/
 Description: Gets the data from your NoseRub account and lets you use it on your weblog. Supernifty.<br />We advise you to install the <a href="http://wordpress.org/extend/plugins/simplepie-core">SimplePie Core</a> plugin, too. If you don't, NoseRub will still work, though.
-Version: 0.0.2
+Version: 0.0.3
 Author: Dominik Schwind
 Author URI: http://identoo.com/dominik
 */
@@ -80,13 +80,16 @@ function widget_NoseRub_vcard($args){
 	echo $before_widget;
 	echo $before_title . 'My NoseRub'. $after_title;
 	$nr_vcard_data = unserialize(get_option("nr_vcard_data"));
-	$f .= "<div class='vcard'>";
-	$f .= 	"<a class='fn url' href='".$nr_vcard_data["data"]["url"]."' rel='me'>".
-			$nr_vcard_data["data"]["firstname"]." ".
-			$nr_vcard_data["data"]["lastname"]."</a><br />\n";
-	$f .= "<address class='adr'><span class='locality'>".$nr_vcard_data["data"]["address"]."</span></address></div>";
-	print $f;
-	
+	if($nr_vcard_data){
+		$f .= "<div class='vcard'>";
+		$f .= 	"<a class='fn url' href='".$nr_vcard_data["data"]["url"]."' rel='me'>".
+				$nr_vcard_data["data"]["firstname"]." ".
+				$nr_vcard_data["data"]["lastname"]."</a><br />\n";
+		$f .= "<address class='adr'><span class='locality'>".$nr_vcard_data["data"]["address"]."</span></address></div>";
+		print $f;
+	} else {
+		print "<div>"._("I don't know who I am.")."</div>";
+	}
 	echo $after_widget;
 }
 
@@ -98,11 +101,15 @@ function widget_NoseRub_location($args){
 	$nr_locations = get_option("nr_locations_data");
 	$nr_locs = unserialize($nr_locations);
 	$nr_loc_array = array();
-	foreach($nr_locs["data"]["Locations"] as $nr_loc){
-		$nr_loc_array[$nr_loc["Location"]["id"]] = $nr_loc["Location"]["name"];
+	if(count($nr_locs["data"]["Locations"]) > 0){
+		foreach($nr_locs["data"]["Locations"] as $nr_loc){
+			$nr_loc_array[$nr_loc["Location"]["id"]] = $nr_loc["Location"]["name"];
+		}
+		$nr_loc_now = $nr_locs["data"]["Identity"]["last_location_id"];
+		echo _("I am at ").$nr_loc_array[$nr_loc_now];
+	} else {
+		echo _("I don't know where I am.");
 	}
-	$nr_loc_now = $nr_locs["data"]["Identity"]["last_location_id"];
-	echo "I am at ".$nr_loc_array[$nr_loc_now];
 	echo $after_widget;
 }
 
@@ -112,22 +119,26 @@ function widget_NoseRub_contacts($args){
 	echo $before_widget;
 	echo $before_title . 'NoseRub Contacts'. $after_title;
 	$nr_contacts_data = unserialize(get_option("nr_contacts_data"));
-	$f = "<ul>";
-	foreach($nr_contacts_data["data"] as $nr_contact){
-		$f .= "<li class='vcard'>";
-		$f .= 	"<a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
-		if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
-			$fu = explode("/",$nr_contact["url"]);
-			$c = (count($fu)-1);
-			$f .=	$fu[$c];
-		} else {
-			$f .=	$nr_contact["firstname"]." ".
-					$nr_contact["lastname"];
+	if($nr_contacts_data){
+		$f = "<ul>";
+		foreach($nr_contacts_data["data"] as $nr_contact){
+			$f .= "<li class='vcard'>";
+			$f .= 	"<a class='fn url' href='".$nr_contact["url"]."' rel='".$nr_contact["xfn"]."'>";
+			if(($nr_contact["firstname"]=="")&&($nr_contact["lastname"] == "")){
+				$fu = explode("/",$nr_contact["url"]);
+				$c = (count($fu)-1);
+				$f .=	$fu[$c];
+			} else {
+				$f .=	$nr_contact["firstname"]." ".
+						$nr_contact["lastname"];
+			}
+			$f .=	"</a>\n";
+			$f .= "</li>";
 		}
-		$f .=	"</a>\n";
-		$f .= "</li>";
+		$f .= "</ul>";
+	} else {
+		$f = "<div>"._("I don't seem to know anyone.")."</div>";
 	}
-	$f .= "</ul>";
 	print $f;
 	
 	echo $after_widget;
