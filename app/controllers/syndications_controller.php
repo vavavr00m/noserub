@@ -18,26 +18,53 @@ class SyndicationsController extends AppController {
             $hash = $match[1];
         }
         
+        if(!$extension) {
+            if(isset($feed_types[$url])) {
+                $extension = $url;
+                $hash = 'generic';
+            }
+        }
+        
         if($extension && isset($feed_types[$extension])) {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
             if(!$internal_call && NOSERUB_USE_CDN) {
                 $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301');
             }
-            
-            # find syndication
-            $this->Syndication->contain(array('Account', 'Identity'));
-            $data = $this->Syndication->findByHash($hash);
 
-            # get all items for those accounts
-            $items = array();
-            $conditions = array(
-                'account_id' => Set::extract($data, 'Account.{n}.id')
-            );
-            $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
-            usort($items, 'sort_items');
-            $this->set('syndication_name', $data['Syndication']['name']);
-            $this->set('identity', $data['Identity']);
+            if($hash === 'generic') {
+                $username = isset($this->params['username']) ? $this->params['username'] : '';
+                $splitted = $this->Syndication->Identity->splitUsername($username);
+                $username = $splitted['username'];
+                $this->Syndication->Identity->contain();
+                $identity = $this->Syndication->Identity->findByUsername($username);
+                $items = array();
+                
+                if($identity && $identity['Identity']['generic_feed']) {
+                    $conditions = array(
+                        'identity_id' => $identity['Identity']['id']
+                    );
+                    $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
+                    usort($items, 'sort_items');
+                }
+                $this->set('syndication_name', 'Generic Feed');
+                $this->set('identity', $identity['Identity']);
+            } else {
+                # find syndication
+                $this->Syndication->contain(array('Account', 'Identity'));
+                $data = $this->Syndication->findByHash($hash);
+                
+                # get all items for those accounts
+                $items = array();
+                $conditions = array(
+                    'account_id' => Set::extract($data, 'Account.{n}.id')
+                );
+                $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
+                usort($items, 'sort_items');
+                $this->set('syndication_name', $data['Syndication']['name']);
+                $this->set('identity', $data['Identity']);
+            }
+            
             $this->set('data', $items);
 
             # decide, wether to render the feed directly,
@@ -74,6 +101,28 @@ class SyndicationsController extends AppController {
             # this is not the logged in user
             $url = $this->url->http('/');
             $this->redirect($url);
+        }
+        
+        if($this->data) {
+            $this->ensureSecurityToken();
+
+            $this->Syndication->Identity->id = $session_identity['id'];
+            if($this->Syndication->Identity->saveField('generic_feed', $this->data['Identity']['generic_feed'])) {
+                $this->flashMessage('success', 'Settings saved');
+            } else {
+                $this->flashMessage('error', 'Something went wrong');
+            }
+        } else {
+            # need to fetch it here, because some people could still be logged in
+            # when this updates happens
+            $this->Syndication->Identity->id = $session_identity['id'];
+            $generic_feed = $this->Syndication->Identity->field('generic_feed');
+            $this->data = array(
+                'Identity' => 
+                    array(
+                        'generic_feed' => $generic_feed
+                    )
+            );
         }
         
         # get all the syndications for logged in user

@@ -49,4 +49,22 @@
 <p class="infotext">
 <a href="<?php echo $url . '/settings/feeds/add/'; ?>" class="addmore">Create a new Feed</a>
 </p>
+
+<hr class="space" />
+
+<h2>Generic feed</h2>
+    <form id="IdentityGenericFeedsForm" method="post" action="<?php echo $this->here; ?>">
+        <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+        <fieldset>
+            <legend>
+                If you want a feed with all your updates being available at 
+                <?php echo NOSERUB_FULL_BASE_URL . $feed_url; ?>(rss|js|sphp)
+                please enable the following option.
+            </legend>
+            <?php echo $form->checkbox('Identity.generic_feed'); ?> Enable generic feed
+        </fieldset>
+        <fieldset>
+            <input class="submitbutton" type="submit" value="Save changes"/>
+        </fieldset>
+    </form>
 <?php } ?>
