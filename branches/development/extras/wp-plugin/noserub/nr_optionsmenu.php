@@ -211,6 +211,8 @@ function nr_print_NoseRub_accounts(){
 			$f .= "' alt='' style='width:16px; height:16px; '/>";
 			if($account["title"] != NULL){
 				$f .= $account["title"];
+			} elseif($pu["scheme"] != "http"){
+				$f .= $pu["path"];
 			} else {
 				$f .= $pu["host"];
 			}
