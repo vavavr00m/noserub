@@ -147,14 +147,15 @@ class LocationsController extends AppController {
     }
     
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
-        
+    	$key = $this->verifyRequestOrDie();
+    	$accessToken = ClassRegistry::init('AccessToken');
+		$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+    	
         $this->Location->contain();
-        $data = $this->Location->findAllByIdentityId($identity['Identity']['id'], array('id', 'name'));
+        $data = $this->Location->findAllByIdentityId($identity_id, array('id', 'name'));
         
         $this->Location->Identity->recursive = 0;
-        $this->Location->Identity->id = $identity['Identity']['id'];
+        $this->Location->Identity->id = $identity_id;
         $last_location_id = $this->Location->Identity->field('last_location_id');
         
         $this->set(
@@ -227,4 +228,29 @@ class LocationsController extends AppController {
         
         $this->api->render();
     }
+    
+	private function getServer() {
+		App::import('Model', 'DataStore');
+		$server = new OAuthServer(new DataStore());
+		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
+		
+		return $server;
+	}
+	
+	private function verifyRequestOrDie() {
+		App::import('Vendor', 'oauth', array('file' => 'Oauth'.DS.'OAuth.php'));
+		
+		$server = $this->getServer();
+		
+		try {
+			unset($_GET['url']);
+			$request = OAuthRequest::from_request('GET', Router::url($this->here, true));
+			$server->verify_request($request);
+		} catch (OAuthException $e) {
+			print($e->getMessage());
+			die();
+		}
+		
+		return $request->get_parameter('oauth_token');
+	}
 }
