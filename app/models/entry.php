@@ -150,7 +150,6 @@ class Entry extends AppModel {
     public function getForDisplay($filter, $limit, $with_restricted = false) {
         if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
             # update it before getting data
-            
             if(isset($filter['identity_id']) && $filter['identity_id']) {
                 $this->Account->contain();
                 $fields = array('id');
