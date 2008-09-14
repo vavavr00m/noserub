@@ -3,7 +3,7 @@
 class SyndicationsController extends AppController {
     public $uses = array('Syndication');
     public $helpers = array('form', 'html', 'nicetime', 'flashmessage');
-    public $components = array('url', 'cdn', 'api');
+    public $components = array('url', 'cdn', 'api', 'OauthServiceProvider');
     
     public function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
         $this->checkUnsecure();
@@ -253,16 +253,26 @@ class SyndicationsController extends AppController {
      * API method to get a list of syndications, that the user created
      */
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
         
         $this->Syndication->contain();
-        $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
+        $data = $this->Syndication->findAllByIdentityId($identity_id, array('name', 'hash'));
         
-        $url = Router::url('/' . $identity['Identity']['local_username']);
         if(NOSERUB_USE_CDN) {
             $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
         } else {
+        	if (!isset($identity)) {
+        		$identity = $this->getIdentity($identity_id);
+        	}
+        	$url = Router::url('/' . $identity['Identity']['local_username']);
             $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';
         }
         
@@ -279,7 +289,7 @@ class SyndicationsController extends AppController {
         # look for the generic feeds
         if($identity['Identity']['generic_feed']) {
             if(NOSERUB_USE_CDN) {
-                $feed_url .= md5('generic' . $identity['Identity']['id']) . '.';
+                $feed_url .= md5('generic' . $identity_id) . '.';
             }
             $data[] = array(
                 'Syndication' => array(
@@ -344,5 +354,13 @@ class SyndicationsController extends AppController {
         $this->layout = 'shell';
         $this->set('uploaded', $uploaded);
         $this->render();
+    }
+    
+    private function getIdentity($identity_id) {
+    	$this->Syndication->Identity->contain();
+        $identity = $this->Syndication->Identity->findById($identity_id);
+        $identity['Identity'] = array_merge($identity['Identity'], $this->Syndication->Identity->splitUsername($identity['Identity']['username']));
+        
+        return $identity;
     }
 }
