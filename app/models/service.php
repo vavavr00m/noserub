@@ -308,7 +308,7 @@ class Service extends AppModel {
 class ContactExtractor {
 	public static function getContactsFromSinglePage($url, $pattern) {
 		$data = array();
-        $content = @file_get_contents($url);
+        $content = WebExtractor::fetchUrl($url);
         if($content && preg_match_all($pattern, $content, $matches)) {
             foreach($matches[1] as $username) {
                 if(!isset($data[$username])) {
@@ -326,7 +326,7 @@ class ContactExtractor {
         $i = 2;
         $page_url = $url;
         do {
-            $content = @file_get_contents($page_url);
+            $content = WebExtractor::fetchUrl($page_url);
             if($content && preg_match_all($pattern, $content, $matches)) {
                 # also find the usernames
                 preg_match_all($pattern, $content, $usernames);

@@ -379,7 +379,7 @@
 				return $result;
 			}
 		
-			return @file_get_contents($url);
+			return WebExtractor::fetchUrl($url);
 			
 		}
 		

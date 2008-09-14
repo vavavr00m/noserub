@@ -17,7 +17,7 @@ class GSocialGraph {
                   '&sgn=0';   # Return internal representation of nodes. */
     
         $request = 'http://socialgraph.apis.google.com/lookup?' . $params;
-        $content = @file_get_contents($request);
+        $content = WebExtractor::fetchUrl($request);
         if(!$content) {
             return array();
         }

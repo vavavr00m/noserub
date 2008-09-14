@@ -26,7 +26,7 @@ class FlickrService extends AbstractService {
 	public function getFeedUrl($username) {
 		# we need to read the page first in order to access
         # the user id without need to access the API
-        $content = @file_get_contents('http://www.flickr.com/photos/'.$username.'/');
+        $content = WebExtractor::fetchUrl('http://www.flickr.com/photos/'.$username.'/');
         if(preg_match('/photos_public.gne\?id=(.*)&amp;/i', $content, $matches)) {
         	return 'http://api.flickr.com/services/feeds/photos_public.gne?id='.$matches[1].'&lang=en-us&format=rss_200';
         } else {

@@ -13,7 +13,7 @@ class hcard extends microformat_base {
     
     public function getByUrl($url) {
         $result = false;
-        $content = @file_get_contents($url);
+        $content = WebExtractor::fetchUrl($url);
         
         if($content) {
     	    $result	= @$this->hKit->getByString('hcard', $content);

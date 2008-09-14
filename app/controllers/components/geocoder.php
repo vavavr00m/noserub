@@ -18,7 +18,7 @@ class GeocoderComponent extends Object {
         
         $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address) . '&key=' . NOSERUB_GOOGLE_MAPS_KEY;
         
-        $response = @file_get_contents($url);
+		$response = WebExtractor::fetchUrl($url);
         
         if($response === false) {
             return false;

@@ -7,7 +7,7 @@ class xfn extends microformat_base {
     public function getByUrl($url) {
         $xfn_google = GSocialGraph::lookup($url);
         
-        $content = @file_get_contents($url);
+        $content = WebExtractor::fetchUrl($url);
         $xfn_url = $this->getByContent($content);
         $merge   = array_merge($xfn_google, $xfn_url);
         

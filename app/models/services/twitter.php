@@ -22,7 +22,7 @@ class TwitterService extends AbstractService {
 	public function getFeedUrl($username) {
 		# we need to reed the page first in order to
         # access the rss-feed
-        $content = @file_get_contents('http://twitter.com/'.$username);
+        $content = WebExtractor::fetchUrl('http://twitter.com/'.$username);
         if(!$content) {
         	return false;
         }
