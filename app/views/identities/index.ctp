@@ -17,7 +17,6 @@
         	$openid->xrdsLocation($noserub_url . '/xrds', false);
         	$openid->serverLink('/auth', false);
         }
-        
         if($data['Identity']['generic_feed']) {
             $url = Router::url('/' . $data['Identity']['local_username']);
             if(NOSERUB_USE_CDN) {
