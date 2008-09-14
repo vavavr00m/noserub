@@ -4,7 +4,7 @@
 class ContactsController extends AppController {
     public $uses = array('Contact');
     public $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
-    public $components = array('cluster', 'api');
+    public $components = array('cluster', 'api', 'OauthServiceProvider');
     
     public function index() {
         $this->checkUnsecure();
@@ -493,14 +493,21 @@ class ContactsController extends AppController {
      * returns list of all contacts for this user
      */
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
-                                     
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
+    	                                     
         # get all noserub contacts
         $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
         
         $conditions = array(
-            'Contact.identity_id' => $identity['Identity']['id'],
+            'Contact.identity_id' => $identity_id,
             'WithIdentity.username NOT LIKE "%@%"'
         );
     	$data = $this->Contact->find('all', array('conditions' => $conditions,
