@@ -4,14 +4,16 @@ App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 class OauthController extends AppController {
 	public $uses = array('DataStore', 'RequestToken');
-	public $components = array('RequestHandler');
 
 	public function request_token() {
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
+		// to avoid an "invalid signature" error we have to unset this param
+		unset($_GET['url']);
+		
 		try {
-			$request = OAuthRequest::from_request($this->getRequestType(), Router::url($this->here, true));
+			$request = OAuthRequest::from_request();
 			$request_token = $server->fetch_request_token($request);
 		  	echo $request_token;
 		} catch (OAuthException $e) {
@@ -29,8 +31,11 @@ class OauthController extends AppController {
 		// we do this here so we do not have to set up a cron job
 		$this->RequestToken->deleteExpired();
 		
+		// to avoid an "invalid signature" error we have to unset this param
+		unset($_GET['url']);
+		
 		try {
-  			$request = OAuthRequest::from_request($this->getRequestType(), Router::url($this->here, true));
+  			$request = OAuthRequest::from_request();
   			$access_token = $server->fetch_access_token($request);
   			echo $access_token;
 		} catch (OAuthException $e) {
@@ -80,18 +85,6 @@ class OauthController extends AppController {
 			
 			$this->redirect($redirectTo);
 		}
-	}
-	
-	private function getRequestType() {
-		$requestType = 'POST';
-		
-		if ($this->RequestHandler->isGet()) {
-			$requestType = 'GET';
-			// to avoid an "invalid signature" error we have to unset this param
-			unset($_GET['url']);
-		}
-		
-		return $requestType;
 	}
 	
 	private function getServer() {
