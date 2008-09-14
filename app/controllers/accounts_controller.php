@@ -4,7 +4,7 @@
 class AccountsController extends AppController {
     public $uses = array('Account');
     public $helpers = array('form', 'flashmessage');
-    public $components = array('api');
+    public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -479,11 +479,18 @@ class AccountsController extends AppController {
     }
     
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
 
         $this->Account->contain(array('ServiceType', 'Service'));
-        $accounts = $this->Account->findAllByIdentityId($identity['Identity']['id']);
+        $accounts = $this->Account->findAllByIdentityId($identity_id);
 
         $data = array();
         foreach($accounts as $item) {

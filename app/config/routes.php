@@ -60,6 +60,7 @@ Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action
 Router::connect('/api/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
 Router::connect('/api/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
+Router::connect('/api/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
 
 Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
