@@ -23,9 +23,9 @@ class OauthConsumerComponent extends Object {
 	/**
 	 * Call API with a GET request
 	 */
-	public function get($consumerName, $url, $key, $secret) {
-		$accessToken = new OAuthToken($key, $secret);
-		$request = $this->prepareRequest($consumerName, $accessToken, 'GET', $url, array());
+	public function get($consumerName, $accessTokenKey, $accessTokenSecret, $url, $getData = array()) {
+		$accessToken = new OAuthToken($accessTokenKey, $accessTokenSecret);
+		$request = $this->prepareRequest($consumerName, $accessToken, 'GET', $url, $getData);
 		
 		return $this->doGet($request->to_url());
 	}
@@ -45,8 +45,8 @@ class OauthConsumerComponent extends Object {
 	/**
 	 * Call API with a POST request
 	 */
-	public function post($consumerName, $url, $postData, $key, $secret) {
-		$accessToken = new OAuthToken($key, $secret);
+	public function post($consumerName, $accessTokenKey, $accessTokenSecret, $url, $postData = array()) {
+		$accessToken = new OAuthToken($accessTokenKey, $accessTokenSecret);
 		$request = $this->prepareRequest($consumerName, $accessToken, 'POST', $url, $postData);
 		
 		return $this->doPost($url, $request->to_postdata());
