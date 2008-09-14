@@ -334,15 +334,20 @@ class IdentitiesController extends AppController {
                 $this->data['Identity']['longitude'] = $identity['Identity']['longitude'];
             }
             
-            # check, if photo should be removed
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
+            	# check, if photo should be removed
                 @unlink($path . $identity['Identity']['photo'] . '.jpg');
                 @unlink($path . $identity['Identity']['photo'] . '-small.jpg');
                 $identity['Identity']['photo'] = '';
-            }
-            
-            # save the photo, if neccessary
-            if($this->data['Identity']['photo']['error'] != 0) {
+                $this->data['Identity']['photo'] = $identity['Identity']['photo'];
+            } else if(isset($this->data['Identity']['use_gravatar']) && 
+                      $this->data['Identity']['use_gravatar'] == 1 && 
+                      $this->data['Identity']['photo']['error'] == 4) {
+            	# use gravatar image
+            	$md5 = md5($identity['Identity']['email']);
+            	$this->data['Identity']['photo'] = 'http://gravatar.com/avatar/' . $md5;
+            } else if($this->data['Identity']['photo']['error'] != 0) {
+            	# save the photo, if neccessary
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else {                
                 $this->Identity->id = $session_identity['id'];
