@@ -178,10 +178,17 @@ class LocationsController extends AppController {
     }
     
     public function api_set($location_id) {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+    	} else {
+	    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+	    	$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+    	}
         
-        if(!$this->Location->setTo($identity['Identity']['id'], $location_id)) {
+        if(!$this->Location->setTo($identity_id, $location_id)) {
             $this->set('code', -1);
             $this->set('msg', 'dataset not found');
         }
