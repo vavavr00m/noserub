@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
-    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api');
+    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider');
     
     /**
      * Displays profile page of an identity 
@@ -707,7 +707,7 @@ class IdentitiesController extends AppController {
      * returns a "vcard" of the authenticated user
      */
     public function api_get() {
-    	$key = $this->verifyRequestOrDie();
+    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
 		$accessToken = ClassRegistry::init('AccessToken');
 		$this->Identity->id = $accessToken->field('identity_id', array('token_key' => $key));
     	
@@ -737,7 +737,7 @@ class IdentitiesController extends AppController {
      * returns information about the last location
      */
 	public function api_get_last_location() {
-		$key = $this->verifyRequestOrDie();
+		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
 		$accessToken = ClassRegistry::init('AccessToken');
 		$this->Identity->id = $accessToken->field('identity_id', array('token_key' => $key));
 		$this->Identity->contain('Location');
@@ -752,30 +752,5 @@ class IdentitiesController extends AppController {
         );
         
         $this->api->render();
-	}
-    
-	private function getServer() {
-		App::import('Model', 'DataStore');
-		$server = new OAuthServer(new DataStore());
-		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
-		
-		return $server;
-	}
-	
-	private function verifyRequestOrDie() {
-		App::import('Vendor', 'oauth', array('file' => 'Oauth'.DS.'OAuth.php'));
-		
-		$server = $this->getServer();
-		
-		try {
-			unset($_GET['url']);
-			$request = OAuthRequest::from_request('GET', Router::url($this->here, true));
-			$server->verify_request($request);
-		} catch (OAuthException $e) {
-			print($e->getMessage());
-			die();
-		}
-		
-		return $request->get_parameter('oauth_token');
 	}
 }
