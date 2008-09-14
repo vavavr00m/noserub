@@ -7,7 +7,15 @@
             <?php if($this->data['Identity']['photo']) { ?>
                 <p>
                     <strong>Your current photo:</strong><br />
-                    <img src="<?php echo FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg'); ?>" width="150" height="150" alt="Your current photo" class="mypicture" />
+                    <?php 
+                    	$photo = $this->data['Identity']['photo'];
+                    	if(strpos($photo, 'http') === 0) {
+                    		$url = $photo;
+                    	} else {
+                    		$url = FULL_BASE_URL . Router::url('/static/avatars/'.$this->data['Identity']['photo'].'.jpg');
+                    	}
+                    ?>
+                    <img src="<?php echo $url; ?>" width="150" height="150" alt="Your current photo" class="mypicture" />
                 </p>
                 <p>
                     <input type="checkbox" name="data[Identity][remove_photo]" value="1"> Remove photo
@@ -19,6 +27,10 @@
             </p>
             <label>Photo/Portrait:</label>
             <input type="file" name="data[Identity][photo]" />
+            <?php if(!$this->data['Identity']['photo']) { ?>
+            	<br />
+            	<?php echo $form->checkbox('Identity.use_gravatar'); ?> load from Gravatar.com
+            <?php } ?>
             <p><input class="submitbutton" type="submit" value="Save changes"/></p>
         </fieldset>
     </div>
