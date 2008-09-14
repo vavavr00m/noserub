@@ -707,10 +707,17 @@ class IdentitiesController extends AppController {
      * returns a "vcard" of the authenticated user
      */
     public function api_get() {
-    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-		$accessToken = ClassRegistry::init('AccessToken');
-		$this->Identity->id = $accessToken->field('identity_id', array('token_key' => $key));
-    	
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
+			
+		$this->Identity->id = $identity_id; 
         $this->Identity->contain('Location');
         $data = $this->Identity->read();
         
@@ -737,9 +744,17 @@ class IdentitiesController extends AppController {
      * returns information about the last location
      */
 	public function api_get_last_location() {
-		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-		$accessToken = ClassRegistry::init('AccessToken');
-		$this->Identity->id = $accessToken->field('identity_id', array('token_key' => $key));
+		if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+			$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
+		
+		$this->Identity->id = $identity_id;
 		$this->Identity->contain('Location');
 		
 		$data = $this->Identity->read();

@@ -147,9 +147,15 @@ class LocationsController extends AppController {
     }
     
     public function api_get() {
-    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-    	$accessToken = ClassRegistry::init('AccessToken');
-		$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+    	} else {
+	    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+	    	$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+    	}
     	
         $this->Location->contain();
         $data = $this->Location->findAllByIdentityId($identity_id, array('id', 'name'));
