@@ -19,13 +19,13 @@ class Sex {
 		
 		switch ($sex) {
 			case 1: 
-				$url = Router::url(Sex::AVATAR_PATH.'female'.$suffix);
+				$url = Router::url(Sex::AVATAR_PATH.'female'.$suffix, true);
 				break;
 			case 2: 
-				$url = Router::url(Sex::AVATAR_PATH.'male'.$suffix);
+				$url = Router::url(Sex::AVATAR_PATH.'male'.$suffix, true);
 				break;
 			default: 
-				$url = Router::url(Sex::AVATAR_PATH.'noinfo'.$suffix); 
+				$url = Router::url(Sex::AVATAR_PATH.'noinfo'.$suffix, true); 
 		}
 		
 		return $url;
