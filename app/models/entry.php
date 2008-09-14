@@ -150,8 +150,17 @@ class Entry extends AppModel {
     public function getForDisplay($filter, $limit, $with_restricted = false) {
         if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
             # update it before getting data
-            if(isset($filter['account_id']) && $filter['account_id']) {
-                $this->updateByAccountId($account_id, true);
+            
+            if(isset($filter['identity_id']) && $filter['identity_id']) {
+                $this->Account->contain();
+                $fields = array('id');
+                $data = $this->Account->findAllByIdentityId(
+                	$filter['identity_id'],
+                	$fields
+                );
+                foreach($data as $item) {
+                	$this->updateByAccountId($item['Account']['id'], true);
+                }
             }
         }
         
@@ -170,7 +179,9 @@ class Entry extends AppModel {
         }
         if(isset($filter['filter'])) {
             $ids = $this->ServiceType->getList($filter['filter'], $with_restricted);
-            $conditions['service_type_id'] = $ids;
+            if($ids) {
+                $conditions['service_type_id'] = $ids;
+            }
         }
         if(isset($filter['identity_id'])) {
             $conditions['identity_id'] = $filter['identity_id'];
@@ -179,6 +190,7 @@ class Entry extends AppModel {
         if(!$with_restricted) {
             $conditions['restricted'] = 0;
         }
+        
         $new_items = $this->Identity->Entry->find(
             'all',
             array(

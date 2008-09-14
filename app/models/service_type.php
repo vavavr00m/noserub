@@ -46,7 +46,9 @@ class ServiceType extends AppModel {
 	        $this->contain();
 	        $fields = array('id');
 	        $data = $this->findByToken($token);
-	        $ids[] = $data['ServiceType']['id'];
+	        if($data) {
+	        	$ids[] = $data['ServiceType']['id'];
+	        }
 	    }
 	    
 	    return $ids;
