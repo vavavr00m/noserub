@@ -7,7 +7,7 @@
         App::import('Vendor', 'sex');
     	$noserub_url = 'http://' . $data['Identity']['username'];
         
-        if (isset($data['Identity']['openid'])) {
+        if(isset($data['Identity']['openid'])) {
         	# We delegate to the OpenID identity instead of the OpenID as the OpenID itself may be 
         	# delegated and because OpenID delegation chaining is not possible our delegation 
         	# wouldn't work.
@@ -16,6 +16,16 @@
         } else {
         	$openid->xrdsLocation($noserub_url . '/xrds', false);
         	$openid->serverLink('/auth', false);
+        }
+        
+        if($data['Identity']['generic_feed']) {
+            $url = Router::url('/' . $data['Identity']['local_username']);
+            if(NOSERUB_USE_CDN) {
+                $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/' . md5('generic' . $data['Identity']['id']) . '.rss';
+            } else {
+                $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/rss';
+            }
+            $this->addScript('<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="' . $feed_url . '" />');
         }
         
         echo $this->element('foaf', array('base_url_for_avatars' => $base_url_for_avatars));

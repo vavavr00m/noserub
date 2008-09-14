@@ -28,7 +28,8 @@ class ApiComponent extends Object {
         $fields = array(
             'id',
             'api_hash',
-            'api_active'
+            'api_active',
+            'generic_feed'
         );
         $identity = $this->controller->Identity->findByUsername($splitted['username'], $fields);
 

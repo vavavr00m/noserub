@@ -80,6 +80,9 @@ class SyndicationsController extends AppController {
                         $this->layout = 'feed_' . $feed_type;
                         $this->render('feed');
                         $content = ob_get_contents();
+                        if($hash === 'generic') {
+                            $hash = md5('generic' . $identity['Identity']['id']);
+                        }
                         $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
                         ob_end_clean();
                     }                
@@ -260,7 +263,7 @@ class SyndicationsController extends AppController {
         if(NOSERUB_USE_CDN) {
             $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
         } else {
-            $feed_url = $url . '/feeds/';
+            $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';
         }
         
         # replace the hash by the actual feed url
@@ -272,6 +275,22 @@ class SyndicationsController extends AppController {
                 );
             unset($data[$idx]['Syndication']['hash']);
         }
+
+        # look for the generic feeds
+        if($identity['Identity']['generic_feed']) {
+            if(NOSERUB_USE_CDN) {
+                $feed_url .= md5('generic' . $identity['Identity']['id']) . '.';
+            }
+            $data['Syndication'][] = array(
+                'name' => 'Generic Feed',
+                'url'  => array(
+                    'rss'  => $feed_url . 'rss',
+                    'json' => $feed_url . 'js',
+                    'sphp' => $feed_url . 'sphp'
+                )
+            );
+        }
+        
         $this->set('data', $data);
         
         $this->api->render();
