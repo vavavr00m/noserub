@@ -31,20 +31,11 @@ class SyndicationsController extends AppController {
 
             # get all items for those accounts
             $items = array();
-            if(is_array($data['Account'])) {
-                foreach($data['Account'] as $account) {
-                    if(NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Syndication->Account->Feed->access($account['id'], 5, false);
-                    } else {
-                        $new_items = $this->Syndication->Account->Service->feed2array($data['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
-                    }
-                    if($new_items) {
-                        $items = array_merge($items, $new_items);
-                    }  
-                }
-                usort($items, 'sort_items');
-            }
-            
+            $conditions = array(
+                'account_id' => Set::extract($data, 'Account.{n}.id')
+            );
+            $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
+            usort($items, 'sort_items');
             $this->set('syndication_name', $data['Syndication']['name']);
             $this->set('identity', $data['Identity']);
             $this->set('data', $items);

@@ -6,11 +6,11 @@ $zend_json->useBuiltinEncoderDecoder = true;
 # go through all the items and build the json data structure
 $items = array();
 foreach($data as $item) {
-    $items[] = array('when'    => $nicetime->show($item['datetime']),
-                     'what'    => ucfirst($item['type']),
-                     'title'   => $item['title'],
-                     'link'    => $item['url'],
-                     'content' => $item['content']);
+    $items[] = array('when'    => $nicetime->show($item['Entry']['published_on']),
+                     'what'    => ucfirst($item['ServiceType']['token']),
+                     'title'   => $item['Entry']['title'],
+                     'link'    => $item['Entry']['url'],
+                     'content' => $item['Entry']['content']);
 }
 echo 'noserub_feed='.$zend_json->encode($items);
 ?>
