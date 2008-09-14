@@ -24,7 +24,13 @@
     <?php  if(isset($mainMenu) && is_a($mainMenu->getActiveMenuItem(), 'SocialStreamMenuItem')) { ?>
         <!-- RSS -->
         <?php
-            $filter = $filter == '' ? 'all' : $filter;
+            if(count($filter) == 0 || count($filter) > 1) {
+                $filter = 'all';
+            } else if(count($filter) == 1){
+                $filter = $filter[0];
+            } else {
+                $filter = 'all';
+            }
         ?>
         <link rel="alternate" type="application/rss+xml" title="Social Stream Feed" href="<?php echo Router::Url('/social_stream/' . $filter . '/rss'); ?>" />
 	<?php } ?>
