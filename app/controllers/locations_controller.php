@@ -197,8 +197,15 @@ class LocationsController extends AppController {
     }
     
     public function api_add() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+    	} else {
+	    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+	    	$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+    	}
 
         $name    = isset($this->params['url']['name'])    ? $this->params['url']['name']    : '';
         $address = isset($this->params['url']['address']) ? $this->params['url']['address'] : '';
@@ -210,7 +217,7 @@ class LocationsController extends AppController {
         } else {
             # test, wether we already have this location
             $conditions = array(
-                'identity_id' => $identity['Identity']['id'],
+                'identity_id' => $identity_id,
                 'name'        => $name
             );
             if($this->Location->hasAny($conditions)) {
@@ -218,7 +225,7 @@ class LocationsController extends AppController {
                 $this->set('msg', 'duplicate dataset');
             } else {
                 $data = array(
-                    'identity_id' => $identity['Identity']['id'],
+                    'identity_id' => $identity_id,
                     'name'        => $name,
                     'address'     => $address
                 );
@@ -234,7 +241,7 @@ class LocationsController extends AppController {
                 
                 if($set_to == 1) {
                     $this->Location->cacheQueries = false;
-                    $this->Location->setTo($identity['Identity']['id'], $this->Location->id);
+                    $this->Location->setTo($identity_id, $this->Location->id);
                 }
             }
         }

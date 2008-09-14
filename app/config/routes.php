@@ -59,6 +59,7 @@ Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action
 // OAuth-enabled API methods
 Router::connect('/api/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
+Router::connect('/api/:result_type/locations/add/', array('controller' => 'locations', 'action' => 'api_add'));
 Router::connect('/api/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
 Router::connect('/api/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
 Router::connect('/api/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
