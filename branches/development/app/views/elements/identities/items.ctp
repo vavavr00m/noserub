@@ -21,7 +21,7 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
         $days = 0;
         foreach($data as $date => $cluster) {
             $days++;
-            if($days === 6) {
+            if($days === 14) {
                 break;
             }
             
