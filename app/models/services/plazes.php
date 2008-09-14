@@ -18,7 +18,18 @@ class PlazesService extends AbstractService {
 	}
 	
 	public function getFeedUrl($username) {
-		return 'http://plazes.com/users/'.$username.'/presences.atom';
+		# We need to find the RSS feed as it is now tied to the user number not user ID
+		$content = @file_get_contents('http://plazes.com/users/'.$username);
+        if(!$content) {
+        	return false;
+        }
+        if(preg_match('/http:\/\/plazes\.com\/users\/([0-9]*)\/activities\.atom/i', $content, $matches)) {
+        	return 'http://plazes.com/users/'.$matches[1].'/activities.atom';
+        } else {
+        	return false;
+        }
+		
+		# http://plazes.com/users/3465/activities.atom
 	}
 }
 ?>
