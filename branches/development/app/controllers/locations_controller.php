@@ -2,7 +2,7 @@
 class LocationsController extends AppController {
     public $uses = array('Location');
     public $helpers = array('form', 'flashmessage');
-    public $components = array('url', 'geocoder', 'api');
+    public $components = array('url', 'geocoder', 'api', 'OauthServiceProvider');
     
     public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
@@ -147,7 +147,7 @@ class LocationsController extends AppController {
     }
     
     public function api_get() {
-    	$key = $this->verifyRequestOrDie();
+    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
     	$accessToken = ClassRegistry::init('AccessToken');
 		$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
     	
@@ -228,29 +228,4 @@ class LocationsController extends AppController {
         
         $this->api->render();
     }
-    
-	private function getServer() {
-		App::import('Model', 'DataStore');
-		$server = new OAuthServer(new DataStore());
-		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
-		
-		return $server;
-	}
-	
-	private function verifyRequestOrDie() {
-		App::import('Vendor', 'oauth', array('file' => 'Oauth'.DS.'OAuth.php'));
-		
-		$server = $this->getServer();
-		
-		try {
-			unset($_GET['url']);
-			$request = OAuthRequest::from_request('GET', Router::url($this->here, true));
-			$server->verify_request($request);
-		} catch (OAuthException $e) {
-			print($e->getMessage());
-			die();
-		}
-		
-		return $request->get_parameter('oauth_token');
-	}
 }
