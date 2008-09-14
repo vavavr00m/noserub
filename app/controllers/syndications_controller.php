@@ -281,12 +281,14 @@ class SyndicationsController extends AppController {
             if(NOSERUB_USE_CDN) {
                 $feed_url .= md5('generic' . $identity['Identity']['id']) . '.';
             }
-            $data['Syndication'][] = array(
-                'name' => 'Generic Feed',
-                'url'  => array(
-                    'rss'  => $feed_url . 'rss',
-                    'json' => $feed_url . 'js',
-                    'sphp' => $feed_url . 'sphp'
+            $data[] = array(
+                'Syndication' => array(
+                    'name' => 'Generic Feed',
+                    'url'  => array(
+                        'rss'  => $feed_url . 'rss',
+                        'json' => $feed_url . 'js',
+                        'sphp' => $feed_url . 'sphp'
+                    )
                 )
             );
         }
