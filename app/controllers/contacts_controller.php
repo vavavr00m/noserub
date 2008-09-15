@@ -410,6 +410,9 @@ class ContactsController extends AppController {
         $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
         $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
         
+        $tag_list = $this->Contact->getTagList($about_identity['id']);
+        $this->set('tag_filter_list', $tag_list);
+        
         # get all contacts
         $this->Contact->contain('WithIdentity');
         if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
