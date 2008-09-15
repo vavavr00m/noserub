@@ -7,7 +7,7 @@ class ContactType extends AppModel {
 	
 	/**
 	 * return ids of contact types for the tags in
-	 * the string. also removes thos tags from the new tags.
+	 * the string. also removes those tags from the new tags.
 	 *
 	 * @param array $new_tag 
 	 * @return array of contact type ids and cleaned up tags
@@ -18,9 +18,9 @@ class ContactType extends AppModel {
 	    foreach($tags['tags'] as $tag) {
 	        if($tag) {
 	            $this->contain();
-	            $data = $this->findByName($tag, array('id'));
+	            $data = $this->findByName($tag, array('id', 'name'));
                 if($data) {
-                    $ids[$data['ContactType']['id']] = 1;
+                    $ids[$data['ContactType']['id']] = $data['ContactType']['name'];
                 } else {
                     $remaining_tags[] = $tag;
                 }
@@ -50,7 +50,9 @@ class ContactType extends AppModel {
 	 * removes a contact type, when it is no longer being used
 	 */
 	public function removeIfUnused($contact_type_id) {
-	    if($this->hasAny(array('id' => $contact_type_id))) {
+	    $this->contain('Contact');
+	    $data = $this->findById($contact_type_id);
+	    if(!$data['Contact']) {
 	        $this->id = $contact_type_id;
 	        $this->delete();
 	    }
