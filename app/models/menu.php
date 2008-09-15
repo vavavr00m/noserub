@@ -270,7 +270,7 @@ class RegisterMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action) {
-		parent::__construct('Add me!', '/pages/register/', false);
+		parent::__construct('Register', '/pages/register/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}

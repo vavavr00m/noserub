@@ -213,7 +213,7 @@ class MenuFactoryTest extends CakeTestCase {
 	private function assertMenuForAnonymousUser(Menu $mainMenu, $socialStreamActive, $registerActive) {
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
-		$this->assertMenuItem($menuItems[1], 'Add me!', '/pages/register/', $registerActive);
+		$this->assertMenuItem($menuItems[1], 'Register', '/pages/register/', $registerActive);
 	}
 	
 	private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $settingsActive) {
@@ -422,7 +422,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $isActive) {
-		$this->assertEqual('Add me!', $menuItem->getLabel());
+		$this->assertEqual('Register', $menuItem->getLabel());
 		$this->assertEqual('/pages/register/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
