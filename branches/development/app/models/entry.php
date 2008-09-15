@@ -262,11 +262,7 @@ class Entry extends AppModel {
         $splitted2 = split('@', $splitted[count($splitted)-1]);
         $username = $splitted2[0];
         $intro = str_replace('@user@', 'http://'.$identity['Identity']['username'], $service_type['ServiceType']['intro']);
-        if($entry['url']) {
-            $intro = str_replace('@item@', '»'.$entry['title'].' ('.$entry['url'].')«', $intro);
-        } else {
-            $intro = str_replace('@item@', '»'.$entry['title'].'«', $intro);
-        }
+        $intro = str_replace('@item@', '»'.$entry['title'].'«', $intro);
         
         return $intro;
     }
