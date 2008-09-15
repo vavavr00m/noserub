@@ -11,6 +11,9 @@
     </div>
 
     <div id="sidebar">
+        <?php if($menu['main'] == 'network') {
+            echo $this->element('contacts/tag_filter');
+        } ?>
     	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if($menu['logged_in'] && isset($contacts)) { ?>
     	    <hr />

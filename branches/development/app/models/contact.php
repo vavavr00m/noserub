@@ -36,6 +36,58 @@ class Contact extends AppModel {
         return true;
     }
     
+    /**
+     * get list of all contact tags, that are used by this user
+     *
+     * @param int $identity_id
+     *
+     * @return string
+     */
+    public function getTagList($identity_id) {
+        $data = $this->find(
+            'all',
+            array(
+                'contain' => array(
+                    'NoserubContactType' => array(
+                        'fields' => array('name')
+                    ),
+                    'ContactType' => array(
+                        'fields' => array('name')
+                    )
+                ),
+                'conditions' => array(
+                    'Contact.identity_id' => $identity_id
+                ),
+                'fields' => array(
+                    'Contact.id'
+                )
+            )    
+        );
+        $noserub_tags = Set::extract($data, '{n}.NoserubContactType.{n}.name');
+        $own_tags = Set::extract($data, '{n}.ContactType.{n}.name');
+        #pr($noserub_tags);
+        #pr($own_tags);
+        $result = array();
+        foreach($noserub_tags as $tags) {
+            foreach($tags as $tag) {
+                if(!in_array($tag, $result)) {
+                    $result[] = $tag;
+                }
+            }
+        }
+        foreach($own_tags as $tags) {
+            foreach($tags as $tag) {
+                if(!in_array($tag, $result)) {
+                    $result[] = $tag;
+                }
+            }
+        }
+        
+        $tags = join(' ', $result);
+        $result = $this->NoserubContactType->extract($tags);
+        return $this->ContactType->extract($result);
+    }
+    
 	public function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		
