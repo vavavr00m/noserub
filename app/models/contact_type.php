@@ -50,7 +50,7 @@ class ContactType extends AppModel {
 	 * removes a contact type, when it is no longer being used
 	 */
 	public function removeIfUnused($contact_type_id) {
-	    if($this->hasAny(array('contact_type_id' => $contact_type_id))) {
+	    if($this->hasAny(array('id' => $contact_type_id))) {
 	        $this->id = $contact_type_id;
 	        $this->delete();
 	    }
