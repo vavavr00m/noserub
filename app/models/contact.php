@@ -88,6 +88,73 @@ class Contact extends AppModel {
         return $this->ContactType->extract($result);
     }
     
+    /**
+     * retrieves list of contacts for given filter
+     *
+     * @param int $identity_id
+     * @param array $filter
+     *
+     * @return array
+     */
+    public function getForDisplay($identity_id, $filter) {
+        # TODO: figure out how to do this properly in CakePHP, so that
+        # I don't need to fetch all data, before removing it afterwards.
+        
+        $this->contain(array(
+            'WithIdentity', 
+            'NoserubContactType',
+            'ContactType'
+        ));
+
+        $conditions = array(
+            'Contact.identity_id' => $identity_id,
+        );
+        if(isset($filter['type'])) {
+            if($filter['type'] == 'public') {
+                $conditions[] = 'WithIdentity.username NOT LIKE "%@%"';
+            } else {
+                $conditions[] = 'WithIdentity.username LIKE "%@%"';
+            }
+        }
+        $data = $this->find(
+            'all',
+            array(
+                'conditions' => $conditions,
+                'order'      => 'WithIdentity.username ASC'
+            )
+        );
+        # extract the kind of tag we need to test here
+        $tagtype_id = split('\.', $filter['tag']);
+        if($tagtype_id[0] == 'all' || $tagtype_id[0] == '0') {
+            # no filtering
+            return $data;
+        } else if($tagtype_id[0] == 'private') {
+            $model  = 'ContactType';
+            $model2 = 'ContactTypesContact';
+            $field  = 'contact_type_id';
+        } else {
+            $model  = 'NoserubContactType';
+            $model2 = 'ContactsNoserubContactType';
+            $field  = 'noserub_contact_type_id';
+        }
+        
+        $return = array();
+        foreach($data as $item) {
+            $keep = false;
+            if($item[$model]) {
+                foreach($item[$model] as $item2) {
+                    if($item2[$model2][$field] == $tagtype_id[1]) {
+                        $keep = true;
+                    }
+                }
+            }
+            if($keep) {
+                $return[] = $item;
+            }
+        }
+        return $return;
+    }
+    
 	public function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		

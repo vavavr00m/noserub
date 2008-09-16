@@ -1,3 +1,6 @@
+<?php
+    $selected = $this->data['TagFilter']['id'];
+?>
 <h4>
 	Filter
 </h4>
@@ -6,16 +9,16 @@
         <div class="input">
             <label>Display contacts:</label>
             <select name="data[TagFilter][id]" size="1">
-                <option value="0">
+                <option value="0" <?php if('0' == $selected) { echo ' selected="selected"'; }?>>
                     All
                 </option>
                 <?php foreach($tag_filter_list['noserub_contact_type_ids'] as $id => $tag) { ?>
-                    <option value="<?php echo $id; ?>">
+                    <option value="noserub.<?php echo $id; ?>"<?php if('noserub.'.$id == $selected) { echo ' selected="selected"'; }?>>
                         <?php echo $tag; ?>
                     </option>
                 <?php } ?>
                 <?php foreach($tag_filter_list['contact_type_ids'] as $id => $tag) { ?>
-                    <option value="<?php echo $id; ?>">
+                    <option value="private.<?php echo $id; ?>"<?php if('private.'.$id == $selected) { echo ' selected="selected"'; }?>>
                         <?php echo $tag; ?>
                     </option>
                 <?php } ?>
