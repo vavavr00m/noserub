@@ -2,7 +2,7 @@
 
 class Consumer extends AppModel {
 	public $belongsTo = array('Identity');
-	public $hasMany = array('AccessToken', 'RequestToken');
+	public $hasMany = array('AccessToken', 'RequestToken', 'Nonce');
 	
 	public $validate = array('callback_url' => array('rule' => 'url', 'allowEmpty' => true));
 	
