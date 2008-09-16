@@ -141,6 +141,9 @@ class IdentitiesController extends AppController {
             }
         }
         
+        $items = array();
+        $filter = null;
+        
         if($data) {
             if($splitted['username'] == $session_identity['username']) {
                 $this->set('headline', 'My NoseRub Profile');
