@@ -13,6 +13,12 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
+        $tag_filter = 'all';
+        if($this->data) {
+            $tag_filter = $this->data['TagFilter']['id'];
+        }
+        $this->data['TagFilter']['id'] = $tag_filter;
+        
         # get identity of displayed user
         $this->Contact->Identity->contain();
         $identity = $this->Contact->Identity->findByUsername($splitted['username']);
@@ -22,18 +28,16 @@ class ContactsController extends AppController {
         }
         $this->set('identity', $identity['Identity']);
         
+        $this->set('tag_filter_list', $this->Contact->getTagList($identity['Identity']['id']));
+        
         # get all noserub contacts
-        $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
-        $this->set('noserub_contacts', $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity['Identity']['id'],
-        																					   'WithIdentity.username NOT LIKE "%@%"'),
-        																 'order' => array('WithIdentity.username ASC'))));
-
+        $filter = array('tag' => $tag_filter, 'type' => 'public');
+        $this->set('noserub_contacts', $this->Contact->getForDisplay($identity['Identity']['id'], $filter));
+       
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
-            $this->Contact->contain(array('WithIdentity', 'ContactType', 'NoserubContactType'));
-			$this->set('private_contacts', $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity['Identity']['id'],
-        																					       'WithIdentity.username LIKE "%@%"'),
-        																     'order' => array('WithIdentity.username ASC'))));
+            $filter = array('tag' => $tag_filter, 'type' => 'private');
+            $this->set('private_contacts', $this->Contact->getForDisplay($identity['Identity']['id'], $filter));
         }
         
         $this->set('session_identity', $session_identity);
@@ -396,6 +400,12 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
+        $tag_filter = 'all';
+        if($this->data) {
+            $tag_filter = $this->data['TagFilter']['id'];
+        }
+        $this->data['TagFilter']['id'] = $tag_filter;
+        
 		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
         # get filter
         $show_in_overview = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
@@ -410,20 +420,18 @@ class ContactsController extends AppController {
         $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
         $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
         
-        $tag_list = $this->Contact->getTagList($about_identity['id']);
-        $this->set('tag_filter_list', $tag_list);
+        $this->set('tag_filter_list', $this->Contact->getTagList($about_identity['id']));
         
-        # get all contacts
-        $this->Contact->contain('WithIdentity');
+        # get (filtered) contacts
         if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
             # this is my network, so I can show every contact
-            $data = $this->Contact->findAllByIdentityId($session_identity['id']);
+            $filter = array('tag' => $tag_filter);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            $data = $this->Contact->find('all', array('conditions' => array('Contact.identity_id' => $about_identity['id'],
-            																'WithIdentity.username NOT LIKE "%@%"')));
+            $filter = array('tag' => $tag_filter, 'type' => 'public');
         }
-
+        $data = $this->Contact->getForDisplay($about_identity['id'], $filter);
+        
         # we need to go through all this now and get Accounts and Services
         # also save all contacts
         $contacts = array();

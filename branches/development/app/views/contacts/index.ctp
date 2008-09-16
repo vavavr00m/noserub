@@ -7,6 +7,8 @@ if(empty($noserub_contacts) && empty($private_contacts)) { ?>
         No contacts yet.
     </p>
 <?php } else {
+    echo $this->element('contacts/tag_filter');
+    
 	if($identity['id'] == $session_identity_id) {
     	echo '<p class="infotext">';
         echo $html->link('Add new contact', '/' . $identity['local_username'] . '/contacts/add/', array('class' => 'addmore'));
