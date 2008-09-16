@@ -27,8 +27,9 @@ table.listing th.asc a, table.listing th.desc a {
  background-position: 100% 50%;
  background-repeat: no-repeat;
 }
+/* TODO creating those images
 table.listing th.asc a { background-image: url(../asc.png) }
-table.listing th.desc a { background-image: url(../desc.png) }
+table.listing th.desc a { background-image: url(../desc.png) } */
 table.listing tbody td, table.listing tbody th {
  border: 1px dotted #ddd;
  padding: .33em .5em;
