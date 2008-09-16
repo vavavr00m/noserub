@@ -16,7 +16,15 @@ class DataStore extends AppModel {
 	}
 	
 	public function lookup_nonce($consumer, $token, $nonce, $timestamp) {
-		// TODO add implementation
+		App::import('Model', 'Nonce');
+		$theNonce = new Nonce();
+
+		if (!$theNonce->hasBeenUsed($consumer, $token, $nonce)) {
+			$theNonce->add($consumer, $token, $nonce);
+			return null;
+		}
+		
+		return $nonce;
 	}
 	
 	public function lookup_token($consumer, $token_type, $token) {
