@@ -115,3 +115,11 @@ define('NOSERUB_XMPP_FULL_FEED_USER', '');
 define('NOSERUB_XMPP_FULL_FEED_PASSWORD', '');
 define('NOSERUB_XMPP_FULL_FEED_SERVER', 'jabber.identoo.com');
 define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
+
+/**
+ * If you want your server being displayed on http://noserub.com/sites
+ * and display the number of your registered users there, please contact
+ * dirk.olbertz@gmail.com for listing on that page and set the following
+ * value to 'true'
+ */
+define('NOSERUB_API_INFO_ACTIVE', true);

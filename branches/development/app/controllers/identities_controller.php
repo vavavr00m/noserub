@@ -752,7 +752,7 @@ class IdentitiesController extends AppController {
      * returns information about the last location
      */
 	public function api_get_last_location() {
-		if (isset($this->params['username'])) {
+		if(isset($this->params['username'])) {
     		$identity = $this->api->getIdentity();
         	$this->api->exitWith404ErrorIfInvalid($identity);
         	$identity_id = $identity['Identity']['id'];
@@ -776,4 +776,26 @@ class IdentitiesController extends AppController {
         
         $this->api->render();
 	}
+	
+	/**
+     * used to return number of registered, active users
+     */
+    public function api_info() {
+        if(NOSERUB_API_INFO_ACTIVE) {
+            $this->Identity->contain();
+            $conditions = array(
+                'is_local' => 1,
+                'email <>' => '',
+                'hash'     => '',
+                'NOT username LIKE "%@"'
+            );
+            $data = array(
+                'num_users' => $this->Identity->find('count', array('conditions' => $conditions))
+            );
+        } else {
+            $data = array();
+        }
+        $this->set('data', $data);
+        $this->api->render();
+    }
 }

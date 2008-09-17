@@ -56,6 +56,8 @@ Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'ac
 Router::connect('/pages/oauth/access_token', array('controller' => 'oauth', 'action' => 'access_token'));
 Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action' => 'authorize'));
 
+Router::connect('/api/:result_type/info/', array('controller' => 'identities', 'action' => 'api_info'));
+
 // OAuth-enabled API methods
 Router::connect('/api/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
