@@ -425,12 +425,12 @@ class ContactsController extends AppController {
         # get (filtered) contacts
         if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
             # this is my network, so I can show every contact
-            $filter = array('tag' => $tag_filter);
+            $contact_filter = array('tag' => $tag_filter);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            $filter = array('tag' => $tag_filter, 'type' => 'public');
+            $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
         }
-        $data = $this->Contact->getForDisplay($about_identity['id'], $filter);
+        $data = $this->Contact->getForDisplay($about_identity['id'], $contact_filter);
         
         # we need to go through all this now and get Accounts and Services
         # also save all contacts
