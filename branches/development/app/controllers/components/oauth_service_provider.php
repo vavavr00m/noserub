@@ -11,6 +11,7 @@ class OauthServiceProviderComponent extends Object {
 			$request = OAuthRequest::from_request('GET');
 			$server->verify_request($request);
 		} catch (OAuthException $e) {
+			header('HTTP/1.1 403 Forbidden');
 			print($e->getMessage());
 			die();
 		}
