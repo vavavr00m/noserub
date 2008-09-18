@@ -9,4 +9,3 @@ class YimService extends AbstractService {
 		return 'http://edit.yahoo.com/config/send_webmesg?.target='.$username.'&.src=pg';
 	}
 }
-?>

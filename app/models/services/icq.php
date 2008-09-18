@@ -9,4 +9,3 @@ class IcqService extends AbstractService {
 		return 'http://www.icq.com/'.$username;
 	}
 }
-?>

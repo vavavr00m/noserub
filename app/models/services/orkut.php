@@ -9,4 +9,3 @@ class OrkutService extends AbstractService {
 		return 'http://www.orkut.com/Profile.aspx?uid='.$username;
 	}
 }
-?>

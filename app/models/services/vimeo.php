@@ -21,4 +21,3 @@ class VimeoService extends AbstractService {
 		return 'http://vimeo.com/'.$username.'/videos/rss/';
 	}
 }
-?>

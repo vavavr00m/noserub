@@ -19,5 +19,3 @@ class JsonComponent extends Object {
         return $this->zend_json->decode($value);
     }
 }
-
-?>

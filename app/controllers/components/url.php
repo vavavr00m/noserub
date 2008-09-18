@@ -24,5 +24,3 @@ class UrlComponent extends Object {
         return $url;
     }
 }
-
-?>

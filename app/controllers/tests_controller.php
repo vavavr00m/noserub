@@ -136,4 +136,3 @@ class TestsController extends AppController {
 		return $iniSetting;
 	}
 }
-?>

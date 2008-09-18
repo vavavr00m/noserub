@@ -21,4 +21,3 @@ class WordpresscomService extends AbstractService {
 		return 'http://'.$username.'.wordpress.com/feed/';
 	}
 }
-?>

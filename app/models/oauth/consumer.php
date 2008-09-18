@@ -25,4 +25,3 @@ class Consumer extends AppModel {
 		return Security::hash($this->generateConsumerKey(), null, true);
 	}
 }
-?>

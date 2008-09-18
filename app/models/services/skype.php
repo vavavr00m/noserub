@@ -9,4 +9,3 @@ class SkypeService extends AbstractService {
 		return 'skype:'.$username;
 	}
 }
-?>

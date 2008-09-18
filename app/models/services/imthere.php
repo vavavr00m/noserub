@@ -21,4 +21,3 @@ class ImthereService extends AbstractService {
 		return 'http://imthere.com/users/'.$username.'/events?format=rss';
 	}
 }
-?>

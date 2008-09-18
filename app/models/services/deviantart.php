@@ -21,4 +21,3 @@ class DeviantartService extends AbstractService {
 		return 'http://backend.deviantart.com/rss.xml?q=gallery%3A'.$username.'+sort%3Atime&type=deviation';
 	}
 }
-?>

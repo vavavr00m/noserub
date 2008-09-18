@@ -21,4 +21,3 @@ class SimpyService extends AbstractService {
 		return 'http://www.simpy.com/rss/user/'.$username.'/links/';
 	}
 }
-?>

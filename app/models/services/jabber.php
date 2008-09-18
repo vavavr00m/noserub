@@ -14,4 +14,3 @@ class JabberService extends AbstractService {
 		return 'xmpp:'.$username;
 	}
 }
-?>

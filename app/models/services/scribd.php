@@ -21,4 +21,3 @@ class ScribdService extends AbstractService {
 		return 'http://www.scribd.com/feeds/user_rss/'.$username;
 	}
 }
-?>

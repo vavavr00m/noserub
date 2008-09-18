@@ -9,4 +9,3 @@ class AimService extends AbstractService {
 		return 'aim:goIM?screenname='.$username;
 	}
 }
-?>

@@ -25,4 +25,3 @@ class IpernityService extends AbstractService {
 		return 'http://www.ipernity.com/feed/'.$username.'/photocast/stream/rss.xml?key=';
 	}
 }
-?>

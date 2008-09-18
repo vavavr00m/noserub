@@ -21,4 +21,3 @@ class LastfmService extends AbstractService {
 		return 'http://ws.audioscrobbler.com/1.0/user/'.$username.'/recenttracks.rss';
 	}
 }
-?>

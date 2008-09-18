@@ -21,4 +21,3 @@ class QypeService extends AbstractService {
 		return 'http://www.qype.com/people/'.$username.'/rss';
 	}
 }
-?>

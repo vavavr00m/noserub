@@ -39,4 +39,3 @@ class FilterOpenidSites extends FilterIterator {
     	$this->filter = $filter;
     }
 }
-?>

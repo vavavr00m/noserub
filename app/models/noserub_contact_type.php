@@ -101,4 +101,3 @@ class SelectedNoserubContactTypesFilter extends FilterIterator {
 		return ($this->current() == $this->selected);
     }
 }
-?>

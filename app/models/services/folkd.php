@@ -21,4 +21,3 @@ class FolkdService extends AbstractService {
 		return 'http://www.folkd.com/rss.php?items=15&find=all&sort=&user='.$username;
 	}
 }
-?>

@@ -21,4 +21,3 @@ class DeliciousService extends AbstractService {
 		return 'http://feeds.delicious.com/rss/'.$username;
 	}
 }
-?>

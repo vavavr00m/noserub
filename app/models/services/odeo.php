@@ -21,4 +21,3 @@ class OdeoService extends AbstractService {
 		return 'http://odeo.com/profile/'.$username.'/rss.xml';
 	}
 }
-?>

@@ -104,4 +104,3 @@ class OauthConsumersController extends AppController {
 		return '/'.$this->session_identity['local_username'].'/settings/oauth';
 	}
 }
-?>

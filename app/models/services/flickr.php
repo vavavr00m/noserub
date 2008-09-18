@@ -34,4 +34,3 @@ class FlickrService extends AbstractService {
         }
 	}
 }
-?>

@@ -9,4 +9,3 @@ class DopplrService extends AbstractService {
 		return 'http://www.dopplr.com/traveller/'.$username;
 	}
 }
-?>

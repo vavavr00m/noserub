@@ -50,4 +50,3 @@ class NiceSRegHelper extends AppHelper {
 		return $result;
 	}
 }
-?>

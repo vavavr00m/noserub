@@ -13,4 +13,3 @@ class GtalkService extends AbstractService {
 		return 'xmpp:'.$username;
 	}
 }
-?>

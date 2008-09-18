@@ -222,4 +222,3 @@ class AuthController extends AppController {
 		$this->set('headline', 'OpenID verification');
 	}
 }
-?>

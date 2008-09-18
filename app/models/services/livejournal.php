@@ -21,4 +21,3 @@ class LivejournalService extends AbstractService {
 		return 'http://'.$username.'.livejournal.com/data/rss';
 	}
 }
-?>

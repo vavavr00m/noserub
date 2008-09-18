@@ -350,4 +350,3 @@ class Contact extends AppModel {
         return true;
     }
 }
-?>

@@ -21,4 +21,3 @@ class MagnoliaService extends AbstractService {
 		return 'http://ma.gnolia.com/rss/full/people/'.$username.'/';
 	}
 }
-?>

@@ -9,4 +9,3 @@ class GadugaduService extends AbstractService {
 		return 'gg:'.$username;
 	}
 }
-?>

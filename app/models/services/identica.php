@@ -23,4 +23,3 @@ class IdenticaService extends AbstractService {
 	    return 'http://identi.ca/'.$username.'/rss';
 	}
 }
-?>

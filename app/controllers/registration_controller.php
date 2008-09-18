@@ -154,4 +154,3 @@ class RegistrationController extends AppController {
 	    $this->Session->delete('Registration.nickname');
     }
 }
-?>

@@ -21,4 +21,3 @@ class BloggerdeService extends AbstractService {
 		return 'http://'.$username.'.blogger.de/rss?show=all';
 	}
 }
-?>

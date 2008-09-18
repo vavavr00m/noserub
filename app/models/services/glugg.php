@@ -20,4 +20,3 @@ class GluggService extends AbstractService {
 
 	}
 }
-?>

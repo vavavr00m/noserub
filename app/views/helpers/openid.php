@@ -49,4 +49,3 @@ class OpenidHelper extends AppHelper {
 		}
 	}
 }
-?>

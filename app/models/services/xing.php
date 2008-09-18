@@ -9,4 +9,3 @@ class XingService extends AbstractService {
 		return 'https://www.xing.com/profile/'.$username;
 	}
 }
-?>

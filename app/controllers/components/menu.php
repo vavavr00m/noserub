@@ -58,5 +58,3 @@ class MenuComponent extends Object {
 		return $menuOptions;
 	}
 }
-
-?>

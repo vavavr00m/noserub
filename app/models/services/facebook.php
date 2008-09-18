@@ -9,4 +9,3 @@ class FacebookService extends AbstractService {
 		return 'http://www.facebook.com/profile.php?id='.$username;
 	}
 }
-?>

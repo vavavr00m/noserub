@@ -21,4 +21,3 @@ class StumbleuponService extends AbstractService {
 		return 'http://www.stumbleupon.com/syndicate.php?stumbler='.$username;
 	}
 }
-?>

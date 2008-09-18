@@ -9,4 +9,3 @@ class WiiService extends AbstractService {
 		return 'wii:' . $username;
 	}
 }
-?>

@@ -32,4 +32,3 @@ class PlazesService extends AbstractService {
 		# http://plazes.com/users/3465/activities.atom
 	}
 }
-?>

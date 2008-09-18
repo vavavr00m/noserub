@@ -21,4 +21,3 @@ class IlikeService extends AbstractService {
 		return 'http://ilike.com/user/'.$username.'/recently_played.rss';
 	}
 }
-?>

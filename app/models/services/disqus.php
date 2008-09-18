@@ -20,4 +20,3 @@ class DisqusService extends AbstractService {
 		#http://disqus.com/people/lancew/comments.rss
 	}
 }
-?>

@@ -24,4 +24,3 @@ public function getFeedUrl($username) {
 	    #http://www.blippr.com/profiles/lancew/blips.rss
 	}
 }
-?>

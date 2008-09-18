@@ -28,4 +28,3 @@ class KulandoService extends AbstractService {
         }
 	}
 }
-?>

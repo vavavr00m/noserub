@@ -17,4 +17,3 @@ class YoutubeService extends AbstractService {
 	    return 'http://www.youtube.com/rss/user/' . $username . '/videos.rss';
 	}
 }
-?>

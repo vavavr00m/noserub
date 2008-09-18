@@ -59,5 +59,3 @@ class CdnComponent extends Object {
         $s3object->Delete();
     }
 }
-
-?>
