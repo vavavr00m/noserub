@@ -274,7 +274,7 @@ class Identity extends AppModel {
         	$hcards = $hcard_obj->getByURL($url);
         	$hcard = $this->getOwner($hcards, $url);
         	if($hcard) {
-        	    if(!isset($hvcard['n'])) {
+        	    if(!isset($hcard['n'])) {
         	        $result['Identity']['firstname']     = '';
                     $result['Identity']['lastname']      = $hcard['fn'];
         	    } else {
@@ -285,9 +285,11 @@ class Identity extends AppModel {
 
                 # because of bug in hKit for relative URLs
                 $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
-                $photo = str_replace(':///', '', $photo);
-                if(strpos($photo, 'ttp://') === false) {
-                    $photo = $url . '/' . $photo;
+                if($photo) {
+                    $photo = str_replace(':///', '', $photo);
+                    if(strpos($photo, 'ttp://') === false) {
+                        $photo = $url . '/' . $photo;
+                    }
                 }
                 $result['Identity']['photo'] = $photo;                
                 $result['Identity']['address_shown'] = '';
