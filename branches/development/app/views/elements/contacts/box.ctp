@@ -36,8 +36,7 @@
                 if(strpos($item['photo'], 'http://') === 0 ||
                    strpos($item['photo'], 'https://') === 0) {
                     # contains a complete path, eg. from not local identities
-                    $photo_url = $item['photo'];
-                    $contact_photo = str_replace('.jpg', '-small.jpg', $photo_url);
+                    $contact_photo = $item['photo'];
                 } else {
                     $contact_photo = $static_base_url . $item['photo'].'-small.jpg';
                 }	                
