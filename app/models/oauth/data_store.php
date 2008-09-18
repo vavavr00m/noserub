@@ -19,6 +19,9 @@ class DataStore extends AppModel {
 		App::import('Model', 'Nonce');
 		$theNonce = new Nonce();
 
+		// XXX if the API becomes popular we probably have to move this clean up to a cron job
+		$theNonce->deleteExpired();
+		
 		if (!$theNonce->hasBeenUsed($consumer, $token, $nonce)) {
 			$theNonce->add($consumer, $token, $nonce);
 			return null;
