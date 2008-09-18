@@ -105,7 +105,9 @@ class ContactsController extends AppController {
                     $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
                     if($result == false) {
                         # user could not be found, so delete it
+                        $this->Contact->Identity->id = $new_identity_id;
                         $this->Contact->Identity->delete();
+                        $this->flashMessage('error', 'Could not add contact');
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
                         exit;
