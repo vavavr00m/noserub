@@ -261,8 +261,10 @@ class Identity extends AppModel {
             return false;
         }
 
-        $result = array('accounts' => array(),
-                        'Identity' => array());
+        $result = array(
+            'accounts' => array(),
+            'Identity' => array()
+        );
         
         preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         if(empty($noserub_id)) {
@@ -275,25 +277,41 @@ class Identity extends AppModel {
         	    if(!isset($hvcard['n'])) {
         	        $result['Identity']['firstname']     = '';
                     $result['Identity']['lastname']      = $hcard['fn'];
-        	        $this->log(print_r($hcard, 1));
         	    } else {
                     $result['Identity']['firstname']     = $hcard['n']['given-name'];
                     $result['Identity']['lastname']      = $hcard['n']['family-name'];
                     $result['Identity']['gender']        = 0;
                 }
-                
+
                 # because of bug in hKit for relative URLs
                 $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
                 $photo = str_replace(':///', '', $photo);
                 if(strpos($photo, 'ttp://') === false) {
                     $photo = $url . '/' . $photo;
                 }
-                $result['Identity']['photo'] = $photo;
-                
+                $result['Identity']['photo'] = $photo;                
                 $result['Identity']['address_shown'] = '';
                 $result['Identity']['latitude']      = 0;
                 $result['Identity']['longitude']     = 0;
-        	}
+        	} else if(strpos($url, 'friendfeed.com/') > 0) {
+                # Fix for friendfeed, as they don't support hCard
+                $info_content_start = strpos($content, '<div class="streaminfo"');
+                $info_content_end   = strpos($content, 'id="feedcontainer"');
+                $info_content = substr($content, $info_content_start, $info_content_end-$info_content_start);
+                if(preg_match('/<img .*src="http:\/\/friendfeed\..*\/pictures-(.*)"/iU', $info_content, $matches)) {
+                    $result['Identity']['photo'] = 'http://friendfeed.s3.amazonaws.com/pictures-' . $matches[1];
+                }
+                if(preg_match('/<span.*>(.*)<\/span>/iU', $info_content, $matches)) {
+                    $name = split(' ', $matches[1]);
+                    if(count($name) == 1) {
+                        $result['Identity']['lastname'] = $name;
+                    } else {
+                        $result['Identity']['lastname'] = $name[count($name) - 1];
+                        unset($name[count($name) - 1]);
+                        $result['Identity']['firstname'] = join(' ', $name);
+                    }
+                }
+            }
         	$xfn = new xfn;
         	$xfn = $xfn->getByUrl($url);
         	$splitted = $this->splitUsername($url, false);
