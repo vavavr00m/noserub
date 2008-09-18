@@ -21,4 +21,3 @@ class ViddlerService extends AbstractService {
 		return 'http://www.viddler.com/explore/'.$username.'/videos/feed/';
 	}
 }
-?>

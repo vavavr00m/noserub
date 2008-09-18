@@ -9,4 +9,3 @@ class OrmigoService extends AbstractService {
 		return 'http://www.ormigo.com/vcard/'.$username.'/';
 	}	
 }
-?>

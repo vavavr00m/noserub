@@ -9,4 +9,3 @@ class SecondlifeService extends AbstractService {
 		return '#'.$username;
 	}	
 }
-?>

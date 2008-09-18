@@ -21,4 +21,3 @@ class BliptvService extends AbstractService {
 		return 'http://'.$username.'.blip.tv/rss/';
 	}
 }
-?>

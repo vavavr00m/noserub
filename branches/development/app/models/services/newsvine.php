@@ -21,4 +21,3 @@ class NewsvineService extends AbstractService {
 		return 'http://'.$username.'.newsvine.com/_feeds/rss2/author';
 	}
 }
-?>

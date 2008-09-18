@@ -21,4 +21,3 @@ class FavesService extends AbstractService {
 		return 'http://faves.com/users/'.$username.'/rss';
 	}
 }
-?>

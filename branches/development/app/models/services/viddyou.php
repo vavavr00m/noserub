@@ -21,4 +21,3 @@ class ViddyouService extends AbstractService {
 		return 'http://www.viddyou.com/feed/user/'.$username.'/feed.rss';
 	}
 }
-?>

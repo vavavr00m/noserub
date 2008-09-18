@@ -21,4 +21,3 @@ class MisterwongService extends AbstractService {
 		return 'http://www.mister-wong.de/rss/user/'.$username.'/';
 	}
 }
-?>

@@ -21,4 +21,3 @@ class CorkdService extends AbstractService {
 		return 'http://corkd.com/feed/journal/'.$username;
 	}
 }
-?>

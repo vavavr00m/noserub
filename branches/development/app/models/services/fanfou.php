@@ -24,4 +24,3 @@ class FanfouService extends AbstractService {
 	    #http://api.fanfou.com/statuses/user_timeline/dominik.rss
 	}
 }
-?>

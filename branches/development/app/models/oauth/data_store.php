@@ -98,4 +98,3 @@ class DataStore extends AppModel {
   		return new OAuthToken($key, $secret);
 	}
 }
-?>

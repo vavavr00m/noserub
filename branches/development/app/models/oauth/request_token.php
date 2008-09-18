@@ -27,4 +27,3 @@ class RequestToken extends AppModel {
 		return $this->hasAny(array('RequestToken.authorized' => true, 'RequestToken.token_key' => $token_key));
 	}
 }
-?>

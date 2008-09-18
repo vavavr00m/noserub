@@ -21,4 +21,3 @@ class UpcomingService extends AbstractService {
 		return 'http://upcoming.yahoo.com/syndicate/v2/my_events/'.$username;
 	}
 }
-?>

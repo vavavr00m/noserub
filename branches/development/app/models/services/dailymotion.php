@@ -21,4 +21,3 @@ class DailymotionService extends AbstractService {
 		return 'http://www.dailymotion.com/rss/'.$username;
 	}
 }
-?>

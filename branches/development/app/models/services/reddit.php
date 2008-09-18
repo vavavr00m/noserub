@@ -21,4 +21,3 @@ class RedditService extends AbstractService {
 		return 'http://reddit.com/user/'.$username.'/.rss';
 	}
 }
-?>

@@ -33,4 +33,3 @@ class TwitterService extends AbstractService {
         }
 	}
 }
-?>

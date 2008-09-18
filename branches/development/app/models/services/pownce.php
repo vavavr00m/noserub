@@ -21,4 +21,3 @@ class PownceService extends AbstractService {
 		return 'http://pownce.com/feeds/public/'.$username.'/';
 	}
 }
-?>

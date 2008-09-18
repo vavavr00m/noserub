@@ -17,4 +17,3 @@ class PicasaService extends AbstractService {
 		return 'http://picasaweb.google.com/data/feed/base/user/' . $username . '?alt=rss&kind=photo&hl=en_US&access=public';
 	}
 }
-?>

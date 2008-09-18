@@ -21,4 +21,3 @@ class WeventService extends AbstractService {
 		return 'http://wevent.org/users/'.$username.'/upcoming.rss';
 	}
 }
-?>

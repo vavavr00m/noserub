@@ -9,4 +9,3 @@ class XBoxService extends AbstractService {
 		return 'http://live.xbox.com/member/' . $username;
 	}
 }
-?>

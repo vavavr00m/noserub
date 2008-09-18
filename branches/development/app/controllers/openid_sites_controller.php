@@ -22,4 +22,3 @@ class OpenidSitesController extends AppController {
 		}			
 	}
 }
-?>

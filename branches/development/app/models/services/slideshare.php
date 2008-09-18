@@ -21,4 +21,3 @@ class SlideshareService extends AbstractService {
 		return 'http://www.slideshare.net/rss/user/'.$username;
 	}
 }
-?>

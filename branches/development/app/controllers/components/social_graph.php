@@ -19,5 +19,3 @@ class SocialGraphComponent extends JsonComponent {
         return $this->decode(GSocialGraph::lookup($urls));
     }
 }
-
-?>

@@ -27,4 +27,3 @@ class HemidemiService extends AbstractService {
 		return 'http://www.hemidemi.com/rss/user/'.$username.'/bookmark/recent.xml';
 	}
 }
-?>

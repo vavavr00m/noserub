@@ -335,4 +335,3 @@ class SocialStreamMenuItem extends MenuItem {
 		return false;
 	}
 }
-?>

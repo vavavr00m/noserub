@@ -25,4 +25,3 @@ class ZooomrService extends AbstractService {
 		return 'http://www.zooomr.com/services/feeds/public_photos/?id='.$username.'&format=rss_200';
 	}
 }
-?>

@@ -9,4 +9,3 @@ class PsnService extends AbstractService {
 		return 'psn:' . $username;
 	}
 }
-?>

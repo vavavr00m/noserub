@@ -152,4 +152,3 @@ class ContactType extends AppModel {
 		return $newContactTypes;
 	}
 }
-?>

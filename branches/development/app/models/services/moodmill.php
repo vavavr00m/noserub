@@ -21,4 +21,3 @@ class MoodmillService extends AbstractService {
 		return 'http://www.moodmill.com/rss/'.$username.'/';
 	}
 }
-?>

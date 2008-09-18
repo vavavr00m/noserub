@@ -9,4 +9,3 @@ class LinkedinService extends AbstractService {
 		return 'http://www.linkedin.com/in/'.$username;
 	}
 }
-?>

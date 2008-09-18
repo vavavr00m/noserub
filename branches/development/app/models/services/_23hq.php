@@ -25,4 +25,3 @@ class _23hqService extends AbstractService {
 		return 'http://www.23hq.com/rss/'.$username;
 	}
 }
-?>

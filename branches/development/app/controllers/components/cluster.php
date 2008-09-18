@@ -29,5 +29,3 @@ class ClusterComponent extends Object {
         return $clustered_data;
     }
 }
-
-?>

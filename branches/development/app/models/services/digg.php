@@ -21,4 +21,3 @@ class DiggService extends AbstractService {
 		return 'http://digg.com/users/'.$username.'/history/favorites.rss';
 	}
 }
-?>

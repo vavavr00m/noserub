@@ -9,4 +9,3 @@ class MsnService extends AbstractService {
 		return 'msnim:'.$username;
 	}
 }
-?>
