@@ -22,7 +22,9 @@ class EntriesController extends AppController {
                 'fields'     => 'id',
                 'conditions' => array(
                     'next_update <= NOW()'
-                )
+                ),
+                'limit' => 50,
+                'order' => 'next_update ASC'
             )
         );
 
