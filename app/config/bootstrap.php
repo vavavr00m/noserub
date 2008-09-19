@@ -56,7 +56,7 @@ if(defined('NOSERUB_FULL_BASE_URL')) {
     define('NOSERUB_USER_AGENT', 'NoseRub bot from unknown host (http://noserub.com/)');
 }
 
-ini_set('user_agent', 'Mein Bot');
+ini_set('user_agent', NOSERUB_USER_AGENT);
 
 define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 
