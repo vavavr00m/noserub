@@ -310,7 +310,7 @@ class ContactsController extends AppController {
     	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
     	    
     	    # extract contact types from new tags and clean them up
-    	    $new_tags = $this->Contact->ContactType->extract($new_tags);
+    	    $new_tags = $this->Contact->ContactType->extract($session_identity['id'], $new_tags);
     	    
     	    # merge manual tags with noserub contact types
     	    $entered_noserub_contact_types = $this->Contact->NoserubContactType->merge($this->data['NoserubContactType'], $new_tags['noserub_contact_type_ids']);
