@@ -13,9 +13,13 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        $tag_filter = 'all';
+        $tag_filter = $this->Session->read('Filter.Contact.Tag');
+        if(!$tag_filter) {
+            $tag_filter = 'all';
+        }
         if($this->data) {
             $tag_filter = $this->data['TagFilter']['id'];
+            $this->Session->write('Filter.Contact.Tag', $tag_filter);
         }
         $this->data['TagFilter']['id'] = $tag_filter;
         
@@ -402,9 +406,13 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        $tag_filter = 'all';
+        $tag_filter = $this->Session->read('Filter.Contact.Tag');
+        if(!$tag_filter) {
+            $tag_filter = 'all';
+        }
         if($this->data) {
             $tag_filter = $this->data['TagFilter']['id'];
+            $this->Session->write('Filter.Contact.Tag', $tag_filter);
         }
         $this->data['TagFilter']['id'] = $tag_filter;
         
