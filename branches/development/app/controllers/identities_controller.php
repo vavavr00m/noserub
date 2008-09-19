@@ -783,7 +783,7 @@ class IdentitiesController extends AppController {
      * used to return number of registered, active users
      */
     public function api_info() {
-        if(NOSERUB_API_INFO_ACTIVE) {
+        if(defined(NOSERUB_API_INFO_ACTIVE) && NOSERUB_API_INFO_ACTIVE) {
             $this->Identity->contain();
             $conditions = array(
                 'is_local' => 1,
