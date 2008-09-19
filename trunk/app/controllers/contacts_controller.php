@@ -2,54 +2,46 @@
 /* SVN FILE: $Id:$ */
  
 class ContactsController extends AppController {
-    var $uses = array('Contact');
-    var $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
-    var $components = array('cluster', 'api');
+    public $uses = array('Contact');
+    public $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
+    public $components = array('cluster', 'api', 'OauthServiceProvider');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $this->checkUnsecure();
         
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
+        $tag_filter = 'all';
+        if($this->data) {
+            $tag_filter = $this->data['TagFilter']['id'];
+        }
+        $this->data['TagFilter']['id'] = $tag_filter;
+        
         # get identity of displayed user
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $identity = $this->Contact->Identity->findByUsername($splitted['username']);
         if(!$identity) {
             # identity not found
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         $this->set('identity', $identity['Identity']);
         
-        # get all noserub contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
+        $this->set('tag_filter_list', $this->Contact->getTagList($identity['Identity']['id']));
         
-        $this->set('noserub_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
-                                                                     'WithIdentity.username NOT LIKE "%@%"'), 
-                                                               null, 
-                                                               'WithIdentity.username ASC'));
+        # get all noserub contacts
+        $filter = array('tag' => $tag_filter, 'type' => 'public');
+        $this->set('noserub_contacts', $this->Contact->getForDisplay($identity['Identity']['id'], $filter));
+       
         # get all private contacts, if this is the logged in user
         if(isset($session_identity['id']) && $splitted['username'] == $session_identity['username']) {
-            $this->Contact->recursive = 1;
-            $this->Contact->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
-
-            $this->set('private_contacts', $this->Contact->findAll(array('Contact.identity_id' => $identity['Identity']['id'],
-                                                                         'WithIdentity.username LIKE "%@%"'), 
-                                                                         null, 
-                                                                         'WithIdentity.username ASC'));
+            $filter = array('tag' => $tag_filter, 'type' => 'private');
+            $this->set('private_contacts', $this->Contact->getForDisplay($identity['Identity']['id'], $filter));
         }
         
         $this->set('session_identity', $session_identity);
+		$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         
         if($session_identity['username'] == $splitted['username']) {
             $this->set('headline', 'My contacts');
@@ -66,14 +58,14 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function add() {
+    public function add() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         if($this->data) {
@@ -113,7 +105,9 @@ class ContactsController extends AppController {
                     $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
                     if($result == false) {
                         # user could not be found, so delete it
+                        $this->Contact->Identity->id = $new_identity_id;
                         $this->Contact->Identity->delete();
+                        $this->flashMessage('error', 'Could not add contact');
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
                         exit;
@@ -126,11 +120,7 @@ class ContactsController extends AppController {
                 # now create the contact relationship
                 
                 # but first make sure, that this connection is not already there
-                $this->Contact->recursive = 0;
-                $this->Contact->expects('Contact');
-                $num_of_contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
-                                                                   'with_identity_id' => $new_identity_id));
-                if($num_of_contacts > 0) {
+                if ($this->Contact->hasAny(array('identity_id' => $session_identity['id'], 'with_identity_id' => $new_identity_id))) {
                     $this->Contact->invalidate('noserub_id', 'unique');
                     $this->render();
                     exit;
@@ -150,9 +140,7 @@ class ContactsController extends AppController {
                 $new_splitted = $this->Contact->Identity->splitUsername($new_identity_username);
                 
                 # check, if this is unique
-                $this->Contact->Identity->recursive = 0;
-                $this->Contact->Identity->expects('Contact');
-                if($this->Contact->Identity->findCount(array('username' => $new_splitted['username'])) == 0) {
+                if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
                     $this->Contact->Identity->create();
                     $identity = array('is_local' => 1,
                                       'username' => $new_splitted['username']);
@@ -185,14 +173,7 @@ class ContactsController extends AppController {
         }
     }
         
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $contact_id        = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
         $username          = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted          = $this->Contact->Identity->splitUsername($username);
@@ -200,28 +181,27 @@ class ContactsController extends AppController {
         
         if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
             # this is not the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
 
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
         # check, if the contact belongs to the identity
-        $this->Contact->recursive = 0;
-        $this->Contact->expects('Contact');
+        $this->Contact->contain();
         $contact = $this->Contact->find(array('id'          => $contact_id,
                                               'identity_id' => $session_identity['id']));
     
         if(!$contact) {
             # contact not found for logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
         
         # remove contact_type relationships
         $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactTypesContact->execute($sql);
+        $this->Contact->ContactTypesContact->query($sql);
         $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactsNoserubContactType->execute($sql);
+        $this->Contact->ContactsNoserubContactType->query($sql);
         
         # remove this contact
         $with_identity_id = $contact['Contact']['with_identity_id'];
@@ -231,8 +211,7 @@ class ContactsController extends AppController {
         
         # get the other identity in order to determine, if
         # this was a local identity and therefore can be deleted
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $with_identity = $this->Contact->WithIdentity->findById($with_identity_id);
         
         if($with_identity['WithIdentity']['namespace'] == $session_identity['local_username']) {
@@ -244,7 +223,7 @@ class ContactsController extends AppController {
             $this->Contact->Identity->Account->deleteByIdentityId($with_identity_id);
         }
 
-        $this->redirect('/' . $session_identity['local_username'] . '/contacts/', null, true);
+        $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
     }
     
     /**
@@ -262,10 +241,9 @@ class ContactsController extends AppController {
             # this is not the logged in user
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
-        
+ 
         # get the contact
-        $this->Contact->recursive = 1;
-	    $this->Contact->expects('Contact', 'Identity', 'WithIdentity');
+		$this->Contact->contain('Identity', 'WithIdentity');
 	    $contact = $this->Contact->findById($contact_id);
 	    
         if($session_identity['id'] != $contact['Contact']['identity_id']) {
@@ -274,16 +252,16 @@ class ContactsController extends AppController {
         }
         
         $this->set('contact', $contact);
+        $this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
         
         # get contact's accounts
-        $this->Contact->Identity->Account->recursive = 1;
-        $this->Contact->Identity->Account->expects('Account', 'Service');
+        $this->Contact->Identity->Account->contain('Service');
         $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
         
         $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);
     }
     
-    function edit() {
+    public function edit() {
     	$contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$username   = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted   = $this->Contact->Identity->splitUsername($username);
@@ -295,8 +273,7 @@ class ContactsController extends AppController {
         }
         
         # get the contact
-        $this->Contact->recursive = 2;
-	    $this->Contact->expects('Contact.Contact', 'Identity.Identity', 'WithIdentity.WithIdentity', 'ContactType.ContactType', 'NoserubContactType.NoserubContactType');
+	    $this->Contact->contain(array('Identity', 'WithIdentity', 'ContactType', 'NoserubContactType'));
 	    $contact = $this->Contact->findById($contact_id);
 	    
         if($session_identity['id'] != $contact['Contact']['identity_id']) {
@@ -357,7 +334,7 @@ class ContactsController extends AppController {
                 } else if(!$marked && in_array($id, $selected_noserub_contact_types)) {
                     $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE ' .
                            'contact_id=' . $contact_id . ' AND noserub_contact_type_id=' . $id;
-                    $this->Contact->ContactsNoserubContactType->execute($sql);
+                    $this->Contact->ContactsNoserubContactType->query($sql);
                 }
             }
             
@@ -388,7 +365,7 @@ class ContactsController extends AppController {
                 } else if(!$marked && in_array($id, $selected_contact_types)) {
                     $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE ' .
                            'contact_id=' . $contact_id . ' AND contact_type_id=' . $id;
-                    $this->Contact->ContactTypesContact->execute($sql);
+                    $this->Contact->ContactTypesContact->query($sql);
                     
                     $this->Contact->ContactType->removeIfUnused($id);
                 }
@@ -399,15 +376,14 @@ class ContactsController extends AppController {
     	}
     	
     	$this->set('contact', $contact);
+    	$this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
     	
     	$this->set('headline', 'Edit the contact details');
     	
-    	$this->Contact->NoserubContactType->recursive = 0;
-    	$this->Contact->NoserubContactType->expects('NoserubContactType');
-	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->findAll());	    
+    	$this->Contact->NoserubContactType->contain();
+	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
 	    
-	    $this->Contact->ContactType->recursive = 0;
-	    $this->Contact->ContactType->expects('ContactType');
+	    $this->Contact->ContactType->contain();
 	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
     }
     
@@ -418,13 +394,19 @@ class ContactsController extends AppController {
      * @return 
      * @access 
      */
-    function network() {
+    public function network() {
         $this->checkUnsecure();
         
         $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        
+        $tag_filter = 'all';
+        if($this->data) {
+            $tag_filter = $this->data['TagFilter']['id'];
+        }
+        $this->data['TagFilter']['id'] = $tag_filter;
         
 		$filter = $this->Contact->Identity->Account->ServiceType->sanitizeFilter($filter);
         # get filter
@@ -435,51 +417,37 @@ class ContactsController extends AppController {
         } else {
             $filter = array($filter);
         }
-            
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+
+        $this->Contact->Identity->contain();
         $about_identity = $this->Contact->Identity->findByUsername($splitted['username']);
         $about_identity = isset($about_identity['Identity']) ? $about_identity['Identity'] : false;
         
-        # get all contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects('Contact', 'Contact.WithIdentity');
+        $this->set('tag_filter_list', $this->Contact->getTagList($about_identity['id']));
+        
+        # get (filtered) contacts
         if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
             # this is my network, so I can show every contact
-            $data = $this->Contact->findAllByIdentityId($session_identity['id']);
+            $contact_filter = array('tag' => $tag_filter);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            $data = $this->Contact->findAll(array('Contact.identity_id' => $about_identity['id'],
-                                                  'WithIdentity.username NOT LIKE "%@%"'));
+            $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
         }
-
+        $data = $this->Contact->getForDisplay($about_identity['id'], $contact_filter);
+        
         # we need to go through all this now and get Accounts and Services
         # also save all contacts
         $contacts = array();
         foreach($data as $key => $value) {
             $contacts[] = $value['WithIdentity'];
-            $this->Contact->Identity->Account->recursive = 1;
-            $this->Contact->Identity->Account->expects('Account.Acount', 'Account.Service', 'Account.ServiceType');
-            $accounts = $this->Contact->Identity->Account->findAllByIdentityId($value['WithIdentity']['id']);
-            $data[$key]['WithIdentity']['Account'] = $accounts;
         }
 
-        $items = array();
-        foreach($data as $contact) {
-            foreach($contact['WithIdentity']['Account'] as $account) {
-                if(in_array($account['ServiceType']['token'], $filter)) {
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Contact->Identity->Account->Feed->access($account['Account']['id']);
-                    } else {
-                        $new_items = $this->Contact->Identity->Account->Service->feed2array($contact['WithIdentity']['username'], $account['Account']['service_id'], $account['Account']['service_type_id'], $account['Account']['feed_url']);
-                    }
-                    if($new_items) {
-                        $items = array_merge($items, $new_items);
-                    }
-                }
-            }
-        }        
-
+        $contact_ids = Set::extract($contacts, '{n}.id');
+        # get last 100 items
+        $conditions = array(
+            'filter'      => $filter,
+            'identity_id' => $contact_ids
+        );
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
         usort($items, 'sort_items');
         $items = $this->cluster->create($items);
                 
@@ -487,51 +455,41 @@ class ContactsController extends AppController {
         $this->set('identities', $contacts);
         $this->set('filter', $filter);
         $this->set('about_identity', $about_identity);
+        $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
         
         $this->render('../identities/social_stream');
-        exit;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_as_contact() {
+    public function add_as_contact() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
         if(!$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
         # get id for this username
-        $this->Contact->Identity->recursive = 0;
-        $this->Contact->Identity->expects('Identity');
+        $this->Contact->Identity->contain();
         $identity = $this->Contact->Identity->findByUsername($splitted['username'], array('Identity.id'));
         
         if($session_identity['id'] == $identity['Identity']['id']) {
             # this is the logged in user. no reason to allow him to add
             # himself as contact.
             $this->flashMessage('alert', 'You cannot add yourself as a contact.');
-            $this->redirect('/' . $splitted['local_username'], null, true);
+            $this->redirect('/' . $splitted['local_username']);
         }
         
         # test, if there isn't already a contact
-        $this->Contact->recursive = 0;
-        $this->Contact->expects('Contact');
-        $contacts = $this->Contact->findCount(array('identity_id'      => $session_identity['id'],
+        $hasContact = $this->Contact->hasAny(array('identity_id'      => $session_identity['id'],
                                                     'with_identity_id' => $identity['Identity']['id']));
-                                           
-        if($contacts == 0) {
+
+        if (!$hasContact) {
             # now create the contact relationship
             $this->Contact->create();
             $contact = array('identity_id'      => $session_identity['id'],
@@ -548,44 +506,25 @@ class ContactsController extends AppController {
      * returns list of all contacts for this user
      */
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
-
-        $sex = array(
-            'img' => array(
-                0 => Router::url('/images/profile/avatar/noinfo.gif'),
-                1 => Router::url('/images/profile/avatar/female.gif'),
-                2 => Router::url('/images/profile/avatar/male.gif')
-            ),
-            'img-small' => array(
-                0 => Router::url('/images/profile/avatar/noinfo-small.gif'),
-                1 => Router::url('/images/profile/avatar/female-small.gif'),
-                2 => Router::url('/images/profile/avatar/male-small.gif')
-            )
-        );
-        
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-            $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-        } else {
-            $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-        }
-
-                                     
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
+    	                                     
         # get all noserub contacts
-        $this->Contact->recursive = 1;
-        $this->Contact->expects(
-            'Contact.Contact', 
-            'Contact.WithIdentity', 
-            'WithIdentity.WithIdentity', 
-            'NoserubContactType.NoserubContactType'
-        );
+        $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
         
         $conditions = array(
-            'Contact.identity_id' => $identity['Identity']['id'],
+            'Contact.identity_id' => $identity_id,
             'WithIdentity.username NOT LIKE "%@%"'
         );
-        
-        $data = $this->Contact->findAll($conditions, null, 'WithIdentity.last_activity DESC');
+    	$data = $this->Contact->find('all', array('conditions' => $conditions,
+    											  'order' => array('WithIdentity.last_activity DESC')));   
         
         $contacts = array();
         foreach($data as $item) {
@@ -599,23 +538,11 @@ class ContactsController extends AppController {
                 $xfn[] = 'contact';
             }
             
-            if($item['WithIdentity']['photo']) {
-                if(strpos($item['WithIdentity']['photo'], 'http://') === 0 ||
-                   strpos($item['WithIdentity']['photo'], 'https://') === 0) {
-                       # contains a complete path, eg. from not local identities
-                       $profile_photo = $item['WithIdentity']['photo'];
-                   } else {
-                       $profile_photo = $static_base_url . $item['WithIdentity']['photo'] . '.jpg';
-                   }
-            } else {
-                $profile_photo = $sex['img-small'][$item['WithIdentity']['sex']];
-            }
-            
             $contact = array(
                 'url' => 'http://' . $item['WithIdentity']['username'],
                 'firstname' => $item['WithIdentity']['firstname'],
                 'lastname'  => $item['WithIdentity']['lastname'],
-                'photo'     => $profile_photo,
+                'photo'     => $this->Contact->Identity->getPhotoUrl($item, 'WithIdentity', true),
                 'xfn'       => join(' ', $xfn)
             );
             $contacts[] = $contact;

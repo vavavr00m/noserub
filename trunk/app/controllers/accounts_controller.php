@@ -2,17 +2,11 @@
 /* SVN FILE: $Id:$ */
  
 class AccountsController extends AppController {
-    var $uses = array('Account');
-    var $helpers = array('form', 'flashmessage');
+    public $uses = array('Account');
+    public $helpers = array('form', 'flashmessage');
+    public $components = array('api', 'OauthServiceProvider');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -21,14 +15,13 @@ class AccountsController extends AppController {
         $identity = $this->getIdentity($splitted['username']);
         if(!$identity) {
             # this identity is not here
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         $this->set('about_identity', $identity['Identity']);
-        
+
         # get all accounts
-        $this->Account->recursive = 1;
-        $this->Account->expects('Account.Account', 'Account.Service', 'Service.Service');
-        $data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
+		$this->Account->contain('Service');
+		$data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
         $this->set('data', $data);
         $this->set('session_identity', $session_identity);
         
@@ -64,7 +57,7 @@ class AccountsController extends AppController {
                         $account_id = $present_contact_accounts[$service_id]['account_id'];
                         $this->Account->id = $account_id;
                         $this->Account->delete();
-                        $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+                        $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
                         $need_redirect = true;
                     } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
                         # username was changed!
@@ -96,7 +89,7 @@ class AccountsController extends AppController {
         }
     }
     
-    function add_step_1() {
+    public function add_step_1() {
     	$username = isset($this->params['username']) ? $this->params['username'] : '';
     	$session_identity = $this->Session->read('Identity');
     	$splitted = $this->Account->Identity->splitUsername($username);
@@ -172,8 +165,7 @@ class AccountsController extends AppController {
     		}
     	}
     	
-    	$this->Account->Service->recursive = 0;
-    	$this->Account->Service->expects('Service');
+    	$this->Account->Service->contain();
     	$this->set('services', $this->Account->Service->find('list', array(
     	    'conditions' => array(
     	        'is_contact' => '0',
@@ -182,14 +174,7 @@ class AccountsController extends AppController {
     	$this->set('headline', 'Specify the service url');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_2_preview() {
+    public function add_step_2_preview() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -200,7 +185,7 @@ class AccountsController extends AppController {
         if(!$identity_id || !$data) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         $data['service_id'] = $this->Session->read('Service.add.id');
@@ -213,7 +198,7 @@ class AccountsController extends AppController {
 
             if(isset($this->params['form']['submit'])) {
                 # check if the acccount is not already there
-                if($this->Account->findCount(array('identity_id' => $identity_id, 'account_url' => $data['account_url'])) == 0) {
+                if(!$this->Account->hasAny(array('identity_id' => $identity_id, 'account_url' => $data['account_url']))) {
                     # save the new account
                     $data['identity_id'] = $identity_id;
 					
@@ -231,10 +216,11 @@ class AccountsController extends AppController {
                     $this->Account->create();
                     $this->Account->save($data, true, $saveable);
 
-                    if($this->Account->id && defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
-                        # save feed information to cache
-                        $this->Account->Feed->store($this->Account->id, $data['items']);
-                        $this->Account->Feed->updateServiceType($this->Account->id, $data['service_type_id']);
+                    if($this->Account->id) {
+                        # save feed information to entry table
+                        $this->Account->Entry->updateByAccountId($this->Account->id);
+                        # update service type id
+                        $this->Account->saveField('service_type_id', $data['service_type_id']);
                     }
                     
                     if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
@@ -243,7 +229,7 @@ class AccountsController extends AppController {
                         if(!empty($contacts)) {
                             $this->Session->write('Service.add.contacts', $contacts);
                             $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/', null, true);
+                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/');
                         }
                     }
                     
@@ -253,13 +239,12 @@ class AccountsController extends AppController {
             # we're done!
             if($identity_id == $session_identity['id']) {
                 # new account for the logged in user, so we redirect to his/her account settings
-                $this->redirect('/' . $username . '/settings/accounts/', null, true);
+                $this->redirect('/' . $username . '/settings/accounts/');
             } else {
                 # new account for a private contact. redirect to his/her profile
-                $this->Account->Identity->recursive = 0;
-                $this->Account->Identity->expects('Identity');
+                $this->Account->Identity->contain();
                 $account_for_identity = $this->Account->Identity->findById($identity_id);
-                $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/', null, true);
+                $this->redirect('/' . $account_for_identity['Identity']['local_username'] . '/');
             }
         }
         // for feeds it must be possible to select the service type
@@ -270,14 +255,7 @@ class AccountsController extends AppController {
         $this->set('headline', 'Preview the data');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add_step_3_friends() {
+    public function add_step_3_friends() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
@@ -289,13 +267,13 @@ class AccountsController extends AppController {
         if(!$identity_id || !$session_identity || !$service_id || !$service_type_id) {
             # couldn't find the session vars. so either someone skipped 
             # a step, or the user was logged out during the process
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
             $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/', null, true);
+            $this->redirect('/' . $username . '/settings/accounts/');
         }
         
         if($this->data) {
@@ -361,10 +339,10 @@ class AccountsController extends AppController {
             }
             # we're done!
             $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/', null, true);
+            $this->redirect('/' . $username . '/settings/accounts/');
         }
-        $this->Account->recursive = 1;
-        $this->Account->expects('Account', 'Service');
+
+        $this->Account->contain('Service');
         $account = $this->Account->findById($this->Session->read('Service.add.account_id'));
         $this->set('headline', 'Import your social network from ' . $account['Service']['name']);
 
@@ -375,11 +353,10 @@ class AccountsController extends AppController {
         # database. We therefore can remove them from the list
         foreach($data as $username => $item) {
             # try to find accounts with that username first
-            $this->Account->recursive = 1;
-            $this->Account->expects('Account', 'Identity');
-            $accounts = $this->Account->findAll(array('Account.username'        => $username,
-                                                      'Account.service_id'      => $service_id,
-                                                      'Account.service_type_id' => $service_type_id));
+            $this->Account->contain('Identity');
+            $accounts = $this->Account->find('all', array('conditions' => array('Account.username' => $username,
+            																	'Account.service_id' => $service_id,
+            																	'Account.service_type_id' => $service_type_id)));
             
             # we might have several accounts found, because the same account 
             # could be stored at different local identities.
@@ -399,12 +376,11 @@ class AccountsController extends AppController {
         # now give the data to the view
         $this->set('data', $data);
         
-        $this->Account->Identity->Contact->recursive = 1;
-        $this->Account->Identity->Contact->expects('Contact', 'WithIdentity');
-        $data = $this->Account->Identity->Contact->findAll(array('Contact.identity_id'   => $identity_id,
-                                                                 'WithIdentity.is_local' => 1,
-                                                                 'WithIdentity.username LIKE "%@%"'), 
-                                                           null, 'WithIdentity.username ASC');
+        $this->Account->Identity->Contact->contain('WithIdentity');
+        $data = $this->Account->Identity->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity_id,
+        																				   'WithIdentity.is_local' => 1,
+        																				   'WithIdentity.username LIKE "%@%"'),
+        															 'order' => array('WithIdentity.username ASC')));
         $contacts = array();
         foreach($data as $item) {
             $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['local_username'];
@@ -412,30 +388,22 @@ class AccountsController extends AppController {
         $this->set('contacts', $contacts);
     }
         
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function edit($account_id) {
+    public function edit($account_id) {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $session_identity = $this->Session->read('Identity');
         $identity_id      = $session_identity['id'];
 
         # check the session vars
         if(!$session_identity) {
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
 
         # get the account
-        $this->Account->recursive = 0;
-        $this->Account->expects('Account');
+        $this->Account->contain();
         $data = $this->Account->find(array('id' => $account_id, 'identity_id' => $identity_id));
         if(!$data) {
             # the account for this identity could not be found
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         if(!$this->data) {
@@ -446,21 +414,14 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
                 $this->Account->Feed->updateServiceType($this->Account->id, $this->data['Account']['service_type_id']);
-                $this->redirect('/' . $username . '/settings/accounts/', null, true);
+                $this->redirect('/' . $username . '/settings/accounts/');
             }
         }
         
         $this->render('edit');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $account_id       = isset($this->params['account_id']) ? $this->params['account_id'] : '';
         $username         = isset($this->params['username'])   ? $this->params['username']   : '';
         $splitted         = $this->Account->Identity->splitUsername($username);
@@ -469,7 +430,7 @@ class AccountsController extends AppController {
         # check the session vars
         if(!$username || !$session_identity) {
             # this user is not logged in
-            $this->redirect('/', null, true);
+            $this->redirect('/');
         }
         
         # make sure, that the correct security token is set
@@ -482,24 +443,22 @@ class AccountsController extends AppController {
             if(!$about_identity) {
                 # could not find the identity
                 $this->flashMessage('alert', 'Could not find the user.');
-                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/');
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
                 # this logged in user is not allowed to change something
                 $this->flashMessage('alert', 'You may not delete this.');
-                $this->redirect('/' . $splitted['local_username'] . '/', null, true);
+                $this->redirect('/' . $splitted['local_username'] . '/');
             }
         }
         # check, wether the account belongs to the identity
-        $this->Account->recursive = 0;
-        $this->Account->expects('Account');
-        if(1 == $this->Account->findCount(array('identity_id' => isset($identity_id) ? $identity_id : $session_identity['id'],
+        if ($this->Account->hasAny(array('identity_id' => isset($identity_id) ? $identity_id : $session_identity['id'],
                                                 'id'          => $account_id))) {
             $this->Account->id = $account_id;
             $this->Account->delete();
-            $this->Account->execute('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+            $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'entries WHERE account_id=' . $account_id);
             $this->flashMessage('success', 'Account deleted.');
         }
         
@@ -507,8 +466,7 @@ class AccountsController extends AppController {
     }
     
     private function getIdentity($username) {
-        $this->Account->Identity->recursive = 0;
-        $this->Account->Identity->expects('Identity');
+        $this->Account->Identity->contain();
         $identity = $this->Account->Identity->findByUsername($username);
 
         return $identity;
@@ -518,5 +476,33 @@ class AccountsController extends AppController {
     	$this->Session->write('Service.add.data', $data);
 		$this->Session->write('Service.add.type', $data['service_type_id']);
 		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
+    }
+    
+    public function api_get() {
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
+
+        $this->Account->contain(array('ServiceType', 'Service'));
+        $accounts = $this->Account->findAllByIdentityId($identity_id);
+
+        $data = array();
+        foreach($accounts as $item) {
+            $data[] = array(
+                'title' => $item['Account']['title'],
+                'url'   => $item['Account']['account_url'],
+                'icon'  => $item['Service']['icon'],
+                'type'  => $item['ServiceType']['name']
+            );
+        }
+        $this->set('data', $data);
+        
+        $this->api->render();
     }
 }

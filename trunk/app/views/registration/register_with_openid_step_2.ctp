@@ -16,7 +16,7 @@
         You can change the following privacy settings everytime you like. Just 
         go to the Settings, once you are logged in.
     </p>
-    <?php echo $this->renderElement('identities/privacy_settings'); ?>
+    <?php echo $this->element('identities/privacy_settings'); ?>
     <fieldset>
         <input class="submitbutton" type="submit" value="Register"/>
     </fieldset>

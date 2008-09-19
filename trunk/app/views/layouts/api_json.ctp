@@ -1,5 +1,5 @@
 <?php
-vendor('Zend/Json');
+App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
 $zend_json = new Zend_Json();
 $zend_json->useBuiltinEncoderDecoder = true;
 

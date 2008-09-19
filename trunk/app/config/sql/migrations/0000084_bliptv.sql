@@ -1,0 +1,1 @@
+INSERT INTO `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`)VALUES (59 , 'bliptv', 'Blip.TV', 'http://www.blip.tv/', '6', '', 'bliptv.gif', '1', '0', '30', NOW( ) , NOW( ));

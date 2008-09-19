@@ -2,13 +2,13 @@
 /* SVN FILE: $Id:$ */
  
 class Contact extends AppModel {
-    var $belongsTo = array('Identity',
+    public $belongsTo = array('Identity',
                            'WithIdentity' => array('className' => 'Identity',
                                                    'foreignKey' => 'with_identity_id'));
 
-    var $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
+    public $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
     
-    var $validate = array(
+    public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'required' => VALID_NOT_EMPTY)
         );
@@ -17,8 +17,7 @@ class Contact extends AppModel {
      * creates a contact, when it's not already there
      */
     public function add($identity_id, $with_identity_id) {
-        $this->recursive = 0;
-        $this->expects('Contact');
+        $this->contain();
         $conditions = array(
             'identity_id'      => $identity_id,
             'with_identity_id' => $with_identity_id
@@ -37,7 +36,126 @@ class Contact extends AppModel {
         return true;
     }
     
-	function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
+    /**
+     * get list of all contact tags, that are used by this user
+     *
+     * @param int $identity_id
+     *
+     * @return string
+     */
+    public function getTagList($identity_id) {
+        $data = $this->find(
+            'all',
+            array(
+                'contain' => array(
+                    'NoserubContactType' => array(
+                        'fields' => array('name')
+                    ),
+                    'ContactType' => array(
+                        'fields' => array('name')
+                    )
+                ),
+                'conditions' => array(
+                    'Contact.identity_id' => $identity_id
+                ),
+                'fields' => array(
+                    'Contact.id'
+                )
+            )    
+        );
+        $noserub_tags = Set::extract($data, '{n}.NoserubContactType.{n}.name');
+        $own_tags = Set::extract($data, '{n}.ContactType.{n}.name');
+        #pr($noserub_tags);
+        #pr($own_tags);
+        $result = array();
+        foreach($noserub_tags as $tags) {
+            foreach($tags as $tag) {
+                if(!in_array($tag, $result)) {
+                    $result[] = $tag;
+                }
+            }
+        }
+        foreach($own_tags as $tags) {
+            foreach($tags as $tag) {
+                if(!in_array($tag, $result)) {
+                    $result[] = $tag;
+                }
+            }
+        }
+        
+        $tags = join(' ', $result);
+        $result = $this->NoserubContactType->extract($tags);
+        return $this->ContactType->extract($result);
+    }
+    
+    /**
+     * retrieves list of contacts for given filter
+     *
+     * @param int $identity_id
+     * @param array $filter
+     *
+     * @return array
+     */
+    public function getForDisplay($identity_id, $filter) {
+        # TODO: figure out how to do this properly in CakePHP, so that
+        # I don't need to fetch all data, before removing it afterwards.
+        
+        $this->contain(array(
+            'WithIdentity', 
+            'NoserubContactType',
+            'ContactType'
+        ));
+
+        $conditions = array(
+            'Contact.identity_id' => $identity_id,
+        );
+        if(isset($filter['type'])) {
+            if($filter['type'] == 'public') {
+                $conditions[] = 'WithIdentity.username NOT LIKE "%@%"';
+            } else {
+                $conditions[] = 'WithIdentity.username LIKE "%@%"';
+            }
+        }
+        $data = $this->find(
+            'all',
+            array(
+                'conditions' => $conditions,
+                'order'      => 'WithIdentity.username ASC'
+            )
+        );
+        # extract the kind of tag we need to test here
+        $tagtype_id = split('\.', $filter['tag']);
+        if($tagtype_id[0] == 'all' || $tagtype_id[0] == '0') {
+            # no filtering
+            return $data;
+        } else if($tagtype_id[0] == 'private') {
+            $model  = 'ContactType';
+            $model2 = 'ContactTypesContact';
+            $field  = 'contact_type_id';
+        } else {
+            $model  = 'NoserubContactType';
+            $model2 = 'ContactsNoserubContactType';
+            $field  = 'noserub_contact_type_id';
+        }
+        
+        $return = array();
+        foreach($data as $item) {
+            $keep = false;
+            if($item[$model]) {
+                foreach($item[$model] as $item2) {
+                    if($item2[$model2][$field] == $tagtype_id[1]) {
+                        $keep = true;
+                    }
+                }
+            }
+            if($keep) {
+                $return[] = $item;
+            }
+        }
+        return $return;
+    }
+    
+	public function createAssociationsToContactTypes($contact_id, $contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		
 		foreach($contact_type_ids as $contact_type_id) {
@@ -46,14 +164,14 @@ class Contact extends AppModel {
 		    # check, if we already have that
 		    $this->ContactTypesContact->cacheQueries = false;
 		    $conditions = $data;
-		    if($this->ContactTypesContact->findCount($conditions) == 0) {
+		    if(!$this->ContactTypesContact->hasAny($conditions)) {
 			    $this->ContactTypesContact->create();
 			    $this->ContactTypesContact->save($data);
 		    }
 		}
 	}
 
-	function createAssociationsToNoserubContactTypes($contact_id, $noserub_contact_type_ids) {
+	public function createAssociationsToNoserubContactTypes($contact_id, $noserub_contact_type_ids) {
 		$data['contact_id'] = $contact_id;
 		
 		foreach ($noserub_contact_type_ids as $noserub_contact_type_id) {
@@ -62,18 +180,18 @@ class Contact extends AppModel {
 			# check, if we already have that
 		    $this->ContactsNoserubContactType->cacheQueries = false;
 		    $conditions = $data;
-		    if($this->ContactsNoserubContactType->findCount($conditions) == 0) {
+		    if(!$this->ContactsNoserubContactType->hasAny($conditions)) {
 			    $this->ContactsNoserubContactType->create();
 			    $this->ContactsNoserubContactType->save($data);
 		    }
 		}
 	}
     
-	function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
+	public function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
 		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
 	}
 	
-	function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
+	public function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
 		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
 	}
 	
@@ -86,10 +204,10 @@ class Contact extends AppModel {
      * @return 
      * @access 
      */
-    function deleteByIdentityId($identity_id, $local_username) {
-        $this->recursive = 1;
-        $this->expects('Contact.Contact', 'Contact.WithIdentity', 'WithIdentity.WithIdentity');
-        $contacts = $this->findAll(array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id));
+    public function deleteByIdentityId($identity_id, $local_username) {
+        $this->contain('WithIdentity');
+        $contacts = $this->find('all', array('conditions' => array('identity_id=' . $identity_id . ' OR with_identity_id=' . $identity_id)));
+
         foreach($contacts as $contact) {
             if($contact['Contact']['identity_id'] == $identity_id &&
                $contact['WithIdentity']['namespace'] == $local_username) {
@@ -105,8 +223,7 @@ class Contact extends AppModel {
     }
     
     public function export($identity_id) {
-        $this->recursive = 1;
-        $this->expects('Contact', 'WithIdentity', 'NoserubContactType', 'ContactType');
+        $this->contain(array('WithIdentity', 'NoserubContactType', 'ContactType'));
         $data = $this->findAllByIdentityId($identity_id);
         $contacts = array();
         foreach($data as $item) {
@@ -147,8 +264,7 @@ class Contact extends AppModel {
      */
     public function import($identity_id, $data) {
         # get identity first
-        $this->Identity->recursive = 0;
-        $this->Identity->expects('Identity');
+        $this->Identity->contain();
         $this->Identity->id = $identity_id;
         $identity = $this->Identity->read();
 
@@ -161,8 +277,7 @@ class Contact extends AppModel {
             $new_splitted = $this->Identity->splitUsername($username, $item['is_local']);
         
             # check, if we already have that username
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $new_identity = $this->Identity->findByUsername($new_splitted['username']);
             
             if(!$new_identity) {
@@ -187,8 +302,7 @@ class Contact extends AppModel {
 
             # just make sure, that we keep the note
             if(isset($item['note']) && $item['note']) {
-                $this->recursive = 0;
-                $this->expects('Contact');
+                $this->contain();
                 $this->cacheQueries = false;
                 $contact = $this->read();
                 if(!$contact['Contact']['note']) {
@@ -208,8 +322,7 @@ class Contact extends AppModel {
             # add noserub contact types
             # but only, if there are none set here right now
             if(isset($item['noserub_contact_types']) && $item['noserub_contact_types']) {
-                $this->recursive = 1;
-                $this->expects('Contact', 'NoserubContactType');
+                $this->contain(array('Contact', 'NoserubContactType'));
                 $this->cacheQueries = false;
                 $contact = $this->read();
                 if(count($contact['NoserubContactType']) == 0) {
@@ -237,4 +350,3 @@ class Contact extends AppModel {
         return true;
     }
 }
-?>

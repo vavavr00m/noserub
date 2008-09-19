@@ -1,4 +1,4 @@
-<?php echo $this->renderElement('identities/mini_profile'); ?>
+<?php echo $this->element('identities/mini_profile', array('base_url_for_avatars' => $base_url_for_avatars)); ?>
 
 <br class="clear" />
 

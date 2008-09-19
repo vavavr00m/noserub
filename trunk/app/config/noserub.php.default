@@ -29,13 +29,12 @@ define('NOSERUB_FULL_BASE_URL', 'http://');
 define('NOSERUB_ADMIN_HASH', '');
 
 /**
- * When set to true, all feed items are fetched from
- * the database upon display. This means a faster response,
- * but may not always display the newest items. You also
- * need to install a cronjob to update the feeds in the cache
- * on a regular base.
+ * If set to "false", NoseRub will update the entries
+ * for an account whenever you go to a user's page.
+ * For better performance, you should set this to
+ * "true" and add a cronjob for this purpose.
  */
-define('NOSERUB_USE_FEED_CACHE', true);
+define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
 
 /**
  * all = everyone can register
@@ -111,3 +110,16 @@ define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
  * @name: NOSERUB_REGISTRATION_RESTRICTED_HOSTS
  */
 define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', false);
+
+define('NOSERUB_XMPP_FULL_FEED_USER', '');
+define('NOSERUB_XMPP_FULL_FEED_PASSWORD', '');
+define('NOSERUB_XMPP_FULL_FEED_SERVER', 'jabber.identoo.com');
+define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
+
+/**
+ * If you want your server being displayed on http://noserub.com/sites
+ * and display the number of your registered users there, please contact
+ * dirk.olbertz@gmail.com for listing on that page and set the following
+ * value to 'true'
+ */
+define('NOSERUB_API_INFO_ACTIVE', true);

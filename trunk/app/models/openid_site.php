@@ -1,7 +1,7 @@
 <?php
 
 class OpenidSite extends AppModel {
-	var $belongsTo = array('Identity');
+	public $belongsTo = array('Identity');
 	
 	public function updateAllAllowedStates($openidSites, $identityId) {
 		$iterator = new FilterOpenidSites($openidSites);
@@ -39,4 +39,3 @@ class FilterOpenidSites extends FilterIterator {
     	$this->filter = $filter;
     }
 }
-?>

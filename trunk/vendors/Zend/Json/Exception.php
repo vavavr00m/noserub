@@ -22,7 +22,7 @@
 /**
  * Zend_Exception
  */
-vendor('Zend/Exception');
+App::import('Vendor', 'exception', array('file' => 'Zend'.DS.'Exception.php'));
 
 
 /**

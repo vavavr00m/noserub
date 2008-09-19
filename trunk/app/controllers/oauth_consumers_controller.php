@@ -20,7 +20,7 @@ class OauthConsumersController extends AppController {
 	}
 	
 	public function index() {
-		$this->Consumer->expects('Consumer');
+		$this->Consumer->contain();
 		$this->set('consumers', $this->Consumer->findAllByIdentityId($this->session_identity['id']));
 		$this->set('session_identity', $this->session_identity);
 		$this->set('headline', 'OAuth');
@@ -29,7 +29,7 @@ class OauthConsumersController extends AppController {
 	public function add() {
 		if ($this->data) {
 			if ($this->data['Consumer']['application_name']) {
-				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'])) {
+				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'], $this->data['Consumer']['callback_url'])) {
 					$this->flashMessage('success', 'Application registered.');
 					$this->redirect($this->getOAuthSettingsUrl());
 				} else {
@@ -51,7 +51,7 @@ class OauthConsumersController extends AppController {
             $this->redirect($this->url->http('/'));
 		}
 		
-		$this->Consumer->expects('Consumer');
+		$this->Consumer->contain();
 		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
 		
 		if (!$consumer) {
@@ -89,8 +89,7 @@ class OauthConsumersController extends AppController {
 		
 		$this->ensureSecurityToken();
 		
-		$this->Consumer->expects('Consumer');
-		if (1 == $this->Consumer->findCount(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
+		if ($this->Consumer->hasAny(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
             $this->Consumer->delete($consumer_id);
             
             $this->flashMessage('success', 'Application deleted.');            
@@ -105,4 +104,3 @@ class OauthConsumersController extends AppController {
 		return '/'.$this->session_identity['local_username'].'/settings/oauth';
 	}
 }
-?>

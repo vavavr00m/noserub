@@ -27,12 +27,12 @@ header('Content-Type: text/xml');
 	    <?php $num_items = 0; ?>
 	    <?php foreach($data as $item) { ?>
 	        <item>
-		        <title><?php echo $item['title']; ?></title>
-		        <link><?php echo $item['url']; ?></link>
-		        <pubDate><?php echo date('D, d M Y H:i:s T', strtotime($item['datetime'])); ?></pubDate>
-		        <dc:creator>http://<?php echo $item['username']; ?></dc:creator>
-                <description><![CDATA[<?php echo substr($item['content'], 0, 255); ?><?php echo strlen($item['content']) > 255 ? ' [...]' : ''; ?>]]></description>
-                <content:encoded><![CDATA[<?php echo $item['content']; ?>]]></content:encoded>
+		        <title><?php echo $item['Entry']['title']; ?></title>
+		        <link><?php echo $item['Entry']['url']; ?></link>
+		        <pubDate><?php echo date('D, d M Y H:i:s T', strtotime($item['Entry']['published_on'])); ?></pubDate>
+		        <dc:creator>http://<?php echo $item['Identity']['username']; ?></dc:creator>
+                <description><![CDATA[<?php echo substr($item['Entry']['content'], 0, 255); ?><?php echo strlen($item['Entry']['content']) > 255 ? ' [...]' : ''; ?>]]></description>
+                <content:encoded><![CDATA[<?php echo $item['Entry']['content']; ?>]]></content:encoded>
 		    </item>
 		    <?php 
 		        $num_items++;

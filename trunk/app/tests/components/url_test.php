@@ -1,39 +1,39 @@
 <?php
 
 class UrlComponentTestCase extends CakeTestCase {
-    var $component = null;
+    private $component = null;
     
-	function setUp() {
+	public function setUp() {
 		$this->component = new UrlComponent();
 	}
 	
-	function testHttpEmpty() {
+	public function testHttpEmpty() {
 	    $url = '';
 	    $this->assertEqual($url, $this->component->http($url));
 	}
 	
-	function testHttpNull() {
+	public function testHttpNull() {
 	    $url = null;
 	    $this->assertEqual($url, $this->component->http($url));
 	}
 	
-    function testHttpHttps() {
+    public function testHttpHttps() {
 	    $url = 'https://identoo.com/';
 	    $this->assertEqual('http://identoo.com/', $this->component->http($url));
 	}
 	
-	function testHttpHttp() {
+	public function testHttpHttp() {
 	    $url = 'http://identoo.com/';
 	    $this->assertEqual('http://identoo.com/', $this->component->http($url));
 	}
 	
-	function testHttpRelative() {
+	public function testHttpRelative() {
 	    $url = '/settings/';
 	    $expected = FULL_BASE_URL . Router::url($url);
 	    $this->assertEqual($expected, $this->component->http($url));
 	}
 	
-	function tearDown() {
+	public function tearDown() {
 	    unset($this->component);
 	}
 }	

@@ -1,12 +1,11 @@
 <?php
 class PsnService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('/^psn:(.+)/'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'psn:' . $username;
 	}
 }
-?>

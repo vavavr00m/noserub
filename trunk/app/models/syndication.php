@@ -2,7 +2,6 @@
 /* SVN FILE: $Id:$ */
  
 class Syndication extends AppModel {
-    var $belongsTo = array('Identity');
-    
-    var $hasAndBelongsToMany = array('Account');
+    public $belongsTo = array('Identity');
+    public $hasAndBelongsToMany = array('Account');
 }

@@ -28,7 +28,7 @@
 	background: transparent url(../images/icons/network/link.gif) no-repeat center left;
 }
 
-.text {
+li.text { /* li element avoids conflict with text classes automatically set by cake's form helper */
 	background: transparent url(../images/icons/network/text.gif) no-repeat center left;
 }
 

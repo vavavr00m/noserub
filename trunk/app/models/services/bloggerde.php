@@ -1,24 +1,23 @@
 <?php
 class BloggerdeService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).blogger.de#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://'.$username.'.blogger.de/';
 	}
 	
-	function getContacts($username) {
+	public function getContacts($username) {
 		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'blogger.de/', '/<a href="http:\/\/(.*).blogger.de" rel=".*">.*<\/a>/iU');
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return 'http://'.$username.'.blogger.de/rss?show=all';
 	}
 }
-?>

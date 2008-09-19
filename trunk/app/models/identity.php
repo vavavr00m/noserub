@@ -2,11 +2,11 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-    var $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Activity', 'Syndication');
-    var $belongsTo = array('Location' => array('className'  => 'Location',
+    public $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Syndication', 'Entry');
+    public $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
     
-    var $validate = array(
+    public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
                                 'required' => VALID_NOT_EMPTY),
@@ -18,7 +18,7 @@ class Identity extends AppModel {
     		'openid'   => array('rule' => 'validateUniqueOpenID')
         );
     
-    function validatePasswd2($value, $params = array()) {
+    public function validatePasswd2($value, $params = array()) {
         if ($this->data['Identity']['passwd'] !== $value['passwd2']) {
             return false;
         } else {
@@ -26,10 +26,8 @@ class Identity extends AppModel {
         }
     }
 
-    function validateUniqueOpenID($value, $params = array()) {
-        $this->recursive = 0;
-        $this->expects('Identity');
-    	if ($this->findCount(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#')) > 0) {
+    public function validateUniqueOpenID($value, $params = array()) {
+    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#'))) {
     		return false;
     	} else {
     		return true;
@@ -43,16 +41,14 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function validateUniqueUsername($value, $params = array()) {
+    public function validateUniqueUsername($value, $params = array()) {
         $value = strtolower($value['username']);
         $split_username = $this->splitUsername($value);
         if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
             return false;
         }
 
-        $this->recursive = 0;
-        $this->expects('Identity');
-        if($this->findCount(array('Identity.username' => $value)) > 0) {
+        if($this->hasAny(array('Identity.username' => $value))) {
             return false;
         } else {
             return true;
@@ -62,7 +58,7 @@ class Identity extends AppModel {
     /**
      * check, whether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
      */
-    function validateRestrictedEmail($email, $params = array()) {
+    public function validateRestrictedEmail($email, $params = array()) {
         if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 
             NOSERUB_REGISTRATION_RESTRICTED_HOSTS === false ||
             $email == '') {
@@ -72,14 +68,7 @@ class Identity extends AppModel {
         return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function afterFind($data) {
+    public function afterFind($data) {
         # moved from Identity Model to here, so that all the associated
         # afterFinds could be catched, too
         if(is_array($data)) {
@@ -123,7 +112,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function block($identity_id = null) {
+    public function block($identity_id = null) {
         if($identity_id === null) {
             $identity_id = $this->id;
         }
@@ -149,26 +138,17 @@ class Identity extends AppModel {
         $this->save($data, false, $saveable);
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-	public function check($data) {
+    public function check($data) {
         $splitted = $this->splitUsername($data['Identity']['username']);
         $username = $splitted['username'];
-        $this->recursive = 0;
-        $this->expects('Identity');
+        $this->contain();
         return $this->find(array('Identity.hash' => '',
                                  'Identity.username' => $username, 
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
     public function checkOpenID($openIDResponse) {
-    	$this->recursive = 0;
-    	$this->expects('Identity');    	
+    	$this->contain();
     	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
     	
     	if ($identity) {
@@ -202,14 +182,7 @@ class Identity extends AppModel {
     	return false;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function checkSecurityToken($identity_id, $security_token) {
+    public function checkSecurityToken($identity_id, $security_token) {
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
@@ -222,9 +195,8 @@ class Identity extends AppModel {
     /**
      * Returns the contacts of the specified identity, ordered by last activity.
      */
-    function getContacts($identityId, $limit = null) {
-    	$this->Contact->recursive = 1;
-        $this->Contact->expects('Contact', 'WithIdentity', 'NoserubContactType.NoserubContactType');
+    public function getContacts($identityId, $limit = null) {
+        $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
 		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.last_activity DESC', $limit);
 		
 		return $contacts;
@@ -233,16 +205,17 @@ class Identity extends AppModel {
     /**
      * Returns mutual contacts of two identities, or false if there are no mutual contacts.
      */
-    function getMutualContacts($firstIdentityId, $secondIdentityId, $limit = null) {
+    public function getMutualContacts($firstIdentityId, $secondIdentityId, $limit = null) {
     	$query = 'SELECT with_identity_id FROM contacts WHERE identity_id='.$firstIdentityId . ' AND with_identity_id IN (SELECT with_identity_id FROM contacts WHERE identity_id='.$secondIdentityId.')';
         $ids = $this->query($query);
         
     	if($ids) {
 			$mutualContactsIds = join(',', Set::extract($ids, '{n}.contacts.with_identity_id'));
 
-			$this->recursive = 0;
-			$this->expects('Identity');
-			$mutualContacts = $this->findAll(array('Identity.id IN (' . $mutualContactsIds . ')'), null, 'Identity.last_activity DESC', $limit);
+			$this->contain();
+			$mutualContacts = $this->find('all', array('conditions' => array('Identity.id IN (' . $mutualContactsIds . ')'),
+													   'order' => array('Identity.last_activity DESC'),
+													   'limit' => $limit));
 			
 			return $mutualContacts;
 		}
@@ -253,13 +226,15 @@ class Identity extends AppModel {
     /**
      * Returns the newest identities.
      */
-    function getNewbies($limit = null) {
-    	$this->recursive = 0;
-        $this->expects('Identity');
-        $newbies = $this->findAll(array('is_local' => 1, 
-                                        'frontpage_updates' => 1,
-                                        'hash' => '',
-                                        'username NOT LIKE "%@%"'), null, 'Identity.created DESC', $limit);
+    public function getNewbies($limit = null) {
+        $this->contain();
+
+        $newbies = $this->find('all', array('conditions' => array('is_local' => 1,
+        														  'frontpage_updates' => 1,
+        														  'hash' => '',
+        														  'username NOT LIKE "%@%"'),
+        									'order' => array('Identity.created DESC'),
+        									'limit' => $limit));
         
         return $newbies;
     }
@@ -274,51 +249,71 @@ class Identity extends AppModel {
      * @return array with information about the accounts and blogs from that page
      * @access 
      */
-    function parseNoseRubPage($url) {
+    public function parseNoseRubPage($url) {
         if(!$url) {
             return false;
         }
 
         # "@" to avoid notices and warnings on not supported
         # protocol, e.g. https
-        $content = @file_get_contents($url);
+        $content = WebExtractor::fetchUrl($url);
         if(!$content) {
             return false;
         }
 
-        $result = array('accounts' => array(),
-                        'Identity' => array());
+        $result = array(
+            'accounts' => array(),
+            'Identity' => array()
+        );
         
         preg_match('/<foaf:Person rdf:nodeID="(.*)">/i', $content, $noserub_id);
         if(empty($noserub_id)) {
-            vendor('microformat/hcard');
-            vendor('microformat/xfn');
+            App::import('Vendor', 'microformat'.DS.'hcard');
+            App::import('Vendor', 'microformat'.DS.'xfn');
             $hcard_obj = new hcard;
         	$hcards = $hcard_obj->getByURL($url);
         	$hcard = $this->getOwner($hcards, $url);
         	if($hcard) {
-        	    if(!isset($hvcard['n'])) {
+        	    if(!isset($hcard['n'])) {
         	        $result['Identity']['firstname']     = '';
                     $result['Identity']['lastname']      = $hcard['fn'];
-        	        $this->log(print_r($hcard, 1));
         	    } else {
                     $result['Identity']['firstname']     = $hcard['n']['given-name'];
                     $result['Identity']['lastname']      = $hcard['n']['family-name'];
                     $result['Identity']['gender']        = 0;
                 }
-                
+
                 # because of bug in hKit for relative URLs
                 $photo  = isset($hcard['photo']) ? $hcard['photo'] : '';
-                $photo = str_replace(':///', '', $photo);
-                if(strpos($photo, 'ttp://') === false) {
-                    $photo = $url . '/' . $photo;
+                if($photo) {
+                    $photo = str_replace(':///', '', $photo);
+                    if(strpos($photo, 'ttp://') === false) {
+                        $photo = $url . '/' . $photo;
+                    }
                 }
-                $result['Identity']['photo'] = $photo;
-                
+                $result['Identity']['photo'] = $photo;                
                 $result['Identity']['address_shown'] = '';
                 $result['Identity']['latitude']      = 0;
                 $result['Identity']['longitude']     = 0;
-        	}
+        	} else if(strpos($url, 'friendfeed.com/') > 0) {
+                # Fix for friendfeed, as they don't support hCard
+                $info_content_start = strpos($content, '<div class="streaminfo"');
+                $info_content_end   = strpos($content, 'id="feedcontainer"');
+                $info_content = substr($content, $info_content_start, $info_content_end-$info_content_start);
+                if(preg_match('/<img .*src="http:\/\/friendfeed\..*\/pictures-(.*)"/iU', $info_content, $matches)) {
+                    $result['Identity']['photo'] = 'http://friendfeed.s3.amazonaws.com/pictures-' . $matches[1];
+                }
+                if(preg_match('/<span.*>(.*)<\/span>/iU', $info_content, $matches)) {
+                    $name = split(' ', $matches[1]);
+                    if(count($name) == 1) {
+                        $result['Identity']['lastname'] = $name;
+                    } else {
+                        $result['Identity']['lastname'] = $name[count($name) - 1];
+                        unset($name[count($name) - 1]);
+                        $result['Identity']['firstname'] = join(' ', $name);
+                    }
+                }
+            }
         	$xfn = new xfn;
         	$xfn = $xfn->getByUrl($url);
         	$splitted = $this->splitUsername($url, false);
@@ -419,14 +414,7 @@ class Identity extends AppModel {
         return isset($hcards[0]) ? $hcards[0] : false;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-	public function register($data) {
+    public function register($data) {
         $isAccountWithOpenID = isset($data['Identity']['openid']);
     	
     	# transform it to a real username
@@ -438,6 +426,7 @@ class Identity extends AppModel {
         }
         $this->create();
         $data['Identity']['is_local'] = 1;
+        $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location';
         
         if (!$isAccountWithOpenID) { 
         	$data['Identity']['password'] = md5($data['Identity']['passwd']);
@@ -470,7 +459,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function sanitizeUsername($username) {
+    public function sanitizeUsername($username) {
         $username = str_replace('ä', 'ae', $username);
         $username = str_replace('ö', 'oe', $username);
         $username = str_replace('ü', 'ue', $username);
@@ -487,7 +476,7 @@ class Identity extends AppModel {
     /**
      * removes http://, https:// and www. from url
      */
-    function removeHttpWww($url) {
+    public function removeHttpWww($url) {
         $url = str_ireplace('http://', '', $url);
         $url = str_ireplace('https://', '', $url);
         if(stripos($url, 'www.') === 0) {
@@ -617,7 +606,7 @@ class Identity extends AppModel {
      * @return 
      * @access 
      */
-    function sync($identity_id, $username) {
+    public function sync($identity_id, $username) {
         $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
         # get the data from the remote server. try http:// and
         # http2://
@@ -648,17 +637,9 @@ class Identity extends AppModel {
         return true;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function verify($hash) {
         # check, if there is a username with that hash
-        $this->recursive = 0;
-        $this->expects = array('Identity');
+        $this->contain();
         $identity = $this->find(array('Identity.hash' => $hash));
         if($hash && $identity) {
             # update the identity
@@ -693,12 +674,7 @@ class Identity extends AppModel {
         
         # make the photo hash an external url
         if($vcard['photo']) {
-            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-                $static_base_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
-            } else {
-                $static_base_url = FULL_BASE_URL . Router::url('/static/avatars/');
-            }
-            $vcard['photo'] = $static_base_url . $vcard['photo'] . '.jpg';
+            $vcard['photo'] = $this->getBaseUrlForAvatars() . $vcard['photo'] . '.jpg';
         }
     
         return array(
@@ -731,8 +707,7 @@ class Identity extends AppModel {
         
         # get current identity, so we can check what
         # to update
-        $this->recursive = 0;
-        $this->expects('Identity');
+        $this->contain();
         $identity = $this->read();
         $identity = $identity['Identity'];
         $saveable = array();
@@ -781,7 +756,7 @@ class Identity extends AppModel {
         if(!$content) {
             return false;
         }
-        vendor('Zend/Json');
+        App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         $zend_json = new Zend_Json();
         $zend_json->useBuiltinEncoderDecoder = true;
         
@@ -796,8 +771,6 @@ class Identity extends AppModel {
         return $data;
     }
     
-    /**
-     */
     private function uploadPhoto($local_filename) {
         if(!$this->exists()) {
             return false;
@@ -840,8 +813,8 @@ class Identity extends AppModel {
             $original_width  = $imageinfo[0];
             $original_height = $imageinfo[1];
 
-            $this->save_scaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
-            $this->save_scaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            $this->saveScaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
+            $this->saveScaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
             
             return $filename;
         }
@@ -850,12 +823,12 @@ class Identity extends AppModel {
     }
     
     public function uploadPhotoByForm($upload_form) {
-       return $this->uploadPhoto($upload_form['tmp_name']);
+		return $this->uploadPhoto($upload_form['tmp_name']);
     }
        
     public function uploadPhotoByUrl($url) {
         # get the file first
-        $content = @file_get_contents($url);
+        $content = WebExtractor::fetchUrl($url);
         if($content) {
             $filename = AVATAR_DIR . $this->id . '.tmp';
             file_put_contents($filename, $content);
@@ -868,27 +841,22 @@ class Identity extends AppModel {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function save_scaled($picture, $original_width, $original_height, $width, $height, $filename) {
-        if($original_width==$width && $original_height==$height) {
+    private function saveScaled($picture, $original_width, $original_height, $width, $height, $filename) {
+        $BEST_QUALITY = 100;
+    	
+    	if($original_width==$width && $original_height==$height) {
             # original picture
-            imagejpeg($picture, $filename, 100); # best quality
+            imagejpeg($picture, $filename, $BEST_QUALITY);
         } else {
             # resampling picture
             $resampled = imagecreatetruecolor($width, $height);
             imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-            imagejpeg($resampled, $filename, 100); # best quality 
+            imagejpeg($resampled, $filename, $BEST_QUALITY); 
         }
     }
     
     private function getSaveableFields($isAccountWithOpenID) {
-    	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'allow_emails', 'created', 'modified');
+    	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'allow_emails', 'overview_filters', 'created', 'modified');
     	
     	if ($isAccountWithOpenID) {
     		$saveable[] = 'openid';
@@ -917,5 +885,74 @@ class Identity extends AppModel {
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
         }
+    }
+    
+    /**
+     * @param $identityKey Either 'Identity' or 'WithIdentity'
+     */
+    public function getPhotoUrl($data, $identityKey = 'Identity', $smallSize = false) {
+        if($data[$identityKey]['photo']) {
+            if($this->startsWithHttp($data[$identityKey]['photo'])) {
+                   # contains a complete path, eg. from not local identities
+                   $profile_photo = $data[$identityKey]['photo'];
+               } else {
+                   $profile_photo = $this->getBaseUrlForAvatars() . $data[$identityKey]['photo'] . '.jpg';
+               }
+        } else {
+            App::import('Vendor', 'sex');
+        	$profile_photo = Sex::getImageUrl($data[$identityKey]['sex'], $smallSize);
+        }
+        
+        return $profile_photo;
+    }
+    
+    public function getBaseUrlForAvatars() {
+    	$url = '';
+    	
+    	if(NOSERUB_USE_CDN) {
+            $url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+        } else {
+            $url = FULL_BASE_URL . Router::url('/static/avatars/');
+        }
+        
+        return $url;
+    }
+    
+    /**
+     * returns the last active identities
+     */
+    public function getLastActive($limit, $with_restricted = false) {
+        $this->Entry->contain();
+        $fields = array('DISTINCT Entry.identity_id');
+        $conditions = array();
+        if(!$with_restricted) {
+            $conditions['restricted'] = 0;
+        }
+        $entries = $this->Entry->find(
+            'all',
+            array(
+                'fields'     => $fields,
+                'conditions' => $conditions,
+                'order'      => 'Entry.published_on DESC',
+                'limit'      => $limit
+            )
+        );
+        $identity_ids = Set::extract($entries, '{n}.Entry.identity_id');
+
+        $this->contain();
+        return $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'id' => $identity_ids
+                ),
+                'limit' => $limit
+            )
+        );
+    }
+    
+    private function startsWithHttp($string) {
+    	return (strpos($string, 'http://') === 0 ||
+                strpos($string, 'https://') === 0);
     }
 }

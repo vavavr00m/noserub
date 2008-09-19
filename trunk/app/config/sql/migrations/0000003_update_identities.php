@@ -3,7 +3,7 @@ foreach($identities as $identity) {
     if($identity['identities']['is_local'] == 0) {
         $username_splitted = split('@', $identity['identities']['username']);
         $username = $username_splitted[1] . '/noserub/' . $username_splitted[0];
-        $this->execute('UPDATE identities SET username="'.$username.'" WHERE id='.$identity['identities']['id']);
+        $this->query('UPDATE identities SET username="'.$username.'" WHERE id='.$identity['identities']['id']);
     } else {
         $full_username = $identity['identities']['username'];
         $username_domain = split('@', $full_username);
@@ -15,6 +15,6 @@ foreach($identities as $identity) {
             $username = $username . '@' . $namespace;
         }
         $sql = 'UPDATE identities SET username="'.$username.'" WHERE id='.$identity['identities']['id'];
-        $this->execute($sql);
+        $this->query($sql);
     }
 }

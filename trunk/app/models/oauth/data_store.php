@@ -1,6 +1,6 @@
 <?php
 
-App::import('Vendor', 'oauth', array('file' => 'oauth'.DS.'OAuth.php'));
+App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 class DataStore extends AppModel {
 	public $useTable = false;
@@ -16,7 +16,18 @@ class DataStore extends AppModel {
 	}
 	
 	public function lookup_nonce($consumer, $token, $nonce, $timestamp) {
-		// TODO add implementation
+		App::import('Model', 'Nonce');
+		$theNonce = new Nonce();
+
+		// XXX if the API becomes popular we probably have to move this clean up to a cron job
+		$theNonce->deleteExpired();
+		
+		if (!$theNonce->hasBeenUsed($consumer, $token, $nonce)) {
+			$theNonce->add($consumer, $token, $nonce);
+			return null;
+		}
+		
+		return $nonce;
 	}
 	
 	public function lookup_token($consumer, $token_type, $token) {
@@ -39,7 +50,8 @@ class DataStore extends AppModel {
   		$requestToken = new RequestToken();
 		
 		if (!empty($consumerData) && $requestToken->isAuthorized($token->key)) {
-			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken');
+			$identityId = $requestToken->field('identity_id', array('token_key' => $token->key));
+			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken', $identityId);
   			$requestToken->delete(array('RequestToken.token_key' => $token->key));
   			
   			return $accessToken;
@@ -66,18 +78,23 @@ class DataStore extends AppModel {
 		return $consumer->findByConsumerKey($consumer_key);
 	}
 	
-	private function new_token($consumerId, $tokenType) {
+	private function new_token($consumer_id, $token_type, $identity_id = null) {
+		App::import('Core', 'Security');
 		$key = md5(time());
-    	$secret = md5(md5(time() + time()));
+    	$secret = Security::hash(time(), null, true);
   		
-  		$data[$tokenType]['consumer_id'] = $consumerId;
-  		$data[$tokenType]['token_key'] = $key;
-  		$data[$tokenType]['token_secret'] = $secret;
-  		App::import('Model', $tokenType);
-  		$token = new $tokenType();
+  		$data[$token_type]['consumer_id'] = $consumer_id;
+  		$data[$token_type]['token_key'] = $key;
+  		$data[$token_type]['token_secret'] = $secret;
+  		
+  		if ($identity_id != null) {
+  			$data[$token_type]['identity_id'] = $identity_id;
+  		}
+  		
+  		App::import('Model', $token_type);
+  		$token = new $token_type();
   		$token->save($data);
   		
   		return new OAuthToken($key, $secret);
 	}
 }
-?>

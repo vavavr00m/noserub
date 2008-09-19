@@ -2,9 +2,9 @@
 /* SVN FILE: $Id:$ */
  
 class ServiceType extends AppModel {
-    var $belongsTo = array('Service');                                                   
+    public $belongsTo = array('Service');                                                   
 
-    var $allowedFilters = array('photo'        => 'Photos',
+    private $allowedFilters = array('photo'        => 'Photos',
 	                            'video'        => 'Videos',
 	                            'audio'        => 'Audio',
 	                            'link'         => 'Link',
@@ -35,5 +35,22 @@ class ServiceType extends AppModel {
 	    $default_filter = $this->allowedFilters;
 	    unset($default_filter['audio']);
 	    return array_keys($default_filter);
+	}
+	
+	/**
+	 * returns array of ids for an array of tokens
+	 */
+	public function getList($tokens) {
+	    $ids = array();
+	    foreach($tokens as $token) {
+	        $this->contain();
+	        $fields = array('id');
+	        $data = $this->findByToken($token);
+	        if($data) {
+	        	$ids[] = $data['ServiceType']['id'];
+	        }
+	    }
+	    
+	    return $ids;
 	}
 }

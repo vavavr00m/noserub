@@ -1,7 +1,7 @@
 <?php
 
 class NoserubContactType extends AppModel {
-	var $hasAndBelongsToMany = array('Contact');
+	public $hasAndBelongsToMany = array('Contact');
 	
 	/**
 	 * return ids of noserub contact types for the tags in
@@ -16,11 +16,10 @@ class NoserubContactType extends AppModel {
 	    $remaining_tags = array();
 	    foreach($tags as $tag) {
 	        if($tag) {
-	            $this->recursive = 0;
-	            $this->expects('NoserubContactType');
-	            $data = $this->findByName($tag, array('id'));
+	            $this->contain();
+	            $data = $this->findByName($tag, array('id', 'name'));
                 if($data) {
-                    $ids[$data['NoserubContactType']['id']] = 1;
+                    $ids[$data['NoserubContactType']['id']] = $data['NoserubContactType']['name'];
                 } else {
                     $remaining_tags[] = $tag;
                 }
@@ -45,18 +44,17 @@ class NoserubContactType extends AppModel {
 	    return $noserub_contact_types;
 	}
 	
-	function getIDsForContact($contact_id) {
-	    $this->ContactsNoserubContactType->recursive = 0;
-	    $this->ContactsNoserubContactType->expects('ContactsNoserubContactType');
+	public function getIDsForContact($contact_id) {
+	    $this->ContactsNoserubContactType->contain();
 		$noserub_contact_types    = $this->ContactsNoserubContactType->findAllByContactId($contact_id);
     	return(Set::extract($noserub_contact_types, '{n}.ContactsNoserubContactType.noserub_contact_type_id'));
 	}
 	
-	function getNoserubContactTypeIDsToAdd($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs) {
+	public function getNoserubContactTypeIDsToAdd($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs) {
 		return $this->getElementsOnlyAvailableInFirstArray($newlySelectedNoserubContactTypeIDs, $currentlySelectedNoserubContactTypeIDs);
 	}
 	
-	function getNoserubContactTypeIDsToRemove($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs) {
+	public function getNoserubContactTypeIDsToRemove($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs) {
 		return $this->getElementsOnlyAvailableInFirstArray($currentlySelectedNoserubContactTypeIDs, $newlySelectedNoserubContactTypeIDs);
 	}
 	
@@ -64,7 +62,7 @@ class NoserubContactType extends AppModel {
 	 * @param array $data Array in the form: array('NoserubContactType' => array(1 => 1, 2 => 0, 3 => 1));
 	 * @return array with IDs of the selected NoserubContactTypes
 	 */
-	function getSelectedNoserubContactTypeIDs($data) {
+	public function getSelectedNoserubContactTypeIDs($data) {
     	if (empty($data) || !isset($data['NoserubContactType'])) {
     		return array();
     	}
@@ -103,4 +101,3 @@ class SelectedNoserubContactTypesFilter extends FilterIterator {
 		return ($this->current() == $this->selected);
     }
 }
-?>

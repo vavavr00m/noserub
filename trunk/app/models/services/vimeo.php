@@ -1,24 +1,23 @@
 <?php
 class VimeoService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#vimeo.com/(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://vimeo.com/'.$username.'/';
 	}
 	
-	function getContacts($username) {
+	public function getContacts($username) {
 		return ContactExtractor::getContactsFromMultiplePages('http://vimeo.com/' . $username . '/contacts/', '/<div id="contact_(.*)">/iU', '/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', 'sort:date/page:');
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return 'http://vimeo.com/'.$username.'/videos/rss/';
 	}
 }
-?>

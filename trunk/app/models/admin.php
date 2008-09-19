@@ -1,12 +1,14 @@
 <?php
 
+define('MIGRATIONS_FOLDER', APP . 'config/sql/migrations/');
+
 /** 
  * Model for all the admin stuff in NoseRub.
  */
 class Admin extends AppModel {
-    var $useTable = false;
+    public $useTable = false;
 
-    var $constants = array('!NOSERUB_DOMAIN' => array(
+    public $constants = array('!NOSERUB_DOMAIN' => array(
                                 'file' => 'noserub.php'),
                            'NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
@@ -24,7 +26,9 @@ class Admin extends AppModel {
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php'),
-                           'NOSERUB_USE_FEED_CACHE' => array(
+                           '!NOSERUB_USE_FEED_CACHE' => array(
+                               'file'       => 'noserub.php'),
+                           'NOSERUB_MANUAL_FEEDS_UPDATE' => array(
                                'file'   => 'noserub.php',
                                'values' => array(true, false)),
                            'NOSERUB_USE_CDN' => array(
@@ -32,18 +36,14 @@ class Admin extends AppModel {
                                'values' => array(true, false))
                           );
     
-    private $directories;
-    
-    function __construct() {
-    	$this->directories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
-    }
-    
     /**
      * checks if some directories are writeable
      */
-    function checkWriteable() {
+    public function checkWriteable() {
+    	$writeableDirectories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
+    	
         $out = array();
-        foreach($this->directories as $directory) {
+        foreach($writeableDirectories as $directory) {
             if(!is_writeable($directory)) {
                 $out[] = $directory;
             }
@@ -59,7 +59,7 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function checkConstants() {
+    public function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
             if(strpos($constant, '!') === 0) {
@@ -85,14 +85,7 @@ class Admin extends AppModel {
         return $out;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function checkExtensions() {
+    public function checkExtensions() {
         $result = array();
     	
         if (!extension_loaded('curl')) {
@@ -118,7 +111,7 @@ class Admin extends AppModel {
      *          0 = connect not working
      *          1 = everything fine
      */
-    function getDatabaseStatus() {
+    public function getDatabaseStatus() {
         $filePresent = file_exists(CONFIGS.'database.php');
         if(!$filePresent) {
             return -1;
@@ -139,8 +132,8 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getMostRecentMigration() {
-        $files = scandir(APP . '/config/sql/migrations/');
+    public function getMostRecentMigration() {
+        $files = scandir(MIGRATIONS_FOLDER);
         $most_recent_migration = 0;
         foreach($files as $filename) {
             if(preg_match('/([0-9]+)_.*\.(sql|php)/i', $filename, $matches)) {
@@ -163,9 +156,9 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getCurrentMigration() {
+    public function getCurrentMigration() {
         # check, if schema_info is there:
-		$tables = $this->execute('SHOW TABLES');
+		$tables = $this->query('SHOW TABLES');
 		
 		$is_present = false;
 		foreach($tables as $table) {
@@ -181,8 +174,8 @@ class Admin extends AppModel {
 		}
 		
 		if(!$is_present) {
-	        $this->execute('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
-		    $this->execute('INSERT INTO `schema_info` (`value`) VALUES (0)');
+	        $this->query('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
+		    $this->query('INSERT INTO `schema_info` (`value`) VALUES (0)');
 	        return 0;
 	    } 
 	    
@@ -197,16 +190,16 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function getOpenMigrations($current_migration) {
+    public function getOpenMigrations($current_migration) {
         $migrations = array('sql' => array(), 'php' => array());
-        $files = scandir(APP . '/config/sql/migrations/');
+        $files = scandir(MIGRATIONS_FOLDER);
         foreach($files as $filename) {
             # sql
             if(preg_match('/([0-9]+)_(.*)\.sql/i', $filename, $matches)) {
                 $num = intval($matches[1]);
                 if($num > $current_migration) {
                     $name = $matches[2];
-                    $content = file(APP . '/config/sql/migrations/' . $filename);
+                    $content = file(MIGRATIONS_FOLDER . $filename);
                     $migrations['sql'][$num] = array('name'    => $name,
                                                      'content' => $content);
                 }
@@ -216,7 +209,7 @@ class Admin extends AppModel {
                 $num = intval($matches[1]);
                 if($num > $current_migration) {
                     $name = $matches[2];
-                    $content = file_get_contents(APP . '/config/sql/migrations/' . $filename);
+                    $content = file_get_contents(MIGRATIONS_FOLDER . $filename);
                     $migrations['php'][$num] = array('name'    => $name,
                                                      'content' => $content);
                 }
@@ -234,11 +227,11 @@ class Admin extends AppModel {
      * @return 
      * @access 
      */
-    function migrate($migrations, $current_migration, $most_recent_migration) {
+    public function migrate($migrations, $current_migration, $most_recent_migration) {
         for($i=$current_migration+1; $i<=$most_recent_migration; $i++) {
             if(isset($migrations['sql'][$i])) {
                 foreach($migrations['sql'][$i]['content'] as $sql) {
-                    $this->execute($sql);
+                    $this->query($sql);
                 }
             }
             if(isset($migrations['php'][$i]['name'])) {
@@ -246,7 +239,7 @@ class Admin extends AppModel {
             }
             
             # update schema_info
-            $this->execute('UPDATE schema_info SET value='.$i);
+            $this->query('UPDATE schema_info SET value='.$i);
         }
     }
 }

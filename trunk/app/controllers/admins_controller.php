@@ -1,28 +1,27 @@
 <?php
  
 class AdminsController extends AppController {
-    var $uses = array('Admin');
+    public $uses = array('Admin');
     
-    /**
-     * Update the system. Check for new migrations
-     * and possible new constants.
-     *
-     * @param  string admin_hash (through $this->params)
-     * @return 
-     * @access 
-     */
-    function system_update() {
-        $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
+    public function beforeFilter() {
+    	parent::beforeFilter();
+    	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
-        if($admin_hash != NOSERUB_ADMIN_HASH ||
-           $admin_hash == '') {
+        if($admin_hash != NOSERUB_ADMIN_HASH || $admin_hash == '') {
             # there is nothing to do for us here
-            $this->render('../elements/hash_not_valid');
-            exit;
+            echo $this->render('/elements/hash_not_valid');
+			exit;
         }
+    }
 
-        $extensions = $this->Admin->checkExtensions();
-        $this->set('extensions', $extensions);
+	/**
+     * Update the system. Check for new migrations
+     * and possible new constants. 
+     */
+    public function system_update() {
+    	// XXX security_token is set to avoid "undefined variable" error in view
+    	$this->set('security_token', '');
+        $this->set('extensions', $this->Admin->checkExtensions());
         
         $directories = $this->Admin->checkWriteable();
         $this->set('directories', $directories);

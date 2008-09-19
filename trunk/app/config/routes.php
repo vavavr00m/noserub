@@ -43,27 +43,39 @@ Router::connect('/social_stream/:filter/:output/', array('controller' => 'identi
  * developement.
  */
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
-Router::connect('/pages/login/withopenid', array('controller' => 'identities', 'action' => 'login_with_openid'));
 Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
-Router::connect('/pages/register/', array('controller' => 'identities', 'action' => 'register'));
-Router::connect('/pages/register/withopenid/', array('controller' => 'identities', 'action' => 'register_with_openid_step_1'));
-Router::connect('/pages/register/withopenid/step2', array('controller' => 'identities', 'action' => 'register_with_openid_step_2'));
-Router::connect('/pages/register/thanks/', array('controller' => 'identities', 'action' => 'register_thanks'));
+Router::connect('/pages/register/', array('controller' => 'registration', 'action' => 'register'));
+Router::connect('/pages/register/withopenid/', array('controller' => 'registration', 'action' => 'register_with_openid_step_1'));
+Router::connect('/pages/register/withopenid/step2', array('controller' => 'registration', 'action' => 'register_with_openid_step_2'));
+Router::connect('/pages/register/thanks/', array('controller' => 'registration', 'action' => 'register_thanks'));
+Router::connect('/pages/verify/:hash/', array('controller' => 'registration', 'action' => 'verify'));
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
-Router::connect('/pages/verify/:hash/', array('controller' => 'identities', 'action' => 'verify'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
 Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'action' => 'request_token'));
 Router::connect('/pages/oauth/access_token', array('controller' => 'oauth', 'action' => 'access_token'));
 Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action' => 'authorize'));
 
+Router::connect('/api/:result_type/info/', array('controller' => 'identities', 'action' => 'api_info'));
+
+// OAuth-enabled API methods
+Router::connect('/api/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
+Router::connect('/api/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
+Router::connect('/api/:result_type/locations/add/', array('controller' => 'locations', 'action' => 'api_add'));
+Router::connect('/api/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
+Router::connect('/api/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
+Router::connect('/api/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
+Router::connect('/api/:result_type/contacts/', array('controller' => 'contacts', 'action' => 'api_get'));
+Router::connect('/api/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
+
 Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/add/', array('controller' => 'locations', 'action' => 'api_add'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/', array('controller' => 'locations', 'action' => 'api_get'));
-Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('controller' => 'identities', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('controller' => 'contacts', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
@@ -82,11 +94,11 @@ Router::connect('/:username/messages/new/*', array('controller' => 'identities',
 Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
-Router::connect('/:username/settings/account/', array('controller' => 'identities', 'action' => 'account_settings'));
-Router::connect('/:username/settings/account/export/:security_token/', array('controller' => 'identities', 'action' => 'account_settings_export'));
-Router::connect('/:username/settings/account/import_data/:security_token/', array('controller' => 'identities', 'action' => 'account_settings_import_data'));
-Router::connect('/:username/settings/account/import/', array('controller' => 'identities', 'action' => 'account_settings_import'));
-Router::connect('/:username/settings/account/redirect/', array('controller' => 'identities', 'action' => 'account_settings_redirect'));
+Router::connect('/:username/settings/account/', array('controller' => 'account_settings', 'action' => 'index'));
+Router::connect('/:username/settings/account/export/:security_token/', array('controller' => 'account_settings', 'action' => 'export'));
+Router::connect('/:username/settings/account/import_data/:security_token/', array('controller' => 'account_settings', 'action' => 'import_data'));
+Router::connect('/:username/settings/account/import/', array('controller' => 'account_settings', 'action' => 'import'));
+Router::connect('/:username/settings/account/redirect/', array('controller' => 'account_settings', 'action' => 'redirect_url'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
@@ -114,15 +126,16 @@ Router::connect('/:username/settings/*', array('controller' => 'identities', 'ac
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
 
+Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entries', 'action' => 'jobs_update'));
 Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
+Router::connect('/jobs/:admin_hash/xmpp/start', array('controller' => 'xmpp', 'action' => 'shell_run'));
     
 /**
  * Shell routes that can only be accessed through the shell_dispatcher
  */ 
 Router::connect('/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
-Router::connect('/cache/feed/create/', array('controller' => 'feeds', 'action' => 'shell_create'));
-Router::connect('/cache/feed/refresh/', array('controller' => 'feeds', 'action' => 'shell_refresh'));
+Router::connect('/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));

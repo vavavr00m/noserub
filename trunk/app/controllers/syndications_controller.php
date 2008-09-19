@@ -1,18 +1,11 @@
 <?php
  
 class SyndicationsController extends AppController {
-    var $uses = array('Syndication');
-    var $helpers = array('form', 'html', 'nicetime', 'flashmessage');
-    var $components = array('url', 'cdn', 'api');
+    public $uses = array('Syndication');
+    public $helpers = array('form', 'html', 'nicetime', 'flashmessage');
+    public $components = array('url', 'cdn', 'api', 'OauthServiceProvider');
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
+    public function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
         $this->checkUnsecure();
         $feed_types = array(
             'rss'  => 'text/xml', 
@@ -25,41 +18,58 @@ class SyndicationsController extends AppController {
             $hash = $match[1];
         }
         
+        if(!$extension) {
+            if(isset($feed_types[$url])) {
+                $extension = $url;
+                $hash = 'generic';
+            }
+        }
+        
         if($extension && isset($feed_types[$extension])) {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
-            if(!$internal_call && defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
-                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301', true);
+            if(!$internal_call && NOSERUB_USE_CDN) {
+                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301');
             }
-            
-            # find syndication
-            $this->Syndication->recursive = 1;
-            $this->Syndication->expects('Syndication', 'Account', 'Identity');
-            $data = $this->Syndication->findByHash($hash);
 
-            # get all items for those accounts
-            $items = array();
-            if(is_array($data['Account'])) {
-                foreach($data['Account'] as $account) {
-                    if(defined('NOSERUB_USE_FEED_CACHE') && NOSERUB_USE_FEED_CACHE) {
-                        $new_items = $this->Syndication->Account->Feed->access($account['id'], 5, false);
-                    } else {
-                        $new_items = $this->Syndication->Account->Service->feed2array($data['Identity']['username'], $account['service_id'], $account['service_type_id'], $account['feed_url'], 5, false);
-                    }
-                    if($new_items) {
-                        $items = array_merge($items, $new_items);
-                    }  
+            if($hash === 'generic') {
+                $username = isset($this->params['username']) ? $this->params['username'] : '';
+                $splitted = $this->Syndication->Identity->splitUsername($username);
+                $username = $splitted['username'];
+                $this->Syndication->Identity->contain();
+                $identity = $this->Syndication->Identity->findByUsername($username);
+                $items = array();
+                
+                if($identity && $identity['Identity']['generic_feed']) {
+                    $conditions = array(
+                        'identity_id' => $identity['Identity']['id']
+                    );
+                    $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
+                    usort($items, 'sort_items');
                 }
+                $this->set('syndication_name', 'Generic Feed');
+                $this->set('identity', $identity['Identity']);
+            } else {
+                # find syndication
+                $this->Syndication->contain(array('Account', 'Identity'));
+                $data = $this->Syndication->findByHash($hash);
+                
+                # get all items for those accounts
+                $items = array();
+                $conditions = array(
+                    'account_id' => Set::extract($data, 'Account.{n}.id')
+                );
+                $items = $this->Syndication->Identity->Entry->getForDisplay($conditions, 25);
                 usort($items, 'sort_items');
+                $this->set('syndication_name', $data['Syndication']['name']);
+                $this->set('identity', $data['Identity']);
             }
             
-            $this->set('syndication_name', $data['Syndication']['name']);
-            $this->set('identity', $data['Identity']);
             $this->set('data', $items);
 
             # decide, wether to render the feed directly,
             # or uploading it to the CDN.
-            if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+            if(NOSERUB_USE_CDN) {
                 # check, if the items are new enough, so we need
                 # to do an upload
                 $datetime_newest_item = isset($items[0]['datetime']) ? $items[0]['datetime'] : '2007-10-01';
@@ -70,6 +80,9 @@ class SyndicationsController extends AppController {
                         $this->layout = 'feed_' . $feed_type;
                         $this->render('feed');
                         $content = ob_get_contents();
+                        if($hash === 'generic') {
+                            $hash = md5('generic' . $identity['Identity']['id']);
+                        }
                         $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
                         ob_end_clean();
                     }                
@@ -82,14 +95,7 @@ class SyndicationsController extends AppController {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function index() {
+    public function index() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Syndication->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -97,26 +103,40 @@ class SyndicationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
+        }
+        
+        if($this->data) {
+            $this->ensureSecurityToken();
+
+            $this->Syndication->Identity->id = $session_identity['id'];
+            if($this->Syndication->Identity->saveField('generic_feed', $this->data['Identity']['generic_feed'])) {
+                $this->flashMessage('success', 'Settings saved');
+            } else {
+                $this->flashMessage('error', 'Something went wrong');
+            }
+        } else {
+            # need to fetch it here, because some people could still be logged in
+            # when this updates happens
+            $this->Syndication->Identity->id = $session_identity['id'];
+            $generic_feed = $this->Syndication->Identity->field('generic_feed');
+            $this->data = array(
+                'Identity' => 
+                    array(
+                        'generic_feed' => $generic_feed
+                    )
+            );
         }
         
         # get all the syndications for logged in user
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Syndication');
+        $this->Syndication->contain();
         $this->set('data', $this->Syndication->findAllByIdentityId($session_identity['id']));
         
         $this->set('session_identity', $session_identity);
         $this->set('headline', 'Configure Feeds from your activities and accounts');
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function delete() {
+    public function delete() {
         $username       = isset($this->params['username'])       ? $this->params['username']       : '';
         $syndication_id = isset($this->params['syndication_id']) ? $this->params['syndication_id'] :  0;
         $splitted = $this->Syndication->Identity->splitUsername($username);
@@ -126,32 +146,23 @@ class SyndicationsController extends AppController {
            $syndication_id == 0) {
             # this is not the logged in user, or invalid syndication_id
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
         # check, if the syndication_id belongs to the logged in user
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Syndication');
-        if(1 == $this->Syndication->findCount(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
+        if($this->Syndication->hasAny(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Syndication->delete($syndication_id);
             $this->flashMessage('success', 'Feed deleted.');
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
-        	$this->redirect($url, null, true);
+        	$this->redirect($url);
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function add() {
+    public function add() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Syndication->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -159,7 +170,7 @@ class SyndicationsController extends AppController {
         if(!$session_identity || $session_identity['username'] != $splitted['username']) {
             # this is not the logged in user
             $url = $this->url->http('/');
-            $this->redirect($url, null, true);
+            $this->redirect($url);
         }
         
         if($this->data) {
@@ -192,34 +203,31 @@ class SyndicationsController extends AppController {
                 $this->Syndication->save($data);
                 
                 # no also create it initially, if we use a CDN
-                if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+                if(NOSERUB_USE_CDN) {
                     $this->feed($data['Syndication']['hash'].'.rss', true);
                 }
             } 
             
             $this->flashMessage('success', 'Feed added.');            
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
-        	$this->redirect($url, null, true);
+        	$this->redirect($url);
         } else {
             # get all accounts from this user, that have feeds
-            $this->Syndication->Account->recursive = 1;
-            $this->Syndication->Account->expects('Account', 'Service');
-            $accounts = $this->Syndication->Account->findAll(array('Account.identity_id' => $session_identity['id'],
-                                                                   'Account.feed_url <> ""'));
+            $this->Syndication->Account->contain('Service');
+            $accounts = $this->Syndication->Account->find('all', array('conditions' => array('Account.identity_id' => $session_identity['id'],
+            																				 'Account.feed_url <> ""')));
             $this->set('accounts', $accounts);
 
             # get all accounts from this users contacts
-            $this->Syndication->Identity->Contact->recursive = 1;
-            $this->Syndication->Identity->Contact->expects('Contact.WithIdentity', 
-                                                           'WithIdentity.Account.Service');
+            $this->Syndication->Identity->Contact->contain(array('WithIdentity', 'WithIdentity.Account.Service'));
            
             $contacts = $this->Syndication->Identity->Contact->findAllByIdentityId($session_identity['id']);
             
             # now go through all contacts to get accounts and services
             foreach($contacts as $key => $value) {
-                $this->Syndication->Account->recursive = 1;
-                $this->Syndication->Account->expects('Account', 'Service');
-                $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->findAll(array('identity_id' => $value['WithIdentity']['id'], 'feed_url != ""')); 
+                $this->Syndication->Account->contain('Service');
+                $contacts[$key]['WithIdentity']['Account'] = $this->Syndication->Account->find('all', array('conditions' => array('identity_id' => $value['WithIdentity']['id'],
+                																												  'feed_url != ""')));  
             }
             $this->set('contacts', $contacts);
             
@@ -238,24 +246,34 @@ class SyndicationsController extends AppController {
         }
         
         $this->set('headline', 'Add new Feed');
+        $this->set('base_url_for_avatars', $this->Syndication->Identity->getBaseUrlForAvatars());
     }
     
     /**
      * API method to get a list of syndications, that the user created
      */
     public function api_get() {
-        $identity = $this->api->getIdentity();
-        $this->api->exitWith404ErrorIfInvalid($identity);
+    	if (isset($this->params['username'])) {
+    		$identity = $this->api->getIdentity();
+        	$this->api->exitWith404ErrorIfInvalid($identity);
+        	$identity_id = $identity['Identity']['id'];
+		} else {
+    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
         
-        $this->Syndication->recursive = 0;
-        $this->Syndication->expects('Location');
-        $data = $this->Syndication->findAllByIdentityId($identity['Identity']['id'], array('name', 'hash'));
+        $this->Syndication->contain();
+        $data = $this->Syndication->findAllByIdentityId($identity_id, array('name', 'hash'));
         
-        $url = Router::url('/' . $identity['Identity']['local_username']);
-        if(defined('NOSERUB_USE_CDN') && NOSERUB_USE_CDN) {
+        if(NOSERUB_USE_CDN) {
             $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
         } else {
-            $feed_url = $url . '/feeds/';
+        	if (!isset($identity)) {
+        		$identity = $this->getIdentity($identity_id);
+        	}
+        	$url = Router::url('/' . $identity['Identity']['local_username']);
+            $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';
         }
         
         # replace the hash by the actual feed url
@@ -267,24 +285,35 @@ class SyndicationsController extends AppController {
                 );
             unset($data[$idx]['Syndication']['hash']);
         }
+
+        # look for the generic feeds
+        if($identity['Identity']['generic_feed']) {
+            if(NOSERUB_USE_CDN) {
+                $feed_url .= md5('generic' . $identity_id) . '.';
+            }
+            $data[] = array(
+                'Syndication' => array(
+                    'name' => 'Generic Feed',
+                    'url'  => array(
+                        'rss'  => $feed_url . 'rss',
+                        'json' => $feed_url . 'js',
+                        'sphp' => $feed_url . 'sphp'
+                    )
+                )
+            );
+        }
+        
         $this->set('data', $data);
         
         $this->api->render();
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function shell_upload() {
+    public function shell_upload() {
         $uploaded = array();
 
-        if(!defined('NOSERUB_USE_CDN') || !NOSERUB_USE_CDN) {
+        if(!NOSERUB_USE_CDN) {
             # we don't need to do any upload
-            $this->set('data', $uploaded);
+            $this->set('uploaded', $uploaded);
             $this->render();
             exit;
         }
@@ -295,9 +324,10 @@ class SyndicationsController extends AppController {
             # no two refresh's within 14 minutes
             $last_upload = date('Y-m-d H:i:s', strtotime('-15 minutes'));
             
-            $this->Syndication->recursive = 0;
-            $this->Syndication->expects('Syndication');
-            $data = $this->Syndication->findAll(array('Syndication.last_upload < "' . $last_upload . '"'), null, 'Syndication.last_upload ASC, Syndication.modified DESC', 1);
+            $this->Syndication->contain();
+            $data = $this->Syndication->find('all', array('conditions' => array('Syndication.last_upload <' => $last_upload),
+            											  'order' => array('Syndication.last_upload ASC', 'Syndication.modified DESC'),
+            											  'limit' => 1));
             foreach($data as $item) {
                 # save the old last_update timestamp
                 $datetime_last_upload = $item['Syndication']['last_upload'];
@@ -324,5 +354,13 @@ class SyndicationsController extends AppController {
         $this->layout = 'shell';
         $this->set('uploaded', $uploaded);
         $this->render();
+    }
+    
+    private function getIdentity($identity_id) {
+    	$this->Syndication->Identity->contain();
+        $identity = $this->Syndication->Identity->findById($identity_id);
+        $identity['Identity'] = array_merge($identity['Identity'], $this->Syndication->Identity->splitUsername($identity['Identity']['username']));
+        
+        return $identity;
     }
 }

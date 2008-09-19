@@ -1,12 +1,12 @@
 <?php
 class PagesController extends AppController {
-    var $uses = array();
+    public $uses = array();
     
-    function display() {
-        $this->redirect('/social_stream/', null, true);
+    public function display() {
+        $this->redirect('/social_stream/');
     }
     
-    function security_check() {
+    public function security_check() {
         $this->set('headline', 'There was a security problem');
     }
 }

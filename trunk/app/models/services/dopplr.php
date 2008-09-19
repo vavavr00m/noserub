@@ -1,12 +1,11 @@
 <?php
 class DopplrService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#dopplr.com/traveller/(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://www.dopplr.com/traveller/'.$username;
 	}
 }
-?>

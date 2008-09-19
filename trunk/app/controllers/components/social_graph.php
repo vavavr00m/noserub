@@ -4,7 +4,7 @@
  * SocialGraph API
  * eg. Google SocialGraph API
  */
-vendor('microformat/google_social_graph');
+App::import('Vendor', 'microformat'.DS.'google_social_graph');
 App::import('Component', 'Json');
 
 class SocialGraphComponent extends JsonComponent {
@@ -19,5 +19,3 @@ class SocialGraphComponent extends JsonComponent {
         return $this->decode(GSocialGraph::lookup($urls));
     }
 }
-
-?>

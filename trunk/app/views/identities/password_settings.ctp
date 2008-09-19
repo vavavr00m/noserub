@@ -1,12 +1,14 @@
 <?php $flashmessage->render(); ?>
+<?php	if(!isset($session_identity["openid"])){	?>
 <p class="infotext">
-    In order to change your password, you have to enter your current password and then the new one.
+	In order to change your password, you have to enter your current password and then the new one.
 </p>
+<?php } ?>
 
 <hr class="space" />
 
 <!-- API Box -->
-<div id="locationsapi" class="right">
+<div id="locationsapi" class="<?php if(!isset($session_identity["openid"])){ ?>right<?php }else{?>left<?php } ?>">
     <form id="APISettingsForm" method="post" action="<?php echo $this->here; ?>">
     	<input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     	<fieldset>
@@ -24,7 +26,9 @@
     	</fieldset>
     <?php echo $form->end(); ?>
 </div>
-
+<?php
+	if(!isset($session_identity["openid"])){
+?>
 <div class="left">
     <form id="IdentityPassowrdSettingsForm" method="post" action="<?php echo $this->here; ?>">
         <fieldset>
@@ -56,3 +60,4 @@
         </fieldset>
     </form>
 </div>
+<?php	}	?>

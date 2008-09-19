@@ -2,24 +2,42 @@
 /* SVN FILE: $Id:$ */
  
 class Account extends AppModel {
-    var $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $hasMany = array('Entry');
+    public $hasAndBelongsToMany = array('Syndication');
     
-    var $hasOne = array('Feed');
-    
-    var $hasAndBelongsToMany = array('Syndication');
-    
-    var $validate = array(
+    public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
     /**
-     * Method description
+     * get's data from RSS (for example) of this
+     * account.
      *
-     * @param  
-     * @return 
-     * @access 
+     * @param int $account_id
+     *
+     * @return array
      */
-    function update($identity_id, $data, $replace = false) {
+    public function getData($account_id = null) {
+        if($account_id) {
+            $this->id = $account_id;
+        }
+        
+        $this->contain();
+        $account = $this->read();
+        $account = $account['Account'];
+        
+        return $this->Service->feed2array(
+            $account['username'],
+            $account['service_id'],
+            $account['service_type_id'],
+            $account['feed_url'],
+            50, # number of items
+            false # no maximum time period
+        );
+    }
+    
+    public function update($identity_id, $data, $replace = false) {
         if($replace) {
             # remove old account data
             $this->deleteByIdentityId($identity_id);
@@ -40,10 +58,9 @@ class Account extends AppModel {
                 'Account.identity_id' => $identity_id,
                 array('OR' => $urls)
             );
-            $this->recursive = 0;
-            $this->expects('Account');
+
             $this->cacheQueries = false;
-            if($this->findCount($conditions) == 0) {
+            if(!$this->hasAny($conditions)) {
                 $item['identity_id'] = $identity_id;
                 $saveable = array(
                     'identity_id', 'service_id', 'service_type_id', 'title',
@@ -57,7 +74,7 @@ class Account extends AppModel {
         return true;
     }
         
-    function replace($identity_id, $data) {
+    public function replace($identity_id, $data) {
         return $this->update($identity_id, $data, true);
     }
     
@@ -68,21 +85,19 @@ class Account extends AppModel {
      * @return 
      * @access 
      */
-    function deleteByIdentityId($identity_id) {
-        $this->recursive = 0;
-        $this->expects('Account');
+    public function deleteByIdentityId($identity_id) {
+        $this->contain();
         $data = $this->findAllByIdentityId($identity_id);
         foreach($data as $item) {
             # delete account and feed cache
             $account_id = $item['Account']['id'];
             $this->delete($account_id, false);
-            $this->execute('DELETE FROM ' . $this->tablePrefix . 'feeds WHERE account_id=' . $item['Account']['id']);
+            $this->query('DELETE FROM ' . $this->tablePrefix . 'entries WHERE account_id=' . $item['Account']['id']);
         }
     }
     
     public function export($identity_id) {
-        $this->recursive = 0;
-        $this->expects('Account');
+        $this->contain();
         $data = $this->findAllByIdentityId($identity_id);
         $accounts = array();
         foreach($data as $item) {

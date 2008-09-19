@@ -6,7 +6,7 @@
 <hr class="space" />
 
 <div class="left">
-    <?php echo $this->renderElement('accounts/index'); ?>
+    <?php echo $this->element('accounts/index'); ?>
 </div>
 
 <div class="right">

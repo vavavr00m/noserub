@@ -1,6 +1,6 @@
 <?php
 
-vendor('Zend/Json');
+App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
 
 class JsonComponent extends Object {
 
@@ -11,28 +11,11 @@ class JsonComponent extends Object {
         $this->zend_json->useBuiltinEncoderDecoder = true;
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function encode($value) {
         return $this->zend_json->encode($value);
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function decode($value) {
         return $this->zend_json->decode($value);
     }
-    
 }
-
-?>

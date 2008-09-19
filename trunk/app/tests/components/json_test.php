@@ -1,20 +1,20 @@
 <?php
 
 class JsonComponentTestCase extends CakeTestCase {
-    var $component = null;
+    private $component = null;
     
-	function setUp() {
+	public function setUp() {
 		$this->component = new JsonComponent();
 	}
 	
-	function testJsonEncodeDecode() {
+	public function testJsonEncodeDecode() {
 	    $value = array(2, 3, 'hallo', 4 => 'test');
 	    $encoded = $this->component->encode($value);
 	    $decoded = $this->component->decode($encoded);
 	    $this->assertEqual($value, $decoded);
 	}
 		
-	function tearDown() {
+	public function tearDown() {
 	    unset($this->component);
 	}
 }	

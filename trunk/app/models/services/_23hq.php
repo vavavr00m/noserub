@@ -2,15 +2,15 @@
 // class name starts with '_' as it is not allowed to use a number as first character
 class _23hqService extends AbstractService {
 	
-	function detectService($url) {
+	public function detectService($url) {
 		return $this->extractUsername($url, array('#23hq.com/(.+)#'));
 	}
 	
-	function getAccountUrl($username) {
+	public function getAccountUrl($username) {
 		return 'http://www.23hq.com/'.$username;
 	}
 	
-	function getContent($feeditem) {
+	public function getContent($feeditem) {
 		$raw_content = $feeditem->get_content();
         #<a href="http://www.23hq.com/DonDahlmann/photo/2204674
         if(preg_match('/<a href="http:\/\/www.23hq.com\/.*\/photo\/.*<\/a>/iU', $raw_content, $matches)) {
@@ -21,8 +21,7 @@ class _23hqService extends AbstractService {
         return '';
 	}
 	
-	function getFeedUrl($username) {
+	public function getFeedUrl($username) {
 		return 'http://www.23hq.com/rss/'.$username;
 	}
 }
-?>

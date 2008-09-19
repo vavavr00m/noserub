@@ -10,8 +10,8 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    var $helpers = array('javascript', 'html');
-    var $components = array('menu', 'Cookie');
+    public $helpers = array('javascript', 'html');
+    public $components = array('menu', 'Cookie');
     
     /**
      * Never ever "use" something here, or the migrations will fail.
@@ -24,9 +24,9 @@ class AppController extends Controller {
      *  Because if you do so, Cake will complain and you have no chance of doing
      *  the migrations in /system/update.)
      */
-    var $uses = array(); 
+    public $uses = array(); 
     
-    function flashMessage($type, $message) {
+    public function flashMessage($type, $message) {
         $flash_messages = $this->Session->read('FlashMessages');
         $flash_messages[$type][] = $message;
         $this->Session->write('FlashMessages', $flash_messages);
@@ -42,30 +42,36 @@ class AppController extends Controller {
      * @access 
      */
     public function checkSecure() {
+        if(defined('SHELL_DISPATCHER')) {
+            return;
+        }
+        
         if(NOSERUB_USE_SSL) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
-                exit;
             }
         }
     }
     
     /**
-        * Makes sure we redirect to the http url,
-        * when we're not on a secure page
-        *
-        * @param  
-        * @return 
-        * @access 
-        */
-       public function checkUnsecure() {
-           $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
-           if($server_port != 80) {
-               $this->redirect(str_replace('https://', 'http://', FULL_BASE_URL) . $this->here);
-               exit;
-           }
-       }
+     * Makes sure we redirect to the http url,
+     * when we're not on a secure page
+     *
+     * @param  
+     * @return 
+     * @access 
+     */
+    public function checkUnsecure() {
+        if(defined('SHELL_DISPATCHER')) {
+            return;
+        }
+        
+        $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
+        if($server_port != 80) {
+            $this->redirect(str_replace('https://', 'http://', FULL_BASE_URL) . $this->here);
+        }
+    }
        
     private function auto_login() {
         $li = $this->Cookie->read('li'); # login id
@@ -76,8 +82,7 @@ class AppController extends Controller {
                 $this->Identity = new Identity();
             }
             
-            $this->Identity->recursive = 0;
-            $this->Identity->expects('Identity');
+            $this->Identity->contain();
             $identity = $this->Identity->findById($li);
 
             if(!$identity) {
@@ -91,14 +96,8 @@ class AppController extends Controller {
         }
             
     }
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function beforeFilter() {
+
+    public function beforeFilter() {
         # check for auto-login
         if(!$this->Session->check('Identity.id')) {
             $this->auto_login();
@@ -129,14 +128,7 @@ class AppController extends Controller {
         }
     }
     
-    /**
-     * Method description
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    function ensureSecurityToken() {
+    public function ensureSecurityToken() {
         if(!isset($this->Identity)) {
             App::import('Model', 'Identity');
             $this->Identity = new Identity();
@@ -156,7 +148,7 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
-        if($this->viewPath != 'errors' && strpos($this->here, '/system/update/') === false) {
+        if($this->viewPath != 'errors' && strpos($this->here, '/system/update') === false) {
 	        if(!isset($this->Identity)) {
 	            App::import('Model', 'Identity');
 	            $this->Identity = new Identity();
@@ -169,5 +161,4 @@ class AppController extends Controller {
     public function afterFilter() {
         $this->Session->write('FlashMessages', array());
     }
-    
 }

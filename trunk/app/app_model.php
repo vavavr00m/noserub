@@ -9,8 +9,8 @@
  * @subpackage models
  */
 class AppModel extends Model {
-
-    private $sanitizeExclusion = array('Feed');
+	public $actsAs = array('Containable');
+	private $sanitizeExclusion = array('Feed', 'Entry');
     
     /**
      * 	configure sanitization details based on the model and the 
@@ -18,7 +18,7 @@ class AppModel extends Model {
      * 
      * 	@var array $sanitization
      */
-    var $sanitization = array (
+    public $sanitization = array (
         /*
         'Task' => array (
             'ignore_keys' => null, # define an array of the keys you don't want to sanitize
@@ -50,8 +50,8 @@ class AppModel extends Model {
                 continue;
             }
 
-            foreach ($item as $model => $attributes) {
-                if (!in_array($model, $this->sanitizeExclusion)) {
+            foreach($item as $model => $attributes) {
+                if(!in_array($model, $this->sanitizeExclusion)) {
                     
                     # add pound links again
                     if($model == 'Task') {
@@ -68,32 +68,7 @@ class AppModel extends Model {
                     if (is_array($attributes)) {
                         foreach ($attributes as $fieldName => $field) {
                             if (!is_array($field) && !empty ($field)) {
-                                $replacements = array (
-                                    "&",
-                                    "%",
-                                    "<",
-                                    ">",
-                                    '"',
-                                    "'",
-                                    "(",
-                                    ")",
-                                    "+",
-                                    "-"
-                                );
-                                $patterns = array (
-                                    "/\&amp;/",
-                                    "/\&#37;/",
-                                    "/\&lt;/",
-                                    "/\&gt;/",
-                                    "/\&quot;/",
-                                    "/\&#39;/",
-                                    "/\&#40;/",
-                                    "/\&#41;/",
-                                    "/\&#43;/",
-                                    "/\&#45;/"
-                                );
-                                $field = preg_replace($patterns, $replacements, $field);
-                                $data[$key][$model][$fieldName] = $field;
+                                $data[$key][$model][$fieldName] = $this->deSanitize($field);
                             }
                         }
                     }
@@ -177,86 +152,62 @@ class AppModel extends Model {
         return true;
     }
     
-    /**
-     * Expects unbindsAll except the given models
-     *
-     * link: http://bakery.cakephp.org/articles/view/185
-     *
-     * @return
-     * @access public
-     */
-    public function expects() {
-        $models = array ();
-
-        $arguments = func_get_args();
-
-        # flatten arguments (backwards compatibility - array notation)
-        foreach ($arguments as $index => $argument) {
-            if (is_array($argument)) {
-                if (count($argument) > 0) {
-                    $arguments = array_merge($arguments, $argument);
-                }
-
-                unset ($arguments[$index]);
-            }
-        }
-
-        if (count($arguments) == 0) {
-            # no arguments - only the model itself
-            $models[$this->name] = array ();
-        } else {
-            foreach ($arguments as $argument) {
-                # check dot notation
-                if (strpos($argument, '.') !== false) {
-                    $model = substr($argument, 0, strpos($argument, '.'));
-                    $child = substr($argument, strpos($argument, '.') + 1);
-
-                    if ($child == $model) {
-                        $models[$model] = array ();
-                    } else {
-                        $models[$model][] = $child;
-                    }
-                } else {
-                    $models[$this->name][] = $argument;
-                }
-            }
-        }
-        foreach ($models as $model => $children) {
-            if ($model != $this->name && isset ($this-> $model)) {
-                $this-> $model->expects($children);
-            }
-        }
-
-        if (isset ($models[$this->name])) {
-            foreach ($models as $model => $children) {
-                if ($model != $this->name) {
-                    $models[$this->name][] = $model;
-                }
-            }
-            $models = array_unique($models[$this->name]);
-
-            $unbind = array ();
-
-            $relations = array (
-                'belongsTo',
-                'hasOne',
-                'hasMany',
-                'hasAndBelongsToMany'
-            );
-
-            foreach ($relations as $relation) {
-                if (isset ($this-> $relation)) {
-                    foreach ($this-> $relation as $name => $currentModel) {
-                        if (!in_array($name, $models)) {
-                            $unbind[$relation][] = $name;
-                        }
-                    }
-                }
-            }
-
-            if (count($unbind) > 0) {
-                $this->unbindModel($unbind);
-            }
-        }
+    private function deSanitize($field) {
+    	$replacements = array (
+			"&",
+			"%",
+			"<",
+			">",
+			'"',
+			"'",
+			"(",
+			")",
+			"+",
+			"-"
+		);
+		$patterns = array (
+			"/\&amp;/",
+			"/\&#37;/",
+			"/\&lt;/",
+			"/\&gt;/",
+			"/\&quot;/",
+			"/\&#39;/",
+			"/\&#40;/",
+			"/\&#41;/",
+			"/\&#43;/",
+			"/\&#45;/"
+		);
+		
+		return preg_replace($patterns, $replacements, $field);
     }
+
+	
+}
+
+/**
+ * q: Why is this in the app_model file?
+ * a: Because we couldn't really think of a better place.
+ *    Suggestions are most welcome.
+ */
+class WebExtractor {
+	/**
+	 * This function fetches urls, trying curl and file_get_contents
+	 * 
+	 *  using code by lars.strojny - http://code.google.com/p/noserub/issues/detail?id=167
+	 */
+	public function fetchUrl($url){
+		if (!ini_get('allow_url_fopen')) {
+			if (!function_exists('curl_init')) {
+				throw new RuntimeException('allow_url_fopen disabled and curl not available - No possibility to fetch external resources.');
+			} else {
+				$curl = curl_init($url);
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+				$content = curl_exec($curl);
+				curl_close($curl);
+				return $content;
+			}
+		} else {
+			return @file_get_contents($url);
+		}
+	}
 }

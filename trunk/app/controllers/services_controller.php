@@ -1,4 +1,4 @@
 <?php
 class ServicesController extends AppController {
-    var $uses = array('Service');
+    public $uses = array('Service');
 }
