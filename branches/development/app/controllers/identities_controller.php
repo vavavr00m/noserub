@@ -59,9 +59,6 @@ class IdentitiesController extends AppController {
             # don't display local contacts to anyone else, but the owner
             $data = null;
         } else {
-            # the following line should not be neccessary! It worked locally and on
-            # preview.noserub.com, but not on identoo.com
-            $this->Identity->recursive = 2;
         	$this->Identity->contain(array('Location', 'Account', 'Account.Service', 'Account.ServiceType'));
             $data = $this->Identity->find(array('username'  => $username,
                                                 'is_local'  => 1,
