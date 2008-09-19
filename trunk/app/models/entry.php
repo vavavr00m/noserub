@@ -133,7 +133,7 @@ class Entry extends AppModel {
                 'service_type_id' => $service_type_id,
                 'published_on'    => $item['datetime'],
                 'title'           => $item['title'] ? $item['title'] : '',
-                'url'             => $item['url'],
+                'url'             => $item['url'] ? $item['url'] : '',
                 'content'         => $item['content'] ? $item['content'] : '',
                 'restricted'      => !$frontpage_updates
             );
