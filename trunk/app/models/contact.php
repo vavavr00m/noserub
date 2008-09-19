@@ -85,7 +85,7 @@ class Contact extends AppModel {
         
         $tags = join(' ', $result);
         $result = $this->NoserubContactType->extract($tags);
-        return $this->ContactType->extract($result);
+        return $this->ContactType->extract($identity_id, $result);
     }
     
     /**

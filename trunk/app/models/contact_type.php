@@ -12,13 +12,25 @@ class ContactType extends AppModel {
 	 * @param array $new_tag 
 	 * @return array of contact type ids and cleaned up tags
 	 */
-	public function extract($tags) {
+	public function extract($identity_id, $tags) {
 	    $ids = array();
 	    $remaining_tags = array();
 	    foreach($tags['tags'] as $tag) {
 	        if($tag) {
 	            $this->contain();
-	            $data = $this->findByName($tag, array('id', 'name'));
+	            
+	            $data = $this->find(
+	                'first',
+	                array(
+	                    'conditions' => array(
+	                        'identity_id' => $identity_id,
+	                        'name'        => $tag,
+	                    ),
+	                    'fields' => array(
+	                        'id', 'name'
+	                    )
+	                )
+	            );
                 if($data) {
                     $ids[$data['ContactType']['id']] = $data['ContactType']['name'];
                 } else {
