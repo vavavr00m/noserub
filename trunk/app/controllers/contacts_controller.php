@@ -448,9 +448,11 @@ class ContactsController extends AppController {
             'identity_id' => $contact_ids
         );
         $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
-        usort($items, 'sort_items');
-        $items = $this->cluster->create($items);
-                
+        if($items) {
+            usort($items, 'sort_items');
+            $items = $this->cluster->create($items);
+        }
+    
         $this->set('items', $items);
         $this->set('identities', $contacts);
         $this->set('filter', $filter);
