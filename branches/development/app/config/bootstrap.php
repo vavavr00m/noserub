@@ -51,7 +51,7 @@ if(file_exists(APP . '/config/noserub.php')) {
 }
 
 if(defined('NOSERUB_FULL_BASE_URL')) {
-    define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . NOSERUB_FULL_BASE_URL . '(http://noserub.com/)');
+    define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . NOSERUB_FULL_BASE_URL . ' (http://noserub.com/)');
 } else {
     define('NOSERUB_USER_AGENT', 'NoseRub bot from unknown host (http://noserub.com/)');
 }
