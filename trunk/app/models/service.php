@@ -253,6 +253,7 @@ class Service extends AppModel {
     	App::import('Vendor', 'simplepie'.DS.'simplepie');
         $feed = new SimplePie();
         $feed->set_feed_url($feed_url);
+        $feed->set_useragent(NOSERUB_USER_AGENT);
         $feed->enable_cache(false);
         
         $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
