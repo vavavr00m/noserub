@@ -1,9 +1,9 @@
 <?php
     $url = Router::url('/' . $session_identity['local_username']);
     if(NOSERUB_USE_CDN) {
-        $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
+        $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . $url . '/feeds/';
     } else {
-        $feed_url = $url . '/feeds/';
+        $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';
     } 
 ?>
 <?php $flashmessage->render(); ?>
@@ -59,7 +59,7 @@
     <fieldset>
         <legend>
             If you want a feed with all your updates being available at 
-            <?php echo NOSERUB_FULL_BASE_URL . $feed_url; ?>(rss|js|sphp)
+            <?php echo $feed_url; ?>(rss|js|sphp)
             please enable the following option.
         </legend>
         <?php echo $form->checkbox('Identity.generic_feed'); ?> Enable generic feed
