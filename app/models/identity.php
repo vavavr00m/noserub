@@ -132,6 +132,7 @@ class Identity extends AppModel {
                       'birthday'          => '1900-01-01',
                       'sex'               => 0,
                       'frontpage_updates' => 0,
+                      'generic_feed'      => 0,
                       'security_token'    => '');
         $saveable = array_keys($data);
         $saveable[] = 'modified';
@@ -193,11 +194,11 @@ class Identity extends AppModel {
     }
 
     /**
-     * Returns the contacts of the specified identity, ordered by last activity.
+     * Returns the contacts of the specified identity, ordered by created
      */
     public function getContacts($identityId, $limit = null) {
         $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
-		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.last_activity DESC', $limit);
+		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.created DESC', $limit);
 		
 		return $contacts;
     }
@@ -214,7 +215,7 @@ class Identity extends AppModel {
 
 			$this->contain();
 			$mutualContacts = $this->find('all', array('conditions' => array('Identity.id IN (' . $mutualContactsIds . ')'),
-													   'order' => array('Identity.last_activity DESC'),
+													   'order' => array('Identity.created DESC'),
 													   'limit' => $limit));
 			
 			return $mutualContacts;
@@ -546,40 +547,6 @@ class Identity extends AppModel {
         return $result;
     }
     
-    
-    /**
-     * if Identity.last_activity is before $datetime, it is updated in the
-     * database.
-     */
-    public function updateLastActivity($datetime = null, $identity_id = null) {
-        if($datetime === null) {
-            # no datetime set, use now
-            $datetime = date('Y-m-d H:i:s');
-        } else {
-            # make sure we have datetime and not only date or something like that
-            $datetime = date('Y-m-d H:i:s', strtotime($datetime));
-        
-            # get now
-            $now = date('Y-m-d H:i:s');
-        
-            if($datetime > $now) {
-                # don't allow "last_activity" to be in the future
-                return;
-            }
-        }
-        
-        # get the current value
-        if($identity_id) {
-            $this->id = $identity_id;
-        }
-        
-        $last_activity = $this->field('Last_activity');
-        if($last_activity < $datetime) {
-            # set the new datetime
-            $this->saveField('last_activity', $datetime);
-        }
-    }
-
     /**
      * Updates the security token for given $identity_id
      *
@@ -659,7 +626,7 @@ class Identity extends AppModel {
             'id', 'is_local', 'password', 'openid', 'openid_identity', 
             'openid_server_url', 'email', 'last_location_id', 
             'api_hash', 'api_active', 'hash', 'security_token',
-            'last_activity', 'last_sync', 'created', 'modified',
+            'last_generic_feed_upload', 'last_sync', 'created', 'modified',
             'local_username', 'single_username', 'namespace',
             'local', 'servername', 'name', 'overview_filters',
             'frontpage_updates', 'allow_emails'

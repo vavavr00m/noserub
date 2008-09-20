@@ -534,7 +534,7 @@ class ContactsController extends AppController {
             'WithIdentity.username NOT LIKE "%@%"'
         );
     	$data = $this->Contact->find('all', array('conditions' => $conditions,
-    											  'order' => array('WithIdentity.last_activity DESC')));   
+    											  'order' => array('WithIdentity.created DESC')));   
         
         $contacts = array();
         foreach($data as $item) {
