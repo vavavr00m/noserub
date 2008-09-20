@@ -24,7 +24,6 @@ class SyndicationsController extends AppController {
                 $hash = 'generic';
             }
         }
-        
         if($extension && isset($feed_types[$extension])) {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
@@ -66,7 +65,6 @@ class SyndicationsController extends AppController {
             }
             
             $this->set('data', $items);
-
             # decide, wether to render the feed directly,
             # or uploading it to the CDN.
             if(NOSERUB_USE_CDN) {
@@ -76,15 +74,15 @@ class SyndicationsController extends AppController {
                 if($datetime_newest_item > $datetime_last_upload) {
                     # we need to upload
                     foreach($feed_types as $feed_type => $mime_type) {
-                        ob_start();                
                         $this->layout = 'feed_' . $feed_type;
-                        $this->render('feed');
-                        $content = ob_get_contents();
+                        $content = $this->render('feed');
                         if($hash === 'generic') {
-                            $hash = md5('generic' . $identity['Identity']['id']);
+                            $hash = $identity['Identity']['local_username'];
                         }
-                        $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
-                        ob_end_clean();
+                        if($content) {
+                            $this->cdn->writeContent('feeds/'.$hash.'.'.$feed_type, $mime_type, $content);
+                        }
+                        $this->output = ''; 
                     }                
                 } 
                 return true;
@@ -313,9 +311,11 @@ class SyndicationsController extends AppController {
 
         if(!NOSERUB_USE_CDN) {
             # we don't need to do any upload
+            $this->layout = 'shell';
+            $uploaded[] = 'none - no CDN defined in noserub.php';
             $this->set('uploaded', $uploaded);
             $this->render();
-            exit;
+            return;
         }
         
         # I do this like this and not through a LIMIT of 250, because
@@ -325,31 +325,76 @@ class SyndicationsController extends AppController {
             $last_upload = date('Y-m-d H:i:s', strtotime('-15 minutes'));
             
             $this->Syndication->contain();
-            $data = $this->Syndication->find('all', array('conditions' => array('Syndication.last_upload <' => $last_upload),
-            											  'order' => array('Syndication.last_upload ASC', 'Syndication.modified DESC'),
-            											  'limit' => 1));
-            foreach($data as $item) {
+            $data = $this->Syndication->find(
+                'first', 
+                array(
+                    'conditions' => array(
+                        'Syndication.last_upload <' => $last_upload
+                    ),
+            		'order' => array(
+            		    'Syndication.last_upload ASC', 
+            		    'Syndication.modified DESC'
+            		)
+            	)
+            );
+            if($data) {
                 # save the old last_update timestamp
-                $datetime_last_upload = $item['Syndication']['last_upload'];
+                $datetime_last_upload = $data['Syndication']['last_upload'];
                 
                 # set the last_upload right now, so a parallel running task
                 # would not get it, while we are uploading the data
-                $this->Syndication->id = $item['Syndication']['id'];
+                $this->Syndication->id = $data['Syndication']['id'];
                 $this->Syndication->saveField('last_upload', date('Y-m-d H:i:s'));
                 
                 # call the internal method
                 # it's not important which feed_type we want, as all
                 # available will be created and being uploaded
-                if($this->feed($item['Syndication']['hash'].'.rss', true, $datetime_last_upload)) {
-                    $uploaded[] = $item['Syndication']['hash'];
+                if($this->feed($data['Syndication']['hash'].'.rss', true, $datetime_last_upload)) {
+                    $uploaded[] = $data['Syndication']['hash'];
                 } else {
                     # in this case, we need to set the old timestamp again. because it could
                     # happen, that a rss feed is updated some time after now, but with an item
                     # older than now.
-                    $this->Syndication->id = $item['Syndication']['id'];
+                    $this->Syndication->id = $data['Syndication']['id'];
                     $this->Syndication->saveField('last_upload', $datetime_last_upload);
                 }
             }
+            
+            # also upload a generic feed
+            $this->Syndication->Identity->contain();
+            $data = $this->Syndication->Identity->find(
+                'first',
+                array(
+                    'conditions' => array(
+                        'Identity.generic_feed' => 1,
+                        'Identity.last_generic_feed_upload <' => $last_upload
+                    ),
+                    'order' => 'Identity.last_generic_feed_upload ASC'
+                )
+            );
+            if($data) {
+                # save the old last_update timestamp
+                $datetime_last_upload = $data['Identity']['last_generic_feed_upload'];
+            
+                # set the last_upload right now, so a parallel running task
+                # would not get it, while we are uploading the data
+                $this->Syndication->Identity->id = $data['Identity']['id'];
+                $this->Syndication->Identity->saveField('last_generic_feed_upload', date('Y-m-d H:i:s'));
+            
+                # call the internal method
+                # it's not important which feed_type we want, as all
+                # available will be created and being uploaded
+                $this->params['username'] = $data['Identity']['username'];
+                if($this->feed('rss', true, $datetime_last_upload)) {
+                    $uploaded[] = $data['Identity']['username'];
+                } else {
+                    # in this case, we need to set the old timestamp again. because it could
+                    # happen, that a rss feed is updated some time after now, but with an item
+                    # older than now.
+                    $this->Syndication->Identity->id = $data['Identity']['id'];
+                    $this->Syndication->Identity->saveField('last_generic_feed_upload', $datetime_last_upload);
+                }
+            }    
         }
         $this->layout = 'shell';
         $this->set('uploaded', $uploaded);
