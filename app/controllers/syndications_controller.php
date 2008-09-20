@@ -287,7 +287,7 @@ class SyndicationsController extends AppController {
         # look for the generic feeds
         if($identity['Identity']['generic_feed']) {
             if(NOSERUB_USE_CDN) {
-                $feed_url .= md5('generic' . $identity_id) . '.';
+                $feed_url .= $identity['Identity']['local_username'] . '.';
             }
             $data[] = array(
                 'Syndication' => array(
