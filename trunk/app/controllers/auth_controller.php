@@ -11,7 +11,6 @@ App::import('Vendor', 'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'))
 class AuthController extends AppController {
 	const SESSION_KEY_FOR_LAST_OPENID_REQUEST = 'Noserub.lastOpenIDRequest';
 	const SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST = 'Noserub.authenticatedOpenIDRequest';
-	const OPENID_ENDPOINT_URL = '/auth';
 	public $uses = array('OpenidSite');
 	public $helpers = array('Nicesreg');
 	
@@ -33,7 +32,7 @@ class AuthController extends AppController {
 					
 					if ($identity['username'] == $requestIdentity) {
 						if ($request->immediate) {
-							$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
+							$response = $request->answer(true, $this->getEndPointUrl());
 						} else {
 							$this->Session->write(self::SESSION_KEY_FOR_AUTHENTICATED_OPENID_REQUEST, $request);
 							$this->redirect('/auth/trust');
@@ -43,7 +42,7 @@ class AuthController extends AppController {
 					}
 				} else {
 					if ($request->immediate) {
-						$response = $request->answer(false, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
+						$response = $request->answer(false, $this->getEndPointUrl());
 					} else {
 						$this->Session->write(self::SESSION_KEY_FOR_LAST_OPENID_REQUEST, $request);
 						$this->redirect('/pages/login/');
@@ -70,7 +69,7 @@ class AuthController extends AppController {
 
 			if (isset($openidSite['OpenidSite']['allowed']) && $openidSite['OpenidSite']['allowed']) {
 				$this->Session->delete($sessionKey);
-				$response = $request->answer(true, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
+				$response = $request->answer(true, $this->getEndPointUrl());
 				$this->addSRegDataToResponse($response, $sregRequest, $openidSite);
 				
 				$this->renderResponse($response);
@@ -89,7 +88,7 @@ class AuthController extends AppController {
 					$this->OpenidSite->save();
 				}
 
-				$response = $request->answer($answer, FULL_BASE_URL . self::OPENID_ENDPOINT_URL);
+				$response = $request->answer($answer, $this->getEndPointUrl());
 
 				if ($answer) {
 					$this->addSRegDataToResponse($response, $sregRequest, $this->data);
@@ -120,6 +119,10 @@ class AuthController extends AppController {
 
 		$sregResponse = Auth_OpenID_SRegResponse::extractResponse($sregRequest, $data);
 		$sregResponse->toMessage($response->fields);
+	}
+	
+	private function getEndPointUrl() {
+		return 'http://' . env('HTTP_HOST') . '/auth';
 	}
 	
 	private function getOpenIDRequest($server) {
