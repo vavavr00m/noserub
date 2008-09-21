@@ -122,4 +122,4 @@ define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
  * dirk.olbertz@gmail.com for listing on that page and set the following
  * value to 'true'
  */
-define('NOSERUB_API_INFO_ACTIVE', true);
+define('NOSERUB_API_INFO_ACTIVE', false);
