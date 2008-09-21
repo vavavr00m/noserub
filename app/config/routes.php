@@ -79,6 +79,7 @@ Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('contro
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
+Router::connect('/search', array('controller' => 'searches', 'action' => 'index'));
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));

@@ -29,8 +29,8 @@ class MenuFactory {
 		$controller = $this->value($options, 'controller');
 		$action = $this->value($options, 'action');
 		
-		if (isset($options['is_local'])) {
-			if ($options['is_local'] === true) {
+		if(isset($options['is_local'])) {
+			if($options['is_local'] === true) {
 				$localUsername = $this->value($options, 'local_username');
 				$menuItems = $this->getMainMenuForLocalUser($controller, $action, $localUsername);
 			} else {
@@ -104,8 +104,9 @@ class MenuFactory {
 	
 	private function getMainMenuForAnonymousUser($controller, $action, $registrationType) {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
+		$menuItems[] = new SearchMenuItem($controller, $action);
 		
-		if ($registrationType == 'all') {
+		if($registrationType == 'all') {
 			$menuItems[] = new RegisterMenuItem($controller, $action);
 		}
 		
@@ -116,6 +117,7 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
+		$menuItems[] = new SearchMenuItem($controller, $action);
 		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
 		return $menuItems;
@@ -131,7 +133,7 @@ class MenuFactory {
 	private function getRegistrationType($options) {
 		$registrationType = '';
 		
-		if (!isset($options['registration_type'])) {
+		if(!isset($options['registration_type'])) {
 			$registrationType = NOSERUB_REGISTRATION_TYPE;
 		} else {
 			$registrationType = $options['registration_type'];
@@ -329,6 +331,25 @@ class SocialStreamMenuItem extends MenuItem {
 	
 	public function isActive() {
 		if ($this->controller == 'Identities' && $this->action == 'social_stream') {
+			return true;
+		}
+		
+		return false;
+	}
+}
+
+class SearchMenuItem extends MenuItem {
+	private $controller = null;
+	private $action = null;
+	
+	public function __construct($controller, $action) {
+		parent::__construct('Search', '/search/', false);
+		$this->controller = $controller;
+		$this->action = $action;
+	}
+	
+	public function isActive() {
+		if($this->controller == 'Searches') {
 			return true;
 		}
 		
