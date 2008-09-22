@@ -2,7 +2,7 @@
 
 class SearchesController extends AppController {
     public $uses = array('ServiceType', 'Entry');
-    
+    public $helpers = array('nicetime');
     public $components = array('cluster');
     
     /**
