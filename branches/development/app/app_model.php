@@ -53,17 +53,6 @@ class AppModel extends Model {
             foreach($item as $model => $attributes) {
                 if(!in_array($model, $this->sanitizeExclusion)) {
                     
-                    # add pound links again
-                    if($model == 'Task') {
-                        if(isset($attributes[0])) {
-                            foreach($attributes as $index => $attribute) {
-                                $data[$key][$model][$index]['description'] = Task::replaceLinkHooks($attribute['description']);
-                            }
-                        } else if(isset($attributes['description'])) {
-                            $attributes['description'] = Task::replaceLinkHooks($attributes['description']);
-                        }
-                    }
-                    
                     # de-sanitize for whatever purpose - we have to talk about this!
                     if (is_array($attributes)) {
                         foreach ($attributes as $fieldName => $field) {

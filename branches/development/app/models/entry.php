@@ -185,7 +185,14 @@ class Entry extends AppModel {
         if(isset($filter['identity_id'])) {
             $conditions['identity_id'] = $filter['identity_id'];
         }
-        
+        if(isset($filter['search']) && $filter['search']) {
+            $terms = split(' ', $filter['search']);
+            $search_conditions = array();
+            foreach($terms as $term) {
+                $search_conditions[] = '(Entry.title LIKE "%'.$term.'%" OR Entry.content LIKE "%'.$term.'%" OR Entry.url LIKE "%'.$term.'%")';
+            }
+            $conditions[] = '(' . join(' AND ', $search_conditions) . ')';
+        }
         if(!$with_restricted) {
             $conditions['restricted'] = 0;
         }
