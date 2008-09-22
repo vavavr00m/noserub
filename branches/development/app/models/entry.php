@@ -189,7 +189,7 @@ class Entry extends AppModel {
             $terms = split(' ', $filter['search']);
             $search_conditions = array();
             foreach($terms as $term) {
-                $search_conditions[] = '(Entry.title LIKE "%'.$term.'%" OR Entry.content LIKE "%'.$term.'%" OR Entry.url LIKE "%'.$term.'%")';
+                $search_conditions[] = '(Entry.title LIKE "%'.$term.'%" OR Entry.content LIKE "%'.$term.'%")';
             }
             $conditions[] = '(' . join(' AND ', $search_conditions) . ')';
         }
