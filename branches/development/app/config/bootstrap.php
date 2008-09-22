@@ -86,3 +86,9 @@ define('AVATAR_DIR', STATIC_DIR . 'avatars' . DS);
 function sort_items($a, $b) {
 	return $a['Entry']['published_on'] < $b['Entry']['published_on'];
 }
+
+function sort_accounts($a, $b) {
+    $a_val = $a['Service']['id'] == 8 ? $a['title'] : $a['Service']['name'];
+    $b_val = $b['Service']['id'] == 8 ? $b['title'] : $b['Service']['name'];
+    return strtolower($a_val) > strtolower($b_val);
+}
