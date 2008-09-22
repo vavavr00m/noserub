@@ -103,6 +103,20 @@
         
         <hr class="clear" />
         
+        <?php if($relationship_status == 'self') { ?>
+            <h4>What are you doing?</h4>
+            <form action="<?php echo $this->here; ?>" method="post">
+                <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+                <fieldset>
+                    <div class="input micropublish">
+                        <?php echo $form->textarea('Micropublish/value'); ?>
+                        <input class="submitbutton" type="submit" value="Send"/>
+                    </div>
+                </fieldset>
+            </form>
+            <hr class="clear" />
+        <?php } ?>
+        
         <?php if($data['Identity']['about']) { ?>
             <h4>About <?php echo Sex::himOrHer($data['Identity']['sex']); ?></h4>
             <div id="about">

@@ -236,15 +236,34 @@ class Entry extends AppModel {
             $this->create();
             $this->save($data);
             
-            App::import('Model', 'Xmpp');
-            $this->Xmpp = new Xmpp();
-            $message = $this->getMessage($data);
-            $this->Xmpp->broadcast($message);
+            #App::import('Model', 'Xmpp');
+            #$this->Xmpp = new Xmpp();
+            #$message = $this->getMessage($data);
+            #$this->Xmpp->broadcast($message);
     
             return true;
         } else {
             return false;
         }
+    }
+    
+    public function addMicropublish($identity_id, $value, $restricted = false) {
+        $value = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        $data = array(
+            'identity_id' => $identity_id,
+            'account_id'  => 0,
+            'service_type_id' => 5,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $value,
+            'url'             => '',
+            'content'         => $value,
+            'restricted'      => $restricted
+        );
+        
+        $this->create();
+        $this->save($data);
+        
+        return true;
     }
     
     /**
