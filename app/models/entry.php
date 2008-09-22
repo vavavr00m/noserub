@@ -249,6 +249,14 @@ class Entry extends AppModel {
     
     public function addMicropublish($identity_id, $value, $restricted = false) {
         $value = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        
+        # cut after 160 chars
+        $value = substr($value, 0, 160);
+        
+        # make links clickable
+        $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
+        $value = preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", $value);
+        
         $data = array(
             'identity_id' => $identity_id,
             'account_id'  => 0,
