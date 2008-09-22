@@ -25,10 +25,14 @@ class IdentitiesController extends AppController {
             $this->ensureSecurityToken();
             
             if(isset($this->data['Micropublish']['value'])) {
+                $this->Identity->id = $session_identity['id'];
+                $frontpage_updates = $this->Identity->field('frontpage_updates');
                 $this->Identity->Entry->addMicropublish(
                     $session_identity['id'], 
-                    $this->data['Micropublish']['value']
+                    $this->data['Micropublish']['value'],
+                    $frontpage_updates == 0
                 );
+                $this->data = array();
             } else {
                 # location was changed
                 $location_id = $this->data['Locator']['id'];
