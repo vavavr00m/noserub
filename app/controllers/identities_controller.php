@@ -218,7 +218,6 @@ class IdentitiesController extends AppController {
         } else {
         	$this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
             $this->set('newbies', $this->Identity->getNewbies(9));
-            #$this->set('data', $data);
             $this->set('identities', $identities);
             $this->set('items', $items);
             $this->set('filter', $filter);
