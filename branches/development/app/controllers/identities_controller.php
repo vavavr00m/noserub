@@ -24,19 +24,26 @@ class IdentitiesController extends AppController {
         if($this->data) {
             $this->ensureSecurityToken();
             
-            # location was changed
-            $location_id = $this->data['Locator']['id'];
-            if($location_id == 0 && $this->data['Locator']['name'] != '') {
-                # a new location must be created
-                $data = array('identity_id' => $session_identity['id'],
-                              'name'        => $this->data['Locator']['name']);
-                $this->Identity->Location->create();
-                $this->Identity->Location->save($data);
-                $location_id = $this->Identity->Location->id;
-            } 
-            if($location_id > 0) {
-                $this->Identity->Location->setTo($session_identity['id'], $location_id);                
-                $this->flashMessage('success', 'Location updated');
+            if(isset($this->data['Micropublish']['value'])) {
+                $this->Identity->Entry->addMicropublish(
+                    $session_identity['id'], 
+                    $this->data['Micropublish']['value']
+                );
+            } else {
+                # location was changed
+                $location_id = $this->data['Locator']['id'];
+                if($location_id == 0 && $this->data['Locator']['name'] != '') {
+                    # a new location must be created
+                    $data = array('identity_id' => $session_identity['id'],
+                                  'name'        => $this->data['Locator']['name']);
+                    $this->Identity->Location->create();
+                    $this->Identity->Location->save($data);
+                    $location_id = $this->Identity->Location->id;
+                } 
+                if($location_id > 0) {
+                    $this->Identity->Location->setTo($session_identity['id'], $location_id);                
+                    $this->flashMessage('success', 'Location updated');
+                }
             }
         }
 

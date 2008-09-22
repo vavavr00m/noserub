@@ -80,6 +80,14 @@ textarea {
 	margin-top: 10px;
 }
 
+.micropublish textarea {
+    width: 500px;
+	height: 28px;
+	line-height: 14px;
+	padding: 5px 10px 5px 10px;
+	vertical-align: middle;
+}
+
 #SyndicationAddForm ul, #IdentityDisplaySettingsForm ul {
 	padding: 0px;
 }
