@@ -96,6 +96,7 @@ class IdentitiesController extends AppController {
                         $communications[] = $account;
                     }
                 }
+                usort($accounts, 'sort_accounts');
                 $this->set('accounts', $accounts);
                 $this->set('communications', $communications);
                 
