@@ -3,7 +3,7 @@
 ?>
 <form action="<?php echo $this->here; ?>" method="get">
     <fieldset>
-        <label>with all thes following words:</label>
+        <label>with all the following words:</label>
         <div class="input text">
             <input type="text" size="64" name="q" value="<?php echo $q; ?>">
             <input class="submitbutton" type="submit" value="Go"/>
