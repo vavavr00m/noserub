@@ -108,6 +108,7 @@ class AuthController extends AppController {
 	}
 	
 	public function xrds() {
+		Configure::write('debug', 0);
 		$this->layout = 'xml';
 		header('Content-type: application/xrds+xml');
 		$this->set('server', Router::url('/'.low($this->name), true));
