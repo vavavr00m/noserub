@@ -672,6 +672,7 @@ class IdentitiesController extends AppController {
     }
     
     public function yadis() {
+    	Configure::write('debug', 0);
     	$this->layout = 'xml';
     	header('Content-type: application/xrds+xml');
 		$this->set('server', Router::url('/', true));
