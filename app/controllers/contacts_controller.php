@@ -406,6 +406,17 @@ class ContactsController extends AppController {
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
+        if(isset($this->data['Micropublish']['value'])) {
+            $this->Contact->Identity->id = $session_identity['id'];
+            $frontpage_updates = $this->Contact->Identity->field('frontpage_updates');
+            $this->Contact->Identity->Entry->addMicropublish(
+                $session_identity['id'], 
+                $this->data['Micropublish']['value'],
+                $frontpage_updates == 0
+            );
+            $this->data = array();
+        }
+        
         $tag_filter = $this->Session->read('Filter.Contact.Tag');
         if(!$tag_filter) {
             $tag_filter = 'all';
@@ -450,6 +461,9 @@ class ContactsController extends AppController {
         }
 
         $contact_ids = Set::extract($contacts, '{n}.id');
+        # extend it by identity_id of the user that is currently seen
+        $contact_ids[] = $about_identity['id'];
+        
         # get last 100 items
         $conditions = array(
             'filter'      => $filter,
@@ -464,6 +478,7 @@ class ContactsController extends AppController {
         $this->set('items', $items);
         $this->set('identities', $contacts);
         $this->set('filter', $filter);
+        $this->set('session_identity', $session_identity);
         $this->set('about_identity', $about_identity);
         $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');

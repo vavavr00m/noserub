@@ -231,7 +231,7 @@ class MyContactsMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername) {
-		parent::__construct('My Contacts', '/' . $localUsername . '/network/', false);
+		parent::__construct('With my Contacts', '/' . $localUsername . '/network/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
