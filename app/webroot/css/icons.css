@@ -60,6 +60,10 @@ li.text { /* li element avoids conflict with text classes automatically set by c
 	background: transparent url(../images/icons/network/location.gif) no-repeat center left;
 }
 
+.noserub {
+	background: transparent url(../images/icons/network/noserub.gif) no-repeat center left;
+}
+
 /* portal */
 
 .edit {

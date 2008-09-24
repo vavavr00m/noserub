@@ -86,6 +86,7 @@ class MenuFactory {
 		$menuItems[] = new MenuItem('Events', $urlPart.'event/', $filter == 'event');
 		$menuItems[] = new MenuItem('Documents', $urlPart.'document/', $filter == 'document');
 		$menuItems[] = new MenuItem('Locations', $urlPart.'location/', $filter == 'location');
+		$menuItems[] = new MenuItem('NoseRub', $urlPart.'noserub/', $filter == 'noserub');
 		
 		return $menuItems;
 	}

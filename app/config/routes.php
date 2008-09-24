@@ -133,7 +133,10 @@ Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
 Router::connect('/jobs/:admin_hash/xmpp/start', array('controller' => 'xmpp', 'action' => 'shell_run'));
-    
+
+Router::connect('/jobs/cron/:cron_hash/identities/sync/all/', array('controller' => 'identities', 'action' => 'cron_sync_all'));
+Router::connect('/jobs/cron/:cron_hash/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'cron_update'));
+
 /**
  * Shell routes that can only be accessed through the shell_dispatcher
  */ 

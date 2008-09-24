@@ -29,6 +29,23 @@ define('NOSERUB_FULL_BASE_URL', 'http://');
 define('NOSERUB_ADMIN_HASH', '');
 
 /**
+ * Similar to NOSERUB_ADMIN_HASH, but only used
+ * for some cronjob routes that can called by URL with this
+ * hash. Only needed, if you install NoseRub on a server
+ * without access to the crontab.
+ *
+ * Don't use the same value for NOSERUB_ADMIN_HASH and NOSERUB_CRON_HASH!
+ *
+ * The URLs for these cronjobs are:
+ * NOSERUB_FULL_BAS_URL/jobs/cron/NOSERUB_CRON_HASH/identities/sync/all/
+ * NOSERUB_FULL_BAS_URL/jobs/cron/NOSERUB_CRON_HASH/cache/feed/refresh/
+ *
+ * These cronjobs can take some time to finish, so you might run into
+ * problems with timeouts of the webserver you're using.
+ */
+define('NOSERUB_CRON_HASH', '');
+
+/**
  * If set to "false", NoseRub will update the entries
  * for an account whenever you go to a user's page.
  * For better performance, you should set this to
