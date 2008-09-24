@@ -300,4 +300,9 @@ class Entry extends AppModel {
         
         return $intro;
     }
+    
+    public function updateRestriction($identity_id, $restricted) {
+        $sql = 'UPDATE ' . $this->tablePrefix . 'entries SET restricted=' . $restricted . ' WHERE identity_id=' . $identity_id;
+        $this->query($sql);
+    }
 }
