@@ -447,8 +447,15 @@ class IdentitiesController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
             
-            $saveable = array('frontpage_updates', 'allow_emails');
+            # get the frontpage update, so we know if anything changed
             $this->Identity->id = $session_identity['id'];
+            $frontpage_updates = $this->Identity->field('frontpage_updates');
+            
+            if($frontpage_updates != $this->data['Identity']['frontpage_updates']) {
+                $this->Identity->Entry->updateRestriction($session_identity['id'], $frontpage_updates == 1 ? 1 : 0);
+            }
+            # ssave all settings
+            $saveable = array('frontpage_updates', 'allow_emails');
             $this->Identity->save($this->data, true, $saveable);
             
             $this->flashMessage('success', 'Privacy settings have been saved.');
