@@ -220,7 +220,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
 		$this->assertMenuItem($menuItems[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
-		$this->assertMenuItem($menuItems[2], 'My Contacts', '/' . $localUsername . '/network/', $myContactsActive);
+		$this->assertMenuItem($menuItems[2], 'With my Contacts', '/' . $localUsername . '/network/', $myContactsActive);
 		$this->assertMenuItem($menuItems[3], 'Settings', '/' . $localUsername . '/settings/',$settingsActive);
 	}
 	
@@ -377,7 +377,7 @@ class MyContactsMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $username, $isActive) {
-		$this->assertEqual('My Contacts', $menuItem->getLabel());
+		$this->assertEqual('With my Contacts', $menuItem->getLabel());
 		$this->assertEqual('/'.$username.'/network/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
