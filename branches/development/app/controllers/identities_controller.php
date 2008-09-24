@@ -678,6 +678,22 @@ class IdentitiesController extends AppController {
         $this->render('jobs_sync_all');
     }
     
+    public function cron_sync_all() {
+        $cron_hash= isset($this->params['cron_hash'])  ? $this->params['cron_hash'] : '';
+        
+        if($cron_hash != NOSERUB_CRON_HASH ||
+           $cron_hash == '') {
+            # there is nothing to do for us here
+            $this->set('data', 'Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!');
+            $this->render('jobs_sync_all');
+            return;
+        }
+        
+        $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
+        $this->jobs_sync_all();
+        $this->render('jobs_sync_all');
+    }
+    
     public function yadis() {
     	Configure::write('debug', 0);
     	$this->layout = 'xml';

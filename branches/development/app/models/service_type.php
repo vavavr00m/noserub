@@ -4,15 +4,18 @@
 class ServiceType extends AppModel {
     public $belongsTo = array('Service');                                                   
 
-    private $allowedFilters = array('photo'        => 'Photos',
-	                            'video'        => 'Videos',
-	                            'audio'        => 'Audio',
-	                            'link'         => 'Link',
-	                            'text'         => 'Text',
-	                            'micropublish' => 'Micropublish',
-	                            'event'        => 'Event',
-	                            'document'     => 'Documents',
-	                            'location'     => 'Locations');
+    private $allowedFilters = array(
+        'photo'        => 'Photos',
+	    'video'        => 'Videos',
+	    'audio'        => 'Audio',
+	    'link'         => 'Link',
+	    'text'         => 'Text',
+	    'micropublish' => 'Micropublish',
+	    'event'        => 'Event',
+	    'document'     => 'Documents',
+	    'location'     => 'Locations',
+	    'noserub'      => 'NoseRub'
+	);
 	                            
 	public function sanitizeFilter($filter) {
 		$sanitizedFilter = false;

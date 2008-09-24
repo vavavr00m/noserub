@@ -258,9 +258,27 @@ class Entry extends AppModel {
         $value = preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", $value);
         
         $data = array(
-            'identity_id' => $identity_id,
-            'account_id'  => 0,
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
             'service_type_id' => 5,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $value,
+            'url'             => '',
+            'content'         => $value,
+            'restricted'      => $restricted
+        );
+        
+        $this->create();
+        $this->save($data);
+        
+        return true;
+    }
+    
+    public function addNoserub($identity_id, $value, $restricted = false) {
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'service_type_id' => 0,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $value,
             'url'             => '',

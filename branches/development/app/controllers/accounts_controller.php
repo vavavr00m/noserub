@@ -270,6 +270,9 @@ class AccountsController extends AppController {
             $this->redirect('/');
         }
 
+        #$value = 'added <strong></strong> to his profile
+        #$this->Account->Entry->addNoserub($identity_id, $value, $restricted = false)
+        
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
             $this->flashMessage('success', 'Account added.');
