@@ -135,7 +135,7 @@ class MenuFactory {
 		$registrationType = '';
 		
 		if(!isset($options['registration_type'])) {
-			$registrationType = NOSERUB_REGISTRATION_TYPE;
+			$registrationType = defined('NOSERUB_REGISTRATION_TYPE') && NOSERUB_REGISTRATION_TYPE;
 		} else {
 			$registrationType = $options['registration_type'];
 		}

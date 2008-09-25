@@ -815,7 +815,8 @@ class IdentitiesController extends AppController {
 	}
 	
 	/**
-     * used to return number of registered, active users
+     * used to return number of registered, active users, and some other
+     * values.
      */
     public function api_info() {
         if(defined('NOSERUB_API_INFO_ACTIVE') && NOSERUB_API_INFO_ACTIVE) {
@@ -826,8 +827,14 @@ class IdentitiesController extends AppController {
                 'hash'     => '',
                 'NOT username LIKE "%@"'
             );
+            App::import('Model', 'Admin');
+            $Admin = new Admin;
+            $restricted_hosts = defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') ? NOSERUB_REGISTRATION_RESTRICTED_HOSTS : false;
             $data = array(
-                'num_users' => $this->Identity->find('count', array('conditions' => $conditions))
+                'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
+                'registration_type' => defined('NOSERUB_REGISTRATION_TYPE') ? NOSERUB_REGISTRATION_TYPE : 'unknown',
+                'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
+                'migration' => $Admin->getCurrentMigration()
             );
         } else {
             $data = array();
