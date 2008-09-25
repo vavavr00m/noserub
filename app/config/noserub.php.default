@@ -137,6 +137,16 @@ define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
  * If you want your server being displayed on http://noserub.com/sites
  * and display the number of your registered users there, please contact
  * dirk.olbertz@gmail.com for listing on that page and set the following
- * value to 'true'
+ * value to 'true'.
+ *
+ * Beside the number of users on your site, this method also transfers
+ * the settings NOSERUB_REGISTRATION_RESTRICTED_HOSTS and 
+ * NOSERUB_REGISTRATION_TYPE to noserub.com. In addition, information about
+ * how up to date your installation is (id of newest database migration)
+ * gathered, so we know which versions are used out there.
+ *
+ * We don't send the content of NOSERUB_REGISTRATION_RESTRICTED_HOSTS, but
+ * only the information, if this setting is used. If so, your site will be
+ * flagged as "not public" on http://noserub.com/sites/.
  */
 define('NOSERUB_API_INFO_ACTIVE', false);

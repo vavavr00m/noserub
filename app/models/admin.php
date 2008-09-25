@@ -116,7 +116,6 @@ class Admin extends AppModel {
         if(!$filePresent) {
             return -1;
         }
-        
         uses('model' . DS . 'connection_manager');
     	$db = ConnectionManager::getInstance();
      	$connected = $db->getDataSource('default');
