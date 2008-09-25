@@ -37,8 +37,8 @@ define('NOSERUB_ADMIN_HASH', '');
  * Don't use the same value for NOSERUB_ADMIN_HASH and NOSERUB_CRON_HASH!
  *
  * The URLs for these cronjobs are:
- * NOSERUB_FULL_BAS_URL/jobs/cron/NOSERUB_CRON_HASH/identities/sync/all/
- * NOSERUB_FULL_BAS_URL/jobs/cron/NOSERUB_CRON_HASH/cache/feed/refresh/
+ * NOSERUB_FULL_BASE_URL/jobs/cron/NOSERUB_CRON_HASH/identities/sync/all/
+ * NOSERUB_FULL_BASE_URL/jobs/cron/NOSERUB_CRON_HASH/cache/feed/refresh/
  *
  * These cronjobs can take some time to finish, so you might run into
  * problems with timeouts of the webserver you're using.
