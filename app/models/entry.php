@@ -247,24 +247,20 @@ class Entry extends AppModel {
         }
     }
     
-    public function addMicropublish($identity_id, $value, $restricted = false) {
-        $value = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    public function addMicropublish($identity_id, $text, $restricted = false) {
+        $text = htmlspecialchars(strip_tags($text), ENT_QUOTES, 'UTF-8');
+        $text = $this->shorten($text, 160);
         
-        # cut after 160 chars
-        $value = substr($value, 0, 160);
-        
-        # make links clickable
-        $pattern = '#(^|[^\"=]{1})(http://|https://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm';
-        $value = preg_replace($pattern,"\\1<a href=\"\\2\\3\"><u>\\2\\3</u></a>\\4", $value);
+        $with_markup = $this->micropublishMarkup($text);
         
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
             'service_type_id' => 5,
             'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $value,
+            'title'           => $with_markup,
             'url'             => '',
-            'content'         => $value,
+            'content'         => $text,
             'restricted'      => $restricted
         );
         
@@ -272,6 +268,65 @@ class Entry extends AppModel {
         $this->save($data);
         
         return true;
+    }
+    
+    /**
+     * adds html tags for links and @. also cuts after 160 chars.
+     *
+     * @param string $text
+     * 
+     * @return string
+     */
+    public function micropublishMarkup($text) {
+        # make links clickable
+        $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
+        $text = preg_replace($pattern,"<a href=\"\\1\">\\1</a>", $text);
+        
+        return $text;
+    }
+    
+    /**
+     * shortens a text to $max_length by shortening urls
+     * and cutting
+     *
+     * @param string $text
+     * @param int $max_length
+     *
+     * @return string
+     */
+    public function shorten($text, $max_length) {
+        if(strlen($text) > $max_length) {
+            $text = $this->shortenUrlInText($text);
+        }
+        
+        if(strlen($text) > $max_length) {
+            # cut after $max_length chars
+            $text = substr($text, 0, $max_length);
+        }
+        
+        return $text;
+    }
+    
+    /**
+     * shortens all urls in a given text
+     *
+     * @param string $text
+     * @param int $max_length
+     *
+     * @return string
+     */
+    public function shortenUrlInText($text) {
+        $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
+        if(preg_match_all($pattern, $text, $matches)) {
+            foreach($matches[0] as $url) {
+                $token = WebExtractor::fetchUrl('http://create.li.ttle.de/?url=' . urlencode($url));
+                $new_url = 'http://li.ttle.de/' . $token;
+                if(strlen($new_url) < strlen($url)) {
+                    $text = str_replace($url, $new_url, $text);
+                }
+            }
+        }
+        return $text;
     }
     
     public function addNoserub($identity_id, $value, $restricted = false) {
