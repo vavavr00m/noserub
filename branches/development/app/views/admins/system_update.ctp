@@ -2,8 +2,8 @@
 <?php $no_error = true; ?>
 <p id="message" class="info">
     Information about the current state of your NoseRub instance. Please
-    check back after each update you install, because new Defines may have
-    been introduced and/or changes in the Database structure been made.
+    check back after each update you install, because new constants may have
+    been introduced and/or changes in the database structure been made.
 </p>
 <h2>Extension</h2>
 <?php if(empty($extensions)) { ?>
@@ -15,9 +15,11 @@
     <p id="message" class="alert">
         Some extensions need to be fixed!
     </p>
-    <?php foreach($extensions as $extension => $reason) { ?>
-        <li><?php echo '<strong>' . $extension . '</strong>: ' . $reason; ?></li>
-    <?php } ?>
+    <ul>
+	    <?php foreach($extensions as $extension => $reason) { ?>
+	        <li><?php echo '<strong>' . $extension . '</strong>: ' . $reason; ?></li>
+	    <?php } ?>
+    </ul>
 <?php } ?>
 <h2>Directories</h2>
 <?php if(empty($directories)) { ?>
