@@ -427,7 +427,7 @@ class Identity extends AppModel {
         }
         $this->create();
         $data['Identity']['is_local'] = 1;
-        $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location';
+        $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
         	$data['Identity']['password'] = md5($data['Identity']['passwd']);
