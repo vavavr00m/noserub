@@ -7,6 +7,7 @@ class AccountsController extends AppController {
     public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
+         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -37,45 +38,60 @@ class AccountsController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
-            $need_redirect = false;
-            
-            # extract service_id and username from $data
-            $present_contact_accounts = array();
-            foreach($data as $item) {
-                if($item['Service']['is_contact']) {
-                    $present_contact_accounts[$item['Service']['id']] = array(
-                        'username'   => $item['Account']['username'],
-                        'account_id' => $item['Account']['id']);
+            if(isset($this->data['Identity']['twitter_username'])) {
+                # settings for the Twitter bridge have been made           
+                if(!isset($this->data['Identity']['twitter_bridge_active'])) {
+                    $this->data['Identity']['twitter_bridge_active'] = 0;
                 }
-            }
-            foreach($this->data['Service'] as $service_id => $item) {
-                # go through each given data and test, wether we already have
-                # account-data for it.
-                if(isset($present_contact_accounts[$service_id])) {
-                    if($item['username'] == '') {
-                        # account can be deleted
-                        $account_id = $present_contact_accounts[$service_id]['account_id'];
-                        $this->Account->id = $account_id;
-                        $this->Account->delete();
-                        $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
-                        $need_redirect = true;
-                    } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
-                        # username was changed!
-                        $this->Account->id = $present_contact_accounts[$service_id]['account_id'];
-                        $this->Account->saveField('username', $item['username']);
+                $saveable = array('twitter_bridge_active', 'twitter_username', 'twitter_password');
+                $this->Account->Identity->id = $session_identity['id'];
+                if($this->Account->Identity->save($this->data, false, $saveable)) {
+                    # also store in session
+                    $this->Session->write('Identity', $this->Account->Identity->read());
+                }
+                
+                $need_redirect = true;
+            } else {
+                $need_redirect = false;
+            
+                # extract service_id and username from $data
+                $present_contact_accounts = array();
+                foreach($data as $item) {
+                    if($item['Service']['is_contact']) {
+                        $present_contact_accounts[$item['Service']['id']] = array(
+                            'username'   => $item['Account']['username'],
+                            'account_id' => $item['Account']['id']);
+                    }
+                }
+                foreach($this->data['Service'] as $service_id => $item) {
+                    # go through each given data and test, wether we already have
+                    # account-data for it.
+                    if(isset($present_contact_accounts[$service_id])) {
+                        if($item['username'] == '') {
+                            # account can be deleted
+                            $account_id = $present_contact_accounts[$service_id]['account_id'];
+                            $this->Account->id = $account_id;
+                            $this->Account->delete();
+                            $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
+                            $need_redirect = true;
+                        } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
+                            # username was changed!
+                            $this->Account->id = $present_contact_accounts[$service_id]['account_id'];
+                            $this->Account->saveField('username', $item['username']);
+                            $need_redirect = true;
+                        }
+                    } else if($item['username']) {
+                        # new account needs to be created
+                        $new_account = array(
+                            'identity_id' => $session_identity['id'],
+                            'service_id'  => $service_id,
+                            'service_type_id' => $this->Account->Service->getServiceTypeId($service_id),
+                            'username'        => $item['username'],
+                            'account_url'     => $this->Account->Service->getAccountUrl($service_id, $item['username']));
+                        $this->Account->create();
+                        $this->Account->save($new_account, true, array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'created', 'modified'));
                         $need_redirect = true;
                     }
-                } else if($item['username']) {
-                    # new account needs to be created
-                    $new_account = array(
-                        'identity_id' => $session_identity['id'],
-                        'service_id'  => $service_id,
-                        'service_type_id' => $this->Account->Service->getServiceTypeId($service_id),
-                        'username'        => $item['username'],
-                        'account_url'     => $this->Account->Service->getAccountUrl($service_id, $item['username']));
-                    $this->Account->create();
-                    $this->Account->save($new_account, true, array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'created', 'modified'));
-                    $need_redirect = true;
                 }
             }
             if($need_redirect) {

@@ -49,3 +49,42 @@
         </fieldset>
     </form>
 </div>
+
+<?php if(!defined('NOSERUB_ALLOW_TWITTER_BRIDGE') || NOSERUB_ALLOW_TWITTER_BRIDGE) { ?>
+    <div class="left">
+        <hr class="space" />
+        <h2>Posting to Twitter.com</h2>
+        <p id="message" class="alert">
+           We will ask you here for your Twitter username and password in order 
+           to be able to send your micropublishing messages over to Twitter.com. 
+           <strong>This is a bad thing!</strong> If you installed NoseRub on your
+           own server, this is not <em>that</em> bad.<br />
+           Otherwise make yourself clear, that the admin of this server can see your
+           Twitter login credentials.<br />
+           If you want to know more about why this is bad, please read 
+           <a href="http://adactio.com/journal/1513/">this Article by Jeremy Keith</a>
+           and come to <a href="http://noserub.com/discuss/">our discussion group</a> to
+           discuss this issue!
+        </p>
+        <?php
+            $twitter_bridge_active = isset($session_identity['twitter_bridge_active']) ? $session_identity['twitter_bridge_active'] : 0;
+            $twitter_username      = isset($session_identity['twitter_username']) ? $session_identity['twitter_username'] : '';
+            $twitter_password      = isset($session_identity['twitter_password']) ? $session_identity['twitter_password'] : '';
+        ?>
+        <form method="POST" action="<?php echo $this->here; ?>">
+            <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+            <fieldset>
+                <input type="checkbox" name="data[Identity][twitter_bridge_active]" 
+        			<?php if($twitter_bridge_active == 1) { ?>
+                    	checked="checked"
+                    <?php } ?> 
+                    value = '1' /> Post my <em>what are you doing</em> entries to Twitter.com	
+        		<?php echo $form->input('Identity.twitter_username', array('label' => 'Twitter Username', 'value' => $twitter_username)); ?>
+        		<?php echo $form->input('Identity.twitter_password', array('label' => 'Twitter Password', 'value' => $twitter_password, 'type' => 'password')); ?>
+            </fieldset>
+            <fieldset>
+                <input class="submitbutton" type="submit" value="Save changes"/>
+            </fieldset>
+        </form>
+    </div>
+<?php } ?>

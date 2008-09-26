@@ -249,7 +249,7 @@ class Entry extends AppModel {
     
     public function addMicropublish($identity_id, $text, $restricted = false) {
         $text = htmlspecialchars(strip_tags($text), ENT_QUOTES, 'UTF-8');
-        $text = $this->shorten($text, 160);
+        $text = $this->shorten($text, 140);
         
         $with_markup = $this->micropublishMarkup($text);
         
@@ -266,6 +266,8 @@ class Entry extends AppModel {
         
         $this->create();
         $this->save($data);
+        
+        $this->sendToTwitter($identity_id, $text);
         
         return true;
     }
@@ -377,5 +379,54 @@ class Entry extends AppModel {
     public function updateRestriction($identity_id, $restricted) {
         $sql = 'UPDATE ' . $this->tablePrefix . 'entries SET restricted=' . $restricted . ' WHERE identity_id=' . $identity_id;
         $this->query($sql);
+    }
+    
+    /**
+     * send status to twitter 
+     *
+     * many thanks to laconi.ca for this code!
+     * can be found in lib/util.php there.
+     */
+    private function sendToTwitter($identity_id, $text) {   
+        if(defined('NOSERUB_ALLOW_TWITTER_BRIDGE') &&
+           !NOSERUB_ALLOW_TWITTER_BRIDGE) {
+            return;       
+        }
+        echo 'ups'; exit;
+        $fields = array(
+            'twitter_bridge_active', 
+            'twitter_username', 
+            'twitter_password'
+        );
+        $this->Identity->contain();
+        $data = $this->Identity->findById($identity_id, $fields);
+        if($data['Identity']['twitter_bridge_active'] != 1) {
+            return;
+        }
+             
+    	$twitter_username = $data['Identity']['twitter_username'];
+    	$twitter_password = $data['Identity']['twitter_password'];
+    	$uri = 'http://www.twitter.com/statuses/update.json';
+
+    	$options = array(
+    		CURLOPT_USERPWD 		=> $twitter_username . ':' . $twitter_password,
+    		CURLOPT_POST			=> true,
+    		CURLOPT_POSTFIELDS		=> array(
+    									'status'	=> $text,
+    									'source'	=> 'noserub'
+    									),
+    		CURLOPT_RETURNTRANSFER	=> true,
+    		CURLOPT_FAILONERROR		=> true,
+    		CURLOPT_HEADER			=> false,
+    		CURLOPT_FOLLOWLOCATION	=> true,
+    		CURLOPT_USERAGENT		=> NOSERUB_USER_AGENT,
+    		CURLOPT_CONNECTTIMEOUT	=> 20,  
+    		CURLOPT_TIMEOUT			=> 20
+    	);
+
+        # ignoring all error messages or return values...
+    	$ch = curl_init($uri);
+        curl_setopt_array($ch, $options);
+        curl_exec($ch);
     }
 }

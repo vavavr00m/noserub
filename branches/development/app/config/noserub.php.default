@@ -150,3 +150,10 @@ define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
  * flagged as "not public" on http://noserub.com/sites/.
  */
 define('NOSERUB_API_INFO_ACTIVE', false);
+
+/**
+ * If you, as the admin of this NoseRub installation do not feel
+ * comfortable with the Twitter Bridge, you can deactivate it here
+ * for every user on your site.
+ */
+define('NOSERUB_ALLOW_TWITTER_BRIDGE', true);
