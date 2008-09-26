@@ -123,6 +123,8 @@ Router::connect('/:username/settings/oauth/:consumer_id/delete/:security_token',
 Router::connect('/:username/settings/oauth/:consumer_id/edit/', array('controller' => 'oauth_consumers', 'action' => 'edit'));
 Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
 
+Router::connect('/:username/settings/omb', array('controller' => 'omb', 'action' => 'index'));
+
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
