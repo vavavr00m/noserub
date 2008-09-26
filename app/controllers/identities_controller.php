@@ -569,7 +569,13 @@ class IdentitiesController extends AppController {
     // this method hides the fact that two requests are necessary when login 
     // with an OpenID 
     private function loginWithOpenID() {
-    	$returnTo = $this->webroot.'pages/login';
+    	$protocol = 'http://';
+    	
+    	if (NOSERUB_USE_SSL) {
+    		$protocol = 'https://';
+    	}
+    	
+    	$returnTo = $protocol.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
     	
     	if (!empty($this->data)) {
     		$this->Session->write('OpenidLogin.remember', $this->data['Identity']['remember']);
@@ -704,8 +710,8 @@ class IdentitiesController extends AppController {
     private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
     	try {
     		$this->openid->authenticate($openid, 
-    									'http://'.$_SERVER['SERVER_NAME'].$returnTo, 
-    									$this->url->http('/'),
+    									$returnTo, 
+    									FULL_BASE_URL,
     									$required,
     									$optional);
     	} catch (InvalidArgumentException $e) {
@@ -732,7 +738,7 @@ class IdentitiesController extends AppController {
     }
     
     private function getOpenIDResponseIfSuccess($returnTo) {
-    	$response = $this->openid->getResponse('http://'.$_SERVER['SERVER_NAME'].$returnTo);
+    	$response = $this->openid->getResponse($returnTo);
     			
     	if ($response->status == Auth_OpenID_CANCEL) {
     		$this->Identity->invalidate('openid', 'verification_cancelled');
