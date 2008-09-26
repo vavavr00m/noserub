@@ -2,7 +2,7 @@
 
 class ServiceTypeTest extends CakeTestCase {
 	private $model;
-	private $existingFilters = array('photo', 'video', 'audio', 'link', 'text', 'micropublish', 'event', 'document', 'location');
+	private $existingFilters = array('photo', 'video', 'audio', 'link', 'text', 'micropublish', 'event', 'document', 'location', 'noserub');
 	
 	public function setUp() {
 		$this->model = new ServiceType();
