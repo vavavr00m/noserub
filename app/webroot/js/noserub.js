@@ -95,6 +95,7 @@ noserub.fn = noserub.prototype = {
     },
     
     Contacts_network: function() {
+        this.micropublish_char_count();
         this.social_stream_items();
     },
     
@@ -142,6 +143,13 @@ noserub.fn = noserub.prototype = {
             } else {
                 $(this).addClass('checked');
             }
+        });
+    },
+    
+    micropublish_char_count: function() {
+        $('#MicropublishValue').keyup(function(e) {
+            $('#MicropublishCount').html(140-this.value.length);
+            console.log(this.value.length);
         });
     }
 };

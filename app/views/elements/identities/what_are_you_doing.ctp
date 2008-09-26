@@ -1,4 +1,4 @@
-<h4>What are you doing?</h4>
+<h4>What are you doing? (<strong id="MicropublishCount">140</strong> chars left)</h4>
 <form action="<?php echo $this->here; ?>" method="post">
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
