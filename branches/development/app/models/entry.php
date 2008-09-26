@@ -392,7 +392,7 @@ class Entry extends AppModel {
            !NOSERUB_ALLOW_TWITTER_BRIDGE) {
             return;       
         }
-        echo 'ups'; exit;
+
         $fields = array(
             'twitter_bridge_active', 
             'twitter_username', 
