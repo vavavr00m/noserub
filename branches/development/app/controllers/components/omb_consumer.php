@@ -6,6 +6,7 @@ $path = $pathExtra . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
 App::import('Vendor', 'yadis', array('file' => 'Auth/Yadis/Yadis.php'));
+App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 define('OMB_VERSION', 'http://openmicroblogging.org/protocol/0.1');
 define('OMB_POST_NOTICE', OMB_VERSION.'/postNotice');
@@ -17,6 +18,8 @@ define('OAUTH_AUTHORIZE', OAUTH_VERSION.'/endpoint/authorize');
 define('OAUTH_ACCESS', OAUTH_VERSION.'/endpoint/access');
 
 class OmbConsumerComponent extends Object {
+	public $components = array('OauthConsumer', 'Session');
+	private $controller = null;
 	private $services = null;
 	
 	public function __construct() {
@@ -27,6 +30,54 @@ class OmbConsumerComponent extends Object {
 								OMB_VERSION,
 						  		OMB_POST_NOTICE,
 						  		OMB_UPDATE_PROFILE);
+	}
+	
+	public function startup($controller) {
+		$this->controller = $controller;
+	}
+	
+	public function redirectToAuthorizePage($endPoints, $identity) {
+		$requestToken = $this->OauthConsumer->getRequestToken('GenericOmb', 
+															  $endPoints[1][OAUTH_REQUEST], 
+															  'POST', 
+															  array('omb_version' => OMB_VERSION, 
+															  		'omb_listener' => $endPoints[0]));
+															  
+		$this->Session->write('requestToken', $requestToken);
+		
+		$consumer = $this->getConsumer();
+
+		// XXX identi.ca uses urls like /index.php?action=userauthorization which the OAuth library doesn't like
+		if (strpos($endPoints[1][OAUTH_AUTHORIZE], '?')) {
+			$authUrl = explode('?', $endPoints[1][OAUTH_AUTHORIZE]);
+			$authUrl = $authUrl[0];
+			$isIdentica = true;
+		} else {
+			$authUrl = $endPoints[1][OAUTH_AUTHORIZE];
+		}
+		
+		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
+		
+		$omb_subscribe = array('omb_version' => OMB_VERSION, 
+							   'omb_listener' => $endPoints[0], 
+							   'omb_listenee' => NOSERUB_FULL_BASE_URL, 
+							   'omb_listenee_profile' => 'http://'.$identity['username'], 
+							   'omb_listenee_nickname' => $identity['local_username'], 
+							   'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/');
+		
+		foreach ($omb_subscribe as $k => $v) {
+			$request->set_parameter($k, $v);
+		}
+		
+		$request->set_parameter('oauth_callback', NOSERUB_FULL_BASE_URL.'/'.$identity['local_username'].'/settings/omb/callback');
+		
+		if (isset($isIdentica)) {
+			$request->set_parameter('action', 'userauthorization');
+		}
+		
+		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
+		
+		$this->controller->redirect($request->to_url());
 	}
 	
 	public function discover($url) {
@@ -87,6 +138,13 @@ class OmbConsumerComponent extends Object {
 		}
 		
 		return false;
+	}
+	
+	private function getConsumer() {
+		App::import('File', COMPONENTS.'oauth_consumers'.DS.'generic_omb_consumer.php');
+		$ombConsumer = new GenericOmbConsumer();
+		
+		return $ombConsumer->getConsumer();
 	}
 	
 	private function getXrd($uri, $xrds) {
