@@ -40,15 +40,9 @@ class AccountsController extends AppController {
 
             if(isset($this->data['Identity']['twitter_username'])) {
                 # settings for the Twitter bridge have been made           
-                if(!isset($this->data['Identity']['twitter_bridge_active'])) {
-                    $this->data['Identity']['twitter_bridge_active'] = 0;
-                }
                 $saveable = array('twitter_bridge_active', 'twitter_username', 'twitter_password');
                 $this->Account->Identity->id = $session_identity['id'];
-                if($this->Account->Identity->save($this->data, false, $saveable)) {
-                    # also store in session
-                    $this->Session->write('Identity', $this->Account->Identity->read());
-                }
+                $this->Account->Identity->save($this->data, false, $saveable);
                 
                 $need_redirect = true;
             } else {
@@ -102,6 +96,8 @@ class AccountsController extends AppController {
             } else {
                 $this->flashMessage('info', 'No changes made');
             }
+        } else {
+            $this->data = $identity;
         }
     }
     
