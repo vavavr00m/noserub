@@ -283,6 +283,7 @@ class Entry extends AppModel {
         $this->save($data);
         
         $this->sendToTwitter($identity_id, $text);
+        $this->sendToOmb($identity_id, $text);
         
         return true;
     }
@@ -423,6 +424,20 @@ class Entry extends AppModel {
     public function updateRestriction($identity_id, $restricted) {
         $sql = 'UPDATE ' . $this->tablePrefix . 'entries SET restricted=' . $restricted . ' WHERE identity_id=' . $identity_id;
         $this->query($sql);
+    }
+    
+    private function sendToOmb($identity_id, $text) {
+    	$ombAccessToken = ClassRegistry::init('OmbAccessToken');
+    	$accessToken = $ombAccessToken->findByIdentityId($identity_id);
+    	
+    	if (!$accessToken) {
+    		return;
+    	}
+    	
+    	App::import('Component', array('OmbConsumer', 'OauthConsumer'));
+    	$ombConsumer = new OmbConsumerComponent();
+    	$ombConsumer->OauthConsumer = new OauthConsumerComponent();
+    	$ombConsumer->postNotice($accessToken['OmbAccessToken']['token_key'], $accessToken['OmbAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
     }
     
     /**
