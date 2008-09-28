@@ -37,8 +37,8 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function getAccessToken() {
-		$requestToken = $this->Session->read('requestToken');
-		$accessTokenUrl = $this->Session->read('accessTokenUrl');
+		$requestToken = $this->Session->read('omb.requestToken');
+		$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
 		$accessToken = $this->OauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
 		
 		return $accessToken;
@@ -51,8 +51,8 @@ class OmbConsumerComponent extends Object {
 															  array('omb_version' => OMB_VERSION, 
 															  		'omb_listener' => $endPoints[0]));
 															  
-		$this->Session->write('requestToken', $requestToken);
-		$this->Session->write('accessTokenUrl', $endPoints[1][OAUTH_ACCESS]);
+		$this->Session->write('omb.requestToken', $requestToken);
+		$this->Session->write('omb.accessTokenUrl', $endPoints[1][OAUTH_ACCESS]);
 		
 		$consumer = $this->getConsumer();
 
