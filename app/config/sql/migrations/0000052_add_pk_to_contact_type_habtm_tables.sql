@@ -1,0 +1,2 @@
+ALTER TABLE `contact_types_contacts` ADD `id` int(11) unsigned NOT NULL auto_increment PRIMARY KEY FIRST ;
+ALTER TABLE `contacts_noserub_contact_types` ADD `id` int(11) unsigned NOT NULL auto_increment PRIMARY KEY FIRST ;

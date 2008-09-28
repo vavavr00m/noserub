@@ -1,0 +1,1 @@
+<?php echo $this->element('identities/openid_login_form'); ?>

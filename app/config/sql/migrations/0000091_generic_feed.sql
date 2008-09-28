@@ -1,0 +1,1 @@
+ALTER TABLE  `identities` ADD  `generic_feed` TINYINT NOT NULL COMMENT  '0 = unavailable, 1 = available' AFTER  `frontpage_updates` ;

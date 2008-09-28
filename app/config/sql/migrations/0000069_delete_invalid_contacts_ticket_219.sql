@@ -1,0 +1,1 @@
+DELETE FROM `contacts` WHERE `with_identity_id` = 0;
