@@ -372,9 +372,6 @@ class Entry extends AppModel {
      * Add a NoseRub message, that someone changed the profile photo
      */
     public function addPhotoChanged($identity_id, $restricted = false) {
-        if(is_null($restricted)) {
-            $restricted = $this->getRestricted($identity_id);
-        }
         $message = 'set a new profile photo';
         $this->addNoseRub($identity_id, $message, $restricted);
     }
@@ -383,9 +380,6 @@ class Entry extends AppModel {
      * Add a NoseRub message, that someone added a new service
      */
     public function addNewService($identity_id, $service_id, $restricted = false) {
-        if(is_null($restricted)) {
-            $restricted = $this->getRestricted($identity_id);
-        }
         $this->Account->Service->contain();
         $this->Account->Service->id = $service_id;
         $service_name = $this->Account->Service->field('name');
@@ -394,6 +388,14 @@ class Entry extends AppModel {
         $this->addNoseRub($identity_id, $message, $restricted);
     }
     
+    public function addNewContact($identity_id, $with_identity_id, $restricted = false) {
+        $this->Identity->contain();
+        $this->Identity->id = $with_identity_id;
+        $data = $this->Identity->read();
+        
+        $message = 'added a new contact: <a href="http://' . $data['Identity']['username'] . '">' . $data['Identity']['local_username'] .'</a>';
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
     /**
      */
     public function getMessage($entry) {
