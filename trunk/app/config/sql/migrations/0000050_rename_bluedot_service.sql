@@ -1,1 +1,0 @@
-UPDATE `services` SET `name` = 'Faves', `url` = 'http://faves.com/', `icon` = 'faves.gif' WHERE `id` =42 LIMIT 1 ;

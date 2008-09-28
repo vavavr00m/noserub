@@ -1,1 +1,0 @@
-ALTER TABLE `identities` ADD `security_token` CHAR( 32 ) NOT NULL AFTER `hash`;

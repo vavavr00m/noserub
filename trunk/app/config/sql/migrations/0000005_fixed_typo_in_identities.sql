@@ -1,1 +1,0 @@
-ALTER TABLE `identities` CHANGE `longitute` `longitude` DOUBLE NOT NULL;
