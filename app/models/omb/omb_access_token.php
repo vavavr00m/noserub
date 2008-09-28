@@ -1,6 +1,7 @@
 <?php
 
 class OmbAccessToken extends AppModel {
+	public $belongsTo = array('OmbService');
 	
 	public function add($identity_id, $service_id, $accessToken) {
 		$data['OmbAccessToken']['identity_id'] = $identity_id;
