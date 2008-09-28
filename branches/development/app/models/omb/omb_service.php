@@ -1,6 +1,7 @@
 <?php
 
 class OmbService extends AppModel {
+	public $hasMany = array('OmbAccessToken');
 	
 	public function add($endPoints) {
 		$postNoticeUrl = $endPoints[1][OMB_POST_NOTICE];
