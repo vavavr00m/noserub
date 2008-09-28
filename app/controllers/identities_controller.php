@@ -180,9 +180,10 @@ class IdentitiesController extends AppController {
                 'identity_id' => $data['Identity']['id'],
                 'filter'      => $filter
             );
-            $items = $this->Identity->Entry->getForDisplay($conditions, 100, false);
+            $items = $this->Identity->Entry->getForDisplay($conditions, 50, false);
             if($items) {
                 usort($items, 'sort_items');
+                $items = $this->cluster->removeDuplicates($items);
                 $items = $this->cluster->create($items);
             }
         } else {
@@ -213,6 +214,7 @@ class IdentitiesController extends AppController {
         );
         $items = $this->Identity->Entry->getForDisplay($conditions, 100);
         usort($items, 'sort_items');
+        $items = $this->cluster->removeDuplicates($items);
         
         $identities = $this->Identity->getLastActive(9);
         

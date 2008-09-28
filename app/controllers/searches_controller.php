@@ -20,6 +20,7 @@ class SearchesController extends AppController {
             );
             $items = $this->Entry->getForDisplay($conditions, 50);
             usort($items, 'sort_items');
+            $items = $this->cluster->removeDuplicates($items);
             $items = $this->cluster->create($items);
         } else {
             $items = array();

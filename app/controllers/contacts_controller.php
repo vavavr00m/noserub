@@ -473,6 +473,7 @@ class ContactsController extends AppController {
         $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
         if($items) {
             usort($items, 'sort_items');
+            $items = $this->cluster->removeDuplicates($items);
             $items = $this->cluster->create($items);
         }
     
