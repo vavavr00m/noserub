@@ -25,12 +25,10 @@ class IdentitiesController extends AppController {
             $this->ensureSecurityToken();
             
             if(isset($this->data['Micropublish']['value'])) {
-                $this->Identity->id = $session_identity['id'];
-                $frontpage_updates = $this->Identity->field('frontpage_updates');
                 $this->Identity->Entry->addMicropublish(
                     $session_identity['id'], 
                     $this->data['Micropublish']['value'],
-                    $frontpage_updates == 0
+                    null
                 );
                 $this->data = array();
             } else {
@@ -71,9 +69,16 @@ class IdentitiesController extends AppController {
             $data = null;
         } else {
         	$this->Identity->contain(array('Location', 'Account', 'Account.Service', 'Account.ServiceType'));
-            $data = $this->Identity->find(array('username'  => $username,
-                                                'is_local'  => 1,
-                                                'hash'      => ''));
+            $data = $this->Identity->find(
+                'first',
+                array(
+                    'conditions' => array(
+                        'username'  => $username,
+                        'is_local'  => 1,
+                        'hash'      => ''
+                    )
+                )
+            );
             if($data) {
                 # get the status of relationship between the logged in
                 # user and the profile we're watching
@@ -175,7 +180,7 @@ class IdentitiesController extends AppController {
                 'identity_id' => $data['Identity']['id'],
                 'filter'      => $filter
             );
-            $items = $this->Identity->Entry->getForDisplay($conditions, 100);
+            $items = $this->Identity->Entry->getForDisplay($conditions, 100, false);
             if($items) {
                 usort($items, 'sort_items');
                 $items = $this->cluster->create($items);
@@ -362,6 +367,7 @@ class IdentitiesController extends AppController {
             	# use gravatar image
             	$md5 = md5($identity['Identity']['email']);
             	$this->data['Identity']['photo'] = 'http://gravatar.com/avatar/' . $md5;
+            	$this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
             } else if($this->data['Identity']['photo']['error'] != 0) {
             	# save the photo, if neccessary
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
@@ -375,6 +381,7 @@ class IdentitiesController extends AppController {
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
                     }
+                    $this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
                 }
             }   
              
