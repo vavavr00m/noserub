@@ -1,0 +1,2 @@
+CREATE TABLE `accounts_syndications` (`account_id` int(11) unsigned NOT NULL,`syndication_id` int(11) unsigned NOT NULL,UNIQUE KEY `account_id` (`account_id`,`syndication_id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `syndications` (`id` int(11) unsigned NOT NULL auto_increment,`identity_id` int(11) unsigned NOT NULL,`name` varchar(128) NOT NULL,`hash` char(32) NOT NULL,`created` datetime NOT NULL,`modified` datetime NOT NULL,PRIMARY KEY  (`id`), KEY `identity_id` (`identity_id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
