@@ -131,6 +131,7 @@ class ContactsController extends AppController {
                 }
                 
                 if($this->Contact->add($session_identity['id'], $new_identity_id)) {
+                    $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $new_identity_id, null);
                     $this->flashMessage('success', 'New contact added.');
     			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
     			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
@@ -522,6 +523,8 @@ class ContactsController extends AppController {
             $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
             $this->Contact->save($contact, true, $saveable);
             $this->flashMessage('success', 'Added new contact.');
+            
+            $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
         }
         
         $this->redirect('/' . $splitted['local_username']);
