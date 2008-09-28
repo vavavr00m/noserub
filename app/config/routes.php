@@ -124,6 +124,7 @@ Router::connect('/:username/settings/oauth/:consumer_id/edit/', array('controlle
 Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
 
 Router::connect('/:username/settings/omb', array('controller' => 'omb', 'action' => 'index'));
+Router::connect('/:username/settings/omb/callback', array('controller' => 'omb', 'action' => 'callback'));
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
