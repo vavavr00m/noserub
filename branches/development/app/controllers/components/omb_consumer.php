@@ -5,7 +5,10 @@ $path = ini_get('include_path');
 $path = $pathExtra . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
-App::import('Vendor', 'yadis', array('file' => 'Auth/Yadis/Yadis.php'));
+// avoids a "cannot redeclare" error when using this component in the Entry model
+if (!class_exists('Auth_Yadis_Yadis')) {
+	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
+}
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
 define('OMB_VERSION', 'http://openmicroblogging.org/protocol/0.1');
@@ -147,6 +150,18 @@ class OmbConsumerComponent extends Object {
 		}
 		
 		return false;
+	}
+	
+	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
+		$data = $this->OauthConsumer->post('GenericOmb', 
+										   $tokenKey, 
+										   $tokenSecret, 
+										   $url, 
+										   array('omb_version' => OMB_VERSION, 
+										         'omb_listenee' => NOSERUB_FULL_BASE_URL, 
+										         'omb_notice' => 'noserub://'.md5($notice), 
+										         'omb_notice_content' => $notice));
+		return $data;
 	}
 	
 	private function getConsumer() {
