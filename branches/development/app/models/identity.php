@@ -763,6 +763,10 @@ class Identity extends AppModel {
         
         if($picture) {
             $filename = $this->field('photo');
+            # check, if this isn't a gravatar image
+            if(strpos($filename, 'http') === 0) {
+                $filename = '';
+            }
             if(!$filename) {
                 # get random name for new photo and make sure it is unqiue
                 $filename = '';

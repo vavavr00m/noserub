@@ -23,6 +23,7 @@ class AccountsController extends AppController {
         # get all accounts
 		$this->Account->contain('Service');
 		$data = $this->Account->findAllByIdentity_id($identity['Identity']['id']);
+		usort($data, 'sort_accounts');
         $this->set('data', $data);
         $this->set('session_identity', $session_identity);
         
@@ -235,6 +236,8 @@ class AccountsController extends AppController {
                         $this->Account->saveField('service_type_id', $data['service_type_id']);
                     }
                     
+                    $this->Account->Entry->addNewService($identity_id, $data['service_id'], null);
+                    
                     if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
                         # test, if we can find friends from this account
                         $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
@@ -281,9 +284,6 @@ class AccountsController extends AppController {
             # a step, or the user was logged out during the process
             $this->redirect('/');
         }
-
-        #$value = 'added <strong></strong> to his profile
-        #$this->Account->Entry->addNoserub($identity_id, $value, $restricted = false)
         
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
@@ -298,7 +298,7 @@ class AccountsController extends AppController {
             foreach($this->data as $item) {
                 if(isset($item['action']) && $item['action'] > 0) {
                     # see, wether we should create a new contact, or add 
-                    # a account to an existing one
+                    # an account to an existing one
                     if($item['action'] == 1) {
                         # first check, if the new identity is already there
                         $new_identity_username = $this->Account->Identity->sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];

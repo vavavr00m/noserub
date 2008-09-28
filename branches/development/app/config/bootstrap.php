@@ -88,7 +88,10 @@ function sort_items($a, $b) {
 }
 
 function sort_accounts($a, $b) {
-    $a_val = $a['Service']['id'] == 8 ? $a['title'] : $a['Service']['name'];
-    $b_val = $b['Service']['id'] == 8 ? $b['title'] : $b['Service']['name'];
+    $a_title = isset($a['Account']) ? $a['Account']['title'] : $a['title'];
+    $b_title = isset($b['Account']) ? $b['Account']['title'] : $b['title'];
+    
+    $a_val = $a['Service']['id'] == 8 ? $a_title : $a['Service']['name'];
+    $b_val = $b['Service']['id'] == 8 ? $b_title : $b['Service']['name'];
     return strtolower($a_val) > strtolower($b_val);
 }
