@@ -275,10 +275,10 @@ class Identity extends AppModel {
         	$hcards = $hcard_obj->getByURL($url);
         	$hcard = $this->getOwner($hcards, $url);
         	if($hcard) {
-        	    if(!isset($hcard['n'])) {
+        	    if(!isset($hcard['n']) && isset($hcard['fn'])) {
         	        $result['Identity']['firstname']     = '';
                     $result['Identity']['lastname']      = $hcard['fn'];
-        	    } else {
+        	    } else if(isset($hcard['n'])) {
                     $result['Identity']['firstname']     = $hcard['n']['given-name'];
                     $result['Identity']['lastname']      = $hcard['n']['family-name'];
                     $result['Identity']['gender']        = 0;
