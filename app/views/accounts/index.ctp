@@ -66,17 +66,12 @@
            and come to <a href="http://noserub.com/discuss/">our discussion group</a> to
            discuss this issue!
         </p>
-        <?php
-            $twitter_bridge_active = isset($this->data['Identity']['twitter_bridge_active']) ? $this->data['Identity']['twitter_bridge_active'] : 0;
-            $twitter_username      = isset($session_identity['twitter_username']) ? $session_identity['twitter_username'] : '';
-            $twitter_password      = isset($session_identity['twitter_password']) ? $session_identity['twitter_password'] : '';
-        ?>
         <form method="POST" action="<?php echo $this->here; ?>">
             <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
             <fieldset>
-                <?php echo $form->checkbox('Identity.twitter_bridge_active'); ?>Post my <em>what are you doing</em> entries to Twitter.com	
-        		<?php echo $form->input('Identity.twitter_username', array('label' => 'Twitter Username')); ?>
-        		<?php echo $form->input('Identity.twitter_password', array('label' => 'Twitter Password', 'type' => 'password')); ?>
+                <?php echo $form->checkbox('TwitterAccount.bridge_active'); ?>Post my <em>what are you doing</em> entries to Twitter.com	
+        		<?php echo $form->input('TwitterAccount.username', array('label' => 'Twitter Username')); ?>
+        		<?php echo $form->input('TwitterAccount.password', array('label' => 'Twitter Password', 'type' => 'password')); ?>
             </fieldset>
             <fieldset>
                 <input class="submitbutton" type="submit" value="Save changes"/>
