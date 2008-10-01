@@ -479,12 +479,19 @@ class Entry extends AppModel {
     		CURLOPT_RETURNTRANSFER	=> true,
     		CURLOPT_FAILONERROR		=> true,
     		CURLOPT_HEADER			=> false,
-    		CURLOPT_FOLLOWLOCATION	=> true,
     		CURLOPT_USERAGENT		=> NOSERUB_USER_AGENT,
     		CURLOPT_CONNECTTIMEOUT	=> 20,  
     		CURLOPT_TIMEOUT			=> 20
     	);
 
+        $safe_mode = ini_get('safe_mode');
+        $open_basedir = ini_get('open_basedir');
+        if(!$safe_mode && !$open_basedir) {
+            # this option only works when safe_mode or open_basedir are not enabled
+            $options[CURLOPT_FOLLOWLOCATION] = true;
+            $options[CURLOPT_MAXREDIRS]      = 5; # just randomly picked to restrict it somehow
+        }
+        
         # ignoring all error messages or return values...
     	$ch = curl_init($uri);
         curl_setopt_array($ch, $options);
