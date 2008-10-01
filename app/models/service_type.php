@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class ServiceType extends AppModel {
-    public $belongsTo = array('Service');                                                   
+    public $hasMany = array('Service');                                                   
 
     private $allowedFilters = array(
         'photo'        => 'Photos',
