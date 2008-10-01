@@ -7,7 +7,7 @@ class AccountsController extends AppController {
     public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
-         $this->checkSecure();
+        $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -39,11 +39,9 @@ class AccountsController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
-            if(isset($this->data['Identity']['twitter_username'])) {
-                # settings for the Twitter bridge have been made           
-                $saveable = array('twitter_bridge_active', 'twitter_username', 'twitter_password');
-                $this->Account->Identity->id = $session_identity['id'];
-                $this->Account->Identity->save($this->data, false, $saveable);
+            if(isset($this->data['TwitterAccount']['username'])) {
+                # settings for the Twitter bridge have been made
+                $this->Account->Identity->TwitterAccount->update($session_identity['id'], $this->data);
                 
                 $need_redirect = true;
             } else {
@@ -481,7 +479,7 @@ class AccountsController extends AppController {
     }
     
     private function getIdentity($username) {
-        $this->Account->Identity->contain();
+        $this->Account->Identity->contain('TwitterAccount');
         $identity = $this->Account->Identity->findByUsername($username);
 
         return $identity;

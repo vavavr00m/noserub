@@ -454,19 +454,14 @@ class Entry extends AppModel {
             return;       
         }
 
-        $fields = array(
-            'twitter_bridge_active', 
-            'twitter_username', 
-            'twitter_password'
-        );
-        $this->Identity->contain();
-        $data = $this->Identity->findById($identity_id, $fields);
-        if($data['Identity']['twitter_bridge_active'] != 1) {
+        $this->Identity->TwitterAccount->contain();
+        $data = $this->Identity->TwitterAccount->findByIdentityId($identity_id);
+        if($data['TwitterAccount']['bridge_active'] != 1) {
             return;
         }
              
-    	$twitter_username = $data['Identity']['twitter_username'];
-    	$twitter_password = $data['Identity']['twitter_password'];
+    	$twitter_username = $data['TwitterAccount']['username'];
+    	$twitter_password = $data['TwitterAccount']['password'];
     	$uri = 'http://www.twitter.com/statuses/update.json';
 
     	$options = array(
