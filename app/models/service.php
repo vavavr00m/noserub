@@ -136,7 +136,7 @@ class Service extends AppModel {
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
     	}
-
+        $feed->__destruct();
         unset($feed);
         
         return $items;
