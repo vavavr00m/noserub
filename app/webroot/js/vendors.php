@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: vendors.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id: vendors.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -23,21 +23,22 @@
  * @subpackage		cake.app.webroot.js
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
  * Enter description here...
  */
-$file = $_GET['file'];
-$pos = strpos($file, '..');
-if ($pos === false) {
-	if (is_file('../../vendors/javascript/'.$file) && (preg_match('/(\/.+)\\.js/', $file)))
-	{
-		readfile('../../vendors/javascript/'.$file);
+if (isset($_GET['file'])) {
+	$file = $_GET['file'];
+	$pos = strpos($file, '..');
+	if ($pos === false) {
+		if (is_file('../../vendors/javascript/'.$file) && (preg_match('/(\/.+)\\.js/', $file))) {
+			readfile('../../vendors/javascript/'.$file);
+			return;
+		}
 	}
-} else {
-	header('HTTP/1.1 404 Not Found');
 }
+header('HTTP/1.1 404 Not Found');
 ?>
