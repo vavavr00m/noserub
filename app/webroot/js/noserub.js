@@ -100,6 +100,7 @@ noserub.fn = noserub.prototype = {
     },
     
     Identities_index: function() {
+        this.micropublish_char_count();
         this.social_stream_items();
         if($('.locator option').size() > 1) {
             $('.locator :text').hide();
