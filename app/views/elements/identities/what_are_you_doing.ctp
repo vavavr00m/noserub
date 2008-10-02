@@ -3,7 +3,7 @@
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
         <div class="input micropublish">
-            <?php echo $form->textarea('Micropublish/value'); ?>
+            <?php echo $form->textarea('Micropublish.value'); ?>
             <input class="submitbutton" type="submit" value="Send"/>
         </div>
     </fieldset>
