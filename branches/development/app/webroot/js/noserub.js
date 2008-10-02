@@ -149,7 +149,6 @@ noserub.fn = noserub.prototype = {
     micropublish_char_count: function() {
         $('#MicropublishValue').keyup(function(e) {
             $('#MicropublishCount').html(140-this.value.length);
-            console.log(this.value.length);
         });
     }
 };
