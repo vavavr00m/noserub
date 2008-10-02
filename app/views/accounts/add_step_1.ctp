@@ -10,7 +10,7 @@
     <fieldset>
         <legend>Specify service and account id</legend>
         <label>Service</label>
-        <?php echo $form->select('Account.service_id', $services, null, null, false); ?><br />
+        <?php echo $form->select('Account.service_id', $services, null, array(), false); ?><br />
         <?php echo $form->input('Account.username', array('error' => 'Could not detect a service or a feed', 'label' => 'Account id / Username', 'size' => 64)); ?>
     </fieldset>
     <fieldset>

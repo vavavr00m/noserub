@@ -15,7 +15,7 @@
     <?php if (isset($service_types)): ?>
     	<dt>Servicetype</dt>
     	<dd>
-    		<?php echo $form->select('Account.service_type_id', $service_types, array('3'), null, null, false); ?>
+    		<?php echo $form->select('Account.service_type_id', $service_types, array('3'), array(), false); ?>
     	</dd>
     <?php endif; ?>
     

@@ -16,5 +16,5 @@
 <fieldset>
     <legend>Communication</legend>
     <label>Which persons may send me e-Mails?</label>
-    <?php echo $form->select('Identity.allow_emails', $options, null, null, false); ?>
+    <?php echo $form->select('Identity.allow_emails', $options, null, array(), false); ?>
 </fieldset>
