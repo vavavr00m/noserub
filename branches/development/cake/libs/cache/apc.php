@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: apc.php 7089 2008-06-02 17:35:56Z gwoo $ */
+/* SVN FILE: $Id: apc.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * APC storage engine for cache.
  *
@@ -21,7 +21,7 @@
  * @subpackage		cake.cake.libs.cache
  * @since			CakePHP(tm) v 1.2.0.4933
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -57,6 +57,8 @@ class ApcEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$value, $duration) {
+		$expires = time() + $duration;
+		apc_store($key.'_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
 	}
 /**
@@ -67,6 +69,11 @@ class ApcEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
+		$time = time();
+		$cachetime = intval(apc_fetch($key.'_expires'));
+		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
+			return false;
+		}
 		return apc_fetch($key);
 	}
 /**

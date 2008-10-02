@@ -26,5 +26,33 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestPluginOtherHelperHelper extends AppHelper{}
+class TestsAppsPostsController extends AppController {
+	var $name = 'TestsAppsPosts';
+	var $uses = array('Post');
+	var $viewPath = 'tests_apps';
+
+	function add() {
+		$data = array(
+			'Post' => array(
+				'title' => 'Test article',
+				'body' => 'Body of article.'
+			)
+		);
+		$this->Post->save($data);
+
+		$this->set('posts', $this->Post->find('all'));
+		$this->render('index');
+	}
+	
+	function url_var() {
+		$this->set('params', $this->params);
+		$this->render('index');
+	}
+	
+	function post_var() {
+		$this->set('data', $this->data);
+		$this->render('index');
+	}
+
+}
 ?>

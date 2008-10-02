@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: connection_manager.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: connection_manager.php 7690 2008-10-02 04:56:53Z nate $ */
 
 /**
  * Short description for file.
@@ -81,7 +81,7 @@ class ConnectionManager extends Object {
 	function &getInstance() {
 		static $instance = array();
 
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new ConnectionManager();
 		}
 
@@ -98,12 +98,13 @@ class ConnectionManager extends Object {
 	function &getDataSource($name) {
 		$_this =& ConnectionManager::getInstance();
 
-		if (in_array($name, array_keys($_this->_dataSources))) {
-			return $_this->_dataSources[$name];
+		if (!empty($_this->_dataSources[$name])) {
+			$return =& $_this->_dataSources[$name];
+			return $return;
 		}
 
 		$connections = $_this->enumConnectionObjects();
-		if (in_array($name, array_keys($connections))) {
+		if (!empty($connections[$name])) {
 			$conn = $connections[$name];
 			$class = $conn['classname'];
 			$_this->loadDataSource($name);
@@ -114,7 +115,8 @@ class ConnectionManager extends Object {
 			return null;
 		}
 
-		return $_this->_dataSources[$name];
+		$return =& $_this->_dataSources[$name];
+		return $return;
 	}
 /**
  * Gets the list of available DataSource connections
@@ -164,7 +166,7 @@ class ConnectionManager extends Object {
 			$conn = $connections[$connName];
 		}
 
-		if (isset($conn['parent']) && !empty($conn['parent'])) {
+		if (!empty($conn['parent'])) {
 			$_this->loadDataSource($conn['parent']);
 		}
 
@@ -225,7 +227,8 @@ class ConnectionManager extends Object {
 
 		$_this->config->{$name} = $config;
 		$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
-		return $_this->getDataSource($name);
+		$return =& $_this->getDataSource($name);
+		return $return;
 	}
 /**
  * Returns the file, class name, and parent for the given driver.
@@ -262,5 +265,4 @@ class ConnectionManager extends Object {
 		}
 	}
 }
-
 ?>

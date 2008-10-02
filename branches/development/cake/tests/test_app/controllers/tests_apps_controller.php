@@ -36,5 +36,10 @@ class TestsAppsController extends AppController {
 	function some_method() {
 		return 5;
 	}
+	
+	function set_action() {
+		$this->set('var', 'string');
+		$this->render('index');
+	}
 }
 ?>

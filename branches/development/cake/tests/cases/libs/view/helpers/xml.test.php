@@ -29,8 +29,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'xml');
+App::import('Helper', 'Xml');
 /**
  * TestXml class
  *
@@ -71,7 +70,7 @@ class TestXml extends Object {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class XmlHelperTest extends UnitTestCase {
+class XmlHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
@@ -172,7 +171,7 @@ class XmlHelperTest extends UnitTestCase {
 			'test2' => 'test with "double quotes"'
 		);
 		$result = $this->Xml->serialize($data);
-		$expected = '<std_class test1="test with no quotes" test2="test with \"double quotes\"" />';
+		$expected = '<std_class test1="test with no quotes" test2="test with &quot;double quotes&quot;" />';
 		$this->assertIdentical($result, $expected);
 
 		$data = array(
@@ -195,6 +194,13 @@ class XmlHelperTest extends UnitTestCase {
 		);
 		$result = $this->Xml->serialize($data, array('format' => 'tags'));
 		$expected = '<service_day><service_time><service_time_price><dollar>1</dollar><cents>2</cents></service_time_price></service_time></service_day>';
+		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			'Pages' => array('id' => 2, 'url' => 'http://www.url.com/rb/153/?id=bbbb&t=access')
+		);
+		$result = $this->Xml->serialize($data);
+		$expected = '<pages id="2" url="http://www.url.com/rb/153/?id=bbbb&amp;t=access" />';
 		$this->assertIdentical($result, $expected);
 	}
 /**

@@ -98,10 +98,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 1);
-
-		$this->assertTrue($result);
 		$this->assertTrue(file_exists(CACHE . 'cake_test'));
-
 
 		$result = Cache::read('test');
 		$expecting = $data;
@@ -192,7 +189,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
 		Cache::engine('File', array('duration' => 1));
-		sleep(4);
+		sleep(2);
 		$result = Cache::clear(true);
 		$this->assertTrue($result);
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test1'));
@@ -294,9 +291,7 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testRemoveWindowsSlashesFromCache() {
-		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'tmp'));
-
-		$data = Cache::read('dir_map');
+		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TMP));
 
 		$expected = array (
 				'C:\dev\prj2\sites\cake\libs' => array(
@@ -326,6 +321,9 @@ class FileEngineTest extends CakeTestCase {
 				'C:\dev\prj2\sites\main_site\views\helpers' => array(
 					0 => 'C:\dev\prj2\sites\main_site\views\helpers'));
 
+		$data = Cache::write('test_dir_map', $expected);
+		$data = Cache::read('test_dir_map');
+		Cache::delete('dir_map');
 		$this->assertEqual($expected, $data);
 	}
 

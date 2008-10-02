@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: simpletest.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: simpletest.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -35,4 +35,4 @@
 			<li><?php echo CAKE; ?>vendors </li>
 			<li><?php echo APP_DIR . DS; ?>vendors</li>
 		</ul>
-		<p><a href="http://simpletest.org/en/download.html" target="_new">Download SimpleTest</a></p>
+		<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>

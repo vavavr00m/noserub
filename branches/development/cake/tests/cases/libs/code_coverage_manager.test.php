@@ -35,7 +35,26 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class CodeCoverageManagerTest extends UnitTestCase {
+class CodeCoverageManagerTest extends CakeTestCase {
+
+/**
+ * startTest Method
+ * Store reference of $_GET to restore later.
+ *
+ * @return void
+ **/
+	function startCase() {
+		$this->_get = $_GET;
+	}
+
+/**
+ * End Case - restore GET vars.
+ *
+ * @return void
+ **/
+	function endCase() {
+		$_GET = $this->_get;
+	}
 /**
  * Skip if XDebug not installed
  *
@@ -51,7 +70,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
  * @return void
  */
 	function testNoTestCaseSupplied() {
-		if (php_sapi_name() != 'cli') {
+		if (PHP_SAPI != 'cli') {
 			unset($_GET['group']);
 			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
@@ -613,7 +632,7 @@ HTML;
 	}
 /**
  * testCalculateCodeCoverage method
- * 
+ *
  * @access public
  * @return void
  */

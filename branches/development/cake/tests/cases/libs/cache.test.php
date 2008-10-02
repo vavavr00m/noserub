@@ -86,9 +86,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testWritingWithConfig() {
-
 		Cache::config('sessions');
-
 		Cache::write('test_somthing', 'this is the test data', 'tests');
 
 		$expected = array(
@@ -99,6 +97,7 @@ class CacheTest extends CakeTestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
+			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($expected, Cache::settings('File'));
 	}
@@ -118,13 +117,14 @@ class CacheTest extends CakeTestCase {
 			'path'=> TMP . 'tests',
 			'prefix'=> 'cake_',
 			'lock' => false,
-			'serialize'=> true
+			'serialize'=> true,
+			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($settings, $expecting);
 	}
 /**
  * testWriteEmptyValues method
- * 
+ *
  * @access public
  * @return void
  */
@@ -145,6 +145,33 @@ class CacheTest extends CakeTestCase {
 
 		Cache::write('App.zeroTest2', '0');
 		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
+	}
+/**
+ * testSet method
+ *
+ * @access public
+ * @return void
+ */
+	function testSet() {
+		$write = false;
+
+		Cache::set(array('duration' => '+1 year'));
+		$data = Cache::read('test_cache');
+		$this->assertFalse($data);
+
+		$data = 'this is just a simple test of the cache system';
+		$write = Cache::write('test_cache', $data);
+
+		$this->assertTrue($write);
+
+		Cache::set(array('duration' => '+1 year'));
+		$data = Cache::read('test_cache');
+
+		$this->assertEqual($data, 'this is just a simple test of the cache system');
+
+		Cache::delete('test_cache');
+
+		$global = Cache::settings();
 	}
 }
 ?>
