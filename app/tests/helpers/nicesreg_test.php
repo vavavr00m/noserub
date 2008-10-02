@@ -20,7 +20,7 @@ class NiceSRegTest extends CakeTestCase {
 	public function testCheckboxForSupportedFields() {
 		foreach($this->supportedFields as $field) {
 			$result = $this->helper->checkboxForSupportedFields($field);		
-			$expected = '<input type="hidden" name="data[OpenidSite]['.$field.']" value="0" id="OpenidSite'.ucfirst($field).'_" />' .
+			$expected = '<input type="hidden" name="data[OpenidSite]['.$field.']" id="OpenidSite'.ucfirst($field).'_" value="0" />' .
 						'<input type="checkbox" name="data[OpenidSite]['.$field.']" checked="checked" value="1" id="OpenidSite'.ucfirst($field).'" />';
 			$this->assertEqual($expected, $result);
 		}
@@ -29,13 +29,13 @@ class NiceSRegTest extends CakeTestCase {
 	public function testCheckboxForSupportedFieldsWithOpenidSiteData() {
 		$data = array('OpenidSite' => array('email' => 1));
 		$result = $this->helper->checkboxForSupportedFields('email', $data);		
-		$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
+		$expected = '<input type="hidden" name="data[OpenidSite][email]" id="OpenidSiteEmail_" value="0" />' .
 					'<input type="checkbox" name="data[OpenidSite][email]" checked="checked" value="1" id="OpenidSiteEmail" />';
 		$this->assertEqual($expected, $result);
 		// FIXME this assert will probably fail in later releases due to an additional space in front of [value="1"]
 		$data = array('OpenidSite' => array('email' => 0));
 		$result = $this->helper->checkboxForSupportedFields('email', $data);
-		$expected = '<input type="hidden" name="data[OpenidSite][email]" value="0" id="OpenidSiteEmail_" />' .
+		$expected = '<input type="hidden" name="data[OpenidSite][email]" id="OpenidSiteEmail_" value="0" />' .
 					'<input type="checkbox" name="data[OpenidSite][email]"  value="1" id="OpenidSiteEmail" />';
 		$this->assertEqual($expected, $result);
 	}
