@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: pages_controller.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: pages_controller.php 7118 2008-06-04 20:49:29Z gwoo $ */
 /**
  * Static content controller.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.controller
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: nate $
+ * @modifiedby		$LastChangedBy: gwoo $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */

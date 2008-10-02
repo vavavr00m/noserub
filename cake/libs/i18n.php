@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: i18n.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: i18n.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -382,7 +382,7 @@ class I18n extends Object {
 			}
 
 			if (isset($_this->__domains[$_this->category][$_this->__lang][$domain]["%po-header"]["plural-forms"])) {
-				$switch = preg_replace("/[() {}\\[\\]^\\s*\\]]+/", "", $_this->__domains[$_this->category][$_this->__lang][$domain]["%po-header"]["plural-forms"]);
+				$switch = preg_replace("/(?:[() {}\\[\\]^\\s*\\]]+)/", "", $_this->__domains[$_this->category][$_this->__lang][$domain]["%po-header"]["plural-forms"]);
 				$_this->__domains[$_this->category][$_this->__lang][$domain]["%plural-c"] = $switch;
 				unset($_this->__domains[$_this->category][$_this->__lang][$domain]["%po-header"]);
 			}

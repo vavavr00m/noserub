@@ -28,10 +28,8 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-require_once LIBS.'model'.DS.'model.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql.php';
+App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
+
 
 /**
  * Short description for class.
@@ -234,6 +232,15 @@ class DboMysqlTest extends CakeTestCase {
 
 		$expected = "'4713e29446'";
 		$result = $this->db->value('4713e29446');
+
+		$this->assertEqual($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'integer');
+		$this->assertEqual($expected, $result);
+		
+		$expected = 'NULL';
+		$result = $this->db->value('', 'boolean');
 		$this->assertEqual($expected, $result);
 
 		$expected = 10010001;
@@ -257,6 +264,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)
 		));
+
 		$result = $this->model->schema();
 		$this->assertEqual($result['bool']['type'], 'boolean');
 		$this->assertEqual($result['small_int']['type'], 'integer');
