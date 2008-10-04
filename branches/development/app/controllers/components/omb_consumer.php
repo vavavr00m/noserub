@@ -35,77 +35,61 @@ class OmbConsumerComponent extends Object {
 						  		OMB_UPDATE_PROFILE);
 	}
 	
-	public function startup($controller) {
-		$this->controller = $controller;
-	}
-	
-	public function getAccessToken() {
-		$requestToken = $this->Session->read('omb.requestToken');
-		$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
-		$accessToken = $this->OauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
-		
-		return $accessToken;
-	}
-	
-	public function redirectToAuthorizePage($endPoints, $identity) {
-		$requestToken = $this->OauthConsumer->getRequestToken('GenericOmb', 
-															  $endPoints[1][OAUTH_REQUEST], 
-															  'POST', 
-															  array('omb_version' => OMB_VERSION, 
-															  		'omb_listener' => $endPoints[0]));
-															  
-		$this->Session->write('omb.requestToken', $requestToken);
-		$this->Session->write('omb.accessTokenUrl', $endPoints[1][OAUTH_ACCESS]);
-		
-		$consumer = $this->getConsumer();
+	public function constructAuthorizeUrl($authorizeUrl, $localId, $requestToken, $identity) {
+		$isLaconica = false;
 
-		// XXX identi.ca uses urls like /index.php?action=userauthorization which the OAuth library doesn't like
-		if (strpos($endPoints[1][OAUTH_AUTHORIZE], '?')) {
-			$authUrl = explode('?', $endPoints[1][OAUTH_AUTHORIZE]);
+		// laconica uses urls like http://example.com/index.php?action=userauthorization 
+		// which the OAuth library doesn't like, so we simply remove the querystring
+		if (strpos($authorizeUrl, '?')) {
+			$authUrl = explode('?', $authorizeUrl);
 			$authUrl = $authUrl[0];
-			$isIdentica = true;
+			$isLaconica = true;
 		} else {
-			$authUrl = $endPoints[1][OAUTH_AUTHORIZE];
+			$authUrl = $authorizeUrl;
 		}
 		
+		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
 		
-		$omb_subscribe = array('omb_version' => OMB_VERSION, 
-							   'omb_listener' => $endPoints[0], 
-							   'omb_listenee' => NOSERUB_FULL_BASE_URL, 
-							   'omb_listenee_profile' => 'http://'.$identity['username'], 
-							   'omb_listenee_nickname' => $identity['local_username'], 
-							   'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/');
+		$mandatoryOmbParams = array('omb_version' => OMB_VERSION, 
+									'omb_listener' => $localId, 
+									'omb_listenee' => NOSERUB_FULL_BASE_URL, 
+									'omb_listenee_profile' => 'http://'.$identity['Identity']['username'], 
+									'omb_listenee_nickname' => $identity['Identity']['local_username'], 
+									'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/'   
+		);
 		
-		foreach ($omb_subscribe as $k => $v) {
+		foreach ($mandatoryOmbParams as $k => $v) {
 			$request->set_parameter($k, $v);
 		}
 		
-		$request->set_parameter('oauth_callback', NOSERUB_FULL_BASE_URL.'/'.$identity['local_username'].'/settings/omb/callback');
+		$optionalOmbParams = array('omb_listenee_homepage' => '', // empty because we don't know the user's homepage in NoseRub 
+								   'omb_listenee_fullname' => $identity['Identity']['name'],
+								   'omb_listenee_bio' => $identity['Identity']['about'],
+								   'omb_listenee_location' => $identity['Identity']['address_shown'],
+								   // XXX deactivated because we don't have an 96x96 avatar yet
+								   // 'omb_listenee_avatar' => $identity['Identity']['photo']
+		);
 		
-		if (isset($isIdentica)) {
+		foreach ($optionalOmbParams as $k => $v) {
+			if ($v != '') {
+				$request->set_parameter($k, $v);
+			}
+		}
+		
+		$request->set_parameter('oauth_callback', NOSERUB_FULL_BASE_URL.'/'.$identity['Identity']['local_username'].'/callback');
+		
+		if ($isLaconica) {
 			$request->set_parameter('action', 'userauthorization');
 		}
 		
 		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
 		
-		$this->controller->redirect($request->to_url());
+		return $request->to_url();
 	}
 	
 	public function discover($url) {
-		$fetcher = Auth_Yadis_Yadis::getHTTPFetcher();
-		$yadis = Auth_Yadis_Yadis::discover($url, $fetcher);
-		
-		if (!$yadis || $yadis->isFailure()) {
-			throw new Exception('Yadis doc not found');
-		}
-		
-		$xrds = Auth_Yadis_XRDS::parseXRDS($yadis->response_text);
-		
-		if (!$xrds) {
-			throw new Exception('XRDS data not found');
-		}
-		
+		$xrds = $this->discoverXRDS($url);
 		$yadisServices = $xrds->services(array(array($this, 'filterServices')));
 		
 		foreach ($yadisServices as $yadisService) {
@@ -140,6 +124,7 @@ class OmbConsumerComponent extends Object {
 		return array($localID, $endpoints);
 	}
 	
+	// internal callback method, don't use it outside this class
 	public function filterServices($service) {
 		$uris = $service->getTypes();
 		
@@ -152,6 +137,18 @@ class OmbConsumerComponent extends Object {
 		return false;
 	}
 	
+	public function getAccessToken($accessTokenUrl, $requestToken) {
+		return $this->OauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
+	}
+	
+	public function getRequestToken($requestTokenUrl, $localId) {
+		return $this->OauthConsumer->getRequestToken('GenericOmb', 
+													 $requestTokenUrl, 
+													 'POST', 
+													 array('omb_version' => OMB_VERSION, 
+														   'omb_listener' => $localId));
+	}
+	
 	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
 		$data = $this->OauthConsumer->post('GenericOmb', 
 										   $tokenKey, 
@@ -162,6 +159,23 @@ class OmbConsumerComponent extends Object {
 										         'omb_notice' => 'noserub://'.md5($notice), 
 										         'omb_notice_content' => $notice));
 		return $data;
+	}
+	
+	private function discoverXRDS($url) {
+		$fetcher = Auth_Yadis_Yadis::getHTTPFetcher();
+		$yadis = Auth_Yadis_Yadis::discover($url, $fetcher);
+		
+		if (!$yadis || $yadis->isFailure()) {
+			throw new Exception('Yadis document not found');
+		}
+		
+		$xrds = Auth_Yadis_XRDS::parseXRDS($yadis->response_text);
+		
+		if (!$xrds) {
+			throw new Exception('XRDS data not found');
+		}
+		
+		return $xrds;
 	}
 	
 	private function getConsumer() {

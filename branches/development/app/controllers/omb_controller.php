@@ -1,29 +1,84 @@
 <?php
 
 class OmbController extends AppController {
-	public $uses = array('OmbAccessToken', 'OmbService');
+	public $uses = array('Identity', 'OmbAccessToken', 'OmbService');
 	public $helpers = array('flashmessage', 'form');
 	public $components = array('OmbConsumer');
 	
-	public function index() {
-		$this->set('headline', 'OpenMicroBlogging');
-		$session_identity = $this->Session->read('Identity');
+	public function callback() {
+		$username = isset($this->params['username']) ? $this->params['username'] : '';
+		
+		if (isset($this->params['url']['omb_version'])) {
+			if ($this->params['url']['omb_version'] == OMB_VERSION) {
+				$identity = $this->getIdentity($username);
 
+				$data['Identity']['is_local'] = false;
+				$data['Identity']['username'] = str_replace('http://', '', $this->params['url']['omb_listener_profile']);
+				$this->Identity->save($data, true, array('is_local', 'username'));
+				$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
+				
+				$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
+				$requestToken = $this->Session->read('omb.requestToken');
+				$serviceId = $this->Session->read('omb.serviceId');
+				$accessToken = $this->OmbConsumer->getAccessToken($accessTokenUrl, $requestToken);				
+				
+				$this->OmbAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
+				
+				$this->Session->delete('omb.accessTokenUrl');
+				$this->Session->delete('omb.requestToken');
+				$this->Session->delete('omb.serviceId');
+				
+				$this->flashMessage('Success', 'Successfully subscribed to '.$username);
+			} else {
+				$this->flashMessage('Error', 'Invalid omb version');
+			}
+		} else {
+			$this->flashMessage('Error', 'Invalid request');
+		}
+		
+		$this->redirect('/'.$username);
+	}
+	
+	public function subscribe() {
+		$username = isset($this->params['username']) ? $this->params['username'] : '';
+		$this->set('headline', 'Subscribe to '.$username);
+		
 		if ($this->data) {
-			$endPoints = $this->OmbConsumer->discover($this->data['Omb']['url']);
-			$id = $this->OmbService->add($endPoints);
-			$this->Session->write('omb.service_id', $id);
-			$this->OmbConsumer->redirectToAuthorizePage($endPoints, $session_identity);
+			try {
+				$endPoints = $this->OmbConsumer->discover($this->data['Omb']['url']);
+				$localId = $endPoints[0];
+				$requestTokenUrl = $endPoints[1][OAUTH_REQUEST];
+				$authorizeUrl = $endPoints[1][OAUTH_AUTHORIZE];
+				$accessTokenUrl = $endPoints[1][OAUTH_ACCESS];
+				$postNoticeUrl = $endPoints[1][OMB_POST_NOTICE];
+				$updateProfileUrl = $endPoints[1][OMB_UPDATE_PROFILE];
+				
+				$serviceId = $this->OmbService->getServiceId($postNoticeUrl, $updateProfileUrl);
+
+				if (!$serviceId) {
+					$serviceId = $this->OmbService->add($postNoticeUrl, $updateProfileUrl);
+				}
+
+				$requestToken = $this->OmbConsumer->getRequestToken($requestTokenUrl, $localId);
+				
+				$this->Session->write('omb.requestToken', $requestToken);
+				$this->Session->write('omb.accessTokenUrl', $accessTokenUrl);
+				$this->Session->write('omb.serviceId', $serviceId);
+				
+				$identity = $this->getIdentity($username);
+				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($authorizeUrl, $localId, $requestToken, $identity));
+
+			} catch (Exception $e) {
+				$this->flashMessage('Error', $e->getMessage());
+			}
 		}
 	}
 	
-	public function callback() {
-		$session_identity = $this->Session->read('Identity');
-		$service_id = $this->Session->read('omb.service_id');
-		$accessToken = $this->OmbConsumer->getAccessToken();
-		$this->OmbAccessToken->add($session_identity['id'], $service_id, $accessToken);
+	private function getIdentity($username) {
+		$splitted = $this->Identity->splitUsername($username);
+		$this->Identity->contain();
+		$identity = $this->Identity->findByUsername($splitted['username']);
 		
-		$this->flashMessage('Success', 'Success!');;
-		$this->redirect('/settings/omb');
+        return $identity;
 	}
 }
