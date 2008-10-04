@@ -91,6 +91,8 @@ Router::connect('/:username/add/as/contact/:security_token/', array('controller'
 Router::connect('/:username/xrds', array('controller' => 'auth', 'action' => 'xrds'));
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
+Router::connect('/:username/subscribe', array('controller' => 'omb', 'action' => 'subscribe'));
+Router::connect('/:username/callback', array('controller' => 'omb', 'action' => 'callback'));
 
 Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
@@ -122,9 +124,6 @@ Router::connect('/:username/settings/oauth/add', array('controller' => 'oauth_co
 Router::connect('/:username/settings/oauth/:consumer_id/delete/:security_token', array('controller' => 'oauth_consumers', 'action' => 'delete'));
 Router::connect('/:username/settings/oauth/:consumer_id/edit/', array('controller' => 'oauth_consumers', 'action' => 'edit'));
 Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
-
-Router::connect('/:username/settings/omb', array('controller' => 'omb', 'action' => 'index'));
-Router::connect('/:username/settings/omb/callback', array('controller' => 'omb', 'action' => 'callback'));
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
