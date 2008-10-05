@@ -11,15 +11,6 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 
-define('OMB_VERSION', 'http://openmicroblogging.org/protocol/0.1');
-define('OMB_POST_NOTICE', OMB_VERSION.'/postNotice');
-define('OMB_UPDATE_PROFILE', OMB_VERSION.'/updateProfile');
-
-define('OAUTH_VERSION', 'http://oauth.net/core/1.0');
-define('OAUTH_REQUEST', OAUTH_VERSION.'/endpoint/request');
-define('OAUTH_AUTHORIZE', OAUTH_VERSION.'/endpoint/authorize');
-define('OAUTH_ACCESS', OAUTH_VERSION.'/endpoint/access');
-
 class OmbConsumerComponent extends Object {
 	public $components = array('OauthConsumer', 'Session');
 	private $controller = null;
@@ -27,12 +18,12 @@ class OmbConsumerComponent extends Object {
 	
 	public function __construct() {
 		$this->services = array('http://oauth.net/discovery/1.0',
-								OAUTH_REQUEST,
-						  		OAUTH_AUTHORIZE,
-						  		OAUTH_ACCESS,
-								OMB_VERSION,
-						  		OMB_POST_NOTICE,
-						  		OMB_UPDATE_PROFILE);
+								OauthConstants::REQUEST,
+						  		OauthConstants::AUTHORIZE,
+						  		OauthConstants::ACCESS,
+								OmbConstants::VERSION,
+						  		OmbConstants::POST_NOTICE,
+						  		OmbConstants::UPDATE_PROFILE);
 	}
 	
 	public function constructAuthorizeUrl($authorizeUrl, $localId, $requestToken, $identity) {
@@ -51,7 +42,7 @@ class OmbConsumerComponent extends Object {
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
 		
-		$mandatoryOmbParams = array('omb_version' => OMB_VERSION, 
+		$mandatoryOmbParams = array('omb_version' => OmbConstants::VERSION, 
 									'omb_listener' => $localId, 
 									'omb_listenee' => NOSERUB_FULL_BASE_URL, 
 									'omb_listenee_profile' => 'http://'.$identity['Identity']['username'], 
@@ -109,7 +100,7 @@ class OmbConsumerComponent extends Object {
 							if (in_array($t, $this->services)) {
 								$e = $t;
 							}
-							if ($t == OAUTH_REQUEST) {
+							if ($t == OauthConstants::REQUEST) {
 								$data = $end->getElements('xrd:LocalID');
 								$localID = $end->parser->content($data[0]);
 							}
@@ -145,7 +136,7 @@ class OmbConsumerComponent extends Object {
 		return $this->OauthConsumer->getRequestToken('GenericOmb', 
 													 $requestTokenUrl, 
 													 'POST', 
-													 array('omb_version' => OMB_VERSION, 
+													 array('omb_version' => OmbConstants::VERSION, 
 														   'omb_listener' => $localId));
 	}
 	
@@ -154,7 +145,7 @@ class OmbConsumerComponent extends Object {
 										   $tokenKey, 
 										   $tokenSecret, 
 										   $url, 
-										   array('omb_version' => OMB_VERSION, 
+										   array('omb_version' => OmbConstants::VERSION, 
 										         'omb_listenee' => NOSERUB_FULL_BASE_URL, 
 										         'omb_notice' => 'noserub://'.md5($notice), 
 										         'omb_notice_content' => $notice));
@@ -203,4 +194,16 @@ class OmbConsumerComponent extends Object {
 			}
 		}
 	}
+}
+
+class OmbConstants {
+	const VERSION = 'http://openmicroblogging.org/protocol/0.1';
+	const POST_NOTICE = 'http://openmicroblogging.org/protocol/0.1/postNotice';
+	const UPDATE_PROFILE = 'http://openmicroblogging.org/protocol/0.1/updateProfile';
+}
+
+class OauthConstants {
+	const REQUEST = 'http://oauth.net/core/1.0/endpoint/request';
+	const AUTHORIZE = 'http://oauth.net/core/1.0/endpoint/authorize';
+	const ACCESS = 'http://oauth.net/core/1.0/endpoint/access';
 }

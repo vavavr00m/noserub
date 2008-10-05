@@ -1,8 +1,7 @@
 <?php
 
-define('IDENTICA', 'http://identi.ca');
-
 class OmbConsumerComponentTest extends CakeTestCase {
+	const IDENTICA = 'http://identi.ca';
 	private $component = null;
 	
 	public function setUp() {
@@ -12,13 +11,13 @@ class OmbConsumerComponentTest extends CakeTestCase {
 	public function testDiscover() {
 		$endPoints = $this->component->discover(NOSERUB_FULL_BASE_URL.DS.'testing'.DS.'identica_0.6.xrds');
 		$this->assertEqual(2, count($endPoints));
-		$this->assertEqual(IDENTICA.'/user/4599', $endPoints[0]);
+		$this->assertEqual(self::IDENTICA.'/user/4599', $endPoints[0]);
 		$this->assertEqual(5, count($endPoints[1]));
-		$this->assertEqual(IDENTICA.'/index.php?action=requesttoken', $endPoints[1][OAUTH_REQUEST]);
-		$this->assertEqual(IDENTICA.'/index.php?action=userauthorization', $endPoints[1][OAUTH_AUTHORIZE]);
-		$this->assertEqual(IDENTICA.'/index.php?action=accesstoken', $endPoints[1][OAUTH_ACCESS]);
-		$this->assertEqual(IDENTICA.'/index.php?action=postnotice', $endPoints[1][OMB_POST_NOTICE]);
-		$this->assertEqual(IDENTICA.'/index.php?action=updateprofile', $endPoints[1][OMB_UPDATE_PROFILE]);
+		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $endPoints[1][OauthConstants::REQUEST]);
+		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $endPoints[1][OauthConstants::AUTHORIZE]);
+		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $endPoints[1][OauthConstants::ACCESS]);
+		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $endPoints[1][OmbConstants::POST_NOTICE]);
+		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $endPoints[1][OmbConstants::UPDATE_PROFILE]);
 	}
 	
 	public function testDiscoverNotExistingFile() {
