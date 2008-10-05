@@ -107,13 +107,6 @@ class AuthController extends AppController {
 		}
 	}
 	
-	public function xrds() {
-		Configure::write('debug', 0);
-		$this->layout = 'xml';
-		header('Content-type: application/xrds+xml');
-		$this->set('server', Router::url('/'.low($this->name), true));
-	}
-	
 	private function addSRegDataToResponse($response, $sregRequest, $fields) {
 		$data = am($this->prepareSRegData($this->removeUnwantedFields($sregRequest->required, $fields), true),
 				   $this->prepareSRegData($this->removeUnwantedFields($sregRequest->optional, $fields), true));						
