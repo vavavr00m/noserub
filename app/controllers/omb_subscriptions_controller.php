@@ -9,7 +9,7 @@ class OmbSubscriptionsController extends AppController {
 		$username = isset($this->params['username']) ? $this->params['username'] : '';
 		
 		if (isset($this->params['url']['omb_version'])) {
-			if ($this->params['url']['omb_version'] == OMB_VERSION) {
+			if ($this->params['url']['omb_version'] == OmbConstants::VERSION) {
 				$identity = $this->getIdentity($username);
 
 				$data['Identity']['is_local'] = false;
@@ -47,11 +47,11 @@ class OmbSubscriptionsController extends AppController {
 			try {
 				$endPoints = $this->OmbConsumer->discover($this->data['Omb']['url']);
 				$localId = $endPoints[0];
-				$requestTokenUrl = $endPoints[1][OAUTH_REQUEST];
-				$authorizeUrl = $endPoints[1][OAUTH_AUTHORIZE];
-				$accessTokenUrl = $endPoints[1][OAUTH_ACCESS];
-				$postNoticeUrl = $endPoints[1][OMB_POST_NOTICE];
-				$updateProfileUrl = $endPoints[1][OMB_UPDATE_PROFILE];
+				$requestTokenUrl = $endPoints[1][OauthConstants::REQUEST];
+				$authorizeUrl = $endPoints[1][OauthConstants::AUTHORIZE];
+				$accessTokenUrl = $endPoints[1][OauthConstants::ACCESS];
+				$postNoticeUrl = $endPoints[1][OmbConstants::POST_NOTICE];
+				$updateProfileUrl = $endPoints[1][OmbConstants::UPDATE_PROFILE];
 				
 				$serviceId = $this->OmbService->getServiceId($postNoticeUrl, $updateProfileUrl);
 
