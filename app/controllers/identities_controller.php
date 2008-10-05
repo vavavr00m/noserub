@@ -717,10 +717,12 @@ class IdentitiesController extends AppController {
     }
     
 	public function xrds() {
+		$username = isset($this->params['username']) ? $this->params['username'] : '';
 		Configure::write('debug', 0);
 		$this->layout = 'xml';
 		header('Content-type: application/xrds+xml');
-		$this->set('server', Router::url('/auth', true));
+		$this->set('server', Router::url('/', true));
+		$this->set('username', $username);
 	}
     
     private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {

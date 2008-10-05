@@ -52,9 +52,8 @@ Router::connect('/pages/verify/:hash/', array('controller' => 'registration', 'a
 Router::connect('/pages/account/deleted/', array('controller' => 'identities', 'action' => 'account_deleted'));
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
-Router::connect('/pages/oauth/request_token', array('controller' => 'oauth', 'action' => 'request_token'));
-Router::connect('/pages/oauth/access_token', array('controller' => 'oauth', 'action' => 'access_token'));
-Router::connect('/pages/oauth/authorize', array('controller' => 'oauth', 'action' => 'authorize'));
+Router::connect('/pages/oauth/:action', array('controller' => 'oauth'));
+Router::connect('/pages/omb/:action', array('controller' => 'omb'));
 
 Router::connect('/api/:result_type/info/', array('controller' => 'identities', 'action' => 'api_info'));
 
