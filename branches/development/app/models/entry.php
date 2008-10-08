@@ -429,8 +429,8 @@ class Entry extends AppModel {
     }
     
     private function sendToOmb($identity_id, $text) {
-    	$ombAccessToken = ClassRegistry::init('OmbAccessToken');
-    	$accessToken = $ombAccessToken->findByIdentityId($identity_id);
+    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
+    	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
     	
     	if (!$accessToken) {
     		return;
@@ -439,7 +439,7 @@ class Entry extends AppModel {
     	App::import('Component', array('OmbConsumer', 'OauthConsumer'));
     	$ombConsumer = new OmbConsumerComponent();
     	$ombConsumer->OauthConsumer = new OauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbAccessToken']['token_key'], $accessToken['OmbAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
+    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
     }
     
     /**
