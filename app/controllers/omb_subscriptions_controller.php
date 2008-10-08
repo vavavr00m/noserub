@@ -1,7 +1,7 @@
 <?php
 
 class OmbSubscriptionsController extends AppController {
-	public $uses = array('Identity', 'OmbAccessToken', 'OmbService');
+	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
 	public $helpers = array('flashmessage', 'form');
 	public $components = array('OmbConsumer');
 	
@@ -22,7 +22,7 @@ class OmbSubscriptionsController extends AppController {
 				$serviceId = $this->Session->read('omb.serviceId');
 				$accessToken = $this->OmbConsumer->getAccessToken($accessTokenUrl, $requestToken);				
 				
-				$this->OmbAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
+				$this->OmbServiceAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
 				
 				$this->Session->delete('omb.accessTokenUrl');
 				$this->Session->delete('omb.requestToken');
