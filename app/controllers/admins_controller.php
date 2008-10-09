@@ -4,7 +4,6 @@ class AdminsController extends AppController {
     public $uses = array('Admin');
     
     public function beforeFilter() {
-    	parent::beforeFilter();
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
         if($admin_hash != NOSERUB_ADMIN_HASH || $admin_hash == '') {
