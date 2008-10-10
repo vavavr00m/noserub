@@ -1,5 +1,8 @@
 <?php
 
+App::import('Vendor', 'OmbConstants');
+App::import('Vendor', 'OauthConstants');
+
 class OmbSubscriptionsController extends AppController {
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
 	public $helpers = array('flashmessage', 'form');

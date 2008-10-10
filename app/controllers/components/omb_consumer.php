@@ -10,6 +10,8 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
+App::import('Vendor', 'OmbConstants');
+App::import('Vendor', 'OauthConstants');
 
 class OmbConsumerComponent extends Object {
 	public $components = array('OauthConsumer', 'Session');
@@ -194,16 +196,4 @@ class OmbConsumerComponent extends Object {
 			}
 		}
 	}
-}
-
-class OmbConstants {
-	const VERSION = 'http://openmicroblogging.org/protocol/0.1';
-	const POST_NOTICE = 'http://openmicroblogging.org/protocol/0.1/postNotice';
-	const UPDATE_PROFILE = 'http://openmicroblogging.org/protocol/0.1/updateProfile';
-}
-
-class OauthConstants {
-	const REQUEST = 'http://oauth.net/core/1.0/endpoint/request';
-	const AUTHORIZE = 'http://oauth.net/core/1.0/endpoint/authorize';
-	const ACCESS = 'http://oauth.net/core/1.0/endpoint/access';
 }
