@@ -1,5 +1,8 @@
 <?php
 
+App::import('Vendor', 'OmbConstants');
+App::import('Vendor', 'OauthConstants');
+
 class OmbConsumerComponentTest extends CakeTestCase {
 	const IDENTICA = 'http://identi.ca';
 	private $component = null;
