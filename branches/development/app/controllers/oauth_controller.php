@@ -51,6 +51,7 @@ class OauthController extends AppController {
 		$this->writeToSessionIfParameterIsSet('OAuth.callback_url', 'oauth_callback');
 		
 		if (!$this->Session->check('Identity')) {
+			$this->Session->write('Login.success_url', '/pages/oauth/authorize');
 			$this->redirect('/pages/login');
 		}
 
