@@ -553,12 +553,14 @@ class IdentitiesController extends AppController {
                     if($this->data['Identity']['remember'] == 1) {
                         $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
-                    $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
-                	
-                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
-                	if ($this->Session->check('OAuth.request_token')) {
-                		$url = $this->url->http('/pages/oauth/authorize');
-                	}
+                    
+                    if (!$this->Session->check('Login.success_url')) {
+	                    $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
+	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+                    } else {
+                    	$url = $this->url->http($this->Session->read('Login.success_url'));
+                    	$this->Session->delete('Login.success_url');
+                    }
                     
                     $this->redirect($url);
                 }
