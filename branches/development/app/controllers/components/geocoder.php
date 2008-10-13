@@ -18,8 +18,7 @@ class GeocoderComponent extends Object {
         
         $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address) . '&key=' . NOSERUB_GOOGLE_MAPS_KEY;
         
-        // we import the AppModel because the WebExtractor class is defined there
-        App::import('Model', 'App');
+        App::import('Vendor', 'WebExtractor');
 		$response = WebExtractor::fetchUrl($url);
         
         if($response === false) {

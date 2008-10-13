@@ -336,7 +336,8 @@ class Entry extends AppModel {
     public function shortenUrlInText($text) {
         $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
         if(preg_match_all($pattern, $text, $matches)) {
-            foreach($matches[0] as $url) {
+            App::import('Vendor', 'WebExtractor');
+        	foreach($matches[0] as $url) {
                 $token = WebExtractor::fetchUrl('http://create.li.ttle.de/?url=' . urlencode($url));
                 $new_url = 'http://li.ttle.de/' . $token;
                 if(strlen($new_url) < strlen($url)) {
