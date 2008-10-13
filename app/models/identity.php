@@ -256,8 +256,7 @@ class Identity extends AppModel {
             return false;
         }
 
-        # "@" to avoid notices and warnings on not supported
-        # protocol, e.g. https
+        App::import('Vendor', 'WebExtractor');
         $content = WebExtractor::fetchUrl($url);
         if(!$content) {
             return false;
@@ -800,6 +799,7 @@ class Identity extends AppModel {
        
     public function uploadPhotoByUrl($url) {
         # get the file first
+        App::import('Vendor', 'WebExtractor');
         $content = WebExtractor::fetchUrl($url);
         if($content) {
             $filename = AVATAR_DIR . $this->id . '.tmp';

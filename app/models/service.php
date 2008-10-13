@@ -308,6 +308,7 @@ class Service extends AppModel {
 
 class ContactExtractor {
 	public static function getContactsFromSinglePage($url, $pattern) {
+		App::import('Vendor', 'WebExtractor');
 		$data = array();
         $content = WebExtractor::fetchUrl($url);
         if($content && preg_match_all($pattern, $content, $matches)) {
@@ -323,6 +324,7 @@ class ContactExtractor {
 	
 	// TODO better names for the parameters
 	public static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
+		App::import('Vendor', 'WebExtractor');
 		$data = array();
         $i = 2;
         $page_url = $url;
