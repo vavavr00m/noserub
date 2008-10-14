@@ -187,6 +187,7 @@ class IdentitiesController extends AppController {
                 $items = $this->cluster->create($items);
             }
         } else {
+        	header("HTTP/1.0 404 Not Found");
             $this->set('headline', 'Username could not be found!');
         }
 
