@@ -1,6 +1,7 @@
 <?php
 
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
+App::import('Vendor', 'OmbConstants');
 
 class OmbController extends AppController {
 	public $uses = array('OmbDataStore', 'OmbRequestToken');
@@ -26,38 +27,77 @@ class OmbController extends AppController {
 	}
 	
 	public function access_token() {
-		// TODO add implementation
+		Configure::write('debug', 0);
+		$server = $this->getServer();
+		
+		// we do this here so we do not have to set up a cron job
+		$this->OmbRequestToken->deleteExpired();
+		
+		// to avoid an "invalid signature" error we have to unset this param
+		unset($_GET['url']);
+		
+		try {
+  			$request = OAuthRequest::from_request();
+  			$access_token = $server->fetch_access_token($request);
+  			echo $access_token;
+		} catch (OAuthException $e) {
+  			print($e->getMessage() . "\n<hr />\n");
+  			print_r($request);
+		}
+		
+		exit();
 	}
 	
 	public function authorize() {
-		$this->writeToSessionIfParameterIsSet('OAuth.request_token', 'oauth_token');
-		$this->writeToSessionIfParameterIsSet('OAuth.callback_url', 'oauth_callback');
+		if (!$this->isCorrectOMBVersion()) {
+			echo 'Invalid OMB version';
+			exit;
+		}
+		
+		$requiredParams = array('oauth_token', 'oauth_callback', 'omb_listener', 
+							    'omb_listenee', 'omb_listenee_profile',
+							    'omb_listenee_nickname', 'omb_listenee_license');
+		
+		foreach ($requiredParams as $requiredParam) {
+			if (!isset($this->params['url'][$requiredParam])) {
+				echo 'Missing parameter: ' . $requiredParam;
+				exit;
+			}
+		}
+		
+		foreach ($requiredParams as $requiredParam) {
+			$this->Session->write('OMB.'.$requiredParam, $this->params['url'][$requiredParam]);
+		}
+		
+		$optionalParams = array('omb_listenee_fullname', 'omb_listenee_homepage',
+								'omb_listenee_bio', 'omb_listenee_location',
+								'omb_listenee_avatar');
+		
+		foreach ($optionalParams as $optionalParam) {
+			$this->writeToSessionIfParameterIsSet('OMB.'.$optionalParam, $optionalParam);
+		}
 		
 		if (!$this->Session->check('Identity')) {
-			$this->Session->write('Login.success_url', '/pages/omb/authorize');
+			$this->Session->write('Login.success_url', '/pages/omb/authorize_form');
 			$this->redirect('/pages/login');
 		}
 		
+		$this->redirect('/pages/omb/authorize_form');
+	}
+	
+	public function authorize_form() {
 		if (empty($this->params['form'])) {
-			if (!$this->Session->check('OAuth.request_token')) {
-				if (isset($this->params['url']['oauth_token'])) {
-					$this->Session->write('OAuth.request_token', $this->params['url']['oauth_token']);
-				} else {
-					$this->render('no_token');
-				}
-			}
-			
 			$this->set('headline', 'Authorize access');
 		} else {
 			if (isset($this->params['form']['allow'])) {
-				$this->OmbRequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
-				$redirectTo = $this->Session->read('OAuth.callback_url');
+				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'));
+				$redirectTo = $this->Session->read('OMB.oauth_callback');
 			} else {
 				$redirectTo = '/';
 			}
 			
-			$this->Session->delete('OAuth.request_token');
-			$this->Session->delete('OAuth.callback_url');
+			$this->Session->delete('OMB.oauth_token');
+			$this->Session->delete('OMB.oauth_callback');
 			
 			$this->redirect($redirectTo);
 		}
@@ -76,6 +116,11 @@ class OmbController extends AppController {
 		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
 		
 		return $server;
+	}
+	
+	private function isCorrectOMBVersion() {
+		return (isset($this->params['url']['omb_version']) && 
+				$this->params['url']['omb_version'] == OmbConstants::VERSION);
 	}
 	
 	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
