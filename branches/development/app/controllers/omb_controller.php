@@ -86,18 +86,34 @@ class OmbController extends AppController {
 	}
 	
 	public function authorize_form() {
+		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
+			echo 'Invalid request';
+			exit;
+		}
+
 		if (empty($this->params['form'])) {
 			$this->set('headline', 'Authorize access');
 		} else {
 			if (isset($this->params['form']['allow'])) {
 				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'));
 				$redirectTo = $this->Session->read('OMB.oauth_callback');
+				
+				if (strpos($redirectTo, '?') === false) {
+					$redirectTo .= '?';
+				} else {
+					$redirectTo .= '&';
+				}
+				
+				$identity = $this->Session->read('Identity');
+				
+				$redirectTo .= 'omb_version='.OAuthUtil::urlencodeRFC3986(OmbConstants::VERSION);
+				$redirectTo .= '&omb_listener_nickname='.OAuthUtil::urlencodeRFC3986($identity['local_username']);
+				$redirectTo .= '&omb_listener_profile='.OAuthUtil::urlencodeRFC3986('http://'.$identity['username']);
 			} else {
 				$redirectTo = '/';
 			}
 			
-			$this->Session->delete('OMB.oauth_token');
-			$this->Session->delete('OMB.oauth_callback');
+			$this->Session->delete('OMB');
 			
 			$this->redirect($redirectTo);
 		}
