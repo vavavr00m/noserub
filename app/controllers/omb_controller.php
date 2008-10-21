@@ -106,7 +106,8 @@ class OmbController extends AppController {
 				
 				$identity = $this->Session->read('Identity');
 				
-				$redirectTo .= 'omb_version='.OAuthUtil::urlencodeRFC3986(OmbConstants::VERSION);
+				$redirectTo .= 'oauth_token='.OAuthUtil::urlencodeRFC3986($this->Session->read('OMB.oauth_token'));
+				$redirectTo .= '&omb_version='.OAuthUtil::urlencodeRFC3986(OmbConstants::VERSION);
 				$redirectTo .= '&omb_listener_nickname='.OAuthUtil::urlencodeRFC3986($identity['local_username']);
 				$redirectTo .= '&omb_listener_profile='.OAuthUtil::urlencodeRFC3986('http://'.$identity['username']);
 			} else {

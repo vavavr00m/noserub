@@ -11,6 +11,51 @@ class OmbDataStore extends AppModel {
 		return new OAuthConsumer($consumer_key, '');
 	}
 	
+	// TODO move implementation somewhere else, as it is identical to DataStore::lookup_nonce
+	public function lookup_nonce($consumer, $token, $nonce, $timestamp) {
+		App::import('Model', 'Nonce');
+		$theNonce = new Nonce();
+
+		// XXX if the API becomes popular we probably have to move this clean up to a cron job
+		$theNonce->deleteExpired();
+		
+		if (!$theNonce->hasBeenUsed($consumer, $token, $nonce)) {
+			$theNonce->add($consumer, $token, $nonce);
+			return null;
+		}
+		
+		return $nonce;
+	}
+	
+	public function lookup_token($consumer, $token_type, $token) {
+		$tokenName = 'Omb'.ucfirst($token_type).'Token';
+		
+		App::import('Model', $tokenName);
+		$theToken = new $tokenName();
+		$data = $theToken->find(array($tokenName.'.token_key' => $token));
+		
+		if (!empty($data)) {
+			return new OAuthToken($data[$tokenName]['token_key'], $data[$tokenName]['token_secret']);
+		}
+		
+		return null;
+	}
+	
+	public function new_access_token($token, $consumer) {
+		App::import('Model', 'OmbRequestToken');
+  		$requestToken = new OmbRequestToken();
+		
+		if ($requestToken->isAuthorized($token->key)) {
+			$this->identity_id = $requestToken->field('identity_id', array('token_key' => $token->key));
+			$accessToken = $this->new_token('AccessToken');
+  			$requestToken->delete(array('OmbRequestToken.token_key' => $token->key));
+  			
+  			return $accessToken;
+		}
+		
+		return null;
+	}
+	
 	public function new_request_token($consumer) {  		
   		return $this->new_token('RequestToken');
 	}
@@ -41,7 +86,11 @@ class OmbDataStore extends AppModel {
   		$token = new $token_type();
   		$token->save($data);
   		
-  		return new OmbOAuthToken($key, $secret);
+  		if ($token_type == 'OmbRequestToken') {
+  			return new OmbOAuthToken($key, $secret);
+  		}
+  		
+  		return new OAuthToken($key, $secret);
 	}
 }
 
