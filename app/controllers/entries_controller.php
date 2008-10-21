@@ -1,6 +1,30 @@
 <?php
 class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
+    public $helpers = array('nicetime');
+    
+    /**
+     * Display one entry - permalink for an entry
+     *
+     * @param int $entry_id
+     */
+    public function view($entry_id) {
+        $this->checkUnsecure();
+        
+        $session_identity = $this->Session->read('Identity');
+        
+        $this->Entry->contain('Identity', 'Account', 'ServiceType');
+        $data = $this->Entry->findById($entry_id);
+        $this->set('data', $data);
+        $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
+        
+        if(isset($data['Identity']['id']) && 
+           $session_identity['id'] == $data['Identity']['id']) {
+               $this->set('headline', 'Edit your entry');
+           } else {
+               $this->set('headline', 'Permalink');
+        }
+    }
     
     /**
      * Go through all accounts and update

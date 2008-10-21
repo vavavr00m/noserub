@@ -115,9 +115,9 @@ class MenuFactory {
 	}
 	
 	private function getMainMenuForLocalUser($controller, $action, $localUsername) {
+	    $menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
-		$menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SearchMenuItem($controller, $action);
 		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
@@ -326,7 +326,7 @@ class SocialStreamMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action) {
-		parent::__construct('Social Stream', '/social_stream/', false);
+		parent::__construct('All Users', '/social_stream/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}

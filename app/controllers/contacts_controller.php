@@ -402,10 +402,20 @@ class ContactsController extends AppController {
     public function network() {
         $this->checkUnsecure();
         
-        $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        
+        if(!isset($this->params['username'])) {
+            if(!$session_identity) {
+                $this->redirect('/social_stream/');
+            } else {
+                $username = $session_identity['local_username'];
+            }
+        } else {
+            $username = isset($this->params['username']) ? $this->params['username'] : '';
+        }
+        
+        $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
+        $splitted = $this->Contact->Identity->splitUsername($username);
         
         if(isset($this->data['Micropublish']['value'])) {
             $this->Contact->Identity->id = $session_identity['id'];
@@ -423,8 +433,27 @@ class ContactsController extends AppController {
             $tag_filter = 'all';
         }
         if($this->data) {
-            $tag_filter = $this->data['TagFilter']['id'];
-            $this->Session->write('Filter.Contact.Tag', $tag_filter);
+            $this->ensureSecurityToken();
+
+            if(isset($this->data['Locator']['id'])) {
+                # location was changed
+                $location_id = $this->data['Locator']['id'];
+                if($location_id == 0 && $this->data['Locator']['name'] != '') {
+                    # a new location must be created
+                    $data = array('identity_id' => $session_identity['id'],
+                                  'name'        => $this->data['Locator']['name']);
+                    $this->Contact->Identity->Location->create();
+                    $this->Contact->Identity->Location->save($data);
+                    $location_id = $this->Contact->Identity->Location->id;
+                } 
+                if($location_id > 0) {
+                    $this->Contact->Identity->Location->setTo($session_identity['id'], $location_id);                
+                    $this->flashMessage('success', 'Location updated');
+                }
+            } else {
+                $tag_filter = $this->data['TagFilter']['id'];
+                $this->Session->write('Filter.Contact.Tag', $tag_filter);
+            }
         }
         $this->data['TagFilter']['id'] = $tag_filter;
         
@@ -444,8 +473,9 @@ class ContactsController extends AppController {
         
         $this->set('tag_filter_list', $this->Contact->getTagList($about_identity['id']));
         
+        $is_self = $session_identity && $session_identity['local_username'] == $splitted['local_username'];
         # get (filtered) contacts
-        if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
+        if($is_self) {
             # this is my network, so I can show every contact
             $contact_filter = array('tag' => $tag_filter);
         } else {
@@ -477,6 +507,11 @@ class ContactsController extends AppController {
             $items = $this->cluster->create($items);
         }
     
+        # get list of locations, if this is the logged in user
+        if($is_self) {
+            $this->set('locations', $this->Contact->Identity->Location->find('list', array('conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
+        }
+        
         $this->set('items', $items);
         $this->set('identities', $contacts);
         $this->set('filter', $filter);

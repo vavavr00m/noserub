@@ -33,7 +33,7 @@ noserub.fn = noserub.prototype = {
     
     log: function(msg) {
         if(this.debug === true) {
-            window.console.log(msg);
+            console.log(msg);
         }
     },
     
@@ -97,11 +97,6 @@ noserub.fn = noserub.prototype = {
     Contacts_network: function() {
         this.micropublish_char_count();
         this.social_stream_items();
-    },
-    
-    Identities_index: function() {
-        this.micropublish_char_count();
-        this.social_stream_items();
         if($('.locator option').size() > 1) {
             $('.locator :text').hide();
             $('.locator #locator_name').hide();
@@ -117,6 +112,11 @@ noserub.fn = noserub.prototype = {
                 $('.locator #locator_name').show();
             }
         });
+    },
+    
+    Identities_index: function() {
+        this.micropublish_char_count();
+        this.social_stream_items();
     },
     
     Identities_social_stream: function() {

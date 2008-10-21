@@ -20,34 +20,6 @@ class IdentitiesController extends AppController {
         $username = $splitted['username'];
         
         $session_identity = $this->Session->read('Identity');
-        
-        if($this->data) {
-            $this->ensureSecurityToken();
-            
-            if(isset($this->data['Micropublish']['value'])) {
-                $this->Identity->Entry->addMicropublish(
-                    $session_identity['id'], 
-                    $this->data['Micropublish']['value'],
-                    null
-                );
-                $this->data = array();
-            } else {
-                # location was changed
-                $location_id = $this->data['Locator']['id'];
-                if($location_id == 0 && $this->data['Locator']['name'] != '') {
-                    # a new location must be created
-                    $data = array('identity_id' => $session_identity['id'],
-                                  'name'        => $this->data['Locator']['name']);
-                    $this->Identity->Location->create();
-                    $this->Identity->Location->save($data);
-                    $location_id = $this->Identity->Location->id;
-                } 
-                if($location_id > 0) {
-                    $this->Identity->Location->setTo($session_identity['id'], $location_id);                
-                    $this->flashMessage('success', 'Location updated');
-                }
-            }
-        }
 
         # check, if we need to redirect. only, when the user is not
         # logged in.
@@ -146,11 +118,6 @@ class IdentitiesController extends AppController {
                     if($mutual_contacts) {
                     	$this->set('mutual_contacts', $mutual_contacts);
                     }
-                }
-                
-                # get list of locations, if this is the logged in user
-                if($relationship_status == 'self') {
-                    $this->set('locations', $this->Identity->Location->find('list', array('conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
                 }
                 
                 # create $about_identity for the view
@@ -557,7 +524,7 @@ class IdentitiesController extends AppController {
                     
                     if (!$this->Session->check('Login.success_url')) {
 	                    $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
-	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/');
+	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
                     } else {
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
                     	$this->Session->delete('Login.success_url');
