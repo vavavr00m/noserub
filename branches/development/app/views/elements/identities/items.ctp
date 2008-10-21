@@ -68,30 +68,10 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
                                 echo '</ul>';
                                 echo '<ul class="networklist extended">';
                             }
+                        
+                            echo $this->renderElement('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));
                         ?>
-                        <li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
-                            <span class="date">
-                                <?php if($date == $today) {
-                                    echo $nicetime->show($item['Entry']['published_on']); 
-                                } else {
-                                    echo date('H:s', strtotime($item['Entry']['published_on'])); 
-                                } ?>
-                            </span>
-                            <span>
-                                <?php
-                                    $splitted = split('/', $item['Identity']['username']);
-                                    $splitted2 = split('@', $splitted[count($splitted)-1]);
-                                    $username = $splitted2[0];
-                                    $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $item['ServiceType']['intro']);
-                                    if($item['Entry']['url']) {
-                                        $intro = str_replace('@item@', '»<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>«', $intro);
-                                    } else {
-                                        $intro = str_replace('@item@', '»'.$item['Entry']['title'].'«', $intro);
-                                    }
-                                    echo $intro; 
-                                ?>
-                            </span>
-                        </li>
+                        
                         <?php $num_displayed++; ?>
                     <?php } ?>
                 </ul>

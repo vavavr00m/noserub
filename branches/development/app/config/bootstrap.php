@@ -63,7 +63,7 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
 # just a precaution for avoiding confusions.
-define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,register,social_stream,search,groups');
+define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,register,social_stream,search,groups,entry');
 
 # temporary constant for development purposes
 # TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
