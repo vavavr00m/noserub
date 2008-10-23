@@ -23,7 +23,7 @@
                 <?php foreach($contact_accounts as $account) { ?>
                     <tr>
                         <td>
-                            <img class="whoisicon" alt="<?php echo $account['Service']['name']; ?>" src="/images/icons/services/<?php echo $account['Service']['icon']; ?>"/>
+                            <img class="whoisicon" alt="<?php echo $account['Service']['name']; ?>" src="<?php echo Router::url('/images/icons/services/' . $account['Service']['icon']); ?>"/>
                             <?php echo $account['Service']['name']; ?>
                         </td>
                         <td>
