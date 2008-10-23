@@ -81,7 +81,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => false));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(2, count($menuItems));
-		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', false);
+		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', false);
 		$this->assertMenuItem($menuItems[1], 'My Profile', '', false);
 	}
 	
@@ -106,7 +106,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'none'));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(2, count($menuItems));
-		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', false);
+		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', false);
 		$this->assertMenuItem($menuItems[1], 'Search', '/search/', false);
 	}
 	
@@ -218,16 +218,16 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	private function assertMenuForAnonymousUser(Menu $mainMenu, $socialStreamActive, $searchActive, $registerActive) {
 		$menuItems = $mainMenu->getMenuItems();
-		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
+		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', $socialStreamActive);
 		$this->assertMenuItem($menuItems[1], 'Search', '/search/', $searchActive);
 		$this->assertMenuItem($menuItems[2], 'Register', '/pages/register/', $registerActive);
 	}
 	
 	private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $searchActive, $settingsActive) {
 		$menuItems = $mainMenu->getMenuItems();
-		$this->assertMenuItem($menuItems[0], 'Social Stream', '/social_stream/', $socialStreamActive);
-		$this->assertMenuItem($menuItems[1], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
-		$this->assertMenuItem($menuItems[2], 'With my Contacts', '/' . $localUsername . '/network/', $myContactsActive);
+		$this->assertMenuItem($menuItems[0], 'With my Contacts', '/' . $localUsername . '/network/', $myContactsActive);
+		$this->assertMenuItem($menuItems[1], 'All Users', '/social_stream/', $socialStreamActive);
+		$this->assertMenuItem($menuItems[2], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
 		$this->assertMenuItem($menuItems[3], 'Search', '/search/', $searchActive);
 		$this->assertMenuItem($menuItems[4], 'Settings', '/' . $localUsername . '/settings/', $settingsActive);
 	}
@@ -484,7 +484,7 @@ class SocialStreamMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $isActive) {
-		$this->assertEqual('Social Stream', $menuItem->getLabel());
+		$this->assertEqual('All Users', $menuItem->getLabel());
 		$this->assertEqual('/social_stream/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
