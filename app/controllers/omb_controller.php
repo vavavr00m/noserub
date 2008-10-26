@@ -4,7 +4,8 @@ App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 App::import('Vendor', 'OmbConstants');
 
 class OmbController extends AppController {
-	public $uses = array('OmbDataStore', 'OmbRequestToken');
+	public $uses = array('Entry', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
+	public $components = array('RequestHandler');
 	
 	public function request_token() {
 		Configure::write('debug', 0);
@@ -121,7 +122,25 @@ class OmbController extends AppController {
 	}
 	
 	public function post_notice() {
-		// TODO add implementation
+		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
+			header('HTTP/1.1 403 Forbidden');
+			echo 'Invalid request';
+			exit;
+		}
+		
+		$requiredParams = array('omb_listenee', 'omb_notice', 'omb_notice_content');
+		
+		foreach ($requiredParams as $requiredParam) {
+			if (!isset($this->params['form'][$requiredParam])) {
+				echo 'Missing parameter: '.$requiredParam;
+				exit;
+			}
+		}
+		
+		// TODO add notice
+		
+		echo 'omb_version='.OmbConstants::VERSION;
+		exit;
 	}
 	
 	public function update_profile() {
@@ -135,9 +154,10 @@ class OmbController extends AppController {
 		return $server;
 	}
 	
-	private function isCorrectOMBVersion() {
-		return (isset($this->params['url']['omb_version']) && 
-				$this->params['url']['omb_version'] == OmbConstants::VERSION);
+	// type can be 'url' or 'form'
+	private function isCorrectOMBVersion($type = 'url') {
+		return (isset($this->params[$type]['omb_version']) && 
+				$this->params[$type]['omb_version'] == OmbConstants::VERSION);
 	}
 	
 	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
