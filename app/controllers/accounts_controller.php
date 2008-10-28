@@ -91,7 +91,9 @@ class AccountsController extends AppController {
                 # we need to redirect, because $data is already outdated 
                 # after the changes we just made
                 $this->flashMessage('success', 'Changes saved.');
-                $this->redirect($this->here);
+                // $this->redirect($this->here); doesn't work if you install NoseRub in a subdirectory
+                $this->header('Location: '.$this->here);
+                exit;
             } else {
                 $this->flashMessage('info', 'No changes made');
             }
