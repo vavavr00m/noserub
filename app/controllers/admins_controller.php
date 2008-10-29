@@ -1,7 +1,7 @@
 <?php
  
 class AdminsController extends AppController {
-    public $uses = array('Admin');
+    public $uses = array('Admin', 'Migration');
     
     public function beforeFilter() {
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
@@ -34,17 +34,17 @@ class AdminsController extends AppController {
             return;
         }
         
-        $database_status = $this->Admin->getDatabaseStatus();
+        $database_status = $this->Migration->getDatabaseStatus();
         $this->set('database_status', $database_status);
         if($database_status == 1) {
-            $current_migration     = $this->Admin->getCurrentMigration();
-            $most_recent_migration = $this->Admin->getMostRecentMigration();
+            $current_migration     = $this->Migration->getCurrentMigration();
+            $most_recent_migration = $this->Migration->getMostRecentMigration();
             $this->set('current_migration', $current_migration);
             $this->set('most_recent_migration', $most_recent_migration);
             
             if($current_migration < $most_recent_migration) {
-                $migrations = $this->Admin->getOpenMigrations($current_migration);
-                $this->Admin->migrate($migrations, $current_migration, $most_recent_migration);
+                $migrations = $this->Migration->getOpenMigrations($current_migration);
+                $this->Migration->migrate($migrations, $current_migration, $most_recent_migration);
             
                 $this->set('migrations', $migrations);
             }
