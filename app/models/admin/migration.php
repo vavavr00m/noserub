@@ -20,9 +20,9 @@ class Migration extends AppModel {
         }
         uses('model' . DS . 'connection_manager');
     	$db = ConnectionManager::getInstance();
-     	$connected = $db->getDataSource('default');
+     	$dataSource = $db->getDataSource('default');
      	
-     	return $connected->isConnected() ? 1 : 0;
+     	return $dataSource->isConnected() ? 1 : 0;
     }
     
 	/**
@@ -58,26 +58,8 @@ class Migration extends AppModel {
      * @access 
      */
     public function getCurrentMigration() {
-        # check, if schema_info is there:
-		$tables = $this->query('SHOW TABLES');
-		
-		$is_present = false;
-		foreach($tables as $table) {
-		    foreach($table as $row) {
-		        if(in_array('schema_info', $row)) {
-		            $is_present = true;
-		            break;
-		        }
-	        }
-	        if($is_present) {
-	            break;
-	        }
-		}
-		
-		if(!$is_present) {
-	        $this->query('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
-		    $this->query('INSERT INTO `schema_info` (`value`) VALUES (0)');
-	        return 0;
+		if(!$this->existsSchemaInfoTable()) {
+	        $this->createSchemaInfoTable();
 	    } 
 	    
 	    $schema_info = $this->query('SELECT value FROM schema_info');
@@ -142,5 +124,29 @@ class Migration extends AppModel {
             # update schema_info
             $this->query('UPDATE schema_info SET value='.$i);
         }
+    }
+    
+    private function createSchemaInfoTable() {
+    	$this->query('CREATE TABLE IF NOT EXISTS `schema_info` (`value` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
+		$this->query('INSERT INTO `schema_info` (`value`) VALUES (0)');
+    }
+    
+    private function existsSchemaInfoTable() {
+    	$tables = $this->query('SHOW TABLES');
+		
+		$is_present = false;
+		foreach($tables as $table) {
+		    foreach($table as $row) {
+		        if(in_array('schema_info', $row)) {
+		            $is_present = true;
+		            break;
+		        }
+	        }
+	        if($is_present) {
+	            break;
+	        }
+		}
+		
+		return $is_present;
     }
 }
