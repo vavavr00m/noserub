@@ -51,7 +51,7 @@ class OmbController extends AppController {
 	
 	public function authorize() {
 		if (!$this->isCorrectOMBVersion()) {
-			echo 'Invalid OMB version';
+			echo __('Invalid OMB version', true);
 			exit;
 		}
 		
@@ -61,7 +61,7 @@ class OmbController extends AppController {
 		
 		foreach ($requiredParams as $requiredParam) {
 			if (!isset($this->params['url'][$requiredParam])) {
-				echo 'Missing parameter: ' . $requiredParam;
+				echo __('Missing parameter: ', true) . $requiredParam;
 				exit;
 			}
 		}
@@ -88,12 +88,12 @@ class OmbController extends AppController {
 	
 	public function authorize_form() {
 		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
-			echo 'Invalid request';
+			echo __('Invalid request', true);
 			exit;
 		}
 
 		if (empty($this->params['form'])) {
-			$this->set('headline', 'Authorize access');
+			$this->set('headline', __('Authorize access', true));
 		} else {
 			if (isset($this->params['form']['allow'])) {
 				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'));
@@ -124,7 +124,7 @@ class OmbController extends AppController {
 	public function post_notice() {
 		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
 			header('HTTP/1.1 403 Forbidden');
-			echo 'Invalid request';
+			echo __('Invalid request', true);
 			exit;
 		}
 		
@@ -132,7 +132,7 @@ class OmbController extends AppController {
 		
 		foreach ($requiredParams as $requiredParam) {
 			if (!isset($this->params['form'][$requiredParam])) {
-				echo 'Missing parameter: '.$requiredParam;
+				echo __('Missing parameter: ', true) . $requiredParam;
 				exit;
 			}
 		}

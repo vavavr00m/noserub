@@ -31,12 +31,12 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->delete('omb.requestToken');
 				$this->Session->delete('omb.serviceId');
 				
-				$this->flashMessage('Success', 'Successfully subscribed to '.$username);
+				$this->flashMessage('Success', __('Successfully subscribed to ', true) . $username);
 			} else {
-				$this->flashMessage('Error', 'Invalid omb version');
+				$this->flashMessage('Error', __('Invalid omb version', true));
 			}
 		} else {
-			$this->flashMessage('Error', 'Invalid request');
+			$this->flashMessage('Error', __('Invalid request', true));
 		}
 		
 		$this->redirect('/'.$username);
@@ -44,7 +44,7 @@ class OmbSubscriptionsController extends AppController {
 	
 	public function subscribe() {
 		$username = isset($this->params['username']) ? $this->params['username'] : '';
-		$this->set('headline', 'Subscribe to '.$username);
+		$this->set('headline', __('Subscribe to ', true) . $username);
 		
 		if ($this->data) {
 			try {
