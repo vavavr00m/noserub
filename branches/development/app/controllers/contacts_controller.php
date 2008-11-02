@@ -48,9 +48,9 @@ class ContactsController extends AppController {
 		$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         
         if($session_identity['username'] == $splitted['username']) {
-            $this->set('headline', 'My contacts');
+            $this->set('headline', __('My contacts', true));
         } else {
-            $this->set('headline', $splitted['username'] . '\'s contacts');
+            $this->set('headline', sprintf(__("%s's contacts", true), $splitted['username']));
         }
     }
     
@@ -111,7 +111,7 @@ class ContactsController extends AppController {
                         # user could not be found, so delete it
                         $this->Contact->Identity->id = $new_identity_id;
                         $this->Contact->Identity->delete();
-                        $this->flashMessage('error', 'Could not add contact');
+                        $this->flashMessage('error', __('Could not add contact.'. true));
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
                         exit;
@@ -132,11 +132,11 @@ class ContactsController extends AppController {
                 
                 if($this->Contact->add($session_identity['id'], $new_identity_id)) {
                     $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $new_identity_id, null);
-                    $this->flashMessage('success', 'New contact added.');
+                    $this->flashMessage('success', __('New contact added.', true));
     			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
     			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
 			    } else {
-			        $this->flashMessage('error', 'Could not add contact');
+			        $this->flashMessage('error', __('Could not add contact.', true));
 			    }
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
@@ -153,7 +153,7 @@ class ContactsController extends AppController {
                     $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
-                        $this->flashMessage('success', 'New contact added.');
+                        $this->flashMessage('success', __('New contact added.', true));
         			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
         			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
     			    } else {
@@ -172,9 +172,9 @@ class ContactsController extends AppController {
         }
         
         if($splitted['username'] == $session_identity['username']) {
-            $this->set('headline', 'Add a contact to your social network');
+            $this->set('headline', __('Add a contact to your social network', true));
         } else {
-            $this->set('headline', 'Add a contact to '. $splitted['local_username'] . '\'s social network');
+            $this->set('headline', sprintf(__("Add a contact to %s's social network", true), $splitted['local_username']));
         }
     }
         
@@ -212,7 +212,7 @@ class ContactsController extends AppController {
         $with_identity_id = $contact['Contact']['with_identity_id'];
         $this->Contact->id = $contact_id;
         $this->Contact->delete();
-        $this->flashMessage('success', 'Removed the contact.');
+        $this->flashMessage('success', __('Removed the contact.', true));
         
         # get the other identity in order to determine, if
         # this was a local identity and therefore can be deleted
@@ -263,7 +263,7 @@ class ContactsController extends AppController {
         $this->Contact->Identity->Account->contain('Service');
         $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
         
-        $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);
+        $this->set('headline', sprintf('Info about %s', $contact['WithIdentity']['username']));
     }
     
     public function edit() {
@@ -376,14 +376,14 @@ class ContactsController extends AppController {
                 }
             }
                 	    
-    		$this->flashMessage('success', 'Contact updated.');
+    		$this->flashMessage('success', __('Contact updated.', true));
     		$this->redirect('/' . $session_identity['local_username'] . '/contacts/');
     	}
     	
     	$this->set('contact', $contact);
     	$this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
     	
-    	$this->set('headline', 'Edit the contact details');
+    	$this->set('headline', __('Edit the contact details', true));
     	
     	$this->Contact->NoserubContactType->contain();
 	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
@@ -448,7 +448,7 @@ class ContactsController extends AppController {
                 } 
                 if($location_id > 0) {
                     $this->Contact->Identity->Location->setTo($session_identity['id'], $location_id);                
-                    $this->flashMessage('success', 'Location updated');
+                    $this->flashMessage('success', __('Location updated.', true));
                 }
             } else {
                 $tag_filter = $this->data['TagFilter']['id'];
@@ -518,7 +518,7 @@ class ContactsController extends AppController {
         $this->set('session_identity', $session_identity);
         $this->set('about_identity', $about_identity);
         $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
-        $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
+        $this->set('headline', sprintf(__("Activities in %s's contact's social stream", true), $splitted['local_username']));
         
         $this->render('../identities/social_stream');
     }
@@ -543,7 +543,7 @@ class ContactsController extends AppController {
         if($session_identity['id'] == $identity['Identity']['id']) {
             # this is the logged in user. no reason to allow him to add
             # himself as contact.
-            $this->flashMessage('alert', 'You cannot add yourself as a contact.');
+            $this->flashMessage('alert', __('You cannot add yourself as a contact.', true));
             $this->redirect('/' . $splitted['local_username']);
         }
         
@@ -558,7 +558,7 @@ class ContactsController extends AppController {
                              'with_identity_id' => $identity['Identity']['id']);
             $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
             $this->Contact->save($contact, true, $saveable);
-            $this->flashMessage('success', 'Added new contact.');
+            $this->flashMessage('success', __('Added new contact.', true));
             
             $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
         }

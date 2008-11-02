@@ -28,9 +28,9 @@ class AccountsController extends AppController {
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
-            $this->set('headline', 'Your accounts');
+            $this->set('headline', __('Your accounts', true));
         } else {
-            $this->set('headline', $splitted['username'] . '\'s accounts');
+            $this->set('headline', sprintf(__("%s's accounts", true), $splitted['local_username']));
         }
         
         $this->set('contact_accounts', $this->Account->Service->getContactAccounts());
@@ -90,12 +90,12 @@ class AccountsController extends AppController {
             if($need_redirect) {
                 # we need to redirect, because $data is already outdated 
                 # after the changes we just made
-                $this->flashMessage('success', 'Changes saved.');
+                $this->flashMessage('success', __('Changes saved.', true));
                 // $this->redirect($this->here); doesn't work if you install NoseRub in a subdirectory
                 $this->header('Location: '.$this->here);
                 exit;
             } else {
-                $this->flashMessage('info', 'No changes made');
+                $this->flashMessage('info', __('No changes made.', true));
             }
         } else {
             $this->data = $identity;
@@ -113,7 +113,7 @@ class AccountsController extends AppController {
     	# only logged in users can add accounts
         if(!$session_identity) {
             # this user is not logged in
-            $this->flashMessage('error', 'You need to be logged in to add an account.');
+            $this->flashMessage('error', __('You need to be logged in to add an account.', true));
             $this->redirect('/');
         }
 
@@ -248,7 +248,7 @@ class AccountsController extends AppController {
                         }
                     }
                     
-                    $this->flashMessage('success', 'Account added.');
+                    $this->flashMessage('success', __('Account added.', true));
                 }
             }
             # we're done!
@@ -267,7 +267,7 @@ class AccountsController extends AppController {
         	$this->set('service_types', $this->Account->ServiceType->find('list'));
         }
         $this->set('data', $data);
-        $this->set('headline', 'Preview the data');
+        $this->set('headline', __('Preview the data', true));
     }
     
     public function add_step_3_friends() {
@@ -287,7 +287,7 @@ class AccountsController extends AppController {
         
         if(isset($this->params['form']['cancel'])) {
             # we don't neet to go further
-            $this->flashMessage('success', 'Account added.');
+            $this->flashMessage('success', __('Account added.', true));
             $this->redirect('/' . $username . '/settings/accounts/');
         }
         
@@ -353,7 +353,7 @@ class AccountsController extends AppController {
                 }
             }
             # we're done!
-            $this->flashMessage('success', 'Account added.');
+            $this->flashMessage('success', __('Account added.', true));
             $this->redirect('/' . $username . '/settings/accounts/');
         }
 
@@ -422,7 +422,7 @@ class AccountsController extends AppController {
         }
         
         if(!$this->data) {
-            $this->set('headline', 'Edit service ' . htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8'));
+            $this->set('headline', sprintf('Edit service "%s"', htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8')));
             $this->set('service_types', $this->Account->ServiceType->find('list'));
             $this->data = $data;
         } else {
@@ -457,14 +457,14 @@ class AccountsController extends AppController {
             $about_identity = $this->getIdentity($splitted['username']);
             if(!$about_identity) {
                 # could not find the identity
-                $this->flashMessage('alert', 'Could not find the user.');
+                $this->flashMessage('alert', __('Could not find the user.', true));
                 $this->redirect('/' . $splitted['local_username'] . '/');
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
                 # this logged in user is not allowed to change something
-                $this->flashMessage('alert', 'You may not delete this.');
+                $this->flashMessage('alert', __('You may not delete this.', true));
                 $this->redirect('/' . $splitted['local_username'] . '/');
             }
         }
@@ -474,7 +474,7 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             $this->Account->delete();
             $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'entries WHERE account_id=' . $account_id);
-            $this->flashMessage('success', 'Account deleted.');
+            $this->flashMessage('success', __('Account deleted.', true));
         }
         
         $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');

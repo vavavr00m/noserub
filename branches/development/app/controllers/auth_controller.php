@@ -19,7 +19,7 @@ class AuthController extends AppController {
 		$request = $this->getOpenIDRequest($server);
 
 		if (!isset($request->mode)) {
-			$this->set('headline', 'OpenID server endpoint');
+			$this->set('headline', __('OpenID server endpoint', true));
 			$this->render('server_endpoint');
 		} else {
 			if (get_class($request) == 'Auth_OpenID_CheckIDRequest') {
@@ -102,7 +102,7 @@ class AuthController extends AppController {
 				$this->setDataForTrustForm($request, $sregRequest);
 			}				
 		} else {
-			$this->set('headline', 'Error');
+			$this->set('headline', __('Error', true));
 			$this->render('no_request');
 		}
 	}
@@ -216,6 +216,6 @@ class AuthController extends AppController {
 		
 		$this->set('trustRoot', $request->trust_root);
 		$this->set('identity', $request->identity);
-		$this->set('headline', 'OpenID verification');
+		$this->set('headline', __('OpenID verification', true));
 	}
 }
