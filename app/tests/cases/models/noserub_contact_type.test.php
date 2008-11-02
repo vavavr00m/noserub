@@ -1,4 +1,6 @@
 <?php
+App::import('Model', 'NoserubContactType');
+
 Mock::generatePartial('Model', 'NoserubContactTypeTestVersion', array('findAllByContactId'));
 
 class NoserubContactTypeTest extends CakeTestCase {

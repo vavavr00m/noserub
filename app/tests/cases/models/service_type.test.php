@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'ServiceType');
 
 class ServiceTypeTest extends CakeTestCase {
 	private $model;

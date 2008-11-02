@@ -1,4 +1,5 @@
 <?php
+App::import('Component', 'Geocoder');
 
 # it does not make sense to test for equality, as
 # the accuracy may change and therefore the test woul

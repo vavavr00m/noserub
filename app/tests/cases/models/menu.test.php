@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'Menu');
 
 class MenuTest extends CakeTestCase {
 	public function testMenu() {

@@ -1,5 +1,5 @@
 <?php
-
+App::import('Component', 'OmbConsumer');
 App::import('Vendor', 'OmbConstants');
 App::import('Vendor', 'OauthConstants');
 

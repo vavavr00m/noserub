@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'ContactType');
 
 Mock::generatePartial('ContactType', 'ContactTypeTestVersion', array('findAll', 'create', 'save'));
 Mock::generatePartial('Model', 'ModelForContactTypeTest', array('findAll'));

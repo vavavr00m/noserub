@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'Service');
 
 class ServiceTest extends CakeTestCase {
 	private $service = null;

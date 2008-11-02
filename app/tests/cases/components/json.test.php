@@ -1,4 +1,5 @@
 <?php
+App::import('Component', 'Json');
 
 class JsonComponentTestCase extends CakeTestCase {
     private $component = null;

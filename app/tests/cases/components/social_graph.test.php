@@ -1,4 +1,5 @@
 <?php
+App::import('Component', 'SocialGraph');
 
 class SocialGraphComponentTestCase extends CakeTestCase {
     private $component = null;
