@@ -1,4 +1,5 @@
 <?php
+App::import('Component', 'Url');
 
 class UrlComponentTestCase extends CakeTestCase {
     private $component = null;

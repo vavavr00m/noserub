@@ -1,5 +1,6 @@
 <?php
 App::import('Controller', 'App');
+App::import('Helper', 'Openid');
 
 class OpenidHelperTest extends CakeTestCase {
 	private $helper = null;

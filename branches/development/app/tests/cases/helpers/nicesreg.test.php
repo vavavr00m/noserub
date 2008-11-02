@@ -1,4 +1,6 @@
 <?php
+App::import('Helper', 'Nicesreg');
+App::import('Controller', 'App');
 
 class NiceSRegTest extends CakeTestCase {
 	private $helper = null;

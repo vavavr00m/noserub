@@ -1,4 +1,5 @@
 <?php
+App::import('Model', 'Consumer');
 
 class ConsumerTest extends CakeTestCase {
 	private $consumer = null;

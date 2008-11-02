@@ -1,4 +1,5 @@
 <?php
+App::import('Component', 'Cdn');
 
 class CdnComponentTestCase extends CakeTestCase {
     private $component = null;
