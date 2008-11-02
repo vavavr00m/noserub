@@ -35,7 +35,7 @@ class AccountSettingsController extends AppController {
             $this->data = $this->Identity->read();
         }
         
-        $this->set('headline', 'Manage your account');
+        $this->set('headline', __('Manage your account', true));
     }
     
 	public function export() {
@@ -56,18 +56,18 @@ class AccountSettingsController extends AppController {
             $this->ensureSecurityToken();
 
             if($this->data['Import']['data']['error']) {
-                $this->flashMessage('alert', 'There was an error while uploading');
+                $this->flashMessage('alert', __('There was an error while uploading', true));
             } else {
                 $filename = $this->data['Import']['data']['tmp_name'];
                 $data = $this->Identity->readImport($filename);
                 if($data) {
                     $this->Session->write('Import.data', $data);
                     $this->set('data', $data);
-                    $this->set('headline', 'Importing NoseRub data');
+                    $this->set('headline', __('Importing NoseRub data', true));
                     $this->render();
                     exit;
                 } else {
-                    $this->flashMessage('alert', 'Couldn\'t import the data');
+                    $this->flashMessage('alert', __("Couldn't import the data!", true));
                 }
             }
         } 
@@ -78,13 +78,13 @@ class AccountSettingsController extends AppController {
 	public function import_data() {
         $data = $this->Session->read('Import.data');
         if(!$data) {
-            $this->flashMessage('alert', 'Couldn\'t import the data!');
+            $this->flashMessage('alert', __("Couldn't import the data!", true));
         } else {
             $this->Identity->id = $this->session_identity['id'];
             if($this->Identity->import($data)) {
-                $this->flashMessage('success', 'Import completed');
+                $this->flashMessage('success', __('Import completed', true));
             } else {
-                $this->flashMessage('alert', 'There was an error during import!');
+                $this->flashMessage('alert', __('There was an error during import!', true));
             }
         }
             
@@ -104,7 +104,7 @@ class AccountSettingsController extends AppController {
             }
             $this->Identity->id = $this->session_identity['id'];
             $this->Identity->saveField('redirect_url', $redirect_url);
-            $this->flashMessage('success', 'Redirect URL saved.');
+            $this->flashMessage('success', __('Redirect URL saved.', true));
         }
         
         $this->redirect('/' . $this->username . '/settings/account/');
@@ -112,7 +112,7 @@ class AccountSettingsController extends AppController {
     
 	private function deleteAccount($identity, $confirm) {
     	if($confirm == 0) {
-			$this->set('confirm_error', 'In order to delete your account, please check the check box.');
+			$this->set('confirm_error', __('In order to delete your account, please check the check box.', true));
 		} else if($confirm == 1) {
 			$identityId = $identity['id'];
 			$this->Identity->Account->deleteByIdentityId($identityId);

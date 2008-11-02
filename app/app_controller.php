@@ -117,12 +117,12 @@ class AppController extends Controller {
         if(defined('SHELL_DISPATCHER')) {
             $this->layout = 'shell';
             if($this->action != '' && strpos($this->action, 'shell_') !== 0) {
-                echo 'You may not call this route from the shell.' . "\n\n";
+                echo __('You may not call this route from the shell!', true) . "\n\n";
                 exit;
             }
         } else {
             if(strpos($this->action, 'shell_') === 0) {
-                echo '<h1>Error</h1><p>This route is only accessible from the shell!</p>';
+                echo '<h1>' . __('Error', true) . '</h1><p>' . __('This route is only accessible from the shell!', true) . '</p>';
                 exit;
             }
         }
