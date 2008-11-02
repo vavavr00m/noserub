@@ -67,7 +67,7 @@ class OauthController extends AppController {
 				$this->set('applicationName', $this->RequestToken->getApplicationName($this->Session->read('OAuth.request_token')));
 			}
 			
-			$this->set('headline', 'Authorize access');
+			$this->set('headline', __('Authorize access', true));
 		} else {
 			if (isset($this->params['form']['allow'])) {
 				$this->RequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
