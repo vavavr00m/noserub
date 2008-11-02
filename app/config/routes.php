@@ -28,20 +28,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-  
-/**
- * Here, we are connecting '/' (base path) to controller called 'Pages',
- * its action called 'display', and we pass a param to select the view file
- * to use (in this case, /app/views/pages/home.thtml)...
- */
-#Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+
 Router::connect('/', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/social_stream/:filter/:output/', array('controller' => 'identities', 'action' => 'social_stream'));
-    
-/**
- * Then we connect url '/test' to our test controller. This is helpfull in
- * developement.
- */
+
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'registration', 'action' => 'register'));
@@ -134,7 +124,6 @@ Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entr
 Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
-Router::connect('/jobs/:admin_hash/tests/:action/*', array('controller' => 'tests'));
 Router::connect('/jobs/:admin_hash/xmpp/start', array('controller' => 'xmpp', 'action' => 'shell_run'));
 
 Router::connect('/jobs/cron/:cron_hash/identities/sync/all/', array('controller' => 'identities', 'action' => 'cron_sync_all'));
