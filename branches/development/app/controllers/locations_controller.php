@@ -20,7 +20,7 @@ class LocationsController extends AppController {
         
         $this->set('data', $data);
         $this->set('session_identity', $session_identity);
-        $this->set('headline', 'Manage your locations');
+        $this->set('headline', __('Manage your locations', true));
     }
     
     public function add() {
@@ -49,18 +49,18 @@ class LocationsController extends AppController {
                 $this->data['Location']['identity_id'] = $session_identity['id'];
                 $this->Location->create();
                 if($this->Location->save($this->data)) {
-                    $this->flashMessage('success', 'Location added.');
+                    $this->flashMessage('success', __('Location added.', true));
                     $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
                 	$this->redirect($url);
                 } else {
-                    $this->flashMessage('error', 'Location could not be created.');
+                    $this->flashMessage('error', __('Location could not be created.', true));
                 }
             } else {
                 $this->Location->invalidate('name');
             }
         } 
         
-        $this->set('headline', 'Add new Location');
+        $this->set('headline', __('Add new Location', true));
     }
     
     public function edit() {
@@ -80,7 +80,7 @@ class LocationsController extends AppController {
         $this->Location->contain();
         $location = $this->Location->find(array('id' => $location_id, 'identity_id' => $session_identity['id']));
         if(!$location) {
-            $this->flashMessage('error', 'Location could not be edited.');
+            $this->flashMessage('error', __('Location could not be edited.', true));
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
             $this->redirect($url);
         }
@@ -99,9 +99,9 @@ class LocationsController extends AppController {
                 }
                 $this->Location->id = $location['Location']['id'];
                 if($this->Location->save($this->data)) {
-                    $this->flashMessage('success', 'Location added.');
+                    $this->flashMessage('success', __('Location added.', true));
                 } else {
-                    $this->flashMessage('error', 'Location could not be created.');
+                    $this->flashMessage('error', __('Location could not be created.', true));
                 }
                 $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
             	$this->redirect($url);
@@ -112,7 +112,7 @@ class LocationsController extends AppController {
             $this->data = $location;
         }
         
-        $this->set('headline', 'Edit Location');
+        $this->set('headline', __('Edit Location', true));
         $this->render('add');
     }
     
@@ -137,9 +137,9 @@ class LocationsController extends AppController {
             # everything ok, we can delete now...
             $this->Location->delete($location_id);
             
-            $this->flashMessage('success', 'Location deleted.');            
+            $this->flashMessage('success', __('Location deleted.', true));            
         } else {
-            $this->flashMessage('error', 'Location could not be deleted.');
+            $this->flashMessage('error', __('Location could not be deleted.', true));
         }
         
         $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
@@ -190,7 +190,7 @@ class LocationsController extends AppController {
         
         if(!$this->Location->setTo($identity_id, $location_id)) {
             $this->set('code', -1);
-            $this->set('msg', 'dataset not found');
+            $this->set('msg', __('dataset not found', true));
         }
         
         $this->api->render();
@@ -213,7 +213,7 @@ class LocationsController extends AppController {
         
         if(!$name) {
             $this->set('code', -2);
-            $this->set('msg', 'parameter wrong');
+            $this->set('msg', __('parameter wrong', true));
         } else {
             # test, wether we already have this location
             $conditions = array(
@@ -222,7 +222,7 @@ class LocationsController extends AppController {
             );
             if($this->Location->hasAny($conditions)) {
                 $this->set('code', -3);
-                $this->set('msg', 'duplicate dataset');
+                $this->set('msg', __('duplicate dataset', true));
             } else {
                 $data = array(
                     'identity_id' => $identity_id,

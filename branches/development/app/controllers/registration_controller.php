@@ -31,11 +31,11 @@ class RegistrationController extends AppController {
                                                     'allow_emails'      => 2));
         }
 
-        $this->set('headline', 'Register a new NoseRub account');
+        $this->set('headline', __('Register a new NoseRub account', true));
 	}
 	
 	public function register_with_openid_step_1() {
-    	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
+    	$this->set('headline', __('Register a new NoseRub account - Step 1/2', true));
 		$returnTo = $this->webroot.'pages/register/withopenid';
 		$sregFields = array('email', 'nickname');
     	
@@ -77,7 +77,7 @@ class RegistrationController extends AppController {
     		$this->redirect('/pages/register/withopenid');
     	}
     	
-    	$this->set('headline', 'Register a new NoseRub account - Step 2/2');
+    	$this->set('headline', __('Register a new NoseRub account - Step 2/2', true));
 
     	if (!empty($this->data)) {
     		$this->data['Identity']['openid'] = $this->Session->read('Registration.openid');
@@ -102,14 +102,14 @@ class RegistrationController extends AppController {
     }
     
 	public function register_thanks() {
-        $this->set('headline', 'Thanks for your registration!');
+        $this->set('headline', __('Thanks for your registration!', true));
     }
     
 	public function verify() {
         $hash = isset($this->params['hash']) ? $this->params['hash'] : '';
         
         $this->set('verify_ok', $this->Identity->verify($hash));
-        $this->set('headline', 'Verify your e-mail address');
+        $this->set('headline', __('Verify your e-mail address', true));
     }
     
 	private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {

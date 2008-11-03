@@ -20,9 +20,9 @@ class EntriesController extends AppController {
         
         if(isset($data['Identity']['id']) && 
            $session_identity['id'] == $data['Identity']['id']) {
-               $this->set('headline', 'Edit your entry');
+               $this->set('headline', __('Edit your entry', true));
            } else {
-               $this->set('headline', 'Permalink');
+               $this->set('headline', __('Permalink', true));
         }
     }
     
@@ -45,7 +45,7 @@ class EntriesController extends AppController {
         if($cron_hash != NOSERUB_CRON_HASH ||
            $cron_hash == '') {
             # there is nothing to do for us here
-            $this->set('data', 'Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!');
+            $this->set('data', __('Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!', true));
             $this->render('jobs_update');
             return;
         }
@@ -56,7 +56,7 @@ class EntriesController extends AppController {
     
     public function jobs_update() {
         if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
-            $this->set('data', 'NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php not set to do it manually!');
+            $this->set('data', __('NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php not set to do it manually!', true));
         } else {
             $this->Entry->Account->contain();
             $data = $this->Entry->Account->find(

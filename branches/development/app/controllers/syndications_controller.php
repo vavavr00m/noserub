@@ -109,9 +109,9 @@ class SyndicationsController extends AppController {
 
             $this->Syndication->Identity->id = $session_identity['id'];
             if($this->Syndication->Identity->saveField('generic_feed', $this->data['Identity']['generic_feed'])) {
-                $this->flashMessage('success', 'Settings saved');
+                $this->flashMessage('success', __('Settings saved', true));
             } else {
-                $this->flashMessage('error', 'Something went wrong');
+                $this->flashMessage('error', __('Something went wrong', true));
             }
         } else {
             # need to fetch it here, because some people could still be logged in
@@ -131,7 +131,7 @@ class SyndicationsController extends AppController {
         $this->set('data', $this->Syndication->findAllByIdentityId($session_identity['id']));
         
         $this->set('session_identity', $session_identity);
-        $this->set('headline', 'Configure Feeds from your activities and accounts');
+        $this->set('headline', __('Configure Feeds from your activities and accounts', true));
     }
     
     public function delete() {
@@ -154,7 +154,7 @@ class SyndicationsController extends AppController {
         if($this->Syndication->hasAny(array('id' => $syndication_id, 'identity_id' => $session_identity['id']))) {
             # everything ok, we can delete now...
             $this->Syndication->delete($syndication_id);
-            $this->flashMessage('success', 'Feed deleted.');
+            $this->flashMessage('success', __('Feed deleted.', true));
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
         	$this->redirect($url);
         }
@@ -206,7 +206,7 @@ class SyndicationsController extends AppController {
                 }
             } 
             
-            $this->flashMessage('success', 'Feed added.');            
+            $this->flashMessage('success', __('Feed added.', true));
             $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
         	$this->redirect($url);
         } else {
@@ -243,7 +243,7 @@ class SyndicationsController extends AppController {
             $this->Session->write('Syndication.add.valid_accounts', $valid_accounts);
         }
         
-        $this->set('headline', 'Add new Feed');
+        $this->set('headline', __('Add new Feed', true));
         $this->set('base_url_for_avatars', $this->Syndication->Identity->getBaseUrlForAvatars());
     }
     
@@ -312,7 +312,7 @@ class SyndicationsController extends AppController {
         if(!NOSERUB_USE_CDN) {
             # we don't need to do any upload
             $this->layout = 'shell';
-            $uploaded[] = 'none - no CDN defined in noserub.php';
+            $uploaded[] = __('none - no CDN defined in noserub.php', true);
             $this->set('uploaded', $uploaded);
             $this->render();
             return;
