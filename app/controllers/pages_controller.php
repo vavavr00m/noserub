@@ -7,6 +7,6 @@ class PagesController extends AppController {
     }
     
     public function security_check() {
-        $this->set('headline', 'There was a security problem');
+        $this->set('headline', __('There was a security problem', true));
     }
 }

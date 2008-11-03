@@ -5,7 +5,7 @@ class OpenidSitesController extends AppController {
 	public $uses = array('OpenidSite');
 	
 	public function index() {
-		$this->set('headline', 'OpenID settings');
+		$this->set('headline', __('OpenID settings', true));
 		$identity = $this->Session->read('Identity');
 		
 		if (!empty($this->data)) {

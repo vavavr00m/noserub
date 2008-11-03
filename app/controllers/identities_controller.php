@@ -31,7 +31,7 @@ class IdentitiesController extends AppController {
             if($identity['Identity']['id'] != $session_identity['id']) {
                 $this->redirect($identity['Identity']['redirect_url'], '301');
             } else {
-                $this->flashMessage('info', 'There is a redirect URL given!');
+                $this->flashMessage('info', __('There is a redirect URL given!', true));
                 $this->redirect('http://' . $username . '/settings/account/');
             }
         }
@@ -130,7 +130,7 @@ class IdentitiesController extends AppController {
         
         if($data) {
             if($splitted['username'] == $session_identity['username']) {
-                $this->set('headline', 'My NoseRub Profile');
+                $this->set('headline', __('My NoseRub Profile', true));
             } else {
                 if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude'] != 0 &&
                    $session_identity['latitude'] != 0 && $session_identity['longitude'] != 0) {
@@ -155,7 +155,7 @@ class IdentitiesController extends AppController {
             }
         } else {
         	header("HTTP/1.0 404 Not Found");
-            $this->set('headline', 'Username could not be found!');
+            $this->set('headline', __('Username could not be found!', true));
         }
 
         $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
@@ -199,7 +199,7 @@ class IdentitiesController extends AppController {
         if($output === 'rss') {
             $this->set('filter', $filter);
             $this->set('data', $items);
-            $this->set('syndication_name', 'Social Stream');
+            $this->set('syndication_name', __('Social Stream', true));
             $this->layout = 'feed_rss';
             $this->render('../syndications/feed');
         } else {
@@ -208,7 +208,7 @@ class IdentitiesController extends AppController {
             $this->set('identities', $identities);
             $this->set('items', $items);
             $this->set('filter', $filter);
-            $this->set('headline', 'All public social activities');
+            $this->set('headline', __('All public social activities', true));
             $this->render('social_stream');
         }
     }
@@ -229,32 +229,32 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $about_identity = $this->Identity->findByUsername($splitted['username']);
         $name = empty($about_identity['Identity']['name']) ? $about_identity['Identity']['single_username'] : $about_identity['Identity']['name'];
-        $this->set('headline', 'Send a message to ' . $name);
+        $this->set('headline', __('Send a message to ', true) . $name);
         $this->set('data', $about_identity);
         $this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
         
         $send_allowed = true;
         # check the users privacy setting
         if($about_identity['Identity']['allow_emails'] == 0) {
-            $this->flashMessage('alert', 'You may not send a message to ' . $name);
+            $this->flashMessage('alert', __('You may not send a message to ', true) . $name);
             $send_allowed = false;
         } else if($about_identity['Identity']['allow_emails'] == 1) {
             $has_contact = $this->Identity->Contact->hasAny(array('identity_id'      => $about_identity['Identity']['id'],
                                                                   'with_identity_id' => $session_identity['id']));
         
             if(!$has_contact) {
-                $this->flashMessage('alert', 'You may not send a message to ' . $name);
+                $this->flashMessage('alert', __('You may not send a message to ', true) . $name);
                 $send_allowed = false;
             }
         }
         
         if($this->data && $send_allowed) {
             if(empty($this->data['Message']['subject'])) {
-                $this->flashMessage('alert', 'You need to specify a subject.');
+                $this->flashMessage('alert', __('You need to specify a subject.', true));
             } 
             
             if(empty($this->data['Message']['text'])) {
-                $this->flashMessage('alert', 'You need to specify a text.');
+                $this->flashMessage('alert', __('You need to specify a text.', true));
             }
 
             if(!empty($this->data['Message']['subject']) && !empty($this->data['Message']['text'])) {
@@ -267,21 +267,21 @@ class IdentitiesController extends AppController {
                 $clean_subject = strip_tags($clean_subject);
                 $text    = strip_tags($this->data['Message']['text']);
             
-                $msg  = 'Hi ' . $name . "\n\n";
-                $msg .= 'You got a message from http://' . $session_identity['username'] . '/' . "\n\n";
+                $msg  = __('Hi ', true) . $name . "\n\n";
+                $msg .= __('You got a message from ', true) . 'http://' . $session_identity['username'] . '/' . "\n\n";
                 $msg .= '----------------------------------------------------------' . "\n";
-                $msg .= 'Subject: ' . $subject . "\n";
-                $msg .= 'Text:' . "\n" . $text . "\n\n";
+                $msg .= __('Subject: ', true) . $subject . "\n";
+                $msg .= __('Text:', true) . "\n" . $text . "\n\n";
                 $msg .= '----------------------------------------------------------' . "\n\n";
-                $msg .= 'If you want to reply to this message, go to http://' . $session_identity['username'] . '/' . "\n";
+                $msg .= __('If you want to reply to this message, go to ', true) . 'http://' . $session_identity['username'] . '/' . "\n";
             
                 $email = $about_identity['Identity']['email'];
                 if(!mail($email, '['. NOSERUB_APP_NAME . '] ' . $clean_subject, $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
-                    $this->flashMessage('alert', 'Your Message could not be delivered to ' . $name);
+                    $this->flashMessage('alert', __('Your Message could not be delivered to ', true) . $name);
                 } else {
                     $this->log('mail sent: ' . $email . ' / ' . $clean_subject, LOG_DEBUG);
-                    $this->flashMessage('success', 'Your Message was sent to ' . $name);
+                    $this->flashMessage('success', __('Your Message was sent to ', true) . $name);
                     $this->redirect('/' . $splitted['local_username'] . '/');
                 }
             }
@@ -360,14 +360,14 @@ class IdentitiesController extends AppController {
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
             
-            $this->flashMessage('success', 'Changes have been saved.');
+            $this->flashMessage('success', __('Changes have been saved.', true));
             
         } else {
             $this->Identity->contain();
             $this->data = $this->Identity->findById($session_identity['id']);
         }
         
-        $this->set('headline', 'Settings for my NoseRub Account');
+        $this->set('headline', __('Settings for my NoseRub Account', true));
     }
     
     public function display_settings() {
@@ -399,14 +399,14 @@ class IdentitiesController extends AppController {
             
             $this->Session->write('Identity.overview_filters', $new_value);
             
-            $this->flashMessage('success', 'Display options have been saved.');
+            $this->flashMessage('success', __('Display options have been saved.', true));
         } else {
             $this->Identity->id = $session_identity['id'];
             $this->data['Identity']['overview_filters'] = explode(',', $this->Identity->field('overview_filters'));
         }
         
         $this->set('filters', $this->Identity->Account->ServiceType->getFilters());
-        $this->set('headline', 'Configure your display options');
+        $this->set('headline', __('Configure your display options', true));
     }
     
     public function privacy_settings() {
@@ -435,14 +435,14 @@ class IdentitiesController extends AppController {
             $saveable = array('frontpage_updates', 'allow_emails');
             $this->Identity->save($this->data, true, $saveable);
             
-            $this->flashMessage('success', 'Privacy settings have been saved.');
+            $this->flashMessage('success', __('Privacy settings have been saved.', true));
         } else {
             $this->Identity->id = $session_identity['id'];
             $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
             $this->data['Identity']['allow_emails']      = $this->Identity->field('allow_emails');
         }
         
-        $this->set('headline', 'Your privacy settings');
+        $this->set('headline', __('Your privacy settings', true));
     }
     
     public function password_settings() {
@@ -473,7 +473,7 @@ class IdentitiesController extends AppController {
               	$this->Session->write('Identity.api_hash', $this->data['Identity']['api_hash']);
               	$this->Session->write('Identity.api_active', $this->data['Identity']['api_active']);
               	$session_identity = $this->Session->read('Identity');
-              	$this->flashMessage('success', 'API options have been saved.');
+              	$this->flashMessage('success', __('API options have been saved.', true));
             } else {
                 $data = $this->data;
                 $data['Identity']['username'] = $splitted['username'];
@@ -481,24 +481,24 @@ class IdentitiesController extends AppController {
                 if($this->Identity->check($data)) {
                     # old password is ok, now check the new
                     if(!$data['Identity']['passwd']) {
-                        $this->flashMessage('alert', 'You need to specify a new password.');
+                        $this->flashMessage('alert', __('You need to specify a new password.', true));
                     } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
-                        $this->flashMessage('alert', 'The new password was not entered twice the same.');
+                        $this->flashMessage('alert', __('The new password was not entered twice the same.', true));
                     } else {
                         $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
                         $this->Identity->id = $session_identity['id'];
                         $this->Identity->save($this->data, true, array('password'));
                 
-                        $this->flashMessage('success', 'The new password has been saved.');
+                        $this->flashMessage('success', __('The new password has been saved.', true));
                     }
                 } else {
-                    $this->flashMessage('alert', 'The old password was not correct.');
+                    $this->flashMessage('alert', __('The old password was not correct.', true));
                 }
             }
         }
         
         $this->set('session_identity', $session_identity);
-        $this->set('headline', 'Password settings');
+        $this->set('headline', __('Password settings', true));
     }
 
     public function login() {
@@ -523,7 +523,7 @@ class IdentitiesController extends AppController {
                     } 
                     
                     if (!$this->Session->check('Login.success_url')) {
-	                    $this->flashMessage('success', 'Welcome! It\'s nice to have you back.');
+	                    $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
 	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
                     } else {
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
@@ -533,7 +533,7 @@ class IdentitiesController extends AppController {
                     $this->redirect($url);
                 }
             } else {
-                $this->set('form_error', 'Login not possible');
+                $this->set('form_error', __('Login not possible', true));
             }
     	} else {
     		if ($this->Session->check($sessionKeyForOpenIDRequest)) {
@@ -542,7 +542,7 @@ class IdentitiesController extends AppController {
         	}
     	}
     	
-    	$this->set('headline', 'Login with existing NoseRub account');
+    	$this->set('headline', __('Login with existing NoseRub account', true));
     }
     
     // this method hides the fact that two requests are necessary when login 
@@ -581,7 +581,7 @@ class IdentitiesController extends AppController {
     }
     
     public function account_deleted() {
-        $this->set('headline', 'Account deleted');
+        $this->set('headline', __('Account deleted', true));
     }
     
     /**
@@ -669,7 +669,7 @@ class IdentitiesController extends AppController {
         if($cron_hash != NOSERUB_CRON_HASH ||
            $cron_hash == '') {
             # there is nothing to do for us here
-            $this->set('data', 'Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!');
+            $this->set('data', __('Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!', true));
             $this->render('jobs_sync_all');
             return;
         }
