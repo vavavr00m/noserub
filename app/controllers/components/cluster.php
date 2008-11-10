@@ -40,7 +40,7 @@ class ClusterComponent extends Object {
         $cleaned = array();
         $lookup_table = array();
         foreach($data as $idx => $item) {
-            $key = $item['Entry']['identity_id'] . '.' . md5($item['Entry']['title']);
+            $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($item['Entry']['title']));
             
             if(isset($cleaned[$key])) {
                 # we have this already

@@ -36,7 +36,7 @@ class Identity extends AppModel {
     }
 
     public function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#'))) {
+    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash <>' => '#deleted#'))) {
     		return false;
     	} else {
     		return true;
@@ -850,17 +850,17 @@ class Identity extends AppModel {
     }
     
     private function prepareVerificationMessage($hash) {
-    	$msg  = 'Welcome to ' . NOSERUB_APP_NAME . '!' . "\n\n";
-        $msg .= 'Please click here to verify your email address:' ."\n";
+    	$msg  = sprintf(__('Welcome to %s!', true), NOSERUB_APP_NAME) . "\n\n";
+        $msg .= __('Please click here to verify your email address', true) .":\n";
         $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
-        $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
-        $msg .= 'Thanks!';
+        $msg .= __('If you do not click on this link, the account will automatically be deleted after 14 days.', true) . "\n\n";
+        $msg .= __('Thanks!', true);
         
         return $msg;
     }
     
     private function sendVerificationMail($email, $msg) {
-        if(!mail($email, 'Your ' . NOSERUB_APP_NAME . ' registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+        if(!mail($email, sprintf(__('Your %s registration', true), NOSERUB_APP_NAME), $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);

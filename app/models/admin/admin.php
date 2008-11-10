@@ -63,18 +63,18 @@ class Admin extends AppModel {
             if(strpos($constant, '!') === 0) {
                 $constant = str_replace('!', '', $constant);
                 if(defined($constant)) {
-                    $out[$constant] = 'obsolete! Please remove it from '.$info['file'];
+                    $out[$constant] = sprintf(__('obsolete! Please remove it from %s', true), $info['file']);
                 }
             } else if(!defined($constant)) {
-                $out[$constant] = 'not defined! (see '.$info['file'].')';
+                $out[$constant] = sprintf(__('not defined! (see %s)', true), $info['file']);
             } else {
                 if(isset($info['values'])) {
                     if(!in_array(constant($constant), $info['values'])) {
-                        $out[$constant] = 'value might only be: "' . join('", "', $info['values']) . '" (see '.$info['file'].')';
+                        $out[$constant] = sprintf(__('value might only be: "%s" (see %s)', true), join('", "', $info['values']), $info['file']);
                     }
                 } else {
                     if(constant($constant) === '') {
-                        $out[$constant] = 'no value! (see '.$info['file'].')';
+                        $out[$constant] = sprintf(__('no value! (see %s)', true), $info['file']);
                     }
                 }
             }
@@ -87,15 +87,15 @@ class Admin extends AppModel {
         $result = array();
     	
         if (!extension_loaded('curl')) {
-        	$result = am($result, array('curl' => 'needed for communicating with other servers'));
+        	$result = am($result, array('curl' => __('needed for communicating with other servers', true)));
         }
         
     	if (!extension_loaded('gd')) {
-        	$result = am($result, array('GD' => 'needed for image handling')); 
+        	$result = am($result, array('GD' => __('needed for image handling', true))); 
         }
     	
         if (!(function_exists('gmp_init') || function_exists('bcscale'))) {
-        	$result = am($result, array('GMP or BCMath' => 'needed for OpenID functionality'));
+        	$result = am($result, array(__('GMP or BCMath', true) => __('needed for OpenID functionality', true)));
         }
         
         return $result;
