@@ -65,8 +65,6 @@ class Contact extends AppModel {
         );
         $noserub_tags = Set::extract($data, '{n}.NoserubContactType.{n}.name');
         $own_tags = Set::extract($data, '{n}.ContactType.{n}.name');
-        #pr($noserub_tags);
-        #pr($own_tags);
         $result = array();
         foreach($noserub_tags as $tags) {
             foreach($tags as $tag) {
