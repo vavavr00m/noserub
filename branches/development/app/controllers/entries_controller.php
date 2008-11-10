@@ -1,7 +1,7 @@
 <?php
 class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
-    public $helpers = array('nicetime');
+    public $helpers = array('nicetime', 'flashmessage');
     
     /**
      * Display one entry - permalink for an entry
@@ -17,12 +17,40 @@ class EntriesController extends AppController {
         $data = $this->Entry->findById($entry_id);
         $this->set('data', $data);
         $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
+        $this->set('session_identity', $session_identity);
         
         if(isset($data['Identity']['id']) && 
            $session_identity['id'] == $data['Identity']['id']) {
                $this->set('headline', __('Edit your entry', true));
            } else {
                $this->set('headline', __('Permalink', true));
+        }
+    }
+    
+    /**
+     * delete an entry. only allowed for owner
+     *
+     * @param int $entry_id
+     */
+    public function delete($entry_id) {
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+        
+        $session_identity = $this->Session->read('Identity');
+        if(!isset($session_identity['id']) || !$session_identity['id']) {
+            $this->flashMessage('alert', __('You may not delete this entry!', true));
+            $this->redirect('/');
+        }
+        $this->Entry->contain();
+        $this->Entry->id = $entry_id;
+        $identity_id = $this->Entry->field('identity_id');
+        if($identity_id != $session_identity['id']) {
+            $this->flashMessage('alert', __('You may not delete this entry!', true));
+            $this->redirect('/');
+        } else {
+            $this->Entry->delete();
+            $this->flashMessage('success', __('Entry deleted.', true));
+            $this->redirect('/');
         }
     }
     
@@ -85,7 +113,7 @@ class EntriesController extends AppController {
                 }
             }
             $this->Xmpp->broadcast($messages);
-            $msg = count($entries) . ' entries added/updated';
+            $msg = sprintf(__('%d entries added/updated', true), count($entries));
         
             $this->set('data', $msg);
         }
