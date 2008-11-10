@@ -140,6 +140,9 @@ class AppController extends Controller {
         } else {
             # GET
             $security_token = isset($this->params['security_token']) ? $this->params['security_token'] : '';
+            if(!$security_token) {
+                $security_token = isset($this->params['named']['_t']) ? $this->params['named']['_t'] : '';
+            }
         }
         
         if(!$this->Identity->checkSecurityToken($session_identity_id, $security_token)) {

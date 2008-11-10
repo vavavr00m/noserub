@@ -6,6 +6,14 @@ class Identity extends AppModel {
     public $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Syndication', 'Entry');
     public $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
+    public $hasAndBelongsToMany = array(
+            'FavoriteEntries' => array(
+                'className' => 'Favorite',
+                'joinTable' => 'favorites',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'entry_id'
+            )
+    );
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),

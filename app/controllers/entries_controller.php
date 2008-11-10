@@ -13,8 +13,24 @@ class EntriesController extends AppController {
         
         $session_identity = $this->Session->read('Identity');
         
-        $this->Entry->contain('Identity', 'Account', 'ServiceType');
+        $this->Entry->contain(
+            'Identity', 'Account', 'ServiceType',
+            'FavoritedBy'
+        );
+        
         $data = $this->Entry->findById($entry_id);
+        
+        # go through all favorites to load the identity
+        # if it's the current identity, set a marker
+        foreach($data['FavoritedBy'] as $idx => $item) {
+            if($session_identity['id'] == $item['identity_id']) {
+                $this->set('already_marked', true);
+            }
+            $this->Entry->Identity->contain();
+            $this->Entry->Identity->id = $item['identity_id'];
+            $identity = $this->Entry->Identity->read();
+            $data['FavoritedBy'][$idx]['Identity'] = $identity['Identity'];
+        }
         $this->set('data', $data);
         $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
         $this->set('session_identity', $session_identity);
@@ -51,6 +67,67 @@ class EntriesController extends AppController {
             $this->Entry->delete();
             $this->flashMessage('success', __('Entry deleted.', true));
             $this->redirect('/');
+        }
+    }
+    
+    /**
+     * marks or unmarks an entry as favorite
+     *
+     * @param int $entry_id
+     */
+    public function mark($entry_id) {
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+        
+        $session_identity = $this->Session->read('Identity');
+        if(!isset($session_identity['id']) || !$session_identity['id']) {
+            $this->flashMessage('alert', __('You need to be logged in to perform this action!', true));
+            $this->redirect('/');
+        }
+        
+        $this->Entry->contain(
+            array(
+                'FavoritedBy' => array(
+                    'conditions' => array(
+                        'identity_id' => $session_identity['id']
+                    )
+                )
+            )
+        );
+        
+        $entry = $this->Entry->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Entry.id' => $entry_id,
+                    'service_type_id >' => 0 # don't allow NoseRub entries to be marked 
+                )
+            )
+        );
+        
+        if(!$entry) {
+            $this->flashMessage('alert', __('This entry may not be marked!', true));
+            $this->redirect('/');
+        }
+        
+        if(isset($entry['FavoritedBy'][0])) {
+            # this entry is already marked
+            $this->Entry->FavoritedBy->id = $entry['FavoritedBy'][0]['id'];
+            $this->Entry->FavoritedBy->delete();
+            # todo: remove the NoseRub social stream entry for this
+            $this->flashMessage('success', __('Unmarked the entry.', true));
+            $this->redirect('/entry/' . $entry_id . '/');
+        } else {
+            # mark the item
+            $data = array(
+                'identity_id' => $session_identity['id'],
+                'entry_id'    => $entry_id
+            );
+            $this->Entry->FavoritedBy->create();
+            $this->Entry->FavoritedBy->save($data);
+            $this->Entry->addFavorite($session_identity['id'], $entry_id);
+            $this->flashMessage('success', __('Marked the entry.', true));
+            $this->redirect('/entry/' . $entry_id . '/');
         }
     }
     

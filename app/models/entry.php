@@ -4,6 +4,14 @@
 class Entry extends AppModel {
     public $belongsTo = array('Identity', 'Account', 'ServiceType');
     
+    public $hasMany = array('FavoritedBy' => array(
+                'className' => 'Favorite',
+                'joinTable' => 'favorites',
+                'foreignKey' => 'entry_id',
+                'associationForeignKey' => 'identity_id'
+            )
+    );
+    
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
@@ -397,6 +405,15 @@ class Entry extends AppModel {
         $message = 'added a new contact: <a href="http://' . $data['Identity']['username'] . '">' . $data['Identity']['local_username'] .'</a>';
         $this->addNoseRub($identity_id, $message, $restricted);
     }
+    
+    public function addFavorite($identity_id, $entry_id, $restricted = false) {
+        $this->Identity->Entry->id = $entry_id;
+        $title = strip_tags($this->Identity->Entry->field('title'));
+        $link = '<a href="' . Router::url('/entry/' . $entry_id . '/') . '">' . $title . '</a>';
+        $message = sprintf(__('marked a new favorite: %s', true), $link);
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
     /**
      */
     public function getMessage($entry) {
