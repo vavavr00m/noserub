@@ -1,7 +1,7 @@
 <?php
 $max_num_items_per_day = 10;
 
-if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
+if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
     $filter = 'photo';
 } else {
     # just for now, as we only have a special view for photo

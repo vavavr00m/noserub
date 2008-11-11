@@ -118,6 +118,7 @@ class MenuFactory {
 	    $menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
+		$menuItems[] = new MyFavoritesMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SearchMenuItem($controller, $action);
 		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
@@ -262,6 +263,28 @@ class MyProfileMenuItem extends MenuItem {
 	
 	public function isActive() {
 		if ($this->controller == 'Identities' && $this->action == 'index') {
+			return true;
+		}
+		
+		return false;
+	}
+}
+
+class MyFavoritesMenuItem extends MenuItem {
+	private $controller = null;
+	private $action = null;
+	
+	public function __construct($controller, $action, $localUsername = null) {
+		// TODO adding link for profile of remote user
+		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/favorites/';
+		
+		parent::__construct(__('My Favorites', true), $link, false);
+		$this->controller = $controller;
+		$this->action = $action;
+	}
+	
+	public function isActive() {
+		if ($this->controller == 'Identities' && $this->action == 'favorites') {
 			return true;
 		}
 		
