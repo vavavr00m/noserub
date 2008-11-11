@@ -118,6 +118,7 @@ Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consum
 
 Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
+Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
 
 Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entries', 'action' => 'jobs_update'));

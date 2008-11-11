@@ -171,7 +171,7 @@ class Entry extends AppModel {
                 }
             }
         }
-        
+                        
         $this->Identity->Entry->contain(
             array(
                 'ServiceType.token',
@@ -182,6 +182,7 @@ class Entry extends AppModel {
                 'FavoritedBy'
             )
         );
+        
         $conditions = array();
         if(isset($filter['account_id'])) {            
             $conditions['account_id'] = $filter['account_id'];
@@ -215,7 +216,24 @@ class Entry extends AppModel {
                 $conditions['restricted'] = 0;                
             }
         }
-        
+        if(isset($filter['favorited_by'])) {
+            # get last favorited entry_ids
+            $this->FavoritedBy->contain();
+            $favorites = $this->FavoritedBy->find(
+                'all',
+                array(
+                    'conditions' => array(
+                        'FavoritedBy.identity_id' => $filter['favorited_by']
+                    ),
+                    'order' => 'FavoritedBy.created',
+                    'limit' => $limit
+                )
+            );
+            
+            $entry_ids = Set::extract($favorites, '{n}.FavoritedBy.entry_id');
+            $conditions['Entry.id'] = $entry_ids;
+        } 
+                
         $new_items = $this->Identity->Entry->find(
             'all',
             array(
