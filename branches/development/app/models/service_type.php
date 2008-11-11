@@ -8,10 +8,10 @@ class ServiceType extends AppModel {
         'photo'        => 'Photos',
 	    'video'        => 'Videos',
 	    'audio'        => 'Audio',
-	    'link'         => 'Link',
-	    'text'         => 'Text',
+	    'link'         => 'Links',
+	    'text'         => 'Texts',
 	    'micropublish' => 'Micropublish',
-	    'event'        => 'Event',
+	    'event'        => 'Events',
 	    'document'     => 'Documents',
 	    'location'     => 'Locations',
 	    'noserub'      => 'NoseRub'

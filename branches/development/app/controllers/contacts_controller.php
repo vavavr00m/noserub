@@ -500,7 +500,7 @@ class ContactsController extends AppController {
             'filter'      => $filter,
             'identity_id' => $contact_ids
         );
-        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 50, true);
         if($items) {
             usort($items, 'sort_items');
             $items = $this->cluster->removeDuplicates($items);

@@ -38,7 +38,7 @@ class Sex {
 	public static function heOrShe($sex) {
 		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
 		
-		$pronouns = array('he/she', 'she', 'he');
+		$pronouns = array(__('he/she', true), __('she', true), __('he', true));
 		
 		return $pronouns[$sex];	
 	}
@@ -50,7 +50,7 @@ class Sex {
 	public static function himOrHer($sex) {
 		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
 		
-		$pronouns = array('him/her', 'her', 'him');
+		$pronouns = array(__('him/her', true), __('her', true), __('him', true));
 		
 		return $pronouns[$sex];
 	}
@@ -62,7 +62,7 @@ class Sex {
 	public static function hisOrHer($sex) {
 		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
 		
-		$pronouns = array('his/her', 'her', 'his');
+		$pronouns = array(__('his/her', true), __('her', true), __('his', true));
 		
 		return $pronouns[$sex];
 	}
