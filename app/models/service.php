@@ -255,7 +255,7 @@ class Service extends AppModel {
         $feed->set_feed_url($feed_url);
         $feed->set_useragent(NOSERUB_USER_AGENT);
         $feed->enable_cache(false);
-        
+        $feed->force_feed(true); 
         $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
         if($autodiscovery) {
         	$autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
