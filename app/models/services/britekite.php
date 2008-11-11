@@ -10,9 +10,7 @@ class BritekiteService extends AbstractService {
 		return 'http://brightkite.com/people/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://brightkite.com/people/' . $username . '/friends', '/<a href="\/people\/.*"/simU', '/Next È<\/a>/iU', '?page=');
-	}
+
 	
 	public function getContent($feeditem) {
 
