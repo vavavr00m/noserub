@@ -270,8 +270,7 @@ class SyndicationsController extends AppController {
         	if (!isset($identity)) {
         		$identity = $this->getIdentity($identity_id);
         	}
-        	$url = Router::url('/' . $identity['Identity']['local_username']);
-            $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';
+        	$feed_url = Router::url('/' . $identity['Identity']['local_username'] . '/feeds/', true);
         }
         
         # replace the hash by the actual feed url
@@ -280,7 +279,7 @@ class SyndicationsController extends AppController {
                 'rss'  => $feed_url . $item['Syndication']['hash'] . '.rss',
                 'json' => $feed_url . $item['Syndication']['hash'] . '.js',
                 'sphp' => $feed_url . $item['Syndication']['hash'] . '.sphp'
-                );
+            );
             unset($data[$idx]['Syndication']['hash']);
         }
 
