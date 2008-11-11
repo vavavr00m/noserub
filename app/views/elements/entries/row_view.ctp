@@ -34,4 +34,8 @@
             echo $intro; 
         ?>
     </span>
+    <span>
+        <br />
+        <?php echo $this->renderElement('entries/favorited_by', array('data' => $item)); ?>
+    </span>
 </li>

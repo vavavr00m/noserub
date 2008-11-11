@@ -180,7 +180,7 @@ class IdentitiesController extends AppController {
         $conditions = array(
             'filter'      => $filter
         );
-        $items = $this->Identity->Entry->getForDisplay($conditions, 100);
+        $items = $this->Identity->Entry->getForDisplay($conditions, 50);
         usort($items, 'sort_items');
         $items = $this->cluster->removeDuplicates($items);
         

@@ -931,6 +931,24 @@ class Identity extends AppModel {
         );
     }
     
+    /**
+     * go through all favorites to load the identity
+     *
+     * @param arary $data
+     *
+     * @return array
+     */
+    public function addIdentityToFavoritedBy($data) {        
+        foreach($data['FavoritedBy'] as $idx => $item) {
+            $this->contain();
+            $this->id = $item['identity_id'];
+            $identity = $this->read();
+            $data['FavoritedBy'][$idx]['Identity'] = $identity['Identity'];
+        }
+        
+        return $data;
+    }
+    
     private function startsWithHttp($string) {
     	return (strpos($string, 'http://') === 0 ||
                 strpos($string, 'https://') === 0);

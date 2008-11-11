@@ -19,18 +19,16 @@ class EntriesController extends AppController {
         );
         
         $data = $this->Entry->findById($entry_id);
+        $data = $this->Entry->Identity->addIdentityToFavoritedBy($data);
         
-        # go through all favorites to load the identity
-        # if it's the current identity, set a marker
-        foreach($data['FavoritedBy'] as $idx => $item) {
+        # go through all favorites. if it's the current identity, set a marker
+        foreach($data['FavoritedBy'] as $item) {
             if($session_identity['id'] == $item['identity_id']) {
                 $this->set('already_marked', true);
+                break;
             }
-            $this->Entry->Identity->contain();
-            $this->Entry->Identity->id = $item['identity_id'];
-            $identity = $this->Entry->Identity->read();
-            $data['FavoritedBy'][$idx]['Identity'] = $identity['Identity'];
         }
+        
         $this->set('data', $data);
         $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
         $this->set('session_identity', $session_identity);
@@ -147,7 +145,8 @@ class EntriesController extends AppController {
     public function cron_update() {
         $cron_hash= isset($this->params['cron_hash'])  ? $this->params['cron_hash'] : '';
         
-        if($cron_hash != NOSERUB_CRON_HASH ||
+        if(!defined('NOSERUB_CRON_HASH') ||
+           $cron_hash != NOSERUB_CRON_HASH ||
            $cron_hash == '') {
             # there is nothing to do for us here
             $this->set('data', __('Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!', true));

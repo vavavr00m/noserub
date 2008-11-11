@@ -142,6 +142,7 @@ class Entry extends AppModel {
                 'published_on'    => $item['datetime'],
                 'title'           => $item['title'] ? $item['title'] : '',
                 'url'             => $item['url'] ? $item['url'] : '',
+                'uid'             => $item['url'] ? md5($item['url']) : '',
                 'content'         => $item['content'] ? $item['content'] : '',
                 'restricted'      => !$frontpage_updates
             );
@@ -177,7 +178,8 @@ class Entry extends AppModel {
                 'ServiceType.intro',
                 'Identity.firstname',
                 'Identity.lastname',
-                'Identity.username'
+                'Identity.username',
+                'FavoritedBy'
             )
         );
         $conditions = array();
@@ -222,7 +224,11 @@ class Entry extends AppModel {
                 'limit'      => $limit
             )
         );
-    
+        
+        foreach($new_items as $idx => $data) {
+            $new_items[$idx] = $this->Identity->addIdentityToFavoritedBy($data);
+        }
+        
         return $new_items;
     }
     
@@ -249,6 +255,7 @@ class Entry extends AppModel {
                 'published_on'    => date('Y-m-d H:i:s'),
                 'title'           => $location['Location']['name'],
                 'url'             => '',
+                'uid'             => '',
                 'content'         => $location['Location']['name'],
                 'restricted'      => $restricted
             );
@@ -283,6 +290,7 @@ class Entry extends AppModel {
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $with_markup,
             'url'             => '',
+            'uid'             => '',
             'content'         => $text,
             'restricted'      => $restricted
         );
@@ -367,6 +375,7 @@ class Entry extends AppModel {
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $value,
             'url'             => '',
+            'uid'             => '',
             'content'         => $value,
             'restricted'      => $restricted
         );
