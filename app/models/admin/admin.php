@@ -50,13 +50,6 @@ class Admin extends AppModel {
         return $out;
     }
     
-    /**
-     * check some constants
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
     public function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
@@ -80,6 +73,12 @@ class Admin extends AppModel {
             }
         }
         
+        if (!isset($out['NOSERUB_FULL_BASE_URL'])) {
+        	if (!$this->verifyFullBaseUrlEndsWithSlash()) {
+        		$out['NOSERUB_FULL_BASE_URL'] = sprintf(__('value must end with a slash! (see %s)', true), $info['file']);
+        	}
+        }
+        
         return $out;
     }
     
@@ -99,5 +98,9 @@ class Admin extends AppModel {
         }
         
         return $result;
+    }
+    
+    private function verifyFullBaseUrlEndsWithSlash() {
+    	return (strpos(strrev(constant('NOSERUB_FULL_BASE_URL')), '/') === 0);
     }
 }
