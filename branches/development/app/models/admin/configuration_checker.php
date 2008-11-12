@@ -1,10 +1,6 @@
 <?php
 
-/** 
- * Model for all the admin stuff in NoseRub.
- */
-class Admin extends AppModel {
-    public $useTable = false;
+class ConfigurationChecker {
 
     public $constants = array('!NOSERUB_DOMAIN' => array(
                                 'file' => 'noserub.php'),

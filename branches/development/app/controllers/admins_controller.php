@@ -1,7 +1,7 @@
 <?php
  
 class AdminsController extends AppController {
-    public $uses = array('Admin', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
+    public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
     
     public function beforeFilter() {
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
@@ -28,7 +28,7 @@ class AdminsController extends AppController {
             return;
         }
         
-        $constants = $this->Admin->checkConstants();
+        $constants = $this->ConfigurationChecker->checkConstants();
         $this->set('constants', $constants);
         if(!empty($constants)) {
             return;
