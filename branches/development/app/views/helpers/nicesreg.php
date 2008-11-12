@@ -44,7 +44,7 @@ class NiceSRegHelper extends AppHelper {
 				$result = $value;
 			}
 		} elseif (in_array($key, $unsupportedFields)) {
-			$result = '(not supported by NoseRub)'; 
+			$result = '(' . __('not supported by NoseRub', true) . ')'; 
 		}
 		
 		return $result;

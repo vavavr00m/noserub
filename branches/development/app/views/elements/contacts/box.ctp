@@ -1,5 +1,5 @@
 <?php if (isset($manage) && $manage && $session->check('Identity')): ?>
-<span class="more"><?php echo $html->link('manage', '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
+<span class="more"><?php echo $html->link(__('manage', true), '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
 <?php endif; ?>
 <h4>
 	<?php echo $box_head; ?>
