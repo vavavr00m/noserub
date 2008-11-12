@@ -35,7 +35,9 @@
         ?>
     </span>
     <span>
-        <br />
         <?php echo $this->renderElement('entries/favorited_by', array('data' => $item)); ?>
+    </span>
+    <span>
+        <?php echo $this->renderElement('comments/view', array('data' => $item)); ?>
     </span>
 </li>

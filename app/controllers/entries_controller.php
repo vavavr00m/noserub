@@ -1,7 +1,7 @@
 <?php
 class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
-    public $helpers = array('nicetime', 'flashmessage');
+    public $helpers = array('nicetime', 'flashmessage', 'form');
     
     /**
      * Display one entry - permalink for an entry
@@ -13,13 +13,40 @@ class EntriesController extends AppController {
         
         $session_identity = $this->Session->read('Identity');
         
+        if(isset($this->data['Comment']['content'])) {
+            # a comment was posted
+            
+            # make sure, that the correct security token is set
+            $this->ensureSecurityToken();
+            
+            if(!$session_identity) {
+                $this->flashMessage('alert', __('You need to be logged in to add a comment.', true));
+            } else if(!$this->data['Comment']['content']) {
+                $this->flashMessage('alert', __('You forgot to write something.', true));
+            } else {
+                $this->flashMessage('success', __('Comment added.', true));
+                
+                $data = array(
+                    'entry_id'     => $entry_id,
+                    'identity_id'  => $session_identity['id'],
+                    'content'      => $this->data['Comment']['content'],
+                    'published_on' => date('Y-m-d H:m:i')
+                );
+                $this->Entry->Comment->create();
+                $this->Entry->Comment->save($data);
+                $this->data = array();
+            }
+            
+        } 
+        
         $this->Entry->contain(
             'Identity', 'Account', 'ServiceType',
-            'FavoritedBy'
+            'FavoritedBy', 'Comment'
         );
         
         $data = $this->Entry->findById($entry_id);
-        $data = $this->Entry->Identity->addIdentityToFavoritedBy($data);
+        $data = $this->Entry->Identity->addIdentity('FavoritedBy', $data);
+        $data = $this->Entry->Identity->addIdentity('Comment', $data);
         
         # go through all favorites. if it's the current identity, set a marker
         foreach($data['FavoritedBy'] as $item) {

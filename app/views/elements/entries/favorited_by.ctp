@@ -1,4 +1,5 @@
 <?php if(isset($data['FavoritedBy']) && count($data['FavoritedBy']) > 0 ) {
+    echo '<br />';
     echo sprintf(__('Favorited by %d users: ', true), count($data['FavoritedBy']));
     $users = array();
     foreach($data['FavoritedBy'] as $item) {
