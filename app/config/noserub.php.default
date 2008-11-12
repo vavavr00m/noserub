@@ -19,7 +19,6 @@ define('NOSERUB_APP_NAME', 'NoseRub');
  */
 define('NOSERUB_FULL_BASE_URL', 'http://');
 
-
 /**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
@@ -110,16 +109,6 @@ define('NOSERUB_CDN_S3_SECRET_KEY', '');
 define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
 
 /**
- * Uncomment this line if you get the following error when you try 
- * to authenticate your OpenID: "Fatal error: Define 
- * Auth_OpenID_RAND_SOURCE as null to continue with an insecure 
- * random number generator".
- * You can also define your own source of randomness here if you
- * want use a source different than /dev/urandom.
- */
-// define('Auth_OpenID_RAND_SOURCE', null);
-
-/**
  * If you want to restrict the email addresses of users that can register,
  * set this constant. You can add more than one host:
  * define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', 'mycompany.com myothercompany.com');
@@ -157,3 +146,13 @@ define('NOSERUB_API_INFO_ACTIVE', false);
  * for every user on your site.
  */
 define('NOSERUB_ALLOW_TWITTER_BRIDGE', true);
+
+/**
+ * Uncomment this line if you get the following error when you try 
+ * to authenticate your OpenID: "Fatal error: Define 
+ * Auth_OpenID_RAND_SOURCE as null to continue with an insecure 
+ * random number generator".
+ * You can also define your own source of randomness here if you
+ * want use a source different than /dev/urandom.
+ */
+// define('Auth_OpenID_RAND_SOURCE', null);
