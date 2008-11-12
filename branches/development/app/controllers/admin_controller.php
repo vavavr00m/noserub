@@ -1,6 +1,6 @@
 <?php
  
-class AdminsController extends AppController {
+class AdminController extends AppController {
     public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
     
     public function beforeFilter() {
