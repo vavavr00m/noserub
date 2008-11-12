@@ -1,7 +1,7 @@
 <form id="AccountAddFormStep3" method="post" action="<?php echo $this->here ?>">
 <dl>
     <?php if(isset($data['title'])) { ?>
-        <dt>Title</dt>
+        <dt><?php __('Title'); ?></dt>
         <dd>
 		  <?php
 		  if ($data['service_id'] === 8):
@@ -13,20 +13,20 @@
 		</dd>
     <?php } ?>
     <?php if (isset($service_types)): ?>
-    	<dt>Servicetype</dt>
+    	<dt><?php __('Servicetype'); ?></dt>
     	<dd>
     		<?php echo $form->select('Account.service_type_id', $service_types, array('3'), array(), false); ?>
     	</dd>
     <?php endif; ?>
     
-    <dt>URL</dt>
+    <dt><?php __('URL'); ?></dt>
     <dd><?php echo htmlentities($data['account_url']); ?></dd>
     
     <?php if($data['feed_url']) { ?>
-        <dt>Feed</dt>
+        <dt><?php __('Feed'); ?></dt>
         <dd><?php echo htmlentities($data['feed_url']); ?></dd>
     
-        <dt>Items</dt>
+        <dt><?php __('Items'); ?></dt>
         <dd>
             <ul>
                 <?php foreach($data['items'] as $item) { ?>
@@ -37,6 +37,6 @@
     <?php } ?>
 </dl>
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
-    <input class="submitbutton" type="submit" name="submit" value="OK. Save it!"/>
-    <input class="submitbutton" type="submit" name="cancel" value="Forget it"/>
+    <input class="submitbutton" type="submit" name="submit" value="<?php __('OK. Save it!'); ?>"/>
+    <input class="submitbutton" type="submit" name="cancel" value="<?php __('Forget it'); ?>"/>
 </form>
