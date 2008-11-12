@@ -20,7 +20,7 @@ if(empty($noserub_contacts) && empty($private_contacts)) { ?>
     }
     
     if(!empty($private_contacts)) {
-        echo '<br class="clear" /><h3 class="contactsheadline">' . __('Private Contacts', true . '</h3>';
+        echo '<br class="clear" /><h3 class="contactsheadline">' . __('Private Contacts', true) . '</h3>';
         echo $this->element('contacts/list', array('data' => $private_contacts, 'show_photo' => false, 'base_url_for_avatars' => $base_url_for_avatars));
     }
 }
