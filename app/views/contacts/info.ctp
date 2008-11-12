@@ -13,14 +13,14 @@
 	<!-- send e-Mail -->
 	<?php if($contact['WithIdentity']['local'] == 1 && $contact['WithIdentity']['allow_emails'] != 0) { ?>
 	    <dd class="sendmail">
-		    <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $contact['WithIdentity']['username']; ?>/messages/new/">Send e-Mail</a>
+		    <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $contact['WithIdentity']['username']; ?>/messages/new/"><?php __('Send e-Mail'); ?></a>
 		</dd>
 	<?php } ?>
 </dl>	
 	
 <br class="clear" />
 <?php if($accounts) { ?>
-    <h2>Accounts</h2>
+    <h2><?php __('Accounts'; ?></h2>
     <ul class="whoissidebar">
         <?php foreach($accounts as $item) { ?>
             <li>
@@ -39,4 +39,4 @@
         <?php } ?>
     </ul>
 <?php } ?>
-<a href="<?php echo Router::url('/' . $contact['Identity']['local_username'] . '/contacts/') ?>">Back to list of contacts</a>
+<a href="<?php echo Router::url('/' . $contact['Identity']['local_username'] . '/contacts/') ?>"><?php __('Back to list of contacts'); ?></a>
