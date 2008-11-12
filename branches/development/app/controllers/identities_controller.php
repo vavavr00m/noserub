@@ -232,7 +232,7 @@ class IdentitiesController extends AppController {
         usort($items, 'sort_items');
         $items = $this->cluster->removeDuplicates($items);        
         $items = $this->cluster->create($items);
-        
+
         $this->set('items', $items);
         $this->set('identity', $identity);
         $this->set('headline', sprintf(__("%s's favorites", true), $username));

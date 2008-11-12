@@ -18,6 +18,17 @@
         <?php echo $this->renderElement('entries/row_view', array('item' => $data, 'permalink' => false)); ?>
     </ul>
 </div>
-<hr class="clear" />
-<div>
-</div>
+<?php if(isset($session_identity)) { ?>
+    <hr class="clear" />
+    <div>
+        <form id="MakeCommentForm" method="post" action="<?php echo $this->here ?>">
+            <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
+            <fieldset>
+        	    <?php echo $form->textarea('Comment.content', array('columns' => 80, 'rows' => 40)); ?>
+        	</fieldset>
+        	<fieldset>
+        	    <input class="submitbutton" type="submit" name="submit" value="<?php __('Add comment'); ?>"/>
+        	</fieldset>
+        </form>
+    </div>
+<?php } ?>

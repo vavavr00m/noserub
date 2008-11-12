@@ -4,7 +4,9 @@
 class Entry extends AppModel {
     public $belongsTo = array('Identity', 'Account', 'ServiceType');
     
-    public $hasMany = array('FavoritedBy' => array(
+    public $hasMany = array(
+        'Comment', 
+        'FavoritedBy' => array(
                 'className' => 'Favorite',
                 'joinTable' => 'favorites',
                 'foreignKey' => 'entry_id',
@@ -179,7 +181,8 @@ class Entry extends AppModel {
                 'Identity.firstname',
                 'Identity.lastname',
                 'Identity.username',
-                'FavoritedBy'
+                'FavoritedBy',
+                'Comment'
             )
         );
         
@@ -244,7 +247,8 @@ class Entry extends AppModel {
         );
         
         foreach($new_items as $idx => $data) {
-            $new_items[$idx] = $this->Identity->addIdentityToFavoritedBy($data);
+            $data = $this->Identity->addIdentity('FavoritedBy', $data);
+            $new_items[$idx] = $this->Identity->addIdentity('Comment', $data);
         }
         
         return $new_items;
