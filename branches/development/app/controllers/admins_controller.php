@@ -1,7 +1,7 @@
 <?php
  
 class AdminsController extends AppController {
-    public $uses = array('Admin', 'Migration');
+    public $uses = array('Admin', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
     
     public function beforeFilter() {
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
@@ -20,9 +20,9 @@ class AdminsController extends AppController {
     public function system_update() {
     	// XXX security_token is set to avoid "undefined variable" error in view
     	$this->set('security_token', '');
-        $this->set('extensions', $this->Admin->checkExtensions());
+        $this->set('extensions', ExtensionsChecker::check());
         
-        $directories = $this->Admin->checkWriteable();
+        $directories = WriteableFoldersChecker::check();
         $this->set('directories', $directories);
         if(!empty($directories)) {
             return;

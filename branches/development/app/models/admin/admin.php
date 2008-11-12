@@ -34,22 +34,6 @@ class Admin extends AppModel {
                                'values' => array(true, false))
                           );
     
-    /**
-     * checks if some directories are writeable
-     */
-    public function checkWriteable() {
-    	$writeableDirectories = array(APP.'tmp', WWW_ROOT.'static'.DS.'avatars');
-    	
-        $out = array();
-        foreach($writeableDirectories as $directory) {
-            if(!is_writeable($directory)) {
-                $out[] = $directory;
-            }
-        }
-        
-        return $out;
-    }
-    
     public function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
@@ -80,24 +64,6 @@ class Admin extends AppModel {
         }
         
         return $out;
-    }
-    
-    public function checkExtensions() {
-        $result = array();
-    	
-        if (!extension_loaded('curl')) {
-        	$result = am($result, array('curl' => __('needed for communicating with other servers', true)));
-        }
-        
-    	if (!extension_loaded('gd')) {
-        	$result = am($result, array('GD' => __('needed for image handling', true))); 
-        }
-    	
-        if (!(function_exists('gmp_init') || function_exists('bcscale'))) {
-        	$result = am($result, array(__('GMP or BCMath', true) => __('needed for OpenID functionality', true)));
-        }
-        
-        return $result;
     }
     
     private function verifyFullBaseUrlEndsWithSlash() {
