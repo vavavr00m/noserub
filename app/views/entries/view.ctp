@@ -7,7 +7,8 @@
     <?php echo $this->renderElement('identities/mini_profile'); ?>
 </div>
 <?php if($is_owner) {
-    echo $html->link(__('Delete Entry', true), array('action' => 'delete', $data['Entry']['id'], '_t' => $security_token));
+    # see entries_controller::delete()
+    # echo $html->link(__('Delete Entry', true), array('action' => 'delete', $data['Entry']['id'], '_t' => $security_token));
 } else if($session_identity && $data['Entry']['service_type_id'] != 0) {
     $label = isset($already_marked) ? __('Unmark Entry as favorite', true) : __('Mark Entry as favorite', true);
     echo $html->link($label, array('action' => 'mark', $data['Entry']['id'], '_t' => $security_token));

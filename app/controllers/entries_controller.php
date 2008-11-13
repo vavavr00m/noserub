@@ -74,20 +74,28 @@ class EntriesController extends AppController {
      * @param int $entry_id
      */
     public function delete($entry_id) {
+        # deleting entries is a little bit tricky, when we have no
+        # confirmation, which accounts belong to which users: two users
+        # cann add the same RSS Feed and then both would be able to
+        # delete items. Who do those entries really belong to?
+        $this->flashMessage('alert', __('You may not delete this entry!', true));
+        $this->redirect('/entry/' . $entry_id);
+        return;
+        
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
         $session_identity = $this->Session->read('Identity');
         if(!isset($session_identity['id']) || !$session_identity['id']) {
             $this->flashMessage('alert', __('You may not delete this entry!', true));
-            $this->redirect('/');
+            $this->redirect('/entry/' . $entry_id);
         }
         $this->Entry->contain();
         $this->Entry->id = $entry_id;
         $identity_id = $this->Entry->field('identity_id');
         if($identity_id != $session_identity['id']) {
             $this->flashMessage('alert', __('You may not delete this entry!', true));
-            $this->redirect('/');
+            $this->redirect('/entry/' . $entry_id);
         } else {
             $this->Entry->delete();
             $this->flashMessage('success', __('Entry deleted.', true));
