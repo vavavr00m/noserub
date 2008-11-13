@@ -119,7 +119,6 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new MyFavoritesMenuItem($controller, $action, $localUsername);
-		$menuItems[] = new SearchMenuItem($controller, $action);
 		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
 		return $menuItems;
@@ -226,6 +225,10 @@ class MenuItem {
 	
 	public function isActive() {
 		return $this->isActive;
+	}
+	
+	public function isSettings() {
+	    return false;
 	}
 }
 
@@ -341,6 +344,10 @@ class SettingsMenuItem extends MenuItem {
 		}
 		
 		return false;
+	}
+	
+	public function isSettings() {
+	    return true;
 	}
 }
 
