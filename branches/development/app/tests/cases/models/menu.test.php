@@ -36,7 +36,7 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	public function testGetMainMenuForLocalUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
-		$this->assertEqual(6, count($mainMenu->getMenuItems()));
+		$this->assertEqual(5, count($mainMenu->getMenuItems()));
 		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false, false, false);
 	}
 	
