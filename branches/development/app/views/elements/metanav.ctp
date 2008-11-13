@@ -29,6 +29,13 @@
             </li>
             <li><?php echo $html->link(__('Logout', true), '/pages/logout/' . $security_token . '/');?></li>
         <?php } else { ?>
+            <li>
+                <?php if($this->name == 'Searches') {
+                    __('Search');
+                } else { ?>
+                    <?php echo $html->link(__('Search', true), '/search/'); ?>
+                <?php } ?>
+            </li>
             <li><?php echo $html->link(__('Login', true), '/pages/login/');?></li>
         <?php } ?>
     </ul>
