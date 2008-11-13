@@ -20,7 +20,7 @@
 	
 <br class="clear" />
 <?php if($accounts) { ?>
-    <h2><?php __('Accounts'; ?></h2>
+    <h2><?php __('Accounts'); ?></h2>
     <ul class="whoissidebar">
         <?php foreach($accounts as $item) { ?>
             <li>

@@ -29,7 +29,7 @@
         <?php foreach($data as $item) { ?>
             <tr>
                 <td><?php echo $item['Location']['name']; ?></td>
-                <td><?php echo $item['Location']['address'] == '' ? '<em>' __('Not entered', true) . '</em>' : $item['Location']['address']; ?></td>
+                <td><?php echo $item['Location']['address'] == '' ? '<em>' . __('Not entered', true) . '</em>' : $item['Location']['address']; ?></td>
                 <td>
                     <?php __('Latitude'); ?>: <?php echo $item['Location']['latitude']; ?><br />
                     <?php __('Longitude'); ?>: <?php echo $item['Location']['longitude']; ?>
