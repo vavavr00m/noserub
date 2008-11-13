@@ -1,4 +1,4 @@
-<h2>Uploaded feeds:</h2>
+<h2><?php __('Uploaded feeds'); ?></h2>
 <ul>
     <?php foreach($uploaded as $item) { ?>
         <li><?php echo $item; ?></li>
