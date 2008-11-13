@@ -1,1 +1,1 @@
-Error! No token specified.
+<?php __('Error! No token specified.'); ?>

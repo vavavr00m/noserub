@@ -14,7 +14,7 @@
         <?php } ?>
     
         <div>
-            <h4>Social activity</h4>
+            <h4><?php __('Social activity'); ?></h4>
             <?php echo $this->element('subnav', array('no_wrapper' => true)); ?>
             <?php echo $this->element('identities/items', array('data' => $items, 'filter' => $filter)); ?>
         </div>
@@ -26,13 +26,13 @@
             echo $this->element('locations/choose', array('identity' => $about_identity));
             echo '<hr />';
         } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? 'Contacts' : 'Latest active'), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? __('Contacts', true) : __('Latest active', true)), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if(isset($contacts) && $is_self) { ?>
     	    <hr />
-    	    <?php echo $this->element('contacts/box', array('box_head' => 'My Contacts', 'data' => $contacts, 'static_base_url' => $base_url_for_avatars, 'manage' => true)); ?>
+    	    <?php echo $this->element('contacts/box', array('box_head' => __('My Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars, 'manage' => true)); ?>
     	<?php } ?>
     	<?php if(isset($newbies)) { ?>
     	    <hr />
-            <?php echo $this->element('contacts/box', array('box_head' => 'Newbies', 'data' => $newbies, 'static_base_url' => $base_url_for_avatars)); ?>
+            <?php echo $this->element('contacts/box', array('box_head' => __('Newbies', true), 'data' => $newbies, 'static_base_url' => $base_url_for_avatars)); ?>
         <?php } ?>
     </div>

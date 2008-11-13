@@ -3,41 +3,41 @@
 ?>
 <?php $flashmessage->render(); ?>
 <p class="infotext">
-    Once you added some locations, like <em>Home</em> and <em>Office</em>, you 
+    <?php __('Once you added some locations, like <em>Home</em> and <em>Office</em>, you 
     will be able to set this location on your profile page to tell, where you 
-    currently are.
+    currently are.'); ?>
 </p>
 
-<h2>Your locations</h2>
+<h2><?php __('Your locations'); ?></h2>
 <p class="infotext">
-    <a href="<?php echo $url . '/settings/locations/add/'; ?>" class="addmore">Create a new Location</a>
+    <a href="<?php echo $url . '/settings/locations/add/'; ?>" class="addmore"><?php __('Create a new Location'); ?></a>
 </p>
 <?php if(!$data) { ?>
     <p class="infotext">
-        You did not create any locations yet.
+        <?php __('You did not create any locations yet.'); ?>
     </p>
 <?php } else { ?>
     <table class="listing">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Address (hidden)</th>
-            <th>Location</th>
+            <th><?php __('Name'); ?></th>
+            <th><?php __('Address (hidden)'); ?></th>
+            <th><?php __('Location'); ?></th>
             <th></th>
         </tr>
         </thead>
         <?php foreach($data as $item) { ?>
             <tr>
                 <td><?php echo $item['Location']['name']; ?></td>
-                <td><?php echo $item['Location']['address'] == '' ? '<em>Not entered</em>' : $item['Location']['address']; ?></td>
+                <td><?php echo $item['Location']['address'] == '' ? '<em>' __('Not entered', true) . '</em>' : $item['Location']['address']; ?></td>
                 <td>
-                    Latitude: <?php echo $item['Location']['latitude']; ?><br />
-                    Longitude: <?php echo $item['Location']['longitude']; ?>
+                    <?php __('Latitude'); ?>: <?php echo $item['Location']['latitude']; ?><br />
+                    <?php __('Longitude'); ?>: <?php echo $item['Location']['longitude']; ?>
                 </td>
                 <td>
                 	<ul>
-                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
-                   		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>">Edit</a></li>
+                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $security_token . '/'; ?>"><?php __('Delete'); ?></a></li>
+                   		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
                    	</ul>
                 </td>
             </tr>
