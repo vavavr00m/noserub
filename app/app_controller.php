@@ -103,6 +103,21 @@ class AppController extends Controller {
             $this->auto_login();
         }        
         
+        # Localization
+        App::import('Core', 'l10n');
+        $this->L10n = new L10n();
+        Configure::write('Config.language', Configure::read('Language.default'));
+        $this->Session->write('Config.language', Configure::read('Language.default'));
+        
+        # Localization
+        $this->L10n->get(Configure::read('Config.language'));
+
+        setlocale(LC_ALL, 
+            substr($this->L10n->locale, 0, 3) .
+            strtoupper(substr($this->L10n->locale, 3, 2)) . 
+            '.' . $this->L10n->charset
+        );
+        
         # set menu data
         $this->menu->setViewData($this);  
         

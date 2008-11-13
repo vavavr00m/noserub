@@ -20,6 +20,11 @@ define('NOSERUB_APP_NAME', 'NoseRub');
 define('NOSERUB_FULL_BASE_URL', 'http://');
 
 /**
+ * Default Language for this installation
+ */
+Configure::write('Language.default', 'en-en'); # try 'de-de' :-)
+
+/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities

@@ -111,7 +111,7 @@ class ContactsController extends AppController {
                         # user could not be found, so delete it
                         $this->Contact->Identity->id = $new_identity_id;
                         $this->Contact->Identity->delete();
-                        $this->flashMessage('error', __('Could not add contact.'. true));
+                        $this->flashMessage('error', __('Could not add contact.', true));
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
                         exit;
