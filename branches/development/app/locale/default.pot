@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-11-13 14:56+0100\n"
+"POT-Creation-Date: 2008-11-13 21:11+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -15,16 +15,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /_controller.php:120
+#: /_controller.php:135
 msgid "You may not call this route from the shell!"
 msgstr ""
 
-#: /_controller.php:125
+#: /_controller.php:140
 #: /controllers/auth_controller.php:105
 msgid "Error"
 msgstr ""
 
-#: /_controller.php:125
+#: /_controller.php:140
 msgid "This route is only accessible from the shell!"
 msgstr ""
 
@@ -291,7 +291,7 @@ msgid "Changes have been saved."
 msgstr ""
 
 #: /controllers/identities_controller.php:395
-msgid "Settings for my NoseRub Account"
+msgid "My profile settings"
 msgstr ""
 
 #: /controllers/identities_controller.php:427
@@ -658,7 +658,7 @@ msgid "Register"
 msgstr ""
 
 #: /models/menu.php:326
-#: /views/admins/system_update.ctp:40
+#: /views/admin/system_update.ctp:40
 #: /views/elements/metanav.ctp:18;20
 msgid "Settings"
 msgstr ""
@@ -877,7 +877,7 @@ msgid "Servicetype"
 msgstr ""
 
 #: /views/accounts/add_step_2_preview.ctp:22
-#: /views/admins/system_update.ctp:114
+#: /views/admin/system_update.ctp:114
 msgid "URL"
 msgstr ""
 
@@ -963,95 +963,95 @@ msgstr ""
 msgid "Post my <em>what are you doing</em> entries to Twitter.com"
 msgstr ""
 
-#: /views/admins/system_update.ctp:4
+#: /views/admin/system_update.ctp:4
 msgid "Information about the current state of your NoseRub instance. Please\n    check back after each update you install, because new constants may have\n    been introduced and/or changes in the database structure been made."
 msgstr ""
 
-#: /views/admins/system_update.ctp:8
+#: /views/admin/system_update.ctp:8
 msgid "Extension"
 msgstr ""
 
-#: /views/admins/system_update.ctp:11;27;43;78
+#: /views/admin/system_update.ctp:11;27;43;78
 msgid "Status"
 msgstr ""
 
-#: /views/admins/system_update.ctp:11;27;43;60;78
+#: /views/admin/system_update.ctp:11;27;43;60;78
 msgid "OK"
 msgstr ""
 
-#: /views/admins/system_update.ctp:16
+#: /views/admin/system_update.ctp:16
 msgid "Some extensions need to be fixed!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:24
+#: /views/admin/system_update.ctp:24
 msgid "Directories"
 msgstr ""
 
-#: /views/admins/system_update.ctp:32
+#: /views/admin/system_update.ctp:32
 msgid "Some directories are not writeable!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:36
+#: /views/admin/system_update.ctp:36
 msgid "not writeable"
 msgstr ""
 
-#: /views/admins/system_update.ctp:48
+#: /views/admin/system_update.ctp:48
 msgid "Some constants need to be fixed!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:57
+#: /views/admin/system_update.ctp:57
 msgid "Database"
 msgstr ""
 
-#: /views/admins/system_update.ctp:60;84
+#: /views/admin/system_update.ctp:60;84
 msgid "Configuration"
 msgstr ""
 
-#: /views/admins/system_update.ctp:62
+#: /views/admin/system_update.ctp:62
 msgid "Actual version #"
 msgstr ""
 
-#: /views/admins/system_update.ctp:64
+#: /views/admin/system_update.ctp:64
 msgid "Updating to #"
 msgstr ""
 
-#: /views/admins/system_update.ctp:74
+#: /views/admin/system_update.ctp:74
 msgid "Database up-to-date!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:87
+#: /views/admin/system_update.ctp:87
 msgid "database.php in /app/config/ not found!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:89
+#: /views/admin/system_update.ctp:89
 msgid "Cannot connect to database!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:96
+#: /views/admin/system_update.ctp:96
 msgid "Errors!"
 msgstr ""
 
-#: /views/admins/system_update.ctp:98
+#: /views/admin/system_update.ctp:98
 msgid "Please correct the errors above and then return to this URL, to finish the update."
 msgstr ""
 
-#: /views/admins/system_update.ctp:102
+#: /views/admin/system_update.ctp:102
 msgid "Talk back to NoseRub.com"
 msgstr ""
 
-#: /views/admins/system_update.ctp:104
+#: /views/admin/system_update.ctp:104
 msgid "If you want to, you can just click on the button and NoseRub.com will receive\n        knowledge about your installation here. The decision wether to click that button\n        or not is solely up to you."
 msgstr ""
 
-#: /views/admins/system_update.ctp:111
+#: /views/admin/system_update.ctp:111
 msgid "We don't send any other data beside what you can verify here, once you click that button."
 msgstr ""
 
-#: /views/admins/system_update.ctp:117
+#: /views/admin/system_update.ctp:117
 msgid "DB Version"
 msgstr ""
 
-#: /views/admins/system_update.ctp:121
+#: /views/admin/system_update.ctp:121
 msgid "Send to NoseRub.com"
 msgstr ""
 
@@ -1253,7 +1253,7 @@ msgstr ""
 
 #: /views/elements/contacts/box.ctp:2
 #: /views/elements/locations/choose.ctp:4
-#: /views/identities/index.ctp:168;188;207
+#: /views/identities/index.ctp:167;187;206
 msgid "manage"
 msgstr ""
 
@@ -1350,8 +1350,8 @@ msgid "No one"
 msgstr ""
 
 #: /views/elements/identities/privacy_settings.ctp:4
-#: /views/identities/index.ctp:170
-#: /views/identities/social_stream.ctp:29
+#: /views/identities/index.ctp:169
+#: /views/identities/social_stream.ctp:28
 msgid "Contacts"
 msgstr ""
 
@@ -1521,28 +1521,23 @@ msgstr ""
 msgid "Add some notes here."
 msgstr ""
 
-#: /views/identities/index.ctp:157
-#: /views/identities/social_stream.ctp:17
-msgid "Social activity"
-msgstr ""
-
-#: /views/identities/index.ctp:176
+#: /views/identities/index.ctp:175
 msgid "Contact's Social Stream"
 msgstr ""
 
-#: /views/identities/index.ctp:183
+#: /views/identities/index.ctp:182
 msgid "Mutual Contacts"
 msgstr ""
 
-#: /views/identities/index.ctp:201;226
+#: /views/identities/index.ctp:200;225
 msgid "Add new service"
 msgstr ""
 
-#: /views/identities/index.ctp:209
+#: /views/identities/index.ctp:208
 msgid "Contact"
 msgstr ""
 
-#: /views/identities/index.ctp:215
+#: /views/identities/index.ctp:214
 msgid "E-Mail"
 msgstr ""
 
@@ -1714,15 +1709,15 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:29
+#: /views/identities/social_stream.ctp:28
 msgid "Latest active"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:32
+#: /views/identities/social_stream.ctp:31
 msgid "My Contacts"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:36
+#: /views/identities/social_stream.ctp:35
 msgid "Newbies"
 msgstr ""
 
