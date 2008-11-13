@@ -14,7 +14,6 @@
         <?php } ?>
     
         <div>
-            <h4><?php __('Social activity'); ?></h4>
             <?php echo $this->element('subnav', array('no_wrapper' => true)); ?>
             <?php echo $this->element('identities/items', array('data' => $items, 'filter' => $filter)); ?>
         </div>

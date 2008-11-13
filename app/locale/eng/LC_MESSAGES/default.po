@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: NoseRub\n"
 "POT-Creation-Date: 2008-11-13 21:11+0100\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Dirk Olbertz <dirk.olbertz@ormigo.com>\n"
+"Last-Translator: Dirk Olbertz <dirk.olbertz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: French\n"
-"X-Poedit-Country: FRANCE\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: /_controller.php:135
@@ -1009,12 +1009,12 @@ msgstr ""
 msgid "Extension"
 msgstr ""
 
-# /views/admins/system_update.ctp:11;27;43;78
+# /views/admin/system_update.ctp:11;27;43;78
 #: /views/admin/system_update.ctp:11
 msgid "Status"
 msgstr ""
 
-# /views/admins/system_update.ctp:11;27;43;60;78
+# /views/admin/system_update.ctp:11;27;43;60;78
 #: /views/admin/system_update.ctp:11
 msgid "OK"
 msgstr ""
@@ -1043,7 +1043,7 @@ msgstr ""
 msgid "Database"
 msgstr ""
 
-# /views/admins/system_update.ctp:60;84
+# /views/admin/system_update.ctp:60;84
 #: /views/admin/system_update.ctp:60
 msgid "Configuration"
 msgstr ""
@@ -1316,7 +1316,7 @@ msgstr ""
 msgid "Add new account"
 msgstr ""
 
-# /views/identities/index.ctp:168;188;207
+# /views/identities/index.ctp:167;187;206
 #: /views/elements/contacts/box.ctp:2 /views/elements/locations/choose.ctp:4
 #: /views/identities/index.ctp:167
 msgid "manage"
@@ -1602,7 +1602,7 @@ msgstr ""
 msgid "Mutual Contacts"
 msgstr ""
 
-# /views/identities/index.ctp:201;226
+# /views/identities/index.ctp:200;225
 #: /views/identities/index.ctp:200
 msgid "Add new service"
 msgstr ""

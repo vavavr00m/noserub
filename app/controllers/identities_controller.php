@@ -392,7 +392,7 @@ class IdentitiesController extends AppController {
             $this->data = $this->Identity->findById($session_identity['id']);
         }
         
-        $this->set('headline', __('Settings for my NoseRub Account', true));
+        $this->set('headline', __('My profile settings', true));
     }
     
     public function display_settings() {
