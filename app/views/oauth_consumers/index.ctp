@@ -2,30 +2,30 @@
     $url = Router::url('/' . $session_identity['local_username']);
 	$flashmessage->render(); 
 ?>
-<h3>OAuth parameters</h3>
+<h3><?php __('OAuth parameters'); ?></h3>
 <ul class="infotext">
-	<li>Request Token URL: <strong><?php echo Router::url('/pages/oauth/request_token', true); ?></strong></li>
-	<li>User Authorization URL: <strong><?php echo Router::url('/pages/oauth/authorize', true); ?></strong></li>
-	<li>Access Token URL: <strong><?php echo Router::url('/pages/oauth/access_token', true); ?></strong></li>
-	<li>Signature method: HMAC-SHA1</li>
+	<li><?php __('Request Token URL'); ?>: <strong><?php echo Router::url('/pages/oauth/request_token', true); ?></strong></li>
+	<li><?php __('User Authorization URL'); ?>: <strong><?php echo Router::url('/pages/oauth/authorize', true); ?></strong></li>
+	<li><?php __('Access Token URL'); ?>: <strong><?php echo Router::url('/pages/oauth/access_token', true); ?></strong></li>
+	<li><?php __('Signature method'); ?>: HMAC-SHA1</li>
 </ul>
 
-<h3>Your applications</h3>
+<h3><?php __('Your applications'); ?></h3>
 <p class="infotext">
-	<?php echo $html->link('Register new application', $url.'/settings/oauth/add', array('class' => 'addmore')); ?>
+	<?php echo $html->link(__('Register new application', true), $url.'/settings/oauth/add', array('class' => 'addmore')); ?>
 </p>
 <?php if (empty($consumers)): ?>
 	<p class="infotext">
-		You did not register any applications yet.
+		<?php __('You did not register any applications yet.'); ?>
 	</p>
 <?php else: ?>
 	<table class="listing">
 		<thead>
 			<tr>
-				<th>Application name</th>
-				<th>Callback url</th>
-				<th>Consumer key</th>
-				<th>Consumer secret</th>
+				<th><?php __('Application name'); ?></th>
+				<th><?php __('Callback url'); ?></th>
+				<th><?php __('Consumer key'); ?></th>
+				<th><?php __('Consumer secret'); ?></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -37,8 +37,8 @@
 				<td><?php echo $consumer['Consumer']['consumer_secret']; ?></td>
 				<td>
 					<ul>
-                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>">Delete</a></li>
-                   		<li class="edit icon"><a href="<?php echo $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>">Edit</a></li>
+                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>"><?php __('Delete'); ?></a></li>
+                   		<li class="edit icon"><a href="<?php echo $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
                    	</ul>
 				</td>
 			</tr>
