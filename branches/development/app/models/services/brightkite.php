@@ -1,7 +1,5 @@
 <?php
-class BritekiteService extends AbstractService {
-	
-
+class BrightkiteService extends AbstractService {
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#brightkite.com/people/(.+)#'));
 	}
@@ -10,15 +8,11 @@ class BritekiteService extends AbstractService {
 		return 'http://brightkite.com/people/'.$username;
 	}
 	
-
-	
 	public function getContent($feeditem) {
-
 		return $feeditem->get_link();
 	}
 	
 	public function getFeedUrl($username) {
-		return 'http://brightkite.com/people/'.$username.'/objects.rss';
+		return 'http://brightkite.com/people/' . $username . '/objects.rss';
 	}
-	
 }
