@@ -2,9 +2,9 @@
 
 class ConfigurationChecker {
 
-    public $constants = array('!NOSERUB_DOMAIN' => array(
-                                'file' => 'noserub.php'),
-                           'NOSERUB_ADMIN_HASH' => array(
+	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE');
+	
+    public $constants = array('NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
                            'NOSERUB_REGISTRATION_TYPE' => array(
                                 'values' => array('all', 'none', 'invitation'),
@@ -20,8 +20,6 @@ class ConfigurationChecker {
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php'),
-                           '!NOSERUB_USE_FEED_CACHE' => array(
-                               'file'       => 'noserub.php'),
                            'NOSERUB_MANUAL_FEEDS_UPDATE' => array(
                                'file'   => 'noserub.php',
                                'values' => array(true, false)),
@@ -30,15 +28,29 @@ class ConfigurationChecker {
                                'values' => array(true, false))
                           );
     
+	public function check() {
+		$out = $this->checkForObsoleteConstants();
+		$out = am($out, $this->checkConstants());
+		
+		return $out;
+	}
+
+	protected function checkForObsoleteConstants() {		
+		$out = array();
+		
+		foreach ($this->obsoleteConstants as $obsoleteConstant) {
+			if (defined($obsoleteConstant)) {
+				$out[$obsoleteConstant] = __('obsolete! Please remove it from noserub.php', true);
+			}
+		}
+		
+		return $out;
+	}
+	
     public function checkConstants() {
         $out = array();
         foreach($this->constants as $constant => $info) {
-            if(strpos($constant, '!') === 0) {
-                $constant = str_replace('!', '', $constant);
-                if(defined($constant)) {
-                    $out[$constant] = sprintf(__('obsolete! Please remove it from %s', true), $info['file']);
-                }
-            } else if(!defined($constant)) {
+            if(!defined($constant)) {
                 $out[$constant] = sprintf(__('not defined! (see %s)', true), $info['file']);
             } else {
                 if(isset($info['values'])) {

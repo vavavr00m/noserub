@@ -28,7 +28,7 @@ class AdminController extends AppController {
             return;
         }
         
-        $constants = $this->ConfigurationChecker->checkConstants();
+        $constants = $this->ConfigurationChecker->check();
         $this->set('constants', $constants);
         if(!empty($constants)) {
             return;
