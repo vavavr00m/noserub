@@ -5,54 +5,6 @@
     check back after each update you install, because new constants may have
     been introduced and/or changes in the database structure been made.'); ?>
 </p>
-<h2><?php __('Extension'); ?></h2>
-<?php if(empty($extensions)) { ?>
-    <p id="message" class="success">
-        <?php __('Status'); ?>: <strong><?php __('OK'); ?></strong>
-    </p>
-<?php } else { ?>
-    <?php $no_error = false; ?>
-    <p id="message" class="alert">
-        <?php __('Some extensions need to be fixed!'); ?>
-    </p>
-    <ul>
-	    <?php foreach($extensions as $extension => $reason) { ?>
-	        <li><?php echo '<strong>' . $extension . '</strong>: ' . $reason; ?></li>
-	    <?php } ?>
-    </ul>
-<?php } ?>
-<h2><?php __('Directories'); ?></h2>
-<?php if(empty($directories)) { ?>
-    <p id="message" class="success">
-        <?php __('Status'); ?>: <strong><?__('OK'); ?></strong>
-    </p>
-<?php } else { ?>
-    <?php $no_error = false; ?>
-    <p id="message" class="alert">
-        <?php __('Some directories are not writeable!'); ?>
-    </p>
-    <ul> 
-        <?php foreach($directories as $directory) { ?>
-            <li><?php echo '<strong>' . $directory . '</strong>: ' . __('not writeable', true); ?></li>
-        <?php } ?>
-    </ul>
-<?php } ?>   
-<h2><?php __('Settings'); ?></h2>
-<?php if(empty($constants)) { ?>
-    <p id="message" class="success">
-        <?php __('Status'); ?>: <strong><?php __('OK'); ?></strong>
-    </p>
-<?php } else { ?>
-    <?php $no_error = false; ?>
-    <p id="message" class="alert">
-        <?php __('Some constants need to be fixed!'); ?>
-    </p>
-    <ul> 
-        <?php foreach($constants as $constant => $message) { ?>
-            <li><?php echo '<strong>' . $constant . '</strong>: ' . $message; ?></li>
-        <?php } ?>
-    </ul>
-<?php } ?>
 <?php if(isset($database_status)) { ?>
     <h2><?php __('Database'); ?></h2>
     <?php if($database_status == 1) { ?>
@@ -105,21 +57,5 @@
         knowledge about your installation here. The decision wether to click that button
         or not is solely up to you.'); ?>
     </p>
-    <form method="POST" action="http://noserub.com/talkback">
-        <fieldset>
-            <legend>
-                <?php __("We don't send any other data beside what you can verify here, once you click that button."); ?>
-            </legend>
-            <div class="input text">
-                <input type="hidden" name="talkback[url]" value="<?php echo NOSERUB_FULL_BASE_URL; ?>"><strong><?php __('URL'); ?>:</strong> <?php echo NOSERUB_FULL_BASE_URL; ?>
-            </div>
-            <div class="input text">
-                <input type="hidden" name="talkback[migrations]" value="<?php echo $most_recent_migration; ?>"><strong><?php __('DB Version'); ?>:</strong> <?php echo $most_recent_migration; ?>
-            </div>
-        </fieldset>
-        <fieldset>
-            <input class="submitbutton" type="submit" value="<?php __('Send to NoseRub.com'); ?>"/>
-        </fieldset>
-    </form>
-<?php } ?>
+  <?php } ?>
 </div>
