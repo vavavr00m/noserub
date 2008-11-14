@@ -13,6 +13,18 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$this->assertIdentical(array(), $this->checker->check());
 	}
 	
+	public function testCheckForObsoleteConfigKeys() {
+		$this->checker->setObsoleteConfigKeys(array());
+		$this->assertIdentical(array(), $this->checker->publicCheckForObsoleteConfigKeys());
+		
+		$configKey = 'obsolete_config_key';
+		Configure::write($configKey, '');
+		$this->checker->setObsoleteConfigKeys(array($configKey));
+
+		$result = $this->checker->publicCheckForObsoleteConfigKeys();
+		$this->assertTrue(isset($result[$configKey]));
+	}
+	
 	public function testCheckForObsoleteConstants() {
 		$this->checker->setObsoleteConstants(array());
 		$this->assertIdentical(array(), $this->checker->publicCheckForObsoleteConstants());
@@ -27,8 +39,16 @@ class ConfigurationCheckerTest extends CakeTestCase {
 }
 
 class MyConfigurationChecker extends ConfigurationChecker {
+	public function setObsoleteConfigKeys($keys) {
+		$this->obsoleteConfigKeys = $keys;
+	}
+	
 	public function setObsoleteConstants($constants) {
 		$this->obsoleteConstants = $constants;
+	}
+	
+	public function publicCheckForObsoleteConfigKeys() {
+		return $this->checkForObsoleteConfigKeys();
 	}
 	
 	public function publicCheckForObsoleteConstants() {
