@@ -1,7 +1,7 @@
 <?php
 
 class ConfigurationChecker {
-
+	protected $obsoleteConfigKeys = array();
 	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE');
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
@@ -30,11 +30,27 @@ class ConfigurationChecker {
     
 	public function check() {
 		$out = $this->checkForObsoleteConstants();
+		$out = am($out, $this->checkForObsoleteConfigKeys());
 		$out = am($out, $this->checkConstants());
 		
 		return $out;
 	}
 
+	protected function checkForObsoleteConfigKeys() {
+		$out = array();
+		
+		foreach ($this->obsoleteConfigKeys as $obsoleteConfigKey) {
+			// XXX there is currently no way to determine whether a config key is 
+			// set, so we assume it is not set if Configure::read() returns null.
+			// see also https://trac.cakephp.org/ticket/5743
+			if (!is_null(Configure::read($obsoleteConfigKey))) {
+				$out[$obsoleteConfigKey] = __('obsolete! Please remove it from noserub.php', true);
+			}
+		}
+		
+		return $out;
+	}
+	
 	protected function checkForObsoleteConstants() {		
 		$out = array();
 		
