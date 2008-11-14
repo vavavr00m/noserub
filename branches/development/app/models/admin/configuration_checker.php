@@ -3,6 +3,7 @@
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
 	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE');
+	protected $requiredConfigKeys = array();
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
@@ -31,6 +32,7 @@ class ConfigurationChecker {
 	public function check() {
 		$out = $this->checkForObsoleteConstants();
 		$out = am($out, $this->checkForObsoleteConfigKeys());
+		$out = am($out, $this->checkForRequiredConfigKeys());
 		$out = am($out, $this->checkConstants());
 		
 		return $out;
@@ -40,10 +42,7 @@ class ConfigurationChecker {
 		$out = array();
 		
 		foreach ($this->obsoleteConfigKeys as $obsoleteConfigKey) {
-			// XXX there is currently no way to determine whether a config key is 
-			// set, so we assume it is not set if Configure::read() returns null.
-			// see also https://trac.cakephp.org/ticket/5743
-			if (!is_null(Configure::read($obsoleteConfigKey))) {
+			if ($this->isConfigKeySet($obsoleteConfigKey)) {
 				$out[$obsoleteConfigKey] = __('obsolete! Please remove it from noserub.php', true);
 			}
 		}
@@ -61,6 +60,25 @@ class ConfigurationChecker {
 		}
 		
 		return $out;
+	}
+	
+	protected function checkForRequiredConfigKeys() {
+		$out = array();
+		
+		foreach ($this->requiredConfigKeys as $requiredConfigKey) {
+			if (!$this->isConfigKeySet($requiredConfigKey)) {
+				$out[$requiredConfigKey] = __('not defined in noserub.php', true);
+			}
+		}
+		
+		return $out;
+	}
+	
+	private function isConfigKeySet($key) {
+		// XXX there is currently no way to determine whether a config key is 
+		// set, so we assume it is set if Configure::read() doesn't return null.
+		// see also https://trac.cakephp.org/ticket/5743
+		return !is_null(Configure::read($key));
 	}
 	
     public function checkConstants() {
