@@ -36,6 +36,17 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$result = $this->checker->publicCheckForObsoleteConstants();
 		$this->assertTrue(isset($result[$constantName]));
 	}
+	
+	public function testCheckForRequiredConfigKeys() {
+		$this->checker->setRequiredConfigKeys(array());
+		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigKeys());
+		
+		$configKey = 'Noserub.required_key';
+		$this->checker->setRequiredConfigKeys(array($configKey));
+		
+		$result = $this->checker->publicCheckForRequiredConfigKeys();
+		$this->assertTrue(isset($result[$configKey]));
+	}
 }
 
 class MyConfigurationChecker extends ConfigurationChecker {
@@ -46,6 +57,10 @@ class MyConfigurationChecker extends ConfigurationChecker {
 	public function setObsoleteConstants($constants) {
 		$this->obsoleteConstants = $constants;
 	}
+
+	public function setRequiredConfigKeys($keys) {
+		$this->requiredConfigKeys = $keys;
+	}
 	
 	public function publicCheckForObsoleteConfigKeys() {
 		return $this->checkForObsoleteConfigKeys();
@@ -53,5 +68,9 @@ class MyConfigurationChecker extends ConfigurationChecker {
 	
 	public function publicCheckForObsoleteConstants() {
 		return $this->checkForObsoleteConstants();
+	}
+	
+	public function publicCheckForRequiredConfigKeys() {
+		return $this->checkForRequiredConfigKeys();
 	}
 }
