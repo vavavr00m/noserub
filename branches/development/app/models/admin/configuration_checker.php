@@ -64,10 +64,20 @@ class ConfigurationChecker {
 	
 	protected function checkForRequiredConfigKeys() {
 		$out = array();
-		
+
 		foreach ($this->requiredConfigKeys as $requiredConfigKey) {
-			if (!$this->isConfigKeySet($requiredConfigKey)) {
-				$out[$requiredConfigKey] = __('not defined in noserub.php', true);
+			if ($this->isConfigKeySet($requiredConfigKey->getKey())) {
+				if ($requiredConfigKey->hasValidator()) {
+					$validatorName = $requiredConfigKey->getValidatorName();
+					$validator = new $validatorName();
+					$result = $validator->validate(Configure::read($requiredConfigKey->getKey()));
+					
+					if ($result !== true) {
+						$out[$requiredConfigKey->getKey()] = $result;
+					}
+				}
+			} else {
+				$out[$requiredConfigKey->getKey()] = __('not defined in noserub.php', true);
 			}
 		}
 		
@@ -111,4 +121,70 @@ class ConfigurationChecker {
     private function verifyFullBaseUrlEndsWithSlash() {
     	return (strpos(strrev(constant('NOSERUB_FULL_BASE_URL')), '/') === 0);
     }
+}
+
+class ConfigDefinition {
+	private $key = null;
+	private $validatorName = null;
+	
+	public function __construct($key, $validatorName = null) {
+		$this->key = $key;
+		$this->validatorName = $validatorName;
+	}
+	
+	public function getKey() {
+		return $this->key;
+	}
+	
+	public function hasValidator() {
+		return !is_null($this->validatorName);
+	}
+	
+	public function getValidatorName() {
+		return $this->validatorName;
+	}
+}
+
+interface ConfigValueValidator {
+	/**
+	 * Returns true if the value validates, otherwise a message with the 
+	 * reason why the validation failed
+	 */
+	public function validate($value);
+}
+
+class BooleanValidator implements ConfigValueValidator {
+	public function validate($value) {
+		if (is_bool($value)) {
+			return true;
+		}
+		
+		return __('value might only be: true or false', true);
+	}
+}
+
+class FullBaseUrlValidator implements ConfigValueValidator {
+	public function validate($value) {
+		if ($this->endsWithSlash($value)) {
+			return true;
+		}
+		
+		return __('value must end with a slash!', true);
+	}
+	
+	private function endsWithSlash($string) {
+		return (strpos(strrev($string), '/') === 0);
+	}
+}
+
+class RegistrationTypeValidator implements ConfigValueValidator {
+	private $validRegistrationTypes = array('all', 'none', 'invitation');
+	
+	public function validate($value) {
+		if (in_array($value, $this->validRegistrationTypes)) {
+			return true;
+		}
+		
+		return sprintf(__('value might only be: "%s"', true), join('", "', $this->validRegistrationTypes));
+	}
 }

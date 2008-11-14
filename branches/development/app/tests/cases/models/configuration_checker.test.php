@@ -41,9 +41,22 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$this->checker->setRequiredConfigKeys(array());
 		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigKeys());
 		
-		$configKey = 'Noserub.required_key';
+		$configKey = new ConfigDefinition('Noserub.required_key');
 		$this->checker->setRequiredConfigKeys(array($configKey));
 		
+		$result = $this->checker->publicCheckForRequiredConfigKeys();
+		$this->assertTrue(isset($result[$configKey->getKey()]));
+	}
+	
+	public function testValidationOfBooleanConfigValue() {
+		$configKey = 'Noserub.key'; 
+		$configDefinition = new ConfigDefinition($configKey, 'BooleanValidator');
+		$this->checker->setRequiredConfigKeys(array($configDefinition));
+		
+		Configure::write($configKey, true);
+		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigKeys());
+		
+		Configure::write($configKey, 'not_a_boolean_value');
 		$result = $this->checker->publicCheckForRequiredConfigKeys();
 		$this->assertTrue(isset($result[$configKey]));
 	}
@@ -72,5 +85,65 @@ class MyConfigurationChecker extends ConfigurationChecker {
 	
 	public function publicCheckForRequiredConfigKeys() {
 		return $this->checkForRequiredConfigKeys();
+	}
+}
+
+class ConfigDefinitionTest extends CakeTestCase {
+	public function testConfigDefinitionWithoutValidator() {
+		$definition = new ConfigDefinition('key');
+		$this->assertEqual('key', $definition->getKey());
+		$this->assertFalse($definition->hasValidator());
+		$this->assertNull($definition->getValidatorName());
+	}
+	
+	public function testConfigDefinitionWithValidator() {
+		$definition = new ConfigDefinition('key', 'validator');
+		$this->assertEqual('key', $definition->getKey());
+		$this->assertTrue($definition->hasValidator());
+		$this->assertEqual('validator', $definition->getValidatorName());		
+	}
+}
+
+class BooleanValidatorCheckerTest extends CakeTestCase {
+	private $validator = null;
+	
+	public function setUp() {
+		$this->validator = new BooleanValidator();
+	}
+	
+	public function testValidate() {
+		$this->assertIdentical(true, $this->validator->validate(true));
+		$this->assertIdentical(true, $this->validator->validate(false));
+		$this->assertTrue(is_string($this->validator->validate(0)));
+		$this->assertTrue(is_string($this->validator->validate(1)));
+	}
+}
+
+class FullBaseUrlValidatorTest extends CakeTestCase {
+	private $validator = null;
+	
+	public function setUp() {
+		$this->validator = new FullBaseUrlValidator();
+	}
+	
+	public function testValidate() {
+		$this->assertIdentical(true, $this->validator->validate('http://example.com/'));
+		$this->assertTrue(is_string($this->validator->validate('http://example.com')));
+	}
+}
+
+class RegistrationTypeValidatorTest extends CakeTestCase {
+	private $validator = null;
+	
+	public function setUp() {
+		$this->validator = new RegistrationTypeValidator();
+	}
+	
+	public function testValidate() {
+		$this->assertIdentical(true, $this->validator->validate('all'));
+		$this->assertIdentical(true, $this->validator->validate('none'));
+		$this->assertIdentical(true, $this->validator->validate('invitation'));
+		$this->assertTrue(is_string($this->validator->validate('some text')));
+		$this->assertTrue(is_string($this->validator->validate('')));
 	}
 }
