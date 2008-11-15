@@ -28,7 +28,7 @@ class SyndicationsController extends AppController {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
             if(!$internal_call && NOSERUB_USE_CDN) {
-                $this->redirect('http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/'.$hash.'.'.$extension, '301');
+                $this->redirect('http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/'.$hash.'.'.$extension, '301');
             }
 
             if($hash === 'generic') {
@@ -265,7 +265,7 @@ class SyndicationsController extends AppController {
         $data = $this->Syndication->findAllByIdentityId($identity_id, array('name', 'hash'));
         
         if(NOSERUB_USE_CDN) {
-            $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/';
+            $feed_url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/';
         } else {
         	if (!isset($identity)) {
         		$identity = $this->getIdentity($identity_id);

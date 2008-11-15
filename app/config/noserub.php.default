@@ -109,9 +109,9 @@ define('NOSERUB_USE_CDN', false);
  * yourself. All data for this NoseRub installation will be
  * stored in that bucket.
  */
-define('NOSERUB_CDN_S3_ACCESS_KEY', '');
-define('NOSERUB_CDN_S3_SECRET_KEY', '');
-define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
+Configure::write('Noserub.cdn_s3_access_key', '');
+Configure::write('Noserub.cdn_s3_secret_key', '');
+Configure::write('Noserub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
 
 /**
  * If you want to restrict the email addresses of users that can register,

@@ -20,7 +20,7 @@
         if($data['Identity']['generic_feed']) {
             $url = Router::url('/' . $data['Identity']['local_username']);
             if(NOSERUB_USE_CDN) {
-                $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/' . $data['Identity']['local_username'] . '.rss';
+                $feed_url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/' . $data['Identity']['local_username'] . '.rss';
             } else {
                 $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/rss';
             }
