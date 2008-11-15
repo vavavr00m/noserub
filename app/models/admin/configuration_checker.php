@@ -45,7 +45,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_access_key'),
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
-			new ConfigDefinition('Noserub.registration_restricted_hosts'),
+			new ConfigDefinition('Noserub.registration_restricted_hosts', 'FalseOrNonEmptyStringValidator'),
 			new ConfigDefinition('Noserub.use_cdn', 'BooleanValidator'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
@@ -192,6 +192,20 @@ class BooleanValidator implements ConfigValueValidator {
 		}
 		
 		return __('value might only be: true or false', true);
+	}
+}
+
+class FalseOrNonEmptyStringValidator implements ConfigValueValidator {
+	public function validate($value) {
+		if ($value === false || $this->isNonEmptyString($value)) {
+			return true;
+		}
+		
+		return __('value must be false or a string!', true);
+	}
+	
+	private function isNonEmptyString($value) {
+		return (is_string($value) && $value != '');
 	}
 }
 

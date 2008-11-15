@@ -139,6 +139,21 @@ class BooleanValidatorCheckerTest extends ValidatorTestCase {
 	}
 }
 
+class FalseOrNonEmptyStringValidatorTest extends ValidatorTestCase {
+	private $validator = null;
+	
+	public function setUp() {
+		$this->validator = new FalseOrNonEmptyStringValidator();
+	}
+	
+	public function testValidate() {
+		$this->assertNoValidationError($this->validator->validate(false));
+		$this->assertNoValidationError($this->validator->validate('valid_string'));
+		$this->assertValidationError($this->validator->validate(true));
+		$this->assertValidationError($this->validator->validate(''));
+	}
+}
+
 class FullBaseUrlValidatorTest extends ValidatorTestCase {
 	private $validator = null;
 	
