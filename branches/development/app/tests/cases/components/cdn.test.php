@@ -9,8 +9,8 @@ class CdnComponentTestCase extends CakeTestCase {
 	}
 	
 	public function skip() {
-	    $should_skip = defined('NOSERUB_USE_CDN') == false || NOSERUB_USE_CDN == false;
-		$this->skipif($should_skip, 'NOSERUB_USE_CDN not set to "true" in noserub.php');
+	    $should_skip = (Configure::read('Noserub.use_cdn') == false);
+		$this->skipif($should_skip, 'Noserub.use_cdn not set to "true" in noserub.php');
 	}
 	
 	public function testGetBuckets() {

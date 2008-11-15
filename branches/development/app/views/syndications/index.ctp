@@ -1,6 +1,6 @@
 <?php
     $url = Router::url('/' . $session_identity['local_username']);
-    if(NOSERUB_USE_CDN) {
+    if(Configure::read('Noserub.use_cdn')) {
         $feed_url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/';
     } else {
         $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/';

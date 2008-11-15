@@ -888,7 +888,7 @@ class Identity extends AppModel {
     public function getBaseUrlForAvatars() {
     	$url = '';
     	
-    	if(NOSERUB_USE_CDN) {
+    	if(Configure::read('Noserub.use_cdn')) {
             $url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/avatars/';
         } else {
             $url = FULL_BASE_URL . Router::url('/static/avatars/');

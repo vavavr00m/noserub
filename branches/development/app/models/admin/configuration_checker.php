@@ -9,6 +9,7 @@ class ConfigurationChecker {
 										 'NOSERUB_CDN_S3_BUCKET',
 										 'NOSERUB_DOMAIN',
 										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
+										 'NOSERUB_USE_CDN',
 										 'NOSERUB_USE_FEED_CACHE', 
 										 'NOSERUB_XMPP_FULL_FEED_USER',
 										 'NOSERUB_XMPP_FULL_FEED_PASSWORD', 
@@ -34,9 +35,6 @@ class ConfigurationChecker {
                                'file' => 'noserub.php'),
                            'NOSERUB_MANUAL_FEEDS_UPDATE' => array(
                                'file'   => 'noserub.php',
-                               'values' => array(true, false)),
-                           'NOSERUB_USE_CDN' => array(
-                               'file'   => 'noserub.php',
                                'values' => array(true, false))
                           );
     
@@ -48,6 +46,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
 			new ConfigDefinition('Noserub.registration_restricted_hosts'),
+			new ConfigDefinition('Noserub.use_cdn', 'BooleanValidator'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_server'),
