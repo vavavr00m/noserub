@@ -20,7 +20,7 @@ Configure::write('Noserub.full_base_url', 'http://');
 /**
  * Default Language for this installation
  */
-Configure::write('Language.default', 'en-en'); # try 'de-de' :-)
+Configure::write('Noserub.default_language', 'en-en'); # try 'de-de' :-)
 
 /**
  * A hash value to protect some admin routes from execution by

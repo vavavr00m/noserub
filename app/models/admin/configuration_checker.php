@@ -1,7 +1,7 @@
 <?php
 
 class ConfigurationChecker {
-	protected $obsoleteConfigKeys = array();
+	protected $obsoleteConfigKeys = array('Language.default');
 	protected $obsoleteConstants = array('NOSERUB_ADMIN_HASH',
 										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 
 										 'NOSERUB_API_INFO_ACTIVE',
@@ -36,6 +36,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
 			new ConfigDefinition('Noserub.cron_hash'),
+			new ConfigDefinition('Noserub.default_language'),
 			new ConfigDefinition('Noserub.email_from'),
 			new ConfigDefinition('Noserub.full_base_url', new FullBaseUrlValidator()),
 			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
