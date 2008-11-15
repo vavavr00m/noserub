@@ -848,7 +848,7 @@ class IdentitiesController extends AppController {
             );
             App::import('Model', 'Admin');
             $Admin = new Admin;
-            $restricted_hosts = defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') ? NOSERUB_REGISTRATION_RESTRICTED_HOSTS : false;
+            $restricted_hosts = Configure::read('Noserub.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
                 'registration_type' => defined('NOSERUB_REGISTRATION_TYPE') ? NOSERUB_REGISTRATION_TYPE : 'unknown',

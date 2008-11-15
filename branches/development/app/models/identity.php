@@ -65,16 +65,15 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, whether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+     * check, whether host of email address matches Noserub.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 
-            NOSERUB_REGISTRATION_RESTRICTED_HOSTS === false ||
+        if (Configure::read('Noserub.registration_restricted_hosts') === false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
+        return in_array($host, explode(' ', Configure::read('Noserub.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {

@@ -115,12 +115,10 @@ define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
 
 /**
  * If you want to restrict the email addresses of users that can register,
- * set this constant. You can add more than one host:
- * define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', 'mycompany.com myothercompany.com');
- *
- * @name: NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+ * define this setting. You can add more than one host:
+ * Configure::write('Noserub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
  */
-define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', false);
+Configure::write('Noserub.registration_restricted_hosts', false);
 
 Configure::write('Noserub.xmpp_full_feed_user', '');
 Configure::write('Noserub.xmpp_full_feed_password', '');
@@ -134,12 +132,12 @@ Configure::write('Noserub.xmpp_full_feed_port', 5222);
  * value to 'true'.
  *
  * Beside the number of users on your site, this method also transfers
- * the settings NOSERUB_REGISTRATION_RESTRICTED_HOSTS and 
+ * the settings Noserub.registration_restricted_hosts and 
  * NOSERUB_REGISTRATION_TYPE to noserub.com. In addition, information about
  * how up to date your installation is (id of newest database migration)
  * gathered, so we know which versions are used out there.
  *
- * We don't send the content of NOSERUB_REGISTRATION_RESTRICTED_HOSTS, but
+ * We don't send the content of Noserub.registration_restricted_hosts, but
  * only the information, if this setting is used. If so, your site will be
  * flagged as "not public" on http://noserub.com/sites/.
  */
