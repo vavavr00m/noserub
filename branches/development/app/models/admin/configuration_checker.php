@@ -8,6 +8,7 @@ class ConfigurationChecker {
 										 'NOSERUB_CDN_S3_SECRET_KEY',
 										 'NOSERUB_CDN_S3_BUCKET',
 										 'NOSERUB_DOMAIN',
+										 'NOSERUB_EMAIL_FROM',
 										 'NOSERUB_GOOGLE_MAPS_KEY',
 										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
 										 'NOSERUB_USE_CDN',
@@ -24,8 +25,6 @@ class ConfigurationChecker {
                            'NOSERUB_REGISTRATION_TYPE' => array(
                                 'values' => array('all', 'none', 'invitation'),
                                 'file'   => 'noserub.php'),
-                           'NOSERUB_EMAIL_FROM' => array(
-                               'file' => 'noserub.php'),
                            'NOSERUB_APP_NAME' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
@@ -42,6 +41,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_access_key'),
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
+			new ConfigDefinition('Noserub.email_from'),
 			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.use_cdn', new BooleanValidator()),
