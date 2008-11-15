@@ -28,21 +28,20 @@ Configure::write('Language.default', 'en-en'); # try 'de-de' :-)
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities
- * @name NOSERUB_ADMIN_HASH
  */
-define('NOSERUB_ADMIN_HASH', '');
+Configure::write('Noserub.admin_hash', '');
 
 /**
- * Similar to NOSERUB_ADMIN_HASH, but only used
+ * Similar to Noserub.admin_hash, but only used
  * for some cronjob routes that can called by URL with this
  * hash. Only needed, if you install NoseRub on a server
  * without access to the crontab.
  *
- * Don't use the same value for NOSERUB_ADMIN_HASH and Noserub.cron_hash!
+ * Don't use the same value for Noserub.admin_hash and Noserub.cron_hash!
  *
  * The URLs for these cronjobs are:
- * NOSERUB_FULL_BASE_URL/jobs/cron/Noserub.cron_hash/identities/sync/all/
- * NOSERUB_FULL_BASE_URL/jobs/cron/Noserub.cron_hash/cache/feed/refresh/
+ * NOSERUB_FULL_BASE_URL/jobs/cron/<Noserub.cron_hash>/identities/sync/all/
+ * NOSERUB_FULL_BASE_URL/jobs/cron/<Noserub.cron_hash>/cache/feed/refresh/
  *
  * These cronjobs can take some time to finish, so you might run into
  * problems with timeouts of the webserver you're using.

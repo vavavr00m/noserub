@@ -622,7 +622,7 @@ class IdentitiesController extends AppController {
         $admin_hash  = isset($this->params['admin_hash'])  ? $this->params['admin_hash'] : '';
         $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
         
-        if($admin_hash != NOSERUB_ADMIN_HASH ||
+        if($admin_hash != Configure::read('Noserub.admin_hash') ||
            $admin_hash == '' ||
            !$identity_id) {
             # there is nothing to do for us here
@@ -664,7 +664,7 @@ class IdentitiesController extends AppController {
     public function jobs_sync_all() {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
-        if($admin_hash != NOSERUB_ADMIN_HASH ||
+        if($admin_hash != Configure::read('Noserub.admin_hash') ||
            $admin_hash == '') {
             # there is nothing to do for us here
             return false;
@@ -683,7 +683,7 @@ class IdentitiesController extends AppController {
     }
     
     public function shell_sync_all() {
-        $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
+        $this->params['admin_hash'] = Configure::read('Noserub.admin_hash');
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
     }
@@ -699,9 +699,7 @@ class IdentitiesController extends AppController {
             return;
         }
         
-        $this->params['admin_hash'] = NOSERUB_ADMIN_HASH;
-        $this->jobs_sync_all();
-        $this->render('jobs_sync_all');
+        $this->shell_sync_all();
     }
     
     public function yadis() {
