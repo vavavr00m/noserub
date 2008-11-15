@@ -3,7 +3,9 @@
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
 	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE', 
-										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 'NOSERUB_API_INFO_ACTIVE');
+										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 'NOSERUB_API_INFO_ACTIVE',
+										 'NOSERUB_XMPP_FULL_FEED_PORT', 'NOSERUB_XMPP_FULL_FEED_SERVER',
+										 'NOSERUB_XMPP_FULL_FEED_PASSWORD', 'NOSERUB_XMPP_FULL_FEED_USER');
 	protected $configDefinitions = array();
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
@@ -33,7 +35,11 @@ class ConfigurationChecker {
 	public function __construct() {
 		$this->configDefinitions = array(
 			new ConfigDefinition('Noserub.allow_twitter_bridge', 'BooleanValidator'),
-			new ConfigDefinition('Noserub.api_info_active', 'BooleanValidator')
+			new ConfigDefinition('Noserub.api_info_active', 'BooleanValidator'),
+			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
+			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
+			new ConfigDefinition('Noserub.xmpp_full_feed_server'),
+			new ConfigDefinition('Noserub.xmpp_full_feed_port', 'NumericValidator')
 		);
 	}
 
