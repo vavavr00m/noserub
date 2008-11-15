@@ -301,7 +301,7 @@ class IdentitiesController extends AppController {
                 $msg .= __('If you want to reply to this message, go to ', true) . 'http://' . $session_identity['username'] . '/' . "\n";
             
                 $email = $about_identity['Identity']['email'];
-                if(!mail($email, '['. NOSERUB_APP_NAME . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+                if(!mail($email, '['. Configure::read('Noserub.app_name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
                     $this->flashMessage('alert', __('Your Message could not be delivered to ', true) . $name);
                 } else {

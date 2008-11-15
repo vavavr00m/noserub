@@ -2,9 +2,8 @@
 
 /**
  * The name of this NoseRub server. This is used for the title.
- * @name NOSERUB_APP_NAME
  */
-define('NOSERUB_APP_NAME', 'NoseRub');
+Configure::write('Noserub.app_name', 'NoseRub');
 
 /**
  * The URL, under which your NoseRub installation

@@ -5,6 +5,7 @@ class ConfigurationChecker {
 	protected $obsoleteConstants = array('NOSERUB_ADMIN_HASH',
 										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 
 										 'NOSERUB_API_INFO_ACTIVE',
+										 'NOSERUB_APP_NAME',
 										 'NOSERUB_CDN_S3_ACCESS_KEY',
 										 'NOSERUB_CDN_S3_SECRET_KEY',
 										 'NOSERUB_CDN_S3_BUCKET',
@@ -24,16 +25,13 @@ class ConfigurationChecker {
 										 'NOSERUB_XMPP_FULL_FEED_SERVER',
 										 'NOSERUB_XMPP_FULL_FEED_PORT');
 	protected $configDefinitions = array();
-	
-    public $constants = array('NOSERUB_APP_NAME' => array(
-                               'file' => 'noserub.php')
-                          );
     
 	public function __construct() {
 		$this->configDefinitions = array(
 			new ConfigDefinition('Noserub.admin_hash'),
 			new ConfigDefinition('Noserub.allow_twitter_bridge', new BooleanValidator()),
 			new ConfigDefinition('Noserub.api_info_active', new BooleanValidator()),
+			new ConfigDefinition('Noserub.app_name'),
 			new ConfigDefinition('Noserub.cdn_s3_access_key'),
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
@@ -57,7 +55,6 @@ class ConfigurationChecker {
 		$out = $this->checkForObsoleteConstants();
 		$out = am($out, $this->checkForObsoleteConfigKeys());
 		$out = am($out, $this->checkForRequiredConfigSettings());
-		$out = am($out, $this->checkConstants());
 		
 		return $out;
 	}
@@ -120,27 +117,6 @@ class ConfigurationChecker {
 		
 		return true;
 	}
-	
-    public function checkConstants() {
-        $out = array();
-        foreach($this->constants as $constant => $info) {
-            if(!defined($constant)) {
-                $out[$constant] = sprintf(__('not defined! (see %s)', true), $info['file']);
-            } else {
-                if(isset($info['values'])) {
-                    if(!in_array(constant($constant), $info['values'])) {
-                        $out[$constant] = sprintf(__('value might only be: "%s" (see %s)', true), join('", "', $info['values']), $info['file']);
-                    }
-                } else {
-                    if(constant($constant) === '') {
-                        $out[$constant] = sprintf(__('no value! (see %s)', true), $info['file']);
-                    }
-                }
-            }
-        }
-        
-        return $out;
-    }
 }
 
 class ConfigDefinition {

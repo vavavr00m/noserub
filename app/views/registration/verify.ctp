@@ -1,6 +1,6 @@
 <?php if($verify_ok) { ?>
     <p>
-        <?php sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), NOSERUB_APP_NAME); ?>
+        <?php sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), Configure::read('Noserub.app_name')); ?>
     </p>
 <?php } else { ?>
     <p>
