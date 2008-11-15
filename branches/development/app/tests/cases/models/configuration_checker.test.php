@@ -37,27 +37,27 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$this->assertTrue(isset($result[$constantName]));
 	}
 	
-	public function testCheckForRequiredConfigKeys() {
-		$this->checker->setRequiredConfigKeys(array());
-		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigKeys());
+	public function testCheckForRequiredConfigSettings() {
+		$this->checker->setConfigDefinitions(array());
+		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigSettings());
 		
-		$configKey = new ConfigDefinition('Noserub.required_key');
-		$this->checker->setRequiredConfigKeys(array($configKey));
+		$configKey = 'Noserub.required_key';
+		$this->checker->setConfigDefinitions(array(new ConfigDefinition($configKey)));
 		
-		$result = $this->checker->publicCheckForRequiredConfigKeys();
-		$this->assertTrue(isset($result[$configKey->getKey()]));
+		$result = $this->checker->publicCheckForRequiredConfigSettings();
+		$this->assertTrue(isset($result[$configKey]));
 	}
 	
-	public function testValidationOfBooleanConfigValue() {
+	public function testValidationOfConfigValue() {
 		$configKey = 'Noserub.key'; 
-		$configDefinition = new ConfigDefinition($configKey, 'BooleanValidator');
-		$this->checker->setRequiredConfigKeys(array($configDefinition));
+		$configDefinition = new ConfigDefinition($configKey, 'MyConfigValueValidator');
+		$this->checker->setConfigDefinitions(array($configDefinition));
 		
-		Configure::write($configKey, true);
-		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigKeys());
+		Configure::write($configKey, 'valid_value');
+		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigSettings());
 		
-		Configure::write($configKey, 'not_a_boolean_value');
-		$result = $this->checker->publicCheckForRequiredConfigKeys();
+		Configure::write($configKey, 'invalid_value');
+		$result = $this->checker->publicCheckForRequiredConfigSettings();
 		$this->assertTrue(isset($result[$configKey]));
 	}
 }
@@ -71,8 +71,8 @@ class MyConfigurationChecker extends ConfigurationChecker {
 		$this->obsoleteConstants = $constants;
 	}
 
-	public function setRequiredConfigKeys($keys) {
-		$this->requiredConfigKeys = $keys;
+	public function setConfigDefinitions($keys) {
+		$this->configDefinitions = $keys;
 	}
 	
 	public function publicCheckForObsoleteConfigKeys() {
@@ -83,8 +83,18 @@ class MyConfigurationChecker extends ConfigurationChecker {
 		return $this->checkForObsoleteConstants();
 	}
 	
-	public function publicCheckForRequiredConfigKeys() {
-		return $this->checkForRequiredConfigKeys();
+	public function publicCheckForRequiredConfigSettings() {
+		return $this->checkForRequiredConfigSettings();
+	}
+}
+
+class MyConfigValueValidator implements ConfigValueValidator {
+	public function validate($value) {
+		if ($value == 'valid_value') {
+			return true;
+		}
+		
+		return 'invalid value';
 	}
 }
 
