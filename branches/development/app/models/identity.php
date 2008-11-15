@@ -849,7 +849,7 @@ class Identity extends AppModel {
     }
     
     private function prepareVerificationMessage($hash) {
-    	$msg  = sprintf(__('Welcome to %s!', true), NOSERUB_APP_NAME) . "\n\n";
+    	$msg  = sprintf(__('Welcome to %s!', true), Configure::read('Noserub.app_name')) . "\n\n";
         $msg .= __('Please click here to verify your email address', true) .":\n";
         $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
         $msg .= __('If you do not click on this link, the account will automatically be deleted after 14 days.', true) . "\n\n";
@@ -859,7 +859,7 @@ class Identity extends AppModel {
     }
     
     private function sendVerificationMail($email, $msg) {
-        if(!mail($email, sprintf(__('Your %s registration', true), NOSERUB_APP_NAME), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+        if(!mail($email, sprintf(__('Your %s registration', true), Configure::read('Noserub.app_name')), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
