@@ -2,7 +2,8 @@
 
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
-	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE');
+	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE', 
+										 'NOSERUB_ALLOW_TWITTER_BRIDGE');
 	protected $configDefinitions = array();
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
@@ -29,6 +30,12 @@ class ConfigurationChecker {
                                'values' => array(true, false))
                           );
     
+	public function __construct() {
+		$this->configDefinitions = array(
+			new ConfigDefinition('Noserub.allow_twitter_bridge', 'BooleanValidator')
+		);
+	}
+
 	public function check() {
 		$out = $this->checkForObsoleteConstants();
 		$out = am($out, $this->checkForObsoleteConfigKeys());
