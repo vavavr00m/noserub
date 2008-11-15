@@ -11,7 +11,8 @@ class ConfigurationChecker {
 										 'NOSERUB_GOOGLE_MAPS_KEY',
 										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
 										 'NOSERUB_USE_CDN',
-										 'NOSERUB_USE_FEED_CACHE', 
+										 'NOSERUB_USE_FEED_CACHE',
+										 'NOSERUB_USE_SSL',
 										 'NOSERUB_XMPP_FULL_FEED_USER',
 										 'NOSERUB_XMPP_FULL_FEED_PASSWORD', 
 										 'NOSERUB_XMPP_FULL_FEED_SERVER',
@@ -25,9 +26,6 @@ class ConfigurationChecker {
                                 'file'   => 'noserub.php'),
                            'NOSERUB_EMAIL_FROM' => array(
                                'file' => 'noserub.php'),
-                           'NOSERUB_USE_SSL' => array(
-                               'file'   => 'noserub.php',
-                               'values' => array(true, false)),
                            'NOSERUB_APP_NAME' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
@@ -47,6 +45,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.use_cdn', new BooleanValidator()),
+			new ConfigDefinition('Noserub.use_ssl', new BooleanValidator()),
 			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_server'),

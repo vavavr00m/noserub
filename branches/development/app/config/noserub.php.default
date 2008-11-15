@@ -79,7 +79,7 @@ define('NOSERUB_EMAIL_FROM', 'info@...');
  * When true, https (Port 443) is used for sensitive 
  * pages like /pages/login/ and /pages/register/
  */
-define('NOSERUB_USE_SSL', false);
+Configure::write('Noserub.use_ssl', false);
 
 /**
  * We need a geocoder for get Latitude/Longitude for
