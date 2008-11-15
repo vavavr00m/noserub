@@ -287,7 +287,7 @@ class Contact extends AppModel {
                 
                 # get user data
                 if(!$item['is_private']) {
-                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                    $result = $this->requestAction('/jobs/' . Configure::read('Noserub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
                 }
             } else {
                 $new_identity_id = $new_identity['Identity']['id'];

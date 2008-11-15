@@ -2,7 +2,8 @@
 
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
-	protected $obsoleteConstants = array('NOSERUB_ALLOW_TWITTER_BRIDGE', 
+	protected $obsoleteConstants = array('NOSERUB_ADMIN_HASH',
+										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 
 										 'NOSERUB_API_INFO_ACTIVE',
 										 'NOSERUB_CDN_S3_ACCESS_KEY',
 										 'NOSERUB_CDN_S3_SECRET_KEY',
@@ -23,9 +24,7 @@ class ConfigurationChecker {
 										 'NOSERUB_XMPP_FULL_FEED_PORT');
 	protected $configDefinitions = array();
 	
-    public $constants = array('NOSERUB_ADMIN_HASH' => array(
-                                'file' => 'noserub.php'),
-                           'NOSERUB_APP_NAME' => array(
+    public $constants = array('NOSERUB_APP_NAME' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php')
@@ -33,6 +32,7 @@ class ConfigurationChecker {
     
 	public function __construct() {
 		$this->configDefinitions = array(
+			new ConfigDefinition('Noserub.admin_hash'),
 			new ConfigDefinition('Noserub.allow_twitter_bridge', new BooleanValidator()),
 			new ConfigDefinition('Noserub.api_info_active', new BooleanValidator()),
 			new ConfigDefinition('Noserub.cdn_s3_access_key'),

@@ -106,7 +106,7 @@ class ContactsController extends AppController {
                     $new_identity_id = $this->Contact->Identity->id;
                     
                     # get user data
-                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                    $result = $this->requestAction('/jobs/' . Configure::read('Noserub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
                     if($result == false) {
                         # user could not be found, so delete it
                         $this->Contact->Identity->id = $new_identity_id;
