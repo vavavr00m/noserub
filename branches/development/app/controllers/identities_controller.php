@@ -851,7 +851,7 @@ class IdentitiesController extends AppController {
             $restricted_hosts = Configure::read('Noserub.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
-                'registration_type' => defined('NOSERUB_REGISTRATION_TYPE') ? NOSERUB_REGISTRATION_TYPE : 'unknown',
+                'registration_type' => Configure::read('Noserub.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
                 'migration' => $Admin->getCurrentMigration()
             );
