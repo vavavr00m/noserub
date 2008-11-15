@@ -90,7 +90,7 @@ depending on how you set it up in step #2.
 
 5. Set up cron job
 ------------------
-If you set the value for NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php to "true", 
+If you set the value for Noserub.manual_feeds_update in noserub.php to "true", 
 you have to run the following command via cron to update the feed cache:
 
     php noserub/app/webroot/shell_dispatcher.php /cache/feed/refresh/ 

@@ -194,8 +194,8 @@ class EntriesController extends AppController {
     }
     
     public function jobs_update() {
-        if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
-            $this->set('data', __('NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php not set to do it manually!', true));
+        if(!Configure::read('Noserub.manual_feeds_update')) {
+            $this->set('data', __('Noserub.manual_feeds_update in noserub.php not set to do it manually!', true));
         } else {
             $this->Entry->Account->contain();
             $data = $this->Entry->Account->find(
