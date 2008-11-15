@@ -98,8 +98,8 @@ class AppController extends Controller {
         # Localization
         App::import('Core', 'l10n');
         $this->L10n = new L10n();
-        Configure::write('Config.language', Configure::read('Language.default'));
-        $this->Session->write('Config.language', Configure::read('Language.default'));
+        Configure::write('Config.language', Configure::read('Noserub.default_language'));
+        $this->Session->write('Config.language', Configure::read('Noserub.default_language'));
         
         # Localization
         $this->L10n->get(Configure::read('Config.language'));
