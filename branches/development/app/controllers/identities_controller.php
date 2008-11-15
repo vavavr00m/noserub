@@ -838,7 +838,7 @@ class IdentitiesController extends AppController {
      * values.
      */
     public function api_info() {
-        if(defined('NOSERUB_API_INFO_ACTIVE') && NOSERUB_API_INFO_ACTIVE) {
+        if (Configure::read('Noserub.api_info_active')) {
             $this->Identity->contain();
             $conditions = array(
                 'is_local' => 1,
