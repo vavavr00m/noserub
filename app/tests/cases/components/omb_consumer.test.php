@@ -12,7 +12,7 @@ class OmbConsumerComponentTest extends CakeTestCase {
 	}
 	
 	public function testDiscover() {
-		$endPoints = $this->component->discover(NOSERUB_FULL_BASE_URL.DS.'testing'.DS.'identica_0.6.xrds');
+		$endPoints = $this->component->discover(Configure::read('Noserub.full_base_url') . 'testing/identica_0.6.xrds');
 		$this->assertEqual(2, count($endPoints));
 		$this->assertEqual(self::IDENTICA.'/user/4599', $endPoints[0]);
 		$this->assertEqual(5, count($endPoints[1]));
@@ -25,7 +25,7 @@ class OmbConsumerComponentTest extends CakeTestCase {
 	
 	public function testDiscoverNotExistingFile() {
 		try {
-			$this->component->discover(NOSERUB_FULL_BASE_URL.DS.'testing'.DS.'notexisting');
+			$this->component->discover(Configure::read('Noserub.full_base_url') . 'testing/notexisting');
 			$this->assertTrue(false);
 		} catch (Exception $e) {
 			$this->assertTrue(true);

@@ -15,9 +15,8 @@ define('NOSERUB_APP_NAME', 'NoseRub');
  * http://myserver.com/noserub/, you would have to enter only
  * http://myserver.com/ here. When your installation is available
  * directly under http://myserver.com/, just put http://myserver.com/ here.
- * @name NOSERUB_FULL_BASE_URL
  */
-define('NOSERUB_FULL_BASE_URL', 'http://');
+Configure::write('Noserub.full_base_url', 'http://');
 
 /**
  * Default Language for this installation
@@ -40,8 +39,8 @@ Configure::write('Noserub.admin_hash', '');
  * Don't use the same value for Noserub.admin_hash and Noserub.cron_hash!
  *
  * The URLs for these cronjobs are:
- * NOSERUB_FULL_BASE_URL/jobs/cron/<Noserub.cron_hash>/identities/sync/all/
- * NOSERUB_FULL_BASE_URL/jobs/cron/<Noserub.cron_hash>/cache/feed/refresh/
+ * <Noserub.full_base_url>/jobs/cron/<Noserub.cron_hash>/identities/sync/all/
+ * <Noserub.full_base_url>/jobs/cron/<Noserub.cron_hash>/cache/feed/refresh/
  *
  * These cronjobs can take some time to finish, so you might run into
  * problems with timeouts of the webserver you're using.

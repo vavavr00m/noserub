@@ -46,7 +46,7 @@ class OmbConsumerComponent extends Object {
 		
 		$mandatoryOmbParams = array('omb_version' => OmbConstants::VERSION, 
 									'omb_listener' => $localId, 
-									'omb_listenee' => NOSERUB_FULL_BASE_URL, 
+									'omb_listenee' => Configure::read('Noserub.full_base_url'), 
 									'omb_listenee_profile' => 'http://'.$identity['Identity']['username'], 
 									'omb_listenee_nickname' => $identity['Identity']['local_username'], 
 									'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/'   
@@ -70,7 +70,7 @@ class OmbConsumerComponent extends Object {
 			}
 		}
 		
-		$request->set_parameter('oauth_callback', NOSERUB_FULL_BASE_URL.'/'.$identity['Identity']['local_username'].'/callback');
+		$request->set_parameter('oauth_callback', Configure::read('Noserub.full_base_url') . $identity['Identity']['local_username'].'/callback');
 		
 		if ($isLaconica) {
 			$request->set_parameter('action', 'userauthorization');
@@ -148,7 +148,7 @@ class OmbConsumerComponent extends Object {
 										   $tokenSecret, 
 										   $url, 
 										   array('omb_version' => OmbConstants::VERSION, 
-										         'omb_listenee' => NOSERUB_FULL_BASE_URL, 
+										         'omb_listenee' => Configure::read('Noserub.full_base_url'), 
 										         'omb_notice' => 'noserub://'.md5($notice), 
 										         'omb_notice_content' => $notice));
 		return $data;

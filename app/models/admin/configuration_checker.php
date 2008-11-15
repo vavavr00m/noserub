@@ -11,6 +11,7 @@ class ConfigurationChecker {
 										 'NOSERUB_CRON_HASH',
 										 'NOSERUB_DOMAIN',
 										 'NOSERUB_EMAIL_FROM',
+										 'NOSERUB_FULL_BASE_URL',
 										 'NOSERUB_GOOGLE_MAPS_KEY',
 										 'NOSERUB_MANUAL_FEEDS_UPDATE',
 										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
@@ -25,8 +26,6 @@ class ConfigurationChecker {
 	protected $configDefinitions = array();
 	
     public $constants = array('NOSERUB_APP_NAME' => array(
-                               'file' => 'noserub.php'),
-                           'NOSERUB_FULL_BASE_URL' => array(
                                'file' => 'noserub.php')
                           );
     
@@ -40,6 +39,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
 			new ConfigDefinition('Noserub.cron_hash'),
 			new ConfigDefinition('Noserub.email_from'),
+			new ConfigDefinition('Noserub.full_base_url', new FullBaseUrlValidator()),
 			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.manual_feeds_update', new BooleanValidator()),
 			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
@@ -139,17 +139,7 @@ class ConfigurationChecker {
             }
         }
         
-        if (!isset($out['NOSERUB_FULL_BASE_URL'])) {
-        	if (!$this->verifyFullBaseUrlEndsWithSlash()) {
-        		$out['NOSERUB_FULL_BASE_URL'] = sprintf(__('value must end with a slash! (see %s)', true), $info['file']);
-        	}
-        }
-        
         return $out;
-    }
-    
-    private function verifyFullBaseUrlEndsWithSlash() {
-    	return (strpos(strrev(constant('NOSERUB_FULL_BASE_URL')), '/') === 0);
     }
 }
 
