@@ -575,7 +575,7 @@ class IdentitiesController extends AppController {
     private function loginWithOpenID() {
     	$protocol = 'http://';
     	
-    	if (NOSERUB_USE_SSL) {
+    	if (Configure::read('Noserub.use_ssl')) {
     		$protocol = 'https://';
     	}
     	
