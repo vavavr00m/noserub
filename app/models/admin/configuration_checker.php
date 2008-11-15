@@ -3,7 +3,7 @@
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
 	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE');
-	protected $requiredConfigKeys = array();
+	protected $configDefinitions = array();
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
                                 'file' => 'noserub.php'),
@@ -32,7 +32,7 @@ class ConfigurationChecker {
 	public function check() {
 		$out = $this->checkForObsoleteConstants();
 		$out = am($out, $this->checkForObsoleteConfigKeys());
-		$out = am($out, $this->checkForRequiredConfigKeys());
+		$out = am($out, $this->checkForRequiredConfigSettings());
 		$out = am($out, $this->checkConstants());
 		
 		return $out;
@@ -62,22 +62,18 @@ class ConfigurationChecker {
 		return $out;
 	}
 	
-	protected function checkForRequiredConfigKeys() {
+	protected function checkForRequiredConfigSettings() {
 		$out = array();
 
-		foreach ($this->requiredConfigKeys as $requiredConfigKey) {
-			if ($this->isConfigKeySet($requiredConfigKey->getKey())) {
-				if ($requiredConfigKey->hasValidator()) {
-					$validatorName = $requiredConfigKey->getValidatorName();
-					$validator = new $validatorName();
-					$result = $validator->validate(Configure::read($requiredConfigKey->getKey()));
-					
-					if ($result !== true) {
-						$out[$requiredConfigKey->getKey()] = $result;
-					}
+		foreach ($this->configDefinitions as $configDefinition) {
+			if ($this->isConfigKeySet($configDefinition->getKey())) {
+				$result = $this->validateConfigValue($configDefinition);
+				
+				if ($result !== true) {
+					$out[$configDefinition->getKey()] = $result;
 				}
 			} else {
-				$out[$requiredConfigKey->getKey()] = __('not defined in noserub.php', true);
+				$out[$configDefinition->getKey()] = __('not defined in noserub.php', true);
 			}
 		}
 		
@@ -89,6 +85,17 @@ class ConfigurationChecker {
 		// set, so we assume it is set if Configure::read() doesn't return null.
 		// see also https://trac.cakephp.org/ticket/5743
 		return !is_null(Configure::read($key));
+	}
+	
+	private function validateConfigValue(ConfigDefinition $definition) {
+		if ($definition->hasValidator()) {
+			$validatorClassName = $definition->getValidatorName();
+			$validator = new $validatorClassName();
+			
+			return $validator->validate(Configure::read($definition->getKey()));
+		}
+		
+		return true;
 	}
 	
     public function checkConstants() {
