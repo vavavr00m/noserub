@@ -691,10 +691,10 @@ class IdentitiesController extends AppController {
     public function cron_sync_all() {
         $cron_hash= isset($this->params['cron_hash'])  ? $this->params['cron_hash'] : '';
         
-        if($cron_hash != NOSERUB_CRON_HASH ||
+        if($cron_hash != Configure::read('Noserub.cron_hash') ||
            $cron_hash == '') {
             # there is nothing to do for us here
-            $this->set('data', __('Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!', true));
+            $this->set('data', __('Value for Noserub.cron_hash from noserub.php does not match or is empty!', true));
             $this->render('jobs_sync_all');
             return;
         }
