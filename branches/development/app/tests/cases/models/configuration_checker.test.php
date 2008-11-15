@@ -114,7 +114,17 @@ class ConfigDefinitionTest extends CakeTestCase {
 	}
 }
 
-class BooleanValidatorCheckerTest extends CakeTestCase {
+class ValidatorTestCase extends CakeTestCase {
+	public function assertNoValidationError($validationResult) {
+		$this->assertIdentical(true, $validationResult);
+	}
+	
+	public function assertValidationError($validationResult) {
+		$this->assertTrue(is_string($validationResult));
+	}
+}
+
+class BooleanValidatorCheckerTest extends ValidatorTestCase {
 	private $validator = null;
 	
 	public function setUp() {
@@ -122,14 +132,14 @@ class BooleanValidatorCheckerTest extends CakeTestCase {
 	}
 	
 	public function testValidate() {
-		$this->assertIdentical(true, $this->validator->validate(true));
-		$this->assertIdentical(true, $this->validator->validate(false));
-		$this->assertTrue(is_string($this->validator->validate(0)));
-		$this->assertTrue(is_string($this->validator->validate(1)));
+		$this->assertNoValidationError($this->validator->validate(true));
+		$this->assertNoValidationError($this->validator->validate(false));
+		$this->assertValidationError($this->validator->validate(0));
+		$this->assertValidationError($this->validator->validate(1));
 	}
 }
 
-class FullBaseUrlValidatorTest extends CakeTestCase {
+class FullBaseUrlValidatorTest extends ValidatorTestCase {
 	private $validator = null;
 	
 	public function setUp() {
@@ -137,12 +147,26 @@ class FullBaseUrlValidatorTest extends CakeTestCase {
 	}
 	
 	public function testValidate() {
-		$this->assertIdentical(true, $this->validator->validate('http://example.com/'));
-		$this->assertTrue(is_string($this->validator->validate('http://example.com')));
+		$this->assertNoValidationError($this->validator->validate('http://example.com/'));
+		$this->assertValidationError($this->validator->validate('http://example.com'));
 	}
 }
 
-class RegistrationTypeValidatorTest extends CakeTestCase {
+class NumericValidatorTest extends ValidatorTestCase {
+	private $validator = null;
+	
+	public function setUp() {
+		$this->validator = new NumericValidator();
+	}
+	
+	public function testValidate() {
+		$this->assertNoValidationError($this->validator->validate(123));
+		$this->assertValidationError($this->validator->validate(''));
+		$this->assertValidationError($this->validator->validate(false));
+	}
+}
+
+class RegistrationTypeValidatorTest extends ValidatorTestCase {
 	private $validator = null;
 	
 	public function setUp() {
@@ -150,10 +174,10 @@ class RegistrationTypeValidatorTest extends CakeTestCase {
 	}
 	
 	public function testValidate() {
-		$this->assertIdentical(true, $this->validator->validate('all'));
-		$this->assertIdentical(true, $this->validator->validate('none'));
-		$this->assertIdentical(true, $this->validator->validate('invitation'));
-		$this->assertTrue(is_string($this->validator->validate('some text')));
-		$this->assertTrue(is_string($this->validator->validate('')));
+		$this->assertNoValidationError($this->validator->validate('all'));
+		$this->assertNoValidationError($this->validator->validate('none'));
+		$this->assertNoValidationError($this->validator->validate('invitation'));
+		$this->assertValidationError($this->validator->validate('some text'));
+		$this->assertValidationError($this->validator->validate(''));
 	}
 }

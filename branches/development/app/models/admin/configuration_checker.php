@@ -192,6 +192,16 @@ class FullBaseUrlValidator implements ConfigValueValidator {
 	}
 }
 
+class NumericValidator implements ConfigValueValidator {
+	public function validate($value) {
+		if (is_numeric($value)) {
+			return true;
+		}
+		
+		return __('value must be numeric!', true);
+	}
+}
+
 class RegistrationTypeValidator implements ConfigValueValidator {
 	private $validRegistrationTypes = array('all', 'none', 'invitation');
 	
