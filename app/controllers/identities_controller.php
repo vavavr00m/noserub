@@ -371,7 +371,7 @@ class IdentitiesController extends AppController {
                 $filename = $this->Identity->uploadPhotoByForm($this->data['Identity']['photo']);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
-                    if(NOSERUB_USE_CDN) {
+                    if(Configure::read('Noserub.use_cdn')) {
                         # store to CDN
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
@@ -647,7 +647,7 @@ class IdentitiesController extends AppController {
             $data = $this->Identity->read();
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
-                if(NOSERUB_USE_CDN) {
+                if(Configure::read('Noserub.use_cdn')) {
                     # store to CDN
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');

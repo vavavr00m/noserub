@@ -99,7 +99,7 @@ define('NOSERUB_GOOGLE_MAPS_KEY', false);
  * usage of a CDN here. Please make sure you provide
  * access information to your CDN below.
  */
-define('NOSERUB_USE_CDN', false);
+Configure::write('Noserub.use_cdn', false);
 
 /**
  * You need to enter this three fields, when you want to
