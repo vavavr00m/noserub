@@ -50,11 +50,7 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-if(defined('NOSERUB_FULL_BASE_URL')) {
-    define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . NOSERUB_FULL_BASE_URL . ' (http://noserub.com/)');
-} else {
-    define('NOSERUB_USER_AGENT', 'NoseRub bot from unknown host (http://noserub.com/)');
-}
+define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('Noserub.full_base_url') . ' (http://noserub.com/)');
 
 ini_set('user_agent', NOSERUB_USER_AGENT);
 
