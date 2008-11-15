@@ -40,17 +40,17 @@ class ConfigurationChecker {
     
 	public function __construct() {
 		$this->configDefinitions = array(
-			new ConfigDefinition('Noserub.allow_twitter_bridge', 'BooleanValidator'),
-			new ConfigDefinition('Noserub.api_info_active', 'BooleanValidator'),
+			new ConfigDefinition('Noserub.allow_twitter_bridge', new BooleanValidator()),
+			new ConfigDefinition('Noserub.api_info_active', new BooleanValidator()),
 			new ConfigDefinition('Noserub.cdn_s3_access_key'),
 			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
-			new ConfigDefinition('Noserub.registration_restricted_hosts', 'FalseOrNonEmptyStringValidator'),
-			new ConfigDefinition('Noserub.use_cdn', 'BooleanValidator'),
+			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
+			new ConfigDefinition('Noserub.use_cdn', new BooleanValidator()),
 			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_server'),
-			new ConfigDefinition('Noserub.xmpp_full_feed_port', 'NumericValidator')
+			new ConfigDefinition('Noserub.xmpp_full_feed_port', new NumericValidator())
 		);
 	}
 
@@ -114,8 +114,7 @@ class ConfigurationChecker {
 	
 	private function validateConfigValue(ConfigDefinition $definition) {
 		if ($definition->hasValidator()) {
-			$validatorClassName = $definition->getValidatorName();
-			$validator = new $validatorClassName();
+			$validator = $definition->getValidator();
 			
 			return $validator->validate(Configure::read($definition->getKey()));
 		}
@@ -157,11 +156,11 @@ class ConfigurationChecker {
 
 class ConfigDefinition {
 	private $key = null;
-	private $validatorName = null;
+	private $validator = null;
 	
-	public function __construct($key, $validatorName = null) {
+	public function __construct($key, ConfigValueValidator $validator = null) {
 		$this->key = $key;
-		$this->validatorName = $validatorName;
+		$this->validator = $validator;
 	}
 	
 	public function getKey() {
@@ -169,11 +168,11 @@ class ConfigDefinition {
 	}
 	
 	public function hasValidator() {
-		return !is_null($this->validatorName);
+		return !is_null($this->validator);
 	}
 	
-	public function getValidatorName() {
-		return $this->validatorName;
+	public function getValidator() {
+		return $this->validator;
 	}
 }
 

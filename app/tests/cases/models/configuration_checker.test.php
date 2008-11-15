@@ -50,7 +50,7 @@ class ConfigurationCheckerTest extends CakeTestCase {
 	
 	public function testValidationOfConfigValue() {
 		$configKey = 'Noserub.key'; 
-		$configDefinition = new ConfigDefinition($configKey, 'MyConfigValueValidator');
+		$configDefinition = new ConfigDefinition($configKey, new MyConfigValueValidator());
 		$this->checker->setConfigDefinitions(array($configDefinition));
 		
 		Configure::write($configKey, 'valid_value');
@@ -103,14 +103,15 @@ class ConfigDefinitionTest extends CakeTestCase {
 		$definition = new ConfigDefinition('key');
 		$this->assertEqual('key', $definition->getKey());
 		$this->assertFalse($definition->hasValidator());
-		$this->assertNull($definition->getValidatorName());
+		$this->assertNull($definition->getValidator());
 	}
 	
 	public function testConfigDefinitionWithValidator() {
-		$definition = new ConfigDefinition('key', 'validator');
+		$validator = new MyConfigValueValidator();
+		$definition = new ConfigDefinition('key', $validator);
 		$this->assertEqual('key', $definition->getKey());
 		$this->assertTrue($definition->hasValidator());
-		$this->assertEqual('validator', $definition->getValidatorName());		
+		$this->assertEqual($validator, $definition->getValidator());
 	}
 }
 
