@@ -63,9 +63,8 @@ define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
  *        all previously registered identities aren't altered
  * invitation = only the admin can invite people to register. 
  *              (this is yet not implemented)
- * @name: NOSERUB_REGISTRATION_TYPE
  */
-define('NOSERUB_REGISTRATION_TYPE', 'all');
+Configure::write('Noserub.registration_type', 'all');
 
 /**
  * E-Mail address, that is put into the From: header,
@@ -131,7 +130,7 @@ Configure::write('Noserub.xmpp_full_feed_port', 5222);
  *
  * Beside the number of users on your site, this method also transfers
  * the settings Noserub.registration_restricted_hosts and 
- * NOSERUB_REGISTRATION_TYPE to noserub.com. In addition, information about
+ * Noserub.registration_type to noserub.com. In addition, information about
  * how up to date your installation is (id of newest database migration)
  * gathered, so we know which versions are used out there.
  *
