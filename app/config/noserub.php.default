@@ -143,7 +143,7 @@ define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
  * only the information, if this setting is used. If so, your site will be
  * flagged as "not public" on http://noserub.com/sites/.
  */
-define('NOSERUB_API_INFO_ACTIVE', false);
+Configure::write('Noserub.api_info_active', false);
 
 /**
  * If you, as the admin of this NoseRub installation do not feel
