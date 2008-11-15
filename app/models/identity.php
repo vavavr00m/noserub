@@ -859,7 +859,7 @@ class Identity extends AppModel {
     }
     
     private function sendVerificationMail($email, $msg) {
-        if(!mail($email, sprintf(__('Your %s registration', true), NOSERUB_APP_NAME), $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+        if(!mail($email, sprintf(__('Your %s registration', true), NOSERUB_APP_NAME), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
