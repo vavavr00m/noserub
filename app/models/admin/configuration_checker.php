@@ -10,6 +10,7 @@ class ConfigurationChecker {
 										 'NOSERUB_DOMAIN',
 										 'NOSERUB_EMAIL_FROM',
 										 'NOSERUB_GOOGLE_MAPS_KEY',
+										 'NOSERUB_MANUAL_FEEDS_UPDATE',
 										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
 										 'NOSERUB_REGISTRATION_TYPE',
 										 'NOSERUB_USE_CDN',
@@ -26,10 +27,7 @@ class ConfigurationChecker {
                            'NOSERUB_APP_NAME' => array(
                                'file' => 'noserub.php'),
                            'NOSERUB_FULL_BASE_URL' => array(
-                               'file' => 'noserub.php'),
-                           'NOSERUB_MANUAL_FEEDS_UPDATE' => array(
-                               'file'   => 'noserub.php',
-                               'values' => array(true, false))
+                               'file' => 'noserub.php')
                           );
     
 	public function __construct() {
@@ -41,6 +39,7 @@ class ConfigurationChecker {
 			new ConfigDefinition('Noserub.cdn_s3_bucket'),
 			new ConfigDefinition('Noserub.email_from'),
 			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
+			new ConfigDefinition('Noserub.manual_feeds_update', new BooleanValidator()),
 			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('Noserub.registration_type', new RegistrationTypeValidator()),
 			new ConfigDefinition('Noserub.use_cdn', new BooleanValidator()),

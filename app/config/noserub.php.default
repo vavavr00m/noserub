@@ -55,7 +55,7 @@ define('NOSERUB_CRON_HASH', '');
  * For better performance, you should set this to
  * "true" and add a cronjob for this purpose.
  */
-define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
+Configure::write('Noserub.manual_feeds_update', false);
 
 /**
  * all = everyone can register
