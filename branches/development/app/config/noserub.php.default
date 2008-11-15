@@ -91,7 +91,7 @@ define('NOSERUB_USE_SSL', false);
  * on which you want to use the API Key.
  * If set to false, no geocoding is done.
  */
-define('NOSERUB_GOOGLE_MAPS_KEY', false);
+Configure::write('Noserub.google_maps_key', false);
 
 /**
  * For better reliability, NoseRub can store some data to
