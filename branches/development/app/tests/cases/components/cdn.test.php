@@ -16,7 +16,7 @@ class CdnComponentTestCase extends CakeTestCase {
 	public function testGetBuckets() {
 	    $result = $this->component->getBuckets();
 	    # at least the noser-bucket should be there
-	    $this->assertTrue(isset($result[NOSERUB_CDN_S3_BUCKET]));
+	    $this->assertTrue(isset($result[Configure::read('Noserub.cdn_s3_bucket')]));
 	}
 		
 	public function testFileOperations() {

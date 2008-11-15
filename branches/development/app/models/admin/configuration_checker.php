@@ -2,11 +2,18 @@
 
 class ConfigurationChecker {
 	protected $obsoleteConfigKeys = array();
-	protected $obsoleteConstants = array('NOSERUB_DOMAIN', 'NOSERUB_USE_FEED_CACHE', 
-										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 'NOSERUB_API_INFO_ACTIVE',
-										 'NOSERUB_XMPP_FULL_FEED_PORT', 'NOSERUB_XMPP_FULL_FEED_SERVER',
-										 'NOSERUB_XMPP_FULL_FEED_PASSWORD', 'NOSERUB_XMPP_FULL_FEED_USER',
-										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS');
+	protected $obsoleteConstants = array('NOSERUB_ALLOW_TWITTER_BRIDGE', 
+										 'NOSERUB_API_INFO_ACTIVE',
+										 'NOSERUB_CDN_S3_ACCESS_KEY',
+										 'NOSERUB_CDN_S3_SECRET_KEY',
+										 'NOSERUB_CDN_S3_BUCKET',
+										 'NOSERUB_DOMAIN',
+										 'NOSERUB_REGISTRATION_RESTRICTED_HOSTS',
+										 'NOSERUB_USE_FEED_CACHE', 
+										 'NOSERUB_XMPP_FULL_FEED_USER',
+										 'NOSERUB_XMPP_FULL_FEED_PASSWORD', 
+										 'NOSERUB_XMPP_FULL_FEED_SERVER',
+										 'NOSERUB_XMPP_FULL_FEED_PORT');
 	protected $configDefinitions = array();
 	
     public $constants = array('NOSERUB_ADMIN_HASH' => array(
@@ -37,6 +44,9 @@ class ConfigurationChecker {
 		$this->configDefinitions = array(
 			new ConfigDefinition('Noserub.allow_twitter_bridge', 'BooleanValidator'),
 			new ConfigDefinition('Noserub.api_info_active', 'BooleanValidator'),
+			new ConfigDefinition('Noserub.cdn_s3_access_key'),
+			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
+			new ConfigDefinition('Noserub.cdn_s3_bucket'),
 			new ConfigDefinition('Noserub.registration_restricted_hosts'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
 			new ConfigDefinition('Noserub.xmpp_full_feed_password'),

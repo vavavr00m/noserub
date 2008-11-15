@@ -13,10 +13,10 @@ class CdnComponent extends Object {
     private $secret_key;
 	
     public function __construct() {
-        $this->key_id = defined('NOSERUB_CDN_S3_ACCESS_KEY') ? NOSERUB_CDN_S3_ACCESS_KEY : '';
-        $this->secret_key = defined('NOSERUB_CDN_S3_SECRET_KEY') ? NOSERUB_CDN_S3_SECRET_KEY : '';
+        $this->key_id = Configure::read('Noserub.cdn_s3_access_key');
+        $this->secret_key = Configure::read('Noserub.cdn_s3_secret_key');
         $this->s3 = new AmazonS3($this->key_id, $this->secret_key);
-        $this->bucket_name = defined('NOSERUB_CDN_S3_BUCKET') ? NOSERUB_CDN_S3_BUCKET : '';
+        $this->bucket_name = Configure::read('Noserub.cdn_s3_bucket');
     }
     
     public function setBucket($new_name) {
