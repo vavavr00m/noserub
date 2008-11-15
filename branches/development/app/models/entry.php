@@ -498,8 +498,7 @@ class Entry extends AppModel {
      * can be found in lib/util.php there.
      */
     private function sendToTwitter($identity_id, $text) {   
-        if(defined('NOSERUB_ALLOW_TWITTER_BRIDGE') &&
-           !NOSERUB_ALLOW_TWITTER_BRIDGE) {
+        if (Configure::read('Noserub.allow_twitter_bridge') === false) {
             return;       
         }
 
