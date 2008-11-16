@@ -10,42 +10,42 @@ class ConfigurationCheckerTest extends CakeTestCase {
 	}
 	
 	public function testCheck() {
-		$this->assertIdentical(array(), $this->checker->check());
+		$this->assertNoValidationErrors($this->checker->check());
 	}
 	
 	public function testCheckForObsoleteConfigKeys() {
 		$this->checker->setObsoleteConfigKeys(array());
-		$this->assertIdentical(array(), $this->checker->publicCheckForObsoleteConfigKeys());
+		$this->assertNoValidationErrors($this->checker->publicCheckForObsoleteConfigKeys());
 		
 		$configKey = 'obsolete_config_key';
 		Configure::write($configKey, '');
 		$this->checker->setObsoleteConfigKeys(array($configKey));
 
 		$result = $this->checker->publicCheckForObsoleteConfigKeys();
-		$this->assertTrue(isset($result[$configKey]));
+		$this->assertValidationError($configKey, $result);
 	}
 	
 	public function testCheckForObsoleteConstants() {
 		$this->checker->setObsoleteConstants(array());
-		$this->assertIdentical(array(), $this->checker->publicCheckForObsoleteConstants());
+		$this->assertNoValidationErrors($this->checker->publicCheckForObsoleteConstants());
 		
 		$constantName = 'OBSOLETE_CONSTANT';
 		define($constantName, '');
 		$this->checker->setObsoleteConstants(array($constantName));
 		
 		$result = $this->checker->publicCheckForObsoleteConstants();
-		$this->assertTrue(isset($result[$constantName]));
+		$this->assertValidationError($constantName, $result);
 	}
 	
 	public function testCheckForRequiredConfigSettings() {
 		$this->checker->setConfigDefinitions(array());
-		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigSettings());
+		$this->assertNoValidationErrors($this->checker->publicCheckForRequiredConfigSettings());
 		
 		$configKey = 'Noserub.required_key';
 		$this->checker->setConfigDefinitions(array(new ConfigDefinition($configKey)));
 		
 		$result = $this->checker->publicCheckForRequiredConfigSettings();
-		$this->assertTrue(isset($result[$configKey]));
+		$this->assertValidationError($configKey, $result);
 	}
 	
 	public function testValidationOfConfigValue() {
@@ -54,11 +54,19 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$this->checker->setConfigDefinitions(array($configDefinition));
 		
 		Configure::write($configKey, 'valid_value');
-		$this->assertIdentical(array(), $this->checker->publicCheckForRequiredConfigSettings());
+		$this->assertNoValidationErrors($this->checker->publicCheckForRequiredConfigSettings());
 		
 		Configure::write($configKey, 'invalid_value');
 		$result = $this->checker->publicCheckForRequiredConfigSettings();
-		$this->assertTrue(isset($result[$configKey]));
+		$this->assertValidationError($configKey, $result);
+	}
+	
+	private function assertNoValidationErrors($validationResult) {
+		$this->assertIdentical(array(), $validationResult);
+	}
+	
+	private function assertValidationError($key, $validationResult) {
+		$this->assertTrue(isset($validationResult[$key]));
 	}
 }
 
