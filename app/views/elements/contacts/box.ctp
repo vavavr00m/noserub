@@ -43,7 +43,7 @@
                     }	                
                 } else {
                     App::import('Vendor', 'sex');
-                	$contact_photo = Sex::getImageUrl($item['sex'], true);
+                	$contact_photo = Sex::getSmallImageUrl($item['sex']);
                 } ?>
                 <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
             </a>

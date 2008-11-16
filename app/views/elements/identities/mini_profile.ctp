@@ -14,7 +14,7 @@ if($data['photo']) {
        }
 } else {
 	App::import('Vendor', 'sex');
-    $profile_photo = Sex::getImageUrl($data['sex'], true);
+    $profile_photo = Sex::getSmallImageUrl($data['sex']);
 }
 ?>
 <!-- mini profile // start -->

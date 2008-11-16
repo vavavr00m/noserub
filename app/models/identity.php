@@ -879,7 +879,11 @@ class Identity extends AppModel {
                }
         } else {
             App::import('Vendor', 'sex');
-        	$profile_photo = Sex::getImageUrl($data[$identityKey]['sex'], $smallSize);
+            if ($smallSize) {
+            	$profile_photo = Sex::getSmallImageUrl($data[$identityKey]['sex']);
+            } else {
+        		$profile_photo = Sex::getImageUrl($data[$identityKey]['sex']);
+            }
         }
         
         return $profile_photo;

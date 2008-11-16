@@ -41,7 +41,7 @@
                         }
                     } else {
                     	App::import('Vendor', 'sex');
-                        $contact_photo = Sex::getImageUrl($contact['WithIdentity']['sex'], true);
+                        $contact_photo = Sex::getSmallImageUrl($contact['WithIdentity']['sex']);
                     }
                 ?>
                 <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" class="avatar" />
