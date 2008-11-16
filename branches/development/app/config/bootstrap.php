@@ -65,9 +65,6 @@ define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,re
 # TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
 define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
 
-# setting the language (currently, only english is supported)
-Configure::write('Config.language', 'eng');
-
 /**
  * Static files directory
  * @name STATIC_DIR
