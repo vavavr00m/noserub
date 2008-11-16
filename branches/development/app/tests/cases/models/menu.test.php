@@ -32,58 +32,33 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->factory = new MenuFactory();
 	}
 	
-	public function skip() {
-		$this->skipif(true, 'FIXME');
-	}
-	
 	// local user
 	
 	public function testGetMainMenuForLocalUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
-		$this->assertEqual(5, count($mainMenu->getMenuItems()));
-		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false, false, false);
+		$this->assertEqual(4, count($mainMenu->getMenuItems()));
+		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false);
 	}
 	
 	public function testGetMainMenuWithSocialStreamSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'social_stream', 'local_username' => 'test'));
-		$this->assertMenuForLocalUser($mainMenu, 'test', true, false, false, false, false, false);
+		$this->assertMenuForLocalUser($mainMenu, 'test', true, false, false, false);
 	}
 	
 	public function testGetMainMenuWithMyProfileSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'index', 'local_username' => 'test'));
-		$this->assertMenuForLocalUser($mainMenu, 'test', false, true, false, false, false, false);
+		$this->assertMenuForLocalUser($mainMenu, 'test', false, true, false, false);
 	}
 	
 	public function testGetMainMenuWithMyContactsSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Contacts', 'action' => 'index', 'local_username' => 'test'));
-		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, true, false, false, false);
+		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, true, false);
 	}
 	
 	public function testGetMainMenuWithMyFavoritesSelected() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => 'favorites', 'local_username' => 'test'));
-		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, true, false, false);
+		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, true);
 	}
-	
-	public function testGetMainMenuWithSearchSelected() {
-		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Searches', 'action' => 'index', 'local_username' => 'test'));
-		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false, true, false);
-	}
-	
-	public function testGetMainMenuWithSettingsSelected() {
-		$controllers = array('AccountSettings', 'Accounts', 'OpenidSites', 'Syndications');
-		
-		foreach ($controllers as $controller) {
-			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => $controller, 'local_username' => 'test'));
-			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false, false, true);
-		}
-		
-		$identityActions = array('password_settings', 'privacy_settings', 'profile_settings');
-		
-		foreach ($identityActions as $action) {
-			$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'controller' => 'Identities', 'action' => $action, 'local_username' => 'test'));
-			$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false, false, true);
-		}
-	}		
 	
 	// remote user
 	
@@ -233,14 +208,12 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[2], 'Register', '/pages/register/', $registerActive);
 	}
 	
-	private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $favoritesActive, $searchActive, $settingsActive) {
+	private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $favoritesActive) {
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertMenuItem($menuItems[0], 'With my Contacts', '/' . $localUsername . '/network/', $myContactsActive);
 		$this->assertMenuItem($menuItems[1], 'All Users', '/social_stream/', $socialStreamActive);
 		$this->assertMenuItem($menuItems[2], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
 		$this->assertMenuItem($menuItems[3], 'My Favorites', '/' . $localUsername . '/favorites/', $favoritesActive);
-		$this->assertMenuItem($menuItems[4], 'Search', '/search/', $searchActive);
-		$this->assertMenuItem($menuItems[5], 'Settings', '/' . $localUsername . '/settings/', $settingsActive);
 	}
 	
 	private function assertMenuItem(MenuItem $menuItem, $label, $link, $isActive) {
