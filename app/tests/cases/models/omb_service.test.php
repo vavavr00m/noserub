@@ -9,22 +9,26 @@ class OmbServiceTest extends CakeTestCase {
 		$this->service = new OmbService();
 	}
 	
-	public function skip() {
-		$this->skipIf(true, 'Validation rules are disabled in OmbService');
-	}
-	
 	public function testValidation() {
 		$this->service->create($this->getData('http://example.com', 'http://example.net'));
-		$this->assertIdentical(true, $this->service->validates());
+		$this->assertValid($this->service->validates());
 		
 		$this->service->create($this->getData('invalid', 'http://example.com'));
-		$this->assertIdentical(false, $this->service->validates());
+		$this->assertInvalid($this->service->validates());
 		
 		$this->service->create($this->getData('http://example.com', 'invalid'));
-		$this->assertIdentical(false, $this->service->validates());
+		$this->assertInvalid($this->service->validates());
 		
 		$this->service->create($this->getData('', ''));
-		$this->assertIdentical(false, $this->service->validates());
+		$this->assertInvalid($this->service->validates());
+	}
+	
+	private function assertInvalid($validationResult) {
+		$this->assertIdentical(false, $validationResult);
+	}
+	
+	private function assertValid($validationResult) {
+		$this->assertIdentical(true, $validationResult);
 	}
 	
 	private function getData($postNoticeUrl, $updateProfileUrl) {

@@ -2,9 +2,8 @@
 
 class OmbService extends AppModel {
 	public $hasMany = array('OmbServiceAccessToken');
-	// commented out because the url validation rule doesn't work with localhost urls -> sucks for local testing ;-)
-	/*public $validate = array('post_notice_url' => array('url'),
-							 'update_profile_url' => array('url'));*/
+	public $validate = array('post_notice_url' => array('url'),
+							 'update_profile_url' => array('url'));
 	
 	public function add($postNoticeUrl, $updateProfileUrl) {
 		$data['OmbService']['post_notice_url'] = $postNoticeUrl;
