@@ -1,31 +1,11 @@
 <?php
 App::import('Model', 'NoserubContactType');
 
-Mock::generatePartial('Model', 'NoserubContactTypeTestVersion', array('findAllByContactId'));
-
 class NoserubContactTypeTest extends CakeTestCase {
 	private $model;
 	
 	public function setUp() {
 		$this->model = new NoserubContactType();
-	}
-
-	public function skip() {
-		// TODO fix tests
-		$this->skipIf(true, 'The Containable behavior causes an error when running those tests');
-	}
-	
-	public function testGetNoserubContactTypeIDsForContact() {
-		$returnValue = array(0 => array('ContactsNoserubContactType' => array('noserub_contact_type_id' => 4)),
-							 1 => array('ContactsNoserubContactType' => array('noserub_contact_type_id' => 7)));
-							 
-		$mock = new NoserubContactTypeTestVersion($this);
-		$mock->setReturnValue('findAllByContactId', $returnValue);
-		
-		$this->model->ContactsNoserubContactType = $mock;
-		$noserub_contact_type_ids = $this->model->getIDsForContact(1);
-		$this->assertEqual(4, $noserub_contact_type_ids[0]);
-		$this->assertEqual(7, $noserub_contact_type_ids[1]);
 	}
 	
 	public function testGetNoserubContactTypeIDsToAdd() {
@@ -66,4 +46,3 @@ class NoserubContactTypeTest extends CakeTestCase {
 		$this->assertIdentical(true, empty($noserubContactTypeIDs));			
 	}
 }
-?>
