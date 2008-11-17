@@ -7,8 +7,7 @@ class Migration extends AppModel {
 	
 	/**
      * Tests, wether the database is working, or not
-     *
-     * @param  
+     *  
      * @return -1 = no config file
      *          0 = connect not working
      *          1 = everything fine
@@ -28,10 +27,7 @@ class Migration extends AppModel {
 	/**
      * Get number of most recent migration in the system.
      * This is not the most recent executed migration!
-     * @see getCurrentMigration()
-     * @param  
-     * @return 
-     * @access 
+     * @see getCurrentMigration() 
      */
     public function getMostRecentMigration() {
         $files = scandir(MIGRATIONS_FOLDER);
@@ -53,9 +49,6 @@ class Migration extends AppModel {
      * This is the last migration, that was executed
      * on this system.
      * @see getMostrecentMigration()
-     * @param  
-     * @return 
-     * @access 
      */
     public function getCurrentMigration() {
 		if(!$this->existsSchemaInfoTable()) {
@@ -68,10 +61,6 @@ class Migration extends AppModel {
     
     /**
      * Return all the open migrations
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function getOpenMigrations($current_migration) {
         $migrations = array('sql' => array(), 'php' => array());
@@ -105,10 +94,6 @@ class Migration extends AppModel {
     /**
      * Runnning all migration scripts from $current_migration to
      * $most_recent_migration
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function migrate($migrations, $current_migration, $most_recent_migration) {
         for($i=$current_migration+1; $i<=$most_recent_migration; $i++) {
