@@ -1,24 +1,29 @@
+# translation of default.po to tr
+# Nejat Phliip Eryigit (www.fast-it.net; www-ready-4-it.de) <info@fast-it.net> <info@fast-it.net>, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: NoseRub\n"
-"POT-Creation-Date: 2008-11-13 21:11+0100\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Dirk Olbertz <dirk.olbertz@gmail.com>\n"
-"Language-Team: \n"
+"Project-Id-Version: default\n"
+"POT-Creation-Date: 2008-11-16 23:11+0100\n"
+"PO-Revision-Date: 2008-11-17 08:32+0100\n"
+"Last-Translator: Dirk Olbertz <dirk.olbertz@ormigo.com>\n"
+"Language-Team: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Turkish\n"
 "X-Poedit-Country: TURKEY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: /_controller.php:135
 msgid "You may not call this route from the shell!"
 msgstr ""
 
-#: /_controller.php:140 /controllers/auth_controller.php:105
+#: /_controller.php:140
+#: /controllers/auth_controller.php:105
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: /_controller.php:140
 msgid "This route is only accessible from the shell!"
@@ -26,52 +31,52 @@ msgstr ""
 
 #: /controllers/account_settings_controller.php:38
 msgid "Manage your account"
-msgstr ""
+msgstr "Yeni hesabınıza yönetin"
 
 #: /controllers/account_settings_controller.php:59
 msgid "There was an error while uploading"
-msgstr ""
+msgstr "Yüklerken hata bulundu"
 
 #: /controllers/account_settings_controller.php:66
 msgid "Importing NoseRub data"
-msgstr ""
+msgstr "NoseRub data transfer ediliyor"
 
 # /controllers/account_settings_controller.php:70;81
 #: /controllers/account_settings_controller.php:70
 msgid "Couldn't import the data!"
-msgstr ""
+msgstr "Aktarmada hata oldu!"
 
 #: /controllers/account_settings_controller.php:85
 msgid "Import completed"
-msgstr ""
+msgstr "Transfer başarılı"
 
 #: /controllers/account_settings_controller.php:87
 msgid "There was an error during import!"
-msgstr ""
+msgstr "Transferde hata oluştu!"
 
 #: /controllers/account_settings_controller.php:107
 msgid "Redirect URL saved."
-msgstr ""
+msgstr "Redirect URL kayıtlandı."
 
 #: /controllers/account_settings_controller.php:115
 msgid "In order to delete your account, please check the check box."
-msgstr ""
+msgstr "Kullanıcı adınızı silmek için checkboxu seçiniz."
 
 #: /controllers/accounts_controller.php:31
 msgid "Your accounts"
-msgstr ""
+msgstr "Benim hesap"
 
 #: /controllers/accounts_controller.php:33
 msgid "%s's accounts"
-msgstr ""
+msgstr "%s hesapları"
 
 #: /controllers/accounts_controller.php:93
 msgid "Changes saved."
-msgstr ""
+msgstr "Günçeleme başarılı."
 
 #: /controllers/accounts_controller.php:98
 msgid "No changes made."
-msgstr ""
+msgstr "Yapılan değişiklik yok"
 
 #: /controllers/accounts_controller.php:116
 msgid "You need to be logged in to add an account."
@@ -80,35 +85,35 @@ msgstr ""
 # /controllers/accounts_controller.php:251;290;356
 #: /controllers/accounts_controller.php:251
 msgid "Account added."
-msgstr ""
+msgstr "Lâkap eklendi."
 
 #: /controllers/accounts_controller.php:270
 msgid "Preview the data"
-msgstr ""
+msgstr "Önden göz at."
 
 #: /controllers/accounts_controller.php:460
 msgid "Could not find the user."
-msgstr ""
+msgstr "Kullanıcı adı bulunamadı."
 
 #: /controllers/accounts_controller.php:467
 msgid "You may not delete this."
-msgstr ""
+msgstr "Bunu silemezsiniz."
 
 #: /controllers/accounts_controller.php:477
 msgid "Account deleted."
-msgstr ""
+msgstr "Hesabınız silindi."
 
 #: /controllers/auth_controller.php:22
 msgid "OpenID server endpoint"
-msgstr ""
+msgstr "OpenID server endpoint"
 
 #: /controllers/auth_controller.php:219
 msgid "OpenID verification"
-msgstr ""
+msgstr "OpenID kontrolu"
 
 #: /controllers/contacts_controller.php:51
 msgid "My contacts"
-msgstr ""
+msgstr "Kontaklarım"
 
 #: /controllers/contacts_controller.php:53
 msgid "%s's contacts"
@@ -117,12 +122,12 @@ msgstr ""
 # /controllers/contacts_controller.php:114;139
 #: /controllers/contacts_controller.php:114
 msgid "Could not add contact."
-msgstr ""
+msgstr "Kontak eklenemedi."
 
 # /controllers/contacts_controller.php:135;156
 #: /controllers/contacts_controller.php:135
 msgid "New contact added."
-msgstr ""
+msgstr "Yeni kontak eklenildi."
 
 #: /controllers/contacts_controller.php:175
 msgid "Add a contact to your social network"
@@ -134,31 +139,32 @@ msgstr ""
 
 #: /controllers/contacts_controller.php:215
 msgid "Removed the contact."
-msgstr ""
+msgstr "Silinmiş kontak."
 
 #: /controllers/contacts_controller.php:379
 msgid "Contact updated."
-msgstr ""
+msgstr "Kontak güncellendi."
 
 #: /controllers/contacts_controller.php:386
 msgid "Edit the contact details"
-msgstr ""
+msgstr "Kontak detaylarını düzenle"
 
 #: /controllers/contacts_controller.php:451
 msgid "Location updated."
-msgstr ""
+msgstr "Yer güncellendi."
 
 #: /controllers/contacts_controller.php:521
 msgid "Activities in %s's contact's social stream"
 msgstr ""
 
-#: /controllers/contacts_controller.php:546 /views/contacts/add.ctp:17
+#: /controllers/contacts_controller.php:546
+#: /views/contacts/add.ctp:17
 msgid "You cannot add yourself as a contact."
 msgstr ""
 
 #: /controllers/contacts_controller.php:561
 msgid "Added new contact."
-msgstr ""
+msgstr "Yeni Kişi eklendi."
 
 #: /controllers/entries_controller.php:23
 msgid "You need to be logged in to add a comment."
@@ -166,15 +172,15 @@ msgstr ""
 
 #: /controllers/entries_controller.php:25
 msgid "You forgot to write something."
-msgstr ""
+msgstr "Lütfen, birsey yazmayı unutmayın."
 
 #: /controllers/entries_controller.php:27
 msgid "Comment added."
-msgstr ""
+msgstr "Yorum eklendi."
 
 #: /controllers/entries_controller.php:65
 msgid "Edit your entry"
-msgstr ""
+msgstr "Düzenle"
 
 #: /controllers/entries_controller.php:67
 msgid "Permalink"
@@ -183,11 +189,11 @@ msgstr ""
 # /controllers/entries_controller.php:81;90;97
 #: /controllers/entries_controller.php:81
 msgid "You may not delete this entry!"
-msgstr ""
+msgstr "Bunu silemezsiniz!"
 
 #: /controllers/entries_controller.php:101
 msgid "Entry deleted."
-msgstr ""
+msgstr "Silinmiş metin."
 
 #: /controllers/entries_controller.php:117
 msgid "You need to be logged in to perform this action!"
@@ -195,20 +201,19 @@ msgstr ""
 
 #: /controllers/entries_controller.php:142
 msgid "This entry may not be marked!"
-msgstr ""
+msgstr "Bu alan seçilemez."
 
 #: /controllers/entries_controller.php:151
 msgid "Unmarked the entry."
-msgstr ""
+msgstr "Şeçimi geri al."
 
 #: /controllers/entries_controller.php:162
 msgid "Marked the entry."
-msgstr ""
+msgstr "Seçilen alan."
 
 #: /controllers/entries_controller.php:187
 #: /controllers/identities_controller.php:697
-msgid ""
-"Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!"
+msgid "Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!"
 msgstr ""
 
 #: /controllers/entries_controller.php:198
@@ -217,7 +222,7 @@ msgstr ""
 
 #: /controllers/entries_controller.php:227
 msgid "%d entries added/updated"
-msgstr ""
+msgstr "%d alanı eklendi/ güncellendi."
 
 #: /controllers/identities_controller.php:34
 msgid "There is a redirect URL given!"
@@ -225,11 +230,11 @@ msgstr ""
 
 #: /controllers/identities_controller.php:133
 msgid "My NoseRub Profile"
-msgstr ""
+msgstr "Benim NoseRub Profilim"
 
 #: /controllers/identities_controller.php:158
 msgid "Username could not be found!"
-msgstr ""
+msgstr "Kullanıcı adı bulunamadı!"
 
 #: /controllers/identities_controller.php:202
 msgid "Social Stream"
@@ -241,11 +246,11 @@ msgstr ""
 
 #: /controllers/identities_controller.php:238
 msgid "%s's favorites"
-msgstr ""
+msgstr "%sın favorileri"
 
 #: /controllers/identities_controller.php:257
 msgid "Send a message to "
-msgstr ""
+msgstr "Haber gönder: "
 
 # /controllers/identities_controller.php:264;271
 #: /controllers/identities_controller.php:264
@@ -254,15 +259,15 @@ msgstr ""
 
 #: /controllers/identities_controller.php:278
 msgid "You need to specify a subject."
-msgstr ""
+msgstr "Konu belirtilmeli."
 
 #: /controllers/identities_controller.php:282
 msgid "You need to specify a text."
-msgstr ""
+msgstr "Metin belirtilmeli."
 
 #: /controllers/identities_controller.php:295
 msgid "Hi "
-msgstr ""
+msgstr "Merhaba "
 
 #: /controllers/identities_controller.php:296
 msgid "You got a message from "
@@ -270,15 +275,15 @@ msgstr ""
 
 #: /controllers/identities_controller.php:298
 msgid "Subject: "
-msgstr ""
+msgstr "Konu: "
 
 #: /controllers/identities_controller.php:299
 msgid "Text:"
-msgstr ""
+msgstr "Metin:"
 
 #: /controllers/identities_controller.php:301
 msgid "If you want to reply to this message, go to "
-msgstr ""
+msgstr "Cevap yazmak için "
 
 #: /controllers/identities_controller.php:306
 msgid "Your Message could not be delivered to "
@@ -290,11 +295,11 @@ msgstr ""
 
 #: /controllers/identities_controller.php:388
 msgid "Changes have been saved."
-msgstr ""
+msgstr "Düzenler güncellendi."
 
 #: /controllers/identities_controller.php:395
 msgid "My profile settings"
-msgstr ""
+msgstr "Gelişmiş profil ayarları"
 
 #: /controllers/identities_controller.php:427
 msgid "Display options have been saved."
@@ -318,31 +323,31 @@ msgstr ""
 
 #: /controllers/identities_controller.php:509
 msgid "You need to specify a new password."
-msgstr ""
+msgstr "Yeni paralo gerek."
 
 #: /controllers/identities_controller.php:511
 msgid "The new password was not entered twice the same."
-msgstr ""
+msgstr "Şifreler aynen değil."
 
 #: /controllers/identities_controller.php:517
 msgid "The new password has been saved."
-msgstr ""
+msgstr "Şifreniz kayıt edildi."
 
 #: /controllers/identities_controller.php:520
 msgid "The old password was not correct."
-msgstr ""
+msgstr "Eski şifre hatalı."
 
 #: /controllers/identities_controller.php:526
 msgid "Password settings"
-msgstr ""
+msgstr "Şifre ayarları"
 
 #: /controllers/identities_controller.php:551
 msgid "Welcome! It's nice to have you back."
-msgstr ""
+msgstr "Merhaba! Hoş geldiniz."
 
 #: /controllers/identities_controller.php:561
 msgid "Login not possible"
-msgstr ""
+msgstr "Login imkansız"
 
 #: /controllers/identities_controller.php:570
 msgid "Login with existing NoseRub account"
@@ -350,7 +355,7 @@ msgstr ""
 
 #: /controllers/identities_controller.php:609
 msgid "Account deleted"
-msgstr ""
+msgstr "Kulanıcı adı silindi"
 
 #: /controllers/locations_controller.php:23
 msgid "Manage your locations"
@@ -359,16 +364,16 @@ msgstr ""
 # /controllers/locations_controller.php:52;102
 #: /controllers/locations_controller.php:52
 msgid "Location added."
-msgstr ""
+msgstr "Yer eklendi."
 
 # /controllers/locations_controller.php:56;104
 #: /controllers/locations_controller.php:56
 msgid "Location could not be created."
-msgstr ""
+msgstr "Yer oluşturulamadı."
 
 #: /controllers/locations_controller.php:63
 msgid "Add new Location"
-msgstr ""
+msgstr "Yeni yer ekle"
 
 #: /controllers/locations_controller.php:83
 msgid "Location could not be edited."
@@ -376,11 +381,11 @@ msgstr ""
 
 #: /controllers/locations_controller.php:115
 msgid "Edit Location"
-msgstr ""
+msgstr "Yeri düzenle"
 
 #: /controllers/locations_controller.php:140
 msgid "Location deleted."
-msgstr ""
+msgstr "Yer silindi."
 
 #: /controllers/locations_controller.php:142
 msgid "Location could not be deleted."
@@ -392,24 +397,24 @@ msgstr ""
 
 #: /controllers/locations_controller.php:216
 msgid "parameter wrong"
-msgstr ""
+msgstr "yanlış argüman"
 
 #: /controllers/locations_controller.php:225
 msgid "duplicate dataset"
-msgstr ""
+msgstr "Özellik çoğaltma"
 
 #: /controllers/oauth_consumers_controller.php:33
 msgid "Application registered."
-msgstr ""
+msgstr "Program kayıtlandı."
 
 #: /controllers/oauth_consumers_controller.php:36
 msgid "Application could not be registered."
-msgstr ""
+msgstr "Program kayıtlanamadı."
 
 #: /controllers/oauth_consumers_controller.php:44
 #: /views/oauth_consumers/index.ctp:15
 msgid "Register new application"
-msgstr ""
+msgstr "Yeni program kayıtla."
 
 #: /controllers/oauth_consumers_controller.php:58
 msgid "Application could not be edited."
@@ -417,7 +422,7 @@ msgstr ""
 
 #: /controllers/oauth_consumers_controller.php:66
 msgid "Application updated."
-msgstr ""
+msgstr "Program güncellendi."
 
 #: /controllers/oauth_consumers_controller.php:68
 msgid "Application could not be updated."
@@ -429,15 +434,16 @@ msgstr ""
 
 #: /controllers/oauth_consumers_controller.php:95
 msgid "Application deleted."
-msgstr ""
+msgstr "Program silindi."
 
 #: /controllers/oauth_consumers_controller.php:97
 msgid "Application could not be deleted."
-msgstr ""
+msgstr "Program silinemeldildi."
 
-#: /controllers/oauth_controller.php:70 /controllers/omb_controller.php:96
+#: /controllers/oauth_controller.php:70
+#: /controllers/omb_controller.php:96
 msgid "Authorize access"
-msgstr ""
+msgstr "Girişe izin ver"
 
 #: /controllers/omb_controller.php:54
 msgid "Invalid OMB version"
@@ -446,13 +452,13 @@ msgstr ""
 # /controllers/omb_controller.php:64;135
 #: /controllers/omb_controller.php:64
 msgid "Missing parameter: "
-msgstr ""
+msgstr "Eksik argüman"
 
 # /controllers/omb_controller.php:91;127
 #: /controllers/omb_controller.php:91
 #: /controllers/omb_subscriptions_controller.php:39
 msgid "Invalid request"
-msgstr ""
+msgstr "Geçersiz istek"
 
 #: /controllers/omb_subscriptions_controller.php:34
 msgid "Successfully subscribed to "
@@ -468,7 +474,7 @@ msgstr ""
 
 #: /controllers/openid_sites_controller.php:8
 msgid "OpenID settings"
-msgstr ""
+msgstr "OpenID ayarları"
 
 #: /controllers/pages_controller.php:10
 msgid "There was a security problem"
@@ -476,7 +482,7 @@ msgstr ""
 
 #: /controllers/registration_controller.php:34
 msgid "Register a new NoseRub account"
-msgstr ""
+msgstr "Yeni bir NoseRub hesapı kaydet"
 
 #: /controllers/registration_controller.php:38
 msgid "Register a new NoseRub account - Step 1/2"
@@ -488,11 +494,11 @@ msgstr ""
 
 #: /controllers/registration_controller.php:105
 msgid "Thanks for your registration!"
-msgstr ""
+msgstr "Kayıtınız için teşekkürler!"
 
 #: /controllers/registration_controller.php:112
 msgid "Verify your e-mail address"
-msgstr ""
+msgstr "E-Posta adresinizi kontrol edin"
 
 #: /controllers/searches_controller.php:29
 msgid "Find public items..."
@@ -500,11 +506,11 @@ msgstr ""
 
 #: /controllers/syndications_controller.php:112
 msgid "Settings saved"
-msgstr ""
+msgstr "Ayarlar kaydedildi."
 
 #: /controllers/syndications_controller.php:114
 msgid "Something went wrong"
-msgstr ""
+msgstr "Bir hata oldu"
 
 #: /controllers/syndications_controller.php:134
 msgid "Configure Feeds from your activities and accounts"
@@ -520,7 +526,7 @@ msgstr ""
 
 #: /controllers/syndications_controller.php:246
 msgid "Add new Feed"
-msgstr ""
+msgstr "Yeni Feed ekle"
 
 #: /controllers/syndications_controller.php:314
 msgid "none - no CDN defined in noserub.php"
@@ -528,7 +534,7 @@ msgstr ""
 
 #: /controllers/components/openid.php:81
 msgid "OpenID transaction in progress"
-msgstr ""
+msgstr "OpenID transferi yapılıyor"
 
 #: /models/entry.php:444
 msgid "marked a new favorite: %s"
@@ -536,49 +542,48 @@ msgstr ""
 
 #: /models/identity.php:853
 msgid "Welcome to %s!"
-msgstr ""
+msgstr "%sa hoşgeldiniz!"
 
 #: /models/identity.php:854
 msgid "Please click here to verify your email address"
 msgstr ""
 
 #: /models/identity.php:856
-msgid ""
-"If you do not click on this link, the account will automatically be deleted "
-"after 14 days."
+msgid "If you do not click on this link, the account will automatically be deleted after 14 days."
 msgstr ""
 
 #: /models/identity.php:857
 msgid "Thanks!"
-msgstr ""
+msgstr "Teşekkürler!"
 
 #: /models/identity.php:863
 msgid "Your %s registration"
-msgstr ""
+msgstr "%s kullunıcı adınız"
 
 #: /models/menu.php:79
 msgid "Overview"
-msgstr ""
+msgstr "Genel Görünüm"
 
 #: /models/menu.php:80
 msgid "Photos"
-msgstr ""
+msgstr "Fotoğraflar"
 
 #: /models/menu.php:81
 msgid "Videos"
-msgstr ""
+msgstr "Görüntüler"
 
 #: /models/menu.php:82
 msgid "Audios"
 msgstr ""
 
-#: /models/menu.php:83 /views/syndications/index.ctp:29
+#: /models/menu.php:83
+#: /views/syndications/index.ctp:29
 msgid "Links"
-msgstr ""
+msgstr "Linkler"
 
 #: /models/menu.php:84
 msgid "Texts"
-msgstr ""
+msgstr "Metinler"
 
 #: /models/menu.php:85
 msgid "Micropublish"
@@ -586,16 +591,16 @@ msgstr ""
 
 #: /models/menu.php:86
 msgid "Events"
-msgstr ""
+msgstr "Olaylar"
 
 #: /models/menu.php:87
 msgid "Documents"
-msgstr ""
+msgstr "Dosyalar"
 
 # /models/menu.php:88;151
 #: /models/menu.php:88
 msgid "Locations"
-msgstr ""
+msgstr "Yerler"
 
 #: /models/menu.php:89
 msgid "NoseRub"
@@ -603,19 +608,20 @@ msgstr ""
 
 #: /models/menu.php:149
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
-#: /models/menu.php:150 /views/contacts/info.ctp:23
+#: /models/menu.php:150
+#: /views/contacts/info.ctp:23
 msgid "Accounts"
-msgstr ""
+msgstr "Hesaplar"
 
 #: /models/menu.php:152
 msgid "Display"
-msgstr ""
+msgstr "Göster"
 
 #: /models/menu.php:153
 msgid "Privacy"
-msgstr ""
+msgstr "Gizlilik"
 
 #: /models/menu.php:154
 msgid "Feeds"
@@ -635,7 +641,7 @@ msgstr ""
 
 #: /models/menu.php:160
 msgid "Password & API"
-msgstr ""
+msgstr "Parola & APİ"
 
 #: /models/menu.php:162
 msgid "API"
@@ -643,7 +649,7 @@ msgstr ""
 
 #: /models/menu.php:165
 msgid "Manage"
-msgstr ""
+msgstr "Yönet"
 
 #: /models/menu.php:240
 msgid "With my Contacts"
@@ -651,31 +657,34 @@ msgstr ""
 
 #: /models/menu.php:262
 msgid "My Profile"
-msgstr ""
+msgstr "Profilim"
 
 #: /models/menu.php:284
 msgid "My Favorites"
-msgstr ""
+msgstr "Favorilrim"
 
-#: /models/menu.php:303 /views/registration/register.ctp:36
+#: /models/menu.php:303
+#: /views/registration/register.ctp:36
 #: /views/registration/register_with_openid_step_2.ctp:20
 msgid "Register"
-msgstr ""
+msgstr "Kaydet"
 
 # /views/elements/metanav.ctp:18;20
-#: /models/menu.php:326 /views/admin/system_update.ctp:40
+#: /models/menu.php:326
+#: /views/admin/system_update.ctp:40
 #: /views/elements/metanav.ctp:18
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: /models/menu.php:359
 msgid "All Users"
-msgstr ""
+msgstr "Üyeler"
 
 # /views/elements/metanav.ctp:25;27;34;36
-#: /models/menu.php:378 /views/elements/metanav.ctp:25
+#: /models/menu.php:378
+#: /views/elements/metanav.ctp:25
 msgid "Search"
-msgstr ""
+msgstr "Ara"
 
 #: /models/admin/configuration_checker.php:43
 msgid "obsolete! Please remove it from noserub.php"
@@ -683,7 +692,7 @@ msgstr ""
 
 #: /models/admin/configuration_checker.php:54
 msgid "not defined! (see %s)"
-msgstr ""
+msgstr "tanımsız! (%s gör)"
 
 #: /models/admin/configuration_checker.php:58
 msgid "value might only be: \"%s\" (see %s)"
@@ -691,7 +700,7 @@ msgstr ""
 
 #: /models/admin/configuration_checker.php:62
 msgid "no value! (see %s)"
-msgstr ""
+msgstr "belirtilmiş değer yok (%s gör)"
 
 #: /models/admin/configuration_checker.php:70
 msgid "value must end with a slash! (see %s)"
@@ -715,7 +724,7 @@ msgstr ""
 
 #: /vendors/sex.php:41
 msgid "he/she"
-msgstr ""
+msgstr "o"
 
 #: /vendors/sex.php:41
 msgid "she"
@@ -727,45 +736,40 @@ msgstr ""
 
 #: /vendors/sex.php:53
 msgid "him/her"
-msgstr ""
+msgstr "onun"
 
 # /vendors/sex.php:53;65
 #: /vendors/sex.php:53
 msgid "her"
-msgstr ""
+msgstr "onun"
 
 #: /vendors/sex.php:53
 msgid "him"
-msgstr ""
+msgstr "onun"
 
 #: /vendors/sex.php:65
 msgid "his/her"
-msgstr ""
+msgstr "onun"
 
 #: /vendors/sex.php:65
 msgid "his"
-msgstr ""
+msgstr "onun"
 
 #: /views/account_settings/import.ctp:2
-msgid ""
-"When you proceed, a NoseRub export file from the server <strong>%s</strong> "
-"will be imported to the currently logged in user."
+msgid "When you proceed, a NoseRub export file from the server <strong>%s</strong> will be imported to the currently logged in user."
 msgstr ""
 
 #: /views/account_settings/import.ctp:5
-msgid ""
-"The export file was for the user <strong>%s</strong> and contains %d "
-"contacts, %d accounts and %d locations."
+msgid "The export file was for the user <strong>%s</strong> and contains %d contacts, %d accounts and %d locations."
 msgstr ""
 
 #: /views/account_settings/import.ctp:8
-msgid ""
-"All the contacts and accounts you already have here, will not be overwritten."
+msgid "All the contacts and accounts you already have here, will not be overwritten."
 msgstr ""
 
 #: /views/account_settings/import.ctp:11
 msgid "Are you sure to proceed?"
-msgstr ""
+msgstr "Devam etmek istediğinize emin misiniz?"
 
 #: /views/account_settings/import.ctp:13
 msgid "No, take me back"
@@ -780,10 +784,7 @@ msgid "Export your account data"
 msgstr ""
 
 #: /views/account_settings/index.ctp:5
-msgid ""
-"Export all the information we have about you. That means all your profile "
-"information, your accounts and your contacts. You can use this data on "
-"another NoseRub installation to import your data."
+msgid "Export all the information we have about you. That means all your profile information, your accounts and your contacts. You can use this data on another NoseRub installation to import your data."
 msgstr ""
 
 #: /views/account_settings/index.ctp:8
@@ -795,9 +796,7 @@ msgid "Import your account data"
 msgstr ""
 
 #: /views/account_settings/index.ctp:15
-msgid ""
-"Import previously exported NoseRub data, so you have all your data from the "
-"old NoseRub ID on this one."
+msgid "Import previously exported NoseRub data, so you have all your data from the old NoseRub ID on this one."
 msgstr ""
 
 #: /views/account_settings/index.ctp:20
@@ -813,10 +812,7 @@ msgid "Leave a moving address"
 msgstr ""
 
 #: /views/account_settings/index.ctp:36
-msgid ""
-"If you no longer need this NoseRub ID, but want to make sure your new page "
-"can be accessed through this URL, just enter one.<br />Visitors will be "
-"redirected to that URL then."
+msgid "If you no longer need this NoseRub ID, but want to make sure your new page can be accessed through this URL, just enter one.<br />Visitors will be redirected to that URL then."
 msgstr ""
 
 #: /views/account_settings/index.ctp:40
@@ -828,30 +824,28 @@ msgid "Please add the full URL (http://)"
 msgstr ""
 
 #: /views/account_settings/index.ctp:47
-#: /views/contacts/define_contact_types.ctp:14 /views/contacts/edit.ctp:77
-#: /views/locations/add.ctp:18 /views/oauth_consumers/add.ctp:10
+#: /views/contacts/define_contact_types.ctp:14
+#: /views/contacts/edit.ctp:77
+#: /views/locations/add.ctp:18
+#: /views/oauth_consumers/add.ctp:10
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: /views/account_settings/index.ctp:55
 msgid "Delete your account"
-msgstr ""
+msgstr "hesabımı sil"
 
 #: /views/account_settings/index.ctp:57
-msgid ""
-"Once you deleted your account, you can not gain it back again.<br /"
-"><strong>Your current username will be blocked on this server in order to "
-"prevent fraud.</strong><br />Make sure you exported your data before and set "
-"a redirect URL (See above)."
+msgid "Once you deleted your account, you can not gain it back again.<br /><strong>Your current username will be blocked on this server in order to prevent fraud.</strong><br />Make sure you exported your data before and set a redirect URL (See above)."
 msgstr ""
 
 #: /views/account_settings/index.ctp:61
 msgid "Delete Account"
-msgstr ""
+msgstr "Hesabı sil"
 
 #: /views/account_settings/index.ctp:71
 msgid "Are you sure?"
-msgstr ""
+msgstr "Kesinmi?"
 
 #: /views/account_settings/index.ctp:72
 msgid "Yes, please delete my account."
@@ -859,7 +853,7 @@ msgstr ""
 
 #: /views/account_settings/index.ctp:78
 msgid "Delete account"
-msgstr ""
+msgstr "Hesabı sil"
 
 #: /views/accounts/add_step_1.ctp:4
 msgid "Specify an url and let us try to auto discover"
@@ -870,18 +864,20 @@ msgstr ""
 msgid "Could not detect a service or a feed"
 msgstr ""
 
-#: /views/accounts/add_step_1.ctp:8 /views/contacts/add.ctp:24
+#: /views/accounts/add_step_1.ctp:8
+#: /views/contacts/add.ctp:24
 msgid "OR"
-msgstr ""
+msgstr "VEYA"
 
 #: /views/accounts/add_step_1.ctp:11
 msgid "Specify service and account id"
 msgstr ""
 
-#: /views/accounts/add_step_1.ctp:12 /views/accounts/index.ctp:18
+#: /views/accounts/add_step_1.ctp:12
+#: /views/accounts/index.ctp:18
 #: /views/elements/accounts/index.ctp:19
 msgid "Service"
-msgstr ""
+msgstr "Servis"
 
 #: /views/accounts/add_step_1.ctp:17
 msgid "Next step"
@@ -889,16 +885,17 @@ msgstr ""
 
 #: /views/accounts/add_step_2_preview.ctp:4
 msgid "Title"
-msgstr ""
+msgstr "Başlık"
 
-#: /views/accounts/add_step_2_preview.ctp:16 /views/accounts/edit.ctp:6
+#: /views/accounts/add_step_2_preview.ctp:16
+#: /views/accounts/edit.ctp:6
 msgid "Servicetype"
 msgstr ""
 
 #: /views/accounts/add_step_2_preview.ctp:22
 #: /views/admin/system_update.ctp:114
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: /views/accounts/add_step_2_preview.ctp:26
 msgid "Feed"
@@ -910,16 +907,18 @@ msgstr ""
 
 #: /views/accounts/add_step_2_preview.ctp:40
 msgid "OK. Save it!"
-msgstr ""
+msgstr "Evet! Kaydet!"
 
 #: /views/accounts/add_step_2_preview.ctp:41
 msgid "Forget it"
-msgstr ""
+msgstr "Boşver"
 
-#: /views/accounts/add_step_3_friends.ctp:7 /views/locations/add.ctp:11
-#: /views/locations/index.ctp:23 /views/syndications/index.ctp:28
+#: /views/accounts/add_step_3_friends.ctp:7
+#: /views/locations/add.ctp:11
+#: /views/locations/index.ctp:23
+#: /views/syndications/index.ctp:28
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 #: /views/accounts/add_step_3_friends.ctp:9
 msgid "ignore"
@@ -935,7 +934,7 @@ msgstr ""
 
 #: /views/accounts/add_step_3_friends.ctp:23
 msgid "Add contacts"
-msgstr ""
+msgstr "Kontak Ekle"
 
 #: /views/accounts/add_step_3_friends.ctp:24
 msgid "Skip adding friends"
@@ -947,28 +946,29 @@ msgstr ""
 
 #: /views/accounts/edit.ctp:10
 msgid "Change"
-msgstr ""
+msgstr "Değiştir"
 
 #: /views/accounts/index.ctp:3
-msgid ""
-"Here you can add all your own social/online activities and import friends in "
-"your network."
+msgid "Here you can add all your own social/online activities and import friends in your network."
 msgstr ""
 
-#: /views/accounts/index.ctp:19 /views/elements/accounts/index.ctp:18
+#: /views/accounts/index.ctp:19
+#: /views/elements/accounts/index.ctp:18
 msgid "Username"
-msgstr ""
+msgstr "Kullanıcı adı"
 
 # /views/accounts/index.ctp:48;77
 # /views/identities/password_settings.ctp:25;59
 # /views/identities/profile_settings.ctp:33;91
-#: /views/accounts/index.ctp:48 /views/identities/display_settings.ctp:23
+#: /views/accounts/index.ctp:48
+#: /views/identities/display_settings.ctp:23
 #: /views/identities/password_settings.ctp:25
 #: /views/identities/privacy_settings.ctp:6
-#: /views/identities/profile_settings.ctp:33 /views/openid_sites/index.ctp:26
+#: /views/identities/profile_settings.ctp:33
+#: /views/openid_sites/index.ctp:26
 #: /views/syndications/index.ctp:66
 msgid "Save changes"
-msgstr ""
+msgstr "Değişiklikleri kaydet"
 
 #: /views/accounts/index.ctp:56
 msgid "Posting to Twitter.com"
@@ -977,19 +977,14 @@ msgstr ""
 #: /views/accounts/index.ctp:58
 msgid ""
 "We will ask you here for your Twitter username and password in order \n"
-"           to be able to send your micropublishing messages over to Twitter."
-"com. \n"
-"           <strong>This is a bad thing!</strong> If you installed NoseRub on "
-"your\n"
+"           to be able to send your micropublishing messages over to Twitter.com. \n"
+"           <strong>This is a bad thing!</strong> If you installed NoseRub on your\n"
 "           own server, this is not <em>that</em> bad.<br />\n"
-"           Otherwise make yourself clear, that the admin of this server can "
-"see your\n"
+"           Otherwise make yourself clear, that the admin of this server can see your\n"
 "           Twitter login credentials.<br />\n"
 "           If you want to know more about why this is bad, please read \n"
-"           <a href=\"http://adactio.com/journal/1513/\">this Article by "
-"Jeremy Keith</a>\n"
-"           and come to <a href=\"http://noserub.com/discuss/\">our "
-"discussion group</a> to\n"
+"           <a href=\"http://adactio.com/journal/1513/\">this Article by Jeremy Keith</a>\n"
+"           and come to <a href=\"http://noserub.com/discuss/\">our discussion group</a> to\n"
 "           discuss this issue!"
 msgstr ""
 
@@ -1000,24 +995,23 @@ msgstr ""
 #: /views/admin/system_update.ctp:4
 msgid ""
 "Information about the current state of your NoseRub instance. Please\n"
-"    check back after each update you install, because new constants may "
-"have\n"
+"    check back after each update you install, because new constants may have\n"
 "    been introduced and/or changes in the database structure been made."
 msgstr ""
 
 #: /views/admin/system_update.ctp:8
 msgid "Extension"
-msgstr ""
+msgstr "Eklenti"
 
 # /views/admin/system_update.ctp:11;27;43;78
 #: /views/admin/system_update.ctp:11
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 # /views/admin/system_update.ctp:11;27;43;60;78
 #: /views/admin/system_update.ctp:11
 msgid "OK"
-msgstr ""
+msgstr "Tamam"
 
 #: /views/admin/system_update.ctp:16
 msgid "Some extensions need to be fixed!"
@@ -1025,7 +1019,7 @@ msgstr ""
 
 #: /views/admin/system_update.ctp:24
 msgid "Directories"
-msgstr ""
+msgstr "Dizinler"
 
 #: /views/admin/system_update.ctp:32
 msgid "Some directories are not writeable!"
@@ -1041,16 +1035,16 @@ msgstr ""
 
 #: /views/admin/system_update.ctp:57
 msgid "Database"
-msgstr ""
+msgstr "Veritabanı"
 
 # /views/admin/system_update.ctp:60;84
 #: /views/admin/system_update.ctp:60
 msgid "Configuration"
-msgstr ""
+msgstr "Ayarlar"
 
 #: /views/admin/system_update.ctp:62
 msgid "Actual version #"
-msgstr ""
+msgstr "Program versiyonu #"
 
 #: /views/admin/system_update.ctp:64
 msgid "Updating to #"
@@ -1066,16 +1060,14 @@ msgstr ""
 
 #: /views/admin/system_update.ctp:89
 msgid "Cannot connect to database!"
-msgstr ""
+msgstr "Veri tabanına bağlanılamıyor."
 
 #: /views/admin/system_update.ctp:96
 msgid "Errors!"
-msgstr ""
+msgstr "Hatalar var!"
 
 #: /views/admin/system_update.ctp:98
-msgid ""
-"Please correct the errors above and then return to this URL, to finish the "
-"update."
+msgid "Please correct the errors above and then return to this URL, to finish the update."
 msgstr ""
 
 #: /views/admin/system_update.ctp:102
@@ -1084,22 +1076,18 @@ msgstr ""
 
 #: /views/admin/system_update.ctp:104
 msgid ""
-"If you want to, you can just click on the button and NoseRub.com will "
-"receive\n"
-"        knowledge about your installation here. The decision wether to click "
-"that button\n"
+"If you want to, you can just click on the button and NoseRub.com will receive\n"
+"        knowledge about your installation here. The decision wether to click that button\n"
 "        or not is solely up to you."
 msgstr ""
 
 #: /views/admin/system_update.ctp:111
-msgid ""
-"We don't send any other data beside what you can verify here, once you click "
-"that button."
+msgid "We don't send any other data beside what you can verify here, once you click that button."
 msgstr ""
 
 #: /views/admin/system_update.ctp:117
 msgid "DB Version"
-msgstr ""
+msgstr "DB versiyonu"
 
 #: /views/admin/system_update.ctp:121
 msgid "Send to NoseRub.com"
@@ -1114,9 +1102,7 @@ msgid "This is an OpenID server endpoint. For more information, see %s"
 msgstr ""
 
 #: /views/auth/trust.ctp:5
-msgid ""
-"A site identifying as <strong>%s</strong> has asked us for confirmation that "
-"<strong>%s</strong> is your identity URL."
+msgid "A site identifying as <strong>%s</strong> has asked us for confirmation that <strong>%s</strong> is your identity URL."
 msgstr ""
 
 #: /views/auth/trust.ctp:11
@@ -1129,7 +1115,7 @@ msgstr ""
 
 #: /views/auth/trust.ctp:13
 msgid "this page"
-msgstr ""
+msgstr "bu site"
 
 #: /views/auth/trust.ctp:15
 msgid "It did not provide a link to the policy on data it collects."
@@ -1137,28 +1123,22 @@ msgstr ""
 
 #: /views/auth/trust.ctp:40
 msgid "Allow Forever"
-msgstr ""
+msgstr "Her zaman izin ver"
 
 #: /views/auth/trust.ctp:41
 msgid "Allow Once"
-msgstr ""
+msgstr "Tek bu sefer"
 
 #: /views/auth/trust.ctp:42
 msgid "Deny"
-msgstr ""
+msgstr "İzin verme"
 
 #: /views/contacts/add.ctp:2
-msgid ""
-"You can either enter an URL or a NoseRub-ID (<em>noserubserver.com/MyBuddy</"
-"em>) or just a new username, that then will created a private contact which "
-"is for your access only!"
+msgid "You can either enter an URL or a NoseRub-ID (<em>noserubserver.com/MyBuddy</em>) or just a new username, that then will created a private contact which is for your access only!"
 msgstr ""
 
 #: /views/contacts/add.ctp:5
-msgid ""
-"Whenever you have an URL of someone, you should try that to add a new "
-"contact. Naturally you would want to add a contact's blog as an URL, or his/"
-"her FriendFeed-URL."
+msgid "Whenever you have an URL of someone, you should try that to add a new contact. Naturally you would want to add a contact's blog as an URL, or his/her FriendFeed-URL."
 msgstr ""
 
 #: /views/contacts/add.ctp:9
@@ -1183,21 +1163,18 @@ msgstr ""
 
 #: /views/contacts/add.ctp:20
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
 #: /views/contacts/add.ctp:28
 msgid "Create a private contact"
-msgstr ""
+msgstr "Yeni kişi oluştur"
 
 #: /views/contacts/add.ctp:33
-msgid ""
-"You need to enter something here. Valid characters: letters ,numbers, "
-"underscores, dashes, dots and \"@\""
+msgid "You need to enter something here. Valid characters: letters ,numbers, underscores, dashes, dots and \"@\""
 msgstr ""
 
 #: /views/contacts/add.ctp:34
-msgid ""
-"Valid characters: letters, numbers, underscores, dashes, dots and \"@\" only"
+msgid "Valid characters: letters, numbers, underscores, dashes, dots and \"@\" only"
 msgstr ""
 
 #: /views/contacts/add.ctp:35
@@ -1206,29 +1183,28 @@ msgstr ""
 
 #: /views/contacts/add.ctp:37
 msgid "Create"
-msgstr ""
+msgstr "Yarat"
 
 #: /views/contacts/define_contact_types.ctp:8
 msgid "Your tags"
-msgstr ""
+msgstr "Sizin etiketler"
 
 #: /views/contacts/define_contact_types.ctp:15
 msgid "Skip this step"
-msgstr ""
+msgstr "Bu adımı atla"
 
-#: /views/contacts/edit.ctp:16 /views/contacts/info.ctp:16
+#: /views/contacts/edit.ctp:16
+#: /views/contacts/info.ctp:16
 #: /views/elements/contacts/list.ctp:56
 msgid "Send e-Mail"
-msgstr ""
+msgstr "E-Posta yolla"
 
 #: /views/contacts/edit.ctp:23
 msgid "Define the relationship"
 msgstr ""
 
 #: /views/contacts/edit.ctp:26
-msgid ""
-"Click on a term to choose it and/or add a term to specify the relationship "
-"and group your contacts."
+msgid "Click on a term to choose it and/or add a term to specify the relationship and group your contacts."
 msgstr ""
 
 #: /views/contacts/edit.ctp:31
@@ -1241,7 +1217,7 @@ msgstr ""
 
 #: /views/contacts/edit.ctp:39
 msgid "Familiy"
-msgstr ""
+msgstr "Aile"
 
 #: /views/contacts/edit.ctp:43
 msgid "Physical"
@@ -1249,7 +1225,7 @@ msgstr ""
 
 #: /views/contacts/edit.ctp:47
 msgid "Tags"
-msgstr ""
+msgstr "Etiketler"
 
 #: /views/contacts/edit.ctp:69
 msgid "Add your own tags"
@@ -1270,7 +1246,7 @@ msgstr ""
 # /views/contacts/index.ctp:14;30
 #: /views/contacts/index.ctp:14
 msgid "Add new contact"
-msgstr ""
+msgstr "Yeni kontak ekle"
 
 #: /views/contacts/index.ctp:18
 msgid "NoseRub Contacts"
@@ -1286,12 +1262,10 @@ msgstr ""
 
 #: /views/elements/hash_not_valid.ctp:1
 msgid "Admin-Hash invalid"
-msgstr ""
+msgstr "Admın hash geçersiz"
 
 #: /views/elements/hash_not_valid.ctp:3
-msgid ""
-"In order to access these urls, you need to specify a valid "
-"<strong>NOSERUB_ADMIN_HASH</strong> in <em>noserub.php</em> and use it here."
+msgid "In order to access these urls, you need to specify a valid <strong>NOSERUB_ADMIN_HASH</strong> in <em>noserub.php</em> and use it here."
 msgstr ""
 
 #: /views/elements/metanav.ctp:8
@@ -1300,31 +1274,33 @@ msgstr ""
 
 #: /views/elements/metanav.ctp:30
 msgid "Logout"
-msgstr ""
+msgstr "Çıkış"
 
 # /views/identities/login.ctp:23;36
 #: /views/elements/identities/openid_login_form.ctp:10
-#: /views/elements/metanav.ctp:39 /views/identities/login.ctp:23
+#: /views/elements/metanav.ctp:39
+#: /views/identities/login.ctp:23
 msgid "Login"
-msgstr ""
+msgstr "Giriş"
 
 #: /views/elements/accounts/index.ctp:12
 msgid "No accounts yet."
-msgstr ""
+msgstr "Tanımlı bir hesap yok!"
 
 #: /views/elements/accounts/index.ctp:58
 msgid "Add new account"
-msgstr ""
+msgstr "Yeni hesap ekle"
 
 # /views/identities/index.ctp:167;187;206
-#: /views/elements/contacts/box.ctp:2 /views/elements/locations/choose.ctp:4
+#: /views/elements/contacts/box.ctp:2
+#: /views/elements/locations/choose.ctp:4
 #: /views/identities/index.ctp:167
 msgid "manage"
-msgstr ""
+msgstr "zönet"
 
 #: /views/elements/contacts/list.ctp:66
 msgid "Info"
-msgstr ""
+msgstr "Bilgi"
 
 #: /views/elements/contacts/list.ctp:68
 msgid "Remove Contact"
@@ -1332,19 +1308,19 @@ msgstr ""
 
 #: /views/elements/contacts/list.ctp:69
 msgid "Edit Contact"
-msgstr ""
+msgstr "Kişiyi Düzenle"
 
 #: /views/elements/contacts/list.ctp:72
 msgid "Manage Services"
-msgstr ""
+msgstr "Servisi Yönet"
 
 #: /views/elements/contacts/list.ctp:73
 msgid "Add Service"
-msgstr ""
+msgstr "Servis Ekle"
 
 #: /views/elements/contacts/tag_filter.ctp:4
 msgid "Filter"
-msgstr ""
+msgstr "Filtre"
 
 #: /views/elements/contacts/tag_filter.ctp:9
 msgid "Display contacts"
@@ -1352,21 +1328,19 @@ msgstr ""
 
 #: /views/elements/contacts/tag_filter.ctp:12
 msgid "All"
-msgstr ""
+msgstr "Hepsi"
 
 #: /views/elements/contacts/tag_filter.ctp:25
 #: /views/elements/locations/choose.ctp:21
 msgid "Update"
-msgstr ""
+msgstr "Güncelle"
 
 #: /views/elements/entries/favorited_by.ctp:3
 msgid "Favorited by %d users: "
 msgstr ""
 
 #: /views/elements/identities/items.ctp:14
-msgid ""
-"There are no updates from your social network or own activity yet.<br />Why "
-"don't you add some friends or some more of your own accounts?"
+msgid "There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"
 msgstr ""
 
 #: /views/elements/identities/items.ctp:30
@@ -1375,33 +1349,34 @@ msgstr ""
 
 #: /views/elements/identities/items.ctp:40
 msgid "Today"
-msgstr ""
+msgstr "Bu gün"
 
 #: /views/elements/identities/items.ctp:42
 msgid "Yesterday"
-msgstr ""
+msgstr "Dün"
 
 #: /views/elements/identities/items.ctp:55
 msgid "From"
-msgstr ""
+msgstr "Kimden"
 
 #: /views/elements/identities/openid_login_form.ctp:3
 msgid "Sign in with OpenID"
-msgstr ""
+msgstr "OpenID ile gir"
 
 #: /views/elements/identities/openid_login_form.ctp:4
 msgid "Your OpenID"
-msgstr ""
+msgstr "Sizin OpenID"
 
 #: /views/elements/identities/openid_login_form.ctp:6
 #: /views/identities/login.ctp:17
 msgid "Invalid OpenID"
-msgstr ""
+msgstr "Yanlış OpenID"
 
 #: /views/elements/identities/openid_login_form.ctp:7
 #: /views/identities/login.ctp:18
+#, fuzzy
 msgid "Verification cancelled"
-msgstr ""
+msgstr "İşlem iptal edildi"
 
 #: /views/elements/identities/openid_login_form.ctp:8
 #: /views/identities/login.ctp:19
@@ -1414,20 +1389,21 @@ msgstr ""
 
 #: /views/elements/identities/privacy_settings.ctp:3
 msgid "No one"
-msgstr ""
+msgstr "Hiçbirini seçme"
 
 #: /views/elements/identities/privacy_settings.ctp:4
-#: /views/identities/index.ctp:169 /views/identities/social_stream.ctp:28
+#: /views/identities/index.ctp:169
+#: /views/identities/social_stream.ctp:28
 msgid "Contacts"
-msgstr ""
+msgstr "Kontaklar"
 
 #: /views/elements/identities/privacy_settings.ctp:5
 msgid "Registered users"
-msgstr ""
+msgstr "Kullanıcılar"
 
 #: /views/elements/identities/privacy_settings.ctp:9
 msgid "Updates"
-msgstr ""
+msgstr "Günçelemeler"
 
 #: /views/elements/identities/privacy_settings.ctp:11
 msgid ""
@@ -1442,40 +1418,42 @@ msgstr ""
 
 #: /views/elements/identities/privacy_settings.ctp:16
 msgid "don't show them"
-msgstr ""
+msgstr "gösterme"
 
 #: /views/elements/identities/privacy_settings.ctp:19
+#, fuzzy
 msgid "Communication"
-msgstr ""
+msgstr "İletişim"
 
 #: /views/elements/identities/privacy_settings.ctp:20
 msgid "Which persons may send me e-Mails?"
-msgstr ""
+msgstr "Kimler bana mektub yaza bilir?"
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
 msgid "What are you doing?"
-msgstr ""
+msgstr "Ne yapıyorsun?"
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
 msgid "chars left"
-msgstr ""
+msgstr "rakamlar kaldı"
 
 #: /views/elements/identities/what_are_you_doing.ctp:7
 #: /views/identities/send_message.ctp:14
 msgid "Send"
-msgstr ""
+msgstr "Gönder"
 
-#: /views/elements/locations/choose.ctp:6 /views/locations/index.ctp:25
+#: /views/elements/locations/choose.ctp:6
+#: /views/locations/index.ctp:25
 msgid "Location"
-msgstr ""
+msgstr "Yer"
 
 #: /views/elements/locations/choose.ctp:11
 msgid "I'm currently at"
-msgstr ""
+msgstr "Şu an buradayım: "
 
 #: /views/elements/locations/choose.ctp:17
 msgid "somewhere else"
-msgstr ""
+msgstr "başka bir yerde"
 
 #: /views/elements/locations/choose.ctp:19
 msgid "Where are you then?"
@@ -1483,7 +1461,7 @@ msgstr ""
 
 #: /views/entries/jobs_update.ctp:1
 msgid "Accounts refreshed"
-msgstr ""
+msgstr "Hesaplar güncellendi"
 
 #: /views/entries/view.ctp:13
 msgid "Unmark Entry as favorite"
@@ -1495,7 +1473,7 @@ msgstr ""
 
 #: /views/entries/view.ctp:31
 msgid "Add comment"
-msgstr ""
+msgstr "Yorum ekle"
 
 #: /views/helpers/nicesreg.php:47
 msgid "not supported by NoseRub"
@@ -1504,19 +1482,20 @@ msgstr ""
 # /views/helpers/xfn.php:9;17;24;34
 #: /views/helpers/xfn.php:9
 msgid "no selection"
-msgstr ""
+msgstr "Seçim yok"
 
 #: /views/helpers/xfn.php:10
+#, fuzzy
 msgid "contact"
-msgstr ""
+msgstr "iletişim"
 
 #: /views/helpers/xfn.php:11
 msgid "acquaintance"
-msgstr ""
+msgstr "tanıdık"
 
 #: /views/helpers/xfn.php:12
 msgid "friend"
-msgstr ""
+msgstr "arkadaş"
 
 #: /views/helpers/xfn.php:18
 msgid "co-resident"
@@ -1524,11 +1503,11 @@ msgstr ""
 
 #: /views/helpers/xfn.php:19
 msgid "neighbor"
-msgstr ""
+msgstr "komşu"
 
 #: /views/helpers/xfn.php:25
 msgid "child"
-msgstr ""
+msgstr "çocuk"
 
 #: /views/helpers/xfn.php:26
 msgid "parent"
@@ -1536,7 +1515,7 @@ msgstr ""
 
 #: /views/helpers/xfn.php:27
 msgid "sibling"
-msgstr ""
+msgstr "kardeşler"
 
 #: /views/helpers/xfn.php:28
 msgid "spouse"
@@ -1552,7 +1531,7 @@ msgstr ""
 
 #: /views/helpers/xfn.php:36
 msgid "want-to-meet"
-msgstr ""
+msgstr "Tanışma dilleği"
 
 #: /views/identities/account_deleted.ctp:2
 msgid "Your account and all information about it was successfully deleted."
@@ -1563,8 +1542,7 @@ msgid "Thanks for using our service!"
 msgstr ""
 
 #: /views/identities/display_settings.ctp:6
-msgid ""
-"Filter, which should be shown, when selecting <em>Overview</em> as filter."
+msgid "Filter, which should be shown, when selecting <em>Overview</em> as filter."
 msgstr ""
 
 #: /views/identities/favorites.ctp:4
@@ -1572,48 +1550,47 @@ msgid "Entries that %s marked as favorites."
 msgstr ""
 
 #: /views/identities/index.ctp:3
-msgid ""
-"Either this account does not exist, or it is only available for the user who "
-"created it."
+msgid "Either this account does not exist, or it is only available for the user who created it."
 msgstr ""
 
 # /views/identities/index.ctp:126;143
 #: /views/identities/index.ctp:126
 msgid "edit"
-msgstr ""
+msgstr "düzenle"
 
 #: /views/identities/index.ctp:127
 msgid "Relationship"
-msgstr ""
+msgstr "Akraba"
 
 #: /views/identities/index.ctp:144
 msgid "Notes"
-msgstr ""
+msgstr "Not"
 
 #: /views/identities/index.ctp:147
 msgid "Add some notes here."
 msgstr ""
 
 #: /views/identities/index.ctp:175
+#, fuzzy
 msgid "Contact's Social Stream"
-msgstr ""
+msgstr "Akım bulunamadı"
 
 #: /views/identities/index.ctp:182
 msgid "Mutual Contacts"
-msgstr ""
+msgstr "Müşterek kontaklar"
 
 # /views/identities/index.ctp:200;225
 #: /views/identities/index.ctp:200
 msgid "Add new service"
-msgstr ""
+msgstr "Yeni servis ekle"
 
 #: /views/identities/index.ctp:208
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: /views/identities/index.ctp:214
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Posta"
 
 #: /views/identities/jobs_sync_all.ctp:1
 msgid "Synced usernames"
@@ -1626,12 +1603,10 @@ msgstr ""
 # /views/identities/login.ctp:21;34
 #: /views/identities/login.ctp:21
 msgid "Remember me"
-msgstr ""
+msgstr "Yeniden İsimlendir"
 
 #: /views/identities/password_settings.ctp:4
-msgid ""
-"In order to change your password, you have to enter your current password "
-"and then the new one."
+msgid "In order to change your password, you have to enter your current password and then the new one."
 msgstr ""
 
 #: /views/identities/password_settings.ctp:15
@@ -1652,33 +1627,33 @@ msgstr ""
 
 #: /views/identities/password_settings.ctp:35
 msgid "Change your password"
-msgstr ""
+msgstr "Anahtarlık parolamı değiştir"
 
 #: /views/identities/password_settings.ctp:43
 msgid "Old password"
-msgstr ""
+msgstr "Eski parola"
 
 #: /views/identities/password_settings.ctp:44
 msgid "Password is not correct"
-msgstr ""
+msgstr "Şifre yanlış"
 
 #: /views/identities/password_settings.ctp:48
 msgid "New password"
-msgstr ""
+msgstr "Yeni şifre"
 
 #: /views/identities/password_settings.ctp:49
 #: /views/registration/register.ctp:21
 msgid "Passwords must be at least 6 characters in length"
-msgstr ""
+msgstr "Parolanın en az 6 rakamı olması lazım"
 
 #: /views/identities/password_settings.ctp:53
 msgid "New password repeated"
-msgstr ""
+msgstr "Yeni şifreyi tekrarla"
 
 #: /views/identities/password_settings.ctp:54
 #: /views/registration/register.ctp:26
 msgid "Passwords must match"
-msgstr ""
+msgstr "Şifreler aynı olması lazım"
 
 #: /views/identities/privacy_settings.ctp:11
 msgid ""
@@ -1688,7 +1663,7 @@ msgstr ""
 
 #: /views/identities/profile_settings.ctp:6
 msgid "Photo"
-msgstr ""
+msgstr "Fotağraf"
 
 # /views/identities/profile_settings.ctp:9;18
 #: /views/identities/profile_settings.ctp:9
@@ -1696,13 +1671,12 @@ msgid "Your current photo"
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:21
+#, fuzzy
 msgid "Remove photo"
-msgstr ""
+msgstr "Resmi temizle"
 
 #: /views/identities/profile_settings.ctp:25
-msgid ""
-"Size may not exceed 150x150 pixels. If you don't have one with the right "
-"size, try %s.<br />GIF, JPG and PNG allowed."
+msgid "Size may not exceed 150x150 pixels. If you don't have one with the right size, try %s.<br />GIF, JPG and PNG allowed."
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:27
@@ -1719,11 +1693,11 @@ msgstr ""
 
 #: /views/identities/profile_settings.ctp:42
 msgid "Your firstname"
-msgstr ""
+msgstr "Adınız"
 
 #: /views/identities/profile_settings.ctp:46
 msgid "Your lastname"
-msgstr ""
+msgstr "Soy adınız"
 
 #: /views/identities/profile_settings.ctp:49
 msgid "Sex"
@@ -1735,25 +1709,23 @@ msgstr ""
 
 #: /views/identities/profile_settings.ctp:51
 msgid "female"
-msgstr ""
+msgstr "kadın"
 
 #: /views/identities/profile_settings.ctp:52
 msgid "male"
-msgstr ""
+msgstr "erkek"
 
 #: /views/identities/profile_settings.ctp:56
 msgid "Make a statement"
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:58
-msgid ""
-"HTML is not allowed; newlines are preserved; URLs with http:// and https:// "
-"will turn into links"
+msgid "HTML is not allowed; newlines are preserved; URLs with http:// and https:// will turn into links"
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:60
 msgid "About"
-msgstr ""
+msgstr "Hakkında"
 
 #: /views/identities/profile_settings.ctp:64
 msgid "Geolocation"
@@ -1763,19 +1735,18 @@ msgstr ""
 msgid "Address for geolocation (<strong>private</strong>)"
 msgstr ""
 
-#: /views/identities/profile_settings.ctp:71 /views/locations/index.ctp:34
+#: /views/identities/profile_settings.ctp:71
+#: /views/locations/index.ctp:34
 msgid "Latitude"
 msgstr ""
 
-#: /views/identities/profile_settings.ctp:72 /views/locations/index.ctp:35
+#: /views/identities/profile_settings.ctp:72
+#: /views/locations/index.ctp:35
 msgid "Longitude"
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:76
-msgid ""
-"The address is used to determine the geolocation. This address will "
-"<strong>not</strong> be displayed to anyone else, just the geolocation, if "
-"you enter a valid address."
+msgid "The address is used to determine the geolocation. This address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address."
 msgstr ""
 
 #: /views/identities/profile_settings.ctp:80
@@ -1784,27 +1755,26 @@ msgstr ""
 
 #: /views/identities/profile_settings.ctp:84
 msgid ""
-"Here you can specify, how you would like your address to be displayed. For "
-"instance: <strong>Paris, France</strong><br />\n"
-"            If you leave it empty, nothing will be shown on your profile "
-"page."
+"Here you can specify, how you would like your address to be displayed. For instance: <strong>Paris, France</strong><br />\n"
+"            If you leave it empty, nothing will be shown on your profile page."
 msgstr ""
 
 #: /views/identities/send_message.ctp:9
 msgid "Subject"
-msgstr ""
+msgstr " Konu "
 
 #: /views/identities/send_message.ctp:11
 msgid "Message"
-msgstr ""
+msgstr "Mesaj"
 
 #: /views/identities/social_stream.ctp:28
 msgid "Latest active"
-msgstr ""
+msgstr "Son aktiveler"
 
 #: /views/identities/social_stream.ctp:31
+#, fuzzy
 msgid "My Contacts"
-msgstr ""
+msgstr "Belgelerim"
 
 #: /views/identities/social_stream.ctp:35
 msgid "Newbies"
@@ -1812,7 +1782,7 @@ msgstr ""
 
 #: /views/layouts/default.ctp:3
 msgid "Welcome to %s"
-msgstr ""
+msgstr "%s hoşgeldiniz"
 
 #: /views/layouts/default.ctp:33
 msgid "Social Stream Feed"
@@ -1820,25 +1790,22 @@ msgstr ""
 
 #: /views/locations/add.ctp:4
 msgid "Add a new location"
-msgstr ""
+msgstr "Yeni yer ekle"
 
 #: /views/locations/add.ctp:7
 msgid ""
-"The name will be displayed, when you choose a location as your curent one. "
-"<br />\n"
-"            The address is only used to geocode the location and will not be "
-"displayed.<br />\n"
-"            You can mostly just use <em>Town, Country</em> to specify an "
-"address."
+"The name will be displayed, when you choose a location as your curent one. <br />\n"
+"            The address is only used to geocode the location and will not be displayed.<br />\n"
+"            You can mostly just use <em>Town, Country</em> to specify an address."
 msgstr ""
 
 #: /views/locations/add.ctp:11
 msgid "You need to specify a name."
-msgstr ""
+msgstr "Bir kullanıcı adı yazmanız gerekiyor"
 
 #: /views/locations/add.ctp:12
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #: /views/locations/add.ctp:16
 msgid "Create Location"
@@ -1847,8 +1814,7 @@ msgstr ""
 #: /views/locations/index.ctp:6
 msgid ""
 "Once you added some locations, like <em>Home</em> and <em>Office</em>, you \n"
-"    will be able to set this location on your profile page to tell, where "
-"you \n"
+"    will be able to set this location on your profile page to tell, where you \n"
 "    currently are."
 msgstr ""
 
@@ -1866,35 +1832,39 @@ msgstr ""
 
 #: /views/locations/index.ctp:24
 msgid "Address (hidden)"
-msgstr ""
+msgstr "Adres (gizli)"
 
 #: /views/locations/index.ctp:32
 msgid "Not entered"
 msgstr ""
 
-#: /views/locations/index.ctp:39 /views/oauth_consumers/index.ctp:40
+#: /views/locations/index.ctp:39
+#: /views/oauth_consumers/index.ctp:40
 #: /views/syndications/index.ctp:43
 msgid "Delete"
-msgstr ""
+msgstr "Sil"
 
-#: /views/locations/index.ctp:40 /views/oauth_consumers/index.ctp:41
+#: /views/locations/index.ctp:40
+#: /views/oauth_consumers/index.ctp:41
 msgid "Edit"
-msgstr ""
+msgstr "Düzenle"
 
 #: /views/oauth/authorize.ctp:2
-msgid ""
-"Application <strong>%s</strong> asked for permission to access your data"
+msgid "Application <strong>%s</strong> asked for permission to access your data"
 msgstr ""
 
-#: /views/oauth/authorize.ctp:5 /views/omb/authorize_form.ctp:5
+#: /views/oauth/authorize.ctp:5
+#: /views/omb/authorize_form.ctp:5
 msgid "allow"
-msgstr ""
+msgstr "izinle"
 
-#: /views/oauth/authorize.ctp:6 /views/omb/authorize_form.ctp:6
+#: /views/oauth/authorize.ctp:6
+#: /views/omb/authorize_form.ctp:6
 msgid "deny"
-msgstr ""
+msgstr "yesakla"
 
-#: /views/oauth/no_token.ctp:1 /views/omb/no_token.ctp:1
+#: /views/oauth/no_token.ctp:1
+#: /views/omb/no_token.ctp:1
 msgid "Error! No token specified."
 msgstr ""
 
@@ -1904,7 +1874,7 @@ msgstr ""
 
 #: /views/oauth_consumers/add.ctp:8
 msgid "You need to specify an application name."
-msgstr ""
+msgstr "Programa bir isim vermelisiniz."
 
 #: /views/oauth_consumers/add.ctp:9
 msgid "Callback Url (optional)"
@@ -1952,7 +1922,7 @@ msgstr ""
 
 #: /views/oauth_consumers/index.ctp:27
 msgid "Consumer key"
-msgstr ""
+msgstr "Kullanıcı anatarı"
 
 #: /views/oauth_consumers/index.ctp:28
 msgid "Consumer secret"
@@ -1960,7 +1930,7 @@ msgstr ""
 
 #: /views/omb/authorize_form.ctp:2
 msgid "Allow access?"
-msgstr ""
+msgstr "İzin verilsinmi?"
 
 #: /views/omb_subscriptions/subscribe.ctp:3
 msgid "URL of your profile"
@@ -1972,18 +1942,17 @@ msgstr ""
 
 #: /views/openid_sites/index.ctp:2
 msgid ""
-"Below is a list of sites you have visited. You will not be prompted to "
-"approve identifying yourself to \n"
+"Below is a list of sites you have visited. You will not be prompted to approve identifying yourself to \n"
 "    sites you have checked."
 msgstr ""
 
 #: /views/openid_sites/index.ctp:8
 msgid "Site"
-msgstr ""
+msgstr "Site"
 
 #: /views/openid_sites/index.ctp:9
 msgid "Email"
-msgstr ""
+msgstr "E-Posta"
 
 #: /views/openid_sites/index.ctp:10
 msgid "Fullname"
@@ -1995,58 +1964,39 @@ msgstr ""
 
 #: /views/openid_sites/no_openid_sites.ctp:2
 msgid "No OpenID sites found."
-msgstr ""
+msgstr "OpenİD sitesi bulunmadı."
 
 #: /views/openid_sites/no_openid_sites.ctp:10
-msgid ""
-"You probably never used your <strong>NoseRub-ID</strong> to <strong>log in "
-"at any OpenID site</strong>. Did you know, that your NoseRub-ID <strong>is</"
-"strong> an OpenID?"
+msgid "You probably never used your <strong>NoseRub-ID</strong> to <strong>log in at any OpenID site</strong>. Did you know, that your NoseRub-ID <strong>is</strong> an OpenID?"
 msgstr ""
 
 #: /views/openid_sites/no_openid_sites.ctp:14
-msgid ""
-"You can use your OpenID on any one of a growing number of sites (nearly ten-"
-"thousand) which support OpenID.<br />If one of your favorite sites doesn’t "
-"support OpenID yet, ask them when they will!"
+msgid "You can use your OpenID on any one of a growing number of sites (nearly ten-thousand) which support OpenID.<br />If one of your favorite sites doesn’t support OpenID yet, ask them when they will!"
 msgstr ""
 
 #: /views/openid_sites/no_openid_sites.ctp:18
-msgid ""
-"% gives you an overview of sites where you can use your OpenID to log in "
-"today."
+msgid "% gives you an overview of sites where you can use your OpenID to log in today."
 msgstr ""
 
 #: /views/pages/security_check.ctp:2
-msgid ""
-"The last action you performed, caused a security issue. Mostly, this "
-"happened because of a timed out session. But this can also happen, when you "
-"browse the application with different browsers / windows at the same time. "
-"This is not forbidden, but some actions that perform changes, might then not "
-"work all the time."
+msgid "The last action you performed, caused a security issue. Mostly, this happened because of a timed out session. But this can also happen, when you browse the application with different browsers / windows at the same time. This is not forbidden, but some actions that perform changes, might then not work all the time."
 msgstr ""
 
 #: /views/pages/security_check.ctp:5
-msgid ""
-"Please try the desired action again. If you think you got this message by "
-"error, please contact us."
+msgid "Please try the desired action again. If you think you got this message by error, please contact us."
 msgstr ""
 
 #: /views/registration/register.ctp:2
-msgid ""
-"If you have an %s OpenID, please follow this %s to register a new NoseRub "
-"account."
+msgid "If you have an %s OpenID, please follow this %s to register a new NoseRub account."
 msgstr ""
 
 #: /views/registration/register.ctp:2
 msgid "link"
-msgstr ""
+msgstr "link"
 
 #: /views/registration/register.ctp:10
 #: /views/registration/register_with_openid_step_2.ctp:6
-msgid ""
-"You need to enter something here. Valid characters: letters ,numbers, "
-"underscores, dashes and dots"
+msgid "You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots"
 msgstr ""
 
 #: /views/registration/register.ctp:11
@@ -2067,27 +2017,23 @@ msgstr ""
 #: /views/registration/register.ctp:16
 #: /views/registration/register_with_openid_step_2.ctp:12
 msgid "Please enter a valid E-Mail address"
-msgstr ""
+msgstr "Lütfen geçerli bir E-Posta adresi kaydetin"
 
 #: /views/registration/register.ctp:20
 msgid "Password"
-msgstr ""
+msgstr "Şifre"
 
 #: /views/registration/register.ctp:25
 msgid "Password repeated"
-msgstr ""
+msgstr "Şifreyi tekrarla"
 
 #: /views/registration/register.ctp:32
 #: /views/registration/register_with_openid_step_2.ctp:16
-msgid ""
-"You can change the privacy settings everytime you like. Just go to the "
-"Settings, once you are logged in."
+msgid "You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in."
 msgstr ""
 
 #: /views/registration/register_thanks.ctp:2
-msgid ""
-"Now please check your inbox for the verification link. After that you're "
-"ready to log in."
+msgid "Now please check your inbox for the verification link. After that you're ready to log in."
 msgstr ""
 
 #: /views/registration/verify.ctp:3
@@ -2097,12 +2043,10 @@ msgstr ""
 # /views/registration/verify.ctp:3;7
 #: /views/registration/verify.ctp:3
 msgid "login"
-msgstr ""
+msgstr "Giriş"
 
 #: /views/registration/verify.ctp:7
-msgid ""
-"Sorry. The verification link did not work. Maybe you're already done and "
-"just need to proceed to %s?"
+msgid "Sorry. The verification link did not work. Maybe you're already done and just need to proceed to %s?"
 msgstr ""
 
 #: /views/searches/index.ctp:6
@@ -2111,16 +2055,14 @@ msgstr ""
 
 #: /views/searches/index.ctp:9
 msgid "Go"
-msgstr ""
+msgstr "Git"
 
 #: /views/searches/index.ctp:17
 msgid "Search results for <strong>%s</strong>"
 msgstr ""
 
 #: /views/syndications/add.ctp:3
-msgid ""
-"Select a name. This is just visible for you and should help you to organize "
-"your feeds."
+msgid "Select a name. This is just visible for you and should help you to organize your feeds."
 msgstr ""
 
 #: /views/syndications/add.ctp:7
@@ -2136,8 +2078,7 @@ msgid "Specify network activities"
 msgstr ""
 
 #: /views/syndications/add.ctp:29
-msgid ""
-"Which of your networks (contacts/friends) activities should be included?"
+msgid "Which of your networks (contacts/friends) activities should be included?"
 msgstr ""
 
 #: /views/syndications/add.ctp:57
@@ -2150,14 +2091,10 @@ msgstr ""
 
 #: /views/syndications/add.ctp:74
 msgid "Create Feed"
-msgstr ""
+msgstr "Yeni feed ekle"
 
 #: /views/syndications/index.ctp:11
-msgid ""
-"You can create Feeds from your own social activities or those of friends in "
-"your network. This feeds then can be used by your RSS-Reader or you can "
-"integrate it on your website to show everyone, what you did in the last "
-"couple of hours and days."
+msgid "You can create Feeds from your own social activities or those of friends in your network. This feeds then can be used by your RSS-Reader or you can integrate it on your website to show everyone, what you did in the last couple of hours and days."
 msgstr ""
 
 #: /views/syndications/index.ctp:16
@@ -2178,9 +2115,7 @@ msgid "Generic feed"
 msgstr ""
 
 #: /views/syndications/index.ctp:61
-msgid ""
-"If you want a feed with all your updates being available at<br />%s<br /"
-">please enable the following option."
+msgid "If you want a feed with all your updates being available at<br />%s<br />please enable the following option."
 msgstr ""
 
 #: /views/syndications/index.ctp:63
@@ -2194,3 +2129,4 @@ msgstr ""
 #: /webroot/test.php:99
 msgid "Debug setting does not allow access to this url."
 msgstr ""
+
