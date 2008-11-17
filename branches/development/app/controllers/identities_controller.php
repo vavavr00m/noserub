@@ -25,8 +25,7 @@ class IdentitiesController extends AppController {
         # logged in.
         $this->Identity->contain();
         $identity = $this->Identity->findByUsername($username);        
-        if(strpos($identity['Identity']['redirect_url'], 'http://')  === 0 ||
-           strpos($identity['Identity']['redirect_url'], 'https://') === 0) {
+        if($this->url->startsWithHttpOrHttps($identity['Identity']['redirect_url'])) {
             # there is a redirect set
             if($identity['Identity']['id'] != $session_identity['id']) {
                 $this->redirect($identity['Identity']['redirect_url'], '301');

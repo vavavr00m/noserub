@@ -97,9 +97,7 @@ class AccountSettingsController extends AppController {
             $this->ensureSecurityToken();
             
             $redirect_url = $this->data['Identity']['redirect_url'];
-            if($redirect_url &&
-               strpos($redirect_url, 'http://') !== 0 &&
-               strpos($redirect_url, 'https://') !== 0) {
+            if($redirect_url && !$this->url->startsWithHttpOrHttps($redirect_url)) {
                 $redirect_url = 'http://' . $redirect_url;
             }
             $this->Identity->id = $this->session_identity['id'];
