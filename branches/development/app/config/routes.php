@@ -32,6 +32,8 @@
 Router::connect('/', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/social_stream/:filter/:output/', array('controller' => 'identities', 'action' => 'social_stream'));
 
+Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
+
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'registration', 'action' => 'register'));

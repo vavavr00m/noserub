@@ -98,11 +98,16 @@ class AppController extends Controller {
         # Localization
         App::import('Core', 'l10n');
         $this->L10n = new L10n();
-        Configure::write('Config.language', Configure::read('Noserub.default_language'));
-        $this->Session->write('Config.language', Configure::read('Noserub.default_language'));
-        
-        # Localization
-        $this->L10n->get(Configure::read('Config.language'));
+        # if language is already set in session, get that
+        $language = $this->Session->read('Config.language');
+        if(!$language) {
+            # if not, get NoseRub default language and save it
+            # in the session
+            $language = Configure::read('Noserub.default_language');
+            $this->Session->write('Config.language', $language);
+        }
+        # now set the language
+        $this->L10n->get($language);
 
         setlocale(LC_ALL, 
             substr($this->L10n->locale, 0, 3) .

@@ -765,6 +765,30 @@ class IdentitiesController extends AppController {
     }
     
     /**
+     * sets the language
+     *
+     * todo: when the user is logged in, selected language should be saved
+     *       to the database
+     */
+    public function switch_language($language) {
+        $languages = Configure::read('Languages');
+        if(!array_key_exists($language, $languages)) {
+            $this->flashMessage('alert', __('Language not available!', true));
+            $this->redirect($this->referer());
+        } else {
+            $this->Session->write('Config.language', $language);
+            # now set the language
+            $this->L10n->get($language);
+
+            setlocale(LC_ALL, 
+                substr($this->L10n->locale, 0, 3) .
+                strtoupper(substr($this->L10n->locale, 3, 2)) . 
+                '.' . $this->L10n->charset
+            );
+        }
+        $this->redirect($this->referer());
+    }
+    /**
      * returns a "vcard" of the authenticated user
      */
     public function api_get() {
