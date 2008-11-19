@@ -119,6 +119,7 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new MyFavoritesMenuItem($controller, $action, $localUsername);
+		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
 		return $menuItems;
 	}

@@ -36,7 +36,7 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	public function testGetMainMenuForLocalUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => true, 'local_username' => 'test'));
-		$this->assertEqual(4, count($mainMenu->getMenuItems()));
+		$this->assertEqual(5, count($mainMenu->getMenuItems()));
 		$this->assertMenuForLocalUser($mainMenu, 'test', false, false, false, false);
 	}
 	
@@ -66,8 +66,8 @@ class MenuFactoryTest extends CakeTestCase {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => false));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(2, count($menuItems));
-		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', false);
-		$this->assertMenuItem($menuItems[1], 'My Profile', '', false);
+		$this->assertMenuItem($menuItems[0], __('All Users', true), '/social_stream/', false);
+		$this->assertMenuItem($menuItems[1], __('My Profile', true), '', false);
 	}
 	
 	// anonymous user
@@ -91,8 +91,8 @@ class MenuFactoryTest extends CakeTestCase {
 		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'none'));
 		$menuItems = $mainMenu->getMenuItems();
 		$this->assertEqual(2, count($menuItems));
-		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', false);
-		$this->assertMenuItem($menuItems[1], 'Search', '/search/', false);
+		$this->assertMenuItem($menuItems[0], __('All Users', true), '/social_stream/', false);
+		$this->assertMenuItem($menuItems[1], __('Search', true), '/search/', false);
 	}
 	
 	// sub menus
@@ -189,31 +189,31 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	private function assertFilterSubMenu(Menu $subMenu, $urlPart, FilterState $filterState) {
 		$menuItems = $subMenu->getMenuItems();
-		$this->assertMenuItem($menuItems[0], 'Overview', $urlPart, $filterState->isAllActive());
-		$this->assertMenuItem($menuItems[1], 'Photos', $urlPart.'photo/', $filterState->isPhotoActive());
-		$this->assertMenuItem($menuItems[2], 'Videos', $urlPart.'video/', $filterState->isVideoActive());
-		$this->assertMenuItem($menuItems[3], 'Audios', $urlPart.'audio/', $filterState->isAudioActive());
-		$this->assertMenuItem($menuItems[4], 'Links', $urlPart.'link/', $filterState->isLinkActive());
-		$this->assertMenuItem($menuItems[5], 'Texts', $urlPart.'text/', $filterState->isTextActive());
-		$this->assertMenuItem($menuItems[6], 'Micropublish', $urlPart.'micropublish/', $filterState->isMicroPublishActive());
-		$this->assertMenuItem($menuItems[7], 'Events', $urlPart.'event/', $filterState->isEventActive());
-		$this->assertMenuItem($menuItems[8], 'Documents', $urlPart.'document/', $filterState->isDocumentActive());
-		$this->assertMenuItem($menuItems[9], 'Locations', $urlPart.'location/', $filterState->isLocationActive());
+		$this->assertMenuItem($menuItems[0], __('Overview', true), $urlPart, $filterState->isAllActive());
+		$this->assertMenuItem($menuItems[1], __('Photos', true), $urlPart.'photo/', $filterState->isPhotoActive());
+		$this->assertMenuItem($menuItems[2], __('Videos', true), $urlPart.'video/', $filterState->isVideoActive());
+		$this->assertMenuItem($menuItems[3], __('Audios', true), $urlPart.'audio/', $filterState->isAudioActive());
+		$this->assertMenuItem($menuItems[4], __('Links', true), $urlPart.'link/', $filterState->isLinkActive());
+		$this->assertMenuItem($menuItems[5], __('Texts', true), $urlPart.'text/', $filterState->isTextActive());
+		$this->assertMenuItem($menuItems[6], __('Micropublish', true), $urlPart.'micropublish/', $filterState->isMicroPublishActive());
+		$this->assertMenuItem($menuItems[7], __('Events', true), $urlPart.'event/', $filterState->isEventActive());
+		$this->assertMenuItem($menuItems[8], __('Documents', true), $urlPart.'document/', $filterState->isDocumentActive());
+		$this->assertMenuItem($menuItems[9], __('Locations', true), $urlPart.'location/', $filterState->isLocationActive());
 	}
 	
 	private function assertMenuForAnonymousUser(Menu $mainMenu, $socialStreamActive, $searchActive, $registerActive) {
 		$menuItems = $mainMenu->getMenuItems();
-		$this->assertMenuItem($menuItems[0], 'All Users', '/social_stream/', $socialStreamActive);
-		$this->assertMenuItem($menuItems[1], 'Search', '/search/', $searchActive);
-		$this->assertMenuItem($menuItems[2], 'Register', '/pages/register/', $registerActive);
+		$this->assertMenuItem($menuItems[0], __('All Users', true), '/social_stream/', $socialStreamActive);
+		$this->assertMenuItem($menuItems[1], __('Search', true), '/search/', $searchActive);
+		$this->assertMenuItem($menuItems[2], __('Register', true), '/pages/register/', $registerActive);
 	}
 	
 	private function assertMenuForLocalUser(Menu $mainMenu, $localUsername, $socialStreamActive, $myProfileActive, $myContactsActive, $favoritesActive) {
 		$menuItems = $mainMenu->getMenuItems();
-		$this->assertMenuItem($menuItems[0], 'With my Contacts', '/' . $localUsername . '/network/', $myContactsActive);
-		$this->assertMenuItem($menuItems[1], 'All Users', '/social_stream/', $socialStreamActive);
-		$this->assertMenuItem($menuItems[2], 'My Profile', '/' . $localUsername . '/', $myProfileActive);
-		$this->assertMenuItem($menuItems[3], 'My Favorites', '/' . $localUsername . '/favorites/', $favoritesActive);
+		$this->assertMenuItem($menuItems[0], __('With my Contacts', true), '/' . $localUsername . '/network/', $myContactsActive);
+		$this->assertMenuItem($menuItems[1], __('All Users', true), '/social_stream/', $socialStreamActive);
+		$this->assertMenuItem($menuItems[2], __('My Profile', true), '/' . $localUsername . '/', $myProfileActive);
+		$this->assertMenuItem($menuItems[3], __('My Favorites', true), '/' . $localUsername . '/favorites/', $favoritesActive);
 	}
 	
 	private function assertMenuItem(MenuItem $menuItem, $label, $link, $isActive) {
@@ -226,21 +226,21 @@ class MenuFactoryTest extends CakeTestCase {
 		$menuItems = $subMenu->getMenuItems();
 		$link = '/' . $localUsername . '/settings/';
 		$i = 0;
-		$this->assertMenuItem($menuItems[$i++], 'Profile', $link . 'profile/', $settingState->isProfileActive());
-		$this->assertMenuItem($menuItems[$i++], 'Accounts', $link . 'accounts/', $settingState->isAccountsActive());
-		$this->assertMenuItem($menuItems[$i++], 'Locations', $link . 'locations/', $settingState->isLocationsActive());
-		$this->assertMenuItem($menuItems[$i++], 'Display', $link . 'display/', $settingState->isDisplayActive());
-		$this->assertMenuItem($menuItems[$i++], 'Privacy', $link . 'privacy/', $settingState->isPrivacyActive());
-		$this->assertMenuItem($menuItems[$i++], 'Feeds', $link . 'feeds/', $settingState->isFeedsActive());
-		$this->assertMenuItem($menuItems[$i++], 'OpenID', $link . 'openid/', $settingState->isOpenIDActive());
-		$this->assertMenuItem($menuItems[$i++], 'OAuth', $link . 'oauth/', $settingState->isOAuthActive());
-		$this->assertMenuItem($menuItems[$i++], 'OMB', $link . 'omb/', $settingState->isOMBActive());
+		$this->assertMenuItem($menuItems[$i++], __('Profile', true), $link . 'profile/', $settingState->isProfileActive());
+		$this->assertMenuItem($menuItems[$i++], __('Accounts', true), $link . 'accounts/', $settingState->isAccountsActive());
+		$this->assertMenuItem($menuItems[$i++], __('Locations', true), $link . 'locations/', $settingState->isLocationsActive());
+		$this->assertMenuItem($menuItems[$i++], __('Display', true), $link . 'display/', $settingState->isDisplayActive());
+		$this->assertMenuItem($menuItems[$i++], __('Privacy', true), $link . 'privacy/', $settingState->isPrivacyActive());
+		$this->assertMenuItem($menuItems[$i++], __('Feeds', true), $link . 'feeds/', $settingState->isFeedsActive());
+		$this->assertMenuItem($menuItems[$i++], __('OpenID', true), $link . 'openid/', $settingState->isOpenIDActive());
+		$this->assertMenuItem($menuItems[$i++], __('OAuth', true), $link . 'oauth/', $settingState->isOAuthActive());
+		$this->assertMenuItem($menuItems[$i++], __('OMB', true), $link . 'omb/', $settingState->isOMBActive());
 		if ($isMenuForOpenIDUser) {
-			$this->assertMenuItem($menuItems[$i++], 'API', $link . 'password/', $settingState->isPasswordActive());
+			$this->assertMenuItem($menuItems[$i++], __('API', true), $link . 'password/', $settingState->isPasswordActive());
 		} else {
-			$this->assertMenuItem($menuItems[$i++], 'Password & API', $link . 'password/', $settingState->isPasswordActive());
+			$this->assertMenuItem($menuItems[$i++], __('Password & API', true), $link . 'password/', $settingState->isPasswordActive());
 		}
-		$this->assertMenuItem($menuItems[$i++], 'Manage', $link . 'account/', $settingState->isManageActive());
+		$this->assertMenuItem($menuItems[$i++], __('Manage', true), $link . 'account/', $settingState->isManageActive());
 	}
 }
 
@@ -376,7 +376,7 @@ class MyContactsMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $username, $isActive) {
-		$this->assertEqual('With my Contacts', $menuItem->getLabel());
+		$this->assertEqual(__('With my Contacts', true), $menuItem->getLabel());
 		$this->assertEqual('/'.$username.'/network/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
@@ -399,7 +399,7 @@ class MyProfileMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $link, $isActive) {
-		$this->assertEqual('My Profile', $menuItem->getLabel());
+		$this->assertEqual(__('My Profile', true), $menuItem->getLabel());
 		$this->assertEqual($link, $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
@@ -421,7 +421,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $isActive) {
-		$this->assertEqual('Register', $menuItem->getLabel());
+		$this->assertEqual(__('Register', true), $menuItem->getLabel());
 		$this->assertEqual('/pages/register/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
@@ -450,7 +450,7 @@ class SettingsMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $link, $isActive) {
-		$this->assertEqual('Settings', $menuItem->getLabel());
+		$this->assertEqual(__('Settings', true), $menuItem->getLabel());
 		$this->assertEqual($link, $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
@@ -468,7 +468,7 @@ class SocialStreamMenuItemTest extends CakeTestCase {
 	}
 	
 	private function assertMenuItem($menuItem, $isActive) {
-		$this->assertEqual('All Users', $menuItem->getLabel());
+		$this->assertEqual(__('All Users', true), $menuItem->getLabel());
 		$this->assertEqual('/social_stream/', $menuItem->getLink());
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
