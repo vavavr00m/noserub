@@ -8,6 +8,6 @@ foreach($languages as $key => $value) {
     if($i > 0) {
         echo ' - ';
     }
-    echo $html->link($value, '/pages/switch/language/' . $key . '/');
+    echo $html->link($value, '/pages/switch/language/' . $key . '/', array('rel' => 'nofollow'));
     $i++;
 }
