@@ -61,6 +61,11 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # just a precaution for avoiding confusions.
 define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,register,social_stream,search,groups,entry');
 
+# in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
+if (!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', Configure::read('Noserub.full_base_url'));
+}
+
 # temporary constant for development purposes
 # TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
 define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
