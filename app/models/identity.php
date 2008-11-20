@@ -456,6 +456,27 @@ class Identity extends AppModel {
     }
 
     /**
+     * sending out the password recovery mail
+     *
+     * todo: use the mailer component
+     */
+    public function passwordRecoveryMail($username, $email, $hash) {
+        $msg = sprintf(__('You requested a new password for %s', true), 'http://' . $username) . "\n\n";
+        $msg .= __('Please click here to set a new password', true) .":\n";
+        $msg .= FULL_BASE_URL . Router::url('/pages/password/recovery/' . $hash . '/') . "\n\n";
+        $msg .= __('Thanks!', true);
+
+        if(!mail($email, sprintf(__('%s password recovery', true), Configure::read('Noserub.app_name')), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+            $this->log('password recovery could not be sent: '.$email);
+            return false;
+        } else {
+            $this->log('password recovery mail sent to '.$email, LOG_DEBUG);
+            return true;
+        }
+    }
+    
+    
+    /**
      * Sanitizes non-namespace containing usernames.
      * This is used eg. when adding new contacts from
      * flickr, where usernames can be '0909ds7@N01'.

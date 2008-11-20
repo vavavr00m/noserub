@@ -1,8 +1,4 @@
-<?php /* if (!$session->check('Noserub.lastOpenIDRequest')): ?>
-	<p class="infotext">
-		<?php echo $html->link('Login', '/pages/login/withopenid'); ?> with your <img src="<?php echo Router::url('/images/openid_small.gif'); ?>" alt="OpenID logo" /> OpenID.
-	</p>
-<?php endif; */ ?>
+<?php $flashmessage->render(); ?>
 <?php if(isset($form_error) && !empty($form_error)) { 
     echo '<p>'. $form_error . '</p>';
 } ?>
@@ -36,4 +32,6 @@
 	        <input class="submitbutton" type="submit" value="<?php __('Login'); ?>"/>
 	    </fieldset>
 	<?php echo $form->end(); ?>
+	
+	<?php echo $html->link(__('Forgot your password?', true), '/pages/password/recovery/'); ?>
 </div>
