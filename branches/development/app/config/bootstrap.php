@@ -71,11 +71,13 @@ if (!defined('FULL_BASE_URL')) {
 define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
 
 Configure::write('Languages', array(
-    'de-de' => __('German', true),
-    'en-us' => __('English', true),
-    'fr-fr' => __('French', true),
-    'tr'    => __('Turkish', true)
+    'de-de' => 'Deutsch',
+    'en-us' => 'English',
+    'fr-fr' => 'Français',
+    #'es-es' => 'Español',
+    'tr'    => 'Turkish'
 ));
+
 /**
  * Static files directory
  * @name STATIC_DIR
