@@ -788,6 +788,112 @@ class IdentitiesController extends AppController {
         }
         $this->redirect($this->referer());
     }
+    
+    /**
+     * allows user to retrieve a link to then reset the password
+     */
+    public function password_recovery($recovery_hash = null) {
+        if(!is_null($recovery_hash)) {
+            $this->Identity->contain();
+            $identity = $this->Identity->find(
+                'first',
+                array(
+                    'conditions' => array(
+                        'password_recovery_hash' => $recovery_hash                        
+                    )
+                )
+            );
+            if(strlen($recovery_hash) != 32 || !$identity) {
+                $this->flashMessage('alert', __('The password recovery link is not valid!', true));
+            } else {
+                $this->set('recovery_hash', $recovery_hash);
+                $this->render('password_recovery_password');
+                return;
+            }
+        } else if($this->data) {
+            $conditions = array('is_local' => 1);
+            if($this->data['Identity']['username']) {
+                $splitted = $this->Identity->splitUsername($this->data['Identity']['username']);
+                $conditions['Identity.username'] = $splitted['username'];
+            }
+
+            if($this->data['Identity']['email']) {
+                $conditions['Identity.email'] = $this->data['Identity']['email'];
+            }
+            $this->Identity->contain();
+            $identity = $this->Identity->find(
+                'first',
+                array(
+                    'conditions' => $conditions
+                )
+            );
+            
+            if(!$identity) {
+                $this->flashMessage('alert', __('The account could not be found!', true));
+            } else {
+                $username = $identity['Identity']['username'];
+                $email = $identity['Identity']['email'];
+                if(!$email) {
+                    $this->flashMessage('alert', __('No email address found!', true));
+                } else {
+                    $this->Identity->id = $identity['Identity']['id'];
+                    $recovery_hash = md5(uniqid(rand(), true));
+                    $this->Identity->saveField('password_recovery_hash', $recovery_hash);
+                if(!$this->Identity->passwordRecoveryMail($username, $email, $recovery_hash)) {
+                        $this->flashMessage('alert', __('The mail could not be sent!', true));
+                    } else {
+                        $this->flashMessage('success', __('Please look into your inbox for the password recovery email.', true));
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    /**
+     * this is where the user actually sets the new password
+     *
+     * todo: use validation
+     */
+    public function password_recovery_set($recovery_hash = null) {
+        if(is_null($recovery_hash)) {
+            $this->flashMessage('alert', __('Something went wrong. Please try again!', true));
+            $this->redirect($this->referer());
+        }
+        $this->Identity->contain();
+        $identity = $this->Identity->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'password_recovery_hash' => $recovery_hash                        
+                ),
+                'fields' => array(
+                    'id'
+                )
+            )
+        );
+        if(strlen($recovery_hash) != 32 || !$identity) {
+            $this->flashMessage('alert', __('The password recovery link is not valid!', true));
+            $this->redirect($this->referer());
+        } else if(!$this->data) {
+            $this->flashMessage('alert', __('Something went wrong. Please try again!', true));
+            $this->redirect($this->referer());
+        } else if($this->data['Identity']['password'] != $this->data['Identity']['password2']) {
+            $this->flashMessage('alert', __('The two passwords were not the same!', true));
+            $this->redirect($this->referer());
+        } else if(strlen($this->data['Identity']['password']) < 6) {
+            $this->flashMessage('alert', __('The password is too short!', true));
+            $this->redirect($this->referer());
+        } else {
+            $this->Identity->id = $identity['Identity']['id'];
+            $this->Identity->saveField('password', md5($this->data['Identity']['password']));
+            $this->Identity->saveField('hash', ''); # user also verified email address with this method
+            $this->Identity->saveField('password_recovery_hash', '');
+            $this->flashMessage('success', __('You now can log in with your new password.', true));
+            $this->redirect('/pages/login/');
+        }
+    }
+    
     /**
      * returns a "vcard" of the authenticated user
      */
