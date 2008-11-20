@@ -63,7 +63,7 @@ define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,re
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
 if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', Configure::read('Noserub.full_base_url'));
+	define('FULL_BASE_URL', substr(Configure::read('Noserub.full_base_url'), 0, -1));
 }
 
 # temporary constant for development purposes
