@@ -8,17 +8,18 @@
 ?>
 <li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
     <span class="date">
-        <?php if($permalink) { ?>
-            <a href="/entry/<?php echo $item['Entry']['id']; ?>/">
-        <?php } ?>
-        <?php if(!$with_date) {
-            echo $nicetime->show($item['Entry']['published_on']); 
-        } else {
-            echo date('H:s', strtotime($item['Entry']['published_on'])); 
-        } ?>
-        <?php if($permalink) { ?>
-            </a>
-        <?php } ?>
+        <?php
+            if(!$with_date) {
+                $label = $nicetime->show($item['Entry']['published_on']); 
+            } else {
+                $label = date('H:s', strtotime($item['Entry']['published_on'])); 
+            }
+            if($permalink) {
+                echo $html->link($label, '/entry/' . $item['Entry']['id']);
+            } else {
+                echo $label;
+            }
+        ?>
     </span>
     <span>
         <?php
