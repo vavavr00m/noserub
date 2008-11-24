@@ -57,10 +57,6 @@ class ContactsController extends AppController {
     /**
      * adds a new contact to an identity
      * todo: check for existing identities
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function add() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
@@ -84,7 +80,7 @@ class ContactsController extends AppController {
                 if($identity_username === '') {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
-                    exit;
+                    return;
                 }
                 
                 # check, if this is the logged in user
@@ -92,7 +88,7 @@ class ContactsController extends AppController {
                    'www.'.$session_identity['username'] == $identity_username_splitted['username']) {
                     $this->Contact->invalidate('noserub_id', 'own_noserub_id');
                     $this->render();
-                    exit;       
+                    return;
                 }
                 
                 # see, if we already have it
@@ -114,7 +110,7 @@ class ContactsController extends AppController {
                         $this->flashMessage('error', __('Could not add contact.', true));
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
-                        exit;
+                        return;
                     }
                 } else {
                     # it's already there, so we can go ahead and add it
@@ -127,7 +123,7 @@ class ContactsController extends AppController {
                 if ($this->Contact->hasAny(array('identity_id' => $session_identity['id'], 'with_identity_id' => $new_identity_id))) {
                     $this->Contact->invalidate('noserub_id', 'unique');
                     $this->render();
-                    exit;
+                    return;
                 }
                 
                 if($this->Contact->add($session_identity['id'], $new_identity_id)) {
@@ -162,12 +158,12 @@ class ContactsController extends AppController {
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
                     $this->render();
-                    exit;
+                    return;
                 }
             } else {
                 # we should never come here, unless the username doesn't validate
             	$this->render();
-                exit;
+                return;
             }
         }
         

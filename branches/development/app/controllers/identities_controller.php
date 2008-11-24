@@ -727,10 +727,10 @@ class IdentitiesController extends AppController {
     	} catch (InvalidArgumentException $e) {
     		$this->Identity->invalidate('openid', 'invalid_openid');
 			$this->render();
-			exit;
+			return;
     	} catch (Exception $e) {
     		echo $e->getMessage();
-    		exit();
+    		exit;
     	}
     }
     
@@ -753,12 +753,12 @@ class IdentitiesController extends AppController {
     	if ($response->status == Auth_OpenID_CANCEL) {
     		$this->Identity->invalidate('openid', 'verification_cancelled');
     		$this->render();
-    		exit;
+    		return;
     	} elseif ($response->status == Auth_OpenID_FAILURE) {
     		$this->Identity->invalidate('openid', 'openid_failure');
     		$this->set('errorMessage', $response->message);
     		$this->render();
-    		exit;
+    		return;
     	} elseif ($response->status == Auth_OpenID_SUCCESS) {
     		return $response;
     	}

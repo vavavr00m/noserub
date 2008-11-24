@@ -65,7 +65,7 @@ class AccountSettingsController extends AppController {
                     $this->set('data', $data);
                     $this->set('headline', __('Importing NoseRub data', true));
                     $this->render();
-                    exit;
+                    return;
                 } else {
                     $this->flashMessage('alert', __("Couldn't import the data!", true));
                 }
