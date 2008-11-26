@@ -1,5 +1,5 @@
 <?php
-    $app_name = Configure::read('Noserub.app_name');
+    $app_name = Configure::read('NoseRub.app_name');
     $headline = isset($headline) ? $headline : sprintf(__('Welcome to %s', true), $app_name);
     $title    = $app_name . ' - ' . $headline;
 ?>

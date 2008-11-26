@@ -1,9 +1,9 @@
 <?php
     $url = Router::url('/' . $session_identity['local_username']);
-    if(Configure::read('Noserub.use_cdn')) {
-        $feed_url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/';
+    if(Configure::read('NoseRub.use_cdn')) {
+        $feed_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/';
     } else {
-        $feed_url = Configure::read('Noserub.full_base_url') . $url . '/feeds/';
+        $feed_url = Configure::read('NoseRub.full_base_url') . $url . '/feeds/';
     } 
 ?>
 <?php $flashmessage->render(); ?>

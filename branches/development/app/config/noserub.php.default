@@ -3,7 +3,7 @@
 /**
  * The name of this NoseRub server. This is used for the title.
  */
-Configure::write('Noserub.app_name', 'NoseRub');
+Configure::write('NoseRub.app_name', 'NoseRub');
 
 /**
  * The URL, under which your NoseRub installation
@@ -15,36 +15,36 @@ Configure::write('Noserub.app_name', 'NoseRub');
  * http://myserver.com/ here. When your installation is available
  * directly under http://myserver.com/, just put http://myserver.com/ here.
  */
-Configure::write('Noserub.full_base_url', 'http://');
+Configure::write('NoseRub.full_base_url', 'http://');
 
 /**
  * Default Language for this installation
  */
-Configure::write('Noserub.default_language', 'en-en'); # try 'de-de' :-)
+Configure::write('NoseRub.default_language', 'en-en'); # try 'de-de' :-)
 
 /**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities
  */
-Configure::write('Noserub.admin_hash', '');
+Configure::write('NoseRub.admin_hash', '');
 
 /**
- * Similar to Noserub.admin_hash, but only used
+ * Similar to NoseRub.admin_hash, but only used
  * for some cronjob routes that can called by URL with this
  * hash. Only needed, if you install NoseRub on a server
  * without access to the crontab.
  *
- * Don't use the same value for Noserub.admin_hash and Noserub.cron_hash!
+ * Don't use the same value for NoseRub.admin_hash and NoseRub.cron_hash!
  *
  * The URLs for these cronjobs are:
- * <Noserub.full_base_url>/jobs/cron/<Noserub.cron_hash>/identities/sync/all/
- * <Noserub.full_base_url>/jobs/cron/<Noserub.cron_hash>/cache/feed/refresh/
+ * <NoseRub.full_base_url>/jobs/cron/<NoseRub.cron_hash>/identities/sync/all/
+ * <NoseRub.full_base_url>/jobs/cron/<NoseRub.cron_hash>/cache/feed/refresh/
  *
  * These cronjobs can take some time to finish, so you might run into
  * problems with timeouts of the webserver you're using.
  */
-Configure::write('Noserub.cron_hash', '');
+Configure::write('NoseRub.cron_hash', '');
 
 /**
  * If set to "false", NoseRub will update the entries
@@ -52,7 +52,7 @@ Configure::write('Noserub.cron_hash', '');
  * For better performance, you should set this to
  * "true" and add a cronjob for this purpose.
  */
-Configure::write('Noserub.manual_feeds_update', false);
+Configure::write('NoseRub.manual_feeds_update', false);
 
 /**
  * all = everyone can register
@@ -61,19 +61,19 @@ Configure::write('Noserub.manual_feeds_update', false);
  * invitation = only the admin can invite people to register. 
  *              (this is yet not implemented)
  */
-Configure::write('Noserub.registration_type', 'all');
+Configure::write('NoseRub.registration_type', 'all');
 
 /**
  * E-Mail address, that is put into the From: header,
  * when sending out emails.
  */
-Configure::write('Noserub.email_from', 'info@...');
+Configure::write('NoseRub.email_from', 'info@...');
 
 /**
  * When true, https (Port 443) is used for sensitive 
  * pages like /pages/login/ and /pages/register/
  */
-Configure::write('Noserub.use_ssl', false);
+Configure::write('NoseRub.use_ssl', false);
 
 /**
  * We need a geocoder for get Latitude/Longitude for
@@ -85,7 +85,7 @@ Configure::write('Noserub.use_ssl', false);
  * on which you want to use the API Key.
  * If set to false, no geocoding is done.
  */
-Configure::write('Noserub.google_maps_key', false);
+Configure::write('NoseRub.google_maps_key', false);
 
 /**
  * For better reliability, NoseRub can store some data to
@@ -93,7 +93,7 @@ Configure::write('Noserub.google_maps_key', false);
  * usage of a CDN here. Please make sure you provide
  * access information to your CDN below.
  */
-Configure::write('Noserub.use_cdn', false);
+Configure::write('NoseRub.use_cdn', false);
 
 /**
  * You need to enter this three fields, when you want to
@@ -103,21 +103,21 @@ Configure::write('Noserub.use_cdn', false);
  * yourself. All data for this NoseRub installation will be
  * stored in that bucket.
  */
-Configure::write('Noserub.cdn_s3_access_key', '');
-Configure::write('Noserub.cdn_s3_secret_key', '');
-Configure::write('Noserub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
+Configure::write('NoseRub.cdn_s3_access_key', '');
+Configure::write('NoseRub.cdn_s3_secret_key', '');
+Configure::write('NoseRub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
 
 /**
  * If you want to restrict the email addresses of users that can register,
  * define this setting. You can add more than one host:
- * Configure::write('Noserub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
+ * Configure::write('NoseRub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
  */
-Configure::write('Noserub.registration_restricted_hosts', false);
+Configure::write('NoseRub.registration_restricted_hosts', false);
 
-Configure::write('Noserub.xmpp_full_feed_user', '');
-Configure::write('Noserub.xmpp_full_feed_password', '');
-Configure::write('Noserub.xmpp_full_feed_server', 'jabber.identoo.com');
-Configure::write('Noserub.xmpp_full_feed_port', 5222);
+Configure::write('NoseRub.xmpp_full_feed_user', '');
+Configure::write('NoseRub.xmpp_full_feed_password', '');
+Configure::write('NoseRub.xmpp_full_feed_server', 'jabber.identoo.com');
+Configure::write('NoseRub.xmpp_full_feed_port', 5222);
 
 /**
  * If you want your server being displayed on http://noserub.com/sites
@@ -126,23 +126,23 @@ Configure::write('Noserub.xmpp_full_feed_port', 5222);
  * value to 'true'.
  *
  * Beside the number of users on your site, this method also transfers
- * the settings Noserub.registration_restricted_hosts and 
- * Noserub.registration_type to noserub.com. In addition, information about
+ * the settings NoseRub.registration_restricted_hosts and 
+ * NoseRub.registration_type to noserub.com. In addition, information about
  * how up to date your installation is (id of newest database migration)
  * gathered, so we know which versions are used out there.
  *
- * We don't send the content of Noserub.registration_restricted_hosts, but
+ * We don't send the content of NoseRub.registration_restricted_hosts, but
  * only the information, if this setting is used. If so, your site will be
  * flagged as "not public" on http://noserub.com/sites/.
  */
-Configure::write('Noserub.api_info_active', false);
+Configure::write('NoseRub.api_info_active', false);
 
 /**
  * If you, as the admin of this NoseRub installation do not feel
  * comfortable with the Twitter Bridge, you can deactivate it here
  * for every user on your site.
  */
-Configure::write('Noserub.allow_twitter_bridge', true);
+Configure::write('NoseRub.allow_twitter_bridge', true);
 
 /**
  * Uncomment this line if you get the following error when you try 

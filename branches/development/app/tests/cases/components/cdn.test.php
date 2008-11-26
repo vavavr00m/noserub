@@ -9,14 +9,14 @@ class CdnComponentTestCase extends CakeTestCase {
 	}
 	
 	public function skip() {
-	    $should_skip = (Configure::read('Noserub.use_cdn') == false);
-		$this->skipif($should_skip, 'Noserub.use_cdn not set to "true" in noserub.php');
+	    $should_skip = (Configure::read('NoseRub.use_cdn') == false);
+		$this->skipif($should_skip, 'NoseRub.use_cdn not set to "true" in noserub.php');
 	}
 	
 	public function testGetBuckets() {
 	    $result = $this->component->getBuckets();
 	    # at least the noser-bucket should be there
-	    $this->assertTrue(isset($result[Configure::read('Noserub.cdn_s3_bucket')]));
+	    $this->assertTrue(isset($result[Configure::read('NoseRub.cdn_s3_bucket')]));
 	}
 		
 	public function testFileOperations() {

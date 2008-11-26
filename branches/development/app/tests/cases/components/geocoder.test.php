@@ -13,7 +13,7 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	}
 	
 	public function skip() {
-		$this->skipif(!Configure::read('Noserub.google_maps_key'), 'Noserub.google_maps_key not set in noserub.php');
+		$this->skipif(!Configure::read('NoseRub.google_maps_key'), 'NoseRub.google_maps_key not set in noserub.php');
 	}
 	
 	public function testGet1() {

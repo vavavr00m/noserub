@@ -300,7 +300,7 @@ class IdentitiesController extends AppController {
                 $msg .= __('If you want to reply to this message, go to ', true) . 'http://' . $session_identity['username'] . '/' . "\n";
             
                 $email = $about_identity['Identity']['email'];
-                if(!mail($email, '['. Configure::read('Noserub.app_name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+                if(!mail($email, '['. Configure::read('NoseRub.app_name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
                     $this->flashMessage('alert', __('Your Message could not be delivered to ', true) . $name);
                 } else {
@@ -370,7 +370,7 @@ class IdentitiesController extends AppController {
                 $filename = $this->Identity->uploadPhotoByForm($this->data['Identity']['photo']);
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
-                    if(Configure::read('Noserub.use_cdn')) {
+                    if(Configure::read('NoseRub.use_cdn')) {
                         # store to CDN
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
                         $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
@@ -574,7 +574,7 @@ class IdentitiesController extends AppController {
     private function loginWithOpenID() {
     	$protocol = 'http://';
     	
-    	if (Configure::read('Noserub.use_ssl')) {
+    	if (Configure::read('NoseRub.use_ssl')) {
     		$protocol = 'https://';
     	}
     	
@@ -621,7 +621,7 @@ class IdentitiesController extends AppController {
         $admin_hash  = isset($this->params['admin_hash'])  ? $this->params['admin_hash'] : '';
         $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
         
-        if($admin_hash != Configure::read('Noserub.admin_hash') ||
+        if($admin_hash != Configure::read('NoseRub.admin_hash') ||
            $admin_hash == '' ||
            !$identity_id) {
             # there is nothing to do for us here
@@ -646,7 +646,7 @@ class IdentitiesController extends AppController {
             $data = $this->Identity->read();
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
-                if(Configure::read('Noserub.use_cdn')) {
+                if(Configure::read('NoseRub.use_cdn')) {
                     # store to CDN
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
                     $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');
@@ -663,7 +663,7 @@ class IdentitiesController extends AppController {
     public function jobs_sync_all() {
         $admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
-        if($admin_hash != Configure::read('Noserub.admin_hash') ||
+        if($admin_hash != Configure::read('NoseRub.admin_hash') ||
            $admin_hash == '') {
             # there is nothing to do for us here
             return false;
@@ -682,7 +682,7 @@ class IdentitiesController extends AppController {
     }
     
     public function shell_sync_all() {
-        $this->params['admin_hash'] = Configure::read('Noserub.admin_hash');
+        $this->params['admin_hash'] = Configure::read('NoseRub.admin_hash');
         $this->jobs_sync_all();
         $this->render('jobs_sync_all');
     }
@@ -690,10 +690,10 @@ class IdentitiesController extends AppController {
     public function cron_sync_all() {
         $cron_hash= isset($this->params['cron_hash'])  ? $this->params['cron_hash'] : '';
         
-        if($cron_hash != Configure::read('Noserub.cron_hash') ||
+        if($cron_hash != Configure::read('NoseRub.cron_hash') ||
            $cron_hash == '') {
             # there is nothing to do for us here
-            $this->set('data', __('Value for Noserub.cron_hash from noserub.php does not match or is empty!', true));
+            $this->set('data', __('Value for NoseRub.cron_hash from noserub.php does not match or is empty!', true));
             $this->render('jobs_sync_all');
             return;
         }
@@ -965,7 +965,7 @@ class IdentitiesController extends AppController {
      * values.
      */
     public function api_info() {
-        if (Configure::read('Noserub.api_info_active')) {
+        if (Configure::read('NoseRub.api_info_active')) {
             $this->Identity->contain();
             $conditions = array(
                 'is_local' => 1,
@@ -975,10 +975,10 @@ class IdentitiesController extends AppController {
             );
             App::import('Model', 'Admin');
             $Admin = new Admin;
-            $restricted_hosts = Configure::read('Noserub.registration_restricted_hosts');
+            $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
-                'registration_type' => Configure::read('Noserub.registration_type'),
+                'registration_type' => Configure::read('NoseRub.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
                 'migration' => $Admin->getCurrentMigration()
             );

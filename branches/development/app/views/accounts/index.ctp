@@ -50,7 +50,7 @@
     </form>
 </div>
 
-<?php if (Configure::read('Noserub.allow_twitter_bridge')) { ?>
+<?php if (Configure::read('NoseRub.allow_twitter_bridge')) { ?>
     <div class="left">
         <hr class="space" />
         <h2><?php __('Posting to Twitter.com'); ?></h2>

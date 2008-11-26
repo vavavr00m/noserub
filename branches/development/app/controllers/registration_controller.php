@@ -15,7 +15,7 @@ class RegistrationController extends AppController {
         
         $this->checkSecure();
         
-        if(Configure::read('Noserub.registration_type') != 'all') {
+        if(Configure::read('NoseRub.registration_type') != 'all') {
             $url = $this->url->http('/');
             $this->redirect($url);
         }

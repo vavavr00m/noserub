@@ -180,10 +180,10 @@ class EntriesController extends AppController {
     public function cron_update() {
         $cron_hash= isset($this->params['cron_hash'])  ? $this->params['cron_hash'] : '';
         
-        if($cron_hash != Configure::read('Noserub.cron_hash') ||
+        if($cron_hash != Configure::read('NoseRub.cron_hash') ||
            $cron_hash == '') {
             # there is nothing to do for us here
-            $this->set('data', __('Value for Noserub.cron_hash from noserub.php does not match or is empty!', true));
+            $this->set('data', __('Value for NoseRub.cron_hash from noserub.php does not match or is empty!', true));
             $this->render('jobs_update');
             return;
         }
@@ -193,8 +193,8 @@ class EntriesController extends AppController {
     }
     
     public function jobs_update() {
-        if(!Configure::read('Noserub.manual_feeds_update')) {
-            $this->set('data', __('Noserub.manual_feeds_update in noserub.php not set to do it manually!', true));
+        if(!Configure::read('NoseRub.manual_feeds_update')) {
+            $this->set('data', __('NoseRub.manual_feeds_update in noserub.php not set to do it manually!', true));
         } else {
             $this->Entry->Account->contain();
             $data = $this->Entry->Account->find(

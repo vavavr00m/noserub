@@ -65,15 +65,15 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, whether host of email address matches Noserub.registration_restricted_hosts
+     * check, whether host of email address matches NoseRub.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (Configure::read('Noserub.registration_restricted_hosts') === false ||
+        if (Configure::read('NoseRub.registration_restricted_hosts') === false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', Configure::read('Noserub.registration_restricted_hosts')));
+        return in_array($host, explode(' ', Configure::read('NoseRub.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {
@@ -466,7 +466,7 @@ class Identity extends AppModel {
         $msg .= FULL_BASE_URL . Router::url('/pages/password/recovery/' . $hash . '/') . "\n\n";
         $msg .= __('Thanks!', true);
 
-        if(!mail($email, sprintf(__('%s password recovery', true), Configure::read('Noserub.app_name')), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+        if(!mail($email, sprintf(__('%s password recovery', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
             $this->log('password recovery could not be sent: '.$email);
             return false;
         } else {
@@ -870,7 +870,7 @@ class Identity extends AppModel {
     }
     
     private function prepareVerificationMessage($hash) {
-    	$msg  = sprintf(__('Welcome to %s!', true), Configure::read('Noserub.app_name')) . "\n\n";
+    	$msg  = sprintf(__('Welcome to %s!', true), Configure::read('NoseRub.app_name')) . "\n\n";
         $msg .= __('Please click here to verify your email address', true) .":\n";
         $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
         $msg .= __('If you do not click on this link, the account will automatically be deleted after 14 days.', true) . "\n\n";
@@ -880,7 +880,7 @@ class Identity extends AppModel {
     }
     
     private function sendVerificationMail($email, $msg) {
-        if(!mail($email, sprintf(__('Your %s registration', true), Configure::read('Noserub.app_name')), $msg, 'From: ' . Configure::read('Noserub.email_from'))) {
+        if(!mail($email, sprintf(__('Your %s registration', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
@@ -913,8 +913,8 @@ class Identity extends AppModel {
     public function getBaseUrlForAvatars() {
     	$url = '';
     	
-    	if(Configure::read('Noserub.use_cdn')) {
-            $url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/avatars/';
+    	if(Configure::read('NoseRub.use_cdn')) {
+            $url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
         } else {
             $url = FULL_BASE_URL . Router::url('/static/avatars/');
         }

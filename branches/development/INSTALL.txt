@@ -64,16 +64,16 @@ should create a new database for NoseRub, as there are no prefixes available
 for the table names and you don't want to overwrite existing tables.
 
 In noserub.php, make sure you enter a value for 
-	Noserub.admin_hash
+	NoseRub.admin_hash
 	
 
 
 4. Call the update url
 ----------------------
 You should now be able to call the following url:
-    http://<server_name>/noserub/jobs/<Noserub.admin_hash>/system/update
+    http://<server_name>/noserub/jobs/<NoseRub.admin_hash>/system/update
 or
-    http://<server_name>/jobs/<Noserub.admin_hash>/system/update
+    http://<server_name>/jobs/<NoseRub.admin_hash>/system/update
 depending on how you set it up in step #2.
 
 If neccessary, this page will show your settings you need to make, or it will
@@ -90,7 +90,7 @@ depending on how you set it up in step #2.
 
 5. Set up cron job
 ------------------
-If you set the value for Noserub.manual_feeds_update in noserub.php to "true", 
+If you set the value for NoseRub.manual_feeds_update in noserub.php to "true", 
 you have to run the following command via cron to update the feed cache:
 
     php noserub/app/webroot/shell_dispatcher.php /cache/feed/refresh/ 
