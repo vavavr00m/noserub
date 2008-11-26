@@ -5,18 +5,18 @@ class XmppController extends AppController {
      * the main loop for a running XMPP deamon
      */
     public function shell_run() {
-        if (Configure::read('Noserub.xmpp_full_feed_user') === '') {
+        if (Configure::read('NoseRub.xmpp_full_feed_user') === '') {
             return;
         }
         App::import('Vendor', 'xmpp', array('file' => 'XMPPHP'.DS.'XMPP.php'));
 
         $conn = new XMPPHP_XMPP(
-        		Configure::read('Noserub.xmpp_full_feed_server'),
-        		Configure::read('Noserub.xmpp_full_feed_port'),
-        		Configure::read('Noserub.xmpp_full_feed_user'),
-        		Configure::read('Noserub.xmpp_full_feed_password'),
+        		Configure::read('NoseRub.xmpp_full_feed_server'),
+        		Configure::read('NoseRub.xmpp_full_feed_port'),
+        		Configure::read('NoseRub.xmpp_full_feed_user'),
+        		Configure::read('NoseRub.xmpp_full_feed_password'),
                 'xmpphp', 
-                Configure::read('Noserub.xmpp_full_feed_server'), 
+                Configure::read('NoseRub.xmpp_full_feed_server'), 
                 $printlog = false, 
                 $loglevel = XMPPHP_Log::LEVEL_VERBOSE
         );

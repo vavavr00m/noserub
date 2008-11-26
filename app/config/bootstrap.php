@@ -50,7 +50,7 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('Noserub.full_base_url') . ' (http://noserub.com/)');
+define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('NoseRub.full_base_url') . ' (http://noserub.com/)');
 
 ini_set('user_agent', NOSERUB_USER_AGENT);
 
@@ -63,7 +63,7 @@ define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,re
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
 if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', substr(Configure::read('Noserub.full_base_url'), 0, -1));
+	define('FULL_BASE_URL', substr(Configure::read('NoseRub.full_base_url'), 0, -1));
 }
 
 # temporary constant for development purposes

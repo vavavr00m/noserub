@@ -159,7 +159,7 @@ class Entry extends AppModel {
     /**
      */
     public function getForDisplay($filter, $limit, $with_restricted = false) {
-        if(!Configure::read('Noserub.manual_feeds_update')) {
+        if(!Configure::read('NoseRub.manual_feeds_update')) {
             # update it before getting data
             if(isset($filter['identity_id']) && $filter['identity_id']) {
                 $this->Account->contain();
@@ -498,7 +498,7 @@ class Entry extends AppModel {
      * can be found in lib/util.php there.
      */
     private function sendToTwitter($identity_id, $text) {   
-        if (Configure::read('Noserub.allow_twitter_bridge') === false) {
+        if (Configure::read('NoseRub.allow_twitter_bridge') === false) {
             return;       
         }
 

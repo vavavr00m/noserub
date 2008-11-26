@@ -34,7 +34,7 @@ class AppController extends Controller {
     
     /**
      * Makes sure we redirect to the https url,
-     * when Noserub.use_ssl is used and we're not
+     * when NoseRub.use_ssl is used and we're not
      * on a secure page
      */
     public function checkSecure() {
@@ -42,7 +42,7 @@ class AppController extends Controller {
             return;
         }
         
-        if(Configure::read('Noserub.use_ssl')) {
+        if(Configure::read('NoseRub.use_ssl')) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
@@ -103,7 +103,7 @@ class AppController extends Controller {
         if(!$language) {
             # if not, get NoseRub default language and save it
             # in the session
-            $language = Configure::read('Noserub.default_language');
+            $language = Configure::read('NoseRub.default_language');
             $this->Session->write('Config.language', $language);
         }
         # now set the language

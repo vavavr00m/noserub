@@ -6,7 +6,7 @@ class AdminController extends AppController {
     public function beforeFilter() {
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
-        if($admin_hash != Configure::read('Noserub.admin_hash') || $admin_hash == '') {
+        if($admin_hash != Configure::read('NoseRub.admin_hash') || $admin_hash == '') {
             # there is nothing to do for us here
             echo $this->render('/elements/hash_not_valid');
 			exit;

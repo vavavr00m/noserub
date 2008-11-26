@@ -41,7 +41,7 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		$this->checker->setConfigDefinitions(array());
 		$this->assertNoValidationErrors($this->checker->publicCheckForRequiredConfigSettings());
 		
-		$configKey = 'Noserub.required_key';
+		$configKey = 'NoseRub.required_key';
 		$this->checker->setConfigDefinitions(array(new ConfigDefinition($configKey)));
 		
 		$result = $this->checker->publicCheckForRequiredConfigSettings();
@@ -49,7 +49,7 @@ class ConfigurationCheckerTest extends CakeTestCase {
 	}
 	
 	public function testValidationOfConfigValue() {
-		$configKey = 'Noserub.key'; 
+		$configKey = 'NoseRub.key'; 
 		$configDefinition = new ConfigDefinition($configKey, new MyConfigValueValidator());
 		$this->checker->setConfigDefinitions(array($configDefinition));
 		

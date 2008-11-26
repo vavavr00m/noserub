@@ -27,8 +27,8 @@ class SyndicationsController extends AppController {
         if($extension && isset($feed_types[$extension])) {
             # if we use the CDN for this, we will redirect directly to there,
             # but only, if this is not an internal call
-            if(!$internal_call && Configure::read('Noserub.use_cdn')) {
-                $this->redirect('http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/'.$hash.'.'.$extension, '301');
+            if(!$internal_call && Configure::read('NoseRub.use_cdn')) {
+                $this->redirect('http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/'.$hash.'.'.$extension, '301');
             }
 
             if($hash === 'generic') {
@@ -67,7 +67,7 @@ class SyndicationsController extends AppController {
             $this->set('data', $items);
             # decide, wether to render the feed directly,
             # or uploading it to the CDN.
-            if(Configure::read('Noserub.use_cdn')) {
+            if(Configure::read('NoseRub.use_cdn')) {
                 # check, if the items are new enough, so we need
                 # to do an upload
                 $datetime_newest_item = isset($items[0]['datetime']) ? $items[0]['datetime'] : '2007-10-01';
@@ -201,7 +201,7 @@ class SyndicationsController extends AppController {
                 $this->Syndication->save($data);
                 
                 # no also create it initially, if we use a CDN
-                if(Configure::read('Noserub.use_cdn')) {
+                if(Configure::read('NoseRub.use_cdn')) {
                     $this->feed($data['Syndication']['hash'].'.rss', true);
                 }
             } 
@@ -264,8 +264,8 @@ class SyndicationsController extends AppController {
         $this->Syndication->contain();
         $data = $this->Syndication->findAllByIdentityId($identity_id, array('name', 'hash'));
         
-        if(Configure::read('Noserub.use_cdn')) {
-            $feed_url = 'http://s3.amazonaws.com/' . Configure::read('Noserub.cdn_s3_bucket') . '/feeds/';
+        if(Configure::read('NoseRub.use_cdn')) {
+            $feed_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/';
         } else {
         	if (!isset($identity)) {
         		$identity = $this->getIdentity($identity_id);
@@ -285,7 +285,7 @@ class SyndicationsController extends AppController {
 
         # look for the generic feeds
         if($identity['Identity']['generic_feed']) {
-            if(Configure::read('Noserub.use_cdn')) {
+            if(Configure::read('NoseRub.use_cdn')) {
                 $feed_url .= $identity['Identity']['local_username'] . '.';
             }
             $data[] = array(
@@ -308,7 +308,7 @@ class SyndicationsController extends AppController {
     public function shell_upload() {
         $uploaded = array();
 
-        if(!Configure::read('Noserub.use_cdn')) {
+        if(!Configure::read('NoseRub.use_cdn')) {
             # we don't need to do any upload
             $this->layout = 'shell';
             $uploaded[] = __('none - no CDN defined in noserub.php', true);

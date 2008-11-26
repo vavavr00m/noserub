@@ -28,27 +28,27 @@ class ConfigurationChecker {
     
 	public function __construct() {
 		$this->configDefinitions = array(
-			new ConfigDefinition('Noserub.admin_hash'),
-			new ConfigDefinition('Noserub.allow_twitter_bridge', new BooleanValidator()),
-			new ConfigDefinition('Noserub.api_info_active', new BooleanValidator()),
-			new ConfigDefinition('Noserub.app_name'),
-			new ConfigDefinition('Noserub.cdn_s3_access_key'),
-			new ConfigDefinition('Noserub.cdn_s3_secret_key'),
-			new ConfigDefinition('Noserub.cdn_s3_bucket'),
-			new ConfigDefinition('Noserub.cron_hash'),
-			new ConfigDefinition('Noserub.default_language'),
-			new ConfigDefinition('Noserub.email_from'),
-			new ConfigDefinition('Noserub.full_base_url', new FullBaseUrlValidator()),
-			new ConfigDefinition('Noserub.google_maps_key', new FalseOrNonEmptyStringValidator()),
-			new ConfigDefinition('Noserub.manual_feeds_update', new BooleanValidator()),
-			new ConfigDefinition('Noserub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
-			new ConfigDefinition('Noserub.registration_type', new RegistrationTypeValidator()),
-			new ConfigDefinition('Noserub.use_cdn', new BooleanValidator()),
-			new ConfigDefinition('Noserub.use_ssl', new BooleanValidator()),
-			new ConfigDefinition('Noserub.xmpp_full_feed_user'),
-			new ConfigDefinition('Noserub.xmpp_full_feed_password'),
-			new ConfigDefinition('Noserub.xmpp_full_feed_server'),
-			new ConfigDefinition('Noserub.xmpp_full_feed_port', new NumericValidator())
+			new ConfigDefinition('NoseRub.admin_hash'),
+			new ConfigDefinition('NoseRub.allow_twitter_bridge', new BooleanValidator()),
+			new ConfigDefinition('NoseRub.api_info_active', new BooleanValidator()),
+			new ConfigDefinition('NoseRub.app_name'),
+			new ConfigDefinition('NoseRub.cdn_s3_access_key'),
+			new ConfigDefinition('NoseRub.cdn_s3_secret_key'),
+			new ConfigDefinition('NoseRub.cdn_s3_bucket'),
+			new ConfigDefinition('NoseRub.cron_hash'),
+			new ConfigDefinition('NoseRub.default_language'),
+			new ConfigDefinition('NoseRub.email_from'),
+			new ConfigDefinition('NoseRub.full_base_url', new FullBaseUrlValidator()),
+			new ConfigDefinition('NoseRub.google_maps_key', new FalseOrNonEmptyStringValidator()),
+			new ConfigDefinition('NoseRub.manual_feeds_update', new BooleanValidator()),
+			new ConfigDefinition('NoseRub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
+			new ConfigDefinition('NoseRub.registration_type', new RegistrationTypeValidator()),
+			new ConfigDefinition('NoseRub.use_cdn', new BooleanValidator()),
+			new ConfigDefinition('NoseRub.use_ssl', new BooleanValidator()),
+			new ConfigDefinition('NoseRub.xmpp_full_feed_user'),
+			new ConfigDefinition('NoseRub.xmpp_full_feed_password'),
+			new ConfigDefinition('NoseRub.xmpp_full_feed_server'),
+			new ConfigDefinition('NoseRub.xmpp_full_feed_port', new NumericValidator())
 		);
 	}
 
