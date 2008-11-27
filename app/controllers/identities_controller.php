@@ -371,9 +371,7 @@ class IdentitiesController extends AppController {
                 if($filename) {
                     $this->data['Identity']['photo'] = $filename;
                     if(Configure::read('NoseRub.use_cdn')) {
-                        # store to CDN
-                        $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/'.$filename.'.jpg');
-                        $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/'.$filename.'-small.jpg');
+                        $this->copyAvatarsToCdn($filename);
                     }
                     $this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
                 }
@@ -647,9 +645,7 @@ class IdentitiesController extends AppController {
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
                 if(Configure::read('NoseRub.use_cdn')) {
-                    # store to CDN
-                    $this->cdn->copyTo(AVATAR_DIR . $filename . '.jpg',       'avatars/' . $filename . '.jpg');
-                    $this->cdn->copyTo(AVATAR_DIR . $filename . '-small.jpg', 'avatars/' . $filename . '-small.jpg');
+                    $this->copyAvatarsToCdn($filename);
                 }
             }
         }
@@ -762,6 +758,16 @@ class IdentitiesController extends AppController {
     	} elseif ($response->status == Auth_OpenID_SUCCESS) {
     		return $response;
     	}
+    }
+    
+    private function copyAvatarsToCdn($baseFilename) {
+    	$normalFilename = $baseFilename . '.jpg';
+    	$mediumFilename = $baseFilename . '-medium.jpg';
+    	$smallFilename = $baseFilename . '-small.jpg';
+    	
+    	$this->cdn->copyTo(AVATAR_DIR . $normalFilename, 'avatars/' . $normalFilename);
+    	$this->cdn->copyTo(AVATAR_DIR . $mediumFilename, 'avatars/' . $mediumFilename);
+		$this->cdn->copyTo(AVATAR_DIR . $smallFilename, 'avatars/' . $smallFilename);
     }
     
     /**
