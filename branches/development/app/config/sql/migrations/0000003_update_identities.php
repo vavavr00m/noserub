@@ -1,3 +1,5 @@
+<?php
+
 $identities = $this->query('SELECT id, is_local, username FROM identities');
 foreach($identities as $identity) {
     if($identity['identities']['is_local'] == 0) {
