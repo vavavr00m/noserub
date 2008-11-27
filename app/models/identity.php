@@ -772,22 +772,7 @@ class Identity extends AppModel {
         }
         
         $imageinfo = getimagesize($local_filename);
-        switch($imageinfo[2]) {
-            case IMAGETYPE_GIF:
-                $picture = imageCreateFromGIF($local_filename);
-                break;
-                
-            case IMAGETYPE_JPEG:
-                $picture = imageCreateFromJPEG($local_filename);
-                break;
-                
-            case IMAGETYPE_PNG:
-                $picture = imageCreateFromPNG($local_filename);
-                break;
-                
-            default:
-                $picture = null;
-        }
+        $picture = $this->createImage($imageinfo[2], $local_filename);
         
         if($picture) {
             $filename = $this->field('photo');
@@ -795,17 +780,9 @@ class Identity extends AppModel {
             if(strpos($filename, 'http') === 0) {
                 $filename = '';
             }
+            
             if(!$filename) {
-                # get random name for new photo and make sure it is unqiue
-                $filename = '';
-                $seed = $this->id . $local_filename;
-                while($filename == '') {
-                    $filename = md5($seed);
-                    if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
-                        $filename = '';
-                        $seed = md5($seed . time());
-                    }
-                }
+                $filename = $this->generateUniqueFilenameForPhoto($this->id . $local_filename);
                 $this->saveField('photo', $filename);
             }
             
@@ -819,6 +796,41 @@ class Identity extends AppModel {
         }
         
         return false;
+    }
+    
+    private function createImage($imageType, $localFilename) {
+    	switch($imageType) {
+            case IMAGETYPE_GIF:
+                $picture = imageCreateFromGIF($localFilename);
+                break;
+                
+            case IMAGETYPE_JPEG:
+                $picture = imageCreateFromJPEG($localFilename);
+                break;
+                
+            case IMAGETYPE_PNG:
+                $picture = imageCreateFromPNG($localFilename);
+                break;
+                
+            default:
+                $picture = null;
+        }
+        
+        return $picture;
+    }
+    
+    private function generateUniqueFilenameForPhoto($seed) {
+		$filename = '';
+		
+		while($filename == '') {
+			$filename = md5($seed);
+			if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
+				$filename = '';
+				$seed = md5($seed . time());
+			}
+		}
+		
+		return $filename;
     }
     
     public function uploadPhotoByForm($upload_form) {
