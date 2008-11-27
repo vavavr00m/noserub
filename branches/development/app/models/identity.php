@@ -809,12 +809,11 @@ class Identity extends AppModel {
                 $this->saveField('photo', $filename);
             }
             
-            $original_width  = $imageinfo[0];
-            $original_height = $imageinfo[1];
-
-            $this->saveScaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
-            $this->saveScaled($picture, $original_width, $original_height,  96,  96, AVATAR_DIR . $filename . '-medium.jpg');
-            $this->saveScaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            App::import('Vendor', 'ImageResizer');
+            $originalSize = new ImageSize($imageinfo[0], $imageinfo[1]);
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(150, 150), AVATAR_DIR . $filename . '.jpg');
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(96, 96), AVATAR_DIR . $filename . '-medium.jpg');
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(35, 35), AVATAR_DIR . $filename . '-small.jpg');
             
             return $filename;
         }
@@ -839,20 +838,6 @@ class Identity extends AppModel {
             return $result;
         } else {
             return false;
-        }
-    }
-    
-    private function saveScaled($picture, $original_width, $original_height, $width, $height, $filename) {
-        $BEST_QUALITY = 100;
-    	
-    	if($original_width==$width && $original_height==$height) {
-            # original picture
-            imagejpeg($picture, $filename, $BEST_QUALITY);
-        } else {
-            # resampling picture
-            $resampled = imagecreatetruecolor($width, $height);
-            imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-            imagejpeg($resampled, $filename, $BEST_QUALITY); 
         }
     }
     
