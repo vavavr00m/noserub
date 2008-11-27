@@ -813,6 +813,7 @@ class Identity extends AppModel {
             $original_height = $imageinfo[1];
 
             $this->saveScaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
+            $this->saveScaled($picture, $original_width, $original_height,  96,  96, AVATAR_DIR . $filename . '-medium.jpg');
             $this->saveScaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
             
             return $filename;
