@@ -103,6 +103,7 @@ class Migration extends AppModel {
                 }
             }
             if(isset($migrations['php'][$i]['name'])) {
+            	$migrations['php'][$i]['content'] = str_replace('<?php', '', $migrations['php'][$i]['content']);
                 eval($migrations['php'][$i]['content']);
             }
             
