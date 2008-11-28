@@ -6,19 +6,20 @@ App::import('Vendor', 'OauthConstants');
 class OmbConsumerComponentTest extends CakeTestCase {
 	const IDENTICA = 'http://identi.ca';
 	private $component = null;
+	private $urlOfXRDS = null;
 	
 	public function setUp() {
 		$this->component = new OmbConsumerComponent();
+		$this->urlOfXRDS = Configure::read('NoseRub.full_base_url') . 'testing/identica_0.6.xrds';
 	}
 	
 	public function testDiscover() {
-		$endPoint = $this->component->discover(Configure::read('NoseRub.full_base_url') . 'testing/identica_0.6.xrds');
-		$this->assertEqual(self::IDENTICA.'/user/4599', $endPoint->getLocalId());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $endPoint->getRequestTokenUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $endPoint->getAuthorizeUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $endPoint->getAccessTokenUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $endPoint->getPostNoticeUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $endPoint->getUpdateProfileUrl());
+		$this->assertEndPoint($this->component->discover($this->urlOfXRDS));
+	}
+	
+	public function testDiscoverFromUrlWithoutHttp() {
+		$urlOfXRDSWithoutHttp = str_replace('http://', '', $this->urlOfXRDS);
+		$this->assertEndPoint($this->component->discover($urlOfXRDSWithoutHttp));
 	}
 	
 	public function testDiscoverNotExistingFile() {
@@ -28,6 +29,15 @@ class OmbConsumerComponentTest extends CakeTestCase {
 		} catch (Exception $e) {
 			$this->assertTrue(true);
 		}
+	}
+	
+	private function assertEndPoint(OmbEndPoint $endPoint) {
+		$this->assertEqual(self::IDENTICA.'/user/4599', $endPoint->getLocalId());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $endPoint->getRequestTokenUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $endPoint->getAuthorizeUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $endPoint->getAccessTokenUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $endPoint->getPostNoticeUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $endPoint->getUpdateProfileUrl());
 	}
 }
 
