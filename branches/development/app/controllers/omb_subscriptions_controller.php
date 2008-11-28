@@ -48,29 +48,21 @@ class OmbSubscriptionsController extends AppController {
 		
 		if ($this->data) {
 			try {
-				$endPoints = $this->OmbConsumer->discover($this->data['Omb']['url']);
-				$localId = $endPoints[0];
-				$requestTokenUrl = $endPoints[1][OauthConstants::REQUEST];
-				$authorizeUrl = $endPoints[1][OauthConstants::AUTHORIZE];
-				$accessTokenUrl = $endPoints[1][OauthConstants::ACCESS];
-				$postNoticeUrl = $endPoints[1][OmbConstants::POST_NOTICE];
-				$updateProfileUrl = $endPoints[1][OmbConstants::UPDATE_PROFILE];
-				
-				$serviceId = $this->OmbService->getServiceId($postNoticeUrl, $updateProfileUrl);
+				$endPoint = $this->OmbConsumer->discover($this->data['Omb']['url']);
+				$serviceId = $this->OmbService->getServiceId($endPoint->getPostNoticeUrl(), $endPoint->getUpdateProfileUrl());
 
 				if (!$serviceId) {
-					$serviceId = $this->OmbService->add($postNoticeUrl, $updateProfileUrl);
+					$serviceId = $this->OmbService->add($endPoint->getPostNoticeUrl(), $endPoint->getUpdateProfileUrl());
 				}
 
-				$requestToken = $this->OmbConsumer->getRequestToken($requestTokenUrl, $localId);
+				$requestToken = $this->OmbConsumer->getRequestToken($endPoint->getRequestTokenUrl(), $endPoint->getLocalId());
 				
 				$this->Session->write('omb.requestToken', $requestToken);
-				$this->Session->write('omb.accessTokenUrl', $accessTokenUrl);
+				$this->Session->write('omb.accessTokenUrl', $endPoint->getAccessTokenUrl());
 				$this->Session->write('omb.serviceId', $serviceId);
 				
 				$identity = $this->getIdentity($username);
-				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($authorizeUrl, $localId, $requestToken, $identity));
-
+				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $endPoint->getLocalId(), $requestToken, $identity));
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}
