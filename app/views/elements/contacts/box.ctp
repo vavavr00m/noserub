@@ -34,8 +34,7 @@
             ?>
             <a href="http://<?php echo $item['username']; ?>" rel="<?php echo $rel; ?>">
                 <?php if($item['photo']) {
-                    if(strpos($item['photo'], 'http://') === 0 ||
-                       strpos($item['photo'], 'https://') === 0) {
+                    if (UrlUtil::startsWithHttpOrHttps($item['photo'])) {
                         # contains a complete path, eg. from not local identities
                         $contact_photo = $item['photo'];
                     } else {

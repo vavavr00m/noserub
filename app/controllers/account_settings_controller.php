@@ -97,7 +97,7 @@ class AccountSettingsController extends AppController {
             $this->ensureSecurityToken();
             
             $redirect_url = $this->data['Identity']['redirect_url'];
-            App::import('Vendor', 'UrlUtil');
+
             if($redirect_url && !UrlUtil::startsWithHttpOrHttps($redirect_url)) {
                 $redirect_url = 'http://' . $redirect_url;
             }
