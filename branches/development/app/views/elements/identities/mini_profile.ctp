@@ -5,8 +5,7 @@ if(isset($data['Identity'])) {
 $noserub_url = 'http://' . $data['username'];
 
 if($data['photo']) {
-    if(strpos($data['photo'], 'http://') === 0 ||
-       strpos($data['photo'], 'https://') === 0) {
+    if(UrlUtil::startsWithHttpOrHttps($data['photo'])) {
            # contains a complete path, eg. from not local identities
            $profile_photo = $data['photo'];
        } else {

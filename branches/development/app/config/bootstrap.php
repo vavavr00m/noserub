@@ -101,3 +101,11 @@ function sort_accounts($a, $b) {
     $b_val = $b['Service']['id'] == 8 ? $b_title : $b['Service']['name'];
     return strtolower($a_val) > strtolower($b_val);
 }
+
+class AutoLoader {
+	public static function load($className) {
+		App::import('Vendor', $className);
+	}
+}
+
+spl_autoload_register(array('AutoLoader', 'load'));

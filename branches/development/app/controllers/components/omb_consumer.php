@@ -82,8 +82,6 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function discover($url) {
-		App::import('Vendor', 'UrlUtil');
-		
 		if (!UrlUtil::startsWithHttpOrHttps($url)) {
 			$url = 'http://' . $url;
 		}
