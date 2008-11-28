@@ -82,6 +82,12 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function discover($url) {
+		App::import('Vendor', 'UrlUtil');
+		
+		if (!UrlUtil::startsWithHttpOrHttps($url)) {
+			$url = 'http://' . $url;
+		}
+		
 		$xrds = $this->discoverXRDS($url);
 		$yadisServices = $xrds->services(array(array($this, 'filterServices')));
 		

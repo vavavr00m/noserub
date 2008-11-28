@@ -34,13 +34,6 @@ class UrlComponentTestCase extends CakeTestCase {
 	    $this->assertEqual($expected, $this->component->http($url));
 	}
 	
-	public function testStartsWithHttpOrHttps() {
-		$this->assertIdentical(true, $this->component->startsWithHttpOrHttps('http://example.com'));
-		$this->assertIdentical(true, $this->component->startsWithHttpOrHttps('https://example.com'));
-		$this->assertIdentical(false, $this->component->startsWithHttpOrHttps('example.com'));
-		$this->assertIdentical(false, $this->component->startsWithHttpOrHttps('example.com?url=http://example.net'));
-	}
-	
 	public function tearDown() {
 	    unset($this->component);
 	}
