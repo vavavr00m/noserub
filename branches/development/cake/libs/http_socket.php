@@ -24,7 +24,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', array('Socket', 'Set', 'Router'));
+App::import('Core', array('Set', 'Router'));
+// XXX workaround to avoid "cannot redeclare class" error while running the tests, 
+// issue should be fixed in next cake release 
+require_once('socket.php');
 
 /**
  * Cake network socket connection class.
