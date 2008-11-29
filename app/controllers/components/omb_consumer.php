@@ -14,7 +14,7 @@ App::import('Vendor', 'OmbConstants');
 App::import('Vendor', 'OauthConstants');
 
 class OmbConsumerComponent extends Object {
-	public $components = array('OauthConsumer', 'Session');
+	public $components = array('OmbOauthConsumer', 'Session');
 	private $controller = null;
 	private $services = null;
 	
@@ -132,11 +132,11 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function getAccessToken($accessTokenUrl, $requestToken) {
-		return $this->OauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
+		return $this->OmbOauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
 	}
 	
 	public function getRequestToken($requestTokenUrl, $localId) {
-		return $this->OauthConsumer->getRequestToken('GenericOmb', 
+		return $this->OmbOauthConsumer->getRequestToken('GenericOmb', 
 													 $requestTokenUrl, 
 													 'POST', 
 													 array('omb_version' => OmbConstants::VERSION, 
@@ -144,7 +144,7 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
-		$data = $this->OauthConsumer->post('GenericOmb', 
+		$data = $this->OmbOauthConsumer->post('GenericOmb', 
 										   $tokenKey, 
 										   $tokenSecret, 
 										   $url, 
