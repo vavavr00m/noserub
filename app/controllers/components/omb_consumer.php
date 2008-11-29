@@ -60,8 +60,7 @@ class OmbConsumerComponent extends Object {
 								   'omb_listenee_fullname' => $identity['Identity']['name'],
 								   'omb_listenee_bio' => $identity['Identity']['about'],
 								   'omb_listenee_location' => $identity['Identity']['address_shown'],
-								   // XXX deactivated because we don't have an 96x96 avatar yet
-								   // 'omb_listenee_avatar' => $identity['Identity']['photo']
+								   'omb_listenee_avatar' => Configure::read('NoseRub.full_base_url').'static/avatars/'.$identity['Identity']['photo'].'-medium.jpg'
 		);
 		
 		foreach ($optionalOmbParams as $k => $v) {
