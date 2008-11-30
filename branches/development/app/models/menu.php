@@ -154,7 +154,6 @@ class MenuFactory {
 		$menuItems[] = new MenuItem(__('Feeds', true), $link . 'feeds/', $controller == 'Syndications');
 		$menuItems[] = new MenuItem(__('OpenID', true), $link . 'openid/', $controller == 'OpenidSites');
 		$menuItems[] = new MenuItem(__('OAuth', true), $link . 'oauth/', $controller == 'OauthConsumers');
-		$menuItems[] = new MenuItem(__('OMB', true), $link . 'omb/', $controller == 'Omb');
 		
 		if (!$isOpenIDUser) {
 			$menuItems[] = new MenuItem(__('Password & API', true), $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
@@ -182,7 +181,7 @@ class MenuFactory {
 	}
 	
 	private function showSettingsSubMenu($controller, $action) {
-		$controllers = array('AccountSettings', 'Accounts', 'Locations', 'OauthConsumers', 'Omb', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Accounts', 'Locations', 'OauthConsumers', 'OpenidSites', 'Syndications');
 		
 		if (in_array($controller, $controllers)) {
 			return true;
@@ -329,7 +328,7 @@ class SettingsMenuItem extends MenuItem {
 	}
 	
 	public function isActive() {
-		$controllers = array('AccountSettings', 'Locations', 'Accounts', 'OauthConsumers', 'Omb', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Locations', 'Accounts', 'OauthConsumers', 'OpenidSites', 'Syndications');
 		
 		if(in_array($this->controller, $controllers)) {
 			return true;
