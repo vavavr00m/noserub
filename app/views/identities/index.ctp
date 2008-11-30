@@ -99,7 +99,7 @@
                     ?>
                 <?php } ?>
                 <?php if (!$menu['logged_in']) { ?>
-                	<li class="addcontact icon"><?php echo $html->link('Subscribe', '/'.$data['Identity']['local_username'].'/subscribe'); ?></li>
+<?php /* commented out for release, as it doesn't fully work yet ?>                	<li class="addcontact icon"><?php echo $html->link('Subscribe', '/'.$data['Identity']['local_username'].'/subscribe'); ?></li> */ ?>
                 <?php } ?>
         	</ul>
         </div>
