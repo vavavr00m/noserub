@@ -154,6 +154,10 @@ class OmbConsumerComponent extends Object {
 		return $data;
 	}
 	
+	public function updateProfile() {
+		// TODO implement this method
+	}
+	
 	private function discoverXRDS($url) {
 		$fetcher = Auth_Yadis_Yadis::getHTTPFetcher();
 		$yadis = Auth_Yadis_Yadis::discover($url, $fetcher);
