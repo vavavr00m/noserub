@@ -7,6 +7,7 @@
             <li class="first">
                 <?php echo sprintf(__('You are logged in as <strong>%s</strong>', true), $session->read('Identity.local_username')); ?>
             </li>
+            <li><?php echo $this->element('languages'); ?></li>
             <li>
                 <?php if(strpos($action, '_settings') > 0 ||
                          $action == 'Accounts.index' ||
@@ -29,6 +30,7 @@
             </li>
             <li><?php echo $html->link(__('Logout', true), '/pages/logout/' . $security_token . '/');?></li>
         <?php } else { ?>
+            <li><?php echo $this->element('languages'); ?></li>
             <li>
                 <?php if($this->name == 'Searches') {
                     __('Search');

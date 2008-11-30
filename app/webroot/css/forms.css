@@ -59,6 +59,15 @@ span {
 	padding-right: 10px;
 }
 
+div.submit.inline {
+    display: inline;
+    padding: 10px;
+}
+
+form.inline {
+    display: inline;
+}
+
 .submit {
 	padding-top: 10px;
 }
