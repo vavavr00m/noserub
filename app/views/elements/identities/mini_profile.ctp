@@ -1,4 +1,7 @@
 <?php
+
+App::import('Vendor', 'UrlUtil');
+
 if(isset($data['Identity'])) {
     $data = $data['Identity'];
 }
