@@ -536,6 +536,8 @@ class IdentitiesController extends AppController {
     		}
     		
     		if($identity) {
+    		    $this->Session->write('Config.language', $identity['Identity']['language']);
+    		    
                 $this->Session->write('Identity', $identity['Identity']);
                 if ($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth');
@@ -777,22 +779,31 @@ class IdentitiesController extends AppController {
      * todo: when the user is logged in, selected language should be saved
      *       to the database
      */
-    public function switch_language($language) {
+    public function switch_language() {
+        $language = $this->data['Config']['language'];
         $languages = Configure::read('Languages');
-        if(!array_key_exists($language, $languages)) {
-            $this->flashMessage('alert', __('Language not available!', true));
-            $this->redirect($this->referer());
-        } else {
-            $this->Session->write('Config.language', $language);
-            # now set the language
-            $this->L10n->get($language);
+        if(!isset($languages[$language])) {
+            $language = 'en-en';
+        } 
+        
+        $this->Session->write('Config.language', $language);
+        # now set the language
+        $this->L10n->get($language);
 
-            setlocale(LC_ALL, 
-                substr($this->L10n->locale, 0, 3) .
-                strtoupper(substr($this->L10n->locale, 3, 2)) . 
-                '.' . $this->L10n->charset
-            );
+        setlocale(LC_ALL, 
+            substr($this->L10n->locale, 0, 3) .
+            strtoupper(substr($this->L10n->locale, 3, 2)) . 
+            '.' . $this->L10n->charset
+        );
+        
+        $session_identity = $this->Session->read('Identity');
+        if($session_identity) {
+            # user is logged in, so save it to the db
+            $this->Identity->id = $session_identity['id'];
+            $this->Identity->saveField('language', $language);
+            $this->Session->write('Identity.language', $language);
         }
+        
         $this->redirect($this->referer());
     }
     

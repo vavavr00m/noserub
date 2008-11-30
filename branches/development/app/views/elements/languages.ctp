@@ -1,13 +1,10 @@
 <?php
 
-echo __('Also available in', true) . ': '; 
+echo $form->create('Identity', array('url' => '/pages/switch/language/', 'class' => 'inline'));
+echo __('Language', true) . ': '; 
 
-$i = 0;
 $languages = Configure::read('Languages');
-foreach($languages as $key => $value) {
-    if($i > 0) {
-        echo ' - ';
-    }
-    echo $html->link($value, '/pages/switch/language/' . $key . '/', array('rel' => 'nofollow'));
-    $i++;
-}
+$session_language = $session->read('Config.language');
+echo $form->select('Config.language', $languages, $session_language, array(), false);
+
+echo $form->end(array('label' => __('OK', true), 'div' => array('class' => 'submit inline')));

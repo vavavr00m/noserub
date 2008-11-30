@@ -72,7 +72,7 @@ define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
 
 Configure::write('Languages', array(
     'de-de' => 'Deutsch',
-    'en-us' => 'English',
+    'en-en' => 'English',
     'fr-fr' => 'Français',
     #'es-es' => 'Español',
     'tr'    => 'Turkish'
