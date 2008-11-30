@@ -1,3 +1,4 @@
+<?php App::import('Vendor', 'UrlUtil'); ?>
 <?php if (isset($manage) && $manage && $session->check('Identity')): ?>
 <span class="more"><?php echo $html->link(__('manage', true), '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
 <?php endif; ?>
