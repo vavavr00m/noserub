@@ -26,6 +26,8 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $identity = $this->Identity->findByUsername($username);
 
+        App::import('Vendor', 'UrlUtil');
+        
         if(UrlUtil::startsWithHttpOrHttps($identity['Identity']['redirect_url'])) {
             # there is a redirect set
             if($identity['Identity']['id'] != $session_identity['id']) {
