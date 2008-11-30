@@ -133,14 +133,14 @@ class MenuFactoryTest extends CakeTestCase {
 	
 	public function testGetSettingsSubMenu() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
-		$this->assertEqual(11, count($subMenu->getMenuItems()));
+		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
 	}
 	
 	public function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
-		$this->assertEqual(11, count($subMenu->getMenuItems()));
+		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
 		$this->assertSettingsSubMenu($subMenu, true, 'testuser', $settingState);		
 	}
@@ -234,7 +234,6 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[$i++], __('Feeds', true), $link . 'feeds/', $settingState->isFeedsActive());
 		$this->assertMenuItem($menuItems[$i++], __('OpenID', true), $link . 'openid/', $settingState->isOpenIDActive());
 		$this->assertMenuItem($menuItems[$i++], __('OAuth', true), $link . 'oauth/', $settingState->isOAuthActive());
-		$this->assertMenuItem($menuItems[$i++], __('OMB', true), $link . 'omb/', $settingState->isOMBActive());
 		if ($isMenuForOpenIDUser) {
 			$this->assertMenuItem($menuItems[$i++], __('API', true), $link . 'password/', $settingState->isPasswordActive());
 		} else {
@@ -340,10 +339,6 @@ class SettingState {
 	public function isOAuthActive() {
 		return ($this->activeItem == 'OAuth');
 	}
-	
-	public function isOMBActive() {
-		return ($this->activeItem == 'OMB');
-	}
 }
 
 class MenuitemTest extends CakeTestCase {
@@ -429,7 +424,7 @@ class RegisterMenuItemTest extends CakeTestCase {
 
 class SettingsMenuItemTest extends CakeTestCase {
 	public function testCreateActivatedSettingsMenuItem() {
-		$controllers = array('AccountSettings', 'Accounts', 'Omb', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
 			$menuItem = new SettingsMenuItem($controller, '', 'testuser');
