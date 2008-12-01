@@ -22,9 +22,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	
 	# splitUsername($username)
 	public function testSplitUsernameLocal() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+		$server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -38,9 +36,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameLocalExtended() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+		$server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -54,9 +50,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameLocalNamespace() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+		$server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/poolie@dirk.olbertz',
 	                      'local_username'  => 'poolie@dirk.olbertz',
@@ -94,9 +88,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameWithHttp() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+	    $server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -110,9 +102,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameWithHttps() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+		$server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -126,9 +116,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameWithWww() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+	    $server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -142,9 +130,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameWithHttpAndWww() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+		$server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -158,9 +144,7 @@ class IdentityModelTestCase extends CakeTestCase {
 	}
 	
 	public function testSplitUsernameWithHttpsAndWww() {
-	    $server_base = str_replace('http://', '', FULL_BASE_URL . Router::url('/'));
-	    $server_base = str_replace('https://', '', $server_base);
-	    $server_base = trim($server_base, '/');
+	    $server_base = $this->getServerBase();
 	    
 	    $expected = array('username'        => $server_base . '/dirk.olbertz',
 	                      'local_username'  => 'dirk.olbertz',
@@ -240,5 +224,13 @@ class IdentityModelTestCase extends CakeTestCase {
 	
 	public function tearDown() {
 	    unset($this->model);
+	}
+	
+	private function getServerBase() {
+		App::import('Vendor', 'UrlUtil');
+		$server_base = UrlUtil::removeHttpAndHttps(FULL_BASE_URL . Router::url('/'));
+	    $server_base = trim($server_base, '/');
+	    
+	    return $server_base;
 	}
 }

@@ -44,11 +44,7 @@ class Identity extends AppModel {
     }
     
     /**
-     * validate, if the username is already taken
-     *
-     * @param  
-     * @return 
-     * @access 
+     * validate, if the username is already taken 
      */
     public function validateUniqueUsername($value, $params = array()) {
         $value = strtolower($value['username']);
@@ -115,10 +111,6 @@ class Identity extends AppModel {
     /**
      * Is used, when an account is closed, so that the username
      * remains, but every other personal data is deleted.
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function block($identity_id = null) {
         if($identity_id === null) {
@@ -483,10 +475,6 @@ class Identity extends AppModel {
      * There, the @ is not allowed, so I want to sanitize
      * them, before giving them to the user as selection
      * for using as a real contact username.
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function sanitizeUsername($username) {
         $username = str_replace('ä', 'ae', $username);
@@ -506,8 +494,8 @@ class Identity extends AppModel {
      * removes http://, https:// and www. from url
      */
     public function removeHttpWww($url) {
-        $url = str_ireplace('http://', '', $url);
-        $url = str_ireplace('https://', '', $url);
+    	App::import('Vendor', 'UrlUtil');
+    	$url = UrlUtil::removeHttpAndHttps($url);
         if(stripos($url, 'www.') === 0) {
             $url = substr($url, 4);
         }
@@ -522,10 +510,6 @@ class Identity extends AppModel {
      * (3) poolie@dirk.olbertz (this is a private, local one)
      * (4) noserub.com/poolie@dirk.olbertz (a private, local one)
      * (5) (1) and (4) with http:// or https://
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
@@ -577,10 +561,6 @@ class Identity extends AppModel {
     
     /**
      * Updates the security token for given $identity_id
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function updateSecurityToken($identity_id) {
         if($identity_id) {
@@ -596,15 +576,11 @@ class Identity extends AppModel {
     
     /**
      * sync that identity with data from username (url)
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function sync($identity_id, $username) {
         $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
         # get the data from the remote server. try http:// and
-        # http2://
+        # https://
         $protocols = array('http://', 'https://');
         foreach($protocols as $protocol) {
             $data = $this->parseNoseRubPage($protocol . $username);
