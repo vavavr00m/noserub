@@ -23,28 +23,14 @@ class IdentityModelTestCase extends CakeTestCase {
 	# splitUsername($username)
 	public function testSplitUsernameLocal() {
 		$server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function testSplitUsernameLocalExtended() {
 		$server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername($server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
@@ -89,76 +75,50 @@ class IdentityModelTestCase extends CakeTestCase {
 	
 	public function testSplitUsernameWithHttp() {
 	    $server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('http://' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function testSplitUsernameWithHttps() {
 		$server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('https://' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function testSplitUsernameWithWww() {
 	    $server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function testSplitUsernameWithHttpAndWww() {
 		$server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('http://www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function testSplitUsernameWithHttpsAndWww() {
 	    $server_base = $this->getServerBase();
-	    
-	    $expected = array('username'        => $server_base . '/dirk.olbertz',
-	                      'local_username'  => 'dirk.olbertz',
-	                      'single_username' => 'dirk.olbertz',
-	                      'namespace'       => '',
-	                      'servername'      => $server_base,
-	                      'local'           => 1);
-	                      
+	    $expected = $this->getDirksLocalUsername($server_base);
 	    $result = $this->model->splitUsername('https://www.' . $server_base . '/dirk.olbertz');
 	    $this->assertEqual($expected, $result);
 	}
 	
 	public function tearDown() {
 	    unset($this->model);
+	}
+	
+	private function getDirksLocalUsername($server_base) {
+		return array('username'        => $server_base . '/dirk.olbertz',
+	                 'local_username'  => 'dirk.olbertz',
+	                 'single_username' => 'dirk.olbertz',
+	                 'namespace'       => '',
+	                 'servername'      => $server_base,
+	                 'local'           => 1);
 	}
 	
 	private function getServerBase() {
