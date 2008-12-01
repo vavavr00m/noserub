@@ -175,65 +175,65 @@ class IdentityModelTestCase extends CakeTestCase {
 	
 	# sanitizeUsername($username)
 	
-	public function testSanitizeUsername() {
+	public function testSanitizeUsernameWithAtSign() {
 	    $username = 'test@bc';
 	    $expected = 'testbc';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername2() {
+	public function testSanitizeUsernameWithHyphen() {
 	    $username = 'test-bc';
 	    $expected = 'test-bc';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername3() {
+	public function testSanitizeUsernameWithUnderscore() {
 	    $username = 'te_stbc';
 	    $expected = 'te_stbc';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername4() {
+	public function testSanitizeUsernameWithDigits() {
 	    $username = 'test34bc';
 	    $expected = 'test34bc';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername5() {
+	public function testSanitizeUsernameWithDot() {
 	    $username = 'test.bc';
 	    $expected = 'test.bc';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername6() {
+	public function testSanitizeUsernameWithExclamationMark() {
 	    $username = 'te!c';
 	    $expected = 'tec';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername7() {
+	public function testSanitizeUsernameWithUmlaut() {
 	    $username = 'Pötter';
 	    $expected = 'Poetter';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername8() {
+	public function testSanitizeUsernameWithUmlauts() {
 	    $username = 'äöüßÄÖÜ';
 	    $expected = 'aeoeuessAeOeUe';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
 	
-	public function testSanitizeUsername9() {
-	    $username = 'kein leerzeichen erlaubt';
-	    $expected = 'kein-leerzeichen-erlaubt';
+	public function testSanitizeUsernameWithSpaces() {
+	    $username = 'no spaces allowed';
+	    $expected = 'no-spaces-allowed';
 	    $result = $this->model->sanitizeUsername($username);
 	    $this->assertEqual($expected, $result);
 	}
@@ -242,4 +242,3 @@ class IdentityModelTestCase extends CakeTestCase {
 	    unset($this->model);
 	}
 }
-?>
