@@ -43,7 +43,7 @@ class OmbSubscriptionsController extends AppController {
 	}
 	
 	public function subscribe() {
-		$username = isset($this->params['username']) ? $this->params['username'] : '';
+		$username = $this->getUsernameOrRedirect();
 		$this->set('headline', __('Subscribe to ', true) . $username);
 		
 		if ($this->data) {
@@ -75,5 +75,16 @@ class OmbSubscriptionsController extends AppController {
 		$identity = $this->Identity->findByUsername($splitted['username']);
 		
         return $identity;
+	}
+	
+	private function getUsernameOrRedirect() {
+		App::import('Vendor', 'UsernameUtil');
+		$username = isset($this->params['username']) ? $this->params['username'] : '';
+		
+		if ($username === '' || UsernameUtil::isReservedUsername($username)) {
+			$this->redirect('/');
+		}
+		
+		return $username;
 	}
 }

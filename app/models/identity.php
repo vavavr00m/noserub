@@ -47,9 +47,10 @@ class Identity extends AppModel {
      * validate, if the username is already taken 
      */
     public function validateUniqueUsername($value, $params = array()) {
-        $value = strtolower($value['username']);
+        App::import('Vendor', 'UsernameUtil');
+    	$value = strtolower($value['username']);
         $split_username = $this->splitUsername($value);
-        if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
+        if(UsernameUtil::isReservedUsername($split_username['username'])) {
             return false;
         }
 
