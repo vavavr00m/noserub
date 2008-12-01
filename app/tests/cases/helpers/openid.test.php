@@ -64,8 +64,12 @@ class OpenidHelperTest extends CakeTestCase {
 		// required because of https://trac.cakephp.org/ticket/3241
 		ClassRegistry::removeObject('view');
 		
-		App::import('Model', 'Menu');
 		$view = new View(new AppController());
+		
+		require_once(TESTS.'util'.DS.'helper_factory.php');
+		$view->set('form', HelperFactory::createFormHelper());
+		
+		App::import('Model', 'Menu');
         $view->set('mainMenu', new Menu(array()));
         $view->set('subMenu', new Menu(array()));
 		$view->set('menu', array('main' => '',
