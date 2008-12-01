@@ -26,8 +26,8 @@ class AuthController extends AppController {
 				if ($this->Session->check('Identity')) {
 					$identity = $this->Session->read('Identity');
 					
-					$requestIdentity = str_replace('https://', '', $request->identity);
-					$requestIdentity = str_replace('http://', '', $requestIdentity);
+					App::import('Vendor', 'UrlUtil');
+					$requestIdentity = UrlUtil::removeHttpAndHttps($request->identity);
 					$requestIdentity = rtrim($requestIdentity, '/');
 					
 					if ($identity['username'] == $requestIdentity) {

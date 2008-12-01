@@ -21,7 +21,8 @@ class Service extends AppModel {
     		return false;
     	}
     	
-    	$url = $this->removeHttpProtocol($url);
+    	App::import('Vendor', 'UrlUtil');
+    	$url = UrlUtil::removeHttpAndHttps($url);
     	$services = $this->getAllServices();
 
     	foreach($services as $service) {
@@ -38,9 +39,7 @@ class Service extends AppModel {
     /**
      * Used by Identity::parseNoseRubPage()
      *
-     * @param  
-     * @return array with feed_url, service_id and service_type_id
-     * @access 
+     * @return array with feed_url, service_id and service_type_id 
      */
     public function getInfo($service_url, $username) {
         # get service
@@ -195,10 +194,6 @@ class Service extends AppModel {
     
     /**
      * get service_type_id, feed_url and preview
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function getInfoFromService($username, $service_id, $account_username) {
         $this->contain();
@@ -296,13 +291,6 @@ class Service extends AppModel {
     	}
     	
     	return $this->createService($service_id, $service['Service']['internal_name']);
-    }
-    
-    private function removeHttpProtocol($url) {
-    	$url = str_ireplace('http://', '', $url);
-    	$url = str_ireplace('https://', '', $url);
-    	
-    	return $url;
     }
 }
 
