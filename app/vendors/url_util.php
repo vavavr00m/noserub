@@ -10,11 +10,25 @@ class UrlUtil {
 		return $url;
 	}
 	
+	public static function removeHttpAndHttps($url) {
+		if (UrlUtil::startsWithHttp($url)) {
+			$url = substr($url, strlen('http://'));
+		} elseif (UrlUtil::startsWithHttps($url)) {
+			$url = substr($url, strlen('https://'));
+		}
+		
+		return $url;
+	}
+	
+	public static function startsWithHttp($url) {
+		return (stripos($url, 'http://') === 0);
+	}
+	
 	public static function startsWithHttpOrHttps($url) {
-    	if (stripos($url, 'http://') === 0 || stripos($url, 'https://') === 0) {
-    		return true;
-    	}
-    	
-    	return false;
+    	return (UrlUtil::startsWithHttp($url) || UrlUtil::startsWithHttps($url));
+    }
+    
+    public static function startsWithHttps($url) {
+    	return (stripos($url, 'https://') === 0);
     }
 }
