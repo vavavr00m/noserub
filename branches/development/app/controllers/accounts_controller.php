@@ -301,7 +301,8 @@ class AccountsController extends AppController {
                     # an account to an existing one
                     if($item['action'] == 1) {
                         # first check, if the new identity is already there
-                        $new_identity_username = $this->Account->Identity->sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];
+                        App::import('Vendor', 'UsernameUtil');
+                        $new_identity_username = UsernameUtil::sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];
                         $new_splitted = $this->Account->Identity->splitUsername($new_identity_username);
                         
                         $identity = $this->getIdentity($new_splitted['username']);
