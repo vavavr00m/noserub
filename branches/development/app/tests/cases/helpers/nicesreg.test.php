@@ -12,11 +12,9 @@ class NiceSRegTest extends CakeTestCase {
 		ClassRegistry::removeObject('view');
 		new View(new AppController());
 		
+		require_once(TESTS.'util'.DS.'helper_factory.php');
 		$this->helper = new NiceSRegHelper();
-		App::import('Helper', 'Html');
-		App::import('Helper', 'Form');			
-		$this->helper->Form = new FormHelper();
-		$this->helper->Form->Html = new HtmlHelper();
+		$this->helper->Form = HelperFactory::createFormHelper();
 	}
 
 	public function testCheckboxForSupportedFields() {
