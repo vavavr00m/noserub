@@ -1,5 +1,6 @@
 <?php
 App::import('Component', 'OauthConsumer');
+App::import('Vendor', 'OmbConstants');
 
 class OmbOauthConsumerComponent extends OauthConsumerComponent {
 	protected function createOauthToken($response) {
