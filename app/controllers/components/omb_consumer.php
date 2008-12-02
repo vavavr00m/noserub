@@ -28,18 +28,7 @@ class OmbConsumerComponent extends Object {
 	}
 	
 	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbParams $ombParams) {
-		$isLaconica = false;
-
-		// laconica uses urls like http://example.com/index.php?action=userauthorization 
-		// which the OAuth library doesn't like, so we simply remove the querystring
-		if (strpos($authorizeUrl, '?')) {
-			$authUrl = explode('?', $authorizeUrl);
-			$authUrl = $authUrl[0];
-			$isLaconica = true;
-		} else {
-			$authUrl = $authorizeUrl;
-		}
-		
+		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
 
@@ -50,7 +39,8 @@ class OmbConsumerComponent extends Object {
 
 		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
 		
-		if ($isLaconica) {
+		if ($this->isLaconica($authorizeUrl)) {
+			// adding querystring param we removed above
 			$request->set_parameter('action', 'userauthorization');
 		}
 		
@@ -179,6 +169,27 @@ class OmbConsumerComponent extends Object {
 				return new Auth_Yadis_XRDS($parser, $node);
 			}
 		}
+	}
+	
+	private function isLaconica($authorizeUrl) {
+		if (strpos($authorizeUrl, '?') === false) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// laconica uses urls like http://example.com/index.php?action=userauthorization 
+	// which the OAuth library doesn't like, so we have to remove the querystring
+	private function removeQueryStringIfLaconica($authorizeUrl) {
+		if ($this->isLaconica($authorizeUrl)) {
+			$authUrl = explode('?', $authorizeUrl);
+			$authUrl = $authUrl[0];
+		} else {
+			$authUrl = $authorizeUrl;
+		}
+		
+		return $authUrl;
 	}
 }
 
