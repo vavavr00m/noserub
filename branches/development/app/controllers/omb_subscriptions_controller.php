@@ -62,7 +62,8 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->write('omb.serviceId', $serviceId);
 				
 				$identity = $this->getIdentity($username);
-				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $endPoint->getLocalId(), $requestToken, $identity));
+				$ombParams = new OmbParams($endPoint->getLocalId(), $identity);
+				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $requestToken, $ombParams));
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}

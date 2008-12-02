@@ -10,8 +10,7 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', 'OmbConstants');
-App::import('Vendor', 'OauthConstants');
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParamKeys'));
 
 class OmbConsumerComponent extends Object {
 	public $components = array('OmbOauthConsumer', 'Session');
@@ -28,7 +27,7 @@ class OmbConsumerComponent extends Object {
 						  		OmbConstants::UPDATE_PROFILE);
 	}
 	
-	public function constructAuthorizeUrl($authorizeUrl, $localId, $requestToken, $identity) {
+	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbParams $ombParams) {
 		$isLaconica = false;
 
 		// laconica uses urls like http://example.com/index.php?action=userauthorization 
@@ -43,33 +42,13 @@ class OmbConsumerComponent extends Object {
 		
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
-		
-		$mandatoryOmbParams = array('omb_version' => OmbConstants::VERSION, 
-									'omb_listener' => $localId, 
-									'omb_listenee' => Configure::read('NoseRub.full_base_url'), 
-									'omb_listenee_profile' => 'http://'.$identity['Identity']['username'], 
-									'omb_listenee_nickname' => $identity['Identity']['local_username'], 
-									'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/'   
-		);
-		
-		foreach ($mandatoryOmbParams as $k => $v) {
-			$request->set_parameter($k, $v);
+
+		$params = $ombParams->getAsArray();
+		foreach ($params as $key => $value) {
+			$request->set_parameter($key, $value);
 		}
-		
-		$optionalOmbParams = array('omb_listenee_homepage' => '', // empty because we don't know the user's homepage in NoseRub 
-								   'omb_listenee_fullname' => $identity['Identity']['name'],
-								   'omb_listenee_bio' => $identity['Identity']['about'],
-								   'omb_listenee_location' => $identity['Identity']['address_shown'],
-								   'omb_listenee_avatar' => Configure::read('NoseRub.full_base_url').'static/avatars/'.$identity['Identity']['photo'].'-medium.jpg'
-		);
-		
-		foreach ($optionalOmbParams as $k => $v) {
-			if ($v != '') {
-				$request->set_parameter($k, $v);
-			}
-		}
-		
-		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $identity['Identity']['local_username'].'/callback');
+
+		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
 		
 		if ($isLaconica) {
 			$request->set_parameter('action', 'userauthorization');
@@ -207,7 +186,7 @@ class OmbEndPoint {
 	private $localId = null;
 	private $urls = null;
 	
-	public function __construct($localId, $urls) {
+	public function __construct($localId, array $urls) {
 		$this->localId = $localId;
 		$this->urls = $urls;		
 	}
@@ -234,5 +213,52 @@ class OmbEndPoint {
 	
 	public function getUpdateProfileUrl() {
 		return $this->urls[OmbConstants::UPDATE_PROFILE];
+	}
+}
+
+class OmbParams {
+	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
+	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
+	const MAX_FULLNAME_LENGTH = 255;
+	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
+	private $params = null;
+	
+	public function __construct($listener, array $listenee) {
+		$this->params = array(OmbParamKeys::VERSION => OmbConstants::VERSION,
+							  OmbParamKeys::LISTENER => $listener,
+							  OmbParamKeys::LISTENEE => Configure::read('NoseRub.full_base_url'),
+							  OmbParamKeys::LISTENEE_PROFILE => $this->getProfileUrl($listenee['Identity']['username']),
+							  OmbParamKeys::LISTENEE_NICKNAME => $listenee['Identity']['local_username'],
+							  OmbParamKeys::LISTENEE_LICENSE => self::CREATIVE_COMMONS_LICENSE,
+							  OmbParamKeys::LISTENEE_HOMEPAGE => $this->getProfileUrl($listenee['Identity']['username']),
+							  OmbParamKeys::LISTENEE_FULLNAME => $this->ensureMaxFullnameLength($listenee['Identity']['name']),
+							  OmbParamKeys::LISTENEE_BIO => $this->ensureMaxBioLength($listenee['Identity']['about']),
+							  OmbParamKeys::LISTENEE_LOCATION => $this->ensureMaxLocationLength($listenee['Identity']['address_shown']),
+							  OmbParamKeys::LISTENEE_AVATAR => $this->getPhotoUrl($listenee['Identity']['photo'])
+							  );
+	}
+	
+	public function getAsArray() {
+		return $this->params;
+	}
+	
+	private function ensureMaxBioLength($bio) {
+		return substr($bio, 0, self::MAX_BIO_LENGTH);
+	}
+	
+	private function ensureMaxFullnameLength($fullname) {
+		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
+	}
+	
+	private function ensureMaxLocationLength($location) {
+		return substr($location, 0, self::MAX_LOCATION_LENGTH);
+	}
+	
+	private function getPhotoUrl($photoName) {
+		return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
+	}
+	
+	private function getProfileUrl($username) {
+		return 'http://'.$username;
 	}
 }
