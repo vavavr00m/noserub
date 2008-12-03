@@ -1,7 +1,6 @@
 <?php
 
 class OpenidSitesController extends AppController {
-	public $helpers = array('form');
 	public $uses = array('OpenidSite');
 	
 	public function index() {

@@ -10,7 +10,7 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    public $helpers = array('javascript', 'html');
+    public $helpers = array('javascript', 'html', 'form');
     public $components = array('menu', 'Cookie');
     
     /**

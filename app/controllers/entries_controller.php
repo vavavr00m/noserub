@@ -1,7 +1,7 @@
 <?php
 class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
-    public $helpers = array('nicetime', 'flashmessage', 'form');
+    public $helpers = array('nicetime', 'flashmessage');
     
     /**
      * Display one entry - permalink for an entry

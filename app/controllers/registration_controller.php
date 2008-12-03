@@ -3,7 +3,6 @@
 class RegistrationController extends AppController {
 	public $uses = array('Identity');
 	public $components = array('openid', 'url');
-	public $helpers = array('form');
 	
 	public function register() {
 		$session_identity = $this->Session->read('Identity');

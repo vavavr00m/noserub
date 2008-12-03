@@ -5,7 +5,7 @@ App::import('Vendor', 'OauthConstants');
 
 class OmbSubscriptionsController extends AppController {
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
-	public $helpers = array('flashmessage', 'form');
+	public $helpers = array('flashmessage');
 	public $components = array('OmbConsumer');
 	
 	public function callback() {

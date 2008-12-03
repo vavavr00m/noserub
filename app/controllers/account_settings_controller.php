@@ -3,7 +3,7 @@
 class AccountSettingsController extends AppController {
 	public $uses = array('Identity');
 	public $components = array('url');
-	public $helpers = array('flashmessage', 'form');
+	public $helpers = array('flashmessage');
 	private $session_identity = null;
 	private $username = null;
 

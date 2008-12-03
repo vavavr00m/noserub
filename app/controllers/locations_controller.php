@@ -1,7 +1,7 @@
 <?php
 class LocationsController extends AppController {
     public $uses = array('Location');
-    public $helpers = array('form', 'flashmessage');
+    public $helpers = array('flashmessage');
     public $components = array('url', 'geocoder', 'api', 'OauthServiceProvider');
     
     public function index() {

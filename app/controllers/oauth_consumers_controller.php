@@ -2,7 +2,7 @@
 
 class OauthConsumersController extends AppController {
 	public $uses = array('Consumer');
-	public $helpers = array('flashmessage', 'form');
+	public $helpers = array('flashmessage');
 	private $session_identity = null;
 	
 	public function beforeFilter() {

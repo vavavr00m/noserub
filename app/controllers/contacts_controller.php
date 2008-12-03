@@ -3,7 +3,7 @@
  
 class ContactsController extends AppController {
     public $uses = array('Contact');
-    public $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
+    public $helpers = array('nicetime', 'flashmessage', 'xfn');
     public $components = array('cluster', 'api', 'OauthServiceProvider');
     
     public function index() {
