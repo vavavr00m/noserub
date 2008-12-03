@@ -6,7 +6,7 @@ class Auth_OpenID_CheckIDRequest {}
 
 class IdentitiesController extends AppController {
     public $uses = array('Identity');
-    public $helpers = array('form', 'openid', 'nicetime', 'flashmessage');
+    public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider');
     
     /**

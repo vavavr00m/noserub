@@ -2,7 +2,7 @@
  
 class SyndicationsController extends AppController {
     public $uses = array('Syndication');
-    public $helpers = array('form', 'html', 'nicetime', 'flashmessage');
+    public $helpers = array('nicetime', 'flashmessage');
     public $components = array('url', 'cdn', 'api', 'OauthServiceProvider');
     
     public function feed($url, $internal_call = false, $datetime_last_upload = '2007-01-01') {
