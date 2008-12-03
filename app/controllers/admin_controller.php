@@ -2,6 +2,7 @@
  
 class AdminController extends AppController {
     public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
+    public $helpers = array('form');
     
     public function beforeFilter() {
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
