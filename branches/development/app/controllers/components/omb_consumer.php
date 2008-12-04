@@ -27,12 +27,12 @@ class OmbConsumerComponent extends Object {
 						  		OmbConstants::UPDATE_PROFILE);
 	}
 	
-	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbParams $ombParams) {
+	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
 		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
 
-		$params = $ombParams->getAsArray();
+		$params = $ombAuthorizationParams->getAsArray();
 		foreach ($params as $key => $value) {
 			$request->set_parameter($key, $value);
 		}
@@ -227,7 +227,7 @@ class OmbEndPoint {
 	}
 }
 
-class OmbParams {
+class OmbAuthorizationParams {
 	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
 	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
 	const MAX_FULLNAME_LENGTH = 255;
