@@ -11,5 +11,12 @@ class OmbParamKeys {
 	const LISTENEE_NICKNAME = 'omb_listenee_nickname';
 	const LISTENEE_PROFILE = 'omb_listenee_profile';
 	const LISTENER = 'omb_listener';
+	const LISTENER_AVATAR = 'omb_listener_avatar';
+	const LISTENER_BIO = 'omb_listener_bio';
+	const LISTENER_FULLNAME = 'omb_listener_fullname';
+	const LISTENER_HOMEPAGE = 'omb_listener_homepage';
+	const LISTENER_LOCATION = 'omb_listener_location';
+	const LISTENER_NICKNAME = 'omb_listener_nickname';
+	const LISTENER_PROFILE = 'omb_listener_profile';
 	const VERSION = 'omb_version';
 }
