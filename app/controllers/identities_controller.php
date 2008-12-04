@@ -215,6 +215,9 @@ class IdentitiesController extends AppController {
         }
     }
     
+	/**
+     * Displays favorite items of a user 
+ 	 */
     public function favorites() {
         $this->checkUnsecure();
         
@@ -240,6 +243,34 @@ class IdentitiesController extends AppController {
         $this->set('headline', sprintf(__("%s's favorites", true), $username));
     }
     
+	/**
+	 * Displays comments of a user
+	 */
+	public function comments() {
+        $this->checkUnsecure();
+        
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
+        $username = $splitted['username'];
+
+        $this->Identity->contain();
+        $identity = $this->Identity->findByUsername($username);
+        
+        $conditions = array(
+            'commented_by' => $identity['Identity']['id']
+        );
+        
+        $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
+        
+        usort($items, 'sort_items');
+        $items = $this->cluster->removeDuplicates($items);        
+        $items = $this->cluster->create($items);
+
+        $this->set('items', $items);
+        $this->set('identity', $identity);
+        $this->set('headline', sprintf(__("%s's comments", true), $username));
+    }
+
     public function send_message() {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -1008,4 +1039,90 @@ class IdentitiesController extends AppController {
         $this->set('data', $data);
         $this->api->render();
     }
+
+	/**
+	 * return the last 100 favorites
+	 *
+	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
+	 */
+	public function api_favorites() {
+		# get last 100 favorites
+		$this->Identity->Entry->Favorite->contain();
+		$favorites = $this->Identity->Entry->Favorite->find(
+			'all',
+			array(
+				'fields' => 'Favorite.entry_id',
+				'order'  => 'Favorite.created DESC',
+				'limit'  => 100
+			)
+		);
+		$entry_ids = Set::extract($favorites, '{n}.Favorite.entry_id');
+		$conditions = array(
+			'entry_id' => $entry_ids
+		);
+		$items = $this->Identity->Entry->getForDisplay($conditions, 100, true);
+        
+        usort($items, 'sort_items');
+        $items = $this->cluster->removeDuplicates($items);
+
+		# clean up the data, so we only have the neccessary stuff
+		$data = array();
+		foreach($items as $item) {
+			foreach($item['FavoritedBy'] as $favorited_by) {
+				$data[] = array(
+					'uid'          => $item['Entry']['uid'],
+					'url'          => $item['Entry']['url'],
+					'favorited_by' => $favorited_by['Identity']['username'],
+					'favorited_on' => $favorited_by['created'] 
+				);
+			}
+		}
+
+		$this->set('data', $data);
+		$this->api->render();
+	}
+	
+	/**
+	 * return the last 100 comments
+	 *
+	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
+	 */
+	public function api_comments() {
+		# get last 100 comments
+		$this->Identity->Entry->Comment->contain('Entry', 'Identity');
+		$comments = $this->Identity->Entry->Comment->find(
+			'all',
+			array(
+				'order'  => 'Comment.published_on DESC',
+				'limit'  => 100
+			)
+		);
+		
+		# clean up the data, so we only have the neccessary stuff
+		$data = array();
+		foreach($comments as $comment) {
+			if($comment['Entry']['url']) {
+				$url = $comment['Entry']['url'];
+			} else {
+				$url = Router::url('/entry/' . $comment['Entry']['id'], true);
+			}
+			
+			if($comment['Entry']['uid']) {
+				$uid = $comment['Entry']['uid'];
+			} else {
+				$uid = md5($url);
+			}
+			
+			$data[] = array(
+				'uid'          => $uid,
+				'url'          => $url,
+				'commentd_by'  => $comment['Identity']['username'],
+				'commented_on' => $comment['Comment']['published_on'],
+				'comment'      => $comment['Comment']['content']
+			);
+		}
+
+		$this->set('data', $data);
+		$this->api->render();
+	}
 }

@@ -238,15 +238,16 @@ class AccountsController extends AppController {
                     
                     $this->Account->Entry->addNewService($identity_id, $data['service_id'], null);
                     
-                    if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
-                        # test, if we can find friends from this account
-                        $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
-                        if(!empty($contacts)) {
-                            $this->Session->write('Service.add.contacts', $contacts);
-                            $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/');
-                        }
-                    }
+					# todo: remove this functionality completly
+                    #if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
+                    #    # test, if we can find friends from this account
+                    #    $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
+                    #    if(!empty($contacts)) {
+                    #        $this->Session->write('Service.add.contacts', $contacts);
+                    #        $this->Session->write('Service.add.account_id', $this->Account->id);
+                    #        $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/');
+                    #    }
+                    #}
                     
                     $this->flashMessage('success', __('Account added.', true));
                 }
