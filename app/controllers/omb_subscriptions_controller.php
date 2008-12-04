@@ -9,7 +9,7 @@ class OmbSubscriptionsController extends AppController {
 	public $components = array('OmbConsumer');
 	
 	public function callback() {
-		$username = isset($this->params['username']) ? $this->params['username'] : '';
+		$username = $this->getUsernameOrRedirect();
 		
 		if (isset($this->params['url']['omb_version'])) {
 			if ($this->params['url']['omb_version'] == OmbConstants::VERSION) {
@@ -62,8 +62,8 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->write('omb.serviceId', $serviceId);
 				
 				$identity = $this->getIdentity($username);
-				$ombParams = new OmbParams($endPoint->getLocalId(), $identity);
-				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $requestToken, $ombParams));
+				$ombAuthorizationParams = new OmbAuthorizationParams($endPoint->getLocalId(), $identity);
+				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams));
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}

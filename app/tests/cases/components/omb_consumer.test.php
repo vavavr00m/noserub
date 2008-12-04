@@ -68,7 +68,7 @@ class OmbEndPointTest extends CakeTestCase {
 	}
 }
 
-class OmbParamsTest extends CakeTestCase {
+class OmbAuthorizationParamsTest extends CakeTestCase {
 	private $listener = 'http://example.com/user/12';
 	private $nickname = 'joe';
 	private $username = 'example.net/user/1';
@@ -78,13 +78,13 @@ class OmbParamsTest extends CakeTestCase {
 	private $photo = 'joe_example';
 	
 	public function testGetAsArray() {
-		$paramsArray = $this->getParamsArray();
+		$paramsArray = $this->getAuthorizationParamsArray();
 		$this->assertEqual(OmbConstants::VERSION, $paramsArray[OmbParamKeys::VERSION]);
 		$this->assertEqual($this->listener, $paramsArray[OmbParamKeys::LISTENER]);
 		$this->assertEqual(Configure::read('NoseRub.full_base_url'), $paramsArray[OmbParamKeys::LISTENEE]);
 		$this->assertEqual($this->nickname, $paramsArray[OmbParamKeys::LISTENEE_NICKNAME]);
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE_PROFILE]);
-		$this->assertEqual(OmbParams::CREATIVE_COMMONS_LICENSE, $paramsArray[OmbParamKeys::LISTENEE_LICENSE]);
+		$this->assertEqual(OmbAuthorizationParams::CREATIVE_COMMONS_LICENSE, $paramsArray[OmbParamKeys::LISTENEE_LICENSE]);
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE_HOMEPAGE]);
 		$this->assertEqual($this->fullname, $paramsArray[OmbParamKeys::LISTENEE_FULLNAME]);
 		$this->assertEqual($this->bio, $paramsArray[OmbParamKeys::LISTENEE_BIO]);
@@ -93,21 +93,27 @@ class OmbParamsTest extends CakeTestCase {
 	}
 	
 	public function testGetAsArrayWithTooLongBio() {
-		$this->bio = str_repeat('a', OmbParams::MAX_BIO_LENGTH + 1);
-		$paramsArray = $this->getParamsArray();
-		$this->assertEqual(OmbParams::MAX_BIO_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
+		$this->bio = str_repeat('a', OmbAuthorizationParams::MAX_BIO_LENGTH + 1);
+		$paramsArray = $this->getAuthorizationParamsArray();
+		$this->assertEqual(OmbAuthorizationParams::MAX_BIO_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
 	}
 	
 	public function testGetAsArrayWithTooLongFullname() {
-		$this->fullname = str_repeat('a', OmbParams::MAX_FULLNAME_LENGTH + 1);
-		$paramsArray = $this->getParamsArray();
-		$this->assertEqual(OmbParams::MAX_FULLNAME_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
+		$this->fullname = str_repeat('a', OmbAuthorizationParams::MAX_FULLNAME_LENGTH + 1);
+		$paramsArray = $this->getAuthorizationParamsArray();
+		$this->assertEqual(OmbAuthorizationParams::MAX_FULLNAME_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
 	}
 	
 	public function testGetAsArrayWithTooLongLocation() {
-		$this->location = str_repeat('a', OmbParams::MAX_LOCATION_LENGTH + 1);
-		$paramsArray = $this->getParamsArray();
-		$this->assertEqual(OmbParams::MAX_LOCATION_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_LOCATION]));
+		$this->location = str_repeat('a', OmbAuthorizationParams::MAX_LOCATION_LENGTH + 1);
+		$paramsArray = $this->getAuthorizationParamsArray();
+		$this->assertEqual(OmbAuthorizationParams::MAX_LOCATION_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_LOCATION]));
+	}
+	
+	private function getAuthorizationParamsArray() {
+		$params = new OmbAuthorizationParams($this->listener, $this->getListeneeData());
+		
+		return $params->getAsArray();
 	}
 	
 	private function getListeneeData() {
@@ -117,12 +123,6 @@ class OmbParamsTest extends CakeTestCase {
 										 'about' => $this->bio,
 										 'address_shown' => $this->location,
 										 'photo' => $this->photo));
-	}
-	
-	private function getParamsArray() {
-		$params = new OmbParams($this->listener, $this->getListeneeData());
-		
-		return $params->getAsArray();
 	}
 	
 	private function getPhotoUrl() {
