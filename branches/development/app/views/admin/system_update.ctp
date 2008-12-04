@@ -84,9 +84,9 @@
             <?php __('Configuration'); ?>: <strong><?php
                 switch($database_status) {
                     case -1:
-                        __('database.php in /app/config/ not found!', true); break;
+                        echo __('database.php in /app/config/ not found!', true); break;
                     case  0:
-                        __('Cannot connect to database!', true); break;
+                        echo __('Cannot connect to database!', true); break;
                 }
             ?></strong>
         </p>

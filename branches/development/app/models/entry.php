@@ -6,6 +6,7 @@ class Entry extends AppModel {
     
     public $hasMany = array(
         'Comment', 
+		'Favorite',
         'FavoritedBy' => array(
                 'className' => 'Favorite',
                 'joinTable' => 'favorites',
@@ -199,6 +200,9 @@ class Entry extends AppModel {
         if(isset($filter['identity_id'])) {
             $conditions['identity_id'] = $filter['identity_id'];
         }
+		if(isset($filter['entry_id'])) {
+            $conditions['Entry.id'] = $filter['entry_id'];
+        }
         if(isset($filter['search']) && $filter['search']) {
             $terms = split(' ', $filter['search']);
             $search_conditions = array();
@@ -228,7 +232,7 @@ class Entry extends AppModel {
                     'conditions' => array(
                         'FavoritedBy.identity_id' => $filter['favorited_by']
                     ),
-                    'order' => 'FavoritedBy.created',
+                    'order' => 'FavoritedBy.created DESC',
                     'limit' => $limit
                 )
             );
@@ -236,7 +240,24 @@ class Entry extends AppModel {
             $entry_ids = Set::extract($favorites, '{n}.FavoritedBy.entry_id');
             $conditions['Entry.id'] = $entry_ids;
         } 
-                
+        if(isset($filter['commented_by'])) {
+			# get last commented entry_ids
+			$this->Comment->contain();
+			$comments = $this->Comment->find(
+				'all',
+				array(
+					'conditions' => array(
+						'Comment.identity_id' => $filter['commented_by']
+					),
+					'order' => 'Comment.published_on',
+					'limit' => $limit
+				)
+			);
+			
+			$entry_ids = Set::extract($comments, '{n}.Comment.entry_id');
+			$conditions['Entry.id'] = $entry_ids;
+		}
+		
         $new_items = $this->Identity->Entry->find(
             'all',
             array(

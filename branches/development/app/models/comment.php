@@ -2,6 +2,6 @@
 /* SVN FILE: $Id:$ */
  
 class Comment extends AppModel {
-    public $belongsTo = array('Entry');                                                   
+    public $belongsTo = array('Entry', 'Identity');                                                   
 
 }
