@@ -143,6 +143,11 @@ class OmbAuthorizationResponseTest extends CakeTestCase {
 		$this->requiredParams = $this->getRequiredParams();
 	}
 	
+	public function testConstruct() {
+		$response = new OmbAuthorizationResponse($this->getRequiredParams());
+		$this->assertEqual($this->profileUrl, $response->getProfileUrl());
+	}
+	
 	public function testConstructWithEmptyArray() {
 		$this->assertInvalidArgumentException(array());
 	}
