@@ -21,5 +21,26 @@ class EntryTest extends CakeTestCase {
         
         $this->assertEqual($result, $text);
 	}
+	
+	public function testMicropublishMarkupLinks() {
+	    $text = 'This is a text with a link: http://noserub.com';
+	    $result = $this->entry->micropublishMarkup($text);
+	    
+	    $this->assertEqual($result, 'This is a text with a link: <a href="http://noserub.com">http://noserub.com</a>');
+	}
+	
+	public function testMicropublishMarkupHashtag() {
+	    $text = 'This is a text with a hashtag: #NoseRub';
+	    $result = $this->entry->micropublishMarkup($text);
+	    
+	    $this->assertEqual($result, 'This is a text with a hashtag: <a href="' . Router::url('/search/') .'?q=%23NoseRub">#NoseRub</a>');
+	}
+	
+	public function testMicropublishMarkupHashtagMultiple() {
+	    $text = 'This is a text with two hashtags: #NoseRub #cool';
+	    $result = $this->entry->micropublishMarkup($text);
+	    
+	    $this->assertEqual($result, 'This is a text with two hashtags: <a href="' . Router::url('/search/') .'?q=%23NoseRub">#NoseRub</a> <a href="' . Router::url('/search/') .'?q=%23cool">#cool</a>');
+	}
 }
 ?>

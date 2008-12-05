@@ -269,7 +269,13 @@ class Entry extends AppModel {
         
         foreach($new_items as $idx => $data) {
             $data = $this->Identity->addIdentity('FavoritedBy', $data);
-            $new_items[$idx] = $this->Identity->addIdentity('Comment', $data);
+            $data = $this->Identity->addIdentity('Comment', $data);
+            
+            if($data['Entry']['service_type_id'] == 5 && $data['Entry']['account_id'] > 0) {
+                $data['Entry']['title'] = $data['Entry']['content'] = $this->micropublishMarkup($data['Entry']['title']);
+            }
+            
+            $new_items[$idx] = $data;
         }
         
         return $new_items;
@@ -348,7 +354,7 @@ class Entry extends AppModel {
     }
     
     /**
-     * adds html tags for links and @. also cuts after 160 chars.
+     * adds html tags for links and #
      *
      * @param string $text
      * 
@@ -357,7 +363,11 @@ class Entry extends AppModel {
     public function micropublishMarkup($text) {
         # make links clickable
         $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
-        $text = preg_replace($pattern,"<a href=\"\\1\">\\1</a>", $text);
+        $text = preg_replace($pattern, "<a href=\"\\1\">\\1</a>", $text);
+        
+        # change hashtags into searches
+        $pattern = '/#(\w*)/i';
+        $text = preg_replace($pattern, "<a href=\"" . Router::url('/search/') . "?q=%23\\1\">#\\1</a>", $text);
         
         return $text;
     }

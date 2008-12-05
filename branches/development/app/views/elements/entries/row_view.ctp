@@ -27,7 +27,7 @@
             $splitted2 = split('@', $splitted[count($splitted)-1]);
             $username = $splitted2[0];
             $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $item['ServiceType']['intro']);
-            if($item['Entry']['url']) {
+            if($item['Entry']['service_type_id'] != 5 && $item['Entry']['url']) {
                 $intro = str_replace('@item@', '»<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>«', $intro);
             } else {
                 $intro = str_replace('@item@', '»'.$item['Entry']['title'].'«', $intro);
