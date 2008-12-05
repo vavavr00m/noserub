@@ -9,10 +9,6 @@ class LivejournalService extends AbstractService {
 		return 'http://'.$username.'.livejournal.com/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.livejournal.com/tools/friendlist.bml?user=' . $username, '/lj:user=\'(.*)\'/iU', '/&gt;&gt;<\/b><\/a>/iU', '&page=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

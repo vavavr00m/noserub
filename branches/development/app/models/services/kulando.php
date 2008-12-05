@@ -9,10 +9,6 @@ class KulandoService extends AbstractService {
 		return 'http://'.$username.'.kulando.de';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.kulando.de', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

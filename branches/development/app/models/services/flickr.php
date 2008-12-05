@@ -9,10 +9,6 @@ class FlickrService extends AbstractService {
 		return 'http://www.flickr.com/photos/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.flickr.com/people/' . $username . '/contacts/', '/view his <a href="\/people\/(.*)\/">profile<\/a>/iU', '/class="Next">Next &gt;<\/a>/iU', '?page=');
-	}
-	
 	public function getContent($feeditem) {
 		$raw_content = $feeditem->get_content();
         if(preg_match('/<a href="http:\/\/www.flickr.com\/photos\/.*<\/a>/iU', $raw_content, $matches)) {

@@ -9,10 +9,6 @@ class VimeoService extends AbstractService {
 		return 'http://vimeo.com/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://vimeo.com/' . $username . '/contacts/', '/<div id="contact_(.*)">/iU', '/<img src="\/assets\/images\/paginator_right.gif" alt="next" \/><\/a>/iU', 'sort:date/page:');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

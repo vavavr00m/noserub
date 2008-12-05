@@ -9,10 +9,6 @@ class ViddyouService extends AbstractService {
 		return 'http://viddyou.com/profile.php?user='.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://viddyou.com/profile.php?user=' . $username . '/friends/', '/next>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
