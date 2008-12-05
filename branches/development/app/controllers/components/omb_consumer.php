@@ -273,3 +273,31 @@ class OmbAuthorizationParams {
 		return 'http://'.$username;
 	}
 }
+
+class OmbAuthorizationResponse {
+	private $requiredKeys = array(OmbParamKeys::VERSION, 
+								  OmbParamKeys::LISTENER_NICKNAME, 
+								  OmbParamKeys::LISTENER_PROFILE);
+	
+	public function __construct($urlParams) {
+		if (empty($urlParams) || !$this->existRequiredKeys($urlParams) || !$this->validateRequiredValues($urlParams)) {
+			throw new InvalidArgumentException('Invalid response');
+		}
+	}
+	
+	private function existRequiredKeys($urlParams) {
+		foreach ($this->requiredKeys as $key) {
+			if (!isset($urlParams[$key])) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private function validateRequiredValues($urlParams) {
+		return $urlParams[OmbParamKeys::VERSION] == OmbConstants::VERSION && 
+		       trim($urlParams[OmbParamKeys::LISTENER_NICKNAME]) != '' &&
+		       trim($urlParams[OmbParamKeys::LISTENER_PROFILE]) != '';
+	}
+}
