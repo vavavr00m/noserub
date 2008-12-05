@@ -1,7 +1,6 @@
 <?php
 
-App::import('Vendor', 'OmbConstants');
-App::import('Vendor', 'OauthConstants');
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
@@ -11,31 +10,29 @@ class OmbSubscriptionsController extends AppController {
 	public function callback() {
 		$username = $this->getUsernameOrRedirect();
 		
-		if (isset($this->params['url']['omb_version'])) {
-			if ($this->params['url']['omb_version'] == OmbConstants::VERSION) {
-				$identity = $this->getIdentity($username);
+		try {
+			$response = new OmbAuthorizationResponse($this->params['url']);
+		
+			$identity = $this->getIdentity($username);
 
-				$data['Identity']['is_local'] = false;
-				$data['Identity']['username'] = str_replace('http://', '', $this->params['url']['omb_listener_profile']);
-				$this->Identity->save($data, true, array('is_local', 'username'));
-				$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
-				
-				$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
-				$requestToken = $this->Session->read('omb.requestToken');
-				$serviceId = $this->Session->read('omb.serviceId');
-				$accessToken = $this->OmbConsumer->getAccessToken($accessTokenUrl, $requestToken);				
-				
-				$this->OmbServiceAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
-				
-				$this->Session->delete('omb.accessTokenUrl');
-				$this->Session->delete('omb.requestToken');
-				$this->Session->delete('omb.serviceId');
-				
-				$this->flashMessage('Success', __('Successfully subscribed to ', true) . $username);
-			} else {
-				$this->flashMessage('Error', __('Invalid omb version', true));
-			}
-		} else {
+			$data['Identity']['is_local'] = false;
+			$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
+			$this->Identity->save($data, true, array('is_local', 'username'));
+			$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
+			
+			$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
+			$requestToken = $this->Session->read('omb.requestToken');
+			$serviceId = $this->Session->read('omb.serviceId');
+			$accessToken = $this->OmbConsumer->getAccessToken($accessTokenUrl, $requestToken);				
+			
+			$this->OmbServiceAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
+			
+			$this->Session->delete('omb.accessTokenUrl');
+			$this->Session->delete('omb.requestToken');
+			$this->Session->delete('omb.serviceId');
+			
+			$this->flashMessage('Success', __('Successfully subscribed to ', true) . $username);
+		} catch (InvalidArgumentException $e) {
 			$this->flashMessage('Error', __('Invalid request', true));
 		}
 		

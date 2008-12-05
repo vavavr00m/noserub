@@ -278,11 +278,18 @@ class OmbAuthorizationResponse {
 	private $requiredKeys = array(OmbParamKeys::VERSION, 
 								  OmbParamKeys::LISTENER_NICKNAME, 
 								  OmbParamKeys::LISTENER_PROFILE);
-	
+	private $profileUrl = null; 
+
 	public function __construct($urlParams) {
 		if (empty($urlParams) || !$this->existRequiredKeys($urlParams) || !$this->validateRequiredValues($urlParams)) {
 			throw new InvalidArgumentException('Invalid response');
 		}
+		
+		$this->profileUrl = $urlParams[OmbParamKeys::LISTENER_PROFILE];
+	}
+	
+	public function getProfileUrl() {
+		return $this->profileUrl;
 	}
 	
 	private function existRequiredKeys($urlParams) {
