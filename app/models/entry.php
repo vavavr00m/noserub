@@ -322,7 +322,7 @@ class Entry extends AppModel {
             $restricted = $this->getRestricted($identity_id);
         }
         $text = htmlspecialchars(strip_tags($text), ENT_QUOTES, 'UTF-8');
-        $text = $this->shorten($text, 140);
+        $text = $this->shorten($text);
         
         $with_markup = $this->micropublishMarkup($text);
         
@@ -371,10 +371,8 @@ class Entry extends AppModel {
      *
      * @return string
      */
-    public function shorten($text, $max_length) {
-        if(strlen($text) > $max_length) {
-            $text = $this->shortenUrlInText($text);
-        }
+    public function shorten($text, $max_length = 140) {
+        $text = $this->shortenUrlInText($text);
         
         if(strlen($text) > $max_length) {
             # cut after $max_length chars
