@@ -35,6 +35,11 @@
             echo $intro; 
         ?>
     </span>
+	<?php if($item['Entry']['service_type_id'] == 1) { ?>
+		<span class="photothumb">
+        	<?php echo $item['Entry']['content']; ?>
+		</span>
+	<?php } ?>
     <span>
         <?php echo $this->renderElement('entries/favorited_by', array('data' => $item)); ?>
     </span>
