@@ -366,7 +366,7 @@ class Entry extends AppModel {
         $text = preg_replace($pattern, "<a href=\"\\1\">\\1</a>", $text);
         
         # change hashtags into searches
-        $pattern = '/#(\w*)/i';
+        $pattern = '/#([\wäöüÄÖÜß]*)/i';
         $text = preg_replace($pattern, "<a href=\"" . Router::url('/search/') . "?q=%23\\1\">#\\1</a>", $text);
         
         return $text;

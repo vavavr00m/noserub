@@ -42,5 +42,12 @@ class EntryTest extends CakeTestCase {
 	    
 	    $this->assertEqual($result, 'This is a text with two hashtags: <a href="' . Router::url('/search/') .'?q=%23NoseRub">#NoseRub</a> <a href="' . Router::url('/search/') .'?q=%23cool">#cool</a>');
 	}
+	
+	public function testMicropublishMarkupHashtagUmlaut() {
+	    $text = 'This is a text with an umlaut hashtag: #März';
+	    $result = $this->entry->micropublishMarkup($text);
+	    
+	    $this->assertEqual($result, 'This is a text with an umlaut hashtag: <a href="' . Router::url('/search/') .'?q=%23März">#März</a>');
+	}
 }
 ?>
