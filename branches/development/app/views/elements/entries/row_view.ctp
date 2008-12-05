@@ -36,7 +36,8 @@
         ?>
     </span>
 	<?php if($item['Entry']['service_type_id'] == 1) { ?>
-		<span class="photothumb">
+		<span>
+			<br />
         	<?php echo $item['Entry']['content']; ?>
 		</span>
 	<?php } ?>
