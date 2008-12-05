@@ -9,10 +9,6 @@ class WeventService extends AbstractService {
 		return 'http://wevent.org/users/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://wevent.org/users/' . $username, '/<a href="\/users\/(.*)" class="fn url" rel="friend">.*<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

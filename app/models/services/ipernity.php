@@ -9,10 +9,6 @@ class IpernityService extends AbstractService {
 		return 'http://ipernity.com/doc/'.$username.'/home/photo';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://ipernity.com/user/' . $username . '/network', '/<a href="\/user\/(.*)">Profile<\/a>/iU', '/>next &rarr;<\/a>/iU', '|R58%3Bord%3D3%3Boff%3D0?r[off]=');
-	}
-	
 	public function getContent($feeditem) {
 		$raw_content = $feeditem->get_content();
         if(preg_match('/<img width="[0-9]+" height="[0-9]+" src="(.*)l\.jpg" /iUs', $raw_content, $matches)) {

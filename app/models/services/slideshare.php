@@ -9,10 +9,6 @@ class SlideshareService extends AbstractService {
 		return 'http://www.slideshare.net/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.slideshare.net/' . $username . '/contacts', '/<a href="\/(.*)" style="" title="" class="blue_link_normal" id="">.*<\/a>/iU', '/class="text_float_left">Next<\/a>/iU', '/');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

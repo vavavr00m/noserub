@@ -9,10 +9,6 @@ class MisterwongService extends AbstractService {
 		return 'http://www.mister-wong.de/user/'.$username.'/?profile';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.mister-wong.de/user/' . $username . '/?profile', '/<div class="username">.*<a href=".*">(.*)<\/a>/simU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

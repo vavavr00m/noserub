@@ -9,10 +9,6 @@ class ScribdService extends AbstractService {
 		return 'http://www.scribd.com/people/view/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.scribd.com/people/friends/' . $username, '/<div style="font-size:16px"><a href="\/people\/view\/(.*)">.*<\/a>.*<\/div>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

@@ -9,10 +9,6 @@ class IlikeService extends AbstractService {
 		return 'http://ilike.com/user/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://ilike.com/user/' . $username . '/friends', '/<a style=".*" class="person "  href="\/user\/(.*)" title="View .*\'s profile">/simU', '/src="\/images\/forward_arrow.gif" title="Go forward">/iU', '?page=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

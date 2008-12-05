@@ -194,11 +194,6 @@ class ServiceTest extends CakeTestCase {
 		$this->assertService(35, 'username', $result);
 	}
 	
-	public function testDetectPownceService() {
-		$result = $this->service->detectService('pownce.com/username');
-		$this->assertService(6, 'username', $result);
-	}
-	
 	public function testDetectQypeService() {
 		$result = $this->service->detectService('qype.com/people/username');
 		$this->assertService(12, 'username', $result);

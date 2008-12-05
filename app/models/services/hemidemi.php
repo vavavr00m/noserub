@@ -8,17 +8,7 @@ class HemidemiService extends AbstractService {
 	public function getAccountUrl($username) {
 		return 'http://www.hemidemi.com/user/'.$username.'/home';
 	}
-	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.hemidemi.com/user/' . $username . '/home/friend', '/<a href="\/user\/(.*)\/home">.*<\/a>/iU');
 		
-		# http://www.hemidemi.com/user/garychen67/home/friend
-		# <a href="/user/kouko/home" class="user">kouko</a>
-		
-		
-		
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

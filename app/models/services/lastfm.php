@@ -9,10 +9,6 @@ class LastfmService extends AbstractService {
 		return 'http://www.last.fm/user/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.last.fm/user/' . $username . '/friends/', '/<a href="\/user\/(.*)\/" title=".*" class="nickname.*">.*<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

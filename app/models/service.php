@@ -222,19 +222,6 @@ class Service extends AppModel {
         return $data;
     }
     
-    public function getContactsFromService($account_id) {
-        $this->Account->contain();
-        $account = $this->Account->findById($account_id);
-        
-    	$service = $this->getService($account['Account']['service_id']);
-
-    	if($service) {
-    		return $service->getContacts($account['Account']['username']);
-        }
-        
-        return array();
-    }
-
     private function createService($service_id, $service_name) {
     	$class_name = $service_name . 'Service';
     	
@@ -295,59 +282,6 @@ class Service extends AppModel {
     	
     	return $this->createService($service_id, $service['Service']['internal_name']);
     }
-}
-
-class ContactExtractor {
-	public static function getContactsFromSinglePage($url, $pattern) {
-		App::import('Vendor', 'WebExtractor');
-		$data = array();
-        $content = WebExtractor::fetchUrl($url);
-        if($content && preg_match_all($pattern, $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        }
-
-        return $data;
-	}
-	
-	// TODO better names for the parameters
-	public static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
-		App::import('Vendor', 'WebExtractor');
-		$data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = WebExtractor::fetchUrl($page_url);
-            if($content && preg_match_all($pattern, $content, $matches)) {
-                # also find the usernames
-                preg_match_all($pattern, $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match($secondPattern, $content)) {
-                    $page_url = $url . $urlPart . $i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-	}
 }
 
 /**
