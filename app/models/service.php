@@ -106,6 +106,7 @@ class Service extends AppModel {
 
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
     		$feeditem = $feed->get_item($i);
+
     		# create a NoseRub item out of the feed item
     		$item = array();
     		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
@@ -251,10 +252,12 @@ class Service extends AppModel {
         $feed->set_useragent(NOSERUB_USER_AGENT);
         $feed->enable_cache(false);
         $feed->force_feed(true); 
-        $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
+        
         if($autodiscovery) {
-        	$autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
-        }
+            $autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
+        } else {
+            $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
+		}
         
         $feed->set_autodiscovery_level($autodiscovery_level);
         
