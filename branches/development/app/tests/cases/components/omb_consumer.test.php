@@ -81,7 +81,7 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 		$paramsArray = $this->getAuthorizationParamsArray();
 		$this->assertEqual(OmbConstants::VERSION, $paramsArray[OmbParamKeys::VERSION]);
 		$this->assertEqual($this->listener, $paramsArray[OmbParamKeys::LISTENER]);
-		$this->assertEqual(Configure::read('NoseRub.full_base_url'), $paramsArray[OmbParamKeys::LISTENEE]);
+		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE]);
 		$this->assertEqual($this->nickname, $paramsArray[OmbParamKeys::LISTENEE_NICKNAME]);
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE_PROFILE]);
 		$this->assertEqual(OmbAuthorizationParams::CREATIVE_COMMONS_LICENSE, $paramsArray[OmbParamKeys::LISTENEE_LICENSE]);
