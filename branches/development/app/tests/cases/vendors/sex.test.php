@@ -10,6 +10,13 @@ class SexTest extends CakeTestCase {
 		$this->assertEqual($baseUrl.'noinfo.gif', Sex::getImageUrl(Sex::UNDEFINED));
 	}
 	
+	public function testGetMediumImageUrl() {
+		$baseUrl = Router::url(Sex::AVATAR_PATH, true);
+		$this->assertEqual($baseUrl.'male-medium.gif', Sex::getMediumImageUrl(Sex::MALE));
+		$this->assertEqual($baseUrl.'female-medium.gif', Sex::getMediumImageUrl(Sex::FEMALE));
+		$this->assertEqual($baseUrl.'noinfo-medium.gif', Sex::getMediumImageUrl(Sex::UNDEFINED));
+	}
+	
 	public function testGetSmallImageUrl() {
 		$baseUrl = Router::url(Sex::AVATAR_PATH, true);
 		$this->assertEqual($baseUrl.'male-small.gif', Sex::getSmallImageUrl(Sex::MALE));
