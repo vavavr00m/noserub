@@ -237,7 +237,7 @@ class OmbAuthorizationParams {
 	public function __construct($listener, array $listenee) {
 		$this->params = array(OmbParamKeys::VERSION => OmbConstants::VERSION,
 							  OmbParamKeys::LISTENER => $listener,
-							  OmbParamKeys::LISTENEE => Configure::read('NoseRub.full_base_url'),
+							  OmbParamKeys::LISTENEE => $this->getProfileUrl($listenee['Identity']['username']),
 							  OmbParamKeys::LISTENEE_PROFILE => $this->getProfileUrl($listenee['Identity']['username']),
 							  OmbParamKeys::LISTENEE_NICKNAME => $listenee['Identity']['local_username'],
 							  OmbParamKeys::LISTENEE_LICENSE => self::CREATIVE_COMMONS_LICENSE,
