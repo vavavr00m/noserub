@@ -110,6 +110,12 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 		$this->assertEqual(OmbAuthorizationParams::MAX_LOCATION_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_LOCATION]));
 	}
 	
+	public function testGetAsArrayWithoutPhoto() {
+		$this->photo = '';
+		$paramsArray = $this->getAuthorizationParamsArray();
+		$this->assertEqual('', $paramsArray[OmbParamKeys::LISTENEE_AVATAR]);
+	}
+	
 	private function getAuthorizationParamsArray() {
 		$params = new OmbAuthorizationParams($this->listener, $this->getListeneeData());
 		
