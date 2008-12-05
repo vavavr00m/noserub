@@ -282,7 +282,8 @@ class OmbAuthorizationResponse {
 	private $requiredKeys = array(OmbParamKeys::VERSION, 
 								  OmbParamKeys::LISTENER_NICKNAME, 
 								  OmbParamKeys::LISTENER_PROFILE);
-	private $profileUrl = null; 
+	private $profileUrl = null;
+	private $avatarUrl = null;
 
 	public function __construct($urlParams) {
 		if (empty($urlParams) || !$this->existRequiredKeys($urlParams) || !$this->validateRequiredValues($urlParams)) {
@@ -290,6 +291,11 @@ class OmbAuthorizationResponse {
 		}
 		
 		$this->profileUrl = $urlParams[OmbParamKeys::LISTENER_PROFILE];
+		$this->avatarUrl = $this->extractAvatarUrl($urlParams);
+	}
+	
+	public function getAvatarUrl() {
+		return $this->avatarUrl;
 	}
 	
 	public function getProfileUrl() {
@@ -304,6 +310,14 @@ class OmbAuthorizationResponse {
 		}
 		
 		return true;
+	}
+	
+	private function extractAvatarUrl($urlParams) {
+		if (isset($urlParams[OmbParamKeys::LISTENER_AVATAR])) {
+			return $urlParams[OmbParamKeys::LISTENER_AVATAR];
+		}
+		
+		return '';
 	}
 	
 	private function validateRequiredValues($urlParams) {

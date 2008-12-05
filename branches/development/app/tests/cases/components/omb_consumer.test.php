@@ -143,6 +143,7 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 class OmbAuthorizationResponseTest extends CakeTestCase {
 	private $nickname = 'joe';
 	private $profileUrl = 'http://example.com/joe';
+	private $avatarUrl = 'http://example.com/joe/avatar.gif';
 	private $requiredParams = null;
 	
 	public function setUp() {
@@ -152,6 +153,13 @@ class OmbAuthorizationResponseTest extends CakeTestCase {
 	public function testConstruct() {
 		$response = new OmbAuthorizationResponse($this->getRequiredParams());
 		$this->assertEqual($this->profileUrl, $response->getProfileUrl());
+		$this->assertIdentical('', $response->getAvatarUrl());
+	}
+	
+	public function testConstructWithAvatarUrl() {
+		$data = array_merge($this->getRequiredParams(), array(OmbParamKeys::LISTENER_AVATAR => $this->avatarUrl));
+		$response = new OmbAuthorizationResponse($data);
+		$this->assertEqual($this->avatarUrl, $response->getAvatarUrl());
 	}
 	
 	public function testConstructWithEmptyArray() {
