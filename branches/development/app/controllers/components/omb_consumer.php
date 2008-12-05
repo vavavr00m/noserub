@@ -266,7 +266,11 @@ class OmbAuthorizationParams {
 	}
 	
 	private function getPhotoUrl($photoName) {
-		return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
+		if ($photoName != '') {
+			return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
+		}
+		
+		return '';
 	}
 	
 	private function getProfileUrl($username) {
