@@ -12,6 +12,12 @@ class Sex {
 		return Sex::constructImageUrl($sex, '.gif');
 	}
 	
+	public static function getMediumImageUrl($sex) {
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
+		
+		return Sex::constructImageUrl($sex, '-medium.gif');
+	}
+	
 	public static function getSmallImageUrl($sex) {
 		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
