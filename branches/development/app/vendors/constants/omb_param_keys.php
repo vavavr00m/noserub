@@ -18,5 +18,13 @@ class OmbParamKeys {
 	const LISTENER_LOCATION = 'omb_listener_location';
 	const LISTENER_NICKNAME = 'omb_listener_nickname';
 	const LISTENER_PROFILE = 'omb_listener_profile';
+	const NOTICE = 'omb_notice';
+	const NOTICE_CONTENT = 'omb_notice_content';
+	const NOTICE_LICENSE = 'omb_notice_license';
+	const NOTICE_URL = 'omb_notice_url';
+	const SEEALSO = 'omb_seealso';
+	const SEEALSO_DISPOSITION = 'omb_seealso_disposition';
+	const SEEALSO_LICENSE = 'omb_seealso_license';
+	const SEEALSO_MEDIATYPE = 'omb_seealso_mediatype';
 	const VERSION = 'omb_version';
 }
