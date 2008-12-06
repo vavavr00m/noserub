@@ -509,7 +509,7 @@ class Entry extends AppModel {
     private function sendToOmb($identity_id, $text) {
     	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
     	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
-    	
+
     	if (!$accessToken) {
     		return;
     	}
@@ -517,6 +517,7 @@ class Entry extends AppModel {
     	// XXX don't like it to use a component in a model, better solution needed ;-)
     	App::import('Component', array('OmbConsumer', 'OmbOauthConsumer'));
     	$ombConsumer = new OmbConsumerComponent();
+    	$ombConsumer->Session = new SessionComponent();
     	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
     	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
     }
