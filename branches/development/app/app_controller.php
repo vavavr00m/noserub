@@ -129,7 +129,8 @@ class AppController extends Controller {
         if(defined('SHELL_DISPATCHER')) {
             $this->layout = 'shell';
             if($this->action != '' && strpos($this->action, 'shell_') !== 0) {
-                echo __('You may not call this route from the shell!', true) . "\n\n";
+                echo __('You may not call this route from the shell!', true) . "\n";
+                echo $this->name . '.' . $this->action . "\n\n";
                 exit;
             }
         } else {

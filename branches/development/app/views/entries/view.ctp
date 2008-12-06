@@ -22,7 +22,7 @@
         <?php echo $this->renderElement('entries/row_view', array('item' => $data, 'permalink' => false)); ?>
     </ul>
 </div>
-<?php if(isset($session_identity)) { ?>
+<?php if(isset($session_identity) && $data['Entry']['account_id'] > 0) { ?>
     <hr class="clear" />
     <div>
         <form id="MakeCommentForm" method="post" action="<?php echo $this->here ?>">
