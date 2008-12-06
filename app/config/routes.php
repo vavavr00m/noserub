@@ -101,20 +101,19 @@ Router::connect('/:username/:filter', array('controller' => 'identities', 'actio
 Router::connect('/jobs/cron/:cron_hash/identities/sync/all/', array('controller' => 'identities', 'action' => 'cron_sync_all'));
 Router::connect('/jobs/cron/:cron_hash/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'cron_update'));
 Router::connect('/jobs/cron/:cron_hash/peers/sync/', array('controller' => 'peers', 'action' => 'cron_sync'));
-Router::connect('/jobs/cron/:cron_hash/comments/sync/', array('controller' => 'comments', 'action' => 'cron_sync'));
-
+Router::connect('/jobs/cron/:cron_hash/peers/poll/', array('controller' => 'peers', 'action' => 'cron_poll'));
 
 Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entries', 'action' => 'jobs_update'));
 Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
 Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admin', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/xmpp/start/', array('controller' => 'xmpp', 'action' => 'shell_run'));
-Router::connect('/jobs/:admin_hash/peers/sync/', array('controller' => 'peers', 'action' => 'shell_sync'));
-Router::connect('/jobs/:admin_hash/comments/sync/', array('controller' => 'comments', 'action' => 'shell_sync'));
 
 /**
  * Shell routes that can only be accessed through the shell_dispatcher
  */ 
-Router::connect('/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
-Router::connect('/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
-Router::connect('/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));
+Router::connect('/jobs/shell/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
+Router::connect('/jobs/shell/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
+Router::connect('/jobs/shell/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));
+Router::connect('/jobs/shell/peers/sync/', array('controller' => 'peers', 'action' => 'shell_sync'));
+Router::connect('/jobs/shell/peers/poll/', array('controller' => 'peers', 'action' => 'shell_poll'));

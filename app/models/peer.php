@@ -23,6 +23,11 @@ class Peer extends AppModel {
         
         $updated_peers = array();
         foreach($data as $item) {
+            if($item['url'] == Configure::read('NoseRub.full_base_url')) {
+                # we don't need to set ourselves to that list
+                continue;
+            }
+            
             # check, if we already have this peer
             $this->contain();
             $peer = $this->find(

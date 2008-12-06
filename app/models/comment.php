@@ -5,9 +5,9 @@ class Comment extends AppModel {
     public $belongsTo = array('Entry', 'Identity');                                                   
 
     /**
-     * retrieving new comments from peers
+     * poll new comments from peers
      */
-    public function sync() {
+    public function poll() {
         App::import('Model', 'Peer');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
@@ -25,7 +25,7 @@ class Comment extends AppModel {
             )
         );
         
-        $synced = array();
+        $polled = array();
         foreach($peers as $peer) {
             $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/comments/');
             $zend_json = new Zend_Json();
@@ -66,9 +66,9 @@ class Comment extends AppModel {
                 }
             }
             
-            $synced[] = sprintf(__('%d comments from %s, %d imported', true), count($comments), $peer['Peer']['name'], $imported);
+            $polled[] = sprintf(__('%d comments from %s, %d imported', true), count($comments), $peer['Peer']['name'], $imported);
         }
         
-        return $synced;
+        return $polled;
     }
 }
