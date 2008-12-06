@@ -50,6 +50,8 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
+Configure::write('NoseRub.version', '0.8a');
+
 define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('NoseRub.full_base_url') . ' (http://noserub.com/)');
 
 ini_set('user_agent', NOSERUB_USER_AGENT);

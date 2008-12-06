@@ -721,6 +721,44 @@ class Identity extends AppModel {
         return $data;
     }
     
+    /**
+     * tries to find an identity, given
+     * by that username. if it is not found,
+     * we create this identity.
+     * this is used for Comment::sync()
+     *
+     * ATTENTION! getId() was not available, as it is already used
+     *
+     * @param string $username
+     * 
+     * @return array
+     */
+    public function getIdForUsername($username) {
+        $this->contain();
+        $identity = $this->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Identity.username' => $username
+                ),
+                'fields' => 'Identity.id'
+            )
+        );
+        
+        if(!$identity) {
+            $data = array(
+                'username' => $username,
+                'is_local' => 0
+            );
+            $this->create();
+            $this->save($data);
+            
+            return $this->id;
+        } else {
+            return $identity['Identity']['id'];
+        }
+    }
+    
     private function uploadPhoto($local_filename) {
         if(!$this->exists()) {
             return false;

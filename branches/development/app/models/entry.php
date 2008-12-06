@@ -506,6 +506,28 @@ class Entry extends AppModel {
         $this->query($sql);
     }
     
+    /**
+     * tries to get an entry by it's uid. checks for the url, too, to
+     * avoid hash collisions (although very unlikely)
+     *
+     * @param string $uid
+     * @param string $url
+     *
+     * @return array
+     */
+    public function getByUid($uid, $url) {
+        $this->contain();
+        return $this->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Entry.uid' => $uid,
+                    'Entry.url' => $url
+                )
+            )
+        );
+    }
+    
     private function sendToOmb($identity_id, $text) {
     	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
     	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
