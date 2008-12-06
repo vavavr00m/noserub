@@ -1,5 +1,6 @@
+<?php App::import('Vendor', 'UrlUtil'); ?>
 <?php if (isset($manage) && $manage && $session->check('Identity')): ?>
-<span class="more"><?php echo $html->link('manage', '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
+<span class="more"><?php echo $html->link(__('manage', true), '/'.$session->read('Identity.local_username').'/contacts'); ?></span>
 <?php endif; ?>
 <h4>
 	<?php echo $box_head; ?>
@@ -34,8 +35,7 @@
             ?>
             <a href="http://<?php echo $item['username']; ?>" rel="<?php echo $rel; ?>">
                 <?php if($item['photo']) {
-                    if(strpos($item['photo'], 'http://') === 0 ||
-                       strpos($item['photo'], 'https://') === 0) {
+                    if (UrlUtil::startsWithHttpOrHttps($item['photo'])) {
                         # contains a complete path, eg. from not local identities
                         $contact_photo = $item['photo'];
                     } else {
@@ -43,7 +43,7 @@
                     }	                
                 } else {
                     App::import('Vendor', 'sex');
-                	$contact_photo = Sex::getImageUrl($item['sex'], true);
+                	$contact_photo = Sex::getSmallImageUrl($item['sex']);
                 } ?>
                 <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
             </a>

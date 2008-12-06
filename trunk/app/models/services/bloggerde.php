@@ -9,10 +9,6 @@ class BloggerdeService extends AbstractService {
 		return 'http://'.$username.'.blogger.de/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'blogger.de/', '/<a href="http:\/\/(.*).blogger.de" rel=".*">.*<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

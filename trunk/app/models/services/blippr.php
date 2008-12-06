@@ -9,10 +9,6 @@ class BlipprService extends AbstractService {
 		return 'http://www.blippr.com/profiles/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.blippr.com/profiles/' . $username . '/friends', '/<a href="http:\/\/www\/.blippr\.com\/profiles\/(.*)">.*<\/a>/');
-	}
-	
 	public function getContent($feeditem) {
 		# cut off the username
 		$content = $feeditem->get_content();

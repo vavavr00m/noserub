@@ -1,6 +1,6 @@
 <?php
-    $app_name = defined('NOSERUB_APP_NAME') ? NOSERUB_APP_NAME : 'NoseRub';
-    $headline = isset($headline) ? $headline : 'Welcome to ' . $app_name;
+    $app_name = Configure::read('NoseRub.app_name');
+    $headline = isset($headline) ? $headline : sprintf(__('Welcome to %s', true), $app_name);
     $title    = $app_name . ' - ' . $headline;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -19,8 +19,6 @@
 	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL . Router::url('/'); ?>favicon.ico" />
 	<?php echo $scripts_for_layout; ?>
 
-
-
     <?php  if(isset($mainMenu) && is_a($mainMenu->getActiveMenuItem(), 'SocialStreamMenuItem')) { ?>
         <!-- RSS -->
         <?php
@@ -32,7 +30,7 @@
                 $filter = 'all';
             }
         ?>
-        <link rel="alternate" type="application/rss+xml" title="Social Stream Feed" href="<?php echo Router::Url('/social_stream/' . $filter . '/rss'); ?>" />
+        <link rel="alternate" type="application/rss+xml" title="<?php __('Social Stream Feed'); ?>" href="<?php echo Router::Url('/social_stream/' . $filter . '/rss'); ?>" />
 	<?php } ?>
 
 <!-- CSS -->
@@ -43,7 +41,6 @@
        
     </head>
 	<body>
-<!-- Revision $Revision$ -->
 	<div id="top"></div>
 	<?php echo $this->element('metanav'); ?>
 
@@ -71,7 +68,7 @@
 		</div>
 
 		<div id="footer" class="wrapper">
-			<p><a href="http://noserub.com"><img src="<?php echo Router::url('/images/footer/noserub-logo.gif'); ?>" class="noserublogo" alt="NoseRub Logo" /></a> Powered by <a title="Decentralized social networks" href="http://noserub.com">NoseRub</a></p>
+			<p><a href="http://noserub.com"><img src="<?php echo Router::url('/images/footer/noserub-logo.gif'); ?>" class="noserublogo" alt="NoseRub Logo" /></a> Powered by <a title="Decentralized social networks" href="http://noserub.com">NoseRub <?php echo Configure::read('NoseRub.version'); ?></a></p>
 		</div>
 
 </body>

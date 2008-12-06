@@ -9,10 +9,6 @@ class DailymotionService extends AbstractService {
 		return 'http://www.dailymotion.com/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://www.dailymotion.com/contacts/' . $username, '/<img width="80" height="80" src=".*" alt="(.*)" \/>/simU', '/next&nbsp;&raquo;<\/a>/iU', '/');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

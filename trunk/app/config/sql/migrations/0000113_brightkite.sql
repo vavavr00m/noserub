@@ -1,0 +1,1 @@
+UPDATE `services` SET  `internal_name` =  'Brightkite',`name` =  'Brightkite', `url` =  'http://brightkite.com/', `icon` =  'brightkite.gif' WHERE  `services`.`id` =70

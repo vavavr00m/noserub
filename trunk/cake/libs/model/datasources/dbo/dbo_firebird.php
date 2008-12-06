@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_firebird.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id: dbo_firebird.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Firebird/Interbase layer for DBO
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.libs.model.dbo
  * @since			CakePHP(tm) v 1.2.0.5152
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -109,6 +109,17 @@ class DboFirebird extends DboSource {
 		'binary'	=> array('name' => 'blob'),
 		'boolean'	=> array('name' => 'smallint')
 	);
+/**
+ * Firebird Transaction commands.
+ *
+ * @var array
+ **/
+	var $_commands = array(
+		'begin'	   => 'SET TRANSACTION',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+
 /**
  * Connects to the database using options in the given configuration array.
  *

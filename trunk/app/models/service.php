@@ -21,7 +21,8 @@ class Service extends AppModel {
     		return false;
     	}
     	
-    	$url = $this->removeHttpProtocol($url);
+    	App::import('Vendor', 'UrlUtil');
+    	$url = UrlUtil::removeHttpAndHttps($url);
     	$services = $this->getAllServices();
 
     	foreach($services as $service) {
@@ -38,9 +39,7 @@ class Service extends AppModel {
     /**
      * Used by Identity::parseNoseRubPage()
      *
-     * @param  
-     * @return array with feed_url, service_id and service_type_id
-     * @access 
+     * @return array with feed_url, service_id and service_type_id 
      */
     public function getInfo($service_url, $username) {
         # get service
@@ -107,6 +106,7 @@ class Service extends AppModel {
 
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
     		$feeditem = $feed->get_item($i);
+
     		# create a NoseRub item out of the feed item
     		$item = array();
     		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
@@ -136,7 +136,7 @@ class Service extends AppModel {
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
     	}
-
+        $feed->__destruct();
         unset($feed);
         
         return $items;
@@ -195,10 +195,6 @@ class Service extends AppModel {
     
     /**
      * get service_type_id, feed_url and preview
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function getInfoFromService($username, $service_id, $account_username) {
         $this->contain();
@@ -226,19 +222,6 @@ class Service extends AppModel {
         return $data;
     }
     
-    public function getContactsFromService($account_id) {
-        $this->Account->contain();
-        $account = $this->Account->findById($account_id);
-        
-    	$service = $this->getService($account['Account']['service_id']);
-
-    	if($service) {
-    		return $service->getContacts($account['Account']['username']);
-        }
-        
-        return array();
-    }
-
     private function createService($service_id, $service_name) {
     	$class_name = $service_name . 'Service';
     	
@@ -255,11 +238,13 @@ class Service extends AppModel {
         $feed->set_feed_url($feed_url);
         $feed->set_useragent(NOSERUB_USER_AGENT);
         $feed->enable_cache(false);
+        $feed->force_feed(true); 
         
-        $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
         if($autodiscovery) {
-        	$autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
-        }
+            $autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
+        } else {
+            $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
+		}
         
         $feed->set_autodiscovery_level($autodiscovery_level);
         
@@ -297,64 +282,6 @@ class Service extends AppModel {
     	
     	return $this->createService($service_id, $service['Service']['internal_name']);
     }
-    
-    private function removeHttpProtocol($url) {
-    	$url = str_ireplace('http://', '', $url);
-    	$url = str_ireplace('https://', '', $url);
-    	
-    	return $url;
-    }
-}
-
-class ContactExtractor {
-	public static function getContactsFromSinglePage($url, $pattern) {
-		$data = array();
-        $content = WebExtractor::fetchUrl($url);
-        if($content && preg_match_all($pattern, $content, $matches)) {
-            foreach($matches[1] as $username) {
-                if(!isset($data[$username])) {
-                    $data[$username] = $username;
-                }
-            }
-        }
-
-        return $data;
-	}
-	
-	// TODO better names for the parameters
-	public static function getContactsFromMultiplePages($url, $pattern, $secondPattern, $urlPart) {
-		$data = array();
-        $i = 2;
-        $page_url = $url;
-        do {
-            $content = WebExtractor::fetchUrl($page_url);
-            if($content && preg_match_all($pattern, $content, $matches)) {
-                # also find the usernames
-                preg_match_all($pattern, $content, $usernames);
-                foreach($usernames[1] as $idx => $username) {
-                    if(!isset($data[$username])) {
-                        $data[$username] = $matches[1][$idx];
-                    }
-                }
-                if(preg_match($secondPattern, $content)) {
-                    $page_url = $url . $urlPart . $i;
-                    $i++;
-                    if($i>1000) {
-                        # just to make sure, we don't loop forever
-                        break;
-                    }
-                } else {
-                    # no "next" button found
-                    break;
-                }
-            } else {
-                # no friends found
-                break;
-            }
-        } while(1);
-        
-        return $data;
-	}
 }
 
 /**
@@ -438,7 +365,7 @@ class PhotoFilter implements IServiceTypeFilter {
 		$config = HTMLPurifier_Config::createDefault();
 		$config->set('Cache', 'SerializerPath', CACHE . 'htmlpurifier');
 		$config->set('HTML', 'Allowed', 'img[src|alt]');
-
+        
 		$purifier = new HTMLPurifier($config);
 		$clean_html = $purifier->purify($item['content']);
 		$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error404.ctp 7073 2008-05-31 04:50:38Z gwoo $ */
+/* SVN FILE: $Id: error404.ctp 7118 2008-06-04 20:49:29Z gwoo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -18,9 +18,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.templates.errors
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 7073 $
+ * @version			$Revision: 7118 $
  * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date: 2008-05-30 21:50:38 -0700 (Fri, 30 May 2008) $
+ * @lastmodified	$Date: 2008-06-04 16:49:29 -0400 (Wed, 04 Jun 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>

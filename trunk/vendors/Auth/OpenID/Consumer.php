@@ -921,8 +921,7 @@ class Auth_OpenID_GenericConsumer {
         // in the signed return_to.
         $bare_args = $message->getArgs(Auth_OpenID_BARE_NS);
         foreach ($bare_args as $key => $value) {
-        	// XXX $key != 'url' is a workaround to make it work with CakePHP
-        	if ($key != 'url' && Auth_OpenID::arrayGet($q, $key) != $value) {
+        	if (Auth_OpenID::arrayGet($q, $key) != $value) {
                 return new Auth_OpenID_FailureResponse(null,
                   sprintf("Parameter %s = %s not in return_to URL",
                           $key, $value));

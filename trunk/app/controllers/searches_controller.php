@@ -26,7 +26,7 @@ class SearchesController extends AppController {
             $items = array();
         }
         
-        $this->set('headline', 'Find public items...');        
+        $this->set('headline', __('Find public items...', true));        
     	$this->set('services', $this->ServiceType->getFilters());
     	$this->set('items', $items);
     	$this->set('filter', array());

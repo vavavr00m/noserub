@@ -3,7 +3,6 @@
 class RegistrationController extends AppController {
 	public $uses = array('Identity');
 	public $components = array('openid', 'url');
-	public $helpers = array('form');
 	
 	public function register() {
 		$session_identity = $this->Session->read('Identity');
@@ -15,7 +14,7 @@ class RegistrationController extends AppController {
         
         $this->checkSecure();
         
-        if(NOSERUB_REGISTRATION_TYPE != 'all') {
+        if(Configure::read('NoseRub.registration_type') != 'all') {
             $url = $this->url->http('/');
             $this->redirect($url);
         }
@@ -31,11 +30,11 @@ class RegistrationController extends AppController {
                                                     'allow_emails'      => 2));
         }
 
-        $this->set('headline', 'Register a new NoseRub account');
+        $this->set('headline', __('Register a new NoseRub account', true));
 	}
 	
 	public function register_with_openid_step_1() {
-    	$this->set('headline', 'Register a new NoseRub account - Step 1/2');
+    	$this->set('headline', __('Register a new NoseRub account - Step 1/2', true));
 		$returnTo = $this->webroot.'pages/register/withopenid';
 		$sregFields = array('email', 'nickname');
     	
@@ -77,7 +76,7 @@ class RegistrationController extends AppController {
     		$this->redirect('/pages/register/withopenid');
     	}
     	
-    	$this->set('headline', 'Register a new NoseRub account - Step 2/2');
+    	$this->set('headline', __('Register a new NoseRub account - Step 2/2', true));
 
     	if (!empty($this->data)) {
     		$this->data['Identity']['openid'] = $this->Session->read('Registration.openid');
@@ -102,14 +101,14 @@ class RegistrationController extends AppController {
     }
     
 	public function register_thanks() {
-        $this->set('headline', 'Thanks for your registration!');
+        $this->set('headline', __('Thanks for your registration!', true));
     }
     
 	public function verify() {
         $hash = isset($this->params['hash']) ? $this->params['hash'] : '';
         
         $this->set('verify_ok', $this->Identity->verify($hash));
-        $this->set('headline', 'Verify your e-mail address');
+        $this->set('headline', __('Verify your e-mail address', true));
     }
     
 	private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
@@ -122,7 +121,7 @@ class RegistrationController extends AppController {
     	} catch (InvalidArgumentException $e) {
     		$this->Identity->invalidate('openid', 'invalid_openid');
 			$this->render();
-			exit;
+			return;
     	} catch (Exception $e) {
     		echo $e->getMessage();
     		exit();
@@ -135,12 +134,12 @@ class RegistrationController extends AppController {
     	if ($response->status == Auth_OpenID_CANCEL) {
     		$this->Identity->invalidate('openid', 'verification_cancelled');
     		$this->render();
-    		exit;
+    		return;
     	} elseif ($response->status == Auth_OpenID_FAILURE) {
     		$this->Identity->invalidate('openid', 'openid_failure');
     		$this->set('errorMessage', $response->message);
     		$this->render();
-    		exit;
+    		return;
     	} elseif ($response->status == Auth_OpenID_SUCCESS) {
     		return $response;
     	}

@@ -10,7 +10,7 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    public $helpers = array('javascript', 'html');
+    public $helpers = array('javascript', 'html', 'form');
     public $components = array('menu', 'Cookie');
     
     /**
@@ -34,19 +34,15 @@ class AppController extends Controller {
     
     /**
      * Makes sure we redirect to the https url,
-     * when NOSERUB_USE_SSL is used and we're not
+     * when NoseRub.use_ssl is used and we're not
      * on a secure page
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function checkSecure() {
         if(defined('SHELL_DISPATCHER')) {
             return;
         }
         
-        if(NOSERUB_USE_SSL) {
+        if(Configure::read('NoseRub.use_ssl')) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
@@ -57,10 +53,6 @@ class AppController extends Controller {
     /**
      * Makes sure we redirect to the http url,
      * when we're not on a secure page
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function checkUnsecure() {
         if(defined('SHELL_DISPATCHER')) {
@@ -103,6 +95,26 @@ class AppController extends Controller {
             $this->auto_login();
         }        
         
+        # Localization
+        App::import('Core', 'l10n');
+        $this->L10n = new L10n();
+        # if language is already set in session, get that
+        $language = $this->Session->read('Config.language');
+        if(!$language) {
+            # if not, get NoseRub default language and save it
+            # in the session
+            $language = Configure::read('NoseRub.default_language');
+            $this->Session->write('Config.language', $language);
+        }
+        # now set the language
+        $this->L10n->get($language);
+
+        setlocale(LC_ALL, 
+            substr($this->L10n->locale, 0, 3) .
+            strtoupper(substr($this->L10n->locale, 3, 2)) . 
+            '.' . $this->L10n->charset
+        );
+        
         # set menu data
         $this->menu->setViewData($this);  
         
@@ -117,12 +129,13 @@ class AppController extends Controller {
         if(defined('SHELL_DISPATCHER')) {
             $this->layout = 'shell';
             if($this->action != '' && strpos($this->action, 'shell_') !== 0) {
-                echo 'You may not call this route from the shell.' . "\n\n";
+                echo __('You may not call this route from the shell!', true) . "\n";
+                echo $this->name . '.' . $this->action . "\n\n";
                 exit;
             }
         } else {
             if(strpos($this->action, 'shell_') === 0) {
-                echo '<h1>Error</h1><p>This route is only accessible from the shell!</p>';
+                echo '<h1>' . __('Error', true) . '</h1><p>' . __('This route is only accessible from the shell!', true) . '</p>';
                 exit;
             }
         }
@@ -140,6 +153,9 @@ class AppController extends Controller {
         } else {
             # GET
             $security_token = isset($this->params['security_token']) ? $this->params['security_token'] : '';
+            if(!$security_token) {
+                $security_token = isset($this->params['named']['_t']) ? $this->params['named']['_t'] : '';
+            }
         }
         
         if(!$this->Identity->checkSecurityToken($session_identity_id, $security_token)) {

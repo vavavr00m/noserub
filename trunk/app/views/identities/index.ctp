@@ -1,6 +1,6 @@
 <?php if(!$data) { ?>
     <p>
-        Either this account does not exist, or it is only available for the user who created it.
+        <?php __('Either this account does not exist, or it is only available for the user who created it.'); ?>
     </p>
 <?php } else { ?>
     <?php 
@@ -19,10 +19,10 @@
         }
         if($data['Identity']['generic_feed']) {
             $url = Router::url('/' . $data['Identity']['local_username']);
-            if(NOSERUB_USE_CDN) {
-                $feed_url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/feeds/' . $data['Identity']['local_username'] . '.rss';
+            if(Configure::read('NoseRub.use_cdn')) {
+                $feed_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/' . $data['Identity']['local_username'] . '.rss';
             } else {
-                $feed_url = NOSERUB_FULL_BASE_URL . $url . '/feeds/rss';
+                $feed_url = Configure::read('NoseRub.full_base_url') . $url . '/feeds/rss';
             }
             $this->addScript('<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="' . $feed_url . '" />');
         }
@@ -98,15 +98,13 @@
                         }
                     ?>
                 <?php } ?>
+                <?php if (!$menu['logged_in']) { ?>
+                	<li class="addcontact icon"><?php echo $html->link('Subscribe', '/'.$data['Identity']['local_username'].'/subscribe'); ?></li>
+                <?php } ?>
         	</ul>
         </div>
         
         <hr class="clear" />
-        
-        <?php if($relationship_status == 'self') { ?>
-            <?php echo $this->element('identities/what_are_you_doing'); ?>
-            <hr class="clear" />
-        <?php } ?>
         
         <?php if($data['Identity']['about']) { ?>
             <h4>About <?php echo Sex::himOrHer($data['Identity']['sex']); ?></h4>
@@ -125,8 +123,8 @@
             <hr />
         	
             <div class="textBox">
-            	<span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
-            	<h4>Relationship</h4>
+            	<span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>"><?php __('edit'); ?></a></span>
+            	<h4><?php __('Relationship'); ?></h4>
                 <div id="relationshipBox">
                     <p class="summary">
                     	<?php
@@ -142,11 +140,11 @@
             </div>
         
             <div class="textBox lastBox">
-                <span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>">edit</a></span>
-                <h4>Notes</h4>
+                <span class="more"><a href="http://<?php echo $session_identity['username'] . '/contacts/' . $contact['Contact']['id'] , '/edit/'; ?>"><?php __('edit'); ?></a></span>
+                <h4><?php __('Notes'); ?></h4>
                 <div id="noteBox">
                     <p class="summary">
-                        <?php echo $contact['Contact']['note'] ? $contact['Contact']['note'] : '<em>Add some notes here.</em>'; ?>
+                        <?php echo $contact['Contact']['note'] ? $contact['Contact']['note'] : '<em>' . __('Add some notes here.', true) . '</em>'; ?>
                     </p>        
                 </div>
     		</div>
@@ -156,7 +154,6 @@
         <hr class="clear" />
 
         <div>
-            <h4>Social activity</h4>
             <?php echo $this->element('subnav', array('no_wrapper' => true)); ?>
             <?php echo $this->element('identities/items', array('data' => $items, 'filter' => $filter)); ?>
         </div>
@@ -165,54 +162,29 @@
     </div>
 
     <div id="sidebar">
-        
-         <?php if($relationship_status == 'self') { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/locations/'; ?>">manage</a></span>
-    	
-    	<h4>Location</h4>
-    	
-            <form class="locator" method="POST" action="<?php echo $this->here; ?>">
-                <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
-                <div class="input">
-                <label>I'm currently at</label>
-                <select name="data[Locator][id]" size="1">
-                    <?php $selected_location = $data['Identity']['last_location_id']; ?>
-                    <?php foreach($locations as $id => $name) { ?>
-                        <option <?php if($id == $selected_location) { echo 'selected="selected" '; } ?>value="<?php echo $id; ?>"><?php echo $name; ?></option>
-                    <?php } ?>
-                    <option value="0">[somewhere else]</option>
-                </select>
-                <label id="locator_name" for="data[Locator][name]">Where are you then?</label>
-                <input type="text" name="data[Locator][name]" value="">
-                <input class="submitbutton" type="submit" value="Update"/>
-                </div>
-            </form>
-    
-        <hr />
-        <?php } ?>
 	
 	    <?php if($relationship_status == 'self') { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>">manage</a></span>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>"><?php __('manage'); ?></a></span>
     	<?php } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => 'Contacts', 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
+    	<?php echo $this->element('contacts/box', array('box_head' => __('Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
     	<p class="morefriends">
     		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
     		<strong><?php echo $num_private_contacts; ?></strong> private contacts
     		<?php if(($relationship_status == 'self' && ($num_noserub_contacts+$num_private_contacts > 0)) || 
     		         ($num_noserub_contacts > 0)) { ?>
-    		    <a href="<?php echo $noserub_url . '/network/'; ?>">Contact's Social Stream</a>
+    		    <a href="<?php echo $noserub_url . '/network/'; ?>"><?php __("Contact's Social Stream"); ?></a>
     		<?php } ?>
         </p>
     
         <hr />
 	
 	    <?php if(isset($mutual_contacts)) {
-	        echo $this->element('contacts/box', array('box_head' => 'Mutual Contacts', 'data' => $mutual_contacts, 'static_base_url' => $base_url_for_avatars));
+	        echo $this->element('contacts/box', array('box_head' => __('Mutual Contacts', true), 'data' => $mutual_contacts, 'static_base_url' => $base_url_for_avatars));
 	        echo '<hr />';
 	    } ?>
 	    
 	    <?php if($relationship_status == 'self') { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>">manage</a></span>
+    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>"><?php __('manage'); ?></a></span>
     	<?php } ?>
 	    <h4>On the web</h4>
 	    <ul class="whoissidebar">
@@ -225,21 +197,21 @@
 	    </ul>
 	    <?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
             <p>
-                <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+                <?php echo $html->link(__('Add new service', true), '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/add/', array('class' => 'addmore')); ?>
             </p>
 	    <?php } ?>
 	    <hr />
 
     <?php if($relationship_status == 'self') { ?>
-        <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>">manage</a></span>
+        <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>"><?php __('manage'); ?></a></span>
     <?php } ?>
-	<h4>Contact</h4>
+	<h4><?php __('Contact'); ?></h4>
 	<ul class="whoissidebar">
 	    <?php if($menu['logged_in'] &&
 	             $about_identity['namespace'] == '' && 
 	             $relationship_status != 'self' && 
 	             ($about_identity['allow_emails'] != 0 || ($about_identity['allow_emails'] == 1 && $relationship_status == 'contact'))) { ?>
-		    <li><img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="http://<?php echo $about_identity['username']; ?>/messages/new/">e-Mail</a></li>
+		    <li><img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="whoisicon" /> <a href="http://<?php echo $about_identity['username']; ?>/messages/new/"><?php __('E-Mail'); ?></a></li>
 		<?php } ?>
 		<?php foreach($communications as $item) { ?>
 	        <li>
@@ -250,7 +222,7 @@
 	</ul>
 	<?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
         <p>
-            <?php echo $html->link('Add new service', '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/', array('class' => 'addmore')); ?>
+            <?php echo $html->link(__('Add new service', true), '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />

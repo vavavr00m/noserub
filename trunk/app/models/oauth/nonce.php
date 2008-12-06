@@ -17,6 +17,6 @@ class Nonce extends AppModel {
 	
 	public function hasBeenUsed($consumer, $token, $nonce) {
 		return $this->hasAny(array('consumer' => $consumer->key, 'token' => $token->key,
-									   'nonce' => $nonce));
+								   'nonce' => $nonce));
 	}
 }

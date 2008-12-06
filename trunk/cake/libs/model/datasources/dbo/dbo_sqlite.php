@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sqlite.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id: dbo_sqlite.php 7690 2008-10-02 04:56:53Z nate $ */
 
 /**
  * SQLite layer for DBO
@@ -23,7 +23,7 @@
  * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP(tm) v 0.9.0
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -159,17 +159,14 @@ class DboSqlite extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$db = $this->config['database'];
-		$this->config['database'] = basename($this->config['database']);
-
 		$cache = parent::listSources();
+
 		if ($cache != null) {
 			return $cache;
 		}
+		$result = $this->fetchAll("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", false);
 
-		$result = $this->fetchAll("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-
-		if (!$result || empty($result)) {
+		if (empty($result)) {
 			return array();
 		} else {
 			$tables = array();
@@ -177,11 +174,8 @@ class DboSqlite extends DboSource {
 				$tables[] = $table[0]['name'];
 			}
 			parent::listSources($tables);
-
-			$this->config['database'] = $db;
 			return $tables;
 		}
-		$this->config['database'] = $db;
 		return array();
 	}
 /**
@@ -234,13 +228,18 @@ class DboSqlite extends DboSource {
 		if ($data === null) {
 			return 'NULL';
 		}
-		if ($data === '') {
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		switch ($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
+			case 'integer':
+			case 'float':
+				if ($data === '') {
+					return 'NULL';
+				}
 			default:
 				$data = sqlite_escape_string($data);
 			break;

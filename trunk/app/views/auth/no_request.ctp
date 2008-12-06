@@ -1,3 +1,3 @@
 <p>
-No OpenID request detected in session.
+    <?php __('No OpenID request detected in session.'); ?>
 </p>

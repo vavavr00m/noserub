@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: routes.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: routes.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -31,7 +31,7 @@
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file
- * to use (in this case, /app/views/pages/home.thtml)...
+ * to use (in this case, /app/views/pages/home.ctp)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 /**
@@ -39,7 +39,7 @@
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 /**
- * Then we connect url '/test' to our test controller. This is helpfull in
+ * Then we connect url '/test' to our test controller. This is helpful in
  * developement.
  */
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));

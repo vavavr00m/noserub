@@ -9,10 +9,6 @@ class DeviantartService extends AbstractService {
 		return 'http://'.$username.'.deviantart.com';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username.'.deviantart.com/friends/', '/<a class="u" href="http:\/\/(.*).deviantart.com\/">/iU', '/Next Page<\/a>/iU', '?offset=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

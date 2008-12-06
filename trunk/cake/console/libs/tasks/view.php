@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id: view.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * The View Tasks handles creating and updating view files.
  *
@@ -22,7 +22,7 @@
  * @subpackage		cake.cake.console.libs.tasks
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -124,12 +124,13 @@ class ViewTask extends Shell {
 			} else {
 				$vars = $this->__loadController();
 				if ($vars) {
-					$protected = array_map('strtolower', get_class_methods('appcontroller'));
-					$classVars = get_class_vars($this->controllerName . 'Controller');
-					if (array_key_exists('scaffold', $classVars)) {
+
+					$methods =  array_diff(
+						array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+						array_map('strtolower', get_class_methods('appcontroller'))
+					);
+					if (empty($methods)) {
 						$methods = $this->scaffoldActions;
-					} else {
-						$methods = get_class_methods($this->controllerName . 'Controller');
 					}
 					$adminDelete = null;
 
@@ -138,7 +139,7 @@ class ViewTask extends Shell {
 						$adminDelete = $adminRoute.'_delete';
 					}
 					foreach ($methods as $method) {
-						if ($method{0} != '_' && !in_array(low($method), array_merge($protected, array('delete', $adminDelete)))) {
+						if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
 							$content = $this->getContent($method, $vars);
 							$this->bake($method, $content);
 						}

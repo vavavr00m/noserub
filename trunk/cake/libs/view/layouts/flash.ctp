@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: flash.ctp 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: flash.ctp 7690 2008-10-02 04:56:53Z nate $ */
 /**
  *
  * PHP versions 4 and 5
@@ -14,21 +14,21 @@
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
+ * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package		cake
  * @subpackage		cake.cake.libs.view.templates.layouts
  * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision: 7062 $
+ * @version		$Revision: 7690 $
  * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-05-30 04:29:53 -0700 (Fri, 30 May 2008) $
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @license		http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo $page_title; ?></title>
 <?php echo $html->charset(); ?>
+<title><?php echo $page_title; ?></title>
 
 <?php if (Configure::read() == 0) { ?>
 <meta http-equiv="Refresh" content="<?php echo $pause; ?>;url=<?php echo $url; ?>"/>

@@ -76,17 +76,17 @@ class MenuFactory {
 	}
 	
 	private function getFilterSubMenu($filter, $urlPart) {
-		$menuItems[] = new MenuItem('Overview', $urlPart, $filter == 'all');
-		$menuItems[] = new MenuItem('Photo', $urlPart.'photo/', $filter == 'photo');
-		$menuItems[] = new MenuItem('Video', $urlPart.'video/', $filter == 'video');
-		$menuItems[] = new MenuItem('Audio', $urlPart.'audio/', $filter == 'audio');
-		$menuItems[] = new MenuItem('Link', $urlPart.'link/', $filter == 'link');
-		$menuItems[] = new MenuItem('Text', $urlPart.'text/', $filter == 'text');
-		$menuItems[] = new MenuItem('Micropublish', $urlPart.'micropublish/', $filter == 'micropublish');
-		$menuItems[] = new MenuItem('Events', $urlPart.'event/', $filter == 'event');
-		$menuItems[] = new MenuItem('Documents', $urlPart.'document/', $filter == 'document');
-		$menuItems[] = new MenuItem('Locations', $urlPart.'location/', $filter == 'location');
-		$menuItems[] = new MenuItem('NoseRub', $urlPart.'noserub/', $filter == 'noserub');
+		$menuItems[] = new MenuItem(__('Overview', true), $urlPart, $filter == 'all');
+		$menuItems[] = new MenuItem(__('Photos', true), $urlPart.'photo/', $filter == 'photo');
+		$menuItems[] = new MenuItem(__('Videos', true), $urlPart.'video/', $filter == 'video');
+		$menuItems[] = new MenuItem(__('Audios', true), $urlPart.'audio/', $filter == 'audio');
+		$menuItems[] = new MenuItem(__('Links', true), $urlPart.'link/', $filter == 'link');
+		$menuItems[] = new MenuItem(__('Texts', true), $urlPart.'text/', $filter == 'text');
+		$menuItems[] = new MenuItem(__('Micropublish', true), $urlPart.'micropublish/', $filter == 'micropublish');
+		$menuItems[] = new MenuItem(__('Events', true), $urlPart.'event/', $filter == 'event');
+		$menuItems[] = new MenuItem(__('Documents', true), $urlPart.'document/', $filter == 'document');
+		$menuItems[] = new MenuItem(__('Locations', true), $urlPart.'location/', $filter == 'location');
+		$menuItems[] = new MenuItem(__('NoseRub', true), $urlPart.'noserub/', $filter == 'noserub');
 		
 		return $menuItems;
 	}
@@ -115,10 +115,11 @@ class MenuFactory {
 	}
 	
 	private function getMainMenuForLocalUser($controller, $action, $localUsername) {
+	    $menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
-		$menuItems[] = new MyContactsMenuItem($controller, $action, $localUsername);
-		$menuItems[] = new SearchMenuItem($controller, $action);
+		$menuItems[] = new MyFavoritesMenuItem($controller, $action, $localUsername);
+		$menuItems[] = new MyCommentsMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
 		
 		return $menuItems;
@@ -135,7 +136,7 @@ class MenuFactory {
 		$registrationType = '';
 		
 		if(!isset($options['registration_type'])) {
-			$registrationType = defined('NOSERUB_REGISTRATION_TYPE') && NOSERUB_REGISTRATION_TYPE;
+			$registrationType = Configure::read('NoseRub.registration_type');
 		} else {
 			$registrationType = $options['registration_type'];
 		}
@@ -146,23 +147,22 @@ class MenuFactory {
 	private function getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser) {
 		$link = '/' . $localUsername . '/settings/';
 
-		$menuItems[] = new MenuItem('Profile', $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
-		$menuItems[] = new MenuItem('Accounts', $link . 'accounts/', $controller == 'Accounts');
-		$menuItems[] = new MenuItem('Locations', $link . 'locations/', $controller == 'Locations');
-		$menuItems[] = new MenuItem('Display', $link . 'display/', $controller == 'Identities' && $action == 'display_settings');
-		$menuItems[] = new MenuItem('Privacy', $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
-		$menuItems[] = new MenuItem('Feeds', $link . 'feeds/', $controller == 'Syndications');
-		$menuItems[] = new MenuItem('OpenID', $link . 'openid/', $controller == 'OpenidSites');
-		$menuItems[] = new MenuItem('OAuth', $link . 'oauth/', $controller == 'OauthConsumers');
-		$menuItems[] = new MenuItem('OMB', $link . 'omb/', $controller == 'Omb');
+		$menuItems[] = new MenuItem(__('Profile', true), $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
+		$menuItems[] = new MenuItem(__('Accounts', true), $link . 'accounts/', $controller == 'Accounts');
+		$menuItems[] = new MenuItem(__('Locations', true), $link . 'locations/', $controller == 'Locations');
+		$menuItems[] = new MenuItem(__('Display', true), $link . 'display/', $controller == 'Identities' && $action == 'display_settings');
+		$menuItems[] = new MenuItem(__('Privacy', true), $link . 'privacy/', $controller == 'Identities' && $action == 'privacy_settings');
+		$menuItems[] = new MenuItem(__('Feeds', true), $link . 'feeds/', $controller == 'Syndications');
+		$menuItems[] = new MenuItem(__('OpenID', true), $link . 'openid/', $controller == 'OpenidSites');
+		$menuItems[] = new MenuItem(__('OAuth', true), $link . 'oauth/', $controller == 'OauthConsumers');
 		
 		if (!$isOpenIDUser) {
-			$menuItems[] = new MenuItem('Password & API', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+			$menuItems[] = new MenuItem(__('Password & API', true), $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
 		} else {
-			$menuItems[] = new MenuItem('API', $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
+			$menuItems[] = new MenuItem(__('API', true), $link . 'password/', $controller == 'Identities' && $action == 'password_settings');
 		}
 		
-		$menuItems[] = new MenuItem('Manage', $link . 'account/', $controller == 'AccountSettings' && $action == 'index');
+		$menuItems[] = new MenuItem(__('Manage', true), $link . 'account/', $controller == 'AccountSettings' && $action == 'index');
 		
 		return $menuItems;
 	}
@@ -182,7 +182,7 @@ class MenuFactory {
 	}
 	
 	private function showSettingsSubMenu($controller, $action) {
-		$controllers = array('AccountSettings', 'Accounts', 'Locations', 'OauthConsumers', 'Omb', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Accounts', 'Locations', 'OauthConsumers', 'OpenidSites', 'Syndications');
 		
 		if (in_array($controller, $controllers)) {
 			return true;
@@ -226,6 +226,10 @@ class MenuItem {
 	public function isActive() {
 		return $this->isActive;
 	}
+	
+	public function isSettings() {
+	    return false;
+	}
 }
 
 class MyContactsMenuItem extends MenuItem {
@@ -233,7 +237,7 @@ class MyContactsMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername) {
-		parent::__construct('With my Contacts', '/' . $localUsername . '/network/', false);
+		parent::__construct(__('With my Contacts', true), '/' . $localUsername . '/network/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
@@ -255,7 +259,7 @@ class MyProfileMenuItem extends MenuItem {
 		// TODO adding link for profile of remote user
 		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/';
 		
-		parent::__construct('My Profile', $link, false);
+		parent::__construct(__('My Profile', true), $link, false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
@@ -269,12 +273,56 @@ class MyProfileMenuItem extends MenuItem {
 	}
 }
 
+class MyFavoritesMenuItem extends MenuItem {
+	private $controller = null;
+	private $action = null;
+	
+	public function __construct($controller, $action, $localUsername = null) {
+		// TODO adding link for profile of remote user
+		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/favorites/';
+		
+		parent::__construct(__('My Favorites', true), $link, false);
+		$this->controller = $controller;
+		$this->action = $action;
+	}
+	
+	public function isActive() {
+		if ($this->controller == 'Identities' && $this->action == 'favorites') {
+			return true;
+		}
+		
+		return false;
+	}
+}
+
+class MyCommentsMenuItem extends MenuItem {
+	private $controller = null;
+	private $action = null;
+	
+	public function __construct($controller, $action, $localUsername = null) {
+		// TODO adding link for profile of remote user
+		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/comments/';
+		
+		parent::__construct(__('My Comments', true), $link, false);
+		$this->controller = $controller;
+		$this->action = $action;
+	}
+	
+	public function isActive() {
+		if ($this->controller == 'Identities' && $this->action == 'comments') {
+			return true;
+		}
+		
+		return false;
+	}
+}
+
 class RegisterMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
 	public function __construct($controller, $action) {
-		parent::__construct('Register', '/pages/register/', false);
+		parent::__construct(__('Register', true), '/pages/register/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
@@ -297,13 +345,13 @@ class SettingsMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername) {
-		parent::__construct('Settings', '/' . $localUsername . '/settings/', false);
+		parent::__construct(__('Settings', true), '/' . $localUsername . '/settings/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
 	
 	public function isActive() {
-		$controllers = array('AccountSettings', 'Locations', 'Accounts', 'OauthConsumers', 'Omb', 'OpenidSites', 'Syndications');
+		$controllers = array('AccountSettings', 'Locations', 'Accounts', 'OauthConsumers', 'OpenidSites', 'Syndications');
 		
 		if(in_array($this->controller, $controllers)) {
 			return true;
@@ -319,6 +367,10 @@ class SettingsMenuItem extends MenuItem {
 		
 		return false;
 	}
+	
+	public function isSettings() {
+	    return true;
+	}
 }
 
 class SocialStreamMenuItem extends MenuItem {
@@ -326,7 +378,7 @@ class SocialStreamMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action) {
-		parent::__construct('Social Stream', '/social_stream/', false);
+		parent::__construct(__('All Users', true), '/social_stream/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}
@@ -345,7 +397,7 @@ class SearchMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action) {
-		parent::__construct('Search', '/search/', false);
+		parent::__construct(__('Search', true), '/search/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}

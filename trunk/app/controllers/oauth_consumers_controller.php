@@ -2,7 +2,7 @@
 
 class OauthConsumersController extends AppController {
 	public $uses = array('Consumer');
-	public $helpers = array('flashmessage', 'form');
+	public $helpers = array('flashmessage');
 	private $session_identity = null;
 	
 	public function beforeFilter() {
@@ -30,10 +30,10 @@ class OauthConsumersController extends AppController {
 		if ($this->data) {
 			if ($this->data['Consumer']['application_name']) {
 				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'], $this->data['Consumer']['callback_url'])) {
-					$this->flashMessage('success', 'Application registered.');
+					$this->flashMessage('success', __('Application registered.', true));
 					$this->redirect($this->getOAuthSettingsUrl());
 				} else {
-					$this->flashMessage('error', 'Application could not be registered.');
+					$this->flashMessage('error', __('Application could not be registered.', true));
 				}
 			} else {
 				$this->Consumer->invalidate('application_name');
@@ -41,7 +41,7 @@ class OauthConsumersController extends AppController {
 		}
 		
 		$this->set('session_identity', $this->session_identity);
-		$this->set('headline', 'Register new application');
+		$this->set('headline', __('Register new application', true));
 	}
 	
 	public function edit() {
@@ -55,7 +55,7 @@ class OauthConsumersController extends AppController {
 		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
 		
 		if (!$consumer) {
-			$this->flashMessage('error', 'Application could not be edited.');
+			$this->flashMessage('error', __('Application could not be edited.', true));
 			$this->redirect($this->getOAuthSettingsUrl());
 		}
 		
@@ -63,9 +63,9 @@ class OauthConsumersController extends AppController {
 			if ($this->data['Consumer']['application_name']) {
 				$this->Consumer->id = $consumer['Consumer']['id'];
 				if ($this->Consumer->saveField('application_name', $this->data['Consumer']['application_name'])) {
-                    $this->flashMessage('success', 'Application updated.');
+                    $this->flashMessage('success', __('Application updated.', true));
                 } else {
-                    $this->flashMessage('error', 'Application could not be updated.');
+                    $this->flashMessage('error', __('Application could not be updated.', true));
                 }
                 $this->redirect($this->getOAuthSettingsUrl());
 			} else {
@@ -76,7 +76,7 @@ class OauthConsumersController extends AppController {
 		}
 		
 		$this->set('session_identity', $this->session_identity);
-		$this->set('headline', 'Edit application');
+		$this->set('headline', __('Edit application', true));
         $this->render('add');
 	}
 	
@@ -92,9 +92,9 @@ class OauthConsumersController extends AppController {
 		if ($this->Consumer->hasAny(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
             $this->Consumer->delete($consumer_id);
             
-            $this->flashMessage('success', 'Application deleted.');            
+            $this->flashMessage('success', __('Application deleted.', true));            
         } else {
-            $this->flashMessage('error', 'Application could not be deleted.');
+            $this->flashMessage('error', __('Application could not be deleted.', true));
         }
         
     	$this->redirect($this->getOAuthSettingsUrl());

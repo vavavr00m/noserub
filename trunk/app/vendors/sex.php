@@ -2,69 +2,86 @@
 
 class Sex {
 	const AVATAR_PATH = '/images/profile/avatar/';
+	const UNDEFINED = 0;
+	const FEMALE = 1;
+	const MALE = 2;
 
-	/**
-	 * @param $sex int value, 0: undefined, 1: female, 2: male
-	 */
-	public static function getImageUrl($sex, $smallSize = false) {
-		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
+	public static function getImageUrl($sex) {
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		$suffix = '.gif';
+		return Sex::constructImageUrl($sex, '.gif');
+	}
+	
+	public static function getMediumImageUrl($sex) {
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		if ($smallSize) {
-			$suffix = '-small'.$suffix;
-		}
+		return Sex::constructImageUrl($sex, '-medium.gif');
+	}
+	
+	public static function getSmallImageUrl($sex) {
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		$url = '';
-		
-		switch ($sex) {
-			case 1: 
-				$url = Router::url(Sex::AVATAR_PATH.'female'.$suffix, true);
-				break;
-			case 2: 
-				$url = Router::url(Sex::AVATAR_PATH.'male'.$suffix, true);
-				break;
-			default: 
-				$url = Router::url(Sex::AVATAR_PATH.'noinfo'.$suffix, true); 
-		}
-		
-		return $url;
+		return Sex::constructImageUrl($sex, '-small.gif');
 	}
 	
 	/**
 	 * Returns "he", "she", or "he/she".
-	 * @param $sex int value, 0: undefined, 1: female, 2: male
 	 */
 	public static function heOrShe($sex) {
-		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		$pronouns = array('he/she', 'she', 'he');
+		$pronouns = array(Sex::UNDEFINED => __('he/she', true), 
+						  Sex::FEMALE => __('she', true), 
+						  Sex::MALE => __('he', true));
 		
 		return $pronouns[$sex];	
 	}
 	
 	/**
 	 * Returns "him", "her", or "him/her".
-	 * @param $sex int value, 0: undefined, 1: female, 2: male
 	 */
 	public static function himOrHer($sex) {
-		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		$pronouns = array('him/her', 'her', 'him');
+		$pronouns = array(Sex::UNDEFINED => __('him/her', true), 
+						  Sex::FEMALE => __('her', true), 
+						  Sex::MALE => __('him', true));
 		
 		return $pronouns[$sex];
 	}
 	
 	/**
 	 * Returns "his", "her", or "his/her".
-	 * @param $sex int value, 0: undefined, 1: female, 2: male
 	 */
 	public static function hisOrHer($sex) {
-		if ($sex < 0 || $sex > 2) throw new InvalidArgumentException();
+		if (!in_array($sex, Sex::getSexes())) throw new InvalidArgumentException();
 		
-		$pronouns = array('his/her', 'her', 'his');
+		$pronouns = array(Sex::UNDEFINED => __('his/her', true), 
+						  Sex::FEMALE => __('her', true), 
+						  Sex::MALE => __('his', true));
 		
 		return $pronouns[$sex];
 	}
+	
+	private static function constructImageUrl($sex, $suffix) {
+		$url = '';
+		
+		switch ($sex) {
+			case Sex::FEMALE: 
+				$url = Router::url(Sex::AVATAR_PATH.'female'.$suffix, true);
+				break;
+			case SEX::MALE: 
+				$url = Router::url(Sex::AVATAR_PATH.'male'.$suffix, true);
+				break;
+			case SEX::UNDEFINED: 
+				$url = Router::url(Sex::AVATAR_PATH.'noinfo'.$suffix, true);
+				break; 
+		}
+		
+		return $url;
+	}
+	
+	private static function getSexes() {
+		return array(Sex::UNDEFINED, Sex::FEMALE, Sex::MALE);
+	}
 }
-?>

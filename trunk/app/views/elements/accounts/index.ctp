@@ -9,14 +9,14 @@
 
 <?php if(empty($data)) { ?>
     <p>
-        No accounts yet.
+        <?php __('No accounts yet.'); ?>
     </p>
 <?php } else {?>
     <table class="listing">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Service</th>
+                <th><?php __('Username'); ?></th>
+                <th><?php __('Service'); ?></th>
                 <th></th>
             </tr>
         </thead>
@@ -55,6 +55,6 @@
 <?php } ?>
 <?php if($show_action_links) { ?>
 	<p class="infotext">
-	    <?php echo $html->link('Add new account', '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+	    <?php echo $html->link(__('Add new account', true), '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
 	</p>
 <?php } ?>

@@ -9,10 +9,6 @@ class ZooomrService extends AbstractService {
 		return 'http://www.zooomr.com/photos/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.zooomr.com/people/' . $username . '/contacts/', '/View their <a href="\/people\/(.*)\/">profile<\/a><\/p>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		$raw_content = $feeditem->get_content();
         if(preg_match('/<img src="(.*)_m\.jpg"/iUs', $raw_content, $matches)) {

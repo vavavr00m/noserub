@@ -9,10 +9,6 @@ class OdeoService extends AbstractService {
 		return 'http://odeo.com/profile/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://odeo.com/profile/' . $username . '/contacts/', '/<a href="\/profile\/(.*)" title=".*\'s Profile" rel="contact" id=".*">/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

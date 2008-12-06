@@ -65,8 +65,6 @@ class Contact extends AppModel {
         );
         $noserub_tags = Set::extract($data, '{n}.NoserubContactType.{n}.name');
         $own_tags = Set::extract($data, '{n}.ContactType.{n}.name');
-        #pr($noserub_tags);
-        #pr($own_tags);
         $result = array();
         foreach($noserub_tags as $tags) {
             foreach($tags as $tag) {
@@ -289,7 +287,7 @@ class Contact extends AppModel {
                 
                 # get user data
                 if(!$item['is_private']) {
-                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                    $result = $this->requestAction('/jobs/' . Configure::read('NoseRub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
                 }
             } else {
                 $new_identity_id = $new_identity['Identity']['id'];

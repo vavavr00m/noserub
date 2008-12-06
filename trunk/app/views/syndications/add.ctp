@@ -1,10 +1,10 @@
 <form id="SyndicationAddForm" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
-        <legend>Select a name. This is just visible for you and should help you to organize your feeds.</legend>
+        <legend><?php __('Select a name. This is just visible for you and should help you to organize your feeds.'); ?></legend>
         <?php echo $form->input('Syndication.name', array('label' => '', 'value' => 'Some name', 'size' => 64)); ?>
     </fieldset>
     <fieldset>
-        <legend>Choose, which of your activities should be included</legend>
+        <legend><?php __('Choose, which of your activities should be included.'); ?></legend>
         <ul>
         <?php foreach($accounts as $item) { ?>
             <li>
@@ -18,16 +18,15 @@
     </fieldset>
 
 <p class="infotext">
-	Do you want to include your networks (contacts/friends) activities too?
-	
+	<?php __('Do you want to include your networks (contacts/friends) activities too?'); ?>
 </p>
 <p class="infotext">
-	<a class="specifynetwork addmore" href="#">Specify network activities</a>
+	<a class="specifynetwork addmore" href="#"><?php __('Specify network activities'); ?></a>
 </p>
 <br />
 
     <fieldset class="mynetwork">
-        <legend>Which of your networks (contacts/friends) activities should be included?</legend>
+        <legend><?php __('Which of your networks (contacts/friends) activities should be included?'); ?></legend>
         <?php foreach($contacts as $contact) { ?>
             <?php if(empty($contact['WithIdentity']['Account'])) { continue; } ?>
             
@@ -42,7 +41,7 @@
                         }
                     } else {
                     	App::import('Vendor', 'sex');
-                        $contact_photo = Sex::getImageUrl($contact['WithIdentity']['sex'], true);
+                        $contact_photo = Sex::getSmallImageUrl($contact['WithIdentity']['sex']);
                     }
                 ?>
                 <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $contact['WithIdentity']['username']; ?>'s Picture" class="avatar" />
@@ -55,9 +54,9 @@
             <ul>
                 <li>
                     <input class="check_all" type="checkbox" name="dummy" value="-1" />
-                    All feeds of <?php echo $contact['WithIdentity']['username']; ?>
+                    <?php echo sprintf(__('All feeds of %s', true), $contact['WithIdentity']['username']); ?>
                 </li>
-                <li><a class="specify addmore" href="#">Specify the feeds</a></li>
+                <li><a class="specify addmore" href="#"><?php __('Specify the feeds'); ?></a></li>
 			</ul>
 
 			<ul class="accounts_of_contact">
@@ -72,6 +71,6 @@
         <?php } ?>
     </fieldset>
     <fieldset>
-        <input class="submitbutton" type="submit" value="Create Feed"/>
+        <input class="submitbutton" type="submit" value="<?php __('Create Feed'); ?>"/>
     </fieldset>
 </form>

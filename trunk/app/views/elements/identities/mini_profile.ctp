@@ -1,12 +1,14 @@
 <?php
+
+App::import('Vendor', 'UrlUtil');
+
 if(isset($data['Identity'])) {
     $data = $data['Identity'];
 }
 $noserub_url = 'http://' . $data['username'];
 
 if($data['photo']) {
-    if(strpos($data['photo'], 'http://') === 0 ||
-       strpos($data['photo'], 'https://') === 0) {
+    if(UrlUtil::startsWithHttpOrHttps($data['photo'])) {
            # contains a complete path, eg. from not local identities
            $profile_photo = $data['photo'];
        } else {
@@ -14,7 +16,7 @@ if($data['photo']) {
        }
 } else {
 	App::import('Vendor', 'sex');
-    $profile_photo = Sex::getImageUrl($data['sex'], true);
+    $profile_photo = Sex::getSmallImageUrl($data['sex']);
 }
 ?>
 <!-- mini profile // start -->

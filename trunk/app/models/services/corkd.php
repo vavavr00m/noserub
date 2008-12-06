@@ -9,10 +9,6 @@ class CorkdService extends AbstractService {
 		return 'http://corkd.com/people/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://corkd.com/people/' . $username . '/buddies', '/<dd class="username"><a href="\/people\/(.*)" rel="friend">.*<\/a><\/dd>/iU', '/Next &#8250;&#8250;<\/a>/iU', '?page=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

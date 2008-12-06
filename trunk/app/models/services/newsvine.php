@@ -9,10 +9,6 @@ class NewsvineService extends AbstractService {
 		return 'http://'.$username.'.newsvine.com/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://' . $username . '.newsvine.com/?more=Friends&si=', '/<td><a href="http:\/\/(.*).newsvine.com".*>.*<\/a>/iU', '/title="Next 50">NEXT 50<\/a>/iU', '');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

@@ -13,18 +13,18 @@ class Xmpp extends AppModel {
             return;
         }
         
-        if(!defined('NOSERUB_XMPP_FULL_FEED_USER') || !NOSERUB_XMPP_FULL_FEED_USER) {
+        if (Configure::read('NoseRub.xmpp_full_feed_user') === '') {
             return true;
         }
         
         App::import('Vendor', 'xmpp2', array('file' => 'XMPPHP'.DS.'XMPP.php'));
         $conn = new XMPPHP_XMPP(
-                NOSERUB_XMPP_FULL_FEED_SERVER, 
-                NOSERUB_XMPP_FULL_FEED_PORT, 
-                NOSERUB_XMPP_FULL_FEED_USER, 
-                NOSERUB_XMPP_FULL_FEED_PASSWORD, 
+                Configure::read('NoseRub.xmpp_full_feed_server'),
+        		Configure::read('NoseRub.xmpp_full_feed_port'),
+        		Configure::read('NoseRub.xmpp_full_feed_user'),
+        		Configure::read('NoseRub.xmpp_full_feed_password'),
                 'xmpphp', 
-                NOSERUB_XMPP_FULL_FEED_SERVER, 
+                Configure::read('NoseRub.xmpp_full_feed_server'), 
                 $printlog = false, 
                 $loglevel = XMPPHP_Log::LEVEL_VERBOSE
         );

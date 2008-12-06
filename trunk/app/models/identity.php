@@ -2,9 +2,18 @@
 /* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
+	public $hasOne = array('TwitterAccount');
     public $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Syndication', 'Entry');
     public $belongsTo = array('Location' => array('className'  => 'Location',
                                                'foreignKey' => 'last_location_id'));
+    public $hasAndBelongsToMany = array(
+            'FavoriteEntries' => array(
+                'className' => 'Favorite',
+                'joinTable' => 'favorites',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'entry_id'
+            )
+    );
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
@@ -27,7 +36,7 @@ class Identity extends AppModel {
     }
 
     public function validateUniqueOpenID($value, $params = array()) {
-    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash' => '<> #deleted#'))) {
+    	if ($this->hasAny(array('Identity.openid' => $value['openid'], 'Identity.hash <>' => '#deleted#'))) {
     		return false;
     	} else {
     		return true;
@@ -35,16 +44,13 @@ class Identity extends AppModel {
     }
     
     /**
-     * validate, if the username is already taken
-     *
-     * @param  
-     * @return 
-     * @access 
+     * validate, if the username is already taken 
      */
     public function validateUniqueUsername($value, $params = array()) {
-        $value = strtolower($value['username']);
+        App::import('Vendor', 'UsernameUtil');
+    	$value = strtolower($value['username']);
         $split_username = $this->splitUsername($value);
-        if(in_array($split_username['username'], split(',', NOSERUB_RESERVED_USERNAMES))) {
+        if(UsernameUtil::isReservedUsername($split_username['username'])) {
             return false;
         }
 
@@ -56,16 +62,15 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, whether host of email address matches NOSERUB_REGISTRATION_RESTRICTED_HOSTS
+     * check, whether host of email address matches NoseRub.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (!defined('NOSERUB_REGISTRATION_RESTRICTED_HOSTS') || 
-            NOSERUB_REGISTRATION_RESTRICTED_HOSTS === false ||
+        if (Configure::read('NoseRub.registration_restricted_hosts') === false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', NOSERUB_REGISTRATION_RESTRICTED_HOSTS));
+        return in_array($host, explode(' ', Configure::read('NoseRub.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {
@@ -107,10 +112,6 @@ class Identity extends AppModel {
     /**
      * Is used, when an account is closed, so that the username
      * remains, but every other personal data is deleted.
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function block($identity_id = null) {
         if($identity_id === null) {
@@ -255,8 +256,7 @@ class Identity extends AppModel {
             return false;
         }
 
-        # "@" to avoid notices and warnings on not supported
-        # protocol, e.g. https
+        App::import('Vendor', 'WebExtractor');
         $content = WebExtractor::fetchUrl($url);
         if(!$content) {
             return false;
@@ -449,43 +449,38 @@ class Identity extends AppModel {
     }
 
     /**
-     * Sanitizes non-namespace containing usernames.
-     * This is used eg. when adding new contacts from
-     * flickr, where usernames can be '0909ds7@N01'.
-     * There, the @ is not allowed, so I want to sanitize
-     * them, before giving them to the user as selection
-     * for using as a real contact username.
+     * sending out the password recovery mail
      *
-     * @param  
-     * @return 
-     * @access 
+     * todo: use the mailer component
      */
-    public function sanitizeUsername($username) {
-        $username = str_replace('ä', 'ae', $username);
-        $username = str_replace('ö', 'oe', $username);
-        $username = str_replace('ü', 'ue', $username);
-        $username = str_replace('ß', 'ss', $username);
-        $username = str_replace('Ä', 'Ae', $username);
-        $username = str_replace('Ö', 'Oe', $username);
-        $username = str_replace('Ü', 'Ue', $username);
-        $username = str_replace(' ', '-',  $username);
-        
-        $username = preg_replace('/[^\w\s.-]/', null, $username);
-        return $username;
+    public function passwordRecoveryMail($username, $email, $hash) {
+        $msg = sprintf(__('You requested a new password for %s', true), 'http://' . $username) . "\n\n";
+        $msg .= __('Please click here to set a new password', true) .":\n";
+        $msg .= FULL_BASE_URL . Router::url('/pages/password/recovery/' . $hash . '/') . "\n\n";
+        $msg .= __('Thanks!', true);
+
+        if(!mail($email, sprintf(__('%s password recovery', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
+            $this->log('password recovery could not be sent: '.$email);
+            return false;
+        } else {
+            $this->log('password recovery mail sent to '.$email, LOG_DEBUG);
+            return true;
+        }
     }
     
     /**
      * removes http://, https:// and www. from url
      */
     public function removeHttpWww($url) {
-        $url = str_ireplace('http://', '', $url);
-        $url = str_ireplace('https://', '', $url);
+    	App::import('Vendor', 'UrlUtil');
+    	$url = UrlUtil::removeHttpAndHttps($url);
         if(stripos($url, 'www.') === 0) {
             $url = substr($url, 4);
         }
         
         return $url;
     }
+    
     /**
      * extract single information out of a username
      * a username may have the following occurences:
@@ -494,10 +489,6 @@ class Identity extends AppModel {
      * (3) poolie@dirk.olbertz (this is a private, local one)
      * (4) noserub.com/poolie@dirk.olbertz (a private, local one)
      * (5) (1) and (4) with http:// or https://
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
@@ -549,10 +540,6 @@ class Identity extends AppModel {
     
     /**
      * Updates the security token for given $identity_id
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function updateSecurityToken($identity_id) {
         if($identity_id) {
@@ -568,15 +555,11 @@ class Identity extends AppModel {
     
     /**
      * sync that identity with data from username (url)
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function sync($identity_id, $username) {
         $this->log('sync('.$identity_id.', '.$username.')', LOG_DEBUG);
         # get the data from the remote server. try http:// and
-        # http2://
+        # https://
         $protocols = array('http://', 'https://');
         foreach($protocols as $protocol) {
             $data = $this->parseNoseRubPage($protocol . $username);
@@ -738,28 +721,51 @@ class Identity extends AppModel {
         return $data;
     }
     
+    /**
+     * tries to find an identity, given
+     * by that username. if it is not found,
+     * we create this identity.
+     * this is used for Comment::sync()
+     *
+     * ATTENTION! getId() was not available, as it is already used
+     *
+     * @param string $username
+     * 
+     * @return array
+     */
+    public function getIdForUsername($username) {
+        $this->contain();
+        $identity = $this->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Identity.username' => $username
+                ),
+                'fields' => 'Identity.id'
+            )
+        );
+        
+        if(!$identity) {
+            $data = array(
+                'username' => $username,
+                'is_local' => 0
+            );
+            $this->create();
+            $this->save($data);
+            
+            return $this->id;
+        } else {
+            return $identity['Identity']['id'];
+        }
+    }
+    
     private function uploadPhoto($local_filename) {
         if(!$this->exists()) {
             return false;
         }
         
         $imageinfo = getimagesize($local_filename);
-        switch($imageinfo[2]) {
-            case IMAGETYPE_GIF:
-                $picture = imageCreateFromGIF($local_filename);
-                break;
-                
-            case IMAGETYPE_JPEG:
-                $picture = imageCreateFromJPEG($local_filename);
-                break;
-                
-            case IMAGETYPE_PNG:
-                $picture = imageCreateFromPNG($local_filename);
-                break;
-                
-            default:
-                $picture = null;
-        }
+        $picture = $this->createImage($imageinfo[2], $local_filename);
         
         if($picture) {
             $filename = $this->field('photo');
@@ -767,30 +773,57 @@ class Identity extends AppModel {
             if(strpos($filename, 'http') === 0) {
                 $filename = '';
             }
+            
             if(!$filename) {
-                # get random name for new photo and make sure it is unqiue
-                $filename = '';
-                $seed = $this->id . $local_filename;
-                while($filename == '') {
-                    $filename = md5($seed);
-                    if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
-                        $filename = '';
-                        $seed = md5($seed . time());
-                    }
-                }
+                $filename = $this->generateUniqueFilenameForPhoto($this->id . $local_filename);
                 $this->saveField('photo', $filename);
             }
             
-            $original_width  = $imageinfo[0];
-            $original_height = $imageinfo[1];
-
-            $this->saveScaled($picture, $original_width, $original_height, 150, 150, AVATAR_DIR . $filename . '.jpg');
-            $this->saveScaled($picture, $original_width, $original_height,  35,  35, AVATAR_DIR . $filename . '-small.jpg');
+            App::import('Vendor', 'ImageResizer');
+            $originalSize = new ImageSize($imageinfo[0], $imageinfo[1]);
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(150, 150), AVATAR_DIR . $filename . '.jpg');
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(96, 96), AVATAR_DIR . $filename . '-medium.jpg');
+            ImageResizer::resizeAndSaveJPEG($picture, $originalSize, new ImageSize(35, 35), AVATAR_DIR . $filename . '-small.jpg');
             
             return $filename;
         }
         
         return false;
+    }
+    
+    private function createImage($imageType, $localFilename) {
+    	switch($imageType) {
+            case IMAGETYPE_GIF:
+                $picture = imageCreateFromGIF($localFilename);
+                break;
+                
+            case IMAGETYPE_JPEG:
+                $picture = imageCreateFromJPEG($localFilename);
+                break;
+                
+            case IMAGETYPE_PNG:
+                $picture = imageCreateFromPNG($localFilename);
+                break;
+                
+            default:
+                $picture = null;
+        }
+        
+        return $picture;
+    }
+    
+    private function generateUniqueFilenameForPhoto($seed) {
+		$filename = '';
+		
+		while($filename == '') {
+			$filename = md5($seed);
+			if(file_exists(AVATAR_DIR . $filename . '.jpg')) {
+				$filename = '';
+				$seed = md5($seed . time());
+			}
+		}
+		
+		return $filename;
     }
     
     public function uploadPhotoByForm($upload_form) {
@@ -799,6 +832,7 @@ class Identity extends AppModel {
        
     public function uploadPhotoByUrl($url) {
         # get the file first
+        App::import('Vendor', 'WebExtractor');
         $content = WebExtractor::fetchUrl($url);
         if($content) {
             $filename = AVATAR_DIR . $this->id . '.tmp';
@@ -809,20 +843,6 @@ class Identity extends AppModel {
             return $result;
         } else {
             return false;
-        }
-    }
-    
-    private function saveScaled($picture, $original_width, $original_height, $width, $height, $filename) {
-        $BEST_QUALITY = 100;
-    	
-    	if($original_width==$width && $original_height==$height) {
-            # original picture
-            imagejpeg($picture, $filename, $BEST_QUALITY);
-        } else {
-            # resampling picture
-            $resampled = imagecreatetruecolor($width, $height);
-            imagecopyresampled($resampled, $picture, 0, 0, 0, 0, imagesx($resampled), imagesy($resampled), $original_width, $original_height);
-            imagejpeg($resampled, $filename, $BEST_QUALITY); 
         }
     }
     
@@ -841,17 +861,17 @@ class Identity extends AppModel {
     }
     
     private function prepareVerificationMessage($hash) {
-    	$msg  = 'Welcome to ' . NOSERUB_APP_NAME . '!' . "\n\n";
-        $msg .= 'Please click here to verify your email address:' ."\n";
+    	$msg  = sprintf(__('Welcome to %s!', true), Configure::read('NoseRub.app_name')) . "\n\n";
+        $msg .= __('Please click here to verify your email address', true) .":\n";
         $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
-        $msg .= 'If you do not click on this link, the account will automatically be deleted after 14 days.' . "\n\n";
-        $msg .= 'Thanks!';
+        $msg .= __('If you do not click on this link, the account will automatically be deleted after 14 days.', true) . "\n\n";
+        $msg .= __('Thanks!', true);
         
         return $msg;
     }
     
     private function sendVerificationMail($email, $msg) {
-        if(!mail($email, 'Your ' . NOSERUB_APP_NAME . ' registration', $msg, 'From: ' . NOSERUB_EMAIL_FROM)) {
+        if(!mail($email, sprintf(__('Your %s registration', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
             $this->log('verify mail could not be sent: '.$email);
         } else {
             $this->log('verify mail sent to '.$email, LOG_DEBUG);
@@ -871,7 +891,11 @@ class Identity extends AppModel {
                }
         } else {
             App::import('Vendor', 'sex');
-        	$profile_photo = Sex::getImageUrl($data[$identityKey]['sex'], $smallSize);
+            if ($smallSize) {
+            	$profile_photo = Sex::getSmallImageUrl($data[$identityKey]['sex']);
+            } else {
+        		$profile_photo = Sex::getImageUrl($data[$identityKey]['sex']);
+            }
         }
         
         return $profile_photo;
@@ -880,8 +904,8 @@ class Identity extends AppModel {
     public function getBaseUrlForAvatars() {
     	$url = '';
     	
-    	if(NOSERUB_USE_CDN) {
-            $url = 'http://s3.amazonaws.com/' . NOSERUB_CDN_S3_BUCKET . '/avatars/';
+    	if(Configure::read('NoseRub.use_cdn')) {
+            $url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
         } else {
             $url = FULL_BASE_URL . Router::url('/static/avatars/');
         }
@@ -920,6 +944,29 @@ class Identity extends AppModel {
                 'limit' => $limit
             )
         );
+    }
+    
+    /**
+     * go through all $model to load the identity
+     *
+     * @param string $model eg. FavoritedBy, or Comment
+     * @param arary $data
+     *
+     * @return array
+     */
+    public function addIdentity($model, $data) { 
+        if(!isset($data[$model])) {
+            return $data;
+        }       
+        
+        foreach($data[$model] as $idx => $item) {
+            $this->contain();
+            $this->id = $item['identity_id'];
+            $identity = $this->read();
+            $data[$model][$idx]['Identity'] = $identity['Identity'];
+        }
+        
+        return $data;
     }
     
     private function startsWithHttp($string) {

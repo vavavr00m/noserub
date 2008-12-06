@@ -9,10 +9,6 @@ class StumbleuponService extends AbstractService {
 		return 'http://'.$username.'.stumbleupon.com/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . '.stumbleupon.com/friends/', '/<dt><a href="http:\/\/(.*).stumbleupon.com\/">.*<\/a><\/dt>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}
