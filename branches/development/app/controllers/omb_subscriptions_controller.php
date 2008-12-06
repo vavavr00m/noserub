@@ -19,13 +19,16 @@ class OmbSubscriptionsController extends AppController {
 			
 			$existingId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
 			if ($existingId) {
-				$data['Identity']['id'] = $existingId;
+				$this->Identity->id = $existingId;
 			}
 			
 			$this->Identity->save($data, true, array('is_local', 'username'));
-			
 			$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
 		
+			if ($response->getAvatarUrl() != '') {
+				$this->Identity->uploadPhotoByUrl($response->getAvatarUrl());
+			}
+			
 			$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
 			$requestToken = $this->Session->read('omb.requestToken');
 			$serviceId = $this->Session->read('omb.serviceId');
