@@ -45,17 +45,18 @@ class EntriesController extends AppController {
         );
         
         $data = $this->Entry->findById($entry_id);
-        $data = $this->Entry->Identity->addIdentity('FavoritedBy', $data);
-        $data = $this->Entry->Identity->addIdentity('Comment', $data);
+        if($data) {
+            $data = $this->Entry->Identity->addIdentity('FavoritedBy', $data);
+            $data = $this->Entry->Identity->addIdentity('Comment', $data);
         
-        # go through all favorites. if it's the current identity, set a marker
-        foreach($data['FavoritedBy'] as $item) {
-            if($session_identity['id'] == $item['identity_id']) {
-                $this->set('already_marked', true);
-                break;
+            # go through all favorites. if it's the current identity, set a marker
+            foreach($data['FavoritedBy'] as $item) {
+                if($session_identity['id'] == $item['identity_id']) {
+                    $this->set('already_marked', true);
+                    break;
+                }
             }
         }
-        
         $this->set('data', $data);
         $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
         $this->set('session_identity', $session_identity);
