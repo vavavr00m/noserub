@@ -15,6 +15,9 @@
 } ?>
 <hr class="clear" />
 <div id="network">
+	<?php if($data['Entry']['account_id'] > 0) {
+		echo $html->link(__('External permalink', true), $data['Entry']['url']);
+	} ?>
     <ul class="networklist">
         <?php echo $this->renderElement('entries/row_view', array('item' => $data, 'permalink' => false)); ?>
     </ul>
