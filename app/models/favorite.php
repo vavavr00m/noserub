@@ -32,7 +32,7 @@ class Favorite extends AppModel {
             $zend_json->useBuiltinEncoderDecoder = true;
             $favorites = $zend_json->decode($json_data);
             if(!isset($favorites['data']) || !is_array($favorites['data'])) {
-                $favorites = array();
+                $favorites = array('data' => array());
                 $imported = 0;
             } else {
                 $imported = 0;
@@ -65,7 +65,7 @@ class Favorite extends AppModel {
                 }
             }
             
-            $polled[] = sprintf(__('%d favorites from %s, %d imported', true), count($favorites), $peer['Peer']['name'], $imported);
+            $polled[] = sprintf(__('%d favorites from %s, %d imported', true), count($favorites['data']), $peer['Peer']['name'], $imported);
         }
         
         return $polled;
