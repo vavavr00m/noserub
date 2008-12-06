@@ -68,7 +68,7 @@
 		</div>
 
 		<div id="footer" class="wrapper">
-			<p><a href="http://noserub.com"><img src="<?php echo Router::url('/images/footer/noserub-logo.gif'); ?>" class="noserublogo" alt="NoseRub Logo" /></a> Powered by <a title="Decentralized social networks" href="http://noserub.com">NoseRub</a></p>
+			<p><a href="http://noserub.com"><img src="<?php echo Router::url('/images/footer/noserub-logo.gif'); ?>" class="noserublogo" alt="NoseRub Logo" /></a> Powered by <a title="Decentralized social networks" href="http://noserub.com">NoseRub <?php echo Configure::read('NoseRub.version'); ?></a></p>
 		</div>
 
 </body>
