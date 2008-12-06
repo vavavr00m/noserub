@@ -1116,7 +1116,7 @@ class IdentitiesController extends AppController {
 			$data[] = array(
 				'uid'          => $uid,
 				'url'          => $url,
-				'commentd_by'  => $comment['Identity']['username'],
+				'commented_by' => $comment['Identity']['username'],
 				'commented_on' => $comment['Comment']['published_on'],
 				'comment'      => $comment['Comment']['content']
 			);
