@@ -9,10 +9,6 @@ class DeliciousService extends AbstractService {
 		return 'http://del.icio.us/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://del.icio.us/network/' . $username . '/', '/<a class="uname" href="\/(.*)">.*<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

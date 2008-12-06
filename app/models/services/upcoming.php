@@ -9,10 +9,6 @@ class UpcomingService extends AbstractService {
 		return 'http://upcoming.yahoo.com/user/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://upcoming.yahoo.com/user/' . $username . '/', '/<a href="\/user\/[0-9]*\/">(.*)<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

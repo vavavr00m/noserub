@@ -4,6 +4,17 @@
 class Entry extends AppModel {
     public $belongsTo = array('Identity', 'Account', 'ServiceType');
     
+    public $hasMany = array(
+        'Comment', 
+		'Favorite',
+        'FavoritedBy' => array(
+                'className' => 'Favorite',
+                'joinTable' => 'favorites',
+                'foreignKey' => 'entry_id',
+                'associationForeignKey' => 'identity_id'
+            )
+    );
+    
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
@@ -134,6 +145,7 @@ class Entry extends AppModel {
                 'published_on'    => $item['datetime'],
                 'title'           => $item['title'] ? $item['title'] : '',
                 'url'             => $item['url'] ? $item['url'] : '',
+                'uid'             => $item['url'] ? md5($item['url']) : '',
                 'content'         => $item['content'] ? $item['content'] : '',
                 'restricted'      => !$frontpage_updates
             );
@@ -148,7 +160,7 @@ class Entry extends AppModel {
     /**
      */
     public function getForDisplay($filter, $limit, $with_restricted = false) {
-        if(!NOSERUB_MANUAL_FEEDS_UPDATE) {
+        if(!Configure::read('NoseRub.manual_feeds_update')) {
             # update it before getting data
             if(isset($filter['identity_id']) && $filter['identity_id']) {
                 $this->Account->contain();
@@ -162,16 +174,19 @@ class Entry extends AppModel {
                 }
             }
         }
-        
+                        
         $this->Identity->Entry->contain(
             array(
                 'ServiceType.token',
                 'ServiceType.intro',
                 'Identity.firstname',
                 'Identity.lastname',
-                'Identity.username'
+                'Identity.username',
+                'FavoritedBy',
+                'Comment'
             )
         );
+        
         $conditions = array();
         if(isset($filter['account_id'])) {            
             $conditions['account_id'] = $filter['account_id'];
@@ -184,6 +199,9 @@ class Entry extends AppModel {
         }
         if(isset($filter['identity_id'])) {
             $conditions['identity_id'] = $filter['identity_id'];
+        }
+		if(isset($filter['entry_id'])) {
+            $conditions['Entry.id'] = $filter['entry_id'];
         }
         if(isset($filter['search']) && $filter['search']) {
             $terms = split(' ', $filter['search']);
@@ -205,7 +223,41 @@ class Entry extends AppModel {
                 $conditions['restricted'] = 0;                
             }
         }
-        
+        if(isset($filter['favorited_by'])) {
+            # get last favorited entry_ids
+            $this->FavoritedBy->contain();
+            $favorites = $this->FavoritedBy->find(
+                'all',
+                array(
+                    'conditions' => array(
+                        'FavoritedBy.identity_id' => $filter['favorited_by']
+                    ),
+                    'order' => 'FavoritedBy.created DESC',
+                    'limit' => $limit
+                )
+            );
+            
+            $entry_ids = Set::extract($favorites, '{n}.FavoritedBy.entry_id');
+            $conditions['Entry.id'] = $entry_ids;
+        } 
+        if(isset($filter['commented_by'])) {
+			# get last commented entry_ids
+			$this->Comment->contain();
+			$comments = $this->Comment->find(
+				'all',
+				array(
+					'conditions' => array(
+						'Comment.identity_id' => $filter['commented_by']
+					),
+					'order' => 'Comment.published_on',
+					'limit' => $limit
+				)
+			);
+			
+			$entry_ids = Set::extract($comments, '{n}.Comment.entry_id');
+			$conditions['Entry.id'] = $entry_ids;
+		}
+		
         $new_items = $this->Identity->Entry->find(
             'all',
             array(
@@ -214,7 +266,18 @@ class Entry extends AppModel {
                 'limit'      => $limit
             )
         );
-    
+        
+        foreach($new_items as $idx => $data) {
+            $data = $this->Identity->addIdentity('FavoritedBy', $data);
+            $data = $this->Identity->addIdentity('Comment', $data);
+            
+            if($data['Entry']['service_type_id'] == 5 && $data['Entry']['account_id'] > 0) {
+                $data['Entry']['title'] = $data['Entry']['content'] = $this->micropublishMarkup($data['Entry']['title']);
+            }
+            
+            $new_items[$idx] = $data;
+        }
+        
         return $new_items;
     }
     
@@ -241,6 +304,7 @@ class Entry extends AppModel {
                 'published_on'    => date('Y-m-d H:i:s'),
                 'title'           => $location['Location']['name'],
                 'url'             => '',
+                'uid'             => '',
                 'content'         => $location['Location']['name'],
                 'restricted'      => $restricted
             );
@@ -264,7 +328,7 @@ class Entry extends AppModel {
             $restricted = $this->getRestricted($identity_id);
         }
         $text = htmlspecialchars(strip_tags($text), ENT_QUOTES, 'UTF-8');
-        $text = $this->shorten($text, 140);
+        $text = $this->shorten($text);
         
         $with_markup = $this->micropublishMarkup($text);
         
@@ -275,6 +339,7 @@ class Entry extends AppModel {
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $with_markup,
             'url'             => '',
+            'uid'             => '',
             'content'         => $text,
             'restricted'      => $restricted
         );
@@ -289,7 +354,7 @@ class Entry extends AppModel {
     }
     
     /**
-     * adds html tags for links and @. also cuts after 160 chars.
+     * adds html tags for links and #
      *
      * @param string $text
      * 
@@ -298,7 +363,11 @@ class Entry extends AppModel {
     public function micropublishMarkup($text) {
         # make links clickable
         $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
-        $text = preg_replace($pattern,"<a href=\"\\1\">\\1</a>", $text);
+        $text = preg_replace($pattern, "<a href=\"\\1\">\\1</a>", $text);
+        
+        # change hashtags into searches
+        $pattern = '/#([\wäöüÄÖÜß]*)/i';
+        $text = preg_replace($pattern, "<a href=\"" . Router::url('/search/') . "?q=%23\\1\">#\\1</a>", $text);
         
         return $text;
     }
@@ -312,10 +381,8 @@ class Entry extends AppModel {
      *
      * @return string
      */
-    public function shorten($text, $max_length) {
-        if(strlen($text) > $max_length) {
-            $text = $this->shortenUrlInText($text);
-        }
+    public function shorten($text, $max_length = 140) {
+        $text = $this->shortenUrlInText($text);
         
         if(strlen($text) > $max_length) {
             # cut after $max_length chars
@@ -336,7 +403,8 @@ class Entry extends AppModel {
     public function shortenUrlInText($text) {
         $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
         if(preg_match_all($pattern, $text, $matches)) {
-            foreach($matches[0] as $url) {
+            App::import('Vendor', 'WebExtractor');
+        	foreach($matches[0] as $url) {
                 $token = WebExtractor::fetchUrl('http://create.li.ttle.de/?url=' . urlencode($url));
                 $new_url = 'http://li.ttle.de/' . $token;
                 if(strlen($new_url) < strlen($url)) {
@@ -358,6 +426,7 @@ class Entry extends AppModel {
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $value,
             'url'             => '',
+            'uid'             => '',
             'content'         => $value,
             'restricted'      => $restricted
         );
@@ -396,6 +465,15 @@ class Entry extends AppModel {
         $message = 'added a new contact: <a href="http://' . $data['Identity']['username'] . '">' . $data['Identity']['local_username'] .'</a>';
         $this->addNoseRub($identity_id, $message, $restricted);
     }
+    
+    public function addFavorite($identity_id, $entry_id, $restricted = false) {
+        $this->Identity->Entry->id = $entry_id;
+        $title = strip_tags($this->Identity->Entry->field('title'));
+        $link = '<a href="' . Router::url('/entry/' . $entry_id . '/') . '">' . $title . '</a>';
+        $message = sprintf(__('marked a new favorite: %s', true), $link);
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
     /**
      */
     public function getMessage($entry) {
@@ -428,18 +506,42 @@ class Entry extends AppModel {
         $this->query($sql);
     }
     
+    /**
+     * tries to get an entry by it's uid. checks for the url, too, to
+     * avoid hash collisions (although very unlikely)
+     *
+     * @param string $uid
+     * @param string $url
+     *
+     * @return array
+     */
+    public function getByUid($uid, $url) {
+        $this->contain();
+        return $this->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Entry.uid' => $uid,
+                    'Entry.url' => $url
+                )
+            )
+        );
+    }
+    
     private function sendToOmb($identity_id, $text) {
-    	$ombAccessToken = ClassRegistry::init('OmbAccessToken');
-    	$accessToken = $ombAccessToken->findByIdentityId($identity_id);
-    	
+    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
+    	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
+
     	if (!$accessToken) {
     		return;
     	}
     	
-    	App::import('Component', array('OmbConsumer', 'OauthConsumer'));
+    	// XXX don't like it to use a component in a model, better solution needed ;-)
+    	App::import('Component', array('OmbConsumer', 'OmbOauthConsumer'));
     	$ombConsumer = new OmbConsumerComponent();
-    	$ombConsumer->OauthConsumer = new OauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbAccessToken']['token_key'], $accessToken['OmbAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
+    	$ombConsumer->Session = new SessionComponent();
+    	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
+    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
     }
     
     /**
@@ -449,24 +551,18 @@ class Entry extends AppModel {
      * can be found in lib/util.php there.
      */
     private function sendToTwitter($identity_id, $text) {   
-        if(defined('NOSERUB_ALLOW_TWITTER_BRIDGE') &&
-           !NOSERUB_ALLOW_TWITTER_BRIDGE) {
+        if (Configure::read('NoseRub.allow_twitter_bridge') === false) {
             return;       
         }
 
-        $fields = array(
-            'twitter_bridge_active', 
-            'twitter_username', 
-            'twitter_password'
-        );
-        $this->Identity->contain();
-        $data = $this->Identity->findById($identity_id, $fields);
-        if($data['Identity']['twitter_bridge_active'] != 1) {
+        $this->Identity->TwitterAccount->contain();
+        $data = $this->Identity->TwitterAccount->findByIdentityId($identity_id);
+        if($data['TwitterAccount']['bridge_active'] != 1) {
             return;
         }
              
-    	$twitter_username = $data['Identity']['twitter_username'];
-    	$twitter_password = $data['Identity']['twitter_password'];
+    	$twitter_username = $data['TwitterAccount']['username'];
+    	$twitter_password = $data['TwitterAccount']['password'];
     	$uri = 'http://www.twitter.com/statuses/update.json';
 
     	$options = array(

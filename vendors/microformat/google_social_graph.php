@@ -1,6 +1,7 @@
 <?php
 
 App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
+App::import('Vendor', 'WebExtractor');
 
 class GSocialGraph {
     public function lookup($urls) {

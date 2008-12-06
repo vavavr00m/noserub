@@ -3,21 +3,20 @@
         <?php 
             echo $form->input('Identity.username', 
                               array('error' => array(
-                                    'required' => 'You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots',
-                                    'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only',
-                                    'unique'   => 'The username is already taken'))); 
+                                    'required' => __('You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots', true),
+                                    'content'  => __('Valid characters: letters, numbers, underscores, dashes and dots only', true),
+                                    'unique'   => __('The username is already taken', true)))); 
         ?>
         <?php 
-            echo $form->input('Identity.email', array('label' => 'E-Mail (validation link will be sent there)', 
-                                                      'error' => 'Please enter a valid E-Mail address')); 
+            echo $form->input('Identity.email', array('label' => __('E-Mail (validation link will be sent there)', true), 
+                                                      'error' => __('Please enter a valid E-Mail address', true))); 
         ?>
     </fieldset>
     <p>
-        You can change the following privacy settings everytime you like. Just 
-        go to the Settings, once you are logged in.
+        <?php __('You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in.'); ?>
     </p>
     <?php echo $this->element('identities/privacy_settings'); ?>
     <fieldset>
-        <input class="submitbutton" type="submit" value="Register"/>
+        <input class="submitbutton" type="submit" value="<?php __('Register'); ?>"/>
     </fieldset>
 </form>

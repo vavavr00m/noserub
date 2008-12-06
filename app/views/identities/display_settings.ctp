@@ -3,7 +3,7 @@
     <input type="hidden" name="security_token" value="<?php echo $security_token; ?>">
     <fieldset>
         <legend>
-            Filter, which should be shown, when selecting <em>Overview</em> as filter.
+            <?php __('Filter, which should be shown, when selecting <em>Overview</em> as filter.'); ?>
         </legend>
         <ul>
         <?php foreach($filters as $value => $label) { ?>
@@ -20,6 +20,6 @@
         </ul>
     </fieldset>
     <fieldset>
-        <input class="submitbutton" type="submit" value="Save changes"/>
+        <input class="submitbutton" type="submit" value="<?php __('Save changes'); ?>"/>
     </fieldset>
 </form>

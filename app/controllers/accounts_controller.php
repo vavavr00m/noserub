@@ -3,11 +3,11 @@
  
 class AccountsController extends AppController {
     public $uses = array('Account');
-    public $helpers = array('form', 'flashmessage');
+    public $helpers = array('flashmessage');
     public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
-         $this->checkSecure();
+        $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -28,9 +28,9 @@ class AccountsController extends AppController {
         $this->set('session_identity', $session_identity);
         
         if($session_identity['username'] == $splitted['username']) {
-            $this->set('headline', 'Your accounts');
+            $this->set('headline', __('Your accounts', true));
         } else {
-            $this->set('headline', $splitted['username'] . '\'s accounts');
+            $this->set('headline', sprintf(__("%s's accounts", true), $splitted['local_username']));
         }
         
         $this->set('contact_accounts', $this->Account->Service->getContactAccounts());
@@ -39,11 +39,9 @@ class AccountsController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
-            if(isset($this->data['Identity']['twitter_username'])) {
-                # settings for the Twitter bridge have been made           
-                $saveable = array('twitter_bridge_active', 'twitter_username', 'twitter_password');
-                $this->Account->Identity->id = $session_identity['id'];
-                $this->Account->Identity->save($this->data, false, $saveable);
+            if(isset($this->data['TwitterAccount']['username'])) {
+                # settings for the Twitter bridge have been made
+                $this->Account->Identity->TwitterAccount->update($session_identity['id'], $this->data);
                 
                 $need_redirect = true;
             } else {
@@ -92,10 +90,12 @@ class AccountsController extends AppController {
             if($need_redirect) {
                 # we need to redirect, because $data is already outdated 
                 # after the changes we just made
-                $this->flashMessage('success', 'Changes saved.');
-                $this->redirect($this->here);
+                $this->flashMessage('success', __('Changes saved.', true));
+                // $this->redirect($this->here); doesn't work if you install NoseRub in a subdirectory
+                $this->header('Location: '.$this->here);
+                exit;
             } else {
-                $this->flashMessage('info', 'No changes made');
+                $this->flashMessage('info', __('No changes made.', true));
             }
         } else {
             $this->data = $identity;
@@ -113,7 +113,7 @@ class AccountsController extends AppController {
     	# only logged in users can add accounts
         if(!$session_identity) {
             # this user is not logged in
-            $this->flashMessage('error', 'You need to be logged in to add an account.');
+            $this->flashMessage('error', __('You need to be logged in to add an account.', true));
             $this->redirect('/');
         }
 
@@ -238,17 +238,7 @@ class AccountsController extends AppController {
                     
                     $this->Account->Entry->addNewService($identity_id, $data['service_id'], null);
                     
-                    if($this->Account->id && $this->Session->read('Service.add.account.is_logged_in_user')) {
-                        # test, if we can find friends from this account
-                        $contacts = $this->Account->Service->getContactsFromService($this->Account->id);
-                        if(!empty($contacts)) {
-                            $this->Session->write('Service.add.contacts', $contacts);
-                            $this->Session->write('Service.add.account_id', $this->Account->id);
-                            $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/add/friends/');
-                        }
-                    }
-                    
-                    $this->flashMessage('success', 'Account added.');
+                    $this->flashMessage('success', __('Account added.', true));
                 }
             }
             # we're done!
@@ -267,142 +257,9 @@ class AccountsController extends AppController {
         	$this->set('service_types', $this->Account->ServiceType->find('list'));
         }
         $this->set('data', $data);
-        $this->set('headline', 'Preview the data');
+        $this->set('headline', __('Preview the data', true));
     }
     
-    public function add_step_3_friends() {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted         = $this->Account->Identity->splitUsername($username);
-        $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
-        $session_identity = $this->Session->read('Identity');
-        $service_id       = $this->Session->read('Service.add.id');
-        $service_type_id  = $this->Session->read('Service.add.type');
-        
-        # check the session vars
-        if(!$identity_id || !$session_identity || !$service_id || !$service_type_id) {
-            # couldn't find the session vars. so either someone skipped 
-            # a step, or the user was logged out during the process
-            $this->redirect('/');
-        }
-        
-        if(isset($this->params['form']['cancel'])) {
-            # we don't neet to go further
-            $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/');
-        }
-        
-        if($this->data) {
-            # make sure, that the correct security token is set
-            $this->ensureSecurityToken();
-            
-            foreach($this->data as $item) {
-                if(isset($item['action']) && $item['action'] > 0) {
-                    # see, wether we should create a new contact, or add 
-                    # an account to an existing one
-                    if($item['action'] == 1) {
-                        # first check, if the new identity is already there
-                        $new_identity_username = $this->Account->Identity->sanitizeUsername($item['contactname']) . '@' . $session_identity['local_username'];
-                        $new_splitted = $this->Account->Identity->splitUsername($new_identity_username);
-                        
-                        $identity = $this->getIdentity($new_splitted['username']);
-                        if(!$identity) {
-                            # create a new identity
-                            $identity = array('is_local' => 1,
-                                              'username' => $new_splitted['username']);
-                            # saving without validation, as we have no email and no password
-                            $this->Account->Identity->create();
-                            if(!$this->Account->Identity->save($identity, false)) {
-                                # something went wrong!
-                                LogError('AccountsController::add_step_4_friends(): could not create identity "' . $new_splitted['username'] . '"');
-                                continue;
-                            }
-                            $new_identity_id = $this->Account->Identity->id;
-                        
-                            # now create the contact entry
-                            $contact = array('identity_id'      => $identity_id,
-                                             'with_identity_id' => $new_identity_id);
-                            $this->Account->Identity->Contact->create();
-                            if(!$this->Account->Identity->Contact->save($contact)) {
-                                # something went wrong!
-                                LogError('AccountsController::add_step_4_friends(): could not create contact');
-                                continue;
-                            }
-                        } else {
-                            # the identity already exists. we assume that the
-                            # contact is there, too.
-                            $new_identity_id = $identity['Identity']['id'];
-                        }
-                        
-                        # save the new identity_id to the $item, so we can
-                        # go on with adding the account
-                        $item['contact'] = $new_identity_id;
-                    } 
-                    
-                    # add account to identity specified in $item['contact']
-                    $account_username = $item['username'];
-                    
-                    $account = array('identity_id'     => $item['contact'],
-                                     'service_id'      => $service_id,
-                                     'service_type_id' => $service_type_id,
-                                     'username'        => $account_username,
-                                     'account_url'     => $this->Account->Service->getAccountUrl($service_id, $account_username),
-                                     'feed_url'        => $this->Account->Service->getFeedUrl($service_id, $account_username));
-                                     
-                    $this->Account->create();
-                    $this->Account->save($account);
-                }
-            }
-            # we're done!
-            $this->flashMessage('success', 'Account added.');
-            $this->redirect('/' . $username . '/settings/accounts/');
-        }
-
-        $this->Account->contain('Service');
-        $account = $this->Account->findById($this->Session->read('Service.add.account_id'));
-        $this->set('headline', 'Import your social network from ' . $account['Service']['name']);
-
-        # get data about contacts from session
-        $data = $this->Session->read('Service.add.contacts');
-        
-        # check, if some of these contacts already are in my local
-        # database. We therefore can remove them from the list
-        foreach($data as $username => $item) {
-            # try to find accounts with that username first
-            $this->Account->contain('Identity');
-            $accounts = $this->Account->find('all', array('conditions' => array('Account.username' => $username,
-            																	'Account.service_id' => $service_id,
-            																	'Account.service_type_id' => $service_type_id)));
-            
-            # we might have several accounts found, because the same account 
-            # could be stored at different local identities.
-            # we also don't find those, where e. a del.icio.us RSS-Feed was
-            # added, instead of a del.icio.us account directly.
-            foreach($accounts as $account) {
-                # now see, if the identity is local to our logged
-                # in identity.
-                if($account['Identity']['username'] == $session_identity['local_username']) {
-                    # found him/her
-                    unset($data[$username]);
-                    break;
-                }
-            }
-        }
-        
-        # now give the data to the view
-        $this->set('data', $data);
-        
-        $this->Account->Identity->Contact->contain('WithIdentity');
-        $data = $this->Account->Identity->Contact->find('all', array('conditions' => array('Contact.identity_id' => $identity_id,
-        																				   'WithIdentity.is_local' => 1,
-        																				   'WithIdentity.username LIKE "%@%"'),
-        															 'order' => array('WithIdentity.username ASC')));
-        $contacts = array();
-        foreach($data as $item) {
-            $contacts[$item['WithIdentity']['id']] = $item['WithIdentity']['local_username'];
-        }
-        $this->set('contacts', $contacts);
-    }
-        
     public function edit($account_id) {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $session_identity = $this->Session->read('Identity');
@@ -422,7 +279,7 @@ class AccountsController extends AppController {
         }
         
         if(!$this->data) {
-            $this->set('headline', 'Edit service ' . htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8'));
+            $this->set('headline', sprintf('Edit service "%s"', htmlentities($data['Account']['title'], ENT_QUOTES, 'UTF-8')));
             $this->set('service_types', $this->Account->ServiceType->find('list'));
             $this->data = $data;
         } else {
@@ -457,14 +314,14 @@ class AccountsController extends AppController {
             $about_identity = $this->getIdentity($splitted['username']);
             if(!$about_identity) {
                 # could not find the identity
-                $this->flashMessage('alert', 'Could not find the user.');
+                $this->flashMessage('alert', __('Could not find the user.', true));
                 $this->redirect('/' . $splitted['local_username'] . '/');
             }
             if($about_identity['Identity']['namespace'] == $session_identity['local_username']) {
                 $identity_id = $about_identity['Identity']['id'];
             } else {
                 # this logged in user is not allowed to change something
-                $this->flashMessage('alert', 'You may not delete this.');
+                $this->flashMessage('alert', __('You may not delete this.', true));
                 $this->redirect('/' . $splitted['local_username'] . '/');
             }
         }
@@ -474,14 +331,14 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             $this->Account->delete();
             $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'entries WHERE account_id=' . $account_id);
-            $this->flashMessage('success', 'Account deleted.');
+            $this->flashMessage('success', __('Account deleted.', true));
         }
         
         $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');
     }
     
     private function getIdentity($username) {
-        $this->Account->Identity->contain();
+        $this->Account->Identity->contain('TwitterAccount');
         $identity = $this->Account->Identity->findByUsername($username);
 
         return $identity;

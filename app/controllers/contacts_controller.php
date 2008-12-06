@@ -3,7 +3,7 @@
  
 class ContactsController extends AppController {
     public $uses = array('Contact');
-    public $helpers = array('form', 'nicetime', 'flashmessage', 'xfn');
+    public $helpers = array('nicetime', 'flashmessage', 'xfn');
     public $components = array('cluster', 'api', 'OauthServiceProvider');
     
     public function index() {
@@ -48,19 +48,15 @@ class ContactsController extends AppController {
 		$this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
         
         if($session_identity['username'] == $splitted['username']) {
-            $this->set('headline', 'My contacts');
+            $this->set('headline', __('My contacts', true));
         } else {
-            $this->set('headline', $splitted['username'] . '\'s contacts');
+            $this->set('headline', sprintf(__("%s's contacts", true), $splitted['username']));
         }
     }
     
     /**
      * adds a new contact to an identity
      * todo: check for existing identities
-     *
-     * @param  
-     * @return 
-     * @access 
      */
     public function add() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
@@ -84,7 +80,7 @@ class ContactsController extends AppController {
                 if($identity_username === '') {
                     $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
                     $this->render();
-                    exit;
+                    return;
                 }
                 
                 # check, if this is the logged in user
@@ -92,7 +88,7 @@ class ContactsController extends AppController {
                    'www.'.$session_identity['username'] == $identity_username_splitted['username']) {
                     $this->Contact->invalidate('noserub_id', 'own_noserub_id');
                     $this->render();
-                    exit;       
+                    return;
                 }
                 
                 # see, if we already have it
@@ -106,15 +102,15 @@ class ContactsController extends AppController {
                     $new_identity_id = $this->Contact->Identity->id;
                     
                     # get user data
-                    $result = $this->requestAction('/jobs/' . NOSERUB_ADMIN_HASH . '/sync/identity/' . $new_identity_id . '/');
+                    $result = $this->requestAction('/jobs/' . Configure::read('NoseRub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
                     if($result == false) {
                         # user could not be found, so delete it
                         $this->Contact->Identity->id = $new_identity_id;
                         $this->Contact->Identity->delete();
-                        $this->flashMessage('error', 'Could not add contact');
+                        $this->flashMessage('error', __('Could not add contact.', true));
                         $this->Contact->invalidate('noserub_id', 'user_not_found');
                         $this->render();
-                        exit;
+                        return;
                     }
                 } else {
                     # it's already there, so we can go ahead and add it
@@ -127,16 +123,16 @@ class ContactsController extends AppController {
                 if ($this->Contact->hasAny(array('identity_id' => $session_identity['id'], 'with_identity_id' => $new_identity_id))) {
                     $this->Contact->invalidate('noserub_id', 'unique');
                     $this->render();
-                    exit;
+                    return;
                 }
                 
                 if($this->Contact->add($session_identity['id'], $new_identity_id)) {
                     $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $new_identity_id, null);
-                    $this->flashMessage('success', 'New contact added.');
+                    $this->flashMessage('success', __('New contact added.', true));
     			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
     			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
 			    } else {
-			        $this->flashMessage('error', 'Could not add contact');
+			        $this->flashMessage('error', __('Could not add contact.', true));
 			    }
             } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
                 # we now need to create a new identity and a new contact
@@ -153,7 +149,7 @@ class ContactsController extends AppController {
                     $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
-                        $this->flashMessage('success', 'New contact added.');
+                        $this->flashMessage('success', __('New contact added.', true));
         			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
         			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
     			    } else {
@@ -162,19 +158,19 @@ class ContactsController extends AppController {
                 } else {
                 	$this->Contact->invalidate('username', 'unique');
                     $this->render();
-                    exit;
+                    return;
                 }
             } else {
                 # we should never come here, unless the username doesn't validate
             	$this->render();
-                exit;
+                return;
             }
         }
         
         if($splitted['username'] == $session_identity['username']) {
-            $this->set('headline', 'Add a contact to your social network');
+            $this->set('headline', __('Add a contact to your social network', true));
         } else {
-            $this->set('headline', 'Add a contact to '. $splitted['local_username'] . '\'s social network');
+            $this->set('headline', sprintf(__("Add a contact to %s's social network", true), $splitted['local_username']));
         }
     }
         
@@ -212,7 +208,7 @@ class ContactsController extends AppController {
         $with_identity_id = $contact['Contact']['with_identity_id'];
         $this->Contact->id = $contact_id;
         $this->Contact->delete();
-        $this->flashMessage('success', 'Removed the contact.');
+        $this->flashMessage('success', __('Removed the contact.', true));
         
         # get the other identity in order to determine, if
         # this was a local identity and therefore can be deleted
@@ -263,7 +259,7 @@ class ContactsController extends AppController {
         $this->Contact->Identity->Account->contain('Service');
         $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
         
-        $this->set('headline', 'Info about ' . $contact['WithIdentity']['username']);
+        $this->set('headline', sprintf('Info about %s', $contact['WithIdentity']['username']));
     }
     
     public function edit() {
@@ -376,14 +372,14 @@ class ContactsController extends AppController {
                 }
             }
                 	    
-    		$this->flashMessage('success', 'Contact updated.');
+    		$this->flashMessage('success', __('Contact updated.', true));
     		$this->redirect('/' . $session_identity['local_username'] . '/contacts/');
     	}
     	
     	$this->set('contact', $contact);
     	$this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
     	
-    	$this->set('headline', 'Edit the contact details');
+    	$this->set('headline', __('Edit the contact details', true));
     	
     	$this->Contact->NoserubContactType->contain();
 	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
@@ -402,10 +398,20 @@ class ContactsController extends AppController {
     public function network() {
         $this->checkUnsecure();
         
-        $filter           = isset($this->params['filter'])   ? $this->params['filter']   : '';
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        
+        if(!isset($this->params['username'])) {
+            if(!$session_identity) {
+                $this->redirect('/social_stream/');
+            } else {
+                $username = $session_identity['local_username'];
+            }
+        } else {
+            $username = isset($this->params['username']) ? $this->params['username'] : '';
+        }
+        
+        $filter   = isset($this->params['filter'])   ? $this->params['filter']   : '';
+        $splitted = $this->Contact->Identity->splitUsername($username);
         
         if(isset($this->data['Micropublish']['value'])) {
             $this->Contact->Identity->id = $session_identity['id'];
@@ -423,8 +429,27 @@ class ContactsController extends AppController {
             $tag_filter = 'all';
         }
         if($this->data) {
-            $tag_filter = $this->data['TagFilter']['id'];
-            $this->Session->write('Filter.Contact.Tag', $tag_filter);
+            $this->ensureSecurityToken();
+
+            if(isset($this->data['Locator']['id'])) {
+                # location was changed
+                $location_id = $this->data['Locator']['id'];
+                if($location_id == 0 && $this->data['Locator']['name'] != '') {
+                    # a new location must be created
+                    $data = array('identity_id' => $session_identity['id'],
+                                  'name'        => $this->data['Locator']['name']);
+                    $this->Contact->Identity->Location->create();
+                    $this->Contact->Identity->Location->save($data);
+                    $location_id = $this->Contact->Identity->Location->id;
+                } 
+                if($location_id > 0) {
+                    $this->Contact->Identity->Location->setTo($session_identity['id'], $location_id);                
+                    $this->flashMessage('success', __('Location updated.', true));
+                }
+            } else {
+                $tag_filter = $this->data['TagFilter']['id'];
+                $this->Session->write('Filter.Contact.Tag', $tag_filter);
+            }
         }
         $this->data['TagFilter']['id'] = $tag_filter;
         
@@ -444,8 +469,9 @@ class ContactsController extends AppController {
         
         $this->set('tag_filter_list', $this->Contact->getTagList($about_identity['id']));
         
+        $is_self = $session_identity && $session_identity['local_username'] == $splitted['local_username'];
         # get (filtered) contacts
-        if($session_identity && $session_identity['local_username'] == $splitted['local_username']) {
+        if($is_self) {
             # this is my network, so I can show every contact
             $contact_filter = array('tag' => $tag_filter);
         } else {
@@ -470,20 +496,25 @@ class ContactsController extends AppController {
             'filter'      => $filter,
             'identity_id' => $contact_ids
         );
-        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 100, true);
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 50, true);
         if($items) {
             usort($items, 'sort_items');
             $items = $this->cluster->removeDuplicates($items);
             $items = $this->cluster->create($items);
         }
     
+        # get list of locations, if this is the logged in user
+        if($is_self) {
+            $this->set('locations', $this->Contact->Identity->Location->find('list', array('conditions'=>array('identity_id' => $session_identity['id']),'order' => 'name ASC')));
+        }
+        
         $this->set('items', $items);
         $this->set('identities', $contacts);
         $this->set('filter', $filter);
         $this->set('session_identity', $session_identity);
         $this->set('about_identity', $about_identity);
         $this->set('base_url_for_avatars', $this->Contact->Identity->getBaseUrlForAvatars());
-        $this->set('headline', 'Activities in ' . $splitted['local_username'] . '\'s contact\'s social stream');
+        $this->set('headline', sprintf(__("Activities in %s's contact's social stream", true), $splitted['local_username']));
         
         $this->render('../identities/social_stream');
     }
@@ -508,7 +539,7 @@ class ContactsController extends AppController {
         if($session_identity['id'] == $identity['Identity']['id']) {
             # this is the logged in user. no reason to allow him to add
             # himself as contact.
-            $this->flashMessage('alert', 'You cannot add yourself as a contact.');
+            $this->flashMessage('alert', __('You cannot add yourself as a contact.', true));
             $this->redirect('/' . $splitted['local_username']);
         }
         
@@ -523,7 +554,7 @@ class ContactsController extends AppController {
                              'with_identity_id' => $identity['Identity']['id']);
             $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
             $this->Contact->save($contact, true, $saveable);
-            $this->flashMessage('success', 'Added new contact.');
+            $this->flashMessage('success', __('Added new contact.', true));
             
             $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
         }

@@ -1,3 +1,5 @@
+<?php
+
 $identities = $this->query('SELECT id, username FROM identities WHERE is_local=1');
 foreach($identities as $identity) {
     App::import('Model', 'Identity');

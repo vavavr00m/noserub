@@ -78,7 +78,7 @@ class OpenidComponent extends Object {
 			if (Auth_OpenID::isFailure($formHtml)) {
 				throw new Exception('Could not redirect to server: '.$formHtml->message);
 			} else {
-				echo '<html><head><title>OpenID transaction in progress</title></head>'.
+				echo '<html><head><title>' . __('OpenID transaction in progress', true) . '</title></head>'.
 					 "<body onload='document.getElementById(\"".$formId."\").submit()'>".
 					 $formHtml.'</body></html>';
 				exit;
@@ -88,7 +88,7 @@ class OpenidComponent extends Object {
 	
 	public function getResponse($currentUrl) {
 		$consumer = $this->getConsumer();
-		$response = $consumer->complete($currentUrl);
+		$response = $consumer->complete($currentUrl, $this->getQuery());
 		
 		return $response;
 	}
@@ -130,6 +130,16 @@ class OpenidComponent extends Object {
 		}
 
 		return new Auth_OpenID_MySQLStore($db);
+	}
+	
+	private function getQuery() {
+		$query = Auth_OpenID::getQuery();
+		
+		// unset the url parameter automatically added by app/webroot/.htaccess 
+		// as it causes problems with the verification of the return_to url
+    	unset($query['url']);
+    	
+    	return $query;
 	}
 	
 	private function getStore() {

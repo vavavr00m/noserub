@@ -9,10 +9,6 @@ class PlazesService extends AbstractService {
 		return 'http://plazes.com/users/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromMultiplePages('http://plazes.com/users/' . $username . ';contacts', '/<em class="fn nickname">.*<a href="\/users\/.*" rel="vcard">\n(.*)\s{6}<\/a>/simU', '/next<\/a><\/strong><\/p>/iU', '?page=');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_link();
 	}

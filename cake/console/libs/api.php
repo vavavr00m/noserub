@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: api.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: api.php 7118 2008-06-04 20:49:29Z gwoo $ */
 /**
  * API shell to get CakePHP core method signatures.
  *

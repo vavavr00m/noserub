@@ -13,38 +13,38 @@
 	<!-- send e-Mail -->
 	<?php if($contact['WithIdentity']['local'] == 1 && $contact['WithIdentity']['allow_emails'] != 0) { ?>
 	    <dd class="sendmail">
-		    <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $contact['WithIdentity']['username']; ?>/messages/new/">Send e-Mail</a>
+		    <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $contact['WithIdentity']['username']; ?>/messages/new/"><?php __('Send e-Mail'); ?></a>
 		</dd>
 	<?php } ?>
 </dl>	
 	
 <br class="clear" />
 
-<h3>Define the relationship</h3>
+<h3><?php __('Define the relationship'); ?></h3>
 
 <p class="infotext">
-    Click on a term to choose it and/or add a term to specify the relationship and group your contacts.
+    <?php __('Click on a term to choose it and/or add a term to specify the relationship and group your contacts.'); ?>
 </p>
 
 <form id="DefineContactTypesForm" method="post" action="<?php echo $this->here ?>">
     <fieldset>
-        <legend>Friendship</legend>
+        <legend><?php __('Friendship'); ?></legend>
         <p><?php echo $xfn->friendship($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
-        <legend>Geographical</legend>
+        <legend><?php __('Geographical'); ?></legend>
         <p><?php echo $xfn->geographical($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
-        <legend>Familiy</legend>
+        <legend><?php __('Familiy'); ?></legend>
         <p><?php echo $xfn->family($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
-        <legend>Physical</legend>
+        <legend><?php __('Physical'); ?></legend>
         <p><?php echo $xfn->physical($selected_noserub_contact_types); ?></p>
     </fieldset>
     <fieldset>
-        <legend>Tags</legend>
+        <legend><?php __('Tags'); ?></legend>
 	    <p><?php foreach ($noserub_contact_types as $contact_type) { ?>
 	        <?php
 	            if(in_array($contact_type['NoserubContactType']['id'], array(1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14))) {
@@ -66,14 +66,14 @@
     	<?php } ?></p>
     </fieldset>
     <fieldset>
-        <legend>Add your own tags</legend>
-	    <?php echo $form->input('Tags.own', array('label' => '(separated by space):', 'size' => 32)); ?>
+        <legend><?php __('Add your own tags'); ?></legend>
+	    <?php echo $form->input('Tags.own', array('label' => '(' . __('separated by space', true) . ')', 'size' => 32)); ?>
 	</fieldset>
 	<fieldset>
-	    <legend>Make some notes</legend>
+	    <legend><?php __('Make some notes'); ?></legend>
 	    <?php echo $form->textarea('Contact.note', array('value' => $contact['Contact']['note'])); ?>
 	</fieldset>
 	<fieldset>
-	    <input class="submitbutton" type="submit" name="submit" value="Save"/>
+	    <input class="submitbutton" type="submit" name="submit" value="<?php __('Save'); ?>"/>
 	</fieldset>
 <?php echo $form->end(); ?>

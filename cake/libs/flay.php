@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: flay.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: flay.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Text-to-HTML parser.
  *
@@ -143,8 +143,8 @@ class Flay extends Object{
 						}
 					}
 
-					if (count($links)) {
-						for ($ii = 0; $ii < count($links); $ii++) {
+					if ($count = count($links)) {
+						for ($ii = 0; $ii < $count; $ii++) {
 							if (preg_match("#^(http|https|ftp|nntp)://#", $links[$ii])) {
 								$prefix = null;
 							} else {

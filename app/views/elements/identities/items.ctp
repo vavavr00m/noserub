@@ -1,7 +1,7 @@
 <?php
 $max_num_items_per_day = 10;
 
-if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
+if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
     $filter = 'photo';
 } else {
     # just for now, as we only have a special view for photo
@@ -11,8 +11,7 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
 <div id="network">
  <?php if(empty($data)) { ?>
     <p>
-    	There are no updates from your social network or own activity yet.<br />
-        Why don't you add some friends or some more of your own accounts?
+    	<?php __("There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"); ?>
     </p>
 <?php } else { ?>
     <?php
@@ -28,18 +27,19 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
             if($filter != 'photo') {
                 $num_of_activities = count($cluster);
                 echo '<span class="more">';
+                $label = sprintf(__('%d activities', true), $num_of_activities);
                 if($num_of_activities > $max_num_items_per_day) {
-                    echo '<a href="#">' . $num_of_activities . ' activities</a>';
+                    echo '<a href="#">' . $label . '</a>';
                 } else {
-                    echo $num_of_activities . ' activities';
+                    echo $label;
                 }
                 echo '</span>';
             }
         
             if($date == $today) { 
-                echo '<h2>Today</h2>'; 
+                echo '<h2>' . __('Today', true) . '</h2>'; 
             } else if($date == $yesterday) {
-                echo '<h2>Yesterday</h2>';
+                echo '<h2>' . __('Yesterday', true) . '</h2>';
             } else {
                 echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             }
@@ -52,7 +52,7 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
                         $splitted2 = split('@', $splitted[count($splitted)-1]);
                         $username = $splitted2[0];
                         $label = wordwrap($username, 12, '<br />', true);
-                        echo 'From <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
+                        echo __('From', true) . ' <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
                     ?>
                     </span>
                 <?php } ?>
@@ -68,30 +68,10 @@ if(is_array($filter) && count($filter) == 1 && in_array('photo', $filter)) {
                                 echo '</ul>';
                                 echo '<ul class="networklist extended">';
                             }
+                        
+                            echo $this->renderElement('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));
                         ?>
-                        <li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
-                            <span class="date">
-                                <?php if($date == $today) {
-                                    echo $nicetime->show($item['Entry']['published_on']); 
-                                } else {
-                                    echo date('H:s', strtotime($item['Entry']['published_on'])); 
-                                } ?>
-                            </span>
-                            <span>
-                                <?php
-                                    $splitted = split('/', $item['Identity']['username']);
-                                    $splitted2 = split('@', $splitted[count($splitted)-1]);
-                                    $username = $splitted2[0];
-                                    $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $item['ServiceType']['intro']);
-                                    if($item['Entry']['url']) {
-                                        $intro = str_replace('@item@', '»<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>«', $intro);
-                                    } else {
-                                        $intro = str_replace('@item@', '»'.$item['Entry']['title'].'«', $intro);
-                                    }
-                                    echo $intro; 
-                                ?>
-                            </span>
-                        </li>
+                        
                         <?php $num_displayed++; ?>
                     <?php } ?>
                 </ul>

@@ -9,10 +9,6 @@ class WordpresscomService extends AbstractService {
 		return 'http://'.$username.'.wordpress.com';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://' . $username . 'wordpress.com', '/<a href="http:\/\/(.*).wordpress.com" rel=".*">.*<\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

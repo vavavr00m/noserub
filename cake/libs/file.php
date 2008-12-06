@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id: file.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -33,7 +33,7 @@ if (!class_exists('Object')) {
 }
 
 if (!class_exists('Folder')) {
-	uses('folder');
+	require LIBS . 'folder.php';
 }
 /**
  * Convenience class for reading, writing and appending to files.
@@ -211,7 +211,7 @@ class File extends Object {
  */
 	function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
-		if (substr(PHP_OS,0,3) == "WIN" || $forceWindows === true) {
+		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";
 		}
 		return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
@@ -274,6 +274,7 @@ class File extends Object {
  * @access public
  */
 	function delete() {
+		clearstatcache();
 		if ($this->exists()) {
 			return unlink($this->pwd());
 		}
@@ -340,7 +341,7 @@ class File extends Object {
 		if (!$ext) {
 			$ext = $this->ext();
 		}
-		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
+		return preg_replace( "/(?:[^\w\.-]+)/", "_", basename($name, $ext));
 	}
 /**
  * Get md5 Checksum of file with previous check of Filesize
@@ -435,6 +436,7 @@ class File extends Object {
  * Returns the File's owner.
  *
  * @return integer the Fileowner
+ * @access public
  */
 	function owner() {
 		if ($this->exists()) {

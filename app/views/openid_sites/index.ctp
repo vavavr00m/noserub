@@ -1,14 +1,14 @@
 <p>
-Below is a list of sites you have visited. You will not be prompted to approve identifying yourself to 
-sites you have checked.
+    <?php __('Below is a list of sites you have visited. You will not be prompted to approve identifying yourself to 
+    sites you have checked.'); ?>
 </p>
 <form method="post" action="<?php echo $this->here; ?>">
 	<table class="listing">
 		<tr>
-			<th>Site</th>
-			<th>Email</th>
-			<th>Fullname</th>
-			<th>Gender</th>
+			<th><?php __('Site'); ?></th>
+			<th><?php __('Email'); ?></th>
+			<th><?php __('Fullname'); ?></th>
+			<th><?php __('Gender'); ?></th>
 		</tr>
 		<?php foreach ($openidSites as $openidSite): ?>
 			<tr>
@@ -23,6 +23,6 @@ sites you have checked.
 		<?php endforeach; ?>
 	</table>
 	<p>
-		<input class="submitbutton" type="submit" name="Submit" value="Save changes" />
+		<input class="submitbutton" type="submit" name="Submit" value="<?php __('Save changes'); ?>" />
 	</p>
 </form>

@@ -9,10 +9,6 @@ class QypeService extends AbstractService {
 		return 'http://www.qype.com/people/'.$username.'/';
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://www.qype.com/people/' . $username . '/contacts/', '/<a href="http:\/\/www.qype.com\/people\/(.*)"><img alt="Benutzerfoto: .*" src=".*" title=".*" \/><\/a>/iU');
-	}
-	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}

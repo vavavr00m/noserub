@@ -33,7 +33,7 @@ noserub.fn = noserub.prototype = {
     
     log: function(msg) {
         if(this.debug === true) {
-            window.console.log(msg);
+            console.log(msg);
         }
     },
     
@@ -82,24 +82,8 @@ noserub.fn = noserub.prototype = {
         });
     },
     
-    Contacts_define_contact_types: function() {
-    	this.contact_type_tagging();
-    },
-    
-    Contacts_edit: function() {
-    	this.contact_type_tagging();
-    },
-    
-    contact_type_tagging: function() {
-    	$('#ContactTypeTags').jTagging($('#tags'), ' ');
-    },
-    
     Contacts_network: function() {
         this.micropublish_char_count();
-        this.social_stream_items();
-    },
-    
-    Identities_index: function() {
         this.social_stream_items();
         if($('.locator option').size() > 1) {
             $('.locator :text').hide();
@@ -116,6 +100,11 @@ noserub.fn = noserub.prototype = {
                 $('.locator #locator_name').show();
             }
         });
+    },
+    
+    Identities_index: function() {
+        this.micropublish_char_count();
+        this.social_stream_items();
     },
     
     Identities_social_stream: function() {
@@ -149,7 +138,6 @@ noserub.fn = noserub.prototype = {
     micropublish_char_count: function() {
         $('#MicropublishValue').keyup(function(e) {
             $('#MicropublishCount').html(140-this.value.length);
-            console.log(this.value.length);
         });
     }
 };

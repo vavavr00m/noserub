@@ -12,14 +12,13 @@ class GeocoderComponent extends Object {
      * @access 
      */
     public function get($address) {
-        if(!defined('NOSERUB_GOOGLE_MAPS_KEY') || NOSERUB_GOOGLE_MAPS_KEY === false) {
+        if(Configure::read('NoseRub.google_maps_key') === false) {
             return false;
         }
         
-        $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address) . '&key=' . NOSERUB_GOOGLE_MAPS_KEY;
+        $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address) . '&key=' . Configure::read('NoseRub.google_maps_key');
         
-        // we import the AppModel because the WebExtractor class is defined there
-        App::import('Model', 'App');
+        App::import('Vendor', 'WebExtractor');
 		$response = WebExtractor::fetchUrl($url);
         
         if($response === false) {

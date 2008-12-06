@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xml.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id: xml.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * XML Helper class file.
  *
@@ -20,7 +20,7 @@
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP(tm) v 1.2
  * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
+ * @modifiedby		$LastChangedBy: nate $
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -159,4 +159,5 @@ class XmlHelper extends AppHelper {
 		return $data->toString(array_merge(array('header' => false), $options));
 	}
 }
+
 ?>

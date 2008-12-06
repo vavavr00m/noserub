@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: bake.php 7116 2008-06-04 19:04:58Z gwoo $ */
+/* SVN FILE: $Id: bake.php 7125 2008-06-05 15:06:49Z gwoo $ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *

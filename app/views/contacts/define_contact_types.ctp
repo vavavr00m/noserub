@@ -5,12 +5,12 @@
 		<br />
 	<?php endforeach; ?>
 	<?php echo $form->input('ContactType.tags'); ?>
-	Your tags:
+	<?php __('Your tags'); ?>:
 	<div id="tags">
 		<?php foreach ($contactTypes as $contactType): ?>
 			<a href="#" onclick="return false;"><?php echo $contactType['ContactType']['name']; ?></a>
 		<?php endforeach; ?>
 	</div>
-	<input class="submitbutton" type="submit" name="submit" value="Save"/>
-	<input class="submitbutton" type="submit" name="cancel" value="Skip this step"/>
+	<input class="submitbutton" type="submit" name="submit" value="<?php __('Save'); ?>"/>
+	<input class="submitbutton" type="submit" name="cancel" value="<?php __('Skip this step'); ?>"/>
 <?php echo $form->end(); ?>

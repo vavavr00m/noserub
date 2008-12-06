@@ -1,12 +1,12 @@
 ;<?php die() ?>
-; SVN FILE: $Id: acl.ini.php 7062 2008-05-30 11:29:53Z nate $
+; SVN FILE: $Id: acl.ini.php 7690 2008-10-02 04:56:53Z nate $
 ;/**
 ; * Short description for file.
 ; *
 ; *
 ; * PHP versions 4 and 5
 ; *
-; * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+; * CakePHP(tm) :  Rapid Development Framework http://www.cakephp.org/
 ; * Copyright 2005-2008, Cake Software Foundation, Inc.
 ; *							1785 E. Sahara Avenue, Suite 490-204
 ; *							Las Vegas, Nevada 89104

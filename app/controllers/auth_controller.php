@@ -19,15 +19,15 @@ class AuthController extends AppController {
 		$request = $this->getOpenIDRequest($server);
 
 		if (!isset($request->mode)) {
-			$this->set('headline', 'OpenID server endpoint');
+			$this->set('headline', __('OpenID server endpoint', true));
 			$this->render('server_endpoint');
 		} else {
 			if (get_class($request) == 'Auth_OpenID_CheckIDRequest') {
 				if ($this->Session->check('Identity')) {
 					$identity = $this->Session->read('Identity');
 					
-					$requestIdentity = str_replace('https://', '', $request->identity);
-					$requestIdentity = str_replace('http://', '', $requestIdentity);
+					App::import('Vendor', 'UrlUtil');
+					$requestIdentity = UrlUtil::removeHttpAndHttps($request->identity);
 					$requestIdentity = rtrim($requestIdentity, '/');
 					
 					if ($identity['username'] == $requestIdentity) {
@@ -102,16 +102,9 @@ class AuthController extends AppController {
 				$this->setDataForTrustForm($request, $sregRequest);
 			}				
 		} else {
-			$this->set('headline', 'Error');
+			$this->set('headline', __('Error', true));
 			$this->render('no_request');
 		}
-	}
-	
-	public function xrds() {
-		Configure::write('debug', 0);
-		$this->layout = 'xml';
-		header('Content-type: application/xrds+xml');
-		$this->set('server', Router::url('/'.low($this->name), true));
 	}
 	
 	private function addSRegDataToResponse($response, $sregRequest, $fields) {
@@ -223,6 +216,6 @@ class AuthController extends AppController {
 		
 		$this->set('trustRoot', $request->trust_root);
 		$this->set('identity', $request->identity);
-		$this->set('headline', 'OpenID verification');
+		$this->set('headline', __('OpenID verification', true));
 	}
 }

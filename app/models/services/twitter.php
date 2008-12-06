@@ -9,10 +9,6 @@ class TwitterService extends AbstractService {
 		return 'http://twitter.com/'.$username;
 	}
 	
-	public function getContacts($username) {
-		return ContactExtractor::getContactsFromSinglePage('http://twitter.com/' . $username . '/', '/<a href="http:\/\/twitter\.com\/(.*)" class="url" rel="contact"/i');
-	}
-	
 	public function getContent($feeditem) {
 		# cut off the username
 		$content = $feeditem->get_content();
@@ -22,6 +18,7 @@ class TwitterService extends AbstractService {
 	public function getFeedUrl($username) {
 		# we need to reed the page first in order to
         # access the rss-feed
+        App::import('Vendor', 'WebExtractor');
         $content = WebExtractor::fetchUrl('http://twitter.com/'.$username);
         if(!$content) {
         	return false;

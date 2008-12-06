@@ -10,102 +10,49 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-
-define('OMB_VERSION', 'http://openmicroblogging.org/protocol/0.1');
-define('OMB_POST_NOTICE', OMB_VERSION.'/postNotice');
-define('OMB_UPDATE_PROFILE', OMB_VERSION.'/updateProfile');
-
-define('OAUTH_VERSION', 'http://oauth.net/core/1.0');
-define('OAUTH_REQUEST', OAUTH_VERSION.'/endpoint/request');
-define('OAUTH_AUTHORIZE', OAUTH_VERSION.'/endpoint/authorize');
-define('OAUTH_ACCESS', OAUTH_VERSION.'/endpoint/access');
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParamKeys'));
 
 class OmbConsumerComponent extends Object {
-	public $components = array('OauthConsumer', 'Session');
+	public $components = array('OmbOauthConsumer', 'Session');
 	private $controller = null;
 	private $services = null;
 	
 	public function __construct() {
 		$this->services = array('http://oauth.net/discovery/1.0',
-								OAUTH_REQUEST,
-						  		OAUTH_AUTHORIZE,
-						  		OAUTH_ACCESS,
-								OMB_VERSION,
-						  		OMB_POST_NOTICE,
-						  		OMB_UPDATE_PROFILE);
+								OauthConstants::REQUEST,
+						  		OauthConstants::AUTHORIZE,
+						  		OauthConstants::ACCESS,
+								OmbConstants::VERSION,
+						  		OmbConstants::POST_NOTICE,
+						  		OmbConstants::UPDATE_PROFILE);
 	}
 	
-	public function startup($controller) {
-		$this->controller = $controller;
-	}
-	
-	public function getAccessToken() {
-		$requestToken = $this->Session->read('omb.requestToken');
-		$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
-		$accessToken = $this->OauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
-		
-		return $accessToken;
-	}
-	
-	public function redirectToAuthorizePage($endPoints, $identity) {
-		$requestToken = $this->OauthConsumer->getRequestToken('GenericOmb', 
-															  $endPoints[1][OAUTH_REQUEST], 
-															  'POST', 
-															  array('omb_version' => OMB_VERSION, 
-															  		'omb_listener' => $endPoints[0]));
-															  
-		$this->Session->write('omb.requestToken', $requestToken);
-		$this->Session->write('omb.accessTokenUrl', $endPoints[1][OAUTH_ACCESS]);
-		
+	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
+		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
 		$consumer = $this->getConsumer();
-
-		// XXX identi.ca uses urls like /index.php?action=userauthorization which the OAuth library doesn't like
-		if (strpos($endPoints[1][OAUTH_AUTHORIZE], '?')) {
-			$authUrl = explode('?', $endPoints[1][OAUTH_AUTHORIZE]);
-			$authUrl = $authUrl[0];
-			$isIdentica = true;
-		} else {
-			$authUrl = $endPoints[1][OAUTH_AUTHORIZE];
-		}
-		
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
-		
-		$omb_subscribe = array('omb_version' => OMB_VERSION, 
-							   'omb_listener' => $endPoints[0], 
-							   'omb_listenee' => NOSERUB_FULL_BASE_URL, 
-							   'omb_listenee_profile' => 'http://'.$identity['username'], 
-							   'omb_listenee_nickname' => $identity['local_username'], 
-							   'omb_listenee_license' => 'http://creativecommons.org/licenses/by/3.0/');
-		
-		foreach ($omb_subscribe as $k => $v) {
-			$request->set_parameter($k, $v);
+
+		$params = $ombAuthorizationParams->getAsArray();
+		foreach ($params as $key => $value) {
+			$request->set_parameter($key, $value);
 		}
+
+		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
 		
-		$request->set_parameter('oauth_callback', NOSERUB_FULL_BASE_URL.'/'.$identity['local_username'].'/settings/omb/callback');
-		
-		if (isset($isIdentica)) {
+		if ($this->isLaconica($authorizeUrl)) {
+			// adding querystring param we removed above
 			$request->set_parameter('action', 'userauthorization');
 		}
 		
 		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
 		
-		$this->controller->redirect($request->to_url());
+		return $request->to_url();
 	}
 	
 	public function discover($url) {
-		$fetcher = Auth_Yadis_Yadis::getHTTPFetcher();
-		$yadis = Auth_Yadis_Yadis::discover($url, $fetcher);
-		
-		if (!$yadis || $yadis->isFailure()) {
-			throw new Exception('Yadis doc not found');
-		}
-		
-		$xrds = Auth_Yadis_XRDS::parseXRDS($yadis->response_text);
-		
-		if (!$xrds) {
-			throw new Exception('XRDS data not found');
-		}
-		
+		App::import('Vendor', 'UrlUtil');
+		$url = UrlUtil::addHttpIfNoProtocolSpecified($url);
+		$xrds = $this->discoverXRDS($url);
 		$yadisServices = $xrds->services(array(array($this, 'filterServices')));
 		
 		foreach ($yadisServices as $yadisService) {
@@ -125,7 +72,7 @@ class OmbConsumerComponent extends Object {
 							if (in_array($t, $this->services)) {
 								$e = $t;
 							}
-							if ($t == OAUTH_REQUEST) {
+							if ($t == OauthConstants::REQUEST) {
 								$data = $end->getElements('xrd:LocalID');
 								$localID = $end->parser->content($data[0]);
 							}
@@ -137,9 +84,10 @@ class OmbConsumerComponent extends Object {
 			}
 		}
 		
-		return array($localID, $endpoints);
+		return new OmbEndPoint($localID, $endpoints);
 	}
 	
+	// internal callback method, don't use it outside this class
 	public function filterServices($service) {
 		$uris = $service->getTypes();
 		
@@ -152,16 +100,50 @@ class OmbConsumerComponent extends Object {
 		return false;
 	}
 	
+	public function getAccessToken($accessTokenUrl, $requestToken) {
+		return $this->OmbOauthConsumer->getAccessToken('GenericOmb', $accessTokenUrl, $requestToken);
+	}
+	
+	public function getRequestToken($requestTokenUrl, $localId) {
+		return $this->OmbOauthConsumer->getRequestToken('GenericOmb', 
+													 	$requestTokenUrl, 
+													 	'POST', 
+													 	array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
+															  OmbParamKeys::LISTENER => $localId));
+	}
+	
 	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
-		$data = $this->OauthConsumer->post('GenericOmb', 
-										   $tokenKey, 
-										   $tokenSecret, 
-										   $url, 
-										   array('omb_version' => OMB_VERSION, 
-										         'omb_listenee' => NOSERUB_FULL_BASE_URL, 
-										         'omb_notice' => 'noserub://'.md5($notice), 
-										         'omb_notice_content' => $notice));
+		$identity = $this->Session->read('Identity');
+		$data = $this->OmbOauthConsumer->post('GenericOmb', 
+											  $tokenKey, 
+											  $tokenSecret, 
+											  $url, 
+											  array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
+													OmbParamKeys::LISTENEE => 'http://'.$identity['username'], 
+													OmbParamKeys::NOTICE => 'noserub://'.md5($notice), 
+													OmbParamKeys::NOTICE_CONTENT => $notice));
 		return $data;
+	}
+	
+	public function updateProfile() {
+		// TODO implement this method
+	}
+	
+	private function discoverXRDS($url) {
+		$fetcher = Auth_Yadis_Yadis::getHTTPFetcher();
+		$yadis = Auth_Yadis_Yadis::discover($url, $fetcher);
+		
+		if (!$yadis || $yadis->isFailure()) {
+			throw new Exception('Yadis document not found');
+		}
+		
+		$xrds = Auth_Yadis_XRDS::parseXRDS($yadis->response_text);
+		
+		if (!$xrds) {
+			throw new Exception('XRDS data not found');
+		}
+		
+		return $xrds;
 	}
 	
 	private function getConsumer() {
@@ -188,5 +170,160 @@ class OmbConsumerComponent extends Object {
 				return new Auth_Yadis_XRDS($parser, $node);
 			}
 		}
+	}
+	
+	private function isLaconica($authorizeUrl) {
+		if (strpos($authorizeUrl, '?') === false) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// laconica uses urls like http://example.com/index.php?action=userauthorization 
+	// which the OAuth library doesn't like, so we have to remove the querystring
+	private function removeQueryStringIfLaconica($authorizeUrl) {
+		if ($this->isLaconica($authorizeUrl)) {
+			$authUrl = explode('?', $authorizeUrl);
+			$authUrl = $authUrl[0];
+		} else {
+			$authUrl = $authorizeUrl;
+		}
+		
+		return $authUrl;
+	}
+}
+
+class OmbEndPoint {
+	private $localId = null;
+	private $urls = null;
+	
+	public function __construct($localId, array $urls) {
+		$this->localId = $localId;
+		$this->urls = $urls;		
+	}
+	
+	public function getAccessTokenUrl() {
+		return $this->urls[OauthConstants::ACCESS];
+	}
+	
+	public function getAuthorizeUrl() {
+		return $this->urls[OauthConstants::AUTHORIZE];
+	}
+	
+	public function getLocalId() {
+		return $this->localId;
+	}
+	
+	public function getPostNoticeUrl() {
+		return $this->urls[OmbConstants::POST_NOTICE];
+	}
+	
+	public function getRequestTokenUrl() {
+		return $this->urls[OauthConstants::REQUEST];
+	}
+	
+	public function getUpdateProfileUrl() {
+		return $this->urls[OmbConstants::UPDATE_PROFILE];
+	}
+}
+
+class OmbAuthorizationParams {
+	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
+	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
+	const MAX_FULLNAME_LENGTH = 255;
+	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
+	private $params = null;
+	
+	public function __construct($listener, array $listenee) {
+		$this->params = array(OmbParamKeys::VERSION => OmbConstants::VERSION,
+							  OmbParamKeys::LISTENER => $listener,
+							  OmbParamKeys::LISTENEE => $this->getProfileUrl($listenee['Identity']['username']),
+							  OmbParamKeys::LISTENEE_PROFILE => $this->getProfileUrl($listenee['Identity']['username']),
+							  OmbParamKeys::LISTENEE_NICKNAME => $listenee['Identity']['local_username'],
+							  OmbParamKeys::LISTENEE_LICENSE => self::CREATIVE_COMMONS_LICENSE,
+							  OmbParamKeys::LISTENEE_HOMEPAGE => $this->getProfileUrl($listenee['Identity']['username']),
+							  OmbParamKeys::LISTENEE_FULLNAME => $this->ensureMaxFullnameLength($listenee['Identity']['name']),
+							  OmbParamKeys::LISTENEE_BIO => $this->ensureMaxBioLength($listenee['Identity']['about']),
+							  OmbParamKeys::LISTENEE_LOCATION => $this->ensureMaxLocationLength($listenee['Identity']['address_shown']),
+							  OmbParamKeys::LISTENEE_AVATAR => $this->getPhotoUrl($listenee['Identity']['photo'])
+							  );
+	}
+	
+	public function getAsArray() {
+		return $this->params;
+	}
+	
+	private function ensureMaxBioLength($bio) {
+		return substr($bio, 0, self::MAX_BIO_LENGTH);
+	}
+	
+	private function ensureMaxFullnameLength($fullname) {
+		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
+	}
+	
+	private function ensureMaxLocationLength($location) {
+		return substr($location, 0, self::MAX_LOCATION_LENGTH);
+	}
+	
+	private function getPhotoUrl($photoName) {
+		if ($photoName != '') {
+			return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
+		}
+		
+		return '';
+	}
+	
+	private function getProfileUrl($username) {
+		return 'http://'.$username;
+	}
+}
+
+class OmbAuthorizationResponse {
+	private $requiredKeys = array(OmbParamKeys::VERSION, 
+								  OmbParamKeys::LISTENER_NICKNAME, 
+								  OmbParamKeys::LISTENER_PROFILE);
+	private $profileUrl = null;
+	private $avatarUrl = null;
+
+	public function __construct($urlParams) {
+		if (empty($urlParams) || !$this->existRequiredKeys($urlParams) || !$this->validateRequiredValues($urlParams)) {
+			throw new InvalidArgumentException('Invalid response');
+		}
+		
+		$this->profileUrl = $urlParams[OmbParamKeys::LISTENER_PROFILE];
+		$this->avatarUrl = $this->extractAvatarUrl($urlParams);
+	}
+	
+	public function getAvatarUrl() {
+		return $this->avatarUrl;
+	}
+	
+	public function getProfileUrl() {
+		return $this->profileUrl;
+	}
+	
+	private function existRequiredKeys($urlParams) {
+		foreach ($this->requiredKeys as $key) {
+			if (!isset($urlParams[$key])) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private function extractAvatarUrl($urlParams) {
+		if (isset($urlParams[OmbParamKeys::LISTENER_AVATAR])) {
+			return $urlParams[OmbParamKeys::LISTENER_AVATAR];
+		}
+		
+		return '';
+	}
+	
+	private function validateRequiredValues($urlParams) {
+		return $urlParams[OmbParamKeys::VERSION] == OmbConstants::VERSION && 
+		       trim($urlParams[OmbParamKeys::LISTENER_NICKNAME]) != '' &&
+		       trim($urlParams[OmbParamKeys::LISTENER_PROFILE]) != '';
 	}
 }

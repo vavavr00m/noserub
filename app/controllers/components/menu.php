@@ -16,7 +16,7 @@ class MenuComponent extends Object {
 	
 	private function getCompatibilityData($controller) {
 		$mainMenu = '';
-        if ($controller->name == 'Contacts' && $controller->action == 'network') {
+        if($controller->name == 'Contacts' && $controller->action == 'network') {
         	$mainMenu = 'network'; 
         }
         
@@ -35,7 +35,7 @@ class MenuComponent extends Object {
 	private function getMainMenuOptions($controller) {
 		$menuOptions = array('controller' => $controller->name, 'action' => $controller->action);
         
-        if ($this->Session->check('Identity')) {
+        if($this->Session->check('Identity')) {
         	$isLocal = $this->Session->read('Identity.is_local') == '1' ? true : false;
         	$localUsername = $this->Session->read('Identity.local_username');
         	$menuOptions = am($menuOptions, array('is_local' => $isLocal, 'local_username' => $localUsername));

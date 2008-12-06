@@ -1,4 +1,4 @@
-<h2>Synced usernames</h2>
+<h2><?php __('Synced usernames'); ?></h2>
 <?php if(!is_array($data)) {
     echo $data;
 } else { ?>

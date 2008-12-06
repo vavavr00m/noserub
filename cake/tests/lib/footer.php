@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: footer.php 7062 2008-05-30 11:29:53Z nate $ */
+/* SVN FILE: $Id: footer.php 7690 2008-10-02 04:56:53Z nate $ */
 /**
  * Short description for file.
  *
@@ -26,11 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-?>	</div>		
+?>	</div>
 		</div>
  		<div id="footer">
  			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
- 			<a href="http://www.cakephp.org/" target="_new">
+ 			<a href="http://www.cakephp.org/" target="_blank">
  				<img src="<?php echo $baseUrl; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" /></a></p>
  		</div>
 	</div>

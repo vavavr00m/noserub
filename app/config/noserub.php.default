@@ -2,9 +2,8 @@
 
 /**
  * The name of this NoseRub server. This is used for the title.
- * @name NOSERUB_APP_NAME
  */
-define('NOSERUB_APP_NAME', 'NoseRub');
+Configure::write('NoseRub.app_name', 'NoseRub');
 
 /**
  * The URL, under which your NoseRub installation
@@ -15,35 +14,37 @@ define('NOSERUB_APP_NAME', 'NoseRub');
  * http://myserver.com/noserub/, you would have to enter only
  * http://myserver.com/ here. When your installation is available
  * directly under http://myserver.com/, just put http://myserver.com/ here.
- * @name NOSERUB_FULL_BASE_URL
  */
-define('NOSERUB_FULL_BASE_URL', 'http://');
+Configure::write('NoseRub.full_base_url', 'http://');
 
+/**
+ * Default Language for this installation
+ */
+Configure::write('NoseRub.default_language', 'en-en'); # try 'de-de' :-)
 
 /**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities
- * @name NOSERUB_ADMIN_HASH
  */
-define('NOSERUB_ADMIN_HASH', '');
+Configure::write('NoseRub.admin_hash', '');
 
 /**
- * Similar to NOSERUB_ADMIN_HASH, but only used
+ * Similar to NoseRub.admin_hash, but only used
  * for some cronjob routes that can called by URL with this
  * hash. Only needed, if you install NoseRub on a server
  * without access to the crontab.
  *
- * Don't use the same value for NOSERUB_ADMIN_HASH and NOSERUB_CRON_HASH!
+ * Don't use the same value for NoseRub.admin_hash and NoseRub.cron_hash!
  *
  * The URLs for these cronjobs are:
- * NOSERUB_FULL_BASE_URL/jobs/cron/NOSERUB_CRON_HASH/identities/sync/all/
- * NOSERUB_FULL_BASE_URL/jobs/cron/NOSERUB_CRON_HASH/cache/feed/refresh/
+ * <NoseRub.full_base_url>/jobs/cron/<NoseRub.cron_hash>/identities/sync/all/
+ * <NoseRub.full_base_url>/jobs/cron/<NoseRub.cron_hash>/cache/feed/refresh/
  *
  * These cronjobs can take some time to finish, so you might run into
  * problems with timeouts of the webserver you're using.
  */
-define('NOSERUB_CRON_HASH', '');
+Configure::write('NoseRub.cron_hash', '');
 
 /**
  * If set to "false", NoseRub will update the entries
@@ -51,7 +52,7 @@ define('NOSERUB_CRON_HASH', '');
  * For better performance, you should set this to
  * "true" and add a cronjob for this purpose.
  */
-define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
+Configure::write('NoseRub.manual_feeds_update', false);
 
 /**
  * all = everyone can register
@@ -59,23 +60,20 @@ define('NOSERUB_MANUAL_FEEDS_UPDATE', false);
  *        all previously registered identities aren't altered
  * invitation = only the admin can invite people to register. 
  *              (this is yet not implemented)
- * @name: NOSERUB_REGISTRATION_TYPE
  */
-define('NOSERUB_REGISTRATION_TYPE', 'all');
+Configure::write('NoseRub.registration_type', 'all');
 
 /**
  * E-Mail address, that is put into the From: header,
  * when sending out emails.
- *
- * @name: NOSERUB_EMAIL_FROM
  */
-define('NOSERUB_EMAIL_FROM', 'info@...');
+Configure::write('NoseRub.email_from', 'info@...');
 
 /**
  * When true, https (Port 443) is used for sensitive 
  * pages like /pages/login/ and /pages/register/
  */
-define('NOSERUB_USE_SSL', false);
+Configure::write('NoseRub.use_ssl', false);
 
 /**
  * We need a geocoder for get Latitude/Longitude for
@@ -87,7 +85,7 @@ define('NOSERUB_USE_SSL', false);
  * on which you want to use the API Key.
  * If set to false, no geocoding is done.
  */
-define('NOSERUB_GOOGLE_MAPS_KEY', false);
+Configure::write('NoseRub.google_maps_key', false);
 
 /**
  * For better reliability, NoseRub can store some data to
@@ -95,7 +93,7 @@ define('NOSERUB_GOOGLE_MAPS_KEY', false);
  * usage of a CDN here. Please make sure you provide
  * access information to your CDN below.
  */
-define('NOSERUB_USE_CDN', false);
+Configure::write('NoseRub.use_cdn', false);
 
 /**
  * You need to enter this three fields, when you want to
@@ -105,9 +103,46 @@ define('NOSERUB_USE_CDN', false);
  * yourself. All data for this NoseRub installation will be
  * stored in that bucket.
  */
-define('NOSERUB_CDN_S3_ACCESS_KEY', '');
-define('NOSERUB_CDN_S3_SECRET_KEY', '');
-define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
+Configure::write('NoseRub.cdn_s3_access_key', '');
+Configure::write('NoseRub.cdn_s3_secret_key', '');
+Configure::write('NoseRub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
+
+/**
+ * If you want to restrict the email addresses of users that can register,
+ * define this setting. You can add more than one host:
+ * Configure::write('NoseRub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
+ */
+Configure::write('NoseRub.registration_restricted_hosts', false);
+
+Configure::write('NoseRub.xmpp_full_feed_user', '');
+Configure::write('NoseRub.xmpp_full_feed_password', '');
+Configure::write('NoseRub.xmpp_full_feed_server', 'jabber.identoo.com');
+Configure::write('NoseRub.xmpp_full_feed_port', 5222);
+
+/**
+ * If you want your server being displayed on http://noserub.com/sites
+ * and display the number of your registered users there, please contact
+ * dirk.olbertz@gmail.com for listing on that page and set the following
+ * value to 'true'.
+ *
+ * Beside the number of users on your site, this method also transfers
+ * the settings NoseRub.registration_restricted_hosts and 
+ * NoseRub.registration_type to noserub.com. In addition, information about
+ * how up to date your installation is (id of newest database migration)
+ * gathered, so we know which versions are used out there.
+ *
+ * We don't send the content of NoseRub.registration_restricted_hosts, but
+ * only the information, if this setting is used. If so, your site will be
+ * flagged as "not public" on http://noserub.com/sites/.
+ */
+Configure::write('NoseRub.api_info_active', false);
+
+/**
+ * If you, as the admin of this NoseRub installation do not feel
+ * comfortable with the Twitter Bridge, you can deactivate it here
+ * for every user on your site.
+ */
+Configure::write('NoseRub.allow_twitter_bridge', true);
 
 /**
  * Uncomment this line if you get the following error when you try 
@@ -118,42 +153,3 @@ define('NOSERUB_CDN_S3_BUCKET', 'cdn.mynoserubserver.com');
  * want use a source different than /dev/urandom.
  */
 // define('Auth_OpenID_RAND_SOURCE', null);
-
-/**
- * If you want to restrict the email addresses of users that can register,
- * set this constant. You can add more than one host:
- * define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', 'mycompany.com myothercompany.com');
- *
- * @name: NOSERUB_REGISTRATION_RESTRICTED_HOSTS
- */
-define('NOSERUB_REGISTRATION_RESTRICTED_HOSTS', false);
-
-define('NOSERUB_XMPP_FULL_FEED_USER', '');
-define('NOSERUB_XMPP_FULL_FEED_PASSWORD', '');
-define('NOSERUB_XMPP_FULL_FEED_SERVER', 'jabber.identoo.com');
-define('NOSERUB_XMPP_FULL_FEED_PORT', 5222);
-
-/**
- * If you want your server being displayed on http://noserub.com/sites
- * and display the number of your registered users there, please contact
- * dirk.olbertz@gmail.com for listing on that page and set the following
- * value to 'true'.
- *
- * Beside the number of users on your site, this method also transfers
- * the settings NOSERUB_REGISTRATION_RESTRICTED_HOSTS and 
- * NOSERUB_REGISTRATION_TYPE to noserub.com. In addition, information about
- * how up to date your installation is (id of newest database migration)
- * gathered, so we know which versions are used out there.
- *
- * We don't send the content of NOSERUB_REGISTRATION_RESTRICTED_HOSTS, but
- * only the information, if this setting is used. If so, your site will be
- * flagged as "not public" on http://noserub.com/sites/.
- */
-define('NOSERUB_API_INFO_ACTIVE', false);
-
-/**
- * If you, as the admin of this NoseRub installation do not feel
- * comfortable with the Twitter Bridge, you can deactivate it here
- * for every user on your site.
- */
-define('NOSERUB_ALLOW_TWITTER_BRIDGE', true);

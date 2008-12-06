@@ -1,6 +1,5 @@
 <p class="infotext">
-If you have an <img src="<?php echo Router::url('/images/openid_small.gif'); ?>" alt="OpenID logo" /> OpenID, please follow this 
-<?php echo $html->link('link', '/pages/register/withopenid'); ?> to register a new NoseRub account.
+    <?php echo sprintf(__('If you have an %s OpenID, please follow this %s to register a new NoseRub account.', true), '<img src="' . Router::url('/images/openid_small.gif') . '" alt="OpenID logo" />', $html->link(__('link', true), '/pages/register/withopenid')); ?>
 </p>
 
 <form id="IdentityRegisterForm" method="post" action="<?php echo $this->here; ?>">
@@ -8,32 +7,32 @@ If you have an <img src="<?php echo Router::url('/images/openid_small.gif'); ?>"
         <?php 
             echo $form->input('Identity.username', 
                               array('error' => array(
-                                    'required' => 'You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots',
-                                    'content'  => 'Valid characters: letters, numbers, underscores, dashes and dots only',
-                                    'unique'   => 'The username is already taken'))); 
+                                    'required' => __('You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots', true),
+                                    'content'  => __('Valid characters: letters, numbers, underscores, dashes and dots only', true),
+                                    'unique'   => __('The username is already taken', true)))); 
         ?>
         <?php 
-            echo $form->input('Identity.email', array('label' => 'E-Mail (validation link will be sent there)', 
-                                                      'error' => 'Please enter a valid E-Mail address')); 
+            echo $form->input('Identity.email', array('label' => __('E-Mail (validation link will be sent there)', true), 
+                                                      'error' => __('Please enter a valid E-Mail address', true))); 
         ?>
         <?php 
             echo $form->input('Identity.passwd', array('type'  => 'password',
-                                                       'label' => 'Password', 
-                                                       'error' => 'Passwords must be at least 6 characters in length')); 
+                                                       'label' => __('Password', true), 
+                                                       'error' => __('Passwords must be at least 6 characters in length', true))); 
         ?>
         <?php 
             echo $form->input('Identity.passwd2', array('type' => 'password', 
-                                                        'label' => 'Password repeated', 
-                                                        'error' => 'Passwords must match')); 
+                                                        'label' => __('Password repeated', true), 
+                                                        'error' => __('Passwords must match', true))); 
         ?>
     </fieldset>
 
     <?php echo $this->element('identities/privacy_settings'); ?>
         <p class="infotext">
-        (You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in.)
+        (<?php __('You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in.'); ?>)
     </p>
 
     <fieldset>
-        <input class="submitbutton" type="submit" value="Register"/>
+        <input class="submitbutton" type="submit" value="<?php __('Register'); ?>"/>
     </fieldset>
 </form>
