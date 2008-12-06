@@ -8,6 +8,7 @@ class OmbController extends AppController {
 	public $components = array('RequestHandler');
 	
 	public function request_token() {
+		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -28,6 +29,7 @@ class OmbController extends AppController {
 	}
 	
 	public function access_token() {
+		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -50,6 +52,7 @@ class OmbController extends AppController {
 	}
 	
 	public function authorize() {
+		exit(); // disabled for release
 		if (!$this->isCorrectOMBVersion()) {
 			echo __('Invalid OMB version', true);
 			exit;
@@ -87,6 +90,7 @@ class OmbController extends AppController {
 	}
 	
 	public function authorize_form() {
+		exit(); // disabled for release
 		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
 			echo __('Invalid request', true);
 			exit;
@@ -122,6 +126,7 @@ class OmbController extends AppController {
 	}
 	
 	public function post_notice() {
+		exit(); // disabled for release
 		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
 			header('HTTP/1.1 403 Forbidden');
 			echo __('Invalid request', true);
