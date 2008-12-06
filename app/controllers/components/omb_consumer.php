@@ -108,8 +108,8 @@ class OmbConsumerComponent extends Object {
 		return $this->OmbOauthConsumer->getRequestToken('GenericOmb', 
 													 	$requestTokenUrl, 
 													 	'POST', 
-													 	array('omb_version' => OmbConstants::VERSION, 
-															  'omb_listener' => $localId));
+													 	array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
+															  OmbParamKeys::LISTENER => $localId));
 	}
 	
 	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
@@ -117,10 +117,10 @@ class OmbConsumerComponent extends Object {
 											  $tokenKey, 
 											  $tokenSecret, 
 											  $url, 
-											  array('omb_version' => OmbConstants::VERSION, 
-													'omb_listenee' => Configure::read('NoseRub.full_base_url'), 
-													'omb_notice' => 'noserub://'.md5($notice), 
-													'omb_notice_content' => $notice));
+											  array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
+													OmbParamKeys::LISTENEE => Configure::read('NoseRub.full_base_url'), 
+													OmbParamKeys::NOTICE => 'noserub://'.md5($notice), 
+													OmbParamKeys::NOTICE_CONTENT => $notice));
 		return $data;
 	}
 	
