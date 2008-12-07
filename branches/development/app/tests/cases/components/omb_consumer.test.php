@@ -116,6 +116,14 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 		$this->assertEqual('', $paramsArray[OmbParamKeys::LISTENEE_AVATAR]);
 	}
 	
+	public function testGetAsArrayWithGravatarAsPhoto() {
+		$gravatar = 'http://gravatar.com/avatar/xy';
+		$gravatar96x96 = $gravatar . '?s=96';
+		$this->photo = $gravatar;
+		$paramsArray = $this->getAuthorizationParamsArray();
+		$this->assertEqual($gravatar96x96, $paramsArray[OmbParamKeys::LISTENEE_AVATAR]);
+	}
+	
 	private function getAuthorizationParamsArray() {
 		$params = new OmbAuthorizationParams($this->listener, $this->getListeneeData());
 		
