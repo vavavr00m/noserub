@@ -6,6 +6,7 @@ Router::connect('/social_stream/:filter/:output/', array('controller' => 'identi
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
+Router::connect('/pages/login/openid', array('controller' => 'identities', 'action' => 'login_with_openid'));
 Router::connect('/pages/logout/:security_token/', array('controller' => 'identities', 'action' => 'logout'));
 Router::connect('/pages/register/', array('controller' => 'registration', 'action' => 'register'));
 Router::connect('/pages/register/withopenid/', array('controller' => 'registration', 'action' => 'register_with_openid_step_1'));

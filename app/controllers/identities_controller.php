@@ -603,6 +603,21 @@ class IdentitiesController extends AppController {
     	$this->set('headline', __('Login with existing NoseRub account', true));
     }
     
+    // XXX hack for http://code.google.com/p/noserub/issues/detail?id=240 
+    public function login_with_openid() {
+    	$this->checkUnsecure();
+    	$openid = $this->Session->read('OpenidLogin.openid');
+    	
+    	if ($openid) {
+    		$returnTo = 'https://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
+    		$realm = str_replace('http://', 'https://', FULL_BASE_URL);
+		    $this->authenticateOpenID($openid, $returnTo, $realm);
+    		exit;
+    	}
+    	
+    	$this->redirect(Router::url('/pages/login'));
+    }
+    
     // this method hides the fact that two requests are necessary when login 
     // with an OpenID 
     private function loginWithOpenID() {
@@ -616,7 +631,14 @@ class IdentitiesController extends AppController {
     	
     	if (!empty($this->data)) {
     		$this->Session->write('OpenidLogin.remember', $this->data['Identity']['remember']);
-    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo);
+    		
+    		if (Configure::read('NoseRub.use_ssl')) {
+    			$this->Session->write('OpenidLogin.openid', $this->data['Identity']['openid']);
+    			// we switch to http for submitting the OpenID to the OpenID provider to avoid browser warning 
+    			$this->redirect(str_replace('https', 'http', Router::url('/pages/login/openid', true)));
+    		}
+    		
+    		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, FULL_BASE_URL);
     		exit;
     	} else {
     		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
@@ -749,11 +771,11 @@ class IdentitiesController extends AppController {
 		$this->set('username', $username);
 	}
     
-    private function authenticateOpenID($openid, $returnTo, $required = array(), $optional = array()) {
+    private function authenticateOpenID($openid, $returnTo, $realm, $required = array(), $optional = array()) {
     	try {
     		$this->openid->authenticate($openid, 
     									$returnTo, 
-    									FULL_BASE_URL,
+    									$realm,
     									$required,
     									$optional);
     	} catch (InvalidArgumentException $e) {
