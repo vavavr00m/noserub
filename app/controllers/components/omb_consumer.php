@@ -268,6 +268,10 @@ class OmbAuthorizationParams {
 	
 	private function getPhotoUrl($photoName) {
 		if ($photoName != '') {
+			if ($this->isGravatarUrl($photoName)) {
+				return $this->get96x96GravatarUrl($photoName);
+			}
+			
 			return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
 		}
 		
@@ -276,6 +280,14 @@ class OmbAuthorizationParams {
 	
 	private function getProfileUrl($username) {
 		return 'http://'.$username;
+	}
+	
+	private function get96x96GravatarUrl($gravatarUrl) {
+		return $gravatarUrl . '?s=96';
+	}
+	
+	private function isGravatarUrl($photoName) {
+		return (stripos($photoName, 'http://gravatar.com') === 0);
 	}
 }
 
