@@ -1,7 +1,7 @@
 <?php
 
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', 'OmbConstants');
+App::import('Vendor', array('OmbConstants', 'OmbParamKeys'));
 
 class OmbController extends AppController {
 	public $uses = array('Entry', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
@@ -17,7 +17,7 @@ class OmbController extends AppController {
 		
 		try {
 			$request = OAuthRequest::from_request();
-			$this->OmbDataStore->set_omb_listener($request->get_parameter('omb_listener'));
+			$this->OmbDataStore->set_omb_listener($request->get_parameter(OmbParamKeys::LISTENER));
 			$request_token = $server->fetch_request_token($request);
 		  	echo $request_token;
 		} catch (OAuthException $e) {
@@ -58,9 +58,9 @@ class OmbController extends AppController {
 			exit;
 		}
 		
-		$requiredParams = array('oauth_token', 'oauth_callback', 'omb_listener', 
-							    'omb_listenee', 'omb_listenee_profile',
-							    'omb_listenee_nickname', 'omb_listenee_license');
+		$requiredParams = array('oauth_token', 'oauth_callback', OmbParamKeys::LISTENER, 
+							    OmbParamKeys::LISTENEE, OmbParamKeys::LISTENEE_PROFILE,
+							    OmbParamKeys::LISTENEE_NICKNAME, OmbParamKeys::LISTENEE_LICENSE);
 		
 		foreach ($requiredParams as $requiredParam) {
 			if (!isset($this->params['url'][$requiredParam])) {
@@ -73,9 +73,9 @@ class OmbController extends AppController {
 			$this->Session->write('OMB.'.$requiredParam, $this->params['url'][$requiredParam]);
 		}
 		
-		$optionalParams = array('omb_listenee_fullname', 'omb_listenee_homepage',
-								'omb_listenee_bio', 'omb_listenee_location',
-								'omb_listenee_avatar');
+		$optionalParams = array(OmbParamKeys::LISTENEE_FULLNAME, OmbParamKeys::LISTENEE_HOMEPAGE,
+								OmbParamKeys::LISTENEE_BIO, OmbParamKeys::LISTENEE_LOCATION,
+								OmbParamKeys::LISTENEE_AVATAR);
 		
 		foreach ($optionalParams as $optionalParam) {
 			$this->writeToSessionIfParameterIsSet('OMB.'.$optionalParam, $optionalParam);
@@ -133,7 +133,7 @@ class OmbController extends AppController {
 			exit;
 		}
 		
-		$requiredParams = array('omb_listenee', 'omb_notice', 'omb_notice_content');
+		$requiredParams = array(OmbParamKeys::LISTENEE, OmbParamKeys::NOTICE, OmbParamKeys::NOTICE_CONTENT);
 		
 		foreach ($requiredParams as $requiredParam) {
 			if (!isset($this->params['form'][$requiredParam])) {
@@ -144,7 +144,7 @@ class OmbController extends AppController {
 		
 		// TODO add notice
 		
-		echo 'omb_version='.OmbConstants::VERSION;
+		echo OmbParamKeys::VERSION . '=' . OmbConstants::VERSION;
 		exit;
 	}
 	
@@ -161,8 +161,8 @@ class OmbController extends AppController {
 	
 	// type can be 'url' or 'form'
 	private function isCorrectOMBVersion($type = 'url') {
-		return (isset($this->params[$type]['omb_version']) && 
-				$this->params[$type]['omb_version'] == OmbConstants::VERSION);
+		return (isset($this->params[$type][OmbParamKeys::VERSION]) && 
+				$this->params[$type][OmbParamKeys::VERSION] == OmbConstants::VERSION);
 	}
 	
 	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
