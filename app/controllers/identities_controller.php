@@ -1046,14 +1046,14 @@ class IdentitiesController extends AppController {
                 'hash'     => '',
                 'NOT username LIKE "%@"'
             );
-            App::import('Model', 'Admin');
-            $Admin = new Admin;
+            App::import('Model', 'Migration');
+            $Migration = new Migration();
             $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
                 'registration_type' => Configure::read('NoseRub.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
-                'migration' => $Admin->getCurrentMigration()
+                'migration' => $Migration->getCurrentMigration()
             );
         } else {
             $data = array();
