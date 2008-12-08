@@ -32,7 +32,7 @@ class Comment extends AppModel {
             $zend_json->useBuiltinEncoderDecoder = true;
             $comments = $zend_json->decode($json_data);
             if(!isset($comments['data']) || !is_array($comments['data'])) {
-                $comments = array();
+                $comments = array('data' => array());
                 $imported = 0;
             } else {
                 $imported = 0;
@@ -66,7 +66,7 @@ class Comment extends AppModel {
                 }
             }
             
-            $polled[] = sprintf(__('%d comments from %s, %d imported', true), count($comments), $peer['Peer']['name'], $imported);
+            $polled[] = sprintf(__('%d comments from %s, %d imported', true), count($comments['data']), $peer['Peer']['name'], $imported);
         }
         
         return $polled;
