@@ -18,7 +18,7 @@ header('Content-Type: text/xml');
 	    <?php if(isset($identity['username'])) { ?>
 	        <link>http://<?php echo $identity['username']; ?></link>
 	    <?php } else { ?>
-	        <link><?php echo Router::Url('/social_strem/' . $filter, true); ?></link>
+	        <link><?php echo Router::Url('/social_stream/' . $filter, true); ?></link>
 	    <?php } ?>
 	    <description><?php echo $syndication_name; ?> - NoseRub Feed</description>
 	    <pubDate><?php echo $now; ?></pubDate>
