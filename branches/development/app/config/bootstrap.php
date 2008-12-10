@@ -33,6 +33,7 @@ Configure::write('Languages', array(
     'en-en' => 'English',
     'fr-fr' => 'Français',
     #'es-es' => 'Español',
+    'ko-kr' => 'Korean',
     'tr'    => 'Turkish'
 ));
 
