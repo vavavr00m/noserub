@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: NoseRub\n"
 "POT-Creation-Date: 2008-11-13 21:11+0100\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Dirk Olbertz <dirk.olbertz@ormigo.com>\n"
+"Last-Translator: Dirk Olbertz <dirk.olbertz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,796 +14,796 @@ msgstr ""
 
 #: /_controller.php:135
 msgid "You may not call this route from the shell!"
-msgstr ""
+msgstr "셀에서 이 경로를 호출 할 수 없습니다. "
 
 #: /_controller.php:140
 #: /controllers/auth_controller.php:105
 msgid "Error"
-msgstr ""
+msgstr "오류"
 
 #: /_controller.php:140
 msgid "This route is only accessible from the shell!"
-msgstr ""
+msgstr "해당 경로는 쉘로 접근이 가능합니다."
 
 #: /controllers/account_settings_controller.php:38
 msgid "Manage your account"
-msgstr ""
+msgstr "계정 관리하기"
 
 #: /controllers/account_settings_controller.php:59
 msgid "There was an error while uploading"
-msgstr ""
+msgstr "업로드를 하는 동안 오류가 발생했습니다."
 
 #: /controllers/account_settings_controller.php:66
 msgid "Importing NoseRub data"
-msgstr ""
+msgstr "NoseRub 데이터 불러오기"
 
 #: /controllers/account_settings_controller.php:70;81
 msgid "Couldn't import the data!"
-msgstr ""
+msgstr "데이터를 불러올 수 없었습니다."
 
 #: /controllers/account_settings_controller.php:85
 msgid "Import completed"
-msgstr ""
+msgstr "불러오기가 완료되었습니다."
 
 #: /controllers/account_settings_controller.php:87
 msgid "There was an error during import!"
-msgstr ""
+msgstr "불러오기를 하는 과정에 오류가 발생했습니다."
 
 #: /controllers/account_settings_controller.php:107
 msgid "Redirect URL saved."
-msgstr ""
+msgstr "Redirect URL이 저장되었습니다."
 
 #: /controllers/account_settings_controller.php:115
 msgid "In order to delete your account, please check the check box."
-msgstr ""
+msgstr "계정을 삭제하기 위해서 체크박스에 체크를 해 주세요."
 
 #: /controllers/accounts_controller.php:31
 msgid "Your accounts"
-msgstr ""
+msgstr "내 계정"
 
 #: /controllers/accounts_controller.php:33
 msgid "%s's accounts"
-msgstr ""
+msgstr "의 계정"
 
 #: /controllers/accounts_controller.php:93
 msgid "Changes saved."
-msgstr ""
+msgstr "변경내용이 저장되었습니다."
 
 #: /controllers/accounts_controller.php:98
 msgid "No changes made."
-msgstr ""
+msgstr "변경할 항목이 없습니다."
 
 #: /controllers/accounts_controller.php:116
 msgid "You need to be logged in to add an account."
-msgstr ""
+msgstr "계정을 추가하기 위해서는 로그인이 필요합니다."
 
 #: /controllers/accounts_controller.php:251;290;356
 msgid "Account added."
-msgstr ""
+msgstr "계정이 추가되었습니다."
 
 #: /controllers/accounts_controller.php:270
 msgid "Preview the data"
-msgstr ""
+msgstr "데이터 미리보기"
 
 #: /controllers/accounts_controller.php:460
 msgid "Could not find the user."
-msgstr ""
+msgstr "사용자를 찾을 수 없습니다."
 
 #: /controllers/accounts_controller.php:467
 msgid "You may not delete this."
-msgstr ""
+msgstr "삭제할 수 없습니다."
 
 #: /controllers/accounts_controller.php:477
 msgid "Account deleted."
-msgstr ""
+msgstr "계정을 삭제하였습니다."
 
 #: /controllers/auth_controller.php:22
 msgid "OpenID server endpoint"
-msgstr ""
+msgstr "OpenID server endpoint"
 
 #: /controllers/auth_controller.php:219
 msgid "OpenID verification"
-msgstr ""
+msgstr "OpenID 인증"
 
 #: /controllers/contacts_controller.php:51
 msgid "My contacts"
-msgstr ""
+msgstr "내 친구목록"
 
 #: /controllers/contacts_controller.php:53
 msgid "%s's contacts"
-msgstr ""
+msgstr "의 친구목록"
 
 #: /controllers/contacts_controller.php:114;139
 msgid "Could not add contact."
-msgstr ""
+msgstr "친구목록에 추가할 수 없었습니다."
 
 #: /controllers/contacts_controller.php:135;156
 msgid "New contact added."
-msgstr ""
+msgstr "새로운 친구가 되었습니다."
 
 #: /controllers/contacts_controller.php:175
 msgid "Add a contact to your social network"
-msgstr ""
+msgstr "내 네트워크에 새로운 친구 추가하기"
 
 #: /controllers/contacts_controller.php:177
 msgid "Add a contact to %s's social network"
-msgstr ""
+msgstr "%의 네트워크에 새로운 친구 추가하기"
 
 #: /controllers/contacts_controller.php:215
 msgid "Removed the contact."
-msgstr ""
+msgstr "친구목록을 제거하였습니다."
 
 #: /controllers/contacts_controller.php:379
 msgid "Contact updated."
-msgstr ""
+msgstr "친구정보가 업데이트되었습니다."
 
 #: /controllers/contacts_controller.php:386
 msgid "Edit the contact details"
-msgstr ""
+msgstr "친구 정보 변경"
 
 #: /controllers/contacts_controller.php:451
 msgid "Location updated."
-msgstr ""
+msgstr "위치정보가 업데이트되었습니다."
 
 #: /controllers/contacts_controller.php:521
 msgid "Activities in %s's contact's social stream"
-msgstr ""
+msgstr "Activities in %s's contact's social stream"
 
 #: /controllers/contacts_controller.php:546
 #: /views/contacts/add.ctp:17
 msgid "You cannot add yourself as a contact."
-msgstr ""
+msgstr "친구목록에 자신을 친구로 추가할 수 없습니다."
 
 #: /controllers/contacts_controller.php:561
 msgid "Added new contact."
-msgstr ""
+msgstr "새로운 친구가 추가되었습니다."
 
 #: /controllers/entries_controller.php:23
 msgid "You need to be logged in to add a comment."
-msgstr ""
+msgstr "댓글을 남기기 위해서는 로그인이 필요합니다."
 
 #: /controllers/entries_controller.php:25
 msgid "You forgot to write something."
-msgstr ""
+msgstr "내용을 입력해 주세요."
 
 #: /controllers/entries_controller.php:27
 msgid "Comment added."
-msgstr ""
+msgstr "댓글이 추가되었습니다."
 
 #: /controllers/entries_controller.php:65
 msgid "Edit your entry"
-msgstr ""
+msgstr "글 편집하기"
 
 #: /controllers/entries_controller.php:67
 msgid "Permalink"
-msgstr ""
+msgstr "글 주소"
 
 #: /controllers/entries_controller.php:81;90;97
 msgid "You may not delete this entry!"
-msgstr ""
+msgstr "이 글을 삭제할 수 없습니다."
 
 #: /controllers/entries_controller.php:101
 msgid "Entry deleted."
-msgstr ""
+msgstr "글이 삭제되었습니다."
 
 #: /controllers/entries_controller.php:117
 msgid "You need to be logged in to perform this action!"
-msgstr ""
+msgstr "해당 기능은 로그인이 필요합니다."
 
 #: /controllers/entries_controller.php:142
 msgid "This entry may not be marked!"
-msgstr ""
+msgstr "이 글은 표시를 해 둘 수 없습니다."
 
 #: /controllers/entries_controller.php:151
 msgid "Unmarked the entry."
-msgstr ""
+msgstr "표시하지 않은 글"
 
 #: /controllers/entries_controller.php:162
 msgid "Marked the entry."
-msgstr ""
+msgstr "표시한 글"
 
 #: /controllers/entries_controller.php:187
 #: /controllers/identities_controller.php:697
 msgid "Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!"
-msgstr ""
+msgstr "noserub.php 파일에 NOSERUB_CRON_HASH 값이 일치하지 않거나 비어있습니다."
 
 #: /controllers/entries_controller.php:198
 msgid "NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php not set to do it manually!"
-msgstr ""
+msgstr "noserub.php 파일안에 NOSERUB_MANUAL_FEEDS_UPDATE는  수동으로 설정할 수 없습니다."
 
 #: /controllers/entries_controller.php:227
 msgid "%d entries added/updated"
-msgstr ""
+msgstr "%d 추가된 글/업데이트"
 
 #: /controllers/identities_controller.php:34
 msgid "There is a redirect URL given!"
-msgstr ""
+msgstr "redirect URL이 지정되었습니다."
 
 #: /controllers/identities_controller.php:133
 msgid "My NoseRub Profile"
-msgstr ""
+msgstr "내 NoseRub 프로필"
 
 #: /controllers/identities_controller.php:158
 msgid "Username could not be found!"
-msgstr ""
+msgstr "사용자 이름을 찾을 수 없습니다."
 
 #: /controllers/identities_controller.php:202
 msgid "Social Stream"
-msgstr ""
+msgstr "Social Stream"
 
 #: /controllers/identities_controller.php:211
 msgid "All public social activities"
-msgstr ""
+msgstr "공개된 활동 내용"
 
 #: /controllers/identities_controller.php:238
 msgid "%s's favorites"
-msgstr ""
+msgstr "%의 좋아하는것들"
 
 #: /controllers/identities_controller.php:257
 msgid "Send a message to "
-msgstr ""
+msgstr "에게 메세지 보내기"
 
 #: /controllers/identities_controller.php:264;271
 msgid "You may not send a message to "
-msgstr ""
+msgstr "에게 메세지를 보낼 수 없습니다."
 
 #: /controllers/identities_controller.php:278
 msgid "You need to specify a subject."
-msgstr ""
+msgstr "제목을 입력해 주세요."
 
 #: /controllers/identities_controller.php:282
 msgid "You need to specify a text."
-msgstr ""
+msgstr "내용을 입력해 주세요."
 
 #: /controllers/identities_controller.php:295
 msgid "Hi "
-msgstr ""
+msgstr "안녕하세요."
 
 #: /controllers/identities_controller.php:296
 msgid "You got a message from "
-msgstr ""
+msgstr "부터 메세지가 도착했습니다."
 
 #: /controllers/identities_controller.php:298
 msgid "Subject: "
-msgstr ""
+msgstr "제목"
 
 #: /controllers/identities_controller.php:299
 msgid "Text:"
-msgstr ""
+msgstr "ㅅ"
 
 #: /controllers/identities_controller.php:301
 msgid "If you want to reply to this message, go to "
-msgstr ""
+msgstr "이 메세지에 답장을 원하지 않는다면 이곳으로 이동하세요."
 
 #: /controllers/identities_controller.php:306
 msgid "Your Message could not be delivered to "
-msgstr ""
+msgstr "메세지를 전달 할 수 없었습니다."
 
 #: /controllers/identities_controller.php:309
 msgid "Your Message was sent to "
-msgstr ""
+msgstr "메세지가 전달되었습니다."
 
 #: /controllers/identities_controller.php:388
 msgid "Changes have been saved."
-msgstr ""
+msgstr "변경 내용이 저장되었습니다."
 
 #: /controllers/identities_controller.php:395
 msgid "My profile settings"
-msgstr ""
+msgstr "내 프로필 설정"
 
 #: /controllers/identities_controller.php:427
 msgid "Display options have been saved."
-msgstr ""
+msgstr "화면표시 선택사항이 변경되었습니다."
 
 #: /controllers/identities_controller.php:434
 msgid "Configure your display options"
-msgstr ""
+msgstr "화면표시 선택사항 설정"
 
 #: /controllers/identities_controller.php:463
 msgid "Privacy settings have been saved."
-msgstr ""
+msgstr "사생활 설정이 저장되었습니다."
 
 #: /controllers/identities_controller.php:470
 msgid "Your privacy settings"
-msgstr ""
+msgstr "사생활 보호설정"
 
 #: /controllers/identities_controller.php:501
 msgid "API options have been saved."
-msgstr ""
+msgstr "API 선택사항이 저장되었습니다."
 
 #: /controllers/identities_controller.php:509
 msgid "You need to specify a new password."
-msgstr ""
+msgstr "새로운 비밀번호 지정을 해야합니다."
 
 #: /controllers/identities_controller.php:511
 msgid "The new password was not entered twice the same."
-msgstr ""
+msgstr "새로운 비밀번호가 중복으로 입력되지 않았습니다."
 
 #: /controllers/identities_controller.php:517
 msgid "The new password has been saved."
-msgstr ""
+msgstr "새로운 비밀번호가 저장되었습니다."
 
 #: /controllers/identities_controller.php:520
 msgid "The old password was not correct."
-msgstr ""
+msgstr "예전 비밀번호와 일치하지 않습니다."
 
 #: /controllers/identities_controller.php:526
 msgid "Password settings"
-msgstr ""
+msgstr "패스워드 설정"
 
 #: /controllers/identities_controller.php:551
 msgid "Welcome! It's nice to have you back."
-msgstr ""
+msgstr "다시 방문해 주신것을 환영합니다."
 
 #: /controllers/identities_controller.php:561
 msgid "Login not possible"
-msgstr ""
+msgstr "로그인을 할 수 없습니다."
 
 #: /controllers/identities_controller.php:570
 msgid "Login with existing NoseRub account"
-msgstr ""
+msgstr "이미 NoseRub 계정이 존재합니다."
 
 #: /controllers/identities_controller.php:609
 msgid "Account deleted"
-msgstr ""
+msgstr "계정이 삭제되었습니다."
 
 #: /controllers/locations_controller.php:23
 msgid "Manage your locations"
-msgstr ""
+msgstr "위치정보 관리하기"
 
 #: /controllers/locations_controller.php:52;102
 msgid "Location added."
-msgstr ""
+msgstr "위치정보가 추가되었습니다."
 
 #: /controllers/locations_controller.php:56;104
 msgid "Location could not be created."
-msgstr ""
+msgstr "위치정보를 추가할 수 없습니다."
 
 #: /controllers/locations_controller.php:63
 msgid "Add new Location"
-msgstr ""
+msgstr "새로운 위치 추가하기"
 
 #: /controllers/locations_controller.php:83
 msgid "Location could not be edited."
-msgstr ""
+msgstr "위치정보를 수정할 수 없습니다."
 
 #: /controllers/locations_controller.php:115
 msgid "Edit Location"
-msgstr ""
+msgstr "위치정보 수정하기"
 
 #: /controllers/locations_controller.php:140
 msgid "Location deleted."
-msgstr ""
+msgstr "위치정보가 삭제되었습니다."
 
 #: /controllers/locations_controller.php:142
 msgid "Location could not be deleted."
-msgstr ""
+msgstr "위치정보를 삭제할 수 없습니다."
 
 #: /controllers/locations_controller.php:193
 msgid "dataset not found"
-msgstr ""
+msgstr "dataset를 찾을 수 없습니다."
 
 #: /controllers/locations_controller.php:216
 msgid "parameter wrong"
-msgstr ""
+msgstr "잘못된 파라미터입니다."
 
 #: /controllers/locations_controller.php:225
 msgid "duplicate dataset"
-msgstr ""
+msgstr "중복된  dataset 입니다."
 
 #: /controllers/oauth_consumers_controller.php:33
 msgid "Application registered."
-msgstr ""
+msgstr "어플리케이션이 등록되었습니다."
 
 #: /controllers/oauth_consumers_controller.php:36
 msgid "Application could not be registered."
-msgstr ""
+msgstr "어플리케이션을 등록할 수 없습니다."
 
 #: /controllers/oauth_consumers_controller.php:44
 #: /views/oauth_consumers/index.ctp:15
 msgid "Register new application"
-msgstr ""
+msgstr "새로운 어플리케시연 등록"
 
 #: /controllers/oauth_consumers_controller.php:58
 msgid "Application could not be edited."
-msgstr ""
+msgstr "어플리케이션을 편집할 수 없습니다."
 
 #: /controllers/oauth_consumers_controller.php:66
 msgid "Application updated."
-msgstr ""
+msgstr "어플리케이션이 업데이트 되었습니다."
 
 #: /controllers/oauth_consumers_controller.php:68
 msgid "Application could not be updated."
-msgstr ""
+msgstr "어플리케이션을 업데이트 할 수 없습니다."
 
 #: /controllers/oauth_consumers_controller.php:79
 msgid "Edit application"
-msgstr ""
+msgstr "어플리케이션 편집"
 
 #: /controllers/oauth_consumers_controller.php:95
 msgid "Application deleted."
-msgstr ""
+msgstr "어플리케이션이 삭제되었습니다."
 
 #: /controllers/oauth_consumers_controller.php:97
 msgid "Application could not be deleted."
-msgstr ""
+msgstr "어플리케이션을 삭제할 수 없습니다."
 
 #: /controllers/oauth_controller.php:70
 #: /controllers/omb_controller.php:96
 msgid "Authorize access"
-msgstr ""
+msgstr "접근 권한 부여"
 
 #: /controllers/omb_controller.php:54
 msgid "Invalid OMB version"
-msgstr ""
+msgstr "잘못된 OMB 버젼입니다."
 
 #: /controllers/omb_controller.php:64;135
 msgid "Missing parameter: "
-msgstr ""
+msgstr "파라미터가 없습니다."
 
 #: /controllers/omb_controller.php:91;127
 #: /controllers/omb_subscriptions_controller.php:39
 msgid "Invalid request"
-msgstr ""
+msgstr "잘못된 요청입니다."
 
 #: /controllers/omb_subscriptions_controller.php:34
 msgid "Successfully subscribed to "
-msgstr ""
+msgstr "구독 신청이 성공적으로 이루어졌습니다."
 
 #: /controllers/omb_subscriptions_controller.php:36
 msgid "Invalid omb version"
-msgstr ""
+msgstr "잘못된 OMB 버젼입니다."
 
 #: /controllers/omb_subscriptions_controller.php:47
 msgid "Subscribe to "
-msgstr ""
+msgstr "구독 신청"
 
 #: /controllers/openid_sites_controller.php:8
 msgid "OpenID settings"
-msgstr ""
+msgstr "오픈아이디 설정"
 
 #: /controllers/pages_controller.php:10
 msgid "There was a security problem"
-msgstr ""
+msgstr "보안에 문제가 있습니다."
 
 #: /controllers/registration_controller.php:34
 msgid "Register a new NoseRub account"
-msgstr ""
+msgstr "새로운 NoseRub 계정 등록하기 "
 
 #: /controllers/registration_controller.php:38
 msgid "Register a new NoseRub account - Step 1/2"
-msgstr ""
+msgstr "새로운 NoseRub 계정 등록하기 - 첫단계"
 
 #: /controllers/registration_controller.php:80
 msgid "Register a new NoseRub account - Step 2/2"
-msgstr ""
+msgstr "새로운 NoseRub 계정 등록하기 - 두번째 단계"
 
 #: /controllers/registration_controller.php:105
 msgid "Thanks for your registration!"
-msgstr ""
+msgstr "가입해 주셔서 고맙습니다."
 
 #: /controllers/registration_controller.php:112
 msgid "Verify your e-mail address"
-msgstr ""
+msgstr "인증된 이메일 주소"
 
 #: /controllers/searches_controller.php:29
 msgid "Find public items..."
-msgstr ""
+msgstr "공개된 항목 찾기"
 
 #: /controllers/syndications_controller.php:112
 msgid "Settings saved"
-msgstr ""
+msgstr "설정이 저장되었습니다."
 
 #: /controllers/syndications_controller.php:114
 msgid "Something went wrong"
-msgstr ""
+msgstr "잘못된 부분이 있는것 같습니다."
 
 #: /controllers/syndications_controller.php:134
 msgid "Configure Feeds from your activities and accounts"
-msgstr ""
+msgstr "내 계정과 활동 정보 피드관리"
 
 #: /controllers/syndications_controller.php:157
 msgid "Feed deleted."
-msgstr ""
+msgstr "피드가 삭제되었습니다."
 
 #: /controllers/syndications_controller.php:209
 msgid "Feed added."
-msgstr ""
+msgstr "피드가 추가되었습니다."
 
 #: /controllers/syndications_controller.php:246
 msgid "Add new Feed"
-msgstr ""
+msgstr "새로운 피드 추가하기"
 
 #: /controllers/syndications_controller.php:314
 msgid "none - no CDN defined in noserub.php"
-msgstr ""
+msgstr "없음 - noserub.php에 CDN이 지정되지 않았습니다."
 
 #: /controllers/components/openid.php:81
 msgid "OpenID transaction in progress"
-msgstr ""
+msgstr "오픈아이디 처리 진행중입니다."
 
 #: /models/entry.php:444
 msgid "marked a new favorite: %s"
-msgstr ""
+msgstr "즐겨찾기로 표시됨: %s"
 
 #: /models/identity.php:853
 msgid "Welcome to %s!"
-msgstr ""
+msgstr "%s님 환영합니다."
 
 #: /models/identity.php:854
 msgid "Please click here to verify your email address"
-msgstr ""
+msgstr "이메일 주소를 확인하려면 여기를 클릭하시기 바랍니다."
 
 #: /models/identity.php:856
 msgid "If you do not click on this link, the account will automatically be deleted after 14 days."
-msgstr ""
+msgstr "이 링크를 클릭하지 않으면, 14일후에 자동적으로 계정은 삭제가 됩니다."
 
 #: /models/identity.php:857
 msgid "Thanks!"
-msgstr ""
+msgstr "고맙습니다."
 
 #: /models/identity.php:863
 msgid "Your %s registration"
-msgstr ""
+msgstr "내 등록정보"
 
 #: /models/menu.php:79
 msgid "Overview"
-msgstr ""
+msgstr "한 눈에 보기"
 
 #: /models/menu.php:80
 msgid "Photos"
-msgstr ""
+msgstr "사진"
 
 #: /models/menu.php:81
 msgid "Videos"
-msgstr ""
+msgstr "동영상"
 
 #: /models/menu.php:82
 msgid "Audios"
-msgstr ""
+msgstr "오디오"
 
 #: /models/menu.php:83
 #: /views/syndications/index.ctp:29
 msgid "Links"
-msgstr ""
+msgstr "링크"
 
 #: /models/menu.php:84
 msgid "Texts"
-msgstr ""
+msgstr "텍스트"
 
 #: /models/menu.php:85
 msgid "Micropublish"
-msgstr ""
+msgstr "마이크로블로그"
 
 #: /models/menu.php:86
 msgid "Events"
-msgstr ""
+msgstr "이벤트"
 
 #: /models/menu.php:87
 msgid "Documents"
-msgstr ""
+msgstr "문서"
 
 #: /models/menu.php:88;151
 msgid "Locations"
-msgstr ""
+msgstr "지역"
 
 #: /models/menu.php:89
 msgid "NoseRub"
-msgstr ""
+msgstr "NoseRub"
 
 #: /models/menu.php:149
 msgid "Profile"
-msgstr ""
+msgstr "프로필"
 
 #: /models/menu.php:150
 #: /views/contacts/info.ctp:23
 msgid "Accounts"
-msgstr ""
+msgstr "계정"
 
 #: /models/menu.php:152
 msgid "Display"
-msgstr ""
+msgstr "공개"
 
 #: /models/menu.php:153
 msgid "Privacy"
-msgstr ""
+msgstr "사생활"
 
 #: /models/menu.php:154
 msgid "Feeds"
-msgstr ""
+msgstr "피드"
 
 #: /models/menu.php:155
 msgid "OpenID"
-msgstr ""
+msgstr "오픈아이디"
 
 #: /models/menu.php:156
 msgid "OAuth"
-msgstr ""
+msgstr "OAuth"
 
 #: /models/menu.php:157
 msgid "OMB"
-msgstr ""
+msgstr "OMB"
 
 #: /models/menu.php:160
 msgid "Password & API"
-msgstr ""
+msgstr "비밀번호 & API"
 
 #: /models/menu.php:162
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: /models/menu.php:165
 msgid "Manage"
-msgstr ""
+msgstr "관리"
 
 #: /models/menu.php:240
 msgid "With my Contacts"
-msgstr ""
+msgstr "내 정보"
 
 #: /models/menu.php:262
 msgid "My Profile"
-msgstr ""
+msgstr "내 프로필"
 
 #: /models/menu.php:284
 msgid "My Favorites"
-msgstr ""
+msgstr "내 즐겨찾기"
 
 #: /models/menu.php:303
 #: /views/registration/register.ctp:36
 #: /views/registration/register_with_openid_step_2.ctp:20
 msgid "Register"
-msgstr ""
+msgstr "등록"
 
 #: /models/menu.php:326
 #: /views/admin/system_update.ctp:40
 #: /views/elements/metanav.ctp:18;20
 msgid "Settings"
-msgstr ""
+msgstr "설정"
 
 #: /models/menu.php:359
 msgid "All Users"
-msgstr ""
+msgstr "모든사용자"
 
 #: /models/menu.php:378
 #: /views/elements/metanav.ctp:25;27;34;36
 msgid "Search"
-msgstr ""
+msgstr "검색"
 
 #: /models/admin/configuration_checker.php:43
 msgid "obsolete! Please remove it from noserub.php"
-msgstr ""
+msgstr "noserub.php 파일을 삭제해 주세요."
 
 #: /models/admin/configuration_checker.php:54
 msgid "not defined! (see %s)"
-msgstr ""
+msgstr "정의되지 않았습니다. (%s를 보세요)"
 
 #: /models/admin/configuration_checker.php:58
 msgid "value might only be: \"%s\" (see %s)"
-msgstr ""
+msgstr "value might only be: \"%s\" (see %s)"
 
 #: /models/admin/configuration_checker.php:62
 msgid "no value! (see %s)"
-msgstr ""
+msgstr "변수가 없습니다. (see %s)"
 
 #: /models/admin/configuration_checker.php:70
 msgid "value must end with a slash! (see %s)"
-msgstr ""
+msgstr "변수는 반드시 /로 끝나야 합니다. (see %s)"
 
 #: /models/admin/extensions_checker.php:9
 msgid "needed for communicating with other servers"
-msgstr ""
+msgstr "다른 서버와의 통신이 필요합니다."
 
 #: /models/admin/extensions_checker.php:13
 msgid "needed for image handling"
-msgstr ""
+msgstr "이미지 핸들링이 필요합니다."
 
 #: /models/admin/extensions_checker.php:17
 msgid "GMP or BCMath"
-msgstr ""
+msgstr "GMP or BCMath"
 
 #: /models/admin/extensions_checker.php:17
 msgid "needed for OpenID functionality"
-msgstr ""
+msgstr "오픈아이디 기능이 필요합니다."
 
 #: /vendors/sex.php:41
 msgid "he/she"
-msgstr ""
+msgstr "그/그녀"
 
 #: /vendors/sex.php:41
 msgid "she"
-msgstr ""
+msgstr "그녀"
 
 #: /vendors/sex.php:41
 msgid "he"
-msgstr ""
+msgstr "그"
 
 #: /vendors/sex.php:53
 msgid "him/her"
-msgstr ""
+msgstr "그를/그녀를"
 
 #: /vendors/sex.php:53;65
 msgid "her"
-msgstr ""
+msgstr "그녀를"
 
 #: /vendors/sex.php:53
 msgid "him"
-msgstr ""
+msgstr "그를"
 
 #: /vendors/sex.php:65
 msgid "his/her"
-msgstr ""
+msgstr "그의/그녀의"
 
 #: /vendors/sex.php:65
 msgid "his"
-msgstr ""
+msgstr "그의"
 
 #: /views/account_settings/import.ctp:2
 msgid "When you proceed, a NoseRub export file from the server <strong>%s</strong> will be imported to the currently logged in user."
-msgstr ""
+msgstr "서버로 부터  NoseRub를 내보내기를 진행한 경우  <strong>%s</strong>현재 로그인된 사용자가 불어오게 됩니다."
 
 #: /views/account_settings/import.ctp:5
 msgid "The export file was for the user <strong>%s</strong> and contains %d contacts, %d accounts and %d locations."
-msgstr ""
+msgstr "사용자를 위해서 내보내기한 파일에는 친구목록, 위치정보, 계정이 포함됩니다."
 
 #: /views/account_settings/import.ctp:8
 msgid "All the contacts and accounts you already have here, will not be overwritten."
-msgstr ""
+msgstr "모든 친구목록과 계정이 이미 존재하고 있으면, 중복으로 입력이 안됩니다."
 
 #: /views/account_settings/import.ctp:11
 msgid "Are you sure to proceed?"
-msgstr ""
+msgstr "진행 하시겠습니까?"
 
 #: /views/account_settings/import.ctp:13
 msgid "No, take me back"
-msgstr ""
+msgstr "아니오, 뒤돌아가기"
 
 #: /views/account_settings/import.ctp:16
 msgid "Yes, import the data"
-msgstr ""
+msgstr "네 불러오기 실행"
 
 #: /views/account_settings/index.ctp:3
 msgid "Export your account data"
-msgstr ""
+msgstr "내 계정 정보 내보내기"
 
 #: /views/account_settings/index.ctp:5
 msgid "Export all the information we have about you. That means all your profile information, your accounts and your contacts. You can use this data on another NoseRub installation to import your data."
-msgstr ""
+msgstr "모든 내 정보 내보내기. 모든 프로필 정보, 내 친구목록, 내 계정 정보들을 다른 NoseRub를 설치한 곳에서 불러와서 다시 사용할 수 있습니다."
 
 #: /views/account_settings/index.ctp:8
 msgid "Export all my data"
-msgstr ""
+msgstr "모든 데이터 내보내기"
 
 #: /views/account_settings/index.ctp:13
 msgid "Import your account data"
-msgstr ""
+msgstr "내 계정 정보 불러오기"
 
 #: /views/account_settings/index.ctp:15
 msgid "Import previously exported NoseRub data, so you have all your data from the old NoseRub ID on this one."
-msgstr ""
+msgstr "이전에 내보낸 NoseRub 데이터 불러오기, 예전 NoseRub ID 아이디로 부터 모든 정보를 가지고 있습니다."
 
 #: /views/account_settings/index.ctp:20
 msgid "Import NoseRub Data"
-msgstr ""
+msgstr "NoseRub 데이터 불러오기"
 
 #: /views/account_settings/index.ctp:26
 msgid "Import all data"
-msgstr ""
+msgstr "모든 데이터 불러오기"
 
 #: /views/account_settings/index.ctp:34
 msgid "Leave a moving address"
-msgstr ""
+msgstr "현재 주소에서 벗어나기"
 
 #: /views/account_settings/index.ctp:36
 msgid "If you no longer need this NoseRub ID, but want to make sure your new page can be accessed through this URL, just enter one.<br />Visitors will be redirected to that URL then."
-msgstr ""
+msgstr "만일 더 이상 NoseRub ID가 필요하지 않지만, 이 주소를 통해서 새로운 페이지에 접근하고자 한다면엔터를 입력하세요. 방문자들은 변경된 주소로 방문을 하게됩니다."
 
 #: /views/account_settings/index.ctp:40
 msgid "Redirect URL"
-msgstr ""
+msgstr "변경된 주소"
 
 #: /views/account_settings/index.ctp:41
 msgid "Please add the full URL (http://)"
-msgstr ""
+msgstr "전체 주소를 입력해 주세요."
 
 #: /views/account_settings/index.ctp:47
 #: /views/contacts/define_contact_types.ctp:14
@@ -811,132 +811,132 @@ msgstr ""
 #: /views/locations/add.ctp:18
 #: /views/oauth_consumers/add.ctp:10
 msgid "Save"
-msgstr ""
+msgstr "저장"
 
 #: /views/account_settings/index.ctp:55
 msgid "Delete your account"
-msgstr ""
+msgstr "계정 삭제하기"
 
 #: /views/account_settings/index.ctp:57
 msgid "Once you deleted your account, you can not gain it back again.<br /><strong>Your current username will be blocked on this server in order to prevent fraud.</strong><br />Make sure you exported your data before and set a redirect URL (See above)."
-msgstr ""
+msgstr "계정을 한 번 삭제하면 다시 복구 할 수 없습니다. <br /><strong>부정행위 방지를 위해서 현재 아이디는 사용이 중지가 됩니다.</strong><br />주소를 다시 설정하기 전에 데이터를 내보내기 하세요. (See above)."
 
 #: /views/account_settings/index.ctp:61
 msgid "Delete Account"
-msgstr ""
+msgstr "계정 삭제"
 
 #: /views/account_settings/index.ctp:71
 msgid "Are you sure?"
-msgstr ""
+msgstr "확실한가요?"
 
 #: /views/account_settings/index.ctp:72
 msgid "Yes, please delete my account."
-msgstr ""
+msgstr "네, 계정을 삭제해 주세요."
 
 #: /views/account_settings/index.ctp:78
 msgid "Delete account"
-msgstr ""
+msgstr "계정 삭제"
 
 #: /views/accounts/add_step_1.ctp:4
 msgid "Specify an url and let us try to auto discover"
-msgstr ""
+msgstr "url를 입력한 후에 자동발견을 다시 시도해 보세요."
 
 #: /views/accounts/add_step_1.ctp:5;14
 msgid "Could not detect a service or a feed"
-msgstr ""
+msgstr "서비스 혹은 피드를 삭제할 수 없습니다."
 
 #: /views/accounts/add_step_1.ctp:8
 #: /views/contacts/add.ctp:24
 msgid "OR"
-msgstr ""
+msgstr "혹은"
 
 #: /views/accounts/add_step_1.ctp:11
 msgid "Specify service and account id"
-msgstr ""
+msgstr "서비스 그리고 계정 이름"
 
 #: /views/accounts/add_step_1.ctp:12
 #: /views/accounts/index.ctp:18
 #: /views/elements/accounts/index.ctp:19
 msgid "Service"
-msgstr ""
+msgstr "서비스"
 
 #: /views/accounts/add_step_1.ctp:17
 msgid "Next step"
-msgstr ""
+msgstr "다음 단계"
 
 #: /views/accounts/add_step_2_preview.ctp:4
 msgid "Title"
-msgstr ""
+msgstr "제목"
 
 #: /views/accounts/add_step_2_preview.ctp:16
 #: /views/accounts/edit.ctp:6
 msgid "Servicetype"
-msgstr ""
+msgstr "서비스형태"
 
 #: /views/accounts/add_step_2_preview.ctp:22
 #: /views/admin/system_update.ctp:114
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: /views/accounts/add_step_2_preview.ctp:26
 msgid "Feed"
-msgstr ""
+msgstr "피드"
 
 #: /views/accounts/add_step_2_preview.ctp:29
 msgid "Items"
-msgstr ""
+msgstr "항목"
 
 #: /views/accounts/add_step_2_preview.ctp:40
 msgid "OK. Save it!"
-msgstr ""
+msgstr "확인. 저장"
 
 #: /views/accounts/add_step_2_preview.ctp:41
 msgid "Forget it"
-msgstr ""
+msgstr "괜찮아"
 
 #: /views/accounts/add_step_3_friends.ctp:7
 #: /views/locations/add.ctp:11
 #: /views/locations/index.ctp:23
 #: /views/syndications/index.ctp:28
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: /views/accounts/add_step_3_friends.ctp:9
 msgid "ignore"
-msgstr ""
+msgstr "무시"
 
 #: /views/accounts/add_step_3_friends.ctp:10
 msgid "create as"
-msgstr ""
+msgstr "create as"
 
 #: /views/accounts/add_step_3_friends.ctp:12
 msgid "assign to"
-msgstr ""
+msgstr "에 할당"
 
 #: /views/accounts/add_step_3_friends.ctp:23
 msgid "Add contacts"
-msgstr ""
+msgstr "친구목록 추가"
 
 #: /views/accounts/add_step_3_friends.ctp:24
 msgid "Skip adding friends"
-msgstr ""
+msgstr "친구목록 추가 건너뛰기"
 
 #: /views/accounts/edit.ctp:4
 msgid "Edit service details"
-msgstr ""
+msgstr "서비스 상세설정하기"
 
 #: /views/accounts/edit.ctp:10
 msgid "Change"
-msgstr ""
+msgstr "변경"
 
 #: /views/accounts/index.ctp:3
 msgid "Here you can add all your own social/online activities and import friends in your network."
-msgstr ""
+msgstr "이곳에서 자신의 소셜 네트워크나 온라인 활동 정보를 불러오거나 친구목록에 친구를 추가할 수 있습니다."
 
 #: /views/accounts/index.ctp:19
 #: /views/elements/accounts/index.ctp:18
 msgid "Username"
-msgstr ""
+msgstr "사용자명"
 
 #: /views/accounts/index.ctp:48;77
 #: /views/identities/display_settings.ctp:23
@@ -946,11 +946,11 @@ msgstr ""
 #: /views/openid_sites/index.ctp:26
 #: /views/syndications/index.ctp:66
 msgid "Save changes"
-msgstr ""
+msgstr "변경내용 저장"
 
 #: /views/accounts/index.ctp:56
 msgid "Posting to Twitter.com"
-msgstr ""
+msgstr "Twitter.com에 쓰기"
 
 #: /views/accounts/index.ctp:58
 msgid ""
@@ -965,10 +965,20 @@ msgid ""
 "           and come to <a href=\"http://noserub.com/discuss/\">our discussion group</a> to\n"
 "           discuss this issue!"
 msgstr ""
+"트위터 닷컴에 메세지를 등록하기 위해서 \n"
+"           트위터 아이디와 비밀번호를 요구하게 됩니다. \n"
+"           <strong>이것은 잘못된것입니다.</strong> 만약 NoseRub를 여러분의 \n"
+"           서버에 저장한다면 것은 그것은 잘못된것이 아닙니다.<br />\n"
+"           다시 한번 분명히 하자면,이 서버의 관라지는 당신의 트위터 로그인 정보를 볼 수 있습니다.\n"
+"           <br />\n"
+"           이것이 왜 잘못된 것인지 더 자세히 알고자 한다면 다음 내용을 확인해 주세요. \n"
+"           <a href=\"http://adactio.com/journal/1513/\">Jeremy Keith이 쓴 글이며</a>\n"
+"           이곳   <a href=\"http://noserub.com/discuss/\">토론그룹</a>으로 와서\n"
+"           이 내용에 대해서 의견을 나눠 주세요."
 
 #: /views/accounts/index.ctp:72
 msgid "Post my <em>what are you doing</em> entries to Twitter.com"
-msgstr ""
+msgstr "Twitter.com에 글 보내기"
 
 #: /views/admin/system_update.ctp:4
 msgid ""
@@ -976,78 +986,81 @@ msgid ""
 "    check back after each update you install, because new constants may have\n"
 "    been introduced and/or changes in the database structure been made."
 msgstr ""
+"현재 NoseRub 상태에 대한 정보입니다.\n"
+"설치한 내용에 대해서 변경사항을 체크해 주세요.\n"
+"새로운 내용에 의해서 데이터 베이스의 구조가 변경되거나 추가되었을 수 있습니다."
 
 #: /views/admin/system_update.ctp:8
 msgid "Extension"
-msgstr ""
+msgstr "확장"
 
 #: /views/admin/system_update.ctp:11;27;43;78
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #: /views/admin/system_update.ctp:11;27;43;60;78
 msgid "OK"
-msgstr ""
+msgstr "확인"
 
 #: /views/admin/system_update.ctp:16
 msgid "Some extensions need to be fixed!"
-msgstr ""
+msgstr "몇몇 확장기능에 수정이 필요합니다."
 
 #: /views/admin/system_update.ctp:24
 msgid "Directories"
-msgstr ""
+msgstr "디렉토리"
 
 #: /views/admin/system_update.ctp:32
 msgid "Some directories are not writeable!"
-msgstr ""
+msgstr "몇몇 디렉토리는 쓰기가 불가능합니다."
 
 #: /views/admin/system_update.ctp:36
 msgid "not writeable"
-msgstr ""
+msgstr "쓰기 불가능"
 
 #: /views/admin/system_update.ctp:48
 msgid "Some constants need to be fixed!"
-msgstr ""
+msgstr "몇몇 상수의 수정이 필요합니다."
 
 #: /views/admin/system_update.ctp:57
 msgid "Database"
-msgstr ""
+msgstr "데이터베이스"
 
 #: /views/admin/system_update.ctp:60;84
 msgid "Configuration"
-msgstr ""
+msgstr "환경설정"
 
 #: /views/admin/system_update.ctp:62
 msgid "Actual version #"
-msgstr ""
+msgstr "현재 버젼"
 
 #: /views/admin/system_update.ctp:64
 msgid "Updating to #"
-msgstr ""
+msgstr "업그레이드 버젼"
 
 #: /views/admin/system_update.ctp:74
 msgid "Database up-to-date!"
-msgstr ""
+msgstr "데이터베이스 변경일"
 
 #: /views/admin/system_update.ctp:87
 msgid "database.php in /app/config/ not found!"
-msgstr ""
+msgstr "database.php in /app/config/를 찾을 수 없습니다."
 
 #: /views/admin/system_update.ctp:89
 msgid "Cannot connect to database!"
-msgstr ""
+msgstr "데이터베이스와 연결할 수 없습니다."
 
 #: /views/admin/system_update.ctp:96
 msgid "Errors!"
-msgstr ""
+msgstr "오류"
 
 #: /views/admin/system_update.ctp:98
 msgid "Please correct the errors above and then return to this URL, to finish the update."
-msgstr ""
+msgstr "위 오류들을 수정해 주시고, 업데이트를 마치기 위히서 URL를 다시 입력해 주세요."
 
 #: /views/admin/system_update.ctp:102
 msgid "Talk back to NoseRub.com"
-msgstr ""
+msgstr "NoseRub.com 말하기"
 
 #: /views/admin/system_update.ctp:104
 msgid ""
@@ -1055,703 +1068,708 @@ msgid ""
 "        knowledge about your installation here. The decision wether to click that button\n"
 "        or not is solely up to you."
 msgstr ""
+"If you want to, you can just click on the button and NoseRub.com will receive\n"
+"        knowledge about your installation here. The decision wether to click that button\n"
+"        or not is solely up to you."
 
 #: /views/admin/system_update.ctp:111
 msgid "We don't send any other data beside what you can verify here, once you click that button."
-msgstr ""
+msgstr "이 버튼을 클릭해서 조하하는 제외하고 어떤 데이터도 보내지 않습니다."
 
 #: /views/admin/system_update.ctp:117
 msgid "DB Version"
-msgstr ""
+msgstr "DB 버젼"
 
 #: /views/admin/system_update.ctp:121
 msgid "Send to NoseRub.com"
-msgstr ""
+msgstr "NoseRub.com에 보내기"
 
 #: /views/auth/no_request.ctp:2
 msgid "No OpenID request detected in session."
-msgstr ""
+msgstr "OpenID 요청이 없습니다."
 
 #: /views/auth/server_endpoint.ctp:2
 msgid "This is an OpenID server endpoint. For more information, see %s"
-msgstr ""
+msgstr "여기는 오픈아이디 서버 endpoint입니다. 자세히"
 
 #: /views/auth/trust.ctp:5
 msgid "A site identifying as <strong>%s</strong> has asked us for confirmation that <strong>%s</strong> is your identity URL."
-msgstr ""
+msgstr "사이트에서  <strong>%s</strong> 정보 요청을 해 왔습니다. <strong>%s</strong>"
 
 #: /views/auth/trust.ctp:11
 msgid "%s also asked for additional information."
-msgstr ""
+msgstr "%s 추가 정보를 요청했습니다."
 
 #: /views/auth/trust.ctp:13
 msgid "It asked that you view %s about the policy on the data collected."
-msgstr ""
+msgstr "수집된 데이터 정책에 대해서 요구할 수 있습니다."
 
 #: /views/auth/trust.ctp:13
 msgid "this page"
-msgstr ""
+msgstr "현재 페이지"
 
 #: /views/auth/trust.ctp:15
 msgid "It did not provide a link to the policy on data it collects."
-msgstr ""
+msgstr "데이터 수집 정책에 대한 링크를 제공하고 있지 않습니다."
 
 #: /views/auth/trust.ctp:40
 msgid "Allow Forever"
-msgstr ""
+msgstr "계속 허용"
 
 #: /views/auth/trust.ctp:41
 msgid "Allow Once"
-msgstr ""
+msgstr "이번만  허용"
 
 #: /views/auth/trust.ctp:42
 msgid "Deny"
-msgstr ""
+msgstr "거절"
 
 #: /views/contacts/add.ctp:2
 msgid "You can either enter an URL or a NoseRub-ID (<em>noserubserver.com/MyBuddy</em>) or just a new username, that then will created a private contact which is for your access only!"
-msgstr ""
+msgstr "URL 이나 NoseRub-ID 를 입력하거나, 새로운 사용자명을 사용할 수 있습니다.주인장만 볼 수 있는 비공개 친구목록을 만들 수 있습니다. "
 
 #: /views/contacts/add.ctp:5
 msgid "Whenever you have an URL of someone, you should try that to add a new contact. Naturally you would want to add a contact's blog as an URL, or his/her FriendFeed-URL."
-msgstr ""
+msgstr "다른 사용자의 URL를 가지고 새로운 친구 목록에 추가할 수 있습니다.블로그 주소나 FriendFeed-URL를 추가하기를 원할것 같습니다."
 
 #: /views/contacts/add.ctp:9
 msgid "Add a contact with an URL or NoseRub-ID"
-msgstr ""
+msgstr "URL 혹 NoseRub-ID로 친구 추가하기"
 
 #: /views/contacts/add.ctp:12
 msgid "NoseRub-ID / URL"
-msgstr ""
+msgstr "NoseRub-ID / URL"
 
 #: /views/contacts/add.ctp:15
 msgid "This user could not be found at the other server"
-msgstr ""
+msgstr "사용자를 찾을 수 없습니다."
 
 #: /views/contacts/add.ctp:16
 msgid "This is no valid NoseRub-ID or URL!"
-msgstr ""
+msgstr "유효한 아이디나 주소가 아닙니다."
 
 #: /views/contacts/add.ctp:18
 msgid "This user has already been added as a contact."
-msgstr ""
+msgstr "이미 친구목록에 추가된 사용자 입니다."
 
 #: /views/contacts/add.ctp:20
 msgid "Add"
-msgstr ""
+msgstr "추가"
 
 #: /views/contacts/add.ctp:28
 msgid "Create a private contact"
-msgstr ""
+msgstr "비공개 친구목록 만들기"
 
 #: /views/contacts/add.ctp:33
 msgid "You need to enter something here. Valid characters: letters ,numbers, underscores, dashes, dots and \"@\""
-msgstr ""
+msgstr "내용을 입력해 주세요. 유효한 글자 : 문자, 숫자, - , .  \"@\""
 
 #: /views/contacts/add.ctp:34
 msgid "Valid characters: letters, numbers, underscores, dashes, dots and \"@\" only"
-msgstr ""
+msgstr "유효한 문자 : 문자, 숫자, - , . , \"@\" "
 
 #: /views/contacts/add.ctp:35
 msgid "The username is alreay taken"
-msgstr ""
+msgstr "이미 사용자 이름이 존재합니다."
 
 #: /views/contacts/add.ctp:37
 msgid "Create"
-msgstr ""
+msgstr "만들기"
 
 #: /views/contacts/define_contact_types.ctp:8
 msgid "Your tags"
-msgstr ""
+msgstr "태그"
 
 #: /views/contacts/define_contact_types.ctp:15
 msgid "Skip this step"
-msgstr ""
+msgstr "이 단계 건너뛰기"
 
 #: /views/contacts/edit.ctp:16
 #: /views/contacts/info.ctp:16
 #: /views/elements/contacts/list.ctp:56
 msgid "Send e-Mail"
-msgstr ""
+msgstr "이메일 보내기"
 
 #: /views/contacts/edit.ctp:23
 msgid "Define the relationship"
-msgstr ""
+msgstr "친구관계 지정"
 
 #: /views/contacts/edit.ctp:26
 msgid "Click on a term to choose it and/or add a term to specify the relationship and group your contacts."
-msgstr ""
+msgstr "목록에서 선택하거나 관계를 설명할 수 있는 용어를 직접 입력하세요."
 
 #: /views/contacts/edit.ctp:31
 msgid "Friendship"
-msgstr ""
+msgstr "친구"
 
 #: /views/contacts/edit.ctp:35
 msgid "Geographical"
-msgstr ""
+msgstr "지역"
 
 #: /views/contacts/edit.ctp:39
 msgid "Familiy"
-msgstr ""
+msgstr "가족"
 
 #: /views/contacts/edit.ctp:43
 msgid "Physical"
-msgstr ""
+msgstr "육체적인"
 
 #: /views/contacts/edit.ctp:47
 msgid "Tags"
-msgstr ""
+msgstr "태그"
 
 #: /views/contacts/edit.ctp:69
 msgid "Add your own tags"
-msgstr ""
+msgstr "태그를 추가하세요."
 
 #: /views/contacts/edit.ctp:70
 msgid "separated by space"
-msgstr ""
+msgstr "공백으로 구분하세요."
 
 #: /views/contacts/edit.ctp:73
 msgid "Make some notes"
-msgstr ""
+msgstr "노트를 작성하세요."
 
 #: /views/contacts/index.ctp:7
 msgid "No contacts yet."
-msgstr ""
+msgstr "아직 친구목록이 비어있습니다."
 
 #: /views/contacts/index.ctp:14;30
 msgid "Add new contact"
-msgstr ""
+msgstr "새로운 친구목록 추가"
 
 #: /views/contacts/index.ctp:18
 msgid "NoseRub Contacts"
-msgstr ""
+msgstr "NoseRub 친구목록"
 
 #: /views/contacts/index.ctp:23
 msgid "Private Contacts"
-msgstr ""
+msgstr "비공개 친구목록"
 
 #: /views/contacts/info.ctp:42
 msgid "Back to list of contacts"
-msgstr ""
+msgstr "친구목록으로 돌아가기"
 
 #: /views/elements/hash_not_valid.ctp:1
 msgid "Admin-Hash invalid"
-msgstr ""
+msgstr "관리자- 개작 무효"
 
 #: /views/elements/hash_not_valid.ctp:3
 msgid "In order to access these urls, you need to specify a valid <strong>NOSERUB_ADMIN_HASH</strong> in <em>noserub.php</em> and use it here."
-msgstr ""
+msgstr "이 주소에 접속하기 위해서, <em>noserub.php</em>파일에 <strong>NOSERUB_ADMIN_HASH</strong> 특정한 값이 필요합니다. "
 
 #: /views/elements/metanav.ctp:8
 msgid "You are logged in as <strong>%s</strong>"
-msgstr ""
+msgstr "<strong>%s</strong>로 로그인했습니다."
 
 #: /views/elements/metanav.ctp:30
 msgid "Logout"
-msgstr ""
+msgstr "로그아웃"
 
 #: /views/elements/metanav.ctp:39
 #: /views/elements/identities/openid_login_form.ctp:10
 #: /views/identities/login.ctp:23;36
 msgid "Login"
-msgstr ""
+msgstr "계정이 아직 없습니다."
 
 #: /views/elements/accounts/index.ctp:12
 msgid "No accounts yet."
-msgstr ""
+msgstr "계정이 아직 없습니다."
 
 #: /views/elements/accounts/index.ctp:58
 msgid "Add new account"
-msgstr ""
+msgstr "새로운 친구목록 추가하기"
 
 #: /views/elements/contacts/box.ctp:2
 #: /views/elements/locations/choose.ctp:4
 #: /views/identities/index.ctp:167;187;206
 msgid "manage"
-msgstr ""
+msgstr "관리하기"
 
 #: /views/elements/contacts/list.ctp:66
 msgid "Info"
-msgstr ""
+msgstr "정보"
 
 #: /views/elements/contacts/list.ctp:68
 msgid "Remove Contact"
-msgstr ""
+msgstr "친구목록 삭제하기"
 
 #: /views/elements/contacts/list.ctp:69
 msgid "Edit Contact"
-msgstr ""
+msgstr "친구목록 편집하기"
 
 #: /views/elements/contacts/list.ctp:72
 msgid "Manage Services"
-msgstr ""
+msgstr "친구목록 관리하기"
 
 #: /views/elements/contacts/list.ctp:73
 msgid "Add Service"
-msgstr ""
+msgstr "서비스 추가"
 
 #: /views/elements/contacts/tag_filter.ctp:4
 msgid "Filter"
-msgstr ""
+msgstr "필터"
 
 #: /views/elements/contacts/tag_filter.ctp:9
 msgid "Display contacts"
-msgstr ""
+msgstr "친구목록 보여주기"
 
 #: /views/elements/contacts/tag_filter.ctp:12
 msgid "All"
-msgstr ""
+msgstr "전체"
 
 #: /views/elements/contacts/tag_filter.ctp:25
 #: /views/elements/locations/choose.ctp:21
 msgid "Update"
-msgstr ""
+msgstr "업데이트"
 
 #: /views/elements/entries/favorited_by.ctp:3
 msgid "Favorited by %d users: "
-msgstr ""
+msgstr " %d 사용자가 즐겨찾음"
 
 #: /views/elements/identities/items.ctp:14
 msgid "There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"
-msgstr ""
+msgstr "소셜네트워크나 페이지에 업데이트가 없습니다. <br /> 친구를 추가하거나 페이지에 내용을 작성해 보는것은 어떨까요?"
 
 #: /views/elements/identities/items.ctp:30
 msgid "%d activities"
-msgstr ""
+msgstr "%d activities"
 
 #: /views/elements/identities/items.ctp:40
 msgid "Today"
-msgstr ""
+msgstr "오늘"
 
 #: /views/elements/identities/items.ctp:42
 msgid "Yesterday"
-msgstr ""
+msgstr "어제"
 
 #: /views/elements/identities/items.ctp:55
 msgid "From"
-msgstr ""
+msgstr "보낸이"
 
 #: /views/elements/identities/openid_login_form.ctp:3
 msgid "Sign in with OpenID"
-msgstr ""
+msgstr "오픈아이디로 로그인 하기"
 
 #: /views/elements/identities/openid_login_form.ctp:4
 msgid "Your OpenID"
-msgstr ""
+msgstr "오픈아이디"
 
 #: /views/elements/identities/openid_login_form.ctp:6
 #: /views/identities/login.ctp:17
 msgid "Invalid OpenID"
-msgstr ""
+msgstr "유효한 오픈아이디"
 
 #: /views/elements/identities/openid_login_form.ctp:7
 #: /views/identities/login.ctp:18
 msgid "Verification cancelled"
-msgstr ""
+msgstr "확인이 취소되었습니다."
 
 #: /views/elements/identities/openid_login_form.ctp:8
 #: /views/identities/login.ctp:19
 msgid "OpenID authentication failed: %s"
-msgstr ""
+msgstr "OpenID 확인 실패: %s"
 
 #: /views/elements/identities/openid_login_form.ctp:9
 msgid "e.g. http://user123.myopenid.com/"
-msgstr ""
+msgstr "예. http://user123.myopenid.com/"
 
 #: /views/elements/identities/privacy_settings.ctp:3
 msgid "No one"
-msgstr ""
+msgstr "아무도 없습니다."
 
 #: /views/elements/identities/privacy_settings.ctp:4
 #: /views/identities/index.ctp:169
 #: /views/identities/social_stream.ctp:28
 msgid "Contacts"
-msgstr ""
+msgstr "친구목록"
 
 #: /views/elements/identities/privacy_settings.ctp:5
 msgid "Registered users"
-msgstr ""
+msgstr "등록된 사용자"
 
 #: /views/elements/identities/privacy_settings.ctp:9
 msgid "Updates"
-msgstr ""
+msgstr "업데이트"
 
 #: /views/elements/identities/privacy_settings.ctp:11
 msgid ""
 "We want to show not logged in users, what is going on inside. \n"
 "        So, if you give us your permisson, we will show your updates\n"
 "        there for everyone."
-msgstr ""
+msgstr "어떤 이야기가 오고가는지  로그인 하지 않은 사용자에게도 보여지기를 원합니다.공개 권한을 설정하시면, 업데이트 내용을 모든 사람들이 확인할 수 있습니다."
 
 #: /views/elements/identities/privacy_settings.ctp:15
 msgid "show my updates on frontpage"
-msgstr ""
+msgstr "내 업데이트 내용을 메인페이지에 보여주기"
 
 #: /views/elements/identities/privacy_settings.ctp:16
 msgid "don't show them"
-msgstr ""
+msgstr "메인 페이지에 보여주지 않기"
 
 #: /views/elements/identities/privacy_settings.ctp:19
 msgid "Communication"
-msgstr ""
+msgstr "커뮤니케이션"
 
 #: /views/elements/identities/privacy_settings.ctp:20
 msgid "Which persons may send me e-Mails?"
-msgstr ""
+msgstr "누가 나에게 이메일을 보냈을까?"
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
 msgid "What are you doing?"
-msgstr ""
+msgstr "무엇을 하고 있나요?"
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
 msgid "chars left"
-msgstr ""
+msgstr "문자를 왼쪽으로"
 
 #: /views/elements/identities/what_are_you_doing.ctp:7
 #: /views/identities/send_message.ctp:14
 msgid "Send"
-msgstr ""
+msgstr "보내기"
 
 #: /views/elements/locations/choose.ctp:6
 #: /views/locations/index.ctp:25
 msgid "Location"
-msgstr ""
+msgstr "지역"
 
 #: /views/elements/locations/choose.ctp:11
 msgid "I'm currently at"
-msgstr ""
+msgstr "제가 있는 곳은"
 
 #: /views/elements/locations/choose.ctp:17
 msgid "somewhere else"
-msgstr ""
+msgstr "다른곳에"
 
 #: /views/elements/locations/choose.ctp:19
 msgid "Where are you then?"
-msgstr ""
+msgstr "다음에는 어디로?"
 
 #: /views/entries/jobs_update.ctp:1
 msgid "Accounts refreshed"
-msgstr ""
+msgstr "계정이 새롭게 되었습니다."
 
 #: /views/entries/view.ctp:13
 msgid "Unmark Entry as favorite"
-msgstr ""
+msgstr "즐겨찾기로 표시되지 않은 글"
 
 #: /views/entries/view.ctp:13
 msgid "Mark Entry as favorite"
-msgstr ""
+msgstr "즐겨찾기로 표시된 글"
 
 #: /views/entries/view.ctp:31
 msgid "Add comment"
-msgstr ""
+msgstr "댓글쓰기"
 
 #: /views/helpers/nicesreg.php:47
 msgid "not supported by NoseRub"
-msgstr ""
+msgstr "NoseRub에서 지원하지 않습니다."
 
 #: /views/helpers/xfn.php:9;17;24;34
 msgid "no selection"
-msgstr ""
+msgstr "선택사항이 없습니다."
 
 #: /views/helpers/xfn.php:10
 msgid "contact"
-msgstr ""
+msgstr "연락처"
 
 #: /views/helpers/xfn.php:11
 msgid "acquaintance"
-msgstr ""
+msgstr "아는사람"
 
 #: /views/helpers/xfn.php:12
 msgid "friend"
-msgstr ""
+msgstr "친구"
 
 #: /views/helpers/xfn.php:18
 msgid "co-resident"
-msgstr ""
+msgstr "같은곳에사는"
 
 #: /views/helpers/xfn.php:19
 msgid "neighbor"
-msgstr ""
+msgstr "이웃"
 
 #: /views/helpers/xfn.php:25
 msgid "child"
-msgstr ""
+msgstr "아이"
 
 #: /views/helpers/xfn.php:26
 msgid "parent"
-msgstr ""
+msgstr "부모님"
 
 #: /views/helpers/xfn.php:27
 msgid "sibling"
-msgstr ""
+msgstr "형제"
 
 #: /views/helpers/xfn.php:28
 msgid "spouse"
-msgstr ""
+msgstr "배우자"
 
 #: /views/helpers/xfn.php:29
 msgid "kin"
-msgstr ""
+msgstr "친척"
 
 #: /views/helpers/xfn.php:35
 msgid "met"
-msgstr ""
+msgstr "만난적있음"
 
 #: /views/helpers/xfn.php:36
 msgid "want-to-meet"
-msgstr ""
+msgstr "만나기를 원함"
 
 #: /views/identities/account_deleted.ctp:2
 msgid "Your account and all information about it was successfully deleted."
-msgstr ""
+msgstr "계정과 모든 정보가 삭제되었습니다."
 
 #: /views/identities/account_deleted.ctp:5
 msgid "Thanks for using our service!"
-msgstr ""
+msgstr "서비스를 이용해 주셔서 고맙습니다."
 
 #: /views/identities/display_settings.ctp:6
 msgid "Filter, which should be shown, when selecting <em>Overview</em> as filter."
-msgstr ""
+msgstr "필터는 <em>둘러보기</em> 화면에서 필터를 선택하면 필터로 선택된 내용만 확인할 수 있습니다."
 
 #: /views/identities/favorites.ctp:4
 msgid "Entries that %s marked as favorites."
-msgstr ""
+msgstr "즐겨찾기로 표시된 글"
 
 #: /views/identities/index.ctp:3
 msgid "Either this account does not exist, or it is only available for the user who created it."
-msgstr ""
+msgstr "계정이 존재하지 않거나, 이 계정을 먼저 생성한 사용자만 사용이 가능합니다."
 
 #: /views/identities/index.ctp:126;143
 msgid "edit"
-msgstr ""
+msgstr "편집"
 
 #: /views/identities/index.ctp:127
 msgid "Relationship"
-msgstr ""
+msgstr "관계"
 
 #: /views/identities/index.ctp:144
 msgid "Notes"
-msgstr ""
+msgstr "노트"
 
 #: /views/identities/index.ctp:147
 msgid "Add some notes here."
-msgstr ""
+msgstr "노트를 추가하세요."
 
 #: /views/identities/index.ctp:175
 msgid "Contact's Social Stream"
-msgstr ""
+msgstr "친구들의 활동정보"
 
 #: /views/identities/index.ctp:182
 msgid "Mutual Contacts"
-msgstr ""
+msgstr "같은 친구목록"
 
 #: /views/identities/index.ctp:200;225
 msgid "Add new service"
-msgstr ""
+msgstr "새로운 서비스 추가하기"
 
 #: /views/identities/index.ctp:208
 msgid "Contact"
-msgstr ""
+msgstr "연락처"
 
 #: /views/identities/index.ctp:214
 msgid "E-Mail"
-msgstr ""
+msgstr "이메일"
 
 #: /views/identities/jobs_sync_all.ctp:1
 msgid "Synced usernames"
-msgstr ""
+msgstr "사용자명이 동기화되었습니다."
 
 #: /views/identities/login.ctp:14
 msgid "Your %s OpenID"
-msgstr ""
+msgstr "오픈아이디"
 
 #: /views/identities/login.ctp:21;34
 msgid "Remember me"
-msgstr ""
+msgstr "기억하기"
 
 #: /views/identities/password_settings.ctp:4
 msgid "In order to change your password, you have to enter your current password and then the new one."
-msgstr ""
+msgstr "패스워드를 변경하기 위해서, 현재 비밀번호와 새로운 비밀번호를 입력해야 합니다."
 
 #: /views/identities/password_settings.ctp:15
 msgid "API Settings"
-msgstr ""
+msgstr "API 세팅"
 
 #: /views/identities/password_settings.ctp:17
 msgid "For more information, please check out our API-Documentation: %s"
-msgstr ""
+msgstr "더 많은 정보는  API-Documentation를 참고해 주세요.: %s"
 
 #: /views/identities/password_settings.ctp:23
 msgid "API activated"
-msgstr ""
+msgstr "API 동작중입니다."
 
 #: /views/identities/password_settings.ctp:24
 msgid "API hash"
-msgstr ""
+msgstr "API hash"
 
 #: /views/identities/password_settings.ctp:35
 msgid "Change your password"
-msgstr ""
+msgstr "비밀번호 변경"
 
 #: /views/identities/password_settings.ctp:43
 msgid "Old password"
-msgstr ""
+msgstr "예전 비밀번호"
 
 #: /views/identities/password_settings.ctp:44
 msgid "Password is not correct"
-msgstr ""
+msgstr "비밀번호가 일치하지 않습니다."
 
 #: /views/identities/password_settings.ctp:48
 msgid "New password"
-msgstr ""
+msgstr "새로운 비밀번호"
 
 #: /views/identities/password_settings.ctp:49
 #: /views/registration/register.ctp:21
 msgid "Passwords must be at least 6 characters in length"
-msgstr ""
+msgstr "비밀번호는 반드시 6자 이상이어야 합니다."
 
 #: /views/identities/password_settings.ctp:53
 msgid "New password repeated"
-msgstr ""
+msgstr "새로운 비밀번호를 한 번 더 입력해 주세요."
 
 #: /views/identities/password_settings.ctp:54
 #: /views/registration/register.ctp:26
 msgid "Passwords must match"
-msgstr ""
+msgstr "비밀번호가 일치해야 합니다."
 
 #: /views/identities/privacy_settings.ctp:11
 msgid ""
 "If you would like to discuss what and how to save from public\n"
 "    viewing, please join us at %s."
-msgstr ""
+msgstr "만약 전체보기에서 어떻게 무엇을 저장하는지 논의를 하고자 한다면 이곳에 참여해 주세요. %s."
 
 #: /views/identities/profile_settings.ctp:6
 msgid "Photo"
-msgstr ""
+msgstr "사진"
 
 #: /views/identities/profile_settings.ctp:9;18
 msgid "Your current photo"
-msgstr ""
+msgstr "현재 사진"
 
 #: /views/identities/profile_settings.ctp:21
 msgid "Remove photo"
-msgstr ""
+msgstr "사진 삭제"
 
 #: /views/identities/profile_settings.ctp:25
 msgid "Size may not exceed 150x150 pixels. If you don't have one with the right size, try %s.<br />GIF, JPG and PNG allowed."
-msgstr ""
+msgstr "최대 사진 크기는 150x150 픽셀입니다. 만약 적당한 크기에 사진이 없다면 이곳을 확인해 보세요. %s.<br />GIF, JPG PNG 파일만 가능합니다."
 
 #: /views/identities/profile_settings.ctp:27
 msgid "Photo/Portrait"
-msgstr ""
+msgstr "사진/인물"
 
 #: /views/identities/profile_settings.ctp:31
 msgid "load from Gravatar.com"
-msgstr ""
+msgstr "Gravatar.com에서 불러오기"
 
 #: /views/identities/profile_settings.ctp:40
 msgid "Personal data"
-msgstr ""
+msgstr "개인자료"
 
 #: /views/identities/profile_settings.ctp:42
 msgid "Your firstname"
-msgstr ""
+msgstr "이름"
 
 #: /views/identities/profile_settings.ctp:46
 msgid "Your lastname"
-msgstr ""
+msgstr "성"
 
 #: /views/identities/profile_settings.ctp:49
 msgid "Sex"
-msgstr ""
+msgstr "성별"
 
 #: /views/identities/profile_settings.ctp:50
 msgid "rather not say"
-msgstr ""
+msgstr "나중에"
 
 #: /views/identities/profile_settings.ctp:51
 msgid "female"
-msgstr ""
+msgstr "여성"
 
 #: /views/identities/profile_settings.ctp:52
 msgid "male"
-msgstr ""
+msgstr "남성"
 
 #: /views/identities/profile_settings.ctp:56
 msgid "Make a statement"
-msgstr ""
+msgstr "남기는 말"
 
 #: /views/identities/profile_settings.ctp:58
 msgid "HTML is not allowed; newlines are preserved; URLs with http:// and https:// will turn into links"
-msgstr ""
+msgstr "HTML은 사용할 수 없습니다. 뉴라인들은 보호가 되고 URL들은 http:// 그리고 https://로 변경됩니다."
 
 #: /views/identities/profile_settings.ctp:60
 msgid "About"
-msgstr ""
+msgstr "About"
 
 #: /views/identities/profile_settings.ctp:64
 msgid "Geolocation"
-msgstr ""
+msgstr "위치정보"
 
 #: /views/identities/profile_settings.ctp:66
 msgid "Address for geolocation (<strong>private</strong>)"
-msgstr ""
+msgstr "주소 (<strong>사적인</strong>)"
 
 #: /views/identities/profile_settings.ctp:71
 #: /views/locations/index.ctp:34
 msgid "Latitude"
-msgstr ""
+msgstr "위도"
 
 #: /views/identities/profile_settings.ctp:72
 #: /views/locations/index.ctp:35
 msgid "Longitude"
-msgstr ""
+msgstr "경도"
 
 #: /views/identities/profile_settings.ctp:76
 msgid "The address is used to determine the geolocation. This address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address."
-msgstr ""
+msgstr "이 주소는 위치정보를 정하는데 사용이 됩니다. 정확한 주소를 입력했다면 아무에게나 보여지지 않는 지리적인 위치 정보입니다."
 
 #: /views/identities/profile_settings.ctp:80
 msgid "Address for your profile (<strong>public</strong>)"
-msgstr ""
+msgstr "프로필 주소 (<strong>공개</strong>)"
 
 #: /views/identities/profile_settings.ctp:84
 msgid ""
 "Here you can specify, how you would like your address to be displayed. For instance: <strong>Paris, France</strong><br />\n"
 "            If you leave it empty, nothing will be shown on your profile page."
 msgstr ""
+"어떻게 보여질것이지를 이곳에서 자세히 지정할 수 있습니다. 예를 들어 <strong>파리, 프랑스</strong><br />\n"
+"빈칸으로 남겨두면, 아무런 내용도 표시되지 않습니다."
 
 #: /views/identities/send_message.ctp:9
 msgid "Subject"
-msgstr ""
+msgstr "제목"
 
 #: /views/identities/send_message.ctp:11
 msgid "Message"
-msgstr ""
+msgstr "내용"
 
 #: /views/identities/social_stream.ctp:28
 msgid "Latest active"
-msgstr ""
+msgstr "최근 활동내용"
 
 #: /views/identities/social_stream.ctp:31
 msgid "My Contacts"
-msgstr ""
+msgstr "내 친구목록"
 
 #: /views/identities/social_stream.ctp:35
 msgid "Newbies"
-msgstr ""
+msgstr "새로운 가입자"
 
 #: /views/layouts/default.ctp:3
 msgid "Welcome to %s"
-msgstr ""
+msgstr " %s님 환영합니다."
 
 #: /views/layouts/default.ctp:33
 msgid "Social Stream Feed"
-msgstr ""
+msgstr "Social Stream 피드"
 
 #: /views/locations/add.ctp:4
 msgid "Add a new location"
-msgstr ""
+msgstr "새로운 위치 추가하기"
 
 #: /views/locations/add.ctp:7
 msgid ""
@@ -1759,333 +1777,336 @@ msgid ""
 "            The address is only used to geocode the location and will not be displayed.<br />\n"
 "            You can mostly just use <em>Town, Country</em> to specify an address."
 msgstr ""
+"현재 위치를 지정하면, 그 이름이 표시될 것입니다. <br />\n"
+"그 주소는 지정정보이며, 표시되지 않습니다. <br />\n"
+"자세한 주소 정보로 <em>도시, 국가 </em>를 사용할 수 있습니다."
 
 #: /views/locations/add.ctp:11
 msgid "You need to specify a name."
-msgstr ""
+msgstr "이름을 입력해 주세요."
 
 #: /views/locations/add.ctp:12
 msgid "Address"
-msgstr ""
+msgstr "주소"
 
 #: /views/locations/add.ctp:16
 msgid "Create Location"
-msgstr ""
+msgstr "위치정보 만들기"
 
 #: /views/locations/index.ctp:6
 msgid ""
 "Once you added some locations, like <em>Home</em> and <em>Office</em>, you \n"
 "    will be able to set this location on your profile page to tell, where you \n"
 "    currently are."
-msgstr ""
+msgstr "몇 몇 장소를 한 번 추가하는 것으로, <em>집</em>이나<em>사무실</em>를 현재 위치하고있는 정보로 지정해서 프로필 페이지에 표시할 수 있습니다."
 
 #: /views/locations/index.ctp:11
 msgid "Your locations"
-msgstr ""
+msgstr "현재위치"
 
 #: /views/locations/index.ctp:13
 msgid "Create a new Location"
-msgstr ""
+msgstr "새로운 위치 만들기"
 
 #: /views/locations/index.ctp:17
 msgid "You did not create any locations yet."
-msgstr ""
+msgstr "위치정보를 아직 만들지 않았습니다."
 
 #: /views/locations/index.ctp:24
 msgid "Address (hidden)"
-msgstr ""
+msgstr "주소(비공개)"
 
 #: /views/locations/index.ctp:32
 msgid "Not entered"
-msgstr ""
+msgstr "입력되지 않았습니다."
 
 #: /views/locations/index.ctp:39
 #: /views/oauth_consumers/index.ctp:40
 #: /views/syndications/index.ctp:43
 msgid "Delete"
-msgstr ""
+msgstr "삭제"
 
 #: /views/locations/index.ctp:40
 #: /views/oauth_consumers/index.ctp:41
 msgid "Edit"
-msgstr ""
+msgstr "편집"
 
 #: /views/oauth/authorize.ctp:2
 msgid "Application <strong>%s</strong> asked for permission to access your data"
-msgstr ""
+msgstr "어플리케이션이 <strong>%s</strong> 데이터에 접근할 권한을 요청해 왔습니다."
 
 #: /views/oauth/authorize.ctp:5
 #: /views/omb/authorize_form.ctp:5
 msgid "allow"
-msgstr ""
+msgstr "허락"
 
 #: /views/oauth/authorize.ctp:6
 #: /views/omb/authorize_form.ctp:6
 msgid "deny"
-msgstr ""
+msgstr "거절"
 
 #: /views/oauth/no_token.ctp:1
 #: /views/omb/no_token.ctp:1
 msgid "Error! No token specified."
-msgstr ""
+msgstr "에러! 토큰이 지정되지 않았습니다."
 
 #: /views/oauth_consumers/add.ctp:4
 msgid "Register your application"
-msgstr ""
+msgstr "어플리케이션 등록하기"
 
 #: /views/oauth_consumers/add.ctp:8
 msgid "You need to specify an application name."
-msgstr ""
+msgstr "어플리케이션 이름이 필요합니다."
 
 #: /views/oauth_consumers/add.ctp:9
 msgid "Callback Url (optional)"
-msgstr ""
+msgstr "Callback Url (선택사항)"
 
 #: /views/oauth_consumers/add.ctp:9
 msgid "You need to specify a valid url"
-msgstr ""
+msgstr "유효한 url이 필요합니다."
 
 #: /views/oauth_consumers/index.ctp:5
 msgid "OAuth parameters"
-msgstr ""
+msgstr "OAuth 파라미터"
 
 #: /views/oauth_consumers/index.ctp:7
 msgid "Request Token URL"
-msgstr ""
+msgstr "Token URL 요청"
 
 #: /views/oauth_consumers/index.ctp:8
 msgid "User Authorization URL"
-msgstr ""
+msgstr "사용자 인증 URL"
 
 #: /views/oauth_consumers/index.ctp:9
 msgid "Access Token URL"
-msgstr ""
+msgstr "접근  Token URL"
 
 #: /views/oauth_consumers/index.ctp:10
 msgid "Signature method"
-msgstr ""
+msgstr "서명 방법"
 
 #: /views/oauth_consumers/index.ctp:13
 msgid "Your applications"
-msgstr ""
+msgstr "어플리케이션"
 
 #: /views/oauth_consumers/index.ctp:19
 msgid "You did not register any applications yet."
-msgstr ""
+msgstr "등록된 어플리케이션이 없습니다."
 
 #: /views/oauth_consumers/index.ctp:25
 msgid "Application name"
-msgstr ""
+msgstr "어플리케이션 이름"
 
 #: /views/oauth_consumers/index.ctp:26
 msgid "Callback url"
-msgstr ""
+msgstr "Callback url"
 
 #: /views/oauth_consumers/index.ctp:27
 msgid "Consumer key"
-msgstr ""
+msgstr "Consumer key"
 
 #: /views/oauth_consumers/index.ctp:28
 msgid "Consumer secret"
-msgstr ""
+msgstr "Consumer secret"
 
 #: /views/omb/authorize_form.ctp:2
 msgid "Allow access?"
-msgstr ""
+msgstr "접근을 허락하시겠습니까?"
 
 #: /views/omb_subscriptions/subscribe.ctp:3
 msgid "URL of your profile"
-msgstr ""
+msgstr "프로필 페이지 URL"
 
 #: /views/omb_subscriptions/subscribe.ctp:4
 msgid "Subscribe"
-msgstr ""
+msgstr "받아보기"
 
 #: /views/openid_sites/index.ctp:2
 msgid ""
 "Below is a list of sites you have visited. You will not be prompted to approve identifying yourself to \n"
 "    sites you have checked."
-msgstr ""
+msgstr "아래는 방문한 사이트 리스트입니다. 체크한 사이트는 본인 확인을 묻는 메시지가 나타나지 않습니다."
 
 #: /views/openid_sites/index.ctp:8
 msgid "Site"
-msgstr ""
+msgstr "사이트"
 
 #: /views/openid_sites/index.ctp:9
 msgid "Email"
-msgstr ""
+msgstr "이메일"
 
 #: /views/openid_sites/index.ctp:10
 msgid "Fullname"
-msgstr ""
+msgstr "이름"
 
 #: /views/openid_sites/index.ctp:11
 msgid "Gender"
-msgstr ""
+msgstr "성별"
 
 #: /views/openid_sites/no_openid_sites.ctp:2
 msgid "No OpenID sites found."
-msgstr ""
+msgstr "오픈아이드를 찾지 못했습니다."
 
 #: /views/openid_sites/no_openid_sites.ctp:10
 msgid "You probably never used your <strong>NoseRub-ID</strong> to <strong>log in at any OpenID site</strong>. Did you know, that your NoseRub-ID <strong>is</strong> an OpenID?"
-msgstr ""
+msgstr "<strong>NoseRub-ID</strong>를 오픈아이디로 사용하지 않은것 같습니다. NoseRub-ID를 오픈아이디로 사용할 수 있는것을 알고 계십니까?"
 
 #: /views/openid_sites/no_openid_sites.ctp:14
 msgid "You can use your OpenID on any one of a growing number of sites (nearly ten-thousand) which support OpenID.<br />If one of your favorite sites doesn’t support OpenID yet, ask them when they will!"
-msgstr ""
+msgstr "오픈아이디를 지원하는 수많은 사이트에서 오픈아이디를 사용할 수 있습니다.자주 방문하는 사이트에서 오픈아이디를 지원하지 않는다면 오픈아이디 지원을 요청해 보세요. "
 
 #: /views/openid_sites/no_openid_sites.ctp:18
 msgid "% gives you an overview of sites where you can use your OpenID to log in today."
-msgstr ""
+msgstr "오늘 오픈아이디로 로그인할 수 있는 사이트의 목록을 제공합니다."
 
 #: /views/pages/security_check.ctp:2
 msgid "The last action you performed, caused a security issue. Mostly, this happened because of a timed out session. But this can also happen, when you browse the application with different browsers / windows at the same time. This is not forbidden, but some actions that perform changes, might then not work all the time."
-msgstr ""
+msgstr "가장 마지막에 실행한 내용에 보안 이슈가 있습니다. 대부분 이런일이 발생하는 경우는 세션이 종료가 된 경우입니다.다른 브라우져나, 같은 창에서 다시 발생할 수 있습니다. 금지된 경우는 아니고, 항상 발상해는 경우는 아닙니다."
 
 #: /views/pages/security_check.ctp:5
 msgid "Please try the desired action again. If you think you got this message by error, please contact us."
-msgstr ""
+msgstr "다시 한번 시도해 보시기 바랍니다. 에러라고 생각이 되는 경우는 연락해 주세요."
 
 #: /views/registration/register.ctp:2
 msgid "If you have an %s OpenID, please follow this %s to register a new NoseRub account."
-msgstr ""
+msgstr "%s 오픈아이디를 가지고 있다면 %s 다음 안내를 따라 가입해 주세요."
 
 #: /views/registration/register.ctp:2
 msgid "link"
-msgstr ""
+msgstr "링크"
 
 #: /views/registration/register.ctp:10
 #: /views/registration/register_with_openid_step_2.ctp:6
 msgid "You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots"
-msgstr ""
+msgstr "내용을 입력해 주세요. 유효한 문자 : 문자, 숫자, _ , - , ."
 
 #: /views/registration/register.ctp:11
 #: /views/registration/register_with_openid_step_2.ctp:7
 msgid "Valid characters: letters, numbers, underscores, dashes and dots only"
-msgstr ""
+msgstr "유효한 문자 : 문자, 숫자, _ , - , . 만 사용할 수 있습니다."
 
 #: /views/registration/register.ctp:12
 #: /views/registration/register_with_openid_step_2.ctp:8
 msgid "The username is already taken"
-msgstr ""
+msgstr "중복된 이름이 존재합니다."
 
 #: /views/registration/register.ctp:15
 #: /views/registration/register_with_openid_step_2.ctp:11
 msgid "E-Mail (validation link will be sent there)"
-msgstr ""
+msgstr "이메일(본인 확인 메일이 이 메일 주소로 발송될 것입니다.)"
 
 #: /views/registration/register.ctp:16
 #: /views/registration/register_with_openid_step_2.ctp:12
 msgid "Please enter a valid E-Mail address"
-msgstr ""
+msgstr "유효한 이메일 주소를 입력하세요."
 
 #: /views/registration/register.ctp:20
 msgid "Password"
-msgstr ""
+msgstr "비밀번호"
 
 #: /views/registration/register.ctp:25
 msgid "Password repeated"
-msgstr ""
+msgstr "비밀번호 재입력"
 
 #: /views/registration/register.ctp:32
 #: /views/registration/register_with_openid_step_2.ctp:16
 msgid "You can change the privacy settings everytime you like. Just go to the Settings, once you are logged in."
-msgstr ""
+msgstr "로그인을 한 상태로 세팅 메뉴로 이동해서 사생활 정보를 수정할 수 있습니다."
 
 #: /views/registration/register_thanks.ctp:2
 msgid "Now please check your inbox for the verification link. After that you're ready to log in."
-msgstr ""
+msgstr "이메일에 받은 메일을 확인해 주세요. 인증 확인 링크를 클릭하시면 로그인할 준비가 완료됩니다."
 
 #: /views/registration/verify.ctp:3
 msgid "Congratulations. You're now ready to %s to %s."
-msgstr ""
+msgstr "축하합니다. You're now ready to %s to %s."
 
 #: /views/registration/verify.ctp:3;7
 msgid "login"
-msgstr ""
+msgstr "로그인"
 
 #: /views/registration/verify.ctp:7
 msgid "Sorry. The verification link did not work. Maybe you're already done and just need to proceed to %s?"
-msgstr ""
+msgstr "죄송합니다. 본인 확인 링크가 동작하지 않고 있습니다. 이미 링크를 클릭했거나  %s?를 시도해 보시겠습니까?"
 
 #: /views/searches/index.ctp:6
 msgid "with all the following words"
-msgstr ""
+msgstr "다음의 모든 단어를 포함"
 
 #: /views/searches/index.ctp:9
 msgid "Go"
-msgstr ""
+msgstr "이동"
 
 #: /views/searches/index.ctp:17
 msgid "Search results for <strong>%s</strong>"
-msgstr ""
+msgstr "<strong>%s</strong>에 대한 검색결과"
 
 #: /views/syndications/add.ctp:3
 msgid "Select a name. This is just visible for you and should help you to organize your feeds."
-msgstr ""
+msgstr "이름을 선택하세요. 본인에게만 보여지고 피드를 관리하는데 도움이 됩니다."
 
 #: /views/syndications/add.ctp:7
 msgid "Choose, which of your activities should be included."
-msgstr ""
+msgstr "어떤 활동을 포함하는지 선택해 주세요."
 
 #: /views/syndications/add.ctp:21
 msgid "Do you want to include your networks (contacts/friends) activities too?"
-msgstr ""
+msgstr "네트워크(친구목록/친구)   활동정보 추가를 원하십니까? "
 
 #: /views/syndications/add.ctp:24
 msgid "Specify network activities"
-msgstr ""
+msgstr "특별한 네트워크 활동"
 
 #: /views/syndications/add.ctp:29
 msgid "Which of your networks (contacts/friends) activities should be included?"
-msgstr ""
+msgstr "어떤 네트워크에 (친구목록/친구)에 추가할까요?"
 
 #: /views/syndications/add.ctp:57
 msgid "All feeds of %s"
-msgstr ""
+msgstr "모든 피드 %s"
 
 #: /views/syndications/add.ctp:59
 msgid "Specify the feeds"
-msgstr ""
+msgstr "피드를 확인해 주세요."
 
 #: /views/syndications/add.ctp:74
 msgid "Create Feed"
-msgstr ""
+msgstr "피드 만들기"
 
 #: /views/syndications/index.ctp:11
 msgid "You can create Feeds from your own social activities or those of friends in your network. This feeds then can be used by your RSS-Reader or you can integrate it on your website to show everyone, what you did in the last couple of hours and days."
-msgstr ""
+msgstr "자신의 social activities 나 자신의 친구들의 정보를 피드로 만들 수 있습니다.이 피드는 RSS 리더에서 사용하거나, 최근에 무슨일을 했는지, 자신의 웹사이트에 여러사람이 볼 수 있도록 붙여넣을 수 있습니다."
 
 #: /views/syndications/index.ctp:16
 msgid "Your feeds"
-msgstr ""
+msgstr "피드"
 
 #: /views/syndications/index.ctp:18;50
 msgid "Create a new feed"
-msgstr ""
+msgstr "피드 새로 만들기"
 
 #: /views/syndications/index.ctp:22
 msgid "You did not create any feeds yet."
-msgstr ""
+msgstr "아직 피드를 만들지 않았습니다."
 
 #: /views/syndications/index.ctp:56
 msgid "Generic feed"
-msgstr ""
+msgstr "일반적인 피드"
 
 #: /views/syndications/index.ctp:61
 msgid "If you want a feed with all your updates being available at<br />%s<br />please enable the following option."
-msgstr ""
+msgstr "자신의 업데이트가 피드에 포함되기를 원한다면 following option를 사용가능하도록 변경해 주세요."
 
 #: /views/syndications/index.ctp:63
 msgid "Enable generic feed"
-msgstr ""
+msgstr "이용가능한 피드"
 
 #: /views/syndications/shell_upload.ctp:1
 msgid "Uploaded feeds"
-msgstr ""
+msgstr "피드가 업로드되었습니다."
 
 #: /webroot/test.php:99
 msgid "Debug setting does not allow access to this url."
-msgstr ""
+msgstr "디버깅 설정을 현재 주소에서 접근을 허용하지 않습니다."
 
