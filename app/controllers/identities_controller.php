@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
-    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider');
+    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer');
     
     /**
      * Displays profile page of an identity 
@@ -413,6 +413,7 @@ class IdentitiesController extends AppController {
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
+            $this->sendUpdateToOmbSubscribers($this->data);
             
             $this->flashMessage('success', __('Changes have been saved.', true));
             
@@ -836,6 +837,15 @@ class IdentitiesController extends AppController {
     	return array($avatarName . '.jpg', 
     				 $avatarName . '-medium.jpg', 
     				 $avatarName . '-small.jpg');
+    }
+    
+    private function sendUpdateToOmbSubscribers($data) {
+    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
+    	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
+
+    	if ($accessToken) {
+	    	$this->OmbConsumer->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
+    	}
     }
     
     /**
