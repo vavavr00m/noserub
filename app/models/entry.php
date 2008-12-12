@@ -348,7 +348,7 @@ class Entry extends AppModel {
         $this->save($data);
         
         $this->sendToTwitter($identity_id, $text);
-        $this->sendToOmb($identity_id, $text);
+        $this->sendToOmb($identity_id, $this->id, $text);
         
         return true;
     }
@@ -528,7 +528,7 @@ class Entry extends AppModel {
         );
     }
     
-    private function sendToOmb($identity_id, $text) {
+    private function sendToOmb($identity_id, $entry_id, $text) {
     	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
     	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
 
@@ -541,7 +541,7 @@ class Entry extends AppModel {
     	$ombConsumer = new OmbConsumerComponent();
     	$ombConsumer->Session = new SessionComponent();
     	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
+    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
     }
     
     /**
