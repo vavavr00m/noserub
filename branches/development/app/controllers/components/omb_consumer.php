@@ -125,8 +125,23 @@ class OmbConsumerComponent extends Object {
 		return $data;
 	}
 	
-	public function updateProfile() {
-		// TODO implement this method
+	public function updateProfile($tokenKey, $tokenSecret, $url, OmbUpdatedProfileData $profileData) {
+		$identity = $this->Session->read('Identity');
+		
+		$result = false;
+		$profileDataAsArray = $profileData->getAsArray();
+		
+		if ($profileDataAsArray) {
+			$result = $this->OmbOauthConsumer->post('GenericOmb',
+													$tokenKey,
+													$tokenSecret,
+													$url,
+													array_merge(array(OmbParamKeys::VERSION => OmbConstants::VERSION,
+												  					  OmbParamKeys::LISTENEE => 'http://'.$identity['username']),
+												  				$profileDataAsArray));
+		}
+		
+		return $result;
 	}
 	
 	private function discoverXRDS($url) {
@@ -337,5 +352,19 @@ class OmbAuthorizationResponse {
 		return $urlParams[OmbParamKeys::VERSION] == OmbConstants::VERSION && 
 		       trim($urlParams[OmbParamKeys::LISTENER_NICKNAME]) != '' &&
 		       trim($urlParams[OmbParamKeys::LISTENER_PROFILE]) != '';
+	}
+}
+
+class OmbUpdatedProfileData {
+	private $data = array();
+	
+	public function __construct(array $data) {
+		if (isset($data['Identity']['firstname']) && isset($data['Identity']['lastname'])) {
+			$this->data[OmbParamKeys::LISTENEE_FULLNAME] = trim($data['Identity']['firstname'] . ' ' . $data['Identity']['lastname']);
+		}
+	}
+	
+	public function getAsArray() {
+		return $this->data;
 	}
 }

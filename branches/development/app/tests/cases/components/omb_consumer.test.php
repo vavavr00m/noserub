@@ -219,3 +219,40 @@ class OmbAuthorizationResponseTest extends CakeTestCase {
 					 OmbParamKeys::LISTENER_PROFILE => $this->profileUrl);
 	}
 }
+
+class OmbUpdatedProfileDataTest extends CakeTestCase {
+	private $firstname = 'Joe';
+	private $lastname = 'Doe';
+	
+	public function testConstructWithEmptyArray() {
+		$data = new OmbUpdatedProfileData(array());
+		$this->assertIdentical(array(), $data->getAsArray());
+	}
+	
+	public function testConstructWithUpdatedFullname() {
+		$fullname = $this->firstname . ' ' . $this->lastname;
+		$profileData = $this->createProfileData();
+		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
+	}
+	
+	public function testConstructWithUpdatedFullnameConsistingOfFirstname() {
+		$this->lastname = '';
+		$fullname = $this->firstname;
+		$profileData = $this->createProfileData();
+		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
+	}
+	
+	public function testConstructWithUpdatedFullnameConsistingOfLastname() {
+		$this->firstname = '';
+		$fullname = $this->lastname;
+		$profileData = $this->createProfileData();
+		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
+	}
+	
+	private function createProfileData() {
+		$profileData = new OmbUpdatedProfileData(array('Identity' => array('firstname' => $this->firstname, 
+																		   'lastname' => $this->lastname)));
+		
+		return $profileData->getAsArray();
+	}
+}
