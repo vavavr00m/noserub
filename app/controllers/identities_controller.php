@@ -384,9 +384,7 @@ class IdentitiesController extends AppController {
             }
             
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
-            	# check, if photo should be removed
-                @unlink($path . $identity['Identity']['photo'] . '.jpg');
-                @unlink($path . $identity['Identity']['photo'] . '-small.jpg');
+            	$this->deleteAvatarFiles($identity['Identity']['photo']);
                 $identity['Identity']['photo'] = '';
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else if(isset($this->data['Identity']['use_gravatar']) && 
@@ -424,6 +422,12 @@ class IdentitiesController extends AppController {
         }
         
         $this->set('headline', __('My profile settings', true));
+    }
+    
+    private function deleteAvatarFiles($avatarName) {
+		@unlink(AVATAR_DIR . $avatarName . '.jpg');
+		@unlink(AVATAR_DIR . $avatarName . '-medium.jpg');
+		@unlink(AVATAR_DIR . $avatarName . '-small.jpg');
     }
     
     public function display_settings() {
