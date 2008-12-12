@@ -384,7 +384,7 @@ class IdentitiesController extends AppController {
             }
             
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
-            	$this->deleteAvatarFiles($identity['Identity']['photo']);
+            	$this->deleteAvatars($identity['Identity']['photo']);
                 $identity['Identity']['photo'] = '';
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else if(isset($this->data['Identity']['use_gravatar']) && 
@@ -422,12 +422,6 @@ class IdentitiesController extends AppController {
         }
         
         $this->set('headline', __('My profile settings', true));
-    }
-    
-    private function deleteAvatarFiles($avatarName) {
-		@unlink(AVATAR_DIR . $avatarName . '.jpg');
-		@unlink(AVATAR_DIR . $avatarName . '-medium.jpg');
-		@unlink(AVATAR_DIR . $avatarName . '-small.jpg');
     }
     
     public function display_settings() {
@@ -822,14 +816,26 @@ class IdentitiesController extends AppController {
     	}
     }
     
-    private function copyAvatarsToCdn($baseFilename) {
-    	$normalFilename = $baseFilename . '.jpg';
-    	$mediumFilename = $baseFilename . '-medium.jpg';
-    	$smallFilename = $baseFilename . '-small.jpg';
+    private function copyAvatarsToCdn($avatarName) {
+    	$fileNames = $this->getAvatarFileNames($avatarName);
     	
-    	$this->cdn->copyTo(AVATAR_DIR . $normalFilename, 'avatars/' . $normalFilename);
-    	$this->cdn->copyTo(AVATAR_DIR . $mediumFilename, 'avatars/' . $mediumFilename);
-		$this->cdn->copyTo(AVATAR_DIR . $smallFilename, 'avatars/' . $smallFilename);
+    	foreach ($fileNames as $fileName) {
+    		$this->cdn->copyTo(AVATAR_DIR . $fileName, 'avatars/' . $fileName);
+    	}
+    }
+    
+	private function deleteAvatars($avatarName) {
+		$fileNames = $this->getAvatarFileNames($avatarName);
+		
+		foreach ($fileNames as $fileName) {
+			@unlink(AVATAR_DIR . $fileName);
+		}
+    }
+    
+    private function getAvatarFileNames($avatarName) {
+    	return array($avatarName . '.jpg', 
+    				 $avatarName . '-medium.jpg', 
+    				 $avatarName . '-small.jpg');
     }
     
     /**
