@@ -112,7 +112,7 @@ class OmbConsumerComponent extends Object {
 															  OmbParamKeys::LISTENER => $localId));
 	}
 	
-	public function postNotice($tokenKey, $tokenSecret, $url, $notice) {
+	public function postNotice($tokenKey, $tokenSecret, $url, $noticeId, $notice) {
 		$identity = $this->Session->read('Identity');
 		$data = $this->OmbOauthConsumer->post('GenericOmb', 
 											  $tokenKey, 
@@ -120,7 +120,7 @@ class OmbConsumerComponent extends Object {
 											  $url, 
 											  array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
 													OmbParamKeys::LISTENEE => 'http://'.$identity['username'], 
-													OmbParamKeys::NOTICE => 'noserub://'.md5($notice), 
+													OmbParamKeys::NOTICE => Router::url('/entry/'.$noticeId, true), 
 													OmbParamKeys::NOTICE_CONTENT => $notice));
 		return $data;
 	}
