@@ -393,7 +393,7 @@ class IdentitiesController extends AppController {
             	# use gravatar image
             	$md5 = md5($identity['Identity']['email']);
             	$this->data['Identity']['photo'] = 'http://gravatar.com/avatar/' . $md5;
-            	$this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
+            	$this->Identity->Entry->addPhotoChanged($identity['Identity']['id']);
             } else if($this->data['Identity']['photo']['error'] != 0) {
             	# save the photo, if neccessary
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
@@ -405,7 +405,7 @@ class IdentitiesController extends AppController {
                     if(Configure::read('NoseRub.use_cdn')) {
                         $this->copyAvatarsToCdn($filename);
                     }
-                    $this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
+                    $this->Identity->Entry->addPhotoChanged($identity['Identity']['id']);
                 }
             }   
              
