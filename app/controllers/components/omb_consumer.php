@@ -27,7 +27,11 @@ class OmbConsumerComponent extends Object {
 						  		OmbConstants::UPDATE_PROFILE);
 	}
 	
-	public function constructAuthorizeUrl($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
+	public function startUp($controller) {
+		$this->controller = $controller;
+	}
+	
+	public function redirectToAuthorizationPage($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
 		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
@@ -46,7 +50,7 @@ class OmbConsumerComponent extends Object {
 		
 		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
 		
-		return $request->to_url();
+		$this->controller->redirect($request->to_url());
 	}
 	
 	public function discover($url) {
