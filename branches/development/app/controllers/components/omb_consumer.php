@@ -249,7 +249,6 @@ class OmbDiscoveredLocalService {
 
 class OmbAuthorizationParams {
 	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
-	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
 	private $params = null;
 	
 	public function __construct($listener, array $listenee) {
@@ -262,17 +261,13 @@ class OmbAuthorizationParams {
 							  OmbParamKeys::LISTENEE_HOMEPAGE => $this->getProfileUrl($listenee['Identity']['username']),
 							  OmbParamKeys::LISTENEE_FULLNAME => OmbMaxLengthEnforcer::ensureFullnameLength($listenee['Identity']['name']),
 							  OmbParamKeys::LISTENEE_BIO => OmbMaxLengthEnforcer::ensureBioLength($listenee['Identity']['about']),
-							  OmbParamKeys::LISTENEE_LOCATION => $this->ensureMaxLocationLength($listenee['Identity']['address_shown']),
+							  OmbParamKeys::LISTENEE_LOCATION => OmbMaxLengthEnforcer::ensureLocationLength($listenee['Identity']['address_shown']),
 							  OmbParamKeys::LISTENEE_AVATAR => $this->getPhotoUrl($listenee['Identity']['photo'])
 							  );
 	}
 	
 	public function getAsArray() {
 		return $this->params;
-	}
-	
-	private function ensureMaxLocationLength($location) {
-		return substr($location, 0, self::MAX_LOCATION_LENGTH);
 	}
 	
 	private function getPhotoUrl($photoName) {
@@ -360,6 +355,10 @@ class OmbUpdatedProfileData {
 		if (isset($data['Identity']['about'])) {
 			$this->data[OmbParamKeys::LISTENEE_BIO] = OmbMaxLengthEnforcer::ensureBioLength($data['Identity']['about']);
 		}
+		
+		if (isset($data['Identity']['address_shown'])) {
+			$this->data[OmbParamKeys::LISTENEE_LOCATION] = OmbMaxLengthEnforcer::ensureLocationLength($data['Identity']['address_shown']);
+		}
 	}
 	
 	public function getAsArray() {
@@ -371,6 +370,7 @@ class OmbUpdatedProfileData {
 class OmbMaxLengthEnforcer {
 	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
 	const MAX_FULLNAME_LENGTH = 255;
+	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
 	
 	public static function ensureBioLength($bio) {
 		return substr($bio, 0, self::MAX_BIO_LENGTH);
@@ -378,5 +378,9 @@ class OmbMaxLengthEnforcer {
 	
 	public static function ensureFullnameLength($fullname) {
 		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
+	}
+	
+	public static function ensureLocationLength($location) {
+		return substr($location, 0, self::MAX_LOCATION_LENGTH);
 	}
 }
