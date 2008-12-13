@@ -31,28 +31,6 @@ class OmbConsumerComponent extends Object {
 		$this->controller = $controller;
 	}
 	
-	public function redirectToAuthorizationPage($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
-		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
-		$consumer = $this->getConsumer();
-		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
-
-		$params = $ombAuthorizationParams->getAsArray();
-		foreach ($params as $key => $value) {
-			$request->set_parameter($key, $value);
-		}
-
-		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
-		
-		if ($this->isLaconica($authorizeUrl)) {
-			// adding querystring param we removed above
-			$request->set_parameter('action', 'userauthorization');
-		}
-		
-		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
-		
-		$this->controller->redirect($request->to_url());
-	}
-	
 	public function discover($url) {
 		App::import('Vendor', 'UrlUtil');
 		$url = UrlUtil::addHttpIfNoProtocolSpecified($url);
@@ -127,6 +105,28 @@ class OmbConsumerComponent extends Object {
 													OmbParamKeys::NOTICE => Router::url('/entry/'.$noticeId, true), 
 													OmbParamKeys::NOTICE_CONTENT => $notice));
 		return $data;
+	}
+	
+	public function redirectToAuthorizationPage($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
+		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
+		$consumer = $this->getConsumer();
+		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
+
+		$params = $ombAuthorizationParams->getAsArray();
+		foreach ($params as $key => $value) {
+			$request->set_parameter($key, $value);
+		}
+
+		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
+		
+		if ($this->isLaconica($authorizeUrl)) {
+			// adding querystring param we removed above
+			$request->set_parameter('action', 'userauthorization');
+		}
+		
+		$request->sign_request(new OAuthSignatureMethod_HMAC_SHA1(), $consumer, $requestToken);
+		
+		$this->controller->redirect($request->to_url());
 	}
 	
 	public function updateProfile($tokenKey, $tokenSecret, $url, OmbUpdatedProfileData $profileData) {
@@ -250,7 +250,6 @@ class OmbDiscoveredLocalService {
 class OmbAuthorizationParams {
 	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
 	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
-	const MAX_FULLNAME_LENGTH = 255;
 	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
 	private $params = null;
 	
@@ -262,7 +261,7 @@ class OmbAuthorizationParams {
 							  OmbParamKeys::LISTENEE_NICKNAME => $listenee['Identity']['local_username'],
 							  OmbParamKeys::LISTENEE_LICENSE => self::CREATIVE_COMMONS_LICENSE,
 							  OmbParamKeys::LISTENEE_HOMEPAGE => $this->getProfileUrl($listenee['Identity']['username']),
-							  OmbParamKeys::LISTENEE_FULLNAME => $this->ensureMaxFullnameLength($listenee['Identity']['name']),
+							  OmbParamKeys::LISTENEE_FULLNAME => OmbMaxLengthEnforcer::ensureFullnameLength($listenee['Identity']['name']),
 							  OmbParamKeys::LISTENEE_BIO => $this->ensureMaxBioLength($listenee['Identity']['about']),
 							  OmbParamKeys::LISTENEE_LOCATION => $this->ensureMaxLocationLength($listenee['Identity']['address_shown']),
 							  OmbParamKeys::LISTENEE_AVATAR => $this->getPhotoUrl($listenee['Identity']['photo'])
@@ -275,10 +274,6 @@ class OmbAuthorizationParams {
 	
 	private function ensureMaxBioLength($bio) {
 		return substr($bio, 0, self::MAX_BIO_LENGTH);
-	}
-	
-	private function ensureMaxFullnameLength($fullname) {
-		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
 	}
 	
 	private function ensureMaxLocationLength($location) {
@@ -364,11 +359,24 @@ class OmbUpdatedProfileData {
 	
 	public function __construct(array $data) {
 		if (isset($data['Identity']['firstname']) && isset($data['Identity']['lastname'])) {
-			$this->data[OmbParamKeys::LISTENEE_FULLNAME] = trim($data['Identity']['firstname'] . ' ' . $data['Identity']['lastname']);
+			$this->data[OmbParamKeys::LISTENEE_FULLNAME] = $this->ensureMaxFullnameLength(trim($data['Identity']['firstname'] . ' ' . $data['Identity']['lastname']));
 		}
 	}
 	
 	public function getAsArray() {
 		return $this->data;
+	}
+	
+	private function ensureMaxFullnameLength($fullname) {
+		return substr($fullname, 0, OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
+	}
+}
+
+// XXX don't know a better name right now...
+class OmbMaxLengthEnforcer {
+	const MAX_FULLNAME_LENGTH = 255;
+	
+	public static function ensureFullnameLength($fullname) {
+		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
 	}
 }

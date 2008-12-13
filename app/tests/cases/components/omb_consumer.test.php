@@ -99,9 +99,9 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 	}
 	
 	public function testGetAsArrayWithTooLongFullname() {
-		$this->fullname = str_repeat('a', OmbAuthorizationParams::MAX_FULLNAME_LENGTH + 1);
+		$this->fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH + 1);
 		$paramsArray = $this->getAuthorizationParamsArray();
-		$this->assertEqual(OmbAuthorizationParams::MAX_FULLNAME_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
+		$this->assertEqual(OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
 	}
 	
 	public function testGetAsArrayWithTooLongLocation() {
@@ -249,10 +249,27 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
 	}
 	
+	public function testConstructWithTooLongFullname() {
+		$this->firstname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH + 1);
+		$this->lastname = '';
+		$fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
+		$profileData = $this->createProfileData();
+		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
+	}
+	
 	private function createProfileData() {
 		$profileData = new OmbUpdatedProfileData(array('Identity' => array('firstname' => $this->firstname, 
 																		   'lastname' => $this->lastname)));
 		
 		return $profileData->getAsArray();
+	}
+}
+
+class OmbMaxLengthEnforcerTest extends CakeTestCase {
+	public function testEnsureFullnameLength() {
+		$fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
+		$tooLongFullname = $fullname . 'a';
+		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($fullname));
+		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($tooLongFullname));
 	}
 }
