@@ -84,7 +84,7 @@ class OmbConsumerComponent extends Object {
 			}
 		}
 		
-		return new OmbEndPoint($localID, $endpoints);
+		return new OmbDiscoveredLocalService($localID, $endpoints);
 	}
 	
 	// internal callback method, don't use it outside this class
@@ -209,7 +209,7 @@ class OmbConsumerComponent extends Object {
 	}
 }
 
-class OmbEndPoint {
+class OmbDiscoveredLocalService {
 	private $localId = null;
 	private $urls = null;
 	

@@ -13,12 +13,12 @@ class OmbConsumerComponentTest extends CakeTestCase {
 	}
 	
 	public function testDiscover() {
-		$this->assertEndPoint($this->component->discover($this->urlOfXRDS));
+		$this->assertLocalService($this->component->discover($this->urlOfXRDS));
 	}
 	
 	public function testDiscoverFromUrlWithoutHttp() {
 		$urlOfXRDSWithoutHttp = str_replace('http://', '', $this->urlOfXRDS);
-		$this->assertEndPoint($this->component->discover($urlOfXRDSWithoutHttp));
+		$this->assertLocalService($this->component->discover($urlOfXRDSWithoutHttp));
 	}
 	
 	public function testDiscoverNotExistingFile() {
@@ -30,17 +30,17 @@ class OmbConsumerComponentTest extends CakeTestCase {
 		}
 	}
 	
-	private function assertEndPoint(OmbEndPoint $endPoint) {
-		$this->assertEqual(self::IDENTICA.'/user/4599', $endPoint->getLocalId());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $endPoint->getRequestTokenUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $endPoint->getAuthorizeUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $endPoint->getAccessTokenUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $endPoint->getPostNoticeUrl());
-		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $endPoint->getUpdateProfileUrl());
+	private function assertLocalService(OmbDiscoveredLocalService  $localService) {
+		$this->assertEqual(self::IDENTICA.'/user/4599', $localService->getLocalId());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $localService->getRequestTokenUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $localService->getAuthorizeUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $localService->getAccessTokenUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $localService->getPostNoticeUrl());
+		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $localService->getUpdateProfileUrl());
 	}
 }
 
-class OmbEndPointTest extends CakeTestCase {
+class OmbDiscoveredLocalServiceTest extends CakeTestCase {
 	private $localId = 'http://example.com/user/12';
 	private $requestTokenUrl = 'http://example.com/requestToken';
 	private $authorizeUrl = 'http://example.com/authorize';
@@ -57,14 +57,14 @@ class OmbEndPointTest extends CakeTestCase {
 					  		OmbConstants::UPDATE_PROFILE => $this->updateProfileUrl);
 	}
 	
-	public function testOmbEndPoint() {
-		$endPoint = new OmbEndPoint($this->localId, $this->urls);
-		$this->assertEqual($this->localId, $endPoint->getLocalId());
-		$this->assertEqual($this->requestTokenUrl, $endPoint->getRequestTokenUrl());
-		$this->assertEqual($this->authorizeUrl, $endPoint->getAuthorizeUrl());
-		$this->assertEqual($this->accessTokenUrl, $endPoint->getAccessTokenUrl());
-		$this->assertEqual($this->postNoticeUrl, $endPoint->getPostNoticeUrl());
-		$this->assertEqual($this->updateProfileUrl, $endPoint->getUpdateProfileUrl());
+	public function testOmbDiscoveredLocalService() {
+		$localService = new OmbDiscoveredLocalService($this->localId, $this->urls);
+		$this->assertEqual($this->localId, $localService->getLocalId());
+		$this->assertEqual($this->requestTokenUrl, $localService->getRequestTokenUrl());
+		$this->assertEqual($this->authorizeUrl, $localService->getAuthorizeUrl());
+		$this->assertEqual($this->accessTokenUrl, $localService->getAccessTokenUrl());
+		$this->assertEqual($this->postNoticeUrl, $localService->getPostNoticeUrl());
+		$this->assertEqual($this->updateProfileUrl, $localService->getUpdateProfileUrl());
 	}
 }
 
