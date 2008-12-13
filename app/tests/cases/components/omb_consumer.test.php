@@ -93,9 +93,9 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 	}
 	
 	public function testGetAsArrayWithTooLongBio() {
-		$this->bio = str_repeat('a', OmbAuthorizationParams::MAX_BIO_LENGTH + 1);
+		$this->bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH + 1);
 		$paramsArray = $this->getAuthorizationParamsArray();
-		$this->assertEqual(OmbAuthorizationParams::MAX_BIO_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
+		$this->assertEqual(OmbMaxLengthEnforcer::MAX_BIO_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
 	}
 	
 	public function testGetAsArrayWithTooLongFullname() {
@@ -223,6 +223,7 @@ class OmbAuthorizationResponseTest extends CakeTestCase {
 class OmbUpdatedProfileDataTest extends CakeTestCase {
 	private $firstname = 'Joe';
 	private $lastname = 'Doe';
+	private $bio = 'My bio';
 	
 	public function testConstructWithEmptyArray() {
 		$data = new OmbUpdatedProfileData(array());
@@ -257,15 +258,40 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
 	}
 	
+	public function testConstructWithUpdatedBio() {
+		$profileData = $this->createProfileDataWithBio();
+		$this->assertEqual($this->bio, $profileData[OmbParamKeys::LISTENEE_BIO]);
+	}
+	
+	public function testConstructWithTooLongBio() {
+		$this->bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH + 1);
+		$expectedBio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH);
+		$profileData = $this->createProfileDataWithBio();
+		$this->assertEqual($expectedBio, $profileData[OmbParamKeys::LISTENEE_BIO]);
+	}
+	
 	private function createProfileData() {
 		$profileData = new OmbUpdatedProfileData(array('Identity' => array('firstname' => $this->firstname, 
 																		   'lastname' => $this->lastname)));
 		
 		return $profileData->getAsArray();
 	}
+	
+	private function createProfileDataWithBio() {
+		$profileData = new OmbUpdatedProfileData(array('Identity' => array('about' => $this->bio)));
+		
+		return $profileData->getAsArray();
+	}
 }
 
 class OmbMaxLengthEnforcerTest extends CakeTestCase {
+	public function testEnsureBioLength() {
+		$bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH);
+		$tooLongBio = $bio . 'a';
+		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($bio));
+		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($tooLongBio));
+	}
+	
 	public function testEnsureFullnameLength() {
 		$fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
 		$tooLongFullname = $fullname . 'a';
