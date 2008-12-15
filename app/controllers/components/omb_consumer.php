@@ -359,10 +359,31 @@ class OmbUpdatedProfileData {
 		if (isset($data['Identity']['address_shown'])) {
 			$this->data[OmbParamKeys::LISTENEE_LOCATION] = OmbMaxLengthEnforcer::ensureLocationLength($data['Identity']['address_shown']);
 		}
+		
+		if (isset($data['Identity']['photo'])) {
+			$avatarUrl = '';
+			
+			if ($data['Identity']['photo'] != '') {
+				if ($this->isGravatarUrl($data['Identity']['photo'])) {
+					$avatarUrl = $this->get96x96GravatarUrl($data['Identity']['photo']);
+				} else {
+					$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$data['Identity']['photo'].'-medium.jpg';
+				}
+			}
+			$this->data[OmbParamKeys::LISTENEE_AVATAR] = $avatarUrl;
+		}
 	}
 	
 	public function getAsArray() {
 		return $this->data;
+	}
+	
+	private function get96x96GravatarUrl($gravatarUrl) {
+		return $gravatarUrl . '?s=96';
+	}
+	
+	private function isGravatarUrl($photoName) {
+		return (stripos($photoName, 'http://gravatar.com') === 0);
 	}
 }
 
