@@ -225,6 +225,7 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	private $lastname = 'Doe';
 	private $bio = 'My bio';
 	private $location = 'MyCity, MyCountry';
+	private $avatar = 'myavatar';
 	
 	public function testConstructWithEmptyArray() {
 		$data = new OmbUpdatedProfileData(array());
@@ -259,6 +260,26 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
 	}
 	
+	public function testConstructWithUpdatedAvatar() {
+		$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$this->avatar.'-medium.jpg';
+		$profileData = $this->createProfileDataWithAvatar();
+		$this->assertEqual($avatarUrl, $profileData[OmbParamKeys::LISTENEE_AVATAR]);
+	}
+	
+	public function testConstructWithEmptyAvatar() {
+		$this->avatar = '';
+		$profileData = $this->createProfileDataWithAvatar();
+		$this->assertEqual('', $profileData[OmbParamKeys::LISTENEE_AVATAR]);
+	}
+	
+	public function testConstructWithGravatar() {
+		$gravatar = 'http://gravatar.com/avatar/xy';
+		$gravatar96x96 = $gravatar . '?s=96';
+		$this->avatar = $gravatar;
+		$profileData = $this->createProfileDataWithAvatar();
+		$this->assertEqual($gravatar96x96, $profileData[OmbParamKeys::LISTENEE_AVATAR]);
+	}
+	
 	public function testConstructWithUpdatedBio() {
 		$profileData = $this->createProfileDataWithBio();
 		$this->assertEqual($this->bio, $profileData[OmbParamKeys::LISTENEE_BIO]);
@@ -286,6 +307,12 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	private function createProfileData() {
 		$profileData = new OmbUpdatedProfileData(array('Identity' => array('firstname' => $this->firstname, 
 																		   'lastname' => $this->lastname)));
+		
+		return $profileData->getAsArray();
+	}
+	
+	private function createProfileDataWithAvatar() {
+		$profileData = new OmbUpdatedProfileData(array('Identity' => array('photo' => $this->avatar)));
 		
 		return $profileData->getAsArray();
 	}
