@@ -345,63 +345,149 @@ class OmbAuthorizationResponse {
 }
 
 class OmbUpdatedProfileData {
-	private $data = array();
+	private $params = array();
 	
 	public function __construct(array $data) {
 		if (isset($data['Identity']['firstname']) && isset($data['Identity']['lastname'])) {
-			$this->data[OmbParamKeys::LISTENEE_FULLNAME] = OmbMaxLengthEnforcer::ensureFullnameLength(trim($data['Identity']['firstname'] . ' ' . $data['Identity']['lastname']));
+			$fullname = $data['Identity']['firstname'] . ' ' . $data['Identity']['lastname'];
+			$this->params[] = new OmbListeneeFullname($fullname);
 		}
 		
 		if (isset($data['Identity']['about'])) {
-			$this->data[OmbParamKeys::LISTENEE_BIO] = OmbMaxLengthEnforcer::ensureBioLength($data['Identity']['about']);
+			$this->params[] = new OmbListeneeBio($data['Identity']['about']);
 		}
 		
 		if (isset($data['Identity']['address_shown'])) {
-			$this->data[OmbParamKeys::LISTENEE_LOCATION] = OmbMaxLengthEnforcer::ensureLocationLength($data['Identity']['address_shown']);
+			$this->params[] = new OmbListeneeLocation($data['Identity']['address_shown']);
 		}
 		
 		if (isset($data['Identity']['photo'])) {
-			$avatarUrl = '';
-			
-			if ($data['Identity']['photo'] != '') {
-				if ($this->isGravatarUrl($data['Identity']['photo'])) {
-					$avatarUrl = $this->get96x96GravatarUrl($data['Identity']['photo']);
-				} else {
-					$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$data['Identity']['photo'].'-medium.jpg';
-				}
-			}
-			$this->data[OmbParamKeys::LISTENEE_AVATAR] = $avatarUrl;
+			$this->params[] = new OmbListeneeAvatar($data['Identity']['photo']);
 		}
 	}
 	
 	public function getAsArray() {
-		return $this->data;
+		$result = array();
+		
+		foreach ($this->params as $param) {
+			$result[$param->getKey()] = $param->getValue();
+		}
+		
+		return $result;
+	}
+}
+
+/**
+ * @deprecated, don't use this class anymore!
+ */
+class OmbMaxLengthEnforcer {
+	public static function ensureBioLength($bio) {
+		return substr($bio, 0, OmbListeneeBio::MAX_LENGTH);
+	}
+	
+	public static function ensureFullnameLength($fullname) {
+		return substr($fullname, 0, OmbListeneeFullname::MAX_LENGTH);
+	}
+	
+	public static function ensureLocationLength($location) {
+		return substr($location, 0, OmbListeneeLocation::MAX_LENGTH);
+	}
+}
+
+interface OmbParam {
+	public function getKey();
+	public function getValue();
+}
+
+class OmbListeneeAvatar implements OmbParam {
+	private $avatarUrl = '';
+	
+	public function __construct($avatarName) {
+		if (trim($avatarName) != '') {
+			if ($this->isGravatarUrl($avatarName)) {
+				$this->avatarUrl = $this->get96x96GravatarUrl($avatarName);
+			} else {
+				$this->avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+			}
+		}
+	}
+	
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_AVATAR;
+	}
+	
+	public function getValue() {
+		return $this->avatarUrl;
 	}
 	
 	private function get96x96GravatarUrl($gravatarUrl) {
 		return $gravatarUrl . '?s=96';
 	}
 	
-	private function isGravatarUrl($photoName) {
-		return (stripos($photoName, 'http://gravatar.com') === 0);
+	private function isGravatarUrl($avatarName) {
+		return (stripos($avatarName, 'http://gravatar.com') === 0);
 	}
 }
 
-// XXX don't know a better name right now...
-class OmbMaxLengthEnforcer {
-	const MAX_BIO_LENGTH = 139; // spec says "less than 140 chars"
-	const MAX_FULLNAME_LENGTH = 255;
-	const MAX_LOCATION_LENGTH = 254; // spec says "less than 255 chars"
+class OmbListeneeBio implements OmbParam {
+	const MAX_LENGTH = 139; // spec says "less than 140 chars"
+	private $bio = null;
 	
-	public static function ensureBioLength($bio) {
-		return substr($bio, 0, self::MAX_BIO_LENGTH);
+	public function __construct($bio) {
+		$this->bio = $this->shortenIfTooLong($bio);
 	}
 	
-	public static function ensureFullnameLength($fullname) {
-		return substr($fullname, 0, self::MAX_FULLNAME_LENGTH);
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_BIO;
 	}
 	
-	public static function ensureLocationLength($location) {
-		return substr($location, 0, self::MAX_LOCATION_LENGTH);
+	public function getValue() {
+		return $this->bio;
+	}
+	
+	private function shortenIfTooLong($bio) {
+		return substr($bio, 0, self::MAX_LENGTH);
+	}
+}
+
+class OmbListeneeFullname implements OmbParam {
+	const MAX_LENGTH = 255;
+	private $fullname = null;
+	
+	public function __construct($fullname) {
+		$this->fullname = $this->shortenIfTooLong(trim($fullname));
+	}
+	
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_FULLNAME;
+	}
+	
+	public function getValue() {
+		return $this->fullname;
+	}
+	
+	private function shortenIfTooLong($fullname) {
+		return substr($fullname, 0, self::MAX_LENGTH);
+	}
+}
+
+class OmbListeneeLocation implements OmbParam {
+	const MAX_LENGTH = 254; // spec says "less than 255 chars"
+	private $location = null;
+	
+	public function __construct($location) {
+		$this->location = $this->shortenIfTooLong($location);
+	}
+	
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_LOCATION;
+	}
+	
+	public function getValue() {
+		return $this->location;
+	}
+	
+	private function shortenIfTooLong($location) {
+		return substr($location, 0, self::MAX_LENGTH);
 	}
 }

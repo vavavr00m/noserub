@@ -93,21 +93,21 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 	}
 	
 	public function testGetAsArrayWithTooLongBio() {
-		$this->bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH + 1);
+		$this->bio = str_repeat('a', OmbListeneeBio::MAX_LENGTH + 1);
 		$paramsArray = $this->getAuthorizationParamsArray();
-		$this->assertEqual(OmbMaxLengthEnforcer::MAX_BIO_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
+		$this->assertEqual(OmbListeneeBio::MAX_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_BIO]));
 	}
 	
 	public function testGetAsArrayWithTooLongFullname() {
-		$this->fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH + 1);
+		$this->fullname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH + 1);
 		$paramsArray = $this->getAuthorizationParamsArray();
-		$this->assertEqual(OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
+		$this->assertEqual(OmbListeneeFullname::MAX_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_FULLNAME]));
 	}
 	
 	public function testGetAsArrayWithTooLongLocation() {
-		$this->location = str_repeat('a', OmbMaxLengthEnforcer::MAX_LOCATION_LENGTH + 1);
+		$this->location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH + 1);
 		$paramsArray = $this->getAuthorizationParamsArray();
-		$this->assertEqual(OmbMaxLengthEnforcer::MAX_LOCATION_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_LOCATION]));
+		$this->assertEqual(OmbListeneeLocation::MAX_LENGTH, strlen($paramsArray[OmbParamKeys::LISTENEE_LOCATION]));
 	}
 	
 	public function testGetAsArrayWithoutPhoto() {
@@ -253,9 +253,9 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 	
 	public function testConstructWithTooLongFullname() {
-		$this->firstname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH + 1);
+		$this->firstname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH + 1);
 		$this->lastname = '';
-		$fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
+		$fullname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH);
 		$profileData = $this->createProfileData();
 		$this->assertEqual($fullname, $profileData[OmbParamKeys::LISTENEE_FULLNAME]);
 	}
@@ -286,8 +286,8 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 	
 	public function testConstructWithTooLongBio() {
-		$this->bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH + 1);
-		$expectedBio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH);
+		$this->bio = str_repeat('a', OmbListeneeBio::MAX_LENGTH + 1);
+		$expectedBio = str_repeat('a', OmbListeneeBio::MAX_LENGTH);
 		$profileData = $this->createProfileDataWithBio();
 		$this->assertEqual($expectedBio, $profileData[OmbParamKeys::LISTENEE_BIO]);
 	}
@@ -298,8 +298,8 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 	
 	public function testConstructWithTooLongLocation() {
-		$this->location = str_repeat('a', OmbMaxLengthEnforcer::MAX_LOCATION_LENGTH + 1);
-		$expectedLocation = str_repeat('a', OmbMaxLengthEnforcer::MAX_LOCATION_LENGTH);
+		$this->location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH + 1);
+		$expectedLocation = str_repeat('a', OmbListeneeLocation::MAX_LENGTH);
 		$profileData = $this->createProfileDataWithLocation();
 		$this->assertEqual($expectedLocation, $profileData[OmbParamKeys::LISTENEE_LOCATION]);
 	}
@@ -332,23 +332,91 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 
 class OmbMaxLengthEnforcerTest extends CakeTestCase {
 	public function testEnsureBioLength() {
-		$bio = str_repeat('a', OmbMaxLengthEnforcer::MAX_BIO_LENGTH);
+		$bio = str_repeat('a', OmbListeneeBio::MAX_LENGTH);
 		$tooLongBio = $bio . 'a';
 		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($bio));
 		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($tooLongBio));
 	}
 	
 	public function testEnsureFullnameLength() {
-		$fullname = str_repeat('a', OmbMaxLengthEnforcer::MAX_FULLNAME_LENGTH);
+		$fullname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH);
 		$tooLongFullname = $fullname . 'a';
 		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($fullname));
 		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($tooLongFullname));
 	}
 	
 	public function testEnsureLocationLength() {
-		$location = str_repeat('a', OmbMaxLengthEnforcer::MAX_LOCATION_LENGTH);
+		$location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH);
 		$tooLongLocation = $location . 'a';
 		$this->assertEqual($location, OmbMaxLengthEnforcer::ensureLocationLength($location));
 		$this->assertEqual($location, OmbMaxLengthEnforcer::ensureLocationLength($tooLongLocation));
+	}
+}
+
+class OmbListeneeAvatarTest extends CakeTestCase {
+	public function testConstruct() {
+		$avatarName = 'myavatar';
+		$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+		$listeneeAvatar = new OmbListeneeAvatar($avatarName);
+		$this->assertEqual(OmbParamKeys::LISTENEE_AVATAR, $listeneeAvatar->getKey());
+		$this->assertEqual($avatarUrl, $listeneeAvatar->getValue());
+	}
+	
+	public function testConstructWithEmptyAvatar() {
+		$avatarName = '';
+		$listeneeAvatar = new OmbListeneeAvatar($avatarName);
+		$this->assertEqual($avatarName, $listeneeAvatar->getValue());
+	}
+	
+	public function testConstructWithGravatar() {
+		$gravatar = 'http://gravatar.com/avatar/xy';
+		$gravatar96x96 = $gravatar . '?s=96';
+		$listeneeAvatar = new OmbListeneeAvatar($gravatar);
+		$this->assertEqual($gravatar96x96, $listeneeAvatar->getValue());
+	}
+}
+
+class OmbListeneeBioTest extends CakeTestCase {
+	public function testConstruct() {
+		$bio = 'My bio';
+		$listeneeBio = new OmbListeneeBio($bio);
+		$this->assertEqual(OmbParamKeys::LISTENEE_BIO, $listeneeBio->getKey());
+		$this->assertEqual($bio, $listeneeBio->getValue());
+	}
+	
+	public function testConstructWithTooLongBio() {
+		$bio = str_repeat('a', OmbListeneeBio::MAX_LENGTH + 1);
+		$listeneeBio = new OmbListeneeBio($bio);
+		$this->assertEqual(OmbListeneeBio::MAX_LENGTH, strlen($listeneeBio->getValue()));
+	}
+}
+
+class OmbListeneeFullnameTest extends CakeTestCase {
+	public function testConstruct() {
+		$fullname = 'Firstname Lastname';
+		$listeneeFullname = new OmbListeneeFullname($fullname);
+		$this->assertEqual(OmbParamKeys::LISTENEE_FULLNAME, $listeneeFullname->getKey());
+		$this->assertEqual($fullname, $listeneeFullname->getValue());
+	}
+	
+	public function testConstructWithTooLongFullname() {
+		$fullname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH + 1);
+		$listeneeFullname = new OmbListeneeFullname($fullname);
+		$this->assertEqual(OmbListeneeFullname::MAX_LENGTH, strlen($listeneeFullname->getValue()));
+	}
+}
+
+class OmbListeneeLocationTest extends CakeTestCase {
+	public function testConstruct() {
+		$location = 'MyCity, MyCountry';
+		$listeneeLocation = new OmbListeneeLocation($location);
+		$this->assertEqual(OmbParamKeys::LISTENEE_LOCATION, $listeneeLocation->getKey());
+		$this->assertEqual($location, $listeneeLocation->getValue());
+	}
+	
+	public function testConstructWithTooLongLocation() {
+		$location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH + 1);
+		$listeneeLocation = new OmbListeneeLocation($location);
+		$this->assertEqual(OmbListeneeLocation::MAX_LENGTH, strlen($listeneeLocation->getValue()));
 	}
 }
