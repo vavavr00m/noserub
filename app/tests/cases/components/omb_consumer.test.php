@@ -406,6 +406,15 @@ class OmbListeneeFullnameTest extends CakeTestCase {
 	}
 }
 
+class OmbListeneeLicenseTest extends CakeTestCase {
+	public function testConstruct() {
+		$expectedLicense = OmbListeneeLicense::CREATIVE_COMMONS;
+		$listeneeLicense = new OmbListeneeLicense();
+		$this->assertEqual(OmbParamKeys::LISTENEE_LICENSE, $listeneeLicense->getKey());
+		$this->assertEqual($expectedLicense, $listeneeLicense->getValue());
+	}
+}
+
 class OmbListeneeLocationTest extends CakeTestCase {
 	public function testConstruct() {
 		$location = 'MyCity, MyCountry';
