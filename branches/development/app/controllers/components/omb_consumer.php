@@ -394,30 +394,38 @@ class OmbMaxLengthEnforcer {
 	}
 }
 
-interface OmbParam {
-	public function getKey();
-	public function getValue();
+abstract class OmbParam {
+	private $value = null;
+	
+	public function __construct($value) {
+		$this->value = $value;
+	}
+	
+	abstract public function getKey();
+
+	public function getValue() {
+		return $this->value;
+	}
 }
 
-class OmbListeneeAvatar implements OmbParam {
-	private $avatarUrl = '';
+class OmbListeneeAvatar extends OmbParam {
 	
 	public function __construct($avatarName) {
+		$avatarUrl = '';
+		
 		if (trim($avatarName) != '') {
 			if ($this->isGravatarUrl($avatarName)) {
-				$this->avatarUrl = $this->get96x96GravatarUrl($avatarName);
+				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
 			} else {
-				$this->avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
 			}
 		}
+		
+		parent::__construct($avatarUrl);
 	}
 	
 	public function getKey() {
 		return OmbParamKeys::LISTENEE_AVATAR;
-	}
-	
-	public function getValue() {
-		return $this->avatarUrl;
 	}
 	
 	private function get96x96GravatarUrl($gravatarUrl) {
@@ -429,20 +437,15 @@ class OmbListeneeAvatar implements OmbParam {
 	}
 }
 
-class OmbListeneeBio implements OmbParam {
+class OmbListeneeBio extends OmbParam {
 	const MAX_LENGTH = 139; // spec says "less than 140 chars"
-	private $bio = null;
 	
 	public function __construct($bio) {
-		$this->bio = $this->shortenIfTooLong($bio);
+		parent::__construct($this->shortenIfTooLong($bio));
 	}
 	
 	public function getKey() {
 		return OmbParamKeys::LISTENEE_BIO;
-	}
-	
-	public function getValue() {
-		return $this->bio;
 	}
 	
 	private function shortenIfTooLong($bio) {
@@ -450,20 +453,15 @@ class OmbListeneeBio implements OmbParam {
 	}
 }
 
-class OmbListeneeFullname implements OmbParam {
+class OmbListeneeFullname extends OmbParam {
 	const MAX_LENGTH = 255;
-	private $fullname = null;
 	
 	public function __construct($fullname) {
-		$this->fullname = $this->shortenIfTooLong(trim($fullname));
+		parent::__construct($this->shortenIfTooLong(trim($fullname)));
 	}
 	
 	public function getKey() {
 		return OmbParamKeys::LISTENEE_FULLNAME;
-	}
-	
-	public function getValue() {
-		return $this->fullname;
 	}
 	
 	private function shortenIfTooLong($fullname) {
@@ -471,20 +469,27 @@ class OmbListeneeFullname implements OmbParam {
 	}
 }
 
-class OmbListeneeLocation implements OmbParam {
+class OmbListeneeLicense extends OmbParam {
+	const CREATIVE_COMMONS = 'http://creativecommons.org/licenses/by/3.0/';
+	
+	public function __construct() {
+		parent::__construct(self::CREATIVE_COMMONS);
+	}
+	
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_LICENSE;
+	}
+}
+
+class OmbListeneeLocation extends OmbParam {
 	const MAX_LENGTH = 254; // spec says "less than 255 chars"
-	private $location = null;
 	
 	public function __construct($location) {
-		$this->location = $this->shortenIfTooLong($location);
+		parent::__construct($this->shortenIfTooLong($location));
 	}
 	
 	public function getKey() {
 		return OmbParamKeys::LISTENEE_LOCATION;
-	}
-	
-	public function getValue() {
-		return $this->location;
 	}
 	
 	private function shortenIfTooLong($location) {
