@@ -84,7 +84,7 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE]);
 		$this->assertEqual($this->nickname, $paramsArray[OmbParamKeys::LISTENEE_NICKNAME]);
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE_PROFILE]);
-		$this->assertEqual(OmbAuthorizationParams::CREATIVE_COMMONS_LICENSE, $paramsArray[OmbParamKeys::LISTENEE_LICENSE]);
+		$this->assertEqual(OmbListeneeLicense::CREATIVE_COMMONS, $paramsArray[OmbParamKeys::LISTENEE_LICENSE]);
 		$this->assertEqual($this->getProfileUrl(), $paramsArray[OmbParamKeys::LISTENEE_HOMEPAGE]);
 		$this->assertEqual($this->fullname, $paramsArray[OmbParamKeys::LISTENEE_FULLNAME]);
 		$this->assertEqual($this->bio, $paramsArray[OmbParamKeys::LISTENEE_BIO]);
@@ -330,26 +330,12 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 }
 
-class OmbMaxLengthEnforcerTest extends CakeTestCase {
-	public function testEnsureBioLength() {
-		$bio = str_repeat('a', OmbListeneeBio::MAX_LENGTH);
-		$tooLongBio = $bio . 'a';
-		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($bio));
-		$this->assertEqual($bio, OmbMaxLengthEnforcer::ensureBioLength($tooLongBio));
-	}
-	
-	public function testEnsureFullnameLength() {
-		$fullname = str_repeat('a', OmbListeneeFullname::MAX_LENGTH);
-		$tooLongFullname = $fullname . 'a';
-		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($fullname));
-		$this->assertEqual($fullname, OmbMaxLengthEnforcer::ensureFullnameLength($tooLongFullname));
-	}
-	
-	public function testEnsureLocationLength() {
-		$location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH);
-		$tooLongLocation = $location . 'a';
-		$this->assertEqual($location, OmbMaxLengthEnforcer::ensureLocationLength($location));
-		$this->assertEqual($location, OmbMaxLengthEnforcer::ensureLocationLength($tooLongLocation));
+class OmbListeneeTest extends CakeTestCase {
+	public function testConstruct() {
+		$listenee = 'http://example.com/listenee';
+		$ombListenee = new OmbListenee($listenee);
+		$this->assertEqual(OmbParamKeys::LISTENEE, $ombListenee->getKey());
+		$this->assertEqual($listenee, $ombListenee->getValue());
 	}
 }
 
@@ -406,6 +392,15 @@ class OmbListeneeFullnameTest extends CakeTestCase {
 	}
 }
 
+class OmbListeneeHomepageTest extends CakeTestCase {
+	public function testConstruct() {
+		$homepage = 'http://example.com';
+		$listeneeHomepage = new OmbListeneeHomepage($homepage);
+		$this->assertEqual(OmbParamKeys::LISTENEE_HOMEPAGE, $listeneeHomepage->getKey());
+		$this->assertEqual($homepage, $listeneeHomepage->getValue());
+	}
+}
+
 class OmbListeneeLicenseTest extends CakeTestCase {
 	public function testConstruct() {
 		$expectedLicense = OmbListeneeLicense::CREATIVE_COMMONS;
@@ -427,5 +422,40 @@ class OmbListeneeLocationTest extends CakeTestCase {
 		$location = str_repeat('a', OmbListeneeLocation::MAX_LENGTH + 1);
 		$listeneeLocation = new OmbListeneeLocation($location);
 		$this->assertEqual(OmbListeneeLocation::MAX_LENGTH, strlen($listeneeLocation->getValue()));
+	}
+}
+
+class OmbListeneeNicknameTest extends CakeTestCase {
+	public function testConstruct() {
+		$nickname = 'nick';
+		$listeneeNickname = new OmbListeneeNickname($nickname);
+		$this->assertEqual(OmbParamKeys::LISTENEE_NICKNAME, $listeneeNickname->getKey());
+		$this->assertEqual($nickname, $listeneeNickname->getValue());
+	}
+}
+
+class OmbListeneeProfileTest extends CakeTestCase {
+	public function testConstruct() {
+		$profile = 'http://example.com/profile';
+		$listeneeProfile = new OmbListeneeProfile($profile);
+		$this->assertEqual(OmbParamKeys::LISTENEE_PROFILE, $listeneeProfile->getKey());
+		$this->assertEqual($profile, $listeneeProfile->getValue());
+	}
+}
+
+class OmbListenerTest extends CakeTestCase {
+	public function testConstruct() {
+		$listener = 'http://example.com/listener';
+		$ombListener = new OmbListener($listener);
+		$this->assertEqual(OmbParamKeys::LISTENER, $ombListener->getKey());
+		$this->assertEqual($listener, $ombListener->getValue()); 
+	}
+}
+
+class OmbVersionTest extends CakeTestCase {
+	public function testConstruct() {
+		$version = new OmbVersion();
+		$this->assertEqual(OmbParamKeys::VERSION, $version->getKey());
+		$this->assertEqual(OmbConstants::VERSION, $version->getValue());
 	}
 }

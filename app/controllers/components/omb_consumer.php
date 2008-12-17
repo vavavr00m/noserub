@@ -248,50 +248,35 @@ class OmbDiscoveredLocalService {
 }
 
 class OmbAuthorizationParams {
-	const CREATIVE_COMMONS_LICENSE = 'http://creativecommons.org/licenses/by/3.0/';
 	private $params = null;
 	
 	public function __construct($listener, array $listenee) {
-		$this->params = array(OmbParamKeys::VERSION => OmbConstants::VERSION,
-							  OmbParamKeys::LISTENER => $listener,
-							  OmbParamKeys::LISTENEE => $this->getProfileUrl($listenee['Identity']['username']),
-							  OmbParamKeys::LISTENEE_PROFILE => $this->getProfileUrl($listenee['Identity']['username']),
-							  OmbParamKeys::LISTENEE_NICKNAME => $listenee['Identity']['local_username'],
-							  OmbParamKeys::LISTENEE_LICENSE => self::CREATIVE_COMMONS_LICENSE,
-							  OmbParamKeys::LISTENEE_HOMEPAGE => $this->getProfileUrl($listenee['Identity']['username']),
-							  OmbParamKeys::LISTENEE_FULLNAME => OmbMaxLengthEnforcer::ensureFullnameLength($listenee['Identity']['name']),
-							  OmbParamKeys::LISTENEE_BIO => OmbMaxLengthEnforcer::ensureBioLength($listenee['Identity']['about']),
-							  OmbParamKeys::LISTENEE_LOCATION => OmbMaxLengthEnforcer::ensureLocationLength($listenee['Identity']['address_shown']),
-							  OmbParamKeys::LISTENEE_AVATAR => $this->getPhotoUrl($listenee['Identity']['photo'])
-							  );
+		$profileUrl = $this->getProfileUrl($listenee['Identity']['username']);
+		$this->params[] = new OmbVersion();
+		$this->params[] = new OmbListener($listener);
+		$this->params[] = new OmbListenee($profileUrl);
+		$this->params[] = new OmbListeneeProfile($profileUrl);
+		$this->params[] = new OmbListeneeNickname($listenee['Identity']['local_username']);
+		$this->params[] = new OmbListeneeLicense();
+		$this->params[] = new OmbListeneeHomepage($profileUrl);
+		$this->params[] = new OmbListeneeFullname($listenee['Identity']['name']);
+		$this->params[] = new OmbListeneeBio($listenee['Identity']['about']);
+		$this->params[] = new OmbListeneeLocation($listenee['Identity']['address_shown']);
+		$this->params[] = new OmbListeneeAvatar($listenee['Identity']['photo']);
 	}
 	
 	public function getAsArray() {
-		return $this->params;
-	}
-	
-	private function getPhotoUrl($photoName) {
-		if ($photoName != '') {
-			if ($this->isGravatarUrl($photoName)) {
-				return $this->get96x96GravatarUrl($photoName);
-			}
-			
-			return Configure::read('NoseRub.full_base_url').'static/avatars/'.$photoName.'-medium.jpg';
+		$result = array();
+		
+		foreach ($this->params as $param) {
+			$result[$param->getKey()] = $param->getValue();
 		}
 		
-		return '';
+		return $result;
 	}
-	
+		
 	private function getProfileUrl($username) {
 		return 'http://'.$username;
-	}
-	
-	private function get96x96GravatarUrl($gravatarUrl) {
-		return $gravatarUrl . '?s=96';
-	}
-	
-	private function isGravatarUrl($photoName) {
-		return (stripos($photoName, 'http://gravatar.com') === 0);
 	}
 }
 
@@ -377,23 +362,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-/**
- * @deprecated, don't use this class anymore!
- */
-class OmbMaxLengthEnforcer {
-	public static function ensureBioLength($bio) {
-		return substr($bio, 0, OmbListeneeBio::MAX_LENGTH);
-	}
-	
-	public static function ensureFullnameLength($fullname) {
-		return substr($fullname, 0, OmbListeneeFullname::MAX_LENGTH);
-	}
-	
-	public static function ensureLocationLength($location) {
-		return substr($location, 0, OmbListeneeLocation::MAX_LENGTH);
-	}
-}
-
 abstract class OmbParam {
 	private $value = null;
 	
@@ -405,6 +373,12 @@ abstract class OmbParam {
 
 	public function getValue() {
 		return $this->value;
+	}
+}
+
+class OmbListenee extends OmbParam {
+	public function getKey() {
+		return OmbParamKeys::LISTENEE;
 	}
 }
 
@@ -469,6 +443,12 @@ class OmbListeneeFullname extends OmbParam {
 	}
 }
 
+class OmbListeneeHomepage extends OmbParam {
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_HOMEPAGE;
+	}
+}
+
 class OmbListeneeLicense extends OmbParam {
 	const CREATIVE_COMMONS = 'http://creativecommons.org/licenses/by/3.0/';
 	
@@ -494,5 +474,33 @@ class OmbListeneeLocation extends OmbParam {
 	
 	private function shortenIfTooLong($location) {
 		return substr($location, 0, self::MAX_LENGTH);
+	}
+}
+
+class OmbListeneeNickname extends OmbParam {
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_NICKNAME;
+	}
+}
+
+class OmbListeneeProfile extends OmbParam {
+	public function getKey() {
+		return OmbParamKeys::LISTENEE_PROFILE;
+	}
+}
+
+class OmbListener extends OmbParam {
+	public function getKey() {
+		return OmbParamKeys::LISTENER;
+	}
+}
+
+class OmbVersion extends OmbParam {
+	public function __construct() {
+		parent::__construct(OmbConstants::VERSION);
+	}
+	
+	public function getKey() {
+		return OmbParamKeys::VERSION;
 	}
 }
