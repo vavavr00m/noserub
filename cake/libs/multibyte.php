@@ -6,27 +6,28 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *			1785 E. Sahara Avenue, Suite 490-204
- *			Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.cake.libs
- * @since			CakePHP(tm) v 1.2.0.6833
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP(tm) v 1.2.0.6833
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (function_exists('mb_internal_encoding')) {
-	mb_internal_encoding(Configure::read('App.encoding'));
+	$encoding = Configure::read('App.encoding');
+	if (!empty($encoding)) {
+		mb_internal_encoding($encoding);
+	}
 }
 /**
  * Find position of first occurrence of a case-insensitive string.
@@ -237,8 +238,8 @@ if (!function_exists('mb_encode_mimeheader')) {
  * Multibyte handling methods.
  *
  *
- * @package		cake
- * @subpackage	cake.cake.libs
+ * @package       cake
+ * @subpackage    cake.cake.libs
  */
 class Multibyte extends Object {
 /**
@@ -1077,7 +1078,7 @@ class Multibyte extends Object {
 	function __find($char, $type = 'lower') {
 		$value = false;
 		$found = array();
-		if(!isset($this->__codeRange[$char])) {
+		if (!isset($this->__codeRange[$char])) {
 			$range = $this->__codepoint($char);
 			if ($range === false) {
 				return null;
@@ -1093,7 +1094,7 @@ class Multibyte extends Object {
 		$this->__table = $this->__codeRange[$char];
 		$count = count($this->__caseFold[$this->__table]);
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if ($type === 'lower' && $this->__caseFold[$this->__table][$i][$type][0] === $char) {
 				$found[] = $this->__caseFold[$this->__table][$i];
 			} elseif ($type === 'upper' && $this->__caseFold[$this->__table][$i][$type] === $char) {
