@@ -4,6 +4,10 @@ class AdminController extends AppController {
     public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
     
     public function beforeFilter() {
+        if(defined('SHELL_DISPATCHER') && SHELL_DISPATCHER) {
+            return;
+        }
+        
     	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
         
         if($admin_hash != Configure::read('NoseRub.admin_hash') || $admin_hash == '') {
@@ -49,5 +53,15 @@ class AdminController extends AppController {
                 $this->set('migrations', $migrations);
             }
         }
+    }
+    
+    /**
+     * Enables to call /system/update from the shell.
+     * Will look ugly, but the primary goal is to be able
+     * to call this without a timeout.
+     */
+    public function shell_system_update() {
+        $this->system_update();
+        $this->render('system_update');
     }
 }
