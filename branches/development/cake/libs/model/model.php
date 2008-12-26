@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: model.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Object-relational mapper.
  *
@@ -714,12 +714,12 @@ class Model extends Overloadable {
 						'table' => $this->{$type}[$assocKey]['joinTable'],
 						'ds' => $this->useDbConfig
 					));
-				}	else {
+				} else {
 					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 
-				if (count($this->{$joinClass}->schema()) <= 2) {
+				if (count($this->{$joinClass}->schema()) <= 2 && $this->{$joinClass}->primaryKey !== false) {
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 				}
 			}

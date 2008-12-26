@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dispatcher.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dispatcher.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.
@@ -687,7 +687,7 @@ class Dispatcher extends Object {
 			if ($this->here == '/') {
 				$path = 'home';
 			}
-			$path = Inflector::slug($path);
+			$path = strtolower(Inflector::slug($path));
 
 			$filename = CACHE . 'views' . DS . $path . '.php';
 

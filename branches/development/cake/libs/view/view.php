@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: view.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Methods for displaying presentation data in the view.
  *
@@ -664,7 +664,9 @@ class View extends Object {
 			@include ($___viewFn);
 		}
 
-		$this->_triggerHelpers('afterRender');
+		if ($loadHelpers === true) {
+			$this->_triggerHelpers('afterRender');
+		}
 
 		$out = ob_get_clean();
 		$caching = (

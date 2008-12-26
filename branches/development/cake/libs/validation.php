@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: validation.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: validation.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Validation Class.  Used for validation of model data
  *
@@ -801,11 +801,11 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function url($check) {
+	function url($check, $strict = false) {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=') . '\/0-9a-z]|(%[0-9a-f]{2}))';
-		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)?' .
+		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . ife($strict, '', '?') .
 			'(?:' . $_this->__pattern['ip'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
