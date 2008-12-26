@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: auth.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: auth.php 7961 2008-12-25 23:21:36Z gwoo $ */
 
 /**
  * Authentication component
@@ -673,7 +673,8 @@ class AuthComponent extends Object {
  */
 	function redirect($url = null) {
 		if (!is_null($url)) {
-			$this->Session->write('Auth.redirect', $url);
+			$redir = $url;
+			$this->Session->write('Auth.redirect', $redir);
 		} elseif ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');

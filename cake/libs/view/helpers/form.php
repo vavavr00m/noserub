@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: form.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -123,6 +123,11 @@ class FormHelper extends AppHelper {
 
 		if (isset($object)) {
 			$fields = $object->schema();
+			foreach ($fields as $key => $value) {
+				unset($fields[$key]);
+				$fields[$model . '.' . $key] = $value;
+			}
+
 			if (!empty($object->hasAndBelongsToMany)) {
 				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 					$fields[$alias] = array('type' => 'multiple');
@@ -145,7 +150,8 @@ class FormHelper extends AppHelper {
 					}
 				}
 			}
-			$this->fieldset = array('fields' => $fields, 'key' => $object->primaryKey, 'validates' => $validates);
+			$key = $object->primaryKey;
+			$this->fieldset = compact('fields', 'key', 'validates');
 		}
 
 		$data = $this->fieldset;
@@ -226,7 +232,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$append .= $this->hidden('_Token.key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
+			$append .= $this->hidden('_Token.key', array(
+				'value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand())
+			);
 		}
 
 		if (!empty($append)) {
@@ -234,7 +242,8 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setEntity($model . '.', true);
-		return $this->output(sprintf($this->Html->tags['form'], $this->_parseAttributes($htmlAttributes, null, ''))) . $append;
+		$attributes = $this->_parseAttributes($htmlAttributes, null, '');
+		return $this->output(sprintf($this->Html->tags['form'], $attributes)) . $append;
 	}
 /**
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
@@ -377,8 +386,9 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function error($field, $text = null, $options = array()) {
+		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
+		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
-		$options = array_merge(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
 			if (is_array($error)) {
@@ -495,7 +505,11 @@ class FormHelper extends AppHelper {
 
 		if ($legend === true) {
 			$actionName = __('New', true);
-			if (strpos($this->action, 'update') !== false || strpos($this->action, 'edit') !== false) {
+			$isEdit = (
+				strpos($this->action, 'update') !== false ||
+				strpos($this->action, 'edit') !== false
+			);
+			if ($isEdit) {
 				$actionName = __('Edit', true);
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($this->model()));
@@ -505,10 +519,15 @@ class FormHelper extends AppHelper {
 		$out = null;
 		foreach ($fields as $name => $options) {
 			if (is_numeric($name) && !is_array($options)) {
-					$name = $options;
-					$options = array();
+				$name = $options;
+				$options = array();
 			}
-			if (is_array($blacklist) && in_array($name, $blacklist)) {
+			$entity = explode('.', $name);
+			$blacklisted = (
+				is_array($blacklist) &&
+				(in_array($name, $blacklist) || in_array(end($entity), $blacklist))
+			);
+			if ($blacklisted) {
 				continue;
 			}
 			$out .= $this->input($name, $options);
@@ -549,23 +568,27 @@ class FormHelper extends AppHelper {
 	function input($fieldName, $options = array()) {
 		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
+		$entity = join('.', $view->entity());
+
 		$defaults = array('before' => null, 'between' => null, 'after' => null);
 		$options = array_merge($defaults, $options);
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
+
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
-			} elseif (isset($this->fieldset['fields'][$this->field()])) {
-				$fieldDef = $this->fieldset['fields'][$this->field()];
+			} elseif (isset($this->fieldset['fields'][$entity])) {
+				$fieldDef = $this->fieldset['fields'][$entity];
 				$type = $fieldDef['type'];
 				$primaryKey = $this->fieldset['key'];
 			} elseif (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
 				$fieldDef = $model->schema();
+
 				if (isset($fieldDef[$this->field()])) {
 					$fieldDef = $fieldDef[$this->field()];
 				} else {
@@ -576,10 +599,10 @@ class FormHelper extends AppHelper {
 
 			if (isset($type)) {
 				$map = array(
-					'string'	=> 'text',		'datetime'	=> 'datetime',
-					'boolean'	=> 'checkbox',	'timestamp' => 'datetime',
-					'text'		=> 'textarea',	'time'		=> 'time',
-					'date'		=> 'date', 'float' => 'text'
+					'string'  => 'text',     'datetime'  => 'datetime',
+					'boolean' => 'checkbox', 'timestamp' => 'datetime',
+					'text'    => 'textarea', 'time'      => 'time',
+					'date'    => 'date',     'float'     => 'text'
 				);
 
 				if (isset($this->map[$type])) {
@@ -799,7 +822,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a checkbox input widget.
  *
- * @param string $fieldNamem Name of a field, like this "Modelname.fieldname"
+ * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  *		'value' - the value of the checkbox
  *		'checked' - boolean indicate that this checkbox is checked.
@@ -1159,36 +1182,34 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
-			if ($attributes['multiple'] === 'checkbox') {
-				$tag = $this->Html->tags['checkboxmultiplestart'];
-				$style = 'checkbox';
-			} else {
-				$tag = $this->Html->tags['selectmultiplestart'];
-			}
+			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
+			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
+			$tag = $this->Html->tags[$template];
 			$select[] = $this->hidden(null, array('value' => '', 'id' => null, 'secure' => false));
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}
 
-		if (!empty($tag)) {
+		if (!empty($tag) || isset($template)) {
 			$this->__secure();
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
 				$attributes, array('name', 'value'))
 			);
 		}
 		$emptyMulti = (
-			$showEmpty !== null && $showEmpty !== false &&
-			!(empty($showEmpty) && (isset($attributes) && array_key_exists('multiple', $attributes)))
+			$showEmpty !== null && $showEmpty !== false && !(
+				empty($showEmpty) && (isset($attributes) &&
+				array_key_exists('multiple', $attributes))
+			)
 		);
 
 		if ($emptyMulti) {
-			if ($showEmpty === true) {
-				$showEmpty = '';
-			}
+			$showEmpty = ($showEmpty === true) ? '' : $showEmpty;
 			$options = array_reverse($options, true);
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
+
 		$select = array_merge($select, $this->__selectOptions(
 			array_reverse($options, true),
 			$selected,
@@ -1197,11 +1218,8 @@ class FormHelper extends AppHelper {
 			array('escape' => $escapeOptions, 'style' => $style)
 		));
 
-		if ($style == 'checkbox') {
-			$select[] = $this->Html->tags['checkboxmultipleend'];
-		} else {
-			$select[] = $this->Html->tags['selectend'];
-		}
+		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
+		$select[] = $this->Html->tags[$template];
 		return $this->output(implode("\n", $select));
 	}
 /**

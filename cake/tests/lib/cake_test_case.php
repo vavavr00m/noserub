@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_case.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: cake_test_case.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -686,7 +686,7 @@ class CakeTestCase extends UnitTestCase {
 			if (strpos($fixture, 'core.') === 0) {
 				$fixture = substr($fixture, strlen('core.'));
 				foreach (Configure::corePaths('cake') as $key => $path) {
-					$fixturePaths[] = $path . DS . 'tests' . DS . 'fixtures';
+					$fixturePaths[] = $path . 'tests' . DS . 'fixtures';
 				}
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: request_handler.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: request_handler.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -401,8 +401,8 @@ class RequestHandlerComponent extends Object {
  * @return string Client IP address
  * @access public
  */
-	function getClientIP() {
-		if (env('HTTP_X_FORWARDED_FOR') != null) {
+	function getClientIP($safe = true) {
+		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
 			if (env('HTTP_CLIENT_IP') != null) {

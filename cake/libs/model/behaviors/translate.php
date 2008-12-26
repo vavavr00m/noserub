@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: translate.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: translate.php 7961 2008-12-25 23:21:36Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -58,7 +58,7 @@ class TranslateBehavior extends ModelBehavior {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
 			trigger_error(
-				sprintf(__('Datasource %s for TranslateBehavior of model %s is not connected'), $model->useDbConfig, $model->alias),
+				sprintf(__('Datasource %s for TranslateBehavior of model %s is not connected', true), $model->useDbConfig, $model->alias),
 				E_USER_ERROR
 			);
 			return false;
@@ -427,7 +427,7 @@ class TranslateBehavior extends ModelBehavior {
 				foreach (array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
 					if (isset($model->{$type}[$association]) || isset($model->__backAssociation[$type][$association])) {
 						trigger_error(
-							sprintf(__('Association %s is already binded to model %s'), $association, $model->alias),
+							sprintf(__('Association %s is already binded to model %s', true), $association, $model->alias),
 							E_USER_ERROR
 						);
 						return false;
