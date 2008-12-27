@@ -70,6 +70,19 @@ Configure::write('NoseRub.registration_type', 'all');
 Configure::write('NoseRub.email_from', 'info@...');
 
 /**
+ * When this settings are present in noserub.php, NoseRub
+ * uses them to send out emails. Otherwise, the php mail
+ * settings are used. 
+ */
+Configure::write('NoseRub.smtp_options', array(
+	'port'     => '25',
+	'timeout'  => '30',
+	'host'     => 'your.smtp.server',
+	'username' => 'your_smtp_username',
+	'password' => 'your_smtp_password'
+));
+
+/**
  * When true, https (Port 443) is used for sensitive 
  * pages like /pages/login/ and /pages/register/
  */
