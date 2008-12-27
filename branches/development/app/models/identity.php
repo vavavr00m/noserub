@@ -442,30 +442,7 @@ class Identity extends AppModel {
             return false;
         }
 
-        $msg = $this->prepareVerificationMessage($data['Identity']['hash']);
-        $this->sendVerificationMail($data['Identity']['email'], $msg);
-
         return true;
-    }
-
-    /**
-     * sending out the password recovery mail
-     *
-     * todo: use the mailer component
-     */
-    public function passwordRecoveryMail($username, $email, $hash) {
-        $msg = sprintf(__('You requested a new password for %s', true), 'http://' . $username) . "\n\n";
-        $msg .= __('Please click here to set a new password', true) .":\n";
-        $msg .= FULL_BASE_URL . Router::url('/pages/password/recovery/' . $hash . '/') . "\n\n";
-        $msg .= __('Thanks!', true);
-
-        if(!mail($email, sprintf(__('%s password recovery', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
-            $this->log('password recovery could not be sent: '.$email);
-            return false;
-        } else {
-            $this->log('password recovery mail sent to '.$email, LOG_DEBUG);
-            return true;
-        }
     }
     
     /**
@@ -858,24 +835,6 @@ class Identity extends AppModel {
     	}
     	
     	return $saveable;
-    }
-    
-    private function prepareVerificationMessage($hash) {
-    	$msg  = sprintf(__('Welcome to %s!', true), Configure::read('NoseRub.app_name')) . "\n\n";
-        $msg .= __('Please click here to verify your email address', true) .":\n";
-        $msg .= FULL_BASE_URL . Router::url('/') . 'pages/verify/' . $hash . '/' . "\n\n";
-        $msg .= __('If you do not click on this link, the account will automatically be deleted after 14 days.', true) . "\n\n";
-        $msg .= __('Thanks!', true);
-        
-        return $msg;
-    }
-    
-    private function sendVerificationMail($email, $msg) {
-        if(!mail($email, sprintf(__('Your %s registration', true), Configure::read('NoseRub.app_name')), $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
-            $this->log('verify mail could not be sent: '.$email);
-        } else {
-            $this->log('verify mail sent to '.$email, LOG_DEBUG);
-        }
     }
     
     /**
