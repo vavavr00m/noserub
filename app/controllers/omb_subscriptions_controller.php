@@ -54,22 +54,22 @@ class OmbSubscriptionsController extends AppController {
 		
 		if ($this->data) {
 			try {
-				$endPoint = $this->OmbConsumer->discover($this->data['Omb']['url']);
-				$serviceId = $this->OmbService->getServiceId($endPoint->getPostNoticeUrl(), $endPoint->getUpdateProfileUrl());
+				$localService = $this->OmbConsumer->discover($this->data['Omb']['url']);
+				$serviceId = $this->OmbService->getServiceId($localService->getPostNoticeUrl(), $localService->getUpdateProfileUrl());
 
 				if (!$serviceId) {
-					$serviceId = $this->OmbService->add($endPoint->getPostNoticeUrl(), $endPoint->getUpdateProfileUrl());
+					$serviceId = $this->OmbService->add($localService->getPostNoticeUrl(), $localService->getUpdateProfileUrl());
 				}
 
-				$requestToken = $this->OmbConsumer->getRequestToken($endPoint->getRequestTokenUrl(), $endPoint->getLocalId());
+				$requestToken = $this->OmbConsumer->getRequestToken($localService->getRequestTokenUrl(), $localService->getLocalId());
 				
 				$this->Session->write('omb.requestToken', $requestToken);
-				$this->Session->write('omb.accessTokenUrl', $endPoint->getAccessTokenUrl());
+				$this->Session->write('omb.accessTokenUrl', $localService->getAccessTokenUrl());
 				$this->Session->write('omb.serviceId', $serviceId);
 				
 				$identity = $this->getIdentity($username);
-				$ombAuthorizationParams = new OmbAuthorizationParams($endPoint->getLocalId(), $identity);
-				$this->redirect($this->OmbConsumer->constructAuthorizeUrl($endPoint->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams));
+				$ombAuthorizationParams = new OmbAuthorizationParams($localService->getLocalId(), $identity);
+				$this->OmbConsumer->redirectToAuthorizationPage($localService->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}

@@ -32,9 +32,10 @@ class EntriesController extends AppController {
                     'content'      => $this->data['Comment']['content'],
                     'published_on' => date('Y-m-d H:m:i')
                 );
-                $this->Entry->Comment->create();
-                $this->Entry->Comment->save($data);
+                $this->Entry->Comment->createForAll($data);
                 $this->data = array();
+                
+                $this->Entry->addComment($session_identity['id'], $entry_id);
             }
             
         } 

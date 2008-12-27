@@ -577,7 +577,7 @@ class Identity extends AppModel {
         
         # update all accounts for that identity
         # @todo: not so nice to update another model here
-        $this->Account->replace($identity_id, $data['accounts']);
+        $this->Account->update($identity_id, $data['accounts']);
 
         # update 'last_sync' field and also identity information
         $this->id = $identity_id;

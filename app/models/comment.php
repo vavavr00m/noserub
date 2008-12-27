@@ -5,6 +5,32 @@ class Comment extends AppModel {
     public $belongsTo = array('Entry', 'Identity');                                                   
 
     /**
+     * Creates the given comment and also checks, if other entries
+     * with this uid exist and add comments to it, too.
+     */
+    public function createForAll($data) {
+        $this->create();
+        $this->save($data);
+        
+        # get uid of that Entry
+        $this->Entry->id = $data['entry_id'];
+        $uid = $this->Entry->field('uid');
+        
+        # get all entries with this uid
+        $entries = $this->Entry->getByUid($uid);
+        foreach($entries as $entry) {
+            if($entry['Entry']['id'] == $this->Entry->id) {
+                # we already added this comment
+                continue;
+            }
+            # add comment to this entry
+            $data['entry_id'] = $entry['Entry']['id'];
+            $this->create();
+            $this->save($data);
+        }
+    }
+    
+    /**
      * poll new comments from peers
      */
     public function poll() {
@@ -37,30 +63,34 @@ class Comment extends AppModel {
             } else {
                 $imported = 0;
                 foreach($comments['data'] as $comment) {
-                    $entry = $this->Entry->getByUid($comment['uid'], $comment['url']);
-                    if($entry) {
-                        # we have this entry, nw get the identity
+                    $entries = $this->Entry->getByUid($comment['uid'], $comment['url']);
+                    if($entries) {
+                        # we have this entry, now get the identity
                         $identity_id = $this->Identity->getIdForUsername($comment['commented_by']);
-                        # check, if we already have this comment
-                        $conditions = array(
-                            'entry_id'    => $entry['Entry']['id'],
-                            'identity_id' => $identity_id,
-                            'content'     => $comment['comment']
-                        );
-                        $this->contain();
-                        $count = $this->find(
-                            'count',
-                            array(
-                                'conditions' => $conditions
-                            )
-                        );
-                        if(!$count) {
-                            # we need to create it
-                            $data = $conditions;
-                            $data['published_on'] = $comment['commented_on'];
-                            $this->create();
-                            $this->save($data);
-                            $imported++;
+                        
+                        # add comment to the entries
+                        foreach($entries as $entry) {
+                            # check, if we already have this comment
+                            $conditions = array(
+                                'entry_id'    => $entry['Entry']['id'],
+                                'identity_id' => $identity_id,
+                                'content'     => $comment['comment']
+                            );
+                            $this->contain();
+                            $count = $this->find(
+                                'count',
+                                array(
+                                    'conditions' => $conditions
+                                )
+                            );
+                            if(!$count) {
+                                # we need to create it
+                                $data = $conditions;
+                                $data['published_on'] = $comment['commented_on'];
+                                $this->create();
+                                $this->save($data);
+                                $imported++;
+                            }
                         }
                     }
                 }

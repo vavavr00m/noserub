@@ -121,8 +121,12 @@ class Entry extends AppModel {
                 $entry['published_on'] = $item['datetime'];
                 $entry['title']        = $item['title'];
                 $entry['content']      = $item['content'];
+                $entry['latitude']     = $item['latitude'];
+                $entry['longitude']    = $item['longitude'];
                 $this->id = $entry['id'];
-                $saveable = array('published_on', 'title', 'content');
+                $saveable = array(
+                    'published_on', 'title', 'content',
+                    'latitude', 'longitude');
                 $this->save($entry, $saveable, true);
             } else {
                 # needs no update
@@ -147,6 +151,8 @@ class Entry extends AppModel {
                 'url'             => $item['url'] ? $item['url'] : '',
                 'uid'             => $item['url'] ? md5($item['url']) : '',
                 'content'         => $item['content'] ? $item['content'] : '',
+                'latitude'        => $item['latitude'],
+                'longitude'       => $item['longitude'],
                 'restricted'      => !$frontpage_updates
             );
             $saveable = array_keys($entry);
@@ -348,7 +354,7 @@ class Entry extends AppModel {
         $this->save($data);
         
         $this->sendToTwitter($identity_id, $text);
-        $this->sendToOmb($identity_id, $text);
+        $this->sendToOmb($identity_id, $this->id, $text);
         
         return true;
     }
@@ -474,6 +480,14 @@ class Entry extends AppModel {
         $this->addNoseRub($identity_id, $message, $restricted);
     }
     
+    public function addComment($identity_id, $entry_id, $restricted = false) {
+        $this->Identity->Entry->id = $entry_id;
+        $title = strip_tags($this->Identity->Entry->field('title'));
+        $link = '<a href="' . Router::url('/entry/' . $entry_id . '/') . '">' . $title . '</a>';
+        $message = sprintf(__('commented on: %s', true), $link);
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
     /**
      */
     public function getMessage($entry) {
@@ -510,25 +524,32 @@ class Entry extends AppModel {
      * tries to get an entry by it's uid. checks for the url, too, to
      * avoid hash collisions (although very unlikely)
      *
+     * returns an array, when more than one entry with that uid was
+     * found - this can happen when different identities subscribed
+     * the same feeds. 
+     *
      * @param string $uid
      * @param string $url
      *
      * @return array
      */
-    public function getByUid($uid, $url) {
+    public function getByUid($uid, $url = null) {
+        $conditions = array('Entry.uid' => $uid);
+        if($url) {
+            $conditions['Entry.url'] = $url;
+        }
         $this->contain();
         return $this->find(
-            'first',
+            'all',
             array(
                 'conditions' => array(
-                    'Entry.uid' => $uid,
-                    'Entry.url' => $url
+                    'Entry.uid' => $uid
                 )
             )
         );
     }
     
-    private function sendToOmb($identity_id, $text) {
+    private function sendToOmb($identity_id, $entry_id, $text) {
     	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
     	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
 
@@ -541,7 +562,7 @@ class Entry extends AppModel {
     	$ombConsumer = new OmbConsumerComponent();
     	$ombConsumer->Session = new SessionComponent();
     	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $text);
+    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
     }
     
     /**
