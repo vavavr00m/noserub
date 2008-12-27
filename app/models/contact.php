@@ -340,7 +340,6 @@ class Contact extends AppModel {
             if($item['is_private'] && 
                isset($item['accounts']) &&
                $item['accounts']) {
-                $this->log(print_r($item['accounts'], 1));
                 $this->Identity->Account->update($new_identity_id, $item['accounts']);
             }
         }

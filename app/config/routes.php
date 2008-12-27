@@ -115,6 +115,7 @@ Router::connect('/jobs/:admin_hash/xmpp/start/', array('controller' => 'xmpp', '
  */ 
 Router::connect('/jobs/shell/system/update/', array('controller' => 'admin', 'action' => 'shell_system_update')); 
 Router::connect('/jobs/shell/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
+Router::connect('/jobs/shell/feeds/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/jobs/shell/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/jobs/shell/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));
 Router::connect('/jobs/shell/peers/sync/', array('controller' => 'peers', 'action' => 'shell_sync'));

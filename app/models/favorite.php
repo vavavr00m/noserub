@@ -37,29 +37,32 @@ class Favorite extends AppModel {
             } else {
                 $imported = 0;
                 foreach($favorites['data'] as $favorite) {
-                    $entry = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
-                    if($entry) {
+                    $entrie = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
+                    if($entries) {
                         # we have this entry, nw get the identity
                         $identity_id = $this->Identity->getIdForUsername($favorite['favorited_by']);
-                        # check, if we already have this comment
-                        $conditions = array(
-                            'entry_id'    => $entry['Entry']['id'],
-                            'identity_id' => $identity_id
-                        );
-                        $this->contain();
-                        $count = $this->find(
-                            'count',
-                            array(
-                                'conditions' => $conditions
-                            )
-                        );
-                        if(!$count) {
-                            # we need to create it
-                            $data = $conditions;
-                            $data['created'] = $favorite['favorited_on'];
-                            $this->create();
-                            $this->save($data);
-                            $imported++;
+                        
+                        foreach($entries as $entry) {
+                            # check, if we already have this comment
+                            $conditions = array(
+                                'entry_id'    => $entry['Entry']['id'],
+                                'identity_id' => $identity_id
+                            );
+                            $this->contain();
+                            $count = $this->find(
+                                'count',
+                                array(
+                                    'conditions' => $conditions
+                                )
+                            );
+                            if(!$count) {
+                                # we need to create it
+                                $data = $conditions;
+                                $data['created'] = $favorite['favorited_on'];
+                                $this->create();
+                                $this->save($data);
+                                $imported++;
+                            }
                         }
                     }
                 }
