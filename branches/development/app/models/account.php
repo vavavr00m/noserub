@@ -37,30 +37,45 @@ class Account extends AppModel {
         );
     }
     
-    public function update($identity_id, $data, $replace = false) {
-        if($replace) {
-            # remove old account data
-            $this->deleteByIdentityId($identity_id);
-        }
-    
+    /**
+     * 
+     */
+    public function update($identity_id, $data) {
+        # get all accounts for this identity, so we afterwards can decide
+        # wether an account needs to be removed.
+        $this->contain();
+        $accounts = $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'identity_id' => $identity_id
+                )
+            )
+        );
+        
         # add the new data
         foreach($data as $item) {
             # check, if we already have it. we need to do this, even
             # when not replacing. it could be, that an account is
             # more than once in the array.
-            $urls = array('Account.account_url' => $item['account_url']);
-            if($item['feed_url']) {
-                # only add test for feed URL, when there actually is one.
-                # else, all the contact things like AIM, Jabber would fail.
-                $urls['Account.feed_url'] = $item['feed_url'];
-            }
+            
             $conditions = array(
                 'Account.identity_id' => $identity_id,
-                array('OR' => $urls)
             );
+            
+            if($item['feed_url']) {
+                # only add feed URL, when there actually is one.
+                # else, all the contact things like AIM, Jabber would fail.
+                $conditions['Account.feed_url'] = $item['feed_url'];
+            } else {
+                $conditions['Account.account_url'] = $item['account_url'];
+            }
 
             $this->cacheQueries = false;
-            if(!$this->hasAny($conditions)) {
+            $this->contain();
+            $account = $this->find('first', array('conditions' => $conditions));
+            if(!$account) {
+                $this->log('new account: ' . $item['account_url'], LOG_DEBUG);
                 $item['identity_id'] = $identity_id;
                 $saveable = array(
                     'identity_id', 'service_id', 'service_type_id', 'title',
@@ -68,16 +83,41 @@ class Account extends AppModel {
                 );
                 $this->create();
                 $this->save($item, true, $saveable);
+            } else {
+                $this->log('existing account: ' . $item['account_url'], LOG_DEBUG);
+                $saveable = array(
+                    'identity_id', 'service_id', 'service_type_id', 'title',
+                    'username', 'account_url', 'feed_url', 'modified'
+                );
+                $item['identity_id'] = $identity_id;
+                $this->id = $account['Account']['id'];
+                $this->save($item, true, $saveable);
+            
+                # delete this account from the $accounts array
+                foreach($accounts as $key => $value) {
+                    if($value['Account']['id'] == $account['Account']['id']) {
+                        unset($accounts[$key]);
+                        break;
+                    }
+                }
             }
+        }
+        
+        # delete all accounts that were not found
+        foreach($accounts as $item) {
+            $this->log('delete account: ' . $item['account_url'], LOG_DEBUG);
+            $this->delete($item['Account']['id'], false);
+            $this->Entry->deleteAll(
+                array(
+                    'account_id' => $item['Account']['id']
+                ), 
+                false
+            );
         }
         
         return true;
     }
         
-    public function replace($identity_id, $data) {
-        return $this->update($identity_id, $data, true);
-    }
-    
     /**
      * Deletes all accounts for given identity_id
      *
@@ -92,7 +132,12 @@ class Account extends AppModel {
             # delete account and feed cache
             $account_id = $item['Account']['id'];
             $this->delete($account_id, false);
-            $this->query('DELETE FROM ' . $this->tablePrefix . 'entries WHERE account_id=' . $item['Account']['id']);
+            $this->Entry->deleteAll(
+                array(
+                    'account_id' => $item['Account']['id']
+                ), 
+                false
+            );
         }
     }
     

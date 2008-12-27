@@ -52,7 +52,9 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                         $splitted2 = split('@', $splitted[count($splitted)-1]);
                         $username = $splitted2[0];
                         $label = wordwrap($username, 12, '<br />', true);
-                        echo __('From', true) . ' <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
+						__('From');
+						echo ' ' . $html->link($label, '/entry/' . $item['Entry']['id']);
+                        #echo __('From', true) . ' <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
                     ?>
                     </span>
                 <?php } ?>
