@@ -7,7 +7,7 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
-    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider');
+    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer');
     
     /**
      * Displays profile page of an identity 
@@ -384,9 +384,7 @@ class IdentitiesController extends AppController {
             }
             
             if(isset($this->data['Identity']['remove_photo']) && $this->data['Identity']['remove_photo'] == 1) {
-            	# check, if photo should be removed
-                @unlink($path . $identity['Identity']['photo'] . '.jpg');
-                @unlink($path . $identity['Identity']['photo'] . '-small.jpg');
+            	$this->deleteAvatars($identity['Identity']['photo']);
                 $identity['Identity']['photo'] = '';
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
             } else if(isset($this->data['Identity']['use_gravatar']) && 
@@ -395,7 +393,7 @@ class IdentitiesController extends AppController {
             	# use gravatar image
             	$md5 = md5($identity['Identity']['email']);
             	$this->data['Identity']['photo'] = 'http://gravatar.com/avatar/' . $md5;
-            	$this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
+            	$this->Identity->Entry->addPhotoChanged($identity['Identity']['id']);
             } else if($this->data['Identity']['photo']['error'] != 0) {
             	# save the photo, if neccessary
                 $this->data['Identity']['photo'] = $identity['Identity']['photo'];
@@ -407,7 +405,7 @@ class IdentitiesController extends AppController {
                     if(Configure::read('NoseRub.use_cdn')) {
                         $this->copyAvatarsToCdn($filename);
                     }
-                    $this->Identity->Entry->addPhotoChanged($identity['Identity']['id'], null);
+                    $this->Identity->Entry->addPhotoChanged($identity['Identity']['id']);
                 }
             }   
              
@@ -415,6 +413,7 @@ class IdentitiesController extends AppController {
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);
+            $this->sendUpdateToOmbSubscribers($this->data);
             
             $this->flashMessage('success', __('Changes have been saved.', true));
             
@@ -818,14 +817,35 @@ class IdentitiesController extends AppController {
     	}
     }
     
-    private function copyAvatarsToCdn($baseFilename) {
-    	$normalFilename = $baseFilename . '.jpg';
-    	$mediumFilename = $baseFilename . '-medium.jpg';
-    	$smallFilename = $baseFilename . '-small.jpg';
+    private function copyAvatarsToCdn($avatarName) {
+    	$fileNames = $this->getAvatarFileNames($avatarName);
     	
-    	$this->cdn->copyTo(AVATAR_DIR . $normalFilename, 'avatars/' . $normalFilename);
-    	$this->cdn->copyTo(AVATAR_DIR . $mediumFilename, 'avatars/' . $mediumFilename);
-		$this->cdn->copyTo(AVATAR_DIR . $smallFilename, 'avatars/' . $smallFilename);
+    	foreach ($fileNames as $fileName) {
+    		$this->cdn->copyTo(AVATAR_DIR . $fileName, 'avatars/' . $fileName);
+    	}
+    }
+    
+	private function deleteAvatars($avatarName) {
+		$fileNames = $this->getAvatarFileNames($avatarName);
+		
+		foreach ($fileNames as $fileName) {
+			@unlink(AVATAR_DIR . $fileName);
+		}
+    }
+    
+    private function getAvatarFileNames($avatarName) {
+    	return array($avatarName . '.jpg', 
+    				 $avatarName . '-medium.jpg', 
+    				 $avatarName . '-small.jpg');
+    }
+    
+    private function sendUpdateToOmbSubscribers($data) {
+    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
+    	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
+
+    	if ($accessToken) {
+	    	$this->OmbConsumer->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
+    	}
     }
     
     /**

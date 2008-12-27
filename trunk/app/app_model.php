@@ -11,6 +11,7 @@
 class AppModel extends Model {
 	public $actsAs = array('Containable');
 	private $sanitizeExclusion = array('Feed', 'Entry');
+    private $old_locale = null;
     
     /**
      * 	configure sanitization details based on the model and the 
@@ -77,11 +78,17 @@ class AppModel extends Model {
      * There's also an automatic and always active UTF7-filter to prevent 
      * XSS by UTF7 html chunk injection in ie6 and older
      *
-     * @author mario
      * @return bool
      * @access public
      */
-    public function beforeSave() {
+    public function beforeSave($options = array()) {
+        # set locale to an english version, so that floats (like
+        # in longitude+latitude) don't get messed up for mysql.
+        if(is_null($this->old_locale)) {
+            $this->old_locale = setlocale(LC_ALL, '0');
+        }
+        setlocale(LC_NUMERIC, 'C');
+        
         # sanitize some elements
         if(!empty ($this->data)) {
             if(!in_array($this->name, $this->sanitizeExclusion)) {
@@ -138,7 +145,19 @@ class AppModel extends Model {
             }
         }
         
-        return true;
+        return parent::beforeSave($options);
+    }
+    
+    /**
+     * hook from CakePHP
+     */
+    public function afterSave($created) {
+        # reset locale to version from beforeSave()
+        if(!is_null($this->old_locale)) {
+            setlocale(LC_NUMERIC, $this->old_locale);
+            $this->old_locale = null;
+        }
+        return parent::afterSave($created);
     }
     
     private function deSanitize($field) {
@@ -168,5 +187,5 @@ class AppModel extends Model {
 		);
 		
 		return preg_replace($patterns, $replacements, $field);
-    }
+    }    
 }

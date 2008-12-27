@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: i18n.php 739 2008-06-05 12:36:40Z dhofstet $ */
+/* SVN FILE: $Id: i18n.php 1266 2008-12-19 10:05:47Z dhofstet $ */
 /*i18n schema generated on: 2007-11-25 07:11:25 : 1196004805*/
 /**
  * This is i18n Schema file
@@ -8,24 +8,22 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.app.config.sql
- * @since			CakePHP(tm) v 0.2.9
- * @version			$Revision$
- * @modifiedby		$LastChangedBy: dhofstet $
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.app.config.sql
+ * @since         CakePHP(tm) v 0.2.9
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy: dhofstet $
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /*
  *

@@ -115,12 +115,14 @@ class Service extends AppModel {
     		    break;
     		}
     		
-    		$item['title']    = $feeditem->get_title();
-    		$item['url']      = $feeditem->get_link();
-            $item['intro']    = $intro;
-            $item['type']     = $token;
-            $item['username'] = $username;
-            
+    		$item['title']     = $feeditem->get_title();
+    		$item['url']       = $feeditem->get_link();
+            $item['intro']     = $intro;
+            $item['type']      = $token;
+            $item['username']  = $username;
+            $item['latitude']  = $feeditem->get_latitude();
+            $item['longitude'] = $feeditem->get_longitude();
+
             $service = $this->getService($service_id);
 
             if($service) {
