@@ -7,7 +7,9 @@ class Auth_OpenID_CheckIDRequest {}
 class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
-    public $components = array('geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer');
+    public $components = array(
+        'geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 
+        'OauthServiceProvider', 'OmbConsumer', 'Email');
     
     /**
      * Displays profile page of an identity 
@@ -932,11 +934,21 @@ class IdentitiesController extends AppController {
                     $this->Identity->id = $identity['Identity']['id'];
                     $recovery_hash = md5(uniqid(rand(), true));
                     $this->Identity->saveField('password_recovery_hash', $recovery_hash);
-                if(!$this->Identity->passwordRecoveryMail($username, $email, $recovery_hash)) {
-                        $this->flashMessage('alert', __('The mail could not be sent!', true));
-                    } else {
-                        $this->flashMessage('success', __('Please look into your inbox for the password recovery email.', true));
+                    
+                    $this->set('recovery_hash', $recovery_hash);
+                    $this->set('username', $username);
+                    $this->Email->to       = $email;
+                    $this->Email->subject  = sprintf(__('%s password recovery', true), Configure::read('NoseRub.app_name'));
+                    $this->Email->from     = Configure::read('NoseRub.email_from');
+                    $this->Email->template = 'identity/password_recovery';
+                    $this->Email->sendAs   = 'both'; 
+                    if(Configure::read('NoseRub.smtp_options')) {
+                        $this->Email->smtpOptions = Configure::read('NoseRub.smtp_options');
+                        $this->Email->delivery = 'smtp';
                     }
+                    $this->Email->send();
+                    
+                    $this->flashMessage('success', __('Please look into your inbox for the password recovery email.', true));
                 }
             }
             
