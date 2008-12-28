@@ -37,7 +37,7 @@ class Favorite extends AppModel {
             } else {
                 $imported = 0;
                 foreach($favorites['data'] as $favorite) {
-                    $entrie = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
+                    $entries = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
                     if($entries) {
                         # we have this entry, nw get the identity
                         $identity_id = $this->Identity->getIdForUsername($favorite['favorited_by']);
