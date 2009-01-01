@@ -65,7 +65,6 @@ class AccountsController extends AppController {
                             $account_id = $present_contact_accounts[$service_id]['account_id'];
                             $this->Account->id = $account_id;
                             $this->Account->delete();
-                            $this->Account->query('DELETE FROM ' . $this->Account->tablePrefix . 'feeds WHERE account_id=' . $account_id);
                             $need_redirect = true;
                         } else if($present_contact_accounts[$service_id]['username'] != $item['username']) {
                             # username was changed!
