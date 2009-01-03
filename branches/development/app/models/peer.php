@@ -3,6 +3,21 @@
  
 class Peer extends AppModel {
     
+	public function getEnabledPeers() {
+		$this->contain();
+		$peers = $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'disabled' => '0'
+                ),
+                'order' => 'last_sync ASC'
+            )
+        );
+        
+        return $peers;
+	}
+	
     /**
      * retrieves a list of peers from http://noserub.com/peers
      * and syncs this list with the ones in the local database

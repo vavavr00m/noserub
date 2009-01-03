@@ -39,17 +39,7 @@ class Comment extends AppModel {
         App::import('Vendor', 'WebExtractor');
         
         $Peer = new Peer();
-        
-        $Peer->contain();
-        $peers = $Peer->find(
-            'all',
-            array(
-                'conditions' => array(
-                    'disabled' => '0'
-                ),
-                'order' => 'last_sync ASC'
-            )
-        );
+        $peers = $Peer->getEnabledPeers();
         
         $polled = array();
         Zend_Json::$useBuiltinEncoderDecoder = true;
