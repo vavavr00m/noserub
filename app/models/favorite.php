@@ -29,7 +29,7 @@ class Favorite extends AppModel {
                 foreach($favorites['data'] as $favorite) {
                     $entries = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
                     if($entries) {
-                        # we have this entry, nw get the identity
+                        # we have this entry, now get the identity
                         $identity_id = $this->Identity->getIdForUsername($favorite['favorited_by']);
                         
                         foreach($entries as $entry) {
@@ -38,14 +38,8 @@ class Favorite extends AppModel {
                                 'entry_id'    => $entry['Entry']['id'],
                                 'identity_id' => $identity_id
                             );
-                            $this->contain();
-                            $count = $this->find(
-                                'count',
-                                array(
-                                    'conditions' => $conditions
-                                )
-                            );
-                            if(!$count) {
+
+                            if(!$this->hasAny($conditions)) {
                                 # we need to create it
                                 $data = $conditions;
                                 $data['created'] = $favorite['favorited_on'];

@@ -66,14 +66,8 @@ class Comment extends AppModel {
                                 'identity_id' => $identity_id,
                                 'content'     => $comment['comment']
                             );
-                            $this->contain();
-                            $count = $this->find(
-                                'count',
-                                array(
-                                    'conditions' => $conditions
-                                )
-                            );
-                            if(!$count) {
+                            
+                            if(!$this->hasAny($conditions)) {
                                 # we need to create it
                                 $data = $conditions;
                                 $data['published_on'] = $comment['commented_on'];
