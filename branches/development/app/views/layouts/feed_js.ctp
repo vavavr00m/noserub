@@ -1,7 +1,6 @@
 <?php
 App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-$zend_json = new Zend_Json();
-$zend_json->useBuiltinEncoderDecoder = true;
+Zend_Json::$useBuiltinEncoderDecoder = true;
 
 # go through all the items and build the json data structure
 $items = array();
@@ -12,5 +11,5 @@ foreach($data as $item) {
                      'link'    => $item['Entry']['url'],
                      'content' => $item['Entry']['content']);
 }
-echo 'noserub_feed='.$zend_json->encode($items);
+echo 'noserub_feed='.Zend_Json::encode($items);
 ?>
