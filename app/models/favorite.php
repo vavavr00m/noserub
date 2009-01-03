@@ -26,11 +26,11 @@ class Favorite extends AppModel {
         );
         
         $polled = array();
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        
         foreach($peers as $peer) {
             $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/favorites/');
-            $zend_json = new Zend_Json();
-            $zend_json->useBuiltinEncoderDecoder = true;
-            $favorites = $zend_json->decode($json_data);
+            $favorites = Zend_Json::decode($json_data);
             if(!isset($favorites['data']) || !is_array($favorites['data'])) {
                 $favorites = array('data' => array());
                 $imported = 0;

@@ -684,10 +684,8 @@ class Identity extends AppModel {
             return false;
         }
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-        $zend_json = new Zend_Json();
-        $zend_json->useBuiltinEncoderDecoder = true;
-        
-        $data = $zend_json->decode($content);
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $data = Zend_Json::decode($content);
 
         if(!is_array($data) || 
            !isset($data['server']['base_url']) || 

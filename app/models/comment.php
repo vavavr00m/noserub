@@ -52,11 +52,11 @@ class Comment extends AppModel {
         );
         
         $polled = array();
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        
         foreach($peers as $peer) {
             $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/comments/');
-            $zend_json = new Zend_Json();
-            $zend_json->useBuiltinEncoderDecoder = true;
-            $comments = $zend_json->decode($json_data);
+            $comments = Zend_Json::decode($json_data);
             if(!isset($comments['data']) || !is_array($comments['data'])) {
                 $comments = array('data' => array());
                 $imported = 0;
