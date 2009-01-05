@@ -31,7 +31,7 @@ class Peer extends AppModel {
         $data = Zend_Json::decode($json_data);
         
         if(!$data) {
-            return 'ERROR: could not connect to http://noserub.com/peers';
+            return __('ERROR: could not connect to http://noserub.com/peers', true);
         }
         
         $updated_peers = array();
@@ -76,7 +76,7 @@ class Peer extends AppModel {
         }
         
         if(!$updated_peers) {
-            return 'no peers updated';
+            return __('no peers updated', true);
         }
         
         return $updated_peers;
