@@ -5,6 +5,10 @@ class ExtensionsChecker {
 	public static function check() {
 		$result = array();
     	
+		if (!extension_loaded('spl')) {
+			$result = am($result, array('SPL (Standard PHP Library)' => __('must be enabled', true)));
+		}
+		
         if (!extension_loaded('curl')) {
         	$result = am($result, array('curl' => __('needed for communicating with other servers', true)));
         }
