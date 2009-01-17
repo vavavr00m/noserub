@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: paginator.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: paginator.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Pagination Helper class file.
  *
@@ -304,7 +304,7 @@ class PaginatorHelper extends AppHelper {
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
 
-		if (!$this->{$check}() && (!empty($disabledTitle) || !empty($disabledOptions))) {
+		if (!$this->{$check}($options['model']) && (!empty($disabledTitle) || !empty($disabledOptions))) {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
 				$title = $disabledTitle;
 			}

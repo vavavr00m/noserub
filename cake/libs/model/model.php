@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: model.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: model.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Object-relational mapper.
  *
@@ -1282,6 +1282,18 @@ class Model extends Overloadable {
 						|| ($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 16));
 
 				$newData = $newValues = array();
+				$primaryAdded = false;
+
+				$fields =  array(
+					$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
+					$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+				);
+
+				$idField = $db->name($this->{$join}->primaryKey);
+				if ($isUUID && !in_array($idField, $fields)) {
+					$fields[] = $idField;
+					$primaryAdded = true;
+				}
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
@@ -1289,7 +1301,7 @@ class Model extends Overloadable {
 							$db->value($id, $this->getColumnType($this->primaryKey)),
 							$db->value($row)
 						);
-						if ($isUUID) {
+						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
 						}
 						$values = join(',', $values);
@@ -1297,6 +1309,15 @@ class Model extends Overloadable {
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
+					}
+				}
+
+				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
+					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
+					if (!empty($oldLinks)) {
+ 						$conditions[$associationForeignKey] = $oldLinks;
+						$db->delete($this->{$join}, $conditions);
 					}
 				}
 
@@ -1308,23 +1329,7 @@ class Model extends Overloadable {
 					}
 				}
 
-				if (empty($newData) && $this->hasAndBelongsToMany[$assoc]['unique']) {
-					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
-					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
-					if (!empty($oldLinks)) {
- 						$conditions[$associationForeignKey] = $oldLinks;
-						$db->delete($this->{$join}, $conditions);
-					}
-				}
-
 				if (!empty($newValues)) {
-					$fields =  array(
-						$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
-						$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
-					);
-					if ($isUUID) {
-						$fields[] = $db->name($this->{$join}->primaryKey);
-					}
 					$fields =  join(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
@@ -1754,7 +1759,7 @@ class Model extends Overloadable {
 
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			$records = $this->{$data['with']}->find('all', array(
-				'conditions' => array_merge(array($data['foreignKey'] => $id), (array) $data['conditions']),
+				'conditions' => array_merge(array($this->{$data['with']}->escapeField($data['foreignKey']) => $id)),
 				'fields' => $this->{$data['with']}->primaryKey,
 				'recursive' => -1
 			));
