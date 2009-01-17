@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: validation.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: validation.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Validation Class.  Used for validation of model data
  *
@@ -632,7 +632,7 @@ class Validation extends Object {
 	function multiple($check, $options = array()) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options = array_merge($defaults, $options);
-		$check = array_filter($check);
+		$check = array_filter((array)$check);
 		if (empty($check)) {
 			return false;
 		}
