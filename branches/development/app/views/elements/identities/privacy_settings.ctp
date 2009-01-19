@@ -17,6 +17,17 @@
 </fieldset>
 <fieldset>
     <legend><?php __('Communication'); ?></legend>
-    <label><?php __('Which persons may send me e-Mails?'); ?></label>
+    
+	<label><?php __('Which persons may send me e-Mails?'); ?></label>
     <?php echo $form->select('Identity.allow_emails', $options, null, array(), false); ?>
+    
+	<label><?php __('Notify me when the following happens'); ?>:</label>
+    <?php echo $form->checkbox('Identity.notify_contact'); ?>
+    <?php __('Someone adds me as contact'); ?>
+	<br />
+    <?php echo $form->checkbox('Identity.notify_comment'); ?>
+    <?php __('Someone makes a comment on one of my entries'); ?>
+	<br />
+    <?php echo $form->checkbox('Identity.notify_favorite'); ?>
+    <?php __('Someone marks one of my entries as favorite'); ?>
 </fieldset>
