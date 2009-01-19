@@ -488,15 +488,34 @@ class IdentitiesController extends AppController {
             if($frontpage_updates != $this->data['Identity']['frontpage_updates']) {
                 $this->Identity->Entry->updateRestriction($session_identity['id'], $frontpage_updates == 1 ? 1 : 0);
             }
-            # ssave all settings
-            $saveable = array('frontpage_updates', 'allow_emails');
+            # save all settings
+            $saveable = array(
+                'frontpage_updates', 
+                'allow_emails',
+                'notify_contact',
+                'notify_comment',
+                'notify_favorite'
+            );
             $this->Identity->save($this->data, true, $saveable);
             
             $this->flashMessage('success', __('Privacy settings have been saved.', true));
         } else {
-            $this->Identity->id = $session_identity['id'];
-            $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
-            $this->data['Identity']['allow_emails']      = $this->Identity->field('allow_emails');
+            $this->Identity->contain();
+            $this->data = $this->Identity->find(
+                'first',
+                array(
+                    'conditions' => array(
+                        'id' => $session_identity['id']
+                    ),
+                    'fields' => array(
+                        'frontpage_updates',
+                        'allow_emails',
+                        'notify_contact',
+                        'notify_comment',
+                        'notify_favorite'
+                    )
+                )
+            );
         }
         
         $this->set('headline', __('Your privacy settings', true));
