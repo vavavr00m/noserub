@@ -9,7 +9,8 @@ class IdentitiesController extends AppController {
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
         'geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 
-        'OauthServiceProvider', 'OmbConsumer', 'Email');
+        'OauthServiceProvider', 'OmbConsumer', 'Email'
+    );
     
     /**
      * Displays profile page of an identity 
