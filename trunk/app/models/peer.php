@@ -3,6 +3,21 @@
  
 class Peer extends AppModel {
     
+	public function getEnabledPeers() {
+		$this->contain();
+		$peers = $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'disabled' => '0'
+                ),
+                'order' => 'last_sync ASC'
+            )
+        );
+        
+        return $peers;
+	}
+	
     /**
      * retrieves a list of peers from http://noserub.com/peers
      * and syncs this list with the ones in the local database
@@ -12,13 +27,11 @@ class Peer extends AppModel {
         $json_data = WebExtractor::fetchUrl('http://noserub.com/peers');
         
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-        $zend_json = new Zend_Json();
-        $zend_json->useBuiltinEncoderDecoder = true;
-        
-        $data = $zend_json->decode($json_data);
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $data = Zend_Json::decode($json_data);
         
         if(!$data) {
-            return 'ERROR: could not connect to http://noserub.com/peers';
+            return __('ERROR: could not connect to http://noserub.com/peers', true);
         }
         
         $updated_peers = array();
@@ -63,7 +76,7 @@ class Peer extends AppModel {
         }
         
         if(!$updated_peers) {
-            return 'no peers updated';
+            return __('no peers updated', true);
         }
         
         return $updated_peers;

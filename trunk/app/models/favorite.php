@@ -9,28 +9,21 @@ class Favorite extends AppModel {
      */
     public function poll() {
         App::import('Model', 'Peer');
+        App::import('Model', 'Mail');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
         
-        $Peer = new Peer();
+        $Mail = new Mail();
         
-        $Peer->contain();
-        $peers = $Peer->find(
-            'all',
-            array(
-                'conditions' => array(
-                    'disabled' => '0'
-                ),
-                'order' => 'last_sync ASC'
-            )
-        );
+        $Peer = new Peer();
+        $peers = $Peer->getEnabledPeers();
         
         $polled = array();
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        
         foreach($peers as $peer) {
             $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/favorites/');
-            $zend_json = new Zend_Json();
-            $zend_json->useBuiltinEncoderDecoder = true;
-            $favorites = $zend_json->decode($json_data);
+            $favorites = Zend_Json::decode($json_data);
             if(!isset($favorites['data']) || !is_array($favorites['data'])) {
                 $favorites = array('data' => array());
                 $imported = 0;
@@ -39,7 +32,7 @@ class Favorite extends AppModel {
                 foreach($favorites['data'] as $favorite) {
                     $entries = $this->Entry->getByUid($favorite['uid'], $favorite['url']);
                     if($entries) {
-                        # we have this entry, nw get the identity
+                        # we have this entry, now get the identity
                         $identity_id = $this->Identity->getIdForUsername($favorite['favorited_by']);
                         
                         foreach($entries as $entry) {
@@ -48,20 +41,16 @@ class Favorite extends AppModel {
                                 'entry_id'    => $entry['Entry']['id'],
                                 'identity_id' => $identity_id
                             );
-                            $this->contain();
-                            $count = $this->find(
-                                'count',
-                                array(
-                                    'conditions' => $conditions
-                                )
-                            );
-                            if(!$count) {
+
+                            if(!$this->hasAny($conditions)) {
                                 # we need to create it
                                 $data = $conditions;
                                 $data['created'] = $favorite['favorited_on'];
                                 $this->create();
                                 $this->save($data);
                                 $imported++;
+                                
+                                $Mail->notifyFavorite($identity_id, $entry['Entry']['id']);
                             }
                         }
                     }

@@ -3,6 +3,8 @@
 Router::connect('/', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/social_stream/:filter/:output/', array('controller' => 'identities', 'action' => 'social_stream'));
 
+Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => 'send'));
+
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));

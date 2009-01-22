@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: cache.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Caching for CakePHP.
  *
@@ -213,8 +213,7 @@ class Cache extends Object {
 	function gc() {
 		$_this =& Cache::getInstance();
 		$config = $_this->config();
-		extract($config);
-		$_this->_Engine[$engine]->gc();
+		$_this->_Engine[$config['engine']]->gc();
 	}
 /**
  * Write data for key into cache

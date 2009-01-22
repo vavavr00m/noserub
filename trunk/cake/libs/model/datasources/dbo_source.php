@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_source.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dbo_source.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -508,7 +508,7 @@ class DboSource extends DataSource {
 		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
-		if ($error && Configure::read() > 0) {
+		if (Configure::read() > 0) {
 			$out = null;
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
@@ -1390,7 +1390,8 @@ class DboSource extends DataSource {
  * @access protected
  */
 	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
-		$quotedAlias = $this->startQuote . $model->alias . $this->startQuote;
+		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
+
 		foreach ($fields as $field => $value) {
 			if ($alias && strpos($field, '.') === false) {
 				$quoted = $model->escapeField($field);
@@ -1404,19 +1405,20 @@ class DboSource extends DataSource {
 
 			if ($value === null) {
 				$updates[] = $quoted . ' = NULL';
-			} else {
-				$update = $quoted . ' = ';
-				if ($quoteValues) {
-					$update .= $this->value($value, $model->getColumnType($field), false);
-				} elseif (!$alias) {
-					$update .= str_replace($quotedAlias . '.', '', str_replace(
-						$model->alias . '.', '', $value
-					));
-				} else {
-					$update .= $value;
-				}
-				$updates[] =  $update;
+				continue;
 			}
+			$update = $quoted . ' = ';
+
+			if ($quoteValues) {
+				$update .= $this->value($value, $model->getColumnType($field), false);
+			} elseif (!$alias) {
+				$update .= str_replace($quotedAlias . '.', '', str_replace(
+					$model->alias . '.', '', $value
+				));
+			} else {
+				$update .= $value;
+			}
+			$updates[] =  $update;
 		}
 		return $updates;
 	}
@@ -1674,7 +1676,11 @@ class DboSource extends DataSource {
 					$dot = strpos($fields[$i], '.');
 
 					if ($dot === false) {
-						$fields[$i] = $this->name($alias . '.' . $fields[$i]);
+						$prefix = !(
+							strpos($fields[$i], ' ') !== false ||
+							strpos($fields[$i], '(') !== false
+						);
+						$fields[$i] = $this->name(($prefix ? '' : '') . $alias . '.' . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');
@@ -1824,8 +1830,9 @@ class DboSource extends DataSource {
 						$count = count($value);
 						if ($count === 1) {
 							$data = $this->name($key) . ' = (';
-						} else
+						} else {
 							$data = $this->name($key) . ' IN (';
+						}
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
 								$columnType = $model->getColumnType($key);

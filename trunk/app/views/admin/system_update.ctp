@@ -5,7 +5,7 @@
     check back after each update you install, because new constants may have
     been introduced and/or changes in the database structure been made.'); ?>
 </p>
-<h2><?php __('Extension'); ?></h2>
+<h2><?php __('Extensions'); ?></h2>
 <?php if(empty($extensions)) { ?>
     <p id="message" class="success">
         <?php __('Status'); ?>: <strong><?php __('OK'); ?></strong>

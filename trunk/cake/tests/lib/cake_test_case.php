@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_case.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: cake_test_case.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -460,7 +460,7 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Takes an array $expected and generates a regex from it to match the provided $string. Samples for $expected:
  *
- * Checks for an input tag with a name attribute (contains any value) and an id attribute that contains 'my-input':
+ * Checks for an input tag with a name attribute (contains any non-empty value) and an id attribute that contains 'my-input':
  * 	array('input' => array('name', 'id' => 'my-input'))
  *
  * Checks for two p elements with some text in them:

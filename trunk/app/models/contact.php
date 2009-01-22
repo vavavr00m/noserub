@@ -28,6 +28,10 @@ class Contact extends AppModel {
             $this->create();
             $data = $conditions;
             
+            App::import('Model', 'Mail');
+		    $Mail = new Mail();
+		    $Mail->notifyContact($identity_id, $with_identity_id);
+		    
             return $this->save($data, true, array_keys($data));
         }
         

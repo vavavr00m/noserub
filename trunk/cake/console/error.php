@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: error.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * ErrorHandler for Console Shells
  *
@@ -136,7 +136,6 @@ class ErrorHandler extends Object {
  * @access public
  */
 	function missingDatabase($params = array()) {
-		extract($params, EXTR_OVERWRITE);
 		$this->stderr(__("Missing Database", true));
 		$this->_stop();
 	}

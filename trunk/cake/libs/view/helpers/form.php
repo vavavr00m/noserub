@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: form.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -1364,6 +1364,8 @@ class FormHelper extends AppHelper {
 					$selected = $value;
 				}
 			}
+		} else {
+			$value = $selected;
 		}
 
 		if (strlen($selected) > 2) {

@@ -684,10 +684,8 @@ class Identity extends AppModel {
             return false;
         }
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-        $zend_json = new Zend_Json();
-        $zend_json->useBuiltinEncoderDecoder = true;
-        
-        $data = $zend_json->decode($content);
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $data = Zend_Json::decode($content);
 
         if(!is_array($data) || 
            !isset($data['server']['base_url']) || 
@@ -824,7 +822,11 @@ class Identity extends AppModel {
     }
     
     private function getSaveableFields($isAccountWithOpenID) {
-    	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'allow_emails', 'overview_filters', 'created', 'modified');
+    	$saveable = array(
+    	    'is_local', 'username', 'email', 'hash', 'frontpage_updates', 
+    	    'allow_emails', 'overview_filters', 'notify_contact',
+    	    'notify_comment', 'notify_favorite', 'created', 'modified'
+    	);
     	
     	if ($isAccountWithOpenID) {
     		$saveable[] = 'openid';

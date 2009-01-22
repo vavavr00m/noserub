@@ -8,8 +8,9 @@ class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
-        'geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie', 'api', 
-        'OauthServiceProvider', 'OmbConsumer', 'Email');
+        'geocoder', 'url', 'cluster', 'openid', 'cdn', 
+        'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer'
+    );
     
     /**
      * Displays profile page of an identity 
@@ -488,15 +489,34 @@ class IdentitiesController extends AppController {
             if($frontpage_updates != $this->data['Identity']['frontpage_updates']) {
                 $this->Identity->Entry->updateRestriction($session_identity['id'], $frontpage_updates == 1 ? 1 : 0);
             }
-            # ssave all settings
-            $saveable = array('frontpage_updates', 'allow_emails');
+            # save all settings
+            $saveable = array(
+                'frontpage_updates', 
+                'allow_emails',
+                'notify_contact',
+                'notify_comment',
+                'notify_favorite'
+            );
             $this->Identity->save($this->data, true, $saveable);
             
             $this->flashMessage('success', __('Privacy settings have been saved.', true));
         } else {
-            $this->Identity->id = $session_identity['id'];
-            $this->data['Identity']['frontpage_updates'] = $this->Identity->field('frontpage_updates');
-            $this->data['Identity']['allow_emails']      = $this->Identity->field('allow_emails');
+            $this->Identity->contain();
+            $this->data = $this->Identity->find(
+                'first',
+                array(
+                    'conditions' => array(
+                        'id' => $session_identity['id']
+                    ),
+                    'fields' => array(
+                        'frontpage_updates',
+                        'allow_emails',
+                        'notify_contact',
+                        'notify_comment',
+                        'notify_favorite'
+                    )
+                )
+            );
         }
         
         $this->set('headline', __('Your privacy settings', true));
@@ -926,27 +946,13 @@ class IdentitiesController extends AppController {
             if(!$identity) {
                 $this->flashMessage('alert', __('The account could not be found!', true));
             } else {
-                $username = $identity['Identity']['username'];
                 $email = $identity['Identity']['email'];
                 if(!$email) {
                     $this->flashMessage('alert', __('No email address found!', true));
                 } else {
-                    $this->Identity->id = $identity['Identity']['id'];
-                    $recovery_hash = md5(uniqid(rand(), true));
-                    $this->Identity->saveField('password_recovery_hash', $recovery_hash);
-                    
-                    $this->set('recovery_hash', $recovery_hash);
-                    $this->set('username', $username);
-                    $this->Email->to       = $email;
-                    $this->Email->subject  = sprintf(__('%s password recovery', true), Configure::read('NoseRub.app_name'));
-                    $this->Email->from     = Configure::read('NoseRub.email_from');
-                    $this->Email->template = 'identity/password_recovery';
-                    $this->Email->sendAs   = 'both'; 
-                    if(Configure::read('NoseRub.smtp_options')) {
-                        $this->Email->smtpOptions = Configure::read('NoseRub.smtp_options');
-                        $this->Email->delivery = 'smtp';
-                    }
-                    $this->Email->send();
+                    App::import('model', 'Mail');
+                    $Mail = new Mail;
+                    $Mail->passwordRecovery($identity['Identity']['id']);
                     
                     $this->flashMessage('success', __('Please look into your inbox for the password recovery email.', true));
                 }
