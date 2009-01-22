@@ -33,7 +33,7 @@ class Comment extends AppModel {
                 $this->create();
                 $this->save($data);
             
-                $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
+                $Mail->notifyComment($entry['Entry']['identity_id'], $data['entry_id'], $data['content']);
             }
         }
     }
