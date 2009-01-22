@@ -2,7 +2,7 @@
 
 class RegistrationController extends AppController {
 	public $uses = array('Identity');
-	public $components = array('openid', 'url', 'Email');
+	public $components = array('openid', 'url');
 	
 	public function register() {
 		$session_identity = $this->Session->read('Identity');
@@ -21,25 +21,24 @@ class RegistrationController extends AppController {
 
         if(!empty($this->data)) {
             if($this->Identity->register($this->data)) {
-                $this->set('hash', $this->Identity->field('hash'));
-                $this->Email->to       = $this->data['Identity']['email'];
-                $this->Email->subject  = sprintf(__('Your %s registration', true), Configure::read('NoseRub.app_name'));
-                $this->Email->from     = Configure::read('NoseRub.email_from');
-                $this->Email->template = 'identity/register';
-                $this->Email->sendAs   = 'both'; 
-                if(Configure::read('NoseRub.smtp_options')) {
-                    $this->Email->smtpOptions = Configure::read('NoseRub.smtp_options');
-                    $this->Email->delivery = 'smtp';
-                }
-                $this->Email->send();
+                App::import('Model', 'Mail');
+                $Mail = new Mail();
+                $Mail->registerIdentity($this->data['Identity']['email'], $this->Identity->field('hash'));
                 
                 $url = $this->url->http('/pages/register/thanks/');
                 $this->redirect($url);
             }
         } else {
             # set default value for this privacy setting
-            $this->data = array('Identity' => array('frontpage_updates' => 1,
-                                                    'allow_emails'      => 2));
+            $this->data = array(
+                'Identity' => array(
+                    'frontpage_updates' => 1,
+                    'allow_emails'      => 2,
+                    'notify_contact'    => 1,
+                    'notify_comment'    => 1,
+                    'notify_favorite'   => 1
+                )
+            );
         }
 
         $this->set('headline', __('Register a new NoseRub account', true));

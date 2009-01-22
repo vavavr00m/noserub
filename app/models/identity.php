@@ -822,7 +822,11 @@ class Identity extends AppModel {
     }
     
     private function getSaveableFields($isAccountWithOpenID) {
-    	$saveable = array('is_local', 'username', 'email', 'hash', 'frontpage_updates', 'allow_emails', 'overview_filters', 'created', 'modified');
+    	$saveable = array(
+    	    'is_local', 'username', 'email', 'hash', 'frontpage_updates', 
+    	    'allow_emails', 'overview_filters', 'notify_contact',
+    	    'notify_comment', 'notify_favorite', 'created', 'modified'
+    	);
     	
     	if ($isAccountWithOpenID) {
     		$saveable[] = 'openid';

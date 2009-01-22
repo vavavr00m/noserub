@@ -2,7 +2,6 @@
 class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
     public $helpers = array('nicetime', 'flashmessage');
-    public $components = array('Email');
     
     /**
      * Display one entry - permalink for an entry
@@ -164,26 +163,10 @@ class EntriesController extends AppController {
             $this->Entry->addFavorite($session_identity['id'], $entry_id);
             $this->flashMessage('success', __('Marked the entry.', true));
             
-            # get the owner of this Entry and check, if he wants to be
-            # notified
-            $this->Entry->Identity->id = $entry['Entry']['identity_id'];
-            $notify_favorite = $this->Entry->Identity->field('notify_favorite');
-            if($notify_favorite) {
-                $this->Email->to       = $this->Entry->Identity->field('email');
-                $this->Email->subject  = sprintf(__('%s: Someone marked your entry a favorite', true), Configure::read('NoseRub.app_name'));
-                $this->Email->from     = Configure::read('NoseRub.email_from');
-                $this->Email->template = 'entry/notify_favorite';
-                $this->Email->sendAs   = 'both'; 
-                if(Configure::read('NoseRub.smtp_options')) {
-                    $this->Email->smtpOptions = Configure::read('NoseRub.smtp_options');
-                    $this->Email->delivery = 'smtp';
-                }
-                $this->set('username',    $session_identity['username']);
-                $this->set('entry_id',    $entry['Entry']['id']);
-                $this->set('entry_title', $entry['Entry']['title']);
-                
-                $this->Email->send();
-            }
+            App::import('Model', 'Mail');
+            $Mail = new Mail();
+            $Mail->notifyFavorite($session_identity['id'], $entry_id);
+            
             $this->redirect('/entry/' . $entry_id . '/');
         }
     }
