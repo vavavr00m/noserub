@@ -9,8 +9,11 @@ class Favorite extends AppModel {
      */
     public function poll() {
         App::import('Model', 'Peer');
+        App::import('Model', 'Mail');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
+        
+        $Mail = new Mail();
         
         $Peer = new Peer();
         $peers = $Peer->getEnabledPeers();
@@ -46,6 +49,8 @@ class Favorite extends AppModel {
                                 $this->create();
                                 $this->save($data);
                                 $imported++;
+                                
+                                $Mail->notifyFavorite($identity_id, $entry['Entry']['id']);
                             }
                         }
                     }
