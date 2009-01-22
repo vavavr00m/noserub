@@ -18,6 +18,7 @@ class Mail extends AppModel {
         $Identity = new Identity();
         
         $Identity->id = $identity_id;
+        $Identity->contain();
         $data = $Identity->read();
         $username = $data['Identity']['username'];
         $email    = $data['Identity']['email'];
@@ -43,6 +44,7 @@ class Mail extends AppModel {
         # get the owner of this Entry and check, if he wants to be
         # notified
         $Identity->id = $identity_id;
+        $Identity->contain();
         $data = $Identity->read();
         if($data['Identity']['notify_favorite']) {
             App::import('Model', 'Entry');
@@ -59,6 +61,36 @@ class Mail extends AppModel {
                     'entry_title' => $Entry->field('title')
                 )
             ));
+        }
+    }
+    
+    public function notifyComment($identity_id, $entry_id, $comment) {
+        App::import('Model', 'Identity');
+        $Identity = new Identity();
+        
+        # get the owner of this Entry and check, if he wants to be
+        # notified. and make sure he did not comment on his own stuff.
+        $Identity->id = $identity_id;
+        $Identity->contain();
+        $data = $Identity->read();
+        if($data['Identity']['notify_comment']) {
+            App::import('Model', 'Entry');
+            $Entry = new Entry();
+            $Entry->id = $entry_id;
+            
+            if($Entry->field('identity_id') != $identity_id) {
+                $this->send(array(
+                    'template' => 'entry/notify_comment',
+                    'to'       => $data['Identity']['email'],
+                    'subject'  => sprintf(__('%s: Someone commented on your entry', true), Configure::read('NoseRub.app_name')),
+                    'data' => array(
+                        'username'    => $data['Identity']['username'],
+                        'entry_id'    => $entry_id,
+                        'entry_title' => $Entry->field('title'),
+                        'comment'     => $comment
+                    )
+                ));
+            }
         }
     }
     

@@ -9,24 +9,32 @@ class Comment extends AppModel {
      * with this uid exist and add comments to it, too.
      */
     public function createForAll($data) {
+        App::import('Model', 'Mail');
+        $Mail = new Mail();
+        
         $this->create();
         $this->save($data);
+        $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
         
         # get uid of that Entry
         $this->Entry->id = $data['entry_id'];
         $uid = $this->Entry->field('uid');
         
-        # get all entries with this uid
-        $entries = $this->Entry->getByUid($uid);
-        foreach($entries as $entry) {
-            if($entry['Entry']['id'] == $this->Entry->id) {
-                # we already added this comment
-                continue;
+        if($uid) {
+            # get all entries with this uid
+            $entries = $this->Entry->getByUid($uid);
+            foreach($entries as $entry) {
+                if($entry['Entry']['id'] == $this->Entry->id) {
+                    # we already added this comment
+                    continue;
+                }
+                # add comment to this entry
+                $data['entry_id'] = $entry['Entry']['id'];
+                $this->create();
+                $this->save($data);
+            
+                $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
             }
-            # add comment to this entry
-            $data['entry_id'] = $entry['Entry']['id'];
-            $this->create();
-            $this->save($data);
         }
     }
     
@@ -35,8 +43,11 @@ class Comment extends AppModel {
      */
     public function poll() {
         App::import('Model', 'Peer');
+        App::import('Model', 'Mail');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
+        
+        $Mail = new Mail();
         
         $Peer = new Peer();
         $peers = $Peer->getEnabledPeers();
@@ -74,6 +85,8 @@ class Comment extends AppModel {
                                 $this->create();
                                 $this->save($data);
                                 $imported++;
+                                
+                                $Mail->notifyComment($identity_id, $entry['Entry']['id'], $comment['comment']);
                             }
                         }
                     }
