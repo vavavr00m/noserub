@@ -17,14 +17,15 @@ class Comment extends AppModel {
         $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
         
         # get uid of that Entry
-        $this->Entry->id = $data['entry_id'];
+        $original_entry_id = $data['entry_id'];
+        $this->Entry->id = $original_entry_id;
         $uid = $this->Entry->field('uid');
         
         if($uid) {
             # get all entries with this uid
             $entries = $this->Entry->getByUid($uid);
             foreach($entries as $entry) {
-                if($entry['Entry']['id'] == $this->Entry->id) {
+                if($entry['Entry']['id'] == $original_entry_id) {
                     # we already added this comment
                     continue;
                 }
