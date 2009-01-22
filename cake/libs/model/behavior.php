@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: behavior.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: behavior.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Model behaviors base class.
  *
@@ -279,11 +279,14 @@ class BehaviorCollection extends Object {
 				$this->{$name} =& new $class;
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
-			if ($config !== null && $config !== false) {
+			if (!empty($config)) {
 				$config = array_merge($this->{$name}->settings[$this->modelName], $config);
 			} else {
 				$config = array();
 			}
+		}
+		if (empty($config)) {
+			$config = array();
 		}
 		$this->{$name}->setup(ClassRegistry::getObject($this->modelName), $config);
 

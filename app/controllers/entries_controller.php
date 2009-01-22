@@ -162,6 +162,11 @@ class EntriesController extends AppController {
             $this->Entry->FavoritedBy->save($data);
             $this->Entry->addFavorite($session_identity['id'], $entry_id);
             $this->flashMessage('success', __('Marked the entry.', true));
+            
+            App::import('Model', 'Mail');
+            $Mail = new Mail();
+            $Mail->notifyFavorite($session_identity['id'], $entry_id);
+            
             $this->redirect('/entry/' . $entry_id . '/');
         }
     }

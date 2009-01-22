@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_acl.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: db_acl.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * This is core configuration file.
  *
@@ -175,7 +175,7 @@ class AclNode extends AppModel {
 				'conditions' => $ref,
 				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
 				'joins' => array(array(
-					'table' => $db->fullTableName($table),
+					'table' => $db->fullTableName($this),
 					'alias' => "{$type}0",
 					'type' => 'LEFT',
 					'conditions' => array(

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: set.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: set.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Library of array functions for Cake.
  *
@@ -1086,7 +1086,8 @@ class Set extends Object {
 	function sort($data, $path, $dir) {
 		$result = Set::__flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
-
+		
+		$dir = strtolower($dir);
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;
 		} elseif ($dir === 'desc') {

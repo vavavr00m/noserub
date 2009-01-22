@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: helper.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: helper.php 8004 2009-01-16 20:15:21Z gwoo $ */
 /**
  * Backend for helpers.
  *
@@ -175,7 +175,7 @@ class Helper extends Overloadable {
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {
-		return Router::url($url, $full);
+		return Router::url($url, array('full' => $full, 'escape' => true));
 	}
 /**
  * Checks if a file exists when theme is used, if no file is found default location is returned
