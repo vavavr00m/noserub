@@ -54,7 +54,6 @@ class Comment extends AppModel {
         $peers = $Peer->getEnabledPeers();
         
         $polled = array();
-        Zend_Json::$useBuiltinEncoderDecoder = true;
         
         foreach($peers as $peer) {
             $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/comments/');

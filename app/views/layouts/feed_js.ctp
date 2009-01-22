@@ -1,6 +1,5 @@
 <?php
 App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-Zend_Json::$useBuiltinEncoderDecoder = true;
 
 # go through all the items and build the json data structure
 $items = array();
