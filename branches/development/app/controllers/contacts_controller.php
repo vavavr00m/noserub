@@ -543,21 +543,12 @@ class ContactsController extends AppController {
             $this->redirect('/' . $splitted['local_username']);
         }
         
-        # test, if there isn't already a contact
-        $hasContact = $this->Contact->hasAny(array('identity_id'      => $session_identity['id'],
-                                                    'with_identity_id' => $identity['Identity']['id']));
-
-        if (!$hasContact) {
-            # now create the contact relationship
-            $this->Contact->create();
-            $contact = array('identity_id'      => $session_identity['id'],
-                             'with_identity_id' => $identity['Identity']['id']);
-            $saveable = array('identity_id', 'with_identity_id', 'created', 'modified');
-            $this->Contact->save($contact, true, $saveable);
-            $this->flashMessage('success', __('Added new contact.', true));
-            
-            $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
-        }
+        if($this->Contact->add($session_identity['id'], $identity['Identity']['id'])) {
+            $this->flashMessage('success', __('New contact added.', true));
+		    $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
+	    } else {
+		    $this->flashMessage('error', 'Could not add contact');
+		}
         
         $this->redirect('/' . $splitted['local_username']);
     }
