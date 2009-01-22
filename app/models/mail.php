@@ -43,22 +43,23 @@ class Mail extends AppModel {
         
         # get the owner of this Entry and check, if he wants to be
         # notified
-        $Identity->id = $identity_id;
+        $Identity->Entry->id = $entry_id;
+        $Identity->id = $Identity->Entry->field('identity_id');    
         $Identity->contain();
-        $data = $Identity->read();
-        if($data['Identity']['notify_favorite']) {
-            App::import('Model', 'Entry');
-            $Entry = new Entry();
-            $Entry->id = $entry_id;
+        $favorite_identity = $Identity->read();    
+        if($favorite_identity['Identity']['notify_favorite']) {
+            $Identity->id = $identity_id;
+            $Identity->contain();
+            $data = $Identity->read();
             
             $this->send(array(
                 'template' => 'entry/notify_favorite',
-                'to'       => $data['Identity']['email'],
+                'to'       => $favorite_identity['Identity']['email'],
                 'subject'  => sprintf(__('%s: Someone marked your entry a favorite', true), Configure::read('NoseRub.app_name')),
                 'data' => array(
                     'username'    => $data['Identity']['username'],
                     'entry_id'    => $entry_id,
-                    'entry_title' => $Entry->field('title')
+                    'entry_title' => $Identity->Entry->field('title')
                 )
             ));
         }
@@ -70,27 +71,50 @@ class Mail extends AppModel {
         
         # get the owner of this Entry and check, if he wants to be
         # notified. and make sure he did not comment on his own stuff.
-        $Identity->id = $identity_id;
+        $Identity->Entry->id = $entry_id;
+        $Identity->id = $Identity->Entry->field('identity_id');    
         $Identity->contain();
-        $data = $Identity->read();
-        if($data['Identity']['notify_comment']) {
-            App::import('Model', 'Entry');
-            $Entry = new Entry();
-            $Entry->id = $entry_id;
+        $comment_identity = $Identity->read();
+        if($comment_identity['Identity']['id'] != $identity_id &&
+           $comment_identity['Identity']['notify_comment']) {
+            $Identity->id = $identity_id;
+            $Identity->contain();
+            $data = $Identity->read();            
+
+            $this->send(array(
+                'template' => 'entry/notify_comment',
+                'to'       => $comment_identity['Identity']['email'],
+                'subject'  => sprintf(__('%s: Someone commented on your entry', true), Configure::read('NoseRub.app_name')),
+                'data' => array(
+                    'username'    => $data['Identity']['username'],
+                    'entry_id'    => $entry_id,
+                    'entry_title' => $Identity->Entry->field('title'),
+                    'comment'     => $comment
+                )
+            ));
+        }
+    }
+    
+    public function notifyContact($identity_id, $contacted_identity_id) {
+        App::import('Model', 'Identity');
+        $Identity = new Identity();
+        
+        $Identity->id = $contacted_identity_id;
+        $Identity->contain();
+        $contacted_identity = $Identity->read();
+        if($contacted_identity['Identity']['notify_contact']) {
+            $Identity->id = $identity_id;
+            $Identity->contain();
+            $data = $Identity->read();
             
-            if($Entry->field('identity_id') != $identity_id) {
-                $this->send(array(
-                    'template' => 'entry/notify_comment',
-                    'to'       => $data['Identity']['email'],
-                    'subject'  => sprintf(__('%s: Someone commented on your entry', true), Configure::read('NoseRub.app_name')),
-                    'data' => array(
-                        'username'    => $data['Identity']['username'],
-                        'entry_id'    => $entry_id,
-                        'entry_title' => $Entry->field('title'),
-                        'comment'     => $comment
-                    )
-                ));
-            }
+            $this->send(array(
+                'template' => 'identity/notify_contact',
+                'to'       => $contacted_identity['Identity']['email'],
+                'subject'  => sprintf(__('%s: Someone added you as contact', true), Configure::read('NoseRub.app_name')),
+                'data' => array(
+                    'username' => $data['Identity']['username']
+                )
+            ));
         }
     }
     
