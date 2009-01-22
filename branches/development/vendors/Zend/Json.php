@@ -60,7 +60,7 @@ class Zend_Json
             return json_decode($encodedValue, $objectDecodeType);
         }
 
-        App::import('Vendor', 'decoder', array('file' => 'Zend'.DS.'Json'.DS.'Decoder.php'));
+        App::import('Vendor', 'zend_decoder', array('file' => 'Zend'.DS.'Json'.DS.'Decoder.php'));
         return Zend_Json_Decoder::decode($encodedValue, $objectDecodeType);
     }
 
@@ -85,7 +85,7 @@ class Zend_Json
             return json_encode($valueToEncode);
         }
 
-        App::import('Vendor', 'encoder', array('file' => 'Zend'.DS.'Json'.DS.'Encoder.php'));
+        App::import('Vendor', 'zend_encoder', array('file' => 'Zend'.DS.'Json'.DS.'Encoder.php'));
         return Zend_Json_Encoder::encode($valueToEncode, $cycleCheck);
     }
 }

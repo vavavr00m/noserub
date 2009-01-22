@@ -27,7 +27,6 @@ class Peer extends AppModel {
         $json_data = WebExtractor::fetchUrl('http://noserub.com/peers');
         
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-        Zend_Json::$useBuiltinEncoderDecoder = true;
         $data = Zend_Json::decode($json_data);
         
         if(!$data) {
