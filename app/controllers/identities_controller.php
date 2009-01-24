@@ -866,7 +866,7 @@ class IdentitiesController extends AppController {
     	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
 
     	if ($accessToken) {
-	    	$this->OmbRemoteService->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
+	    	$this->OmbRemoteService->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
     	}
     }
     

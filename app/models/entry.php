@@ -562,7 +562,7 @@ class Entry extends AppModel {
     	$ombRemoteService = new OmbRemoteServiceComponent();
     	$ombRemoteService->Session = new SessionComponent();
     	$ombRemoteService->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombRemoteService->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
+    	$ombRemoteService->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['post_notice_url'], $entry_id, $text);
     }
     
     /**

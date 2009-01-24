@@ -1,11 +1,11 @@
 <?php
 
 class OmbServiceAccessToken extends AppModel {
-	public $belongsTo = array('OmbService');
+	public $belongsTo = array('OmbLocalService');
 	
 	public function add($identity_id, $service_id, $accessToken) {
 		$data[$this->name]['identity_id'] = $identity_id;
-		$data[$this->name]['omb_service_id'] = $service_id;
+		$data[$this->name]['omb_local_service_id'] = $service_id;
 		$data[$this->name]['token_key'] = $accessToken->key;
 		$data[$this->name]['token_secret'] = $accessToken->secret;
 
