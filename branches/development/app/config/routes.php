@@ -62,8 +62,8 @@ Router::connect('/:username/add/as/contact/:security_token/', array('controller'
 Router::connect('/:username/xrds', array('controller' => 'identities', 'action' => 'xrds'));
 Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
-Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
-Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
+Router::connect('/:username/subscribe', array('controller' => 'omb_remote_service', 'action' => 'subscribe'));
+Router::connect('/:username/callback', array('controller' => 'omb_remote_service', 'action' => 'callback'));
 
 Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
