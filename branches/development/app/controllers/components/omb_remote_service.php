@@ -31,7 +31,7 @@ class OmbRemoteServiceComponent extends Object {
 		$this->controller = $controller;
 	}
 	
-	public function discover($url) {
+	public function discoverLocalService($url) {
 		App::import('Vendor', array('OmbLocalServiceDefinition', 'UrlUtil'));
 		$url = UrlUtil::addHttpIfNoProtocolSpecified($url);
 		$xrds = $this->discoverXRDS($url);
