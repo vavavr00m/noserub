@@ -32,7 +32,7 @@ class OmbRemoteServiceComponent extends Object {
 	}
 	
 	public function discover($url) {
-		App::import('Vendor', 'UrlUtil');
+		App::import('Vendor', array('OmbLocalServiceDefinition', 'UrlUtil'));
 		$url = UrlUtil::addHttpIfNoProtocolSpecified($url);
 		$xrds = $this->discoverXRDS($url);
 		$yadisServices = $xrds->services(array(array($this, 'filterServices')));
@@ -66,7 +66,7 @@ class OmbRemoteServiceComponent extends Object {
 			}
 		}
 		
-		return new OmbDiscoveredLocalService($localID, $endpoints);
+		return new OmbLocalServiceDefinition($localID, $endpoints);
 	}
 	
 	// internal callback method, don't use it outside this class
@@ -210,40 +210,6 @@ class OmbRemoteServiceComponent extends Object {
 		}
 		
 		return $authUrl;
-	}
-}
-
-class OmbDiscoveredLocalService {
-	private $localId = null;
-	private $urls = null;
-	
-	public function __construct($localId, array $urls) {
-		$this->localId = $localId;
-		$this->urls = $urls;		
-	}
-	
-	public function getAccessTokenUrl() {
-		return $this->urls[OauthConstants::ACCESS];
-	}
-	
-	public function getAuthorizeUrl() {
-		return $this->urls[OauthConstants::AUTHORIZE];
-	}
-	
-	public function getLocalId() {
-		return $this->localId;
-	}
-	
-	public function getPostNoticeUrl() {
-		return $this->urls[OmbConstants::POST_NOTICE];
-	}
-	
-	public function getRequestTokenUrl() {
-		return $this->urls[OauthConstants::REQUEST];
-	}
-	
-	public function getUpdateProfileUrl() {
-		return $this->urls[OmbConstants::UPDATE_PROFILE];
 	}
 }
 
