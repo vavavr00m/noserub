@@ -3,7 +3,7 @@
 App::import('Vendor', array('OauthConstants', 'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
-	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
+	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbLocalService');
 	public $helpers = array('flashmessage');
 	public $components = array('OmbRemoteService');
 	
@@ -54,22 +54,22 @@ class OmbSubscriptionsController extends AppController {
 		
 		if ($this->data) {
 			try {
-				$localService = $this->OmbRemoteService->discoverLocalService($this->data['Omb']['url']);
-				$serviceId = $this->OmbService->getServiceId($localService);
+				$localServiceDefinition = $this->OmbRemoteService->discoverLocalService($this->data['Omb']['url']);
+				$serviceId = $this->OmbLocalService->getServiceId($localServiceDefinition);
 
 				if (!$serviceId) {
-					$serviceId = $this->OmbService->add($localService);
+					$serviceId = $this->OmbLocalService->add($localServiceDefinition);
 				}
 
-				$requestToken = $this->OmbRemoteService->getRequestToken($localService->getRequestTokenUrl(), $localService->getLocalId());
+				$requestToken = $this->OmbRemoteService->getRequestToken($localServiceDefinition->getRequestTokenUrl(), $localServiceDefinition->getLocalId());
 				
 				$this->Session->write('omb.requestToken', $requestToken);
-				$this->Session->write('omb.accessTokenUrl', $localService->getAccessTokenUrl());
+				$this->Session->write('omb.accessTokenUrl', $localServiceDefinition->getAccessTokenUrl());
 				$this->Session->write('omb.serviceId', $serviceId);
 				
 				$identity = $this->getIdentity($username);
-				$ombAuthorizationParams = new OmbAuthorizationParams($localService->getLocalId(), $identity);
-				$this->OmbRemoteService->redirectToAuthorizationPage($localService->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
+				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
+				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}
