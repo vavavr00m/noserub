@@ -222,15 +222,6 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 }
 
-class OmbListeneeTest extends CakeTestCase {
-	public function testConstruct() {
-		$listenee = 'http://example.com/listenee';
-		$ombListenee = new OmbListenee($listenee);
-		$this->assertEqual(OmbParamKeys::LISTENEE, $ombListenee->getKey());
-		$this->assertEqual($listenee, $ombListenee->getValue());
-	}
-}
-
 class OmbListeneeAvatarTest extends CakeTestCase {
 	public function testConstruct() {
 		$avatarName = 'myavatar';
