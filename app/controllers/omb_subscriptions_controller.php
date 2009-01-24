@@ -12,7 +12,7 @@ class OmbSubscriptionsController extends AppController {
 		
 		try {
 			$response = new OmbAuthorizationResponse($this->params['url']);
-			$identity = $this->getIdentity($username);
+			$identity = $this->Identity->getIdentityByUsername($username);
 
 			$data['Identity']['is_local'] = false;
 			$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
@@ -67,21 +67,13 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->write('omb.accessTokenUrl', $localServiceDefinition->getAccessTokenUrl());
 				$this->Session->write('omb.serviceId', $serviceId);
 				
-				$identity = $this->getIdentity($username);
+				$identity = $this->Identity->getIdentityByUsername($username);
 				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
 				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}
 		}
-	}
-	
-	private function getIdentity($username) {
-		$splitted = $this->Identity->splitUsername($username);
-		$this->Identity->contain();
-		$identity = $this->Identity->findByUsername($splitted['username']);
-		
-        return $identity;
 	}
 	
 	private function getUsernameOrRedirect() {

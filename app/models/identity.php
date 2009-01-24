@@ -204,6 +204,14 @@ class Identity extends AppModel {
 		return $contacts;
     }
     
+    public function getIdentityByUsername($username) {
+    	$splitted = $this->splitUsername($username);
+		$this->contain();
+		$identity = $this->findByUsername($splitted['username']);
+		
+        return $identity;
+    }
+    
     /**
      * Returns mutual contacts of two identities, or false if there are no mutual contacts.
      */
