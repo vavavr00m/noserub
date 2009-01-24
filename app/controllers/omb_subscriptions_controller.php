@@ -54,7 +54,7 @@ class OmbSubscriptionsController extends AppController {
 		
 		if ($this->data) {
 			try {
-				$localService = $this->OmbRemoteService->discover($this->data['Omb']['url']);
+				$localService = $this->OmbRemoteService->discoverLocalService($this->data['Omb']['url']);
 				$serviceId = $this->OmbService->getServiceId($localService->getPostNoticeUrl(), $localService->getUpdateProfileUrl());
 
 				if (!$serviceId) {

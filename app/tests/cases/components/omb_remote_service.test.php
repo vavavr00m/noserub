@@ -12,18 +12,18 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 		$this->urlOfXRDS = Configure::read('NoseRub.full_base_url') . 'testing/identica_0.6.xrds';
 	}
 	
-	public function testDiscover() {
-		$this->assertLocalService($this->component->discover($this->urlOfXRDS));
+	public function testDiscoverLocalService() {
+		$this->assertLocalService($this->component->discoverLocalService($this->urlOfXRDS));
 	}
 	
-	public function testDiscoverFromUrlWithoutHttp() {
+	public function testDiscoverLocalServiceFromUrlWithoutHttp() {
 		$urlOfXRDSWithoutHttp = str_replace('http://', '', $this->urlOfXRDS);
-		$this->assertLocalService($this->component->discover($urlOfXRDSWithoutHttp));
+		$this->assertLocalService($this->component->discoverLocalService($urlOfXRDSWithoutHttp));
 	}
 	
-	public function testDiscoverNotExistingFile() {
+	public function testDiscoverLocalServiceFromNonExistingUrl() {
 		try {
-			$this->component->discover(Configure::read('NoseRub.full_base_url') . 'testing/notexisting');
+			$this->component->discoverLocalService(Configure::read('NoseRub.full_base_url') . 'testing/notexisting');
 			$this->assertTrue(false);
 		} catch (Exception $e) {
 			$this->assertTrue(true);
