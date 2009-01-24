@@ -1,6 +1,6 @@
 <?php
 
-App::import('Vendor', array('OauthConstants', 'OmbConstants', 'UrlUtil'));
+App::import('Vendor', array('OauthConstants', 'OmbAuthorizationParams', 'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbLocalService');
