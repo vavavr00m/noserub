@@ -30,41 +30,13 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 		}
 	}
 	
-	private function assertLocalService(OmbDiscoveredLocalService  $localService) {
+	private function assertLocalService(OmbLocalServiceDefinition $localService) {
 		$this->assertEqual(self::IDENTICA.'/user/4599', $localService->getLocalId());
 		$this->assertEqual(self::IDENTICA.'/index.php?action=requesttoken', $localService->getRequestTokenUrl());
 		$this->assertEqual(self::IDENTICA.'/index.php?action=userauthorization', $localService->getAuthorizeUrl());
 		$this->assertEqual(self::IDENTICA.'/index.php?action=accesstoken', $localService->getAccessTokenUrl());
 		$this->assertEqual(self::IDENTICA.'/index.php?action=postnotice', $localService->getPostNoticeUrl());
 		$this->assertEqual(self::IDENTICA.'/index.php?action=updateprofile', $localService->getUpdateProfileUrl());
-	}
-}
-
-class OmbDiscoveredLocalServiceTest extends CakeTestCase {
-	private $localId = 'http://example.com/user/12';
-	private $requestTokenUrl = 'http://example.com/requestToken';
-	private $authorizeUrl = 'http://example.com/authorize';
-	private $accessTokenUrl = 'http://example.com/accessToken';
-	private $postNoticeUrl = 'http://example.com/postNotice';
-	private $updateProfileUrl = 'http://example.com/updateProfile';
-	private $urls = null;
-	
-	public function setUp() {
-		$this->urls = array(OauthConstants::REQUEST => $this->requestTokenUrl,
-					  		OauthConstants::AUTHORIZE => $this->authorizeUrl,
-					  		OauthConstants::ACCESS => $this->accessTokenUrl,
-					  		OmbConstants::POST_NOTICE => $this->postNoticeUrl,
-					  		OmbConstants::UPDATE_PROFILE => $this->updateProfileUrl);
-	}
-	
-	public function testOmbDiscoveredLocalService() {
-		$localService = new OmbDiscoveredLocalService($this->localId, $this->urls);
-		$this->assertEqual($this->localId, $localService->getLocalId());
-		$this->assertEqual($this->requestTokenUrl, $localService->getRequestTokenUrl());
-		$this->assertEqual($this->authorizeUrl, $localService->getAuthorizeUrl());
-		$this->assertEqual($this->accessTokenUrl, $localService->getAccessTokenUrl());
-		$this->assertEqual($this->postNoticeUrl, $localService->getPostNoticeUrl());
-		$this->assertEqual($this->updateProfileUrl, $localService->getUpdateProfileUrl());
 	}
 }
 
