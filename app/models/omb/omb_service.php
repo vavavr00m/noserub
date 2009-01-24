@@ -2,8 +2,6 @@
 
 class OmbService extends AppModel {
 	public $hasMany = array('OmbServiceAccessToken');
-	public $validate = array('post_notice_url' => array('url'),
-							 'update_profile_url' => array('url'));
 	
 	public function add(OmbLocalServiceDefinition $serviceDefinition) {
 		$data['OmbService']['post_notice_url'] = $serviceDefinition->getPostNoticeUrl();
