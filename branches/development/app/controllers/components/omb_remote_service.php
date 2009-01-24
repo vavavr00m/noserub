@@ -296,12 +296,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-class OmbListenee extends OmbParam {
-	public function getKey() {
-		return OmbParamKeys::LISTENEE;
-	}
-}
-
 class OmbListeneeAvatar extends OmbParam {
 	
 	public function __construct($avatarName) {
