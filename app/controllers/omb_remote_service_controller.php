@@ -2,7 +2,7 @@
 
 App::import('Vendor', array('OauthConstants', 'OmbConstants', 'UrlUtil'));
 
-class OmbSubscriptionsController extends AppController {
+class OmbRemoteServiceController extends AppController {
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
 	public $helpers = array('flashmessage');
 	public $components = array('OmbConsumer');
