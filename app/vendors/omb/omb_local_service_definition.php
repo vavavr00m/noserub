@@ -7,7 +7,7 @@ class OmbLocalServiceDefinition {
 	
 	public function __construct($localId, array $urls) {
 		$this->localId = $localId;
-		$this->urls = $urls;		
+		$this->urls = $this->validateUrls($urls);
 	}
 	
 	public function getAccessTokenUrl() {
@@ -32,5 +32,25 @@ class OmbLocalServiceDefinition {
 	
 	public function getUpdateProfileUrl() {
 		return $this->urls[OmbConstants::UPDATE_PROFILE];
+	}
+	
+	private function validateUrls($urls) {
+		$urlKeys = array(OauthConstants::REQUEST, OauthConstants::AUTHORIZE, 
+						 OauthConstants::ACCESS, OmbConstants::POST_NOTICE,
+						 OmbConstants::UPDATE_PROFILE);
+		
+		foreach ($urlKeys as $urlKey) {
+			if (!isset($urls[$urlKey])) {
+				throw new Exception('Missing URL');
+			}
+		}
+		
+		foreach ($urlKeys as $urlKey) {
+			if (!filter_var($urls[$urlKey], FILTER_VALIDATE_URL)) {
+				throw new Exception('Invalid URL');
+			}
+		}
+		
+		return $urls;
 	}
 }
