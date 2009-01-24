@@ -12,7 +12,7 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParamKeys'));
 
-class OmbConsumerComponent extends Object {
+class OmbRemoteServiceComponent extends Object {
 	public $components = array('OmbOauthConsumer', 'Session');
 	private $controller = null;
 	private $services = null;

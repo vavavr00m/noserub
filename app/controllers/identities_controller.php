@@ -9,7 +9,7 @@ class IdentitiesController extends AppController {
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
         'geocoder', 'url', 'cluster', 'openid', 'cdn', 
-        'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer'
+        'Cookie', 'api', 'OauthServiceProvider', 'OmbRemoteService'
     );
     
     /**
@@ -866,7 +866,7 @@ class IdentitiesController extends AppController {
     	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
 
     	if ($accessToken) {
-	    	$this->OmbConsumer->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
+	    	$this->OmbRemoteService->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
     	}
     }
     
