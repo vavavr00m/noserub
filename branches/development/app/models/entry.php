@@ -558,11 +558,11 @@ class Entry extends AppModel {
     	}
     	
     	// XXX don't like it to use a component in a model, better solution needed ;-)
-    	App::import('Component', array('OmbConsumer', 'OmbOauthConsumer'));
-    	$ombConsumer = new OmbConsumerComponent();
-    	$ombConsumer->Session = new SessionComponent();
-    	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
+    	App::import('Component', array('OmbRemoteService', 'OmbOauthConsumer'));
+    	$ombRemoteService = new OmbRemoteServiceComponent();
+    	$ombRemoteService->Session = new SessionComponent();
+    	$ombRemoteService->OmbOauthConsumer = new OmbOauthConsumerComponent();
+    	$ombRemoteService->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
     }
     
     /**

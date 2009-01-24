@@ -1,14 +1,14 @@
 <?php
-App::import('Component', 'OmbConsumer');
+App::import('Component', 'OmbRemoteService');
 App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParamKeys'));
 
-class OmbConsumerComponentTest extends CakeTestCase {
+class OmbRemoteServiceComponentTest extends CakeTestCase {
 	const IDENTICA = 'http://identi.ca';
 	private $component = null;
 	private $urlOfXRDS = null;
 	
 	public function setUp() {
-		$this->component = new OmbConsumerComponent();
+		$this->component = new OmbRemoteServiceComponent();
 		$this->urlOfXRDS = Configure::read('NoseRub.full_base_url') . 'testing/identica_0.6.xrds';
 	}
 	
