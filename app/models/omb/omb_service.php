@@ -5,9 +5,9 @@ class OmbService extends AppModel {
 	public $validate = array('post_notice_url' => array('url'),
 							 'update_profile_url' => array('url'));
 	
-	public function add($postNoticeUrl, $updateProfileUrl) {
-		$data['OmbService']['post_notice_url'] = $postNoticeUrl;
-		$data['OmbService']['update_profile_url'] = $updateProfileUrl;
+	public function add(OmbLocalServiceDefinition $serviceDefinition) {
+		$data['OmbService']['post_notice_url'] = $serviceDefinition->getPostNoticeUrl();
+		$data['OmbService']['update_profile_url'] = $serviceDefinition->getUpdateProfileUrl();
 
 		$this->create();
 		
@@ -18,9 +18,8 @@ class OmbService extends AppModel {
 		return false;
 	}
 	
-	// one param would be enough, but as I can't decide which param to use we will use both params ;-)
-	public function getServiceId($postNoticeUrl, $updateProfileUrl) {
-		return $this->field('id', array('OmbService.post_notice_url' => $postNoticeUrl, 
-										'OmbService.update_profile_url' => $updateProfileUrl));
+	public function getServiceId(OmbLocalServiceDefinition $serviceDefinition) {
+		return $this->field('id', array('OmbService.post_notice_url' => $serviceDefinition->getPostNoticeUrl(), 
+										'OmbService.update_profile_url' => $serviceDefinition->getUpdateProfileUrl()));
 	}
 }

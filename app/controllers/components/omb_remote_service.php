@@ -37,6 +37,7 @@ class OmbRemoteServiceComponent extends Object {
 		$xrds = $this->discoverXRDS($url);
 		$yadisServices = $xrds->services(array(array($this, 'filterServices')));
 		
+		// TODO refactor this code to make it more readable
 		foreach ($yadisServices as $yadisService) {
 			$types = $yadisService->getTypes();
 			$uris = $yadisService->getURIs();
