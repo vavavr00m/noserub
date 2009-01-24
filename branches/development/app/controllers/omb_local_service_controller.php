@@ -3,7 +3,7 @@
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 App::import('Vendor', array('OmbConstants', 'OmbParamKeys'));
 
-class OmbController extends AppController {
+class OmbLocalServiceController extends AppController {
 	public $uses = array('Entry', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
 	public $components = array('RequestHandler');
 	
