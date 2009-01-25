@@ -1,6 +1,7 @@
 <?php
 
-App::import('Vendor', array('OauthConstants', 'OmbAuthorizationParams', 'OmbConstants', 'UrlUtil'));
+App::import('Vendor', array('OauthConstants', 'OmbAuthorizationParams', 'OmbAuthorizationResponse', 
+							'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
 	const ACCESS_TOKEN_URL_KEY = 'omb.accessTokenUrl';
