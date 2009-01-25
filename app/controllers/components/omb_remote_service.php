@@ -298,12 +298,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-class OmbListeneeNickname extends OmbParam {
-	public function getKey() {
-		return OmbParamKeys::LISTENEE_NICKNAME;
-	}
-}
-
 class OmbListeneeProfile extends OmbParam {
 	public function getKey() {
 		return OmbParamKeys::LISTENEE_PROFILE;
