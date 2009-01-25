@@ -31,6 +31,15 @@ class OmbRemoteServiceComponent extends Object {
 		$this->controller = $controller;
 	}
 	
+	public static function createRemoteService() {
+		App::import('Component', 'OmbOauthConsumer');
+		$remoteService = new OmbRemoteServiceComponent();
+    	$remoteService->Session = new SessionComponent();
+    	$remoteService->OmbOauthConsumer = new OmbOauthConsumerComponent();
+    	
+    	return $remoteService;
+	}
+	
 	public function discoverLocalService($url) {
 		App::import('Vendor', array('OmbLocalServiceDefinition', 'UrlUtil'));
 		$url = UrlUtil::addHttpIfNoProtocolSpecified($url);
