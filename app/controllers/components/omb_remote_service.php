@@ -10,7 +10,8 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbListeneeAvatar', 'OmbParam', 'OmbParamKeys'));
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbListeneeAvatar', 
+							'OmbListeneeBio', 'OmbParam', 'OmbParamKeys'));
 
 class OmbRemoteServiceComponent extends Object {
 	public $components = array('OmbOauthConsumer', 'Session');
@@ -293,22 +294,6 @@ class OmbUpdatedProfileData {
 		}
 		
 		return $result;
-	}
-}
-
-class OmbListeneeBio extends OmbParam {
-	const MAX_LENGTH = 139; // spec says "less than 140 chars"
-	
-	public function __construct($bio) {
-		parent::__construct($this->shortenIfTooLong($bio));
-	}
-	
-	public function getKey() {
-		return OmbParamKeys::LISTENEE_BIO;
-	}
-	
-	private function shortenIfTooLong($bio) {
-		return substr($bio, 0, self::MAX_LENGTH);
 	}
 }
 
