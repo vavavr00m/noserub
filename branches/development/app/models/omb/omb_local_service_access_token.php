@@ -1,6 +1,6 @@
 <?php
 
-class OmbServiceAccessToken extends AppModel {
+class OmbLocalServiceAccessToken extends AppModel {
 	public $belongsTo = array('OmbLocalService');
 	
 	public function add($identity_id, $service_id, $accessToken) {

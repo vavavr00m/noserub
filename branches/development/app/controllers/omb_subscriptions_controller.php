@@ -6,7 +6,7 @@ class OmbSubscriptionsController extends AppController {
 	const ACCESS_TOKEN_URL_KEY = 'omb.accessTokenUrl';
 	const REQUEST_TOKEN_KEY = 'omb.requestToken';
 	const LOCAL_SERVICE_ID_KEY = 'omb.localServiceId';
-	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbLocalService');
+	public $uses = array('Identity', 'OmbLocalService');
 	public $helpers = array('flashmessage');
 	public $components = array('OmbRemoteService');
 	
@@ -37,7 +37,7 @@ class OmbSubscriptionsController extends AppController {
 			$localServiceId = $this->Session->read(self::LOCAL_SERVICE_ID_KEY);
 			$accessToken = $this->OmbRemoteService->getAccessToken($accessTokenUrl, $requestToken);				
 			
-			$this->OmbServiceAccessToken->add($identity['Identity']['id'], $localServiceId, $accessToken);
+			$this->OmbLocalService->OmbLocalServiceAccessToken->add($identity['Identity']['id'], $localServiceId, $accessToken);
 			
 			$this->Session->delete(self::ACCESS_TOKEN_URL_KEY);
 			$this->Session->delete(self::REQUEST_TOKEN_KEY);
