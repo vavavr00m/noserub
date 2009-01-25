@@ -864,10 +864,12 @@ class IdentitiesController extends AppController {
     private function sendUpdateToOmbSubscribers($data) {
     	App::import('Vendor', 'OmbUpdatedProfileData');
     	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
-    	$accessToken = $ombLocalServiceAccessToken->findByIdentityId($this->Identity->id);
-
-    	if ($accessToken) {
-	    	$this->OmbRemoteService->updateProfile($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
+    	$accessTokens = $ombLocalServiceAccessToken->getAccessTokensToUpdateProfile($this->Identity->id);
+    	
+    	if (!empty($accessTokens)) {
+    		foreach ($accessTokens as $accessToken) {
+    			$this->OmbRemoteService->updateProfile($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
+    		}
     	}
     }
     
