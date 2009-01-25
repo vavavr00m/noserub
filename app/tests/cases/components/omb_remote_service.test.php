@@ -221,11 +221,3 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 		return $profileData->getAsArray();
 	}
 }
-
-class OmbVersionTest extends CakeTestCase {
-	public function testConstruct() {
-		$version = new OmbVersion();
-		$this->assertEqual(OmbParamKeys::VERSION, $version->getKey());
-		$this->assertEqual(OmbConstants::VERSION, $version->getValue());
-	}
-}
