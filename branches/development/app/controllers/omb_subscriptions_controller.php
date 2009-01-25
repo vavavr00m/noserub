@@ -3,6 +3,9 @@
 App::import('Vendor', array('OauthConstants', 'OmbAuthorizationParams', 'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
+	const ACCESS_TOKEN_URL_KEY = 'omb.accessTokenUrl';
+	const REQUEST_TOKEN_KEY = 'omb.requestToken';
+	const LOCAL_SERVICE_ID_KEY = 'omb.localServiceId';
 	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbLocalService');
 	public $helpers = array('flashmessage');
 	public $components = array('OmbRemoteService');
@@ -29,16 +32,16 @@ class OmbSubscriptionsController extends AppController {
 				$this->Identity->uploadPhotoByUrl($response->getAvatarUrl());
 			}
 			
-			$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
-			$requestToken = $this->Session->read('omb.requestToken');
-			$serviceId = $this->Session->read('omb.serviceId');
+			$accessTokenUrl = $this->Session->read(self::ACCESS_TOKEN_URL_KEY);
+			$requestToken = $this->Session->read(self::REQUEST_TOKEN_KEY);
+			$localServiceId = $this->Session->read(self::LOCAL_SERVICE_ID_KEY);
 			$accessToken = $this->OmbRemoteService->getAccessToken($accessTokenUrl, $requestToken);				
 			
-			$this->OmbServiceAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
+			$this->OmbServiceAccessToken->add($identity['Identity']['id'], $localServiceId, $accessToken);
 			
-			$this->Session->delete('omb.accessTokenUrl');
-			$this->Session->delete('omb.requestToken');
-			$this->Session->delete('omb.serviceId');
+			$this->Session->delete(self::ACCESS_TOKEN_URL_KEY);
+			$this->Session->delete(self::REQUEST_TOKEN_KEY);
+			$this->Session->delete(self::LOCAL_SERVICE_ID_KEY);
 			
 			$this->flashMessage('Success', __('Successfully subscribed to ', true) . $username);
 		} catch (InvalidArgumentException $e) {
@@ -55,17 +58,17 @@ class OmbSubscriptionsController extends AppController {
 		if ($this->data) {
 			try {
 				$localServiceDefinition = $this->OmbRemoteService->discoverLocalService($this->data['Omb']['url']);
-				$serviceId = $this->OmbLocalService->getServiceId($localServiceDefinition);
+				$localServiceId = $this->OmbLocalService->getServiceId($localServiceDefinition);
 
-				if (!$serviceId) {
-					$serviceId = $this->OmbLocalService->add($localServiceDefinition);
+				if (!$localServiceId) {
+					$localServiceId = $this->OmbLocalService->add($localServiceDefinition);
 				}
 
 				$requestToken = $this->OmbRemoteService->getRequestToken($localServiceDefinition->getRequestTokenUrl(), $localServiceDefinition->getLocalId());
 				
-				$this->Session->write('omb.requestToken', $requestToken);
-				$this->Session->write('omb.accessTokenUrl', $localServiceDefinition->getAccessTokenUrl());
-				$this->Session->write('omb.serviceId', $serviceId);
+				$this->Session->write(self::REQUEST_TOKEN_KEY, $requestToken);
+				$this->Session->write(self::ACCESS_TOKEN_URL_KEY, $localServiceDefinition->getAccessTokenUrl());
+				$this->Session->write(self::LOCAL_SERVICE_ID_KEY, $localServiceId);
 				
 				$identity = $this->Identity->getIdentityByUsername($username);
 				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
