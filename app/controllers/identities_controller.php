@@ -862,11 +862,11 @@ class IdentitiesController extends AppController {
     }
     
     private function sendUpdateToOmbSubscribers($data) {
-    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
-    	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
+    	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
+    	$accessToken = $ombLocalServiceAccessToken->findByIdentityId($this->Identity->id);
 
     	if ($accessToken) {
-	    	$this->OmbRemoteService->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
+	    	$this->OmbRemoteService->updateProfile($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
     	}
     }
     

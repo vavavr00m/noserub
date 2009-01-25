@@ -550,8 +550,8 @@ class Entry extends AppModel {
     }
     
     private function sendToOmb($identity_id, $entry_id, $text) {
-    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
-    	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
+    	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
+    	$accessToken = $ombLocalServiceAccessToken->findByIdentityId($identity_id);
 
     	if (!$accessToken) {
     		return;
@@ -562,7 +562,7 @@ class Entry extends AppModel {
     	$ombRemoteService = new OmbRemoteServiceComponent();
     	$ombRemoteService->Session = new SessionComponent();
     	$ombRemoteService->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombRemoteService->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['post_notice_url'], $entry_id, $text);
+    	$ombRemoteService->postNotice($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['post_notice_url'], $entry_id, $text);
     }
     
     /**

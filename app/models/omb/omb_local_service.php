@@ -1,7 +1,7 @@
 <?php
 
 class OmbLocalService extends AppModel {
-	public $hasMany = array('OmbServiceAccessToken');
+	public $hasMany = array('OmbLocalServiceAccessToken');
 	
 	public function add(OmbLocalServiceDefinition $serviceDefinition) {
 		$data['OmbLocalService']['post_notice_url'] = $serviceDefinition->getPostNoticeUrl();
