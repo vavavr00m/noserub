@@ -28,6 +28,7 @@ class OmbSubscriptionsController extends AppController {
 			
 			$this->Identity->save($data, true, array('is_local', 'username'));
 			$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
+			$contactId = $this->Identity->Contact->id;
 		
 			if ($response->getAvatarUrl() != '') {
 				$this->Identity->uploadPhotoByUrl($response->getAvatarUrl());
@@ -38,7 +39,7 @@ class OmbSubscriptionsController extends AppController {
 			$localServiceId = $this->Session->read(self::LOCAL_SERVICE_ID_KEY);
 			$accessToken = $this->OmbRemoteService->getAccessToken($accessTokenUrl, $requestToken);				
 			
-			$this->OmbLocalService->OmbLocalServiceAccessToken->add($identity['Identity']['id'], $localServiceId, $accessToken);
+			$this->OmbLocalService->OmbLocalServiceAccessToken->add($contactId, $localServiceId, $accessToken);
 			
 			$this->Session->delete(self::ACCESS_TOKEN_URL_KEY);
 			$this->Session->delete(self::REQUEST_TOKEN_KEY);
