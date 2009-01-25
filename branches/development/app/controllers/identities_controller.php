@@ -862,6 +862,7 @@ class IdentitiesController extends AppController {
     }
     
     private function sendUpdateToOmbSubscribers($data) {
+    	App::import('Vendor', 'OmbUpdatedProfileData');
     	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
     	$accessToken = $ombLocalServiceAccessToken->findByIdentityId($this->Identity->id);
 
