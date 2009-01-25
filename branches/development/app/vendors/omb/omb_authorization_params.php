@@ -1,6 +1,6 @@
 <?php
 App::import('Component', 'OmbRemoteService');
-App::import('Vendor', 'OmbListenee');
+App::import('Vendor', array('OmbListenee', 'OmbListeneeHomepage'));
 
 class OmbAuthorizationParams {
 	private $params = null;
