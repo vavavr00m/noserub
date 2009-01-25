@@ -297,12 +297,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-class OmbListeneeHomepage extends OmbParam {
-	public function getKey() {
-		return OmbParamKeys::LISTENEE_HOMEPAGE;
-	}
-}
-
 class OmbListeneeLicense extends OmbParam {
 	const CREATIVE_COMMONS = 'http://creativecommons.org/licenses/by/3.0/';
 	

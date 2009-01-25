@@ -222,15 +222,6 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 }
 
-class OmbListeneeHomepageTest extends CakeTestCase {
-	public function testConstruct() {
-		$homepage = 'http://example.com';
-		$listeneeHomepage = new OmbListeneeHomepage($homepage);
-		$this->assertEqual(OmbParamKeys::LISTENEE_HOMEPAGE, $listeneeHomepage->getKey());
-		$this->assertEqual($homepage, $listeneeHomepage->getValue());
-	}
-}
-
 class OmbListeneeLicenseTest extends CakeTestCase {
 	public function testConstruct() {
 		$expectedLicense = OmbListeneeLicense::CREATIVE_COMMONS;
