@@ -20,9 +20,9 @@ class OmbSubscriptionsController extends AppController {
 			$data['Identity']['is_local'] = false;
 			$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
 			
-			$existingId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
-			if ($existingId) {
-				$this->Identity->id = $existingId;
+			$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
+			if ($existingIdentityId) {
+				$this->Identity->id = $existingIdentityId;
 			}
 			
 			$this->Identity->save($data, true, array('is_local', 'username'));
