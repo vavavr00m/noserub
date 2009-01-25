@@ -10,9 +10,7 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbListeneeAvatar', 
-							'OmbListeneeBio', 'OmbListeneeFullname', 'OmbListeneeLocation',
-							'OmbParam', 'OmbParamKeys'));
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParamKeys'));
 
 class OmbRemoteServiceComponent extends Object {
 	public $components = array('OmbOauthConsumer', 'Session');
