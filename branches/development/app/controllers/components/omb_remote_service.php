@@ -10,7 +10,7 @@ if (!class_exists('Auth_Yadis_Yadis')) {
 	App::import('Vendor', 'yadis', array('file' => 'Auth'.DS.'Yadis'.DS.'Yadis.php'));
 }
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbParam', 'OmbParamKeys'));
+App::import('Vendor', array('OauthConstants', 'OmbConstants', 'OmbListeneeAvatar', 'OmbParam', 'OmbParamKeys'));
 
 class OmbRemoteServiceComponent extends Object {
 	public $components = array('OmbOauthConsumer', 'Session');
@@ -293,35 +293,6 @@ class OmbUpdatedProfileData {
 		}
 		
 		return $result;
-	}
-}
-
-class OmbListeneeAvatar extends OmbParam {
-	
-	public function __construct($avatarName) {
-		$avatarUrl = '';
-		
-		if (trim($avatarName) != '') {
-			if ($this->isGravatarUrl($avatarName)) {
-				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
-			} else {
-				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
-			}
-		}
-		
-		parent::__construct($avatarUrl);
-	}
-	
-	public function getKey() {
-		return OmbParamKeys::LISTENEE_AVATAR;
-	}
-	
-	private function get96x96GravatarUrl($gravatarUrl) {
-		return $gravatarUrl . '?s=96';
-	}
-	
-	private function isGravatarUrl($avatarName) {
-		return (stripos($avatarName, 'http://gravatar.com') === 0);
 	}
 }
 
