@@ -298,12 +298,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-class OmbListener extends OmbParam {
-	public function getKey() {
-		return OmbParamKeys::LISTENER;
-	}
-}
-
 class OmbVersion extends OmbParam {
 	public function __construct() {
 		parent::__construct(OmbConstants::VERSION);
