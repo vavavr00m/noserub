@@ -297,18 +297,6 @@ class OmbUpdatedProfileData {
 	}
 }
 
-class OmbListeneeLicense extends OmbParam {
-	const CREATIVE_COMMONS = 'http://creativecommons.org/licenses/by/3.0/';
-	
-	public function __construct() {
-		parent::__construct(self::CREATIVE_COMMONS);
-	}
-	
-	public function getKey() {
-		return OmbParamKeys::LISTENEE_LICENSE;
-	}
-}
-
 class OmbListeneeLocation extends OmbParam {
 	const MAX_LENGTH = 254; // spec says "less than 255 chars"
 	
