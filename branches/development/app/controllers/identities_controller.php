@@ -9,7 +9,7 @@ class IdentitiesController extends AppController {
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
         'geocoder', 'url', 'cluster', 'openid', 'cdn', 
-        'Cookie', 'api', 'OauthServiceProvider', 'OmbRemoteService'
+        'Cookie', 'api', 'OauthServiceProvider'
     );
     
     /**
@@ -862,15 +862,8 @@ class IdentitiesController extends AppController {
     }
     
     private function sendUpdateToOmbSubscribers($data) {
-    	App::import('Vendor', 'OmbUpdatedProfileData');
-    	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
-    	$accessTokens = $ombLocalServiceAccessToken->getAccessTokensToUpdateProfile($this->Identity->id);
-    	
-    	if (!empty($accessTokens)) {
-    		foreach ($accessTokens as $accessToken) {
-    			$this->OmbRemoteService->updateProfile($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['update_profile_url'], new OmbUpdatedProfileData($data));
-    		}
-    	}
+    	App::import('Component', 'OmbRemoteService');
+    	OmbRemoteServiceComponent::createRemoteService()->updateProfile($this->Identity->id, $data);
     }
     
     /**

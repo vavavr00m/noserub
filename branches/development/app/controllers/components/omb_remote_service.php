@@ -104,7 +104,20 @@ class OmbRemoteServiceComponent extends Object {
 															  OmbParamKeys::LISTENER => $localId));
 	}
 	
-	public function postNotice($tokenKey, $tokenSecret, $url, $noticeId, $notice) {
+	public function postNotice($identityId, $noticeId, $notice) {
+		$accessTokens = ClassRegistry::init('OmbLocalServiceAccessToken')->getAccessTokens($identityId);
+		
+		App::import('Vendor', array('OmbNotice', 'OmbPostNoticeStrategy'));
+		$ombNotice = new OmbNotice($noticeId, $notice);
+		$strategy = new OmbPostNoticeStrategy($this, $accessTokens, $ombNotice);
+		$strategy->execute();
+	}
+	
+	/**
+	 * This method posts a notice to a *SINGLE* url. In most cases you don't want to use 
+	 * this method, but the postNotice() method, which posts a notice to all subscribers.
+	 */
+	public function postNoticeToUrl($tokenKey, $tokenSecret, $url, OmbNotice $ombNotice) {
 		$identity = $this->Session->read('Identity');
 		$data = $this->OmbOauthConsumer->post('GenericOmb', 
 											  $tokenKey, 
@@ -112,8 +125,8 @@ class OmbRemoteServiceComponent extends Object {
 											  $url, 
 											  array(OmbParamKeys::VERSION => OmbConstants::VERSION, 
 													OmbParamKeys::LISTENEE => 'http://'.$identity['username'], 
-													OmbParamKeys::NOTICE => Router::url('/entry/'.$noticeId, true), 
-													OmbParamKeys::NOTICE_CONTENT => $notice));
+													OmbParamKeys::NOTICE => Router::url('/entry/'.$ombNotice->getNoticeId(), true), 
+													OmbParamKeys::NOTICE_CONTENT => $ombNotice->getNotice()));
 		return $data;
 	}
 	
@@ -139,7 +152,21 @@ class OmbRemoteServiceComponent extends Object {
 		$this->controller->redirect($request->to_url());
 	}
 	
-	public function updateProfile($tokenKey, $tokenSecret, $url, OmbUpdatedProfileData $profileData) {
+	public function updateProfile($identityId, $data) {
+		$accessTokens = ClassRegistry::init('OmbLocalServiceAccessToken')->getAccessTokens($identityId);
+		
+		App::import('Vendor', array('OmbUpdatedProfileData', 'OmbUpdateProfileStrategy'));
+		$profileData = new OmbUpdatedProfileData($data);
+		$strategy = new OmbUpdateProfileStrategy($this, $accessTokens, $profileData);
+		$strategy->execute();
+	}
+	
+	/**
+	 * This method notifies a *SINGLE* url about a profile update. In most cases you don't 
+	 * want to use this method, but the updateProfile() method, which notifies all
+	 * subscribers about the profile update.
+	 */
+	public function updateProfileToUrl($tokenKey, $tokenSecret, $url, OmbUpdatedProfileData $profileData) {
 		$identity = $this->Session->read('Identity');
 		
 		$result = false;
