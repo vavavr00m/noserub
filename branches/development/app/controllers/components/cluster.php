@@ -8,15 +8,15 @@ class ClusterComponent extends Object {
      * Clusters will by YYY-MM-DD DESC
      *
      * @param  array $data
-     * @param  bool $with_future_dates 
      * @return array $clustered_data
      */
     public function create($data, $with_future_dates = false) {
-        $today = date('Y-m-d');
+        $now = date('Y-m-d H:i:s');
         $clustered_data = array();
         foreach($data as $key => $value) {
             $day = date('Y-m-d', strtotime($value['Entry']['published_on']));
-            if($with_future_dates === false && $day > $today) {
+            if($with_future_dates === false && 
+               $value['Entry']['published_on'] > $now) {
                 continue;
             }
             if(!isset($clustered_data[$day])) {

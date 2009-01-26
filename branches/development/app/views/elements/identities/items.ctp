@@ -18,6 +18,7 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
         $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 days'));
         $days = 0;
+        $display_more_link = count($data) > 1;
         foreach($data as $date => $cluster) {
             $days++;
             if($days === 14) {
@@ -28,7 +29,10 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 $num_of_activities = count($cluster);
                 echo '<span class="more">';
                 $label = sprintf(__('%d activities', true), $num_of_activities);
-                if($num_of_activities > $max_num_items_per_day) {
+                if($num_of_activities > $max_num_items_per_day &&
+                   $display_more_link) {
+                    # if only one day is displayed, we don't
+                    # need the "more" link
                     echo '<a href="#">' . $label . '</a>';
                 } else {
                     echo $label;
@@ -54,7 +58,6 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                         $label = wordwrap($username, 12, '<br />', true);
 						__('From');
 						echo ' ' . $html->link($label, '/entry/' . $item['Entry']['id']);
-                        #echo __('From', true) . ' <a href="http://' . $item['Identity']['username'] . '">' . $label . '</a>';
                     ?>
                     </span>
                 <?php } ?>
@@ -66,7 +69,10 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 <ul class="networklist">
                     <?php foreach($cluster as $item) { ?>
                         <?php
-                            if($num_displayed == $max_num_items_per_day) {
+                            if($num_displayed == $max_num_items_per_day &&
+                               $display_more_link) {
+                               # if only one day is displayed, show all the
+                               # entries, not only $max_num_items_per_day
                                 echo '</ul>';
                                 echo '<ul class="networklist extended">';
                             }
