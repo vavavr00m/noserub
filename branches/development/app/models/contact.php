@@ -216,6 +216,13 @@ class Contact extends AppModel {
         }
     }
     
+    public function deleteContactTypeAssociations($contact_id) {
+    	$sql = 'DELETE FROM ' . $this->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
+        $this->ContactTypesContact->query($sql);
+        $sql = 'DELETE FROM ' . $this->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
+        $this->ContactsNoserubContactType->query($sql);
+    }
+    
     public function export($identity_id) {
         $this->contain(array('WithIdentity', 'NoserubContactType', 'ContactType'));
         $data = $this->findAllByIdentityId($identity_id);
