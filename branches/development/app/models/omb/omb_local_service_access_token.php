@@ -13,6 +13,10 @@ class OmbLocalServiceAccessToken extends AppModel {
 		return $this->save($data); 
 	}
 	
+	public function deleteByContactId($contact_id) {
+		$this->deleteAll(array('contact_id' => $contact_id));
+	}
+	
 	public function getAccessTokens($identity_id) {
 		$sql = 'SELECT OmbLocalServiceAccessToken.*, OmbLocalService.* 
 				FROM omb_local_service_access_tokens AS OmbLocalServiceAccessToken 
