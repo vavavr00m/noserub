@@ -188,14 +188,6 @@ class Contact extends AppModel {
 		    }
 		}
 	}
-    
-	public function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
-		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
-	}
-	
-	public function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
-		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
-	}
 	
     /**
      * Deletes all contacts from and to this identity_id
