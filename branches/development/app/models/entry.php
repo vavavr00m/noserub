@@ -438,8 +438,12 @@ class Entry extends AppModel {
         );
         
         $this->create();
-        $this->save($data);
-        
+        if($this->save($data)) {    
+            # now set url and uid
+            $url = Router::url('/entry/' . $this->id . '/', true);
+            $this->saveField('url', $url);
+            $this->saveField('uid', md5($url));
+        }
         return true;
     }
     
