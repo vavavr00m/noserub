@@ -550,19 +550,8 @@ class Entry extends AppModel {
     }
     
     private function sendToOmb($identity_id, $entry_id, $text) {
-    	$ombLocalServiceAccessToken = ClassRegistry::init('OmbLocalServiceAccessToken');
-    	$accessTokens = $ombLocalServiceAccessToken->getAccessTokensToPostNotice($identity_id);
-    	
-    	if (empty($accessTokens)) {
-    		return;
-    	}
-    	
     	App::import('Component', 'OmbRemoteService');
-    	$ombRemoteService = OmbRemoteServiceComponent::createRemoteService();
-    	
-    	foreach ($accessTokens as $accessToken) {
-    		$ombRemoteService->postNotice($accessToken['OmbLocalServiceAccessToken']['token_key'], $accessToken['OmbLocalServiceAccessToken']['token_secret'], $accessToken['OmbLocalService']['post_notice_url'], $entry_id, $text);
-    	}
+    	OmbRemoteServiceComponent::createRemoteService()->postNotice($identity_id, $entry_id, $text);
     }
     
     /**
