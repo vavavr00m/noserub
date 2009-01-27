@@ -126,6 +126,13 @@ class OmbLocalServiceController extends AppController {
 				$redirectTo .= '&omb_version='.OAuthUtil::urlencodeRFC3986(OmbConstants::VERSION);
 				$redirectTo .= '&omb_listener_nickname='.OAuthUtil::urlencodeRFC3986($identity['local_username']);
 				$redirectTo .= '&omb_listener_profile='.OAuthUtil::urlencodeRFC3986('http://'.$identity['username']);
+				$redirectTo .= '&omb_listener_location='.OAuthUtil::urlencodeRFC3986($identity['address_shown']);
+				$redirectTo .= '&omb_listener_fullname='.OAuthUtil::urlencodeRFC3986($identity['name']);
+				$redirectTo .= '&omb_listener_bio='.OAuthUtil::urlencodeRFC3986(substr($identity['about'], 0, 139));
+				
+				if ($identity['photo'] != '') {
+					$redirectTo .= '&omb_listener_avatar='.OAuthUtil::urlencodeRFC3986($this->getAvatarUrl($identity['photo']));
+				}
 			} else {
 				$redirectTo = '/';
 			}
@@ -164,6 +171,28 @@ class OmbLocalServiceController extends AppController {
 	
 	public function update_profile() {
 		// TODO add implementation
+	}
+	
+	private function getAvatarUrl($avatarName) {
+		$avatarUrl = '';
+		
+		if (trim($avatarName) != '') {
+			if ($this->isGravatarUrl($avatarName)) {
+				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
+			} else {
+				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+			}
+		}
+		
+		return $avatarUrl;
+	}
+	
+	private function get96x96GravatarUrl($gravatarUrl) {
+		return $gravatarUrl . '?s=96';
+	}
+	
+	private function isGravatarUrl($avatarName) {
+		return (stripos($avatarName, 'http://gravatar.com') === 0);
 	}
 	
 	private function getServer() {
