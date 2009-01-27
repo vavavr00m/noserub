@@ -7,7 +7,7 @@ class Contact extends AppModel {
                                                    'foreignKey' => 'with_identity_id'));
 
     public $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
-    public $hasOne = array('OmbLocalServiceAccessToken');
+    public $hasOne = array('OmbLocalServiceAccessToken', 'OmbAccessToken');
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),

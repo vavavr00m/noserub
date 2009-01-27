@@ -199,6 +199,7 @@ class ContactsController extends AppController {
         }
         
         $this->Contact->deleteContactTypeAssociations($contact_id);
+        $this->Contact->OmbAccessToken->deleteByContactId($contact_id);
         $this->Contact->OmbLocalServiceAccessToken->deleteByContactId($contact_id);
         
         # remove this contact
