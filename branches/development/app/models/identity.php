@@ -875,7 +875,7 @@ class Identity extends AppModel {
     	if(Configure::read('NoseRub.use_cdn')) {
             $url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
         } else {
-            $url = FULL_BASE_URL . Router::url('/static/avatars/');
+            $url = Router::url('/static/avatars/', true);
         }
         
         return $url;
