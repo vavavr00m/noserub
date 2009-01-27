@@ -1,14 +1,13 @@
 <?php
 
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', array('OmbConstants', 'OmbParamKeys'));
+App::import('Vendor', array('OmbConstants', 'OmbParamKeys', 'UrlUtil'));
 
 class OmbLocalServiceController extends AppController {
-	public $uses = array('Entry', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
+	public $uses = array('Entry', 'Identity', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
 	public $components = array('RequestHandler');
 	
 	public function request_token() {
-		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -29,7 +28,6 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function access_token() {
-		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -52,7 +50,6 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function authorize() {
-		exit(); // disabled for release
 		if (!$this->isCorrectOMBVersion()) {
 			echo __('Invalid OMB version', true);
 			exit;
@@ -90,7 +87,6 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function authorize_form() {
-		exit(); // disabled for release
 		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
 			echo __('Invalid request', true);
 			exit;
@@ -100,7 +96,22 @@ class OmbLocalServiceController extends AppController {
 			$this->set('headline', __('Authorize access', true));
 		} else {
 			if (isset($this->params['form']['allow'])) {
-				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'));
+				$data['Identity']['is_local'] = false;
+				$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_PROFILE));
+				
+				$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
+			
+				if (!$existingIdentityId) {
+					$this->Identity->save($data, true, array('is_local', 'username'));
+					$existingIdentityId = $this->Identity->id;
+				}
+				
+				$data['OmbListeneeIdentifier']['identity_id'] = $existingIdentityId;
+				$data['OmbListeneeIdentifier']['identifier'] = $this->Session->read('OMB.'.OmbParamKeys::LISTENEE);
+				ClassRegistry::init('OmbListeneeIdentifier')->save($data, true, array('identity_id', 'identifier'));
+				
+				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'), $existingIdentityId);
+
 				$redirectTo = $this->Session->read('OMB.oauth_callback');
 				
 				if (strpos($redirectTo, '?') === false) {
@@ -126,7 +137,6 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function post_notice() {
-		exit(); // disabled for release
 		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
 			header('HTTP/1.1 403 Forbidden');
 			echo __('Invalid request', true);
@@ -141,8 +151,12 @@ class OmbLocalServiceController extends AppController {
 				exit;
 			}
 		}
-		
-		// TODO add notice
+
+		$identityId = ClassRegistry::init('OmbListeneeIdentifier')->field('identity_id', array('identifier' => $this->params['form'][OmbParamKeys::LISTENEE]));
+		$noticeUrl = $this->params['form'][OmbParamKeys::NOTICE];
+		$notice = $this->params['form'][OmbParamKeys::NOTICE_CONTENT];
+
+		$this->Entry->addOmbNotice($identityId, $noticeUrl, $notice);
 		
 		echo OmbParamKeys::VERSION . '=' . OmbConstants::VERSION;
 		exit;
