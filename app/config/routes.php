@@ -5,6 +5,8 @@ Router::connect('/social_stream/:filter/:output/', array('controller' => 'identi
 
 Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => 'send'));
 
+Router::connect('/widget/users/new/', array('controller' => 'identities', 'action' => 'widget_users_new'));
+
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
@@ -19,7 +21,7 @@ Router::connect('/pages/account/deleted/', array('controller' => 'identities', '
 Router::connect('/pages/security_check/', array('controller' => 'pages', 'action' => 'security_check'));
 Router::connect('/pages/yadis.xrdf', array('controller' => 'identities', 'action' => 'yadis'));
 Router::connect('/pages/oauth/:action', array('controller' => 'oauth'));
-Router::connect('/pages/omb/:action', array('controller' => 'omb'));
+Router::connect('/pages/omb/:action', array('controller' => 'omb_local_service'));
 Router::connect('/pages/password/recovery/*', array('controller' => 'identities', 'action' => 'password_recovery'));
 Router::connect('/pages/password/set/*', array('controller' => 'identities', 'action' => 'password_recovery_set'));
 

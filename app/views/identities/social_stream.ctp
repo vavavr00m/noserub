@@ -1,7 +1,7 @@
 <?php
-    $is_self = isset($about_identity['id']) && 
-               isset($session_identity) &&
-               $about_identity['id'] == $session_identity['id'];
+$is_self = isset($about_identity['id']) && 
+           isset($session_identity) &&
+           $about_identity['id'] == $session_identity['id'];
 ?>
 <?php if(isset($about_identity)) {
     echo $this->element('identities/mini_profile', array('data' => $about_identity, 'base_url_for_avatars' => $base_url_for_avatars));
@@ -30,8 +30,5 @@
     	    <hr />
     	    <?php echo $this->element('contacts/box', array('box_head' => __('My Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars, 'manage' => true)); ?>
     	<?php } ?>
-    	<?php if(isset($newbies)) { ?>
-    	    <hr />
-            <?php echo $this->element('contacts/box', array('box_head' => __('Newbies', true), 'data' => $newbies, 'static_base_url' => $base_url_for_avatars)); ?>
-        <?php } ?>
+    	<?php echo $noserub->widgetNewestUsers(); ?>
     </div>

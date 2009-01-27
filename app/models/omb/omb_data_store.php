@@ -42,22 +42,39 @@ class OmbDataStore extends AppModel {
 	}
 	
 	public function new_access_token($token, $consumer) {
-		App::import('Model', 'OmbRequestToken');
+		App::import('Model', array('Contact', 'OmbRequestToken'));
   		$requestToken = new OmbRequestToken();
 		
 		if ($requestToken->isAuthorized($token->key)) {
-			$this->identity_id = $requestToken->field('identity_id', array('token_key' => $token->key));
-			$accessToken = $this->new_token('AccessToken');
-  			$requestToken->delete(array('OmbRequestToken.token_key' => $token->key));
-  			
-  			return $accessToken;
+			$requestTokenData = $requestToken->findByTokenKey($token->key);
+			$this->identity_id = $requestTokenData['OmbRequestToken']['identity_id'];
+			$with_identity_id = $requestTokenData['OmbRequestToken']['with_identity_id'];
+			
+			$contact = new Contact();
+			$contact->add($this->identity_id, $with_identity_id);
+			$accessToken = $this->createAccessToken($contact->id);
+			$requestToken->delete(array('OmbRequestToken.token_key' => $token->key));
+			
+			return $accessToken;
 		}
 		
 		return null;
 	}
 	
-	public function new_request_token($consumer) {  		
-  		return $this->new_token('RequestToken');
+	public function new_request_token($consumer) {
+  		App::import('Core', 'Security');
+		$key = md5(time());
+    	$secret = Security::hash(time(), null, true);
+    	
+    	$data['OmbRequestToken']['identity_id'] = $this->identity_id;
+  		$data['OmbRequestToken']['token_key'] = $key;
+  		$data['OmbRequestToken']['token_secret'] = $secret;
+  		
+  		App::import('Model', 'OmbRequestToken');
+  		$token = new OmbRequestToken();
+  		$token->save($data);
+  		
+  		return new OmbOAuthToken($key, $secret);
 	}
 	
 	public function set_omb_listener($omb_listener) {
@@ -71,24 +88,18 @@ class OmbDataStore extends AppModel {
 		$this->identity_id = $identity_id;
 	}
 	
-	private function new_token($token_type) {
+	private function createAccessToken($contact_id) {
 		App::import('Core', 'Security');
 		$key = md5(time());
     	$secret = Security::hash(time(), null, true);
+    	
+    	$data['OmbAccessToken']['contact_id'] = $contact_id;
+  		$data['OmbAccessToken']['token_key'] = $key;
+  		$data['OmbAccessToken']['token_secret'] = $secret;
   		
-    	$token_type = 'Omb'.$token_type;
-
-    	$data[$token_type]['identity_id'] = $this->identity_id;
-  		$data[$token_type]['token_key'] = $key;
-  		$data[$token_type]['token_secret'] = $secret;
-  		
-  		App::import('Model', $token_type);
-  		$token = new $token_type();
+  		App::import('Model', 'OmbAccessToken');
+  		$token = new OmbAccessToken();
   		$token->save($data);
-  		
-  		if ($token_type == 'OmbRequestToken') {
-  			return new OmbOAuthToken($key, $secret);
-  		}
   		
   		return new OAuthToken($key, $secret);
 	}

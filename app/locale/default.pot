@@ -1,12 +1,12 @@
 # LANGUAGE translation of CakePHP Application
 # Copyright YEAR NAME <EMAIL@ADDRESS>
-# Generated from file: Revision: 1057 /app/webroot/test.php
+# Generated from file: Revision: 1057 /noserub/app/webroot/test.php
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-01-05 22:26+0100\n"
+"POT-Creation-Date: 2009-01-27 20:07+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -15,16 +15,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /app_controller.php:132
+#: /app_controller.php:136
 msgid "You may not call this route from the shell!"
 msgstr ""
 
-#: /app_controller.php:138
+#: /app_controller.php:142
 #: /controllers/auth_controller.php:105
 msgid "Error"
 msgstr ""
 
-#: /app_controller.php:138
+#: /app_controller.php:142
 msgid "This route is only accessible from the shell!"
 msgstr ""
 
@@ -120,7 +120,7 @@ msgstr ""
 msgid "Could not add contact."
 msgstr ""
 
-#: /controllers/contacts_controller.php:131;152
+#: /controllers/contacts_controller.php:131;152;545
 msgid "New contact added."
 msgstr ""
 
@@ -132,33 +132,29 @@ msgstr ""
 msgid "Add a contact to %s's social network"
 msgstr ""
 
-#: /controllers/contacts_controller.php:211
+#: /controllers/contacts_controller.php:209
 msgid "Removed the contact."
 msgstr ""
 
-#: /controllers/contacts_controller.php:375
+#: /controllers/contacts_controller.php:373
 msgid "Contact updated."
 msgstr ""
 
-#: /controllers/contacts_controller.php:382
+#: /controllers/contacts_controller.php:380
 msgid "Edit the contact details"
 msgstr ""
 
-#: /controllers/contacts_controller.php:447
+#: /controllers/contacts_controller.php:445
 msgid "Location updated."
 msgstr ""
 
-#: /controllers/contacts_controller.php:517
+#: /controllers/contacts_controller.php:515
 msgid "Activities in %s's contact's social stream"
 msgstr ""
 
-#: /controllers/contacts_controller.php:542
+#: /controllers/contacts_controller.php:540
 #: /views/contacts/add.ctp:17
 msgid "You cannot add yourself as a contact."
-msgstr ""
-
-#: /controllers/contacts_controller.php:557
-msgid "Added new contact."
 msgstr ""
 
 #: /controllers/entries_controller.php:23
@@ -205,33 +201,33 @@ msgstr ""
 msgid "Marked the entry."
 msgstr ""
 
-#: /controllers/entries_controller.php:188
-#: /controllers/identities_controller.php:751
+#: /controllers/entries_controller.php:193
+#: /controllers/identities_controller.php:770
 #: /controllers/peers_controller.php:24;62
 msgid "Value for NoseRub.cron_hash from noserub.php does not match or is empty!"
 msgstr ""
 
-#: /controllers/entries_controller.php:199
+#: /controllers/entries_controller.php:204
 msgid "NoseRub.manual_feeds_update in noserub.php not set to do it manually!"
 msgstr ""
 
-#: /controllers/entries_controller.php:228
+#: /controllers/entries_controller.php:233
 msgid "%d entries added/updated"
 msgstr ""
 
-#: /controllers/identities_controller.php:38
+#: /controllers/identities_controller.php:39
 msgid "There is a redirect URL given!"
 msgstr ""
 
-#: /controllers/identities_controller.php:137
+#: /controllers/identities_controller.php:138
 msgid "My NoseRub Profile"
 msgstr ""
 
-#: /controllers/identities_controller.php:162
+#: /controllers/identities_controller.php:163
 msgid "Username could not be found!"
 msgstr ""
 
-#: /controllers/identities_controller.php:206
+#: /controllers/identities_controller.php:207
 msgid "Social Stream"
 msgstr ""
 
@@ -307,87 +303,83 @@ msgstr ""
 msgid "Configure your display options"
 msgstr ""
 
-#: /controllers/identities_controller.php:495
+#: /controllers/identities_controller.php:501
 msgid "Privacy settings have been saved."
 msgstr ""
 
-#: /controllers/identities_controller.php:502
+#: /controllers/identities_controller.php:521
 msgid "Your privacy settings"
 msgstr ""
 
-#: /controllers/identities_controller.php:533
+#: /controllers/identities_controller.php:552
 msgid "API options have been saved."
 msgstr ""
 
-#: /controllers/identities_controller.php:541
+#: /controllers/identities_controller.php:560
 msgid "You need to specify a new password."
 msgstr ""
 
-#: /controllers/identities_controller.php:543
+#: /controllers/identities_controller.php:562
 msgid "The new password was not entered twice the same."
 msgstr ""
 
-#: /controllers/identities_controller.php:549
+#: /controllers/identities_controller.php:568
 msgid "The new password has been saved."
 msgstr ""
 
-#: /controllers/identities_controller.php:552
+#: /controllers/identities_controller.php:571
 msgid "The old password was not correct."
 msgstr ""
 
-#: /controllers/identities_controller.php:558
+#: /controllers/identities_controller.php:577
 msgid "Password settings"
 msgstr ""
 
-#: /controllers/identities_controller.php:585
+#: /controllers/identities_controller.php:604
 msgid "Welcome! It's nice to have you back."
 msgstr ""
 
-#: /controllers/identities_controller.php:595
+#: /controllers/identities_controller.php:614
 msgid "Login not possible"
 msgstr ""
 
-#: /controllers/identities_controller.php:604
+#: /controllers/identities_controller.php:623
 msgid "Login with existing NoseRub account"
 msgstr ""
 
-#: /controllers/identities_controller.php:665
+#: /controllers/identities_controller.php:684
 msgid "Account deleted"
 msgstr ""
 
-#: /controllers/identities_controller.php:902;981
+#: /controllers/identities_controller.php:917;982
 msgid "The password recovery link is not valid!"
 msgstr ""
 
-#: /controllers/identities_controller.php:927
+#: /controllers/identities_controller.php:942
 msgid "The account could not be found!"
 msgstr ""
 
-#: /controllers/identities_controller.php:932
+#: /controllers/identities_controller.php:946
 msgid "No email address found!"
 msgstr ""
 
-#: /controllers/identities_controller.php:941
-msgid "%s password recovery"
-msgstr ""
-
-#: /controllers/identities_controller.php:951
+#: /controllers/identities_controller.php:952
 msgid "Please look into your inbox for the password recovery email."
 msgstr ""
 
-#: /controllers/identities_controller.php:965;984
+#: /controllers/identities_controller.php:966;985
 msgid "Something went wrong. Please try again!"
 msgstr ""
 
-#: /controllers/identities_controller.php:987
+#: /controllers/identities_controller.php:988
 msgid "The two passwords were not the same!"
 msgstr ""
 
-#: /controllers/identities_controller.php:990
+#: /controllers/identities_controller.php:991
 msgid "The password is too short!"
 msgstr ""
 
-#: /controllers/identities_controller.php:997
+#: /controllers/identities_controller.php:998
 msgid "You now can log in with your new password."
 msgstr ""
 
@@ -473,29 +465,29 @@ msgid "Application could not be deleted."
 msgstr ""
 
 #: /controllers/oauth_controller.php:70
-#: /controllers/omb_controller.php:100
+#: /controllers/omb_local_service_controller.php:96
 msgid "Authorize access"
 msgstr ""
 
-#: /controllers/omb_controller.php:57
+#: /controllers/omb_local_service_controller.php:54
 #: /controllers/components/omb_oauth_consumer.php:8
 msgid "Invalid OMB version"
 msgstr ""
 
-#: /controllers/omb_controller.php:67;140
+#: /controllers/omb_local_service_controller.php:64;176
 msgid "Missing parameter: "
 msgstr ""
 
-#: /controllers/omb_controller.php:95;132
-#: /controllers/omb_subscriptions_controller.php:45
+#: /controllers/omb_local_service_controller.php:91;154
+#: /controllers/omb_subscriptions_controller.php:50
 msgid "Invalid request"
 msgstr ""
 
-#: /controllers/omb_subscriptions_controller.php:43
+#: /controllers/omb_subscriptions_controller.php:48
 msgid "Successfully subscribed to "
 msgstr ""
 
-#: /controllers/omb_subscriptions_controller.php:53
+#: /controllers/omb_subscriptions_controller.php:58
 msgid "Subscribe to "
 msgstr ""
 
@@ -507,27 +499,23 @@ msgstr ""
 msgid "There was a security problem"
 msgstr ""
 
-#: /controllers/registration_controller.php:26
-msgid "Your %s registration"
-msgstr ""
-
-#: /controllers/registration_controller.php:45
+#: /controllers/registration_controller.php:44
 msgid "Register a new NoseRub account"
 msgstr ""
 
-#: /controllers/registration_controller.php:49
+#: /controllers/registration_controller.php:48
 msgid "Register a new NoseRub account - Step 1/2"
 msgstr ""
 
-#: /controllers/registration_controller.php:91
+#: /controllers/registration_controller.php:90
 msgid "Register a new NoseRub account - Step 2/2"
 msgstr ""
 
-#: /controllers/registration_controller.php:116
+#: /controllers/registration_controller.php:115
 msgid "Thanks for your registration!"
 msgstr ""
 
-#: /controllers/registration_controller.php:123
+#: /controllers/registration_controller.php:122
 msgid "Verify your e-mail address"
 msgstr ""
 
@@ -564,22 +552,22 @@ msgid "none - no CDN defined in noserub.php"
 msgstr ""
 
 #: /controllers/components/openid.php:81
-msgid "OpenID transaction in progress"
+msgid "OpenID Authentication Redirect"
 msgstr ""
 
-#: /models/comment.php:83
+#: /models/comment.php:96
 msgid "%d comments from %s, %d imported"
 msgstr ""
 
-#: /models/entry.php:479
+#: /models/entry.php:507
 msgid "marked a new favorite: %s"
 msgstr ""
 
-#: /models/entry.php:487
+#: /models/entry.php:515
 msgid "commented on: %s"
 msgstr ""
 
-#: /models/favorite.php:55
+#: /models/favorite.php:59
 msgid "%d favorites from %s, %d imported"
 msgstr ""
 
@@ -642,6 +630,26 @@ msgstr ""
 #: /tests/cases/models/feed_type.test.php:20
 #: /tests/cases/models/menu.test.php:201;231
 msgid "Locations"
+msgstr ""
+
+#: /models/mail.php:32
+msgid "%s password recovery"
+msgstr ""
+
+#: /models/mail.php:58
+msgid "%s: Someone marked your entry a favorite"
+msgstr ""
+
+#: /models/mail.php:87
+msgid "%s: Someone commented on your entry"
+msgstr ""
+
+#: /models/mail.php:113
+msgid "%s: Someone added you as contact"
+msgstr ""
+
+#: /models/mail.php:125
+msgid "Your %s registration"
 msgstr ""
 
 #: /models/menu.php:79
@@ -765,11 +773,11 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: /models/peer.php:34
+#: /models/peer.php:33
 msgid "ERROR: could not connect to http://noserub.com/peers"
 msgstr ""
 
-#: /models/peer.php:79
+#: /models/peer.php:78
 msgid "no peers updated"
 msgstr ""
 
@@ -802,18 +810,22 @@ msgid "value might only be: \"%s\""
 msgstr ""
 
 #: /models/admin/extensions_checker.php:9
-msgid "needed for communicating with other servers"
+msgid "must be enabled"
 msgstr ""
 
 #: /models/admin/extensions_checker.php:13
+msgid "needed for communicating with other servers"
+msgstr ""
+
+#: /models/admin/extensions_checker.php:17
 msgid "needed for image handling"
 msgstr ""
 
-#: /models/admin/extensions_checker.php:17
+#: /models/admin/extensions_checker.php:21
 msgid "GMP or BCMath"
 msgstr ""
 
-#: /models/admin/extensions_checker.php:17
+#: /models/admin/extensions_checker.php:21
 msgid "needed for OpenID functionality"
 msgstr ""
 
@@ -1051,7 +1063,7 @@ msgid "Information about the current state of your NoseRub instance. Please\n   
 msgstr ""
 
 #: /views/admin/system_update.ctp:8
-msgid "Extension"
+msgid "Extensions"
 msgstr ""
 
 #: /views/admin/system_update.ctp:11;27;43;78
@@ -1382,6 +1394,26 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
+#: /views/elements/email/html/entry/notify_comment.ctp:2
+#: /views/elements/email/text/entry/notify_comment.ctp:1
+msgid "%s commented an entry of yours"
+msgstr ""
+
+#: /views/elements/email/html/entry/notify_favorite.ctp:2
+#: /views/elements/email/text/entry/notify_favorite.ctp:1
+msgid "%s marked an entry of yours as favorite"
+msgstr ""
+
+#: /views/elements/email/html/identity/notify_contact.ctp:2
+#: /views/elements/email/text/identity/notify_contact.ctp:1
+msgid "%s added you as a contact"
+msgstr ""
+
+#: /views/elements/email/html/identity/notify_contact.ctp:5
+#: /views/elements/email/text/identity/notify_contact.ctp:2
+msgid "Go to his/her profile to see who it is"
+msgstr ""
+
 #: /views/elements/email/html/identity/password_recovery.ctp:2
 #: /views/elements/email/text/identity/password_recovery.ctp:1
 msgid "You requested a new password for %s"
@@ -1426,19 +1458,19 @@ msgstr ""
 msgid "There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"
 msgstr ""
 
-#: /views/elements/identities/items.ctp:30
+#: /views/elements/identities/items.ctp:31
 msgid "%d activities"
 msgstr ""
 
-#: /views/elements/identities/items.ctp:40
+#: /views/elements/identities/items.ctp:44
 msgid "Today"
 msgstr ""
 
-#: /views/elements/identities/items.ctp:42
+#: /views/elements/identities/items.ctp:46
 msgid "Yesterday"
 msgstr ""
 
-#: /views/elements/identities/items.ctp:55
+#: /views/elements/identities/items.ctp:59
 msgid "From"
 msgstr ""
 
@@ -1503,8 +1535,24 @@ msgstr ""
 msgid "Communication"
 msgstr ""
 
-#: /views/elements/identities/privacy_settings.ctp:20
+#: /views/elements/identities/privacy_settings.ctp:21
 msgid "Which persons may send me e-Mails?"
+msgstr ""
+
+#: /views/elements/identities/privacy_settings.ctp:24
+msgid "Notify me when the following happens"
+msgstr ""
+
+#: /views/elements/identities/privacy_settings.ctp:26
+msgid "Someone adds me as contact"
+msgstr ""
+
+#: /views/elements/identities/privacy_settings.ctp:29
+msgid "Someone makes a comment on one of my entries"
+msgstr ""
+
+#: /views/elements/identities/privacy_settings.ctp:32
+msgid "Someone marks one of my entries as favorite"
 msgstr ""
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
@@ -1545,19 +1593,19 @@ msgstr ""
 msgid "There is no such entry available."
 msgstr ""
 
-#: /views/entries/view.ctp:16
+#: /views/entries/view.ctp:17
 msgid "Unmark Entry as favorite"
 msgstr ""
 
-#: /views/entries/view.ctp:16
+#: /views/entries/view.ctp:17
 msgid "Mark Entry as favorite"
 msgstr ""
 
-#: /views/entries/view.ctp:22
+#: /views/entries/view.ctp:23
 msgid "External permalink"
 msgstr ""
 
-#: /views/entries/view.ctp:38
+#: /views/entries/view.ctp:39
 msgid "Add comment"
 msgstr ""
 
@@ -1883,10 +1931,6 @@ msgstr ""
 msgid "My Contacts"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:35
-msgid "Newbies"
-msgstr ""
-
 #: /views/layouts/default.ctp:3
 msgid "Welcome to %s"
 msgstr ""
@@ -1961,17 +2005,17 @@ msgid "Application <strong>%s</strong> asked for permission to access your data"
 msgstr ""
 
 #: /views/oauth/authorize.ctp:5
-#: /views/omb/authorize_form.ctp:5
+#: /views/omb_local_service/authorize_form.ctp:5
 msgid "allow"
 msgstr ""
 
 #: /views/oauth/authorize.ctp:6
-#: /views/omb/authorize_form.ctp:6
+#: /views/omb_local_service/authorize_form.ctp:6
 msgid "deny"
 msgstr ""
 
 #: /views/oauth/no_token.ctp:1
-#: /views/omb/no_token.ctp:1
+#: /views/omb_local_service/no_token.ctp:1
 msgid "Error! No token specified."
 msgstr ""
 
@@ -2035,7 +2079,7 @@ msgstr ""
 msgid "Consumer secret"
 msgstr ""
 
-#: /views/omb/authorize_form.ctp:2
+#: /views/omb_local_service/authorize_form.ctp:2
 msgid "Allow access?"
 msgstr ""
 
@@ -2235,6 +2279,10 @@ msgstr ""
 
 #: /views/syndications/shell_upload.ctp:1
 msgid "Uploaded feeds"
+msgstr ""
+
+#: /views/themed/default/identities/widget_users_new.ctp:3
+msgid "Newbies"
 msgstr ""
 
 #: /webroot/test.php:99

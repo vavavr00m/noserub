@@ -9,7 +9,7 @@ class IdentitiesController extends AppController {
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
         'geocoder', 'url', 'cluster', 'openid', 'cdn', 
-        'Cookie', 'api', 'OauthServiceProvider', 'OmbConsumer'
+        'Cookie', 'api', 'OauthServiceProvider'
     );
     
     /**
@@ -181,7 +181,7 @@ class IdentitiesController extends AppController {
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
         $filter = $this->getFilter($session_identity);
-        # get last 100 items
+        # get last 50 items
         $conditions = array(
             'filter'      => $filter
         );
@@ -209,7 +209,6 @@ class IdentitiesController extends AppController {
             $this->render('../syndications/feed');
         } else {
         	$this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
-            $this->set('newbies', $this->Identity->getNewbies(9));
             $this->set('identities', $identities);
             $this->set('items', $items);
             $this->set('filter', $filter);
@@ -862,12 +861,8 @@ class IdentitiesController extends AppController {
     }
     
     private function sendUpdateToOmbSubscribers($data) {
-    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
-    	$accessToken = $ombServiceAccessToken->findByIdentityId($this->Identity->id);
-
-    	if ($accessToken) {
-	    	$this->OmbConsumer->updateProfile($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['update_profile_url'], new OmbUpdatedProfileData($data));
-    	}
+    	App::import('Component', 'OmbRemoteService');
+    	OmbRemoteServiceComponent::createRemoteService()->updateProfile($this->Identity->id, $data);
     }
     
     /**
@@ -1185,4 +1180,9 @@ class IdentitiesController extends AppController {
 		$this->set('data', $data);
 		$this->api->render();
 	}
+	
+	public function widget_users_new() {
+	    $this->set('data', $this->Identity->getNewbies(9));
+	}
+	
 }

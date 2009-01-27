@@ -7,6 +7,7 @@ class Contact extends AppModel {
                                                    'foreignKey' => 'with_identity_id'));
 
     public $hasAndBelongsToMany = array('ContactType', 'NoserubContactType');
+    public $hasOne = array('OmbLocalServiceAccessToken', 'OmbAccessToken');
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
@@ -188,14 +189,6 @@ class Contact extends AppModel {
 		    }
 		}
 	}
-    
-	public function deleteAssociationsToContactTypes($contactId, $contactTypeIDs) {
-		$this->ContactTypesContact->deleteAll(array('ContactTypesContact.contact_id' => $contactId, 'ContactTypesContact.contact_type_id' => $contactTypeIDs));
-	}
-	
-	public function deleteAssociationsToNoserubContactTypes($contactId, $noserubContactTypeIDs) {
-		$this->ContactsNoserubContactType->deleteAll(array('ContactsNoserubContactType.contact_id' => $contactId, 'ContactsNoserubContactType.noserub_contact_type_id' => $noserubContactTypeIDs));
-	}
 	
     /**
      * Deletes all contacts from and to this identity_id
@@ -222,6 +215,13 @@ class Contact extends AppModel {
             # the contact itself can be removed in all cases
             $this->delete($contact['Contact']['id']);
         }
+    }
+    
+    public function deleteContactTypeAssociations($contact_id) {
+    	$sql = 'DELETE FROM ' . $this->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
+        $this->ContactTypesContact->query($sql);
+        $sql = 'DELETE FROM ' . $this->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
+        $this->ContactsNoserubContactType->query($sql);
     }
     
     public function export($identity_id) {

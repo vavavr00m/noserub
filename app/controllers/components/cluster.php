@@ -8,15 +8,15 @@ class ClusterComponent extends Object {
      * Clusters will by YYY-MM-DD DESC
      *
      * @param  array $data
-     * @param  bool $with_future_dates 
      * @return array $clustered_data
      */
     public function create($data, $with_future_dates = false) {
-        $today = date('Y-m-d');
+        $now = date('Y-m-d H:i:s');
         $clustered_data = array();
         foreach($data as $key => $value) {
             $day = date('Y-m-d', strtotime($value['Entry']['published_on']));
-            if($with_future_dates === false && $day > $today) {
+            if($with_future_dates === false && 
+               $value['Entry']['published_on'] > $now) {
                 continue;
             }
             if(!isset($clustered_data[$day])) {
@@ -38,21 +38,25 @@ class ClusterComponent extends Object {
      */
     public function removeDuplicates($data) {
         $cleaned = array();
-        $lookup_table = array();
         foreach($data as $idx => $item) {
             $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($item['Entry']['title']));
             
             if(isset($cleaned[$key])) {
-                # we have this already
-                if($item['Entry']['account_id'] == 0 && 
-                   $cleaned[$key]['Entry']['account_id'] == 0) {
-                    # if both are NoseRub, keep both!
+                $both_with_comments = (
+                    ($cleaned[$key]['Comment'] || $cleaned[$key]['FavoritedBy']) &&
+                    ($item['Comment'] || $item['FavoritedBy'])
+                );
+
+                # we already have this
+                if($both_with_comments) {
+                    # if both have comments/favorites, keep both!
                     $cleaned[$key . '.' . $idx] = $item;
-                } else if($cleaned[$key]['Entry']['account_id'] != 0) {
-                    # the existing (= newer) one is not NoseRub, 
-                    # so replace it with current (= older) one
+                } else if(!$cleaned[$key]['Comment'] && !$cleaned[$key]['FavoritedBy']) {
+                    # if existing one has no comments/favorites, 
+                    # replace it with current one
                     $cleaned[$key] = $item;
                 }
+                
                 # else: always keep the newest
             } else {
                 $cleaned[$key] = $item;

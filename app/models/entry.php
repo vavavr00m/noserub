@@ -359,6 +359,30 @@ class Entry extends AppModel {
         return true;
     }
     
+    public function addOmbNotice($identity_id, $notice_url, $notice) {
+    	$text = htmlspecialchars(strip_tags($notice), ENT_QUOTES, 'UTF-8');
+        $text = $this->shorten($text);
+        
+        $with_markup = $this->micropublishMarkup($text);
+        
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'service_type_id' => 5,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $with_markup,
+            'url'             => $notice_url,
+            'uid'             => '',
+            'content'         => $text,
+            'restricted'      => false
+        );
+        
+        $this->create();
+        $this->save($data);
+        
+        return true;
+    }
+    
     /**
      * adds html tags for links and #
      *
@@ -438,8 +462,12 @@ class Entry extends AppModel {
         );
         
         $this->create();
-        $this->save($data);
-        
+        if($this->save($data)) {    
+            # now set url and uid
+            $url = Router::url('/entry/' . $this->id . '/', true);
+            $this->saveField('url', $url);
+            $this->saveField('uid', md5($url));
+        }
         return true;
     }
     
@@ -550,19 +578,8 @@ class Entry extends AppModel {
     }
     
     private function sendToOmb($identity_id, $entry_id, $text) {
-    	$ombServiceAccessToken = ClassRegistry::init('OmbServiceAccessToken');
-    	$accessToken = $ombServiceAccessToken->findByIdentityId($identity_id);
-
-    	if (!$accessToken) {
-    		return;
-    	}
-    	
-    	// XXX don't like it to use a component in a model, better solution needed ;-)
-    	App::import('Component', array('OmbConsumer', 'OmbOauthConsumer'));
-    	$ombConsumer = new OmbConsumerComponent();
-    	$ombConsumer->Session = new SessionComponent();
-    	$ombConsumer->OmbOauthConsumer = new OmbOauthConsumerComponent();
-    	$ombConsumer->postNotice($accessToken['OmbServiceAccessToken']['token_key'], $accessToken['OmbServiceAccessToken']['token_secret'], $accessToken['OmbService']['post_notice_url'], $entry_id, $text);
+    	App::import('Component', 'OmbRemoteService');
+    	OmbRemoteServiceComponent::createRemoteService()->postNotice($identity_id, $entry_id, $text);
     }
     
     /**

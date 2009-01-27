@@ -1,44 +1,49 @@
 <?php
 
-App::import('Vendor', array('OauthConstants', 'OmbConstants', 'UrlUtil'));
+App::import('Vendor', array('OauthConstants', 'OmbAuthorizationParams', 'OmbAuthorizationResponse', 
+							'OmbConstants', 'UrlUtil'));
 
 class OmbSubscriptionsController extends AppController {
-	public $uses = array('Identity', 'OmbServiceAccessToken', 'OmbService');
+	const ACCESS_TOKEN_URL_KEY = 'omb.accessTokenUrl';
+	const REQUEST_TOKEN_KEY = 'omb.requestToken';
+	const LOCAL_SERVICE_ID_KEY = 'omb.localServiceId';
+	public $uses = array('Identity', 'OmbLocalService');
 	public $helpers = array('flashmessage');
-	public $components = array('OmbConsumer');
+	public $components = array('OmbRemoteService');
 	
 	public function callback() {
 		$username = $this->getUsernameOrRedirect();
 		
 		try {
 			$response = new OmbAuthorizationResponse($this->params['url']);
-			$identity = $this->getIdentity($username);
+			$identity = $this->Identity->getIdentityByUsername($username);
 
 			$data['Identity']['is_local'] = false;
 			$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
 			
-			$existingId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
-			if ($existingId) {
-				$this->Identity->id = $existingId;
+			$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
+			if ($existingIdentityId) {
+				$this->Identity->id = $existingIdentityId;
 			}
 			
 			$this->Identity->save($data, true, array('is_local', 'username'));
 			$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
+			$contactId = $this->Identity->Contact->id;
 		
 			if ($response->getAvatarUrl() != '') {
 				$this->Identity->uploadPhotoByUrl($response->getAvatarUrl());
 			}
 			
-			$accessTokenUrl = $this->Session->read('omb.accessTokenUrl');
-			$requestToken = $this->Session->read('omb.requestToken');
-			$serviceId = $this->Session->read('omb.serviceId');
-			$accessToken = $this->OmbConsumer->getAccessToken($accessTokenUrl, $requestToken);				
+			$accessTokenUrl = $this->Session->read(self::ACCESS_TOKEN_URL_KEY);
+			$requestToken = $this->Session->read(self::REQUEST_TOKEN_KEY);
+			$localServiceId = $this->Session->read(self::LOCAL_SERVICE_ID_KEY);
+			$accessToken = $this->OmbRemoteService->getAccessToken($accessTokenUrl, $requestToken);				
 			
-			$this->OmbServiceAccessToken->add($identity['Identity']['id'], $serviceId, $accessToken);
+			$this->OmbLocalService->OmbLocalServiceAccessToken->add($contactId, $localServiceId, $accessToken);
 			
-			$this->Session->delete('omb.accessTokenUrl');
-			$this->Session->delete('omb.requestToken');
-			$this->Session->delete('omb.serviceId');
+			$this->Session->delete(self::ACCESS_TOKEN_URL_KEY);
+			$this->Session->delete(self::REQUEST_TOKEN_KEY);
+			$this->Session->delete(self::LOCAL_SERVICE_ID_KEY);
 			
 			$this->flashMessage('Success', __('Successfully subscribed to ', true) . $username);
 		} catch (InvalidArgumentException $e) {
@@ -54,34 +59,26 @@ class OmbSubscriptionsController extends AppController {
 		
 		if ($this->data) {
 			try {
-				$localService = $this->OmbConsumer->discover($this->data['Omb']['url']);
-				$serviceId = $this->OmbService->getServiceId($localService->getPostNoticeUrl(), $localService->getUpdateProfileUrl());
+				$localServiceDefinition = $this->OmbRemoteService->discoverLocalService($this->data['Omb']['url']);
+				$localServiceId = $this->OmbLocalService->getServiceId($localServiceDefinition);
 
-				if (!$serviceId) {
-					$serviceId = $this->OmbService->add($localService->getPostNoticeUrl(), $localService->getUpdateProfileUrl());
+				if (!$localServiceId) {
+					$localServiceId = $this->OmbLocalService->add($localServiceDefinition);
 				}
 
-				$requestToken = $this->OmbConsumer->getRequestToken($localService->getRequestTokenUrl(), $localService->getLocalId());
+				$requestToken = $this->OmbRemoteService->getRequestToken($localServiceDefinition->getRequestTokenUrl(), $localServiceDefinition->getLocalId());
 				
-				$this->Session->write('omb.requestToken', $requestToken);
-				$this->Session->write('omb.accessTokenUrl', $localService->getAccessTokenUrl());
-				$this->Session->write('omb.serviceId', $serviceId);
+				$this->Session->write(self::REQUEST_TOKEN_KEY, $requestToken);
+				$this->Session->write(self::ACCESS_TOKEN_URL_KEY, $localServiceDefinition->getAccessTokenUrl());
+				$this->Session->write(self::LOCAL_SERVICE_ID_KEY, $localServiceId);
 				
-				$identity = $this->getIdentity($username);
-				$ombAuthorizationParams = new OmbAuthorizationParams($localService->getLocalId(), $identity);
-				$this->OmbConsumer->redirectToAuthorizationPage($localService->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
+				$identity = $this->Identity->getIdentityByUsername($username);
+				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
+				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}
 		}
-	}
-	
-	private function getIdentity($username) {
-		$splitted = $this->Identity->splitUsername($username);
-		$this->Identity->contain();
-		$identity = $this->Identity->findByUsername($splitted['username']);
-		
-        return $identity;
 	}
 	
 	private function getUsernameOrRedirect() {
