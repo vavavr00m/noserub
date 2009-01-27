@@ -359,6 +359,30 @@ class Entry extends AppModel {
         return true;
     }
     
+    public function addOmbNotice($identity_id, $notice_url, $notice) {
+    	$text = htmlspecialchars(strip_tags($notice), ENT_QUOTES, 'UTF-8');
+        $text = $this->shorten($text);
+        
+        $with_markup = $this->micropublishMarkup($text);
+        
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'service_type_id' => 5,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $with_markup,
+            'url'             => $notice_url,
+            'uid'             => '',
+            'content'         => $text,
+            'restricted'      => false
+        );
+        
+        $this->create();
+        $this->save($data);
+        
+        return true;
+    }
+    
     /**
      * adds html tags for links and #
      *
