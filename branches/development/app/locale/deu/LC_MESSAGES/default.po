@@ -1,27 +1,32 @@
+# German translation for noserub
+# Copyright (c) 2008 Rosetta Contributors and Canonical Ltd 2008
+# This file is distributed under the same license as the noserub package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: NoseRub\n"
-"POT-Creation-Date: 2008-11-13 21:11+0100\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Dirk Olbertz <dirk.olbertz@ormigo.com>\n"
-"Language-Team: \n"
+"Project-Id-Version: noserub\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-01-27 20:07+0100\n"
+"PO-Revision-Date: 2009-01-27 21:58+0100\n"
+"Last-Translator: Dirk Olbertz <dirk.olbertz@gmail.com>\n"
+"Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"X-Launchpad-Export-Date: 2009-01-27 20:56+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 
-#: /_controller.php:135
+#: /app_controller.php:136
 msgid "You may not call this route from the shell!"
 msgstr "Diese Route darf nicht aus der Shell heraus aufgerufen werden!"
 
-#: /_controller.php:140
+#: /app_controller.php:142
 #: /controllers/auth_controller.php:105
 msgid "Error"
 msgstr "Fehler"
 
-#: /_controller.php:140
+#: /app_controller.php:142
 msgid "This route is only accessible from the shell!"
 msgstr "Diese Route ist nur von der Shell aus verfügbar!"
 
@@ -35,28 +40,27 @@ msgstr "Während des Hochladens ist ein Fehler aufgetreten"
 
 #: /controllers/account_settings_controller.php:66
 msgid "Importing NoseRub data"
-msgstr ""
+msgstr "NoseRub-Daten importieren"
 
-# /controllers/account_settings_controller.php:70;81
-#: /controllers/account_settings_controller.php:70
+#: /controllers/account_settings_controller.php:70;81
 msgid "Couldn't import the data!"
-msgstr ""
+msgstr "Daten konnten nicht importiert werden!"
 
 #: /controllers/account_settings_controller.php:85
 msgid "Import completed"
-msgstr ""
+msgstr "Import abgeschlossen"
 
 #: /controllers/account_settings_controller.php:87
 msgid "There was an error during import!"
-msgstr ""
+msgstr "Während des Imports ist ein Fehler aufgetreten!"
 
-#: /controllers/account_settings_controller.php:107
+#: /controllers/account_settings_controller.php:106
 msgid "Redirect URL saved."
-msgstr ""
+msgstr "Umleitungs-URL gespeichert."
 
-#: /controllers/account_settings_controller.php:115
+#: /controllers/account_settings_controller.php:114
 msgid "In order to delete your account, please check the check box."
-msgstr ""
+msgstr "Markieren Sie das Kästchen, um die Löschung Ihres Benutzerkontos zu bestätigen."
 
 #: /controllers/accounts_controller.php:31
 msgid "Your accounts"
@@ -64,48 +68,47 @@ msgstr "Ihre Webkonten"
 
 #: /controllers/accounts_controller.php:33
 msgid "%s's accounts"
-msgstr ""
+msgstr "%ss Webkonten"
 
-#: /controllers/accounts_controller.php:93
+#: /controllers/accounts_controller.php:92
 msgid "Changes saved."
 msgstr "Änderungen wurden gespeichert."
 
-#: /controllers/accounts_controller.php:98
+#: /controllers/accounts_controller.php:97
 msgid "No changes made."
-msgstr "Es wurden keine Änderungen gemacht."
+msgstr "Es wurden keine Änderungen vorgenommen."
 
-#: /controllers/accounts_controller.php:116
+#: /controllers/accounts_controller.php:115
 msgid "You need to be logged in to add an account."
-msgstr ""
+msgstr "Sie müssen eingeloggt sein, um ein Webkonto hinzuzufügen."
 
-# /controllers/accounts_controller.php:251;290;356
-#: /controllers/accounts_controller.php:251
+#: /controllers/accounts_controller.php:240
 msgid "Account added."
-msgstr ""
+msgstr "Webkonto hinzugefügt."
 
-#: /controllers/accounts_controller.php:270
+#: /controllers/accounts_controller.php:259
 msgid "Preview the data"
 msgstr "Vorschau der Daten"
 
-#: /controllers/accounts_controller.php:460
+#: /controllers/accounts_controller.php:316
 msgid "Could not find the user."
-msgstr ""
+msgstr "Benutzer konnte nicht gefunden werden."
 
-#: /controllers/accounts_controller.php:467
+#: /controllers/accounts_controller.php:323
 msgid "You may not delete this."
-msgstr ""
+msgstr "Sie dürfen diesen Webaccount nicht löschen."
 
-#: /controllers/accounts_controller.php:477
+#: /controllers/accounts_controller.php:333
 msgid "Account deleted."
-msgstr ""
+msgstr "Webaccount wurde gelöscht."
 
 #: /controllers/auth_controller.php:22
 msgid "OpenID server endpoint"
-msgstr ""
+msgstr "Endpunkt des OpenID-Servers"
 
 #: /controllers/auth_controller.php:219
 msgid "OpenID verification"
-msgstr ""
+msgstr "OpenID Verifizierung"
 
 #: /controllers/contacts_controller.php:51
 msgid "My contacts"
@@ -113,268 +116,296 @@ msgstr "Meine Kontakte"
 
 #: /controllers/contacts_controller.php:53
 msgid "%s's contacts"
-msgstr "%s's Kontakte"
+msgstr "%ss Kontakte"
 
-# /controllers/contacts_controller.php:114;139
-#: /controllers/contacts_controller.php:114
+#: /controllers/contacts_controller.php:110;135
 msgid "Could not add contact."
-msgstr ""
+msgstr "Kontakt konnte nicht hinzugefügt werden."
 
 # /controllers/contacts_controller.php:135;156
-#: /controllers/contacts_controller.php:135
+#: /controllers/contacts_controller.php:131;152;545
 msgid "New contact added."
 msgstr "Neuen Kontakt hinzugefügt."
 
-#: /controllers/contacts_controller.php:175
+#: /controllers/contacts_controller.php:171
 msgid "Add a contact to your social network"
-msgstr ""
+msgstr "Kontakt zu Ihrem sozialen Netzwerk hinzufügen"
 
-#: /controllers/contacts_controller.php:177
+#: /controllers/contacts_controller.php:173
 msgid "Add a contact to %s's social network"
-msgstr ""
+msgstr "Kontakt zu %ss sozialem Netzwerk hinzufügen"
 
-#: /controllers/contacts_controller.php:215
+#: /controllers/contacts_controller.php:209
 msgid "Removed the contact."
-msgstr ""
+msgstr "Kontakt wurde entfernt."
 
-#: /controllers/contacts_controller.php:379
+#: /controllers/contacts_controller.php:373
 msgid "Contact updated."
 msgstr "Kontakt aktualisiert."
 
-#: /controllers/contacts_controller.php:386
+#: /controllers/contacts_controller.php:380
 msgid "Edit the contact details"
 msgstr "Kontaktinformationen bearbeiten"
 
-#: /controllers/contacts_controller.php:451
+#: /controllers/contacts_controller.php:445
 msgid "Location updated."
-msgstr ""
+msgstr "Ort wurde aktualisiert."
 
-#: /controllers/contacts_controller.php:521
+#: /controllers/contacts_controller.php:515
 msgid "Activities in %s's contact's social stream"
-msgstr "Aktivitäten von %s's Kontakten"
+msgstr "Aktivitäten von %ss Kontakten"
 
-#: /controllers/contacts_controller.php:546
+#: /controllers/contacts_controller.php:540
 #: /views/contacts/add.ctp:17
 msgid "You cannot add yourself as a contact."
-msgstr ""
-
-#: /controllers/contacts_controller.php:561
-msgid "Added new contact."
-msgstr ""
+msgstr "Sie können sich nicht selbst als Kontakt hinzufügen."
 
 #: /controllers/entries_controller.php:23
 msgid "You need to be logged in to add a comment."
-msgstr ""
+msgstr "Sie müssen angemeldet sein, um einen Kommentar hinzufügen zu können."
 
 #: /controllers/entries_controller.php:25
 msgid "You forgot to write something."
-msgstr ""
+msgstr "Sie haben keinen Text eingegeben."
 
 #: /controllers/entries_controller.php:27
 msgid "Comment added."
-msgstr "Der Kommentar wurde hinzugefügt."
+msgstr "Kommentar wurde hinzugefügt."
 
-#: /controllers/entries_controller.php:65
+#: /controllers/entries_controller.php:67
 msgid "Edit your entry"
 msgstr "Eigenen Eintrag bearbeiten"
 
-#: /controllers/entries_controller.php:67
+#: /controllers/entries_controller.php:69
 msgid "Permalink"
 msgstr "Permalink des Eintrags"
 
-# /controllers/entries_controller.php:81;90;97
-#: /controllers/entries_controller.php:81
+#: /controllers/entries_controller.php:83;92;99
 msgid "You may not delete this entry!"
-msgstr ""
+msgstr "Sie dürfen diesen Beitrag nicht löschen."
 
-#: /controllers/entries_controller.php:101
+#: /controllers/entries_controller.php:103
 msgid "Entry deleted."
-msgstr ""
+msgstr "Beitrag gelöscht."
 
-#: /controllers/entries_controller.php:117
+#: /controllers/entries_controller.php:119
 msgid "You need to be logged in to perform this action!"
-msgstr ""
+msgstr "Sie müssen eingeloggt sein, um diese Aktion ausführen zu können!"
 
-#: /controllers/entries_controller.php:142
+#: /controllers/entries_controller.php:144
 msgid "This entry may not be marked!"
-msgstr ""
+msgstr "Dieser Beitrag kann nicht als Favorit markiert werden."
 
-#: /controllers/entries_controller.php:151
+#: /controllers/entries_controller.php:153
 msgid "Unmarked the entry."
 msgstr "Markierung wurde aufgehoben"
 
-#: /controllers/entries_controller.php:162
+#: /controllers/entries_controller.php:164
 msgid "Marked the entry."
 msgstr "Eintrag wurde markiert."
 
-#: /controllers/entries_controller.php:187
-#: /controllers/identities_controller.php:697
-msgid "Value for NOSERUB_CRON_HASH from noserub.php does not match or is empty!"
+#: /controllers/entries_controller.php:193
+#: /controllers/identities_controller.php:770
+#: /controllers/peers_controller.php:24;62
+msgid "Value for NoseRub.cron_hash from noserub.php does not match or is empty!"
+msgstr "Der Wert für NoseRub.cron_hash aus der Konfigurationsdatei noserub.php stimmt nicht überein, oder ist leer!"
+
+#: /controllers/entries_controller.php:204
+msgid "NoseRub.manual_feeds_update in noserub.php not set to do it manually!"
 msgstr ""
 
-#: /controllers/entries_controller.php:198
-msgid "NOSERUB_MANUAL_FEEDS_UPDATE in noserub.php not set to do it manually!"
-msgstr ""
-
-#: /controllers/entries_controller.php:227
+#: /controllers/entries_controller.php:233
 msgid "%d entries added/updated"
-msgstr ""
+msgstr "%d Beiträge hinzugefügt/aktualisiert"
 
-#: /controllers/identities_controller.php:34
+#: /controllers/identities_controller.php:39
 msgid "There is a redirect URL given!"
-msgstr ""
+msgstr "Eine Umleitungs-URL is vorhanden!"
 
-#: /controllers/identities_controller.php:133
+#: /controllers/identities_controller.php:138
 msgid "My NoseRub Profile"
 msgstr "Mein NoseRub Profil"
 
-#: /controllers/identities_controller.php:158
+#: /controllers/identities_controller.php:163
 msgid "Username could not be found!"
 msgstr "Der angegebene Benutzername konnte nicht gefunden werden"
 
-#: /controllers/identities_controller.php:202
+#: /controllers/identities_controller.php:207
 msgid "Social Stream"
-msgstr ""
+msgstr "Liste der Aktivitäten"
 
-#: /controllers/identities_controller.php:211
+#: /controllers/identities_controller.php:215
 msgid "All public social activities"
 msgstr "Alle öffentlichen Aktivitäten"
 
-#: /controllers/identities_controller.php:238
+#: /controllers/identities_controller.php:245
 msgid "%s's favorites"
 msgstr "Favoriten von %s"
 
-#: /controllers/identities_controller.php:257
+#: /controllers/identities_controller.php:273
+msgid "%s's comments"
+msgstr "%ss Kommentare"
+
+#: /controllers/identities_controller.php:292
 msgid "Send a message to "
-msgstr ""
+msgstr "Sende eine Nachricht an "
 
-# /controllers/identities_controller.php:264;271
-#: /controllers/identities_controller.php:264
+#: /controllers/identities_controller.php:299;306
 msgid "You may not send a message to "
-msgstr ""
+msgstr "You may not send a message to "
 
-#: /controllers/identities_controller.php:278
+#: /controllers/identities_controller.php:313
 msgid "You need to specify a subject."
-msgstr ""
+msgstr "Sie müssen einen Betreff angeben."
 
-#: /controllers/identities_controller.php:282
+#: /controllers/identities_controller.php:317
 msgid "You need to specify a text."
-msgstr ""
+msgstr "Sie müssen einen Text angeben."
 
-#: /controllers/identities_controller.php:295
+#: /controllers/identities_controller.php:330
 msgid "Hi "
-msgstr ""
+msgstr "Hallo "
 
-#: /controllers/identities_controller.php:296
+#: /controllers/identities_controller.php:331
 msgid "You got a message from "
-msgstr ""
+msgstr "Sie haben eine Nachricht von "
 
-#: /controllers/identities_controller.php:298
+#: /controllers/identities_controller.php:333
 msgid "Subject: "
-msgstr ""
+msgstr "Betreff: "
 
-#: /controllers/identities_controller.php:299
+#: /controllers/identities_controller.php:334
 msgid "Text:"
-msgstr ""
+msgstr "Nachricht:"
 
-#: /controllers/identities_controller.php:301
+#: /controllers/identities_controller.php:336
 msgid "If you want to reply to this message, go to "
 msgstr ""
 
-#: /controllers/identities_controller.php:306
+#: /controllers/identities_controller.php:341
 msgid "Your Message could not be delivered to "
 msgstr ""
 
-#: /controllers/identities_controller.php:309
+#: /controllers/identities_controller.php:344
 msgid "Your Message was sent to "
 msgstr ""
 
-#: /controllers/identities_controller.php:388
+#: /controllers/identities_controller.php:420
 msgid "Changes have been saved."
 msgstr "Die Änderungen wurden gespeichert."
 
-#: /controllers/identities_controller.php:395
-#, fuzzy
-msgid "My profile settings"
-msgstr "Einstellungen der Privatsphäre"
-
 #: /controllers/identities_controller.php:427
-msgid "Display options have been saved."
-msgstr ""
+msgid "My profile settings"
+msgstr "Meine Profileinstellungen"
 
-#: /controllers/identities_controller.php:434
+#: /controllers/identities_controller.php:459
+msgid "Display options have been saved."
+msgstr "Einstellungen zur Darstellung wurden gespeichert."
+
+#: /controllers/identities_controller.php:466
 msgid "Configure your display options"
 msgstr "Darstellungsoptionen anpassen"
 
-#: /controllers/identities_controller.php:463
+#: /controllers/identities_controller.php:501
 msgid "Privacy settings have been saved."
-msgstr ""
+msgstr "Einstellungen zur Privatsphäre wurden gespeichert."
 
-#: /controllers/identities_controller.php:470
+#: /controllers/identities_controller.php:521
 msgid "Your privacy settings"
 msgstr "Einstellungen der Privatsphäre"
 
-#: /controllers/identities_controller.php:501
+#: /controllers/identities_controller.php:552
 msgid "API options have been saved."
-msgstr ""
+msgstr "Einstellungen für die API wurden gespeichert."
 
-#: /controllers/identities_controller.php:509
+#: /controllers/identities_controller.php:560
 msgid "You need to specify a new password."
-msgstr ""
+msgstr "Sie müssen ein neues Passwort angeben."
 
-#: /controllers/identities_controller.php:511
+#: /controllers/identities_controller.php:562
 msgid "The new password was not entered twice the same."
-msgstr ""
+msgstr "Das neue Passwort muss zwei mal eingegeben werden."
 
-#: /controllers/identities_controller.php:517
+#: /controllers/identities_controller.php:568
 msgid "The new password has been saved."
-msgstr ""
+msgstr "Das neue Passwort wurde gespeichert.D"
 
-#: /controllers/identities_controller.php:520
+#: /controllers/identities_controller.php:571
 msgid "The old password was not correct."
-msgstr ""
+msgstr "Das alte Passwort war nicht richtig."
 
-#: /controllers/identities_controller.php:526
+#: /controllers/identities_controller.php:577
 msgid "Password settings"
-msgstr ""
+msgstr "Passworteinstellungen"
 
-#: /controllers/identities_controller.php:551
+#: /controllers/identities_controller.php:604
 msgid "Welcome! It's nice to have you back."
 msgstr "Willkommen! Schön, dass Sie wieder da sind."
 
-#: /controllers/identities_controller.php:561
+#: /controllers/identities_controller.php:614
 msgid "Login not possible"
-msgstr ""
+msgstr "Login nicht möglich"
 
-#: /controllers/identities_controller.php:570
+#: /controllers/identities_controller.php:623
 msgid "Login with existing NoseRub account"
 msgstr "Mit einem existierenden NoseRub Konto einloggen"
 
-#: /controllers/identities_controller.php:609
+#: /controllers/identities_controller.php:684
 msgid "Account deleted"
-msgstr ""
+msgstr "Das Benutzerkonto wurde gelöscht."
+
+#: /controllers/identities_controller.php:917;982
+msgid "The password recovery link is not valid!"
+msgstr "Der Link für das Setzen eines neuen Passworts ist nicht gültig!"
+
+#: /controllers/identities_controller.php:942
+msgid "The account could not be found!"
+msgstr "Dieser Benutzer konnte nicht gefunden werden!"
+
+#: /controllers/identities_controller.php:946
+msgid "No email address found!"
+msgstr "Diese E-Mail Adresse konnte nicht gefunden werden!"
+
+#: /controllers/identities_controller.php:952
+msgid "Please look into your inbox for the password recovery email."
+msgstr "Sie sollten nun eine E-Mail erhalten haben, mit der Sie ein neues Passwort setzen können."
+
+#: /controllers/identities_controller.php:966;985
+msgid "Something went wrong. Please try again!"
+msgstr "Irgend etwas ist schief gelaufen. Bitte probieren Sie es erneut!"
+
+#: /controllers/identities_controller.php:988
+msgid "The two passwords were not the same!"
+msgstr "Die beiden Passwörter stimmen nicht überein!"
+
+#: /controllers/identities_controller.php:991
+msgid "The password is too short!"
+msgstr "Das Passwort ist zu kurz. Bitte verwenden Sie mindestens sechs Zeichen!"
+
+#: /controllers/identities_controller.php:998
+msgid "You now can log in with your new password."
+msgstr "Sie können sich nun mit Ihrem neuen Passwort einloggen."
 
 #: /controllers/locations_controller.php:23
 msgid "Manage your locations"
 msgstr "Verwalten Sie Ihre Ort"
 
 # /controllers/locations_controller.php:52;102
-#: /controllers/locations_controller.php:52
+#: /controllers/locations_controller.php:52;102
 msgid "Location added."
 msgstr "Ort wurde hinzugefügt."
 
-# /controllers/locations_controller.php:56;104
-#: /controllers/locations_controller.php:56
+#: /controllers/locations_controller.php:56;104
 msgid "Location could not be created."
-msgstr ""
+msgstr "Der Ort konnte nicht angelegt werden."
 
 #: /controllers/locations_controller.php:63
 msgid "Add new Location"
-msgstr ""
+msgstr "Neuen Ort anlegen"
 
 #: /controllers/locations_controller.php:83
 msgid "Location could not be edited."
-msgstr ""
+msgstr "Der Ort konnte nicht bearbeitet werden."
 
 #: /controllers/locations_controller.php:115
 msgid "Edit Location"
@@ -382,120 +413,115 @@ msgstr "Ort bearbeiten"
 
 #: /controllers/locations_controller.php:140
 msgid "Location deleted."
-msgstr ""
+msgstr "Der Ort wurde gelöscht."
 
 #: /controllers/locations_controller.php:142
 msgid "Location could not be deleted."
-msgstr ""
+msgstr "Der Ort konnte nicht gelöscht werden."
 
 #: /controllers/locations_controller.php:193
 msgid "dataset not found"
-msgstr ""
+msgstr "Datensatz nicht gefunden"
 
 #: /controllers/locations_controller.php:216
 msgid "parameter wrong"
-msgstr ""
+msgstr "Falscher Parameter"
 
 #: /controllers/locations_controller.php:225
 msgid "duplicate dataset"
-msgstr ""
+msgstr "Doppelter Datensatz"
 
 #: /controllers/oauth_consumers_controller.php:33
 msgid "Application registered."
-msgstr ""
+msgstr "Applikation wurde registriert."
 
 #: /controllers/oauth_consumers_controller.php:36
 msgid "Application could not be registered."
-msgstr ""
+msgstr "Applikation konnte nicht registriert werden."
 
 #: /controllers/oauth_consumers_controller.php:44
 #: /views/oauth_consumers/index.ctp:15
 msgid "Register new application"
-msgstr ""
+msgstr "Neue Applikation registrieren"
 
 #: /controllers/oauth_consumers_controller.php:58
 msgid "Application could not be edited."
-msgstr ""
+msgstr "Applikation konnte nicht bearbeitet werden."
 
 #: /controllers/oauth_consumers_controller.php:66
 msgid "Application updated."
-msgstr ""
+msgstr "Applikation aktualisiert."
 
 #: /controllers/oauth_consumers_controller.php:68
 msgid "Application could not be updated."
-msgstr ""
+msgstr "Applikation konnte nicht aktualisiert werden."
 
 #: /controllers/oauth_consumers_controller.php:79
 msgid "Edit application"
-msgstr ""
+msgstr "Applikation bearbeiten"
 
 #: /controllers/oauth_consumers_controller.php:95
 msgid "Application deleted."
-msgstr ""
+msgstr "Applikation wurde gelöscht."
 
 #: /controllers/oauth_consumers_controller.php:97
 msgid "Application could not be deleted."
-msgstr ""
+msgstr "Applikation konnte nicht gelöscht werden."
 
 #: /controllers/oauth_controller.php:70
-#: /controllers/omb_controller.php:96
+#: /controllers/omb_local_service_controller.php:96
 msgid "Authorize access"
-msgstr ""
+msgstr "Zugriff authorisieren"
 
-#: /controllers/omb_controller.php:54
+#: /controllers/omb_local_service_controller.php:54
+#: /controllers/components/omb_oauth_consumer.php:8
 msgid "Invalid OMB version"
-msgstr ""
+msgstr "Ungültige OMB Version"
 
-# /controllers/omb_controller.php:64;135
-#: /controllers/omb_controller.php:64
+#: /controllers/omb_local_service_controller.php:64;176
 msgid "Missing parameter: "
-msgstr ""
+msgstr "Fehlender Parameter: "
 
-# /controllers/omb_controller.php:91;127
-#: /controllers/omb_controller.php:91
-#: /controllers/omb_subscriptions_controller.php:39
+#: /controllers/omb_local_service_controller.php:91;154
+#: /controllers/omb_subscriptions_controller.php:50
 msgid "Invalid request"
-msgstr ""
+msgstr "Ungültige Anfrage"
 
-#: /controllers/omb_subscriptions_controller.php:34
+#: /controllers/omb_subscriptions_controller.php:48
 msgid "Successfully subscribed to "
 msgstr ""
 
-#: /controllers/omb_subscriptions_controller.php:36
-msgid "Invalid omb version"
-msgstr ""
-
-#: /controllers/omb_subscriptions_controller.php:47
+#: /controllers/omb_subscriptions_controller.php:58
 msgid "Subscribe to "
 msgstr ""
 
-#: /controllers/openid_sites_controller.php:8
+#: /controllers/openid_sites_controller.php:7
 msgid "OpenID settings"
-msgstr ""
+msgstr "OpenID-Einstellungen"
 
 #: /controllers/pages_controller.php:10
 msgid "There was a security problem"
-msgstr ""
+msgstr "Es liegt ein Sicherheitsproblem vor"
 
-#: /controllers/registration_controller.php:34
+#: /controllers/registration_controller.php:44
 msgid "Register a new NoseRub account"
-msgstr ""
+msgstr "Ein neues Benutzerkonto anlegen"
 
-#: /controllers/registration_controller.php:38
+#: /controllers/registration_controller.php:48
 msgid "Register a new NoseRub account - Step 1/2"
-msgstr ""
+msgstr "Ein neues Benutzerkonto anlegen - Schritt 1/2"
 
-#: /controllers/registration_controller.php:80
+#: /controllers/registration_controller.php:90
 msgid "Register a new NoseRub account - Step 2/2"
-msgstr ""
+msgstr "Ein neues Benutzerkonto anlegen - Schritt 2/2"
 
-#: /controllers/registration_controller.php:105
+#: /controllers/registration_controller.php:115
 msgid "Thanks for your registration!"
-msgstr ""
+msgstr "Vielen Dank für Ihre Registrierung!E"
 
-#: /controllers/registration_controller.php:112
+#: /controllers/registration_controller.php:122
 msgid "Verify your e-mail address"
-msgstr ""
+msgstr "E-Mail Adresse bestätigen"
 
 #: /controllers/searches_controller.php:29
 msgid "Find public items..."
@@ -507,7 +533,7 @@ msgstr "Einstellungen wurden gespeichert."
 
 #: /controllers/syndications_controller.php:114
 msgid "Something went wrong"
-msgstr ""
+msgstr "Etwas unvorhergesehenes ist passiert"
 
 #: /controllers/syndications_controller.php:134
 msgid "Configure Feeds from your activities and accounts"
@@ -527,228 +553,318 @@ msgstr "Feed hinzufügen"
 
 #: /controllers/syndications_controller.php:314
 msgid "none - no CDN defined in noserub.php"
-msgstr ""
+msgstr "Kein - Kein CDN in noserub.php festgelegt"
 
 #: /controllers/components/openid.php:81
-msgid "OpenID transaction in progress"
+msgid "OpenID Authentication Redirect"
 msgstr ""
 
-#: /models/entry.php:444
+#: /models/comment.php:96
+msgid "%d comments from %s, %d imported"
+msgstr "%d Kommentare von %s, %d imporrtiert"
+
+#: /models/entry.php:507
 msgid "marked a new favorite: %s"
-msgstr ""
+msgstr "hat einen neuen Favoriten markiert: %s"
 
-#: /models/identity.php:853
-msgid "Welcome to %s!"
-msgstr "Willkommen zu %s!"
+#: /models/entry.php:515
+msgid "commented on: %s"
+msgstr "kommentierte: %s"
 
-#: /models/identity.php:854
-msgid "Please click here to verify your email address"
-msgstr ""
+#: /models/favorite.php:59
+msgid "%d favorites from %s, %d imported"
+msgstr "%d Favoriten von %s, %d importiert"
 
-#: /models/identity.php:856
-msgid "If you do not click on this link, the account will automatically be deleted after 14 days."
-msgstr ""
+#: /models/feed_type.php:13
+#: /models/menu.php:89
+#: /tests/cases/models/feed_type.test.php:11
+msgid "NoseRub"
+msgstr "NoseRub"
 
-#: /models/identity.php:857
-msgid "Thanks!"
-msgstr "Vielen Dank!"
-
-#: /models/identity.php:863
-msgid "Your %s registration"
-msgstr ""
-
-#: /models/menu.php:79
-msgid "Overview"
-msgstr "Übersicht"
-
+#: /models/feed_type.php:17
 #: /models/menu.php:80
+#: /tests/cases/models/feed_type.test.php:12
+#: /tests/cases/models/menu.test.php:193
 msgid "Photos"
 msgstr "Fotos"
 
+#: /models/feed_type.php:21
+#: /tests/cases/models/feed_type.test.php:13
+msgid "Links / Bookmarks"
+msgstr "Links / Lesezeichen"
+
+#: /models/feed_type.php:25
+#: /tests/cases/models/feed_type.test.php:14
+msgid "Text / Blog"
+msgstr "Text / Blog"
+
+#: /models/feed_type.php:29
+#: /tests/cases/models/feed_type.test.php:15
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: /models/feed_type.php:33
+#: /models/menu.php:85
+#: /tests/cases/models/feed_type.test.php:16
+#: /tests/cases/models/menu.test.php:198
+msgid "Micropublish"
+msgstr "Micropublish"
+
+#: /models/feed_type.php:37
 #: /models/menu.php:81
+#: /tests/cases/models/feed_type.test.php:17
+#: /tests/cases/models/menu.test.php:194
 msgid "Videos"
 msgstr "Videos"
 
+#: /models/feed_type.php:41
+#: /tests/cases/models/feed_type.test.php:18
+msgid "Audio"
+msgstr "Audio"
+
+#: /models/feed_type.php:45
+#: /models/menu.php:87
+#: /tests/cases/models/feed_type.test.php:19
+#: /tests/cases/models/menu.test.php:200
+msgid "Documents"
+msgstr "Dokumente"
+
+# /models/menu.php:88;151
+#: /models/feed_type.php:49
+#: /models/menu.php:88;152
+#: /tests/cases/models/feed_type.test.php:20
+#: /tests/cases/models/menu.test.php:201;231
+msgid "Locations"
+msgstr "Orte"
+
+#: /models/mail.php:32
+msgid "%s password recovery"
+msgstr "%s: Neues Passwort setzen"
+
+#: /models/mail.php:58
+msgid "%s: Someone marked your entry a favorite"
+msgstr "%s: Ihr Beitrag wurde als Favorit gespeichert"
+
+#: /models/mail.php:87
+msgid "%s: Someone commented on your entry"
+msgstr "%s: Ihr Beitrag wurde kommentiert"
+
+#: /models/mail.php:113
+msgid "%s: Someone added you as contact"
+msgstr "%s: Sie wurden als Kontakt hinzugefügt"
+
+#: /models/mail.php:125
+msgid "Your %s registration"
+msgstr "Ihre %s Registrierung"
+
+#: /models/menu.php:79
+#: /tests/cases/models/menu.test.php:192
+msgid "Overview"
+msgstr "Übersicht"
+
 #: /models/menu.php:82
+#: /tests/cases/models/menu.test.php:195
 msgid "Audios"
 msgstr "Audio"
 
 #: /models/menu.php:83
+#: /tests/cases/models/menu.test.php:196
 #: /views/syndications/index.ctp:29
 msgid "Links"
 msgstr "Links"
 
 #: /models/menu.php:84
+#: /tests/cases/models/menu.test.php:197
 msgid "Texts"
 msgstr "Texte"
 
-#: /models/menu.php:85
-msgid "Micropublish"
-msgstr "Micropublish"
-
 #: /models/menu.php:86
+#: /tests/cases/models/menu.test.php:199
 msgid "Events"
 msgstr "Ereignisse"
 
-#: /models/menu.php:87
-msgid "Documents"
-msgstr "Dokumente"
-
-# /models/menu.php:88;151
-#: /models/menu.php:88
-msgid "Locations"
-msgstr "Orte"
-
-#: /models/menu.php:89
-msgid "NoseRub"
-msgstr "NoseRub"
-
-#: /models/menu.php:149
+#: /models/menu.php:150
+#: /tests/cases/models/menu.test.php:229
 msgid "Profile"
 msgstr "Profil"
 
-#: /models/menu.php:150
+#: /models/menu.php:151
+#: /tests/cases/models/menu.test.php:230
 #: /views/contacts/info.ctp:23
 msgid "Accounts"
 msgstr "Webkonten"
 
-#: /models/menu.php:152
+#: /models/menu.php:153
+#: /tests/cases/models/menu.test.php:232
 msgid "Display"
 msgstr "Darstellung"
 
-#: /models/menu.php:153
+#: /models/menu.php:154
+#: /tests/cases/models/menu.test.php:233
 msgid "Privacy"
 msgstr "Privatsphäre"
 
-#: /models/menu.php:154
+#: /models/menu.php:155
+#: /tests/cases/models/menu.test.php:234
 msgid "Feeds"
 msgstr "Feeds"
 
-#: /models/menu.php:155
+#: /models/menu.php:156
+#: /tests/cases/models/menu.test.php:235
 msgid "OpenID"
 msgstr "OpenID"
 
-#: /models/menu.php:156
+#: /models/menu.php:157
+#: /tests/cases/models/menu.test.php:236
 msgid "OAuth"
 msgstr "OAuth"
 
-#: /models/menu.php:157
-msgid "OMB"
-msgstr ""
-
 #: /models/menu.php:160
+#: /tests/cases/models/menu.test.php:240
 msgid "Password & API"
 msgstr "Passwort & API"
 
 #: /models/menu.php:162
+#: /tests/cases/models/menu.test.php:238
 msgid "API"
 msgstr "API"
 
 #: /models/menu.php:165
+#: /tests/cases/models/menu.test.php:242
 msgid "Manage"
 msgstr "Verwalten"
 
 #: /models/menu.php:240
+#: /tests/cases/models/menu.test.php:213;374
 msgid "With my Contacts"
 msgstr "Mit meinen Kontakten"
 
 #: /models/menu.php:262
+#: /tests/cases/models/menu.test.php:70;215;397
 msgid "My Profile"
 msgstr "Mein Profil"
 
 #: /models/menu.php:284
+#: /tests/cases/models/menu.test.php:216
 msgid "My Favorites"
 msgstr "Meine Favoriten"
 
-#: /models/menu.php:303
+#: /models/menu.php:306
+msgid "My Comments"
+msgstr "Meine Kommentare"
+
+#: /models/menu.php:325
+#: /tests/cases/models/menu.test.php:208;419
 #: /views/registration/register.ctp:36
 #: /views/registration/register_with_openid_step_2.ctp:20
 msgid "Register"
 msgstr "Registrieren"
 
 # /views/elements/metanav.ctp:18;20
-#: /models/menu.php:326
+#: /models/menu.php:348
+#: /tests/cases/models/menu.test.php:448
 #: /views/admin/system_update.ctp:40
-#: /views/elements/metanav.ctp:18
+#: /views/elements/metanav.ctp:19;21
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: /models/menu.php:359
+#: /models/menu.php:381
+#: /tests/cases/models/menu.test.php:69;94;206;214;466
 msgid "All Users"
 msgstr "Alle Benutzer"
 
 # /views/elements/metanav.ctp:25;27;34;36
-#: /models/menu.php:378
-#: /views/elements/metanav.ctp:25
+#: /models/menu.php:400
+#: /tests/cases/models/menu.test.php:95;207
+#: /views/elements/metanav.ctp:26;28;36;38
 msgid "Search"
 msgstr "Suche"
 
-#: /models/admin/configuration_checker.php:43
+#: /models/peer.php:33
+msgid "ERROR: could not connect to http://noserub.com/peers"
+msgstr "FEHLER: Konnte keine Verbindung mit http://noserub.com/peers herstellen"
+
+#: /models/peer.php:78
+msgid "no peers updated"
+msgstr "Es wurden keine Peers aktualisiert"
+
+#: /models/admin/configuration_checker.php:68;80
 msgid "obsolete! Please remove it from noserub.php"
-msgstr ""
+msgstr "Veraltet! Bitte aus noserub.php entfernen"
 
-#: /models/admin/configuration_checker.php:54
-msgid "not defined! (see %s)"
-msgstr "nicht definiert (siehe %s)"
+#: /models/admin/configuration_checker.php:98
+msgid "not defined in noserub.php"
+msgstr "nicht in noserub.php definiert"
 
-#: /models/admin/configuration_checker.php:58
-msgid "value might only be: \"%s\" (see %s)"
-msgstr ""
+#: /models/admin/configuration_checker.php:159
+msgid "value might only be: true or false"
+msgstr "Der Wert darf nur \"true\" oder \"false\" sein"
 
-#: /models/admin/configuration_checker.php:62
-msgid "no value! (see %s)"
-msgstr ""
+#: /models/admin/configuration_checker.php:169
+msgid "value must be false or a string!"
+msgstr "Der Wert muss entweder \"false\", oder eine Zeichenkette sein"
 
-#: /models/admin/configuration_checker.php:70
-msgid "value must end with a slash! (see %s)"
-msgstr ""
+#: /models/admin/configuration_checker.php:183
+msgid "value must end with a slash!"
+msgstr "Der Wert muss mit einem \"/\" enden!"
+
+#: /models/admin/configuration_checker.php:197
+msgid "value must be numeric!"
+msgstr "Der Wert muss eine Zahl sein!"
+
+#: /models/admin/configuration_checker.php:209
+msgid "value might only be: \"%s\""
+msgstr "Der Wert darf nur \"%s\" sein."
 
 #: /models/admin/extensions_checker.php:9
+msgid "must be enabled"
+msgstr "muss aktiviert sein"
+
+#: /models/admin/extensions_checker.php:13
 msgid "needed for communicating with other servers"
 msgstr ""
 
-#: /models/admin/extensions_checker.php:13
+#: /models/admin/extensions_checker.php:17
 msgid "needed for image handling"
 msgstr ""
 
-#: /models/admin/extensions_checker.php:17
+#: /models/admin/extensions_checker.php:21
 msgid "GMP or BCMath"
 msgstr "GMP oder BCMath"
 
-#: /models/admin/extensions_checker.php:17
+#: /models/admin/extensions_checker.php:21
 msgid "needed for OpenID functionality"
-msgstr ""
+msgstr "benötigt für die OpenID Funktionalität"
 
-#: /vendors/sex.php:41
+#: /vendors/sex.php:33
 msgid "he/she"
-msgstr ""
+msgstr "er/sie"
 
-#: /vendors/sex.php:41
+#: /vendors/sex.php:34
 msgid "she"
-msgstr ""
+msgstr "sie"
 
-#: /vendors/sex.php:41
+#: /vendors/sex.php:35
 msgid "he"
-msgstr ""
+msgstr "er"
 
-#: /vendors/sex.php:53
+#: /vendors/sex.php:46
 msgid "him/her"
 msgstr ""
 
-# /vendors/sex.php:53;65
-#: /vendors/sex.php:53
+#: /vendors/sex.php:47;60
 msgid "her"
 msgstr ""
 
-#: /vendors/sex.php:53
+#: /vendors/sex.php:48
 msgid "him"
 msgstr ""
 
-#: /vendors/sex.php:65
+#: /vendors/sex.php:59
 msgid "his/her"
 msgstr ""
 
-#: /vendors/sex.php:65
+#: /vendors/sex.php:61
 msgid "his"
 msgstr ""
 
@@ -770,11 +886,11 @@ msgstr ""
 
 #: /views/account_settings/import.ctp:13
 msgid "No, take me back"
-msgstr ""
+msgstr "Nein, zurück"
 
 #: /views/account_settings/import.ctp:16
 msgid "Yes, import the data"
-msgstr ""
+msgstr "Ja, Daten importieren"
 
 #: /views/account_settings/index.ctp:3
 msgid "Export your account data"
@@ -786,11 +902,11 @@ msgstr ""
 
 #: /views/account_settings/index.ctp:8
 msgid "Export all my data"
-msgstr ""
+msgstr "Alle Daten exportieren"
 
 #: /views/account_settings/index.ctp:13
 msgid "Import your account data"
-msgstr ""
+msgstr "Account-Daten importieren"
 
 #: /views/account_settings/index.ctp:15
 msgid "Import previously exported NoseRub data, so you have all your data from the old NoseRub ID on this one."
@@ -798,11 +914,11 @@ msgstr ""
 
 #: /views/account_settings/index.ctp:20
 msgid "Import NoseRub Data"
-msgstr ""
+msgstr "NoseRub Daten importieren"
 
 #: /views/account_settings/index.ctp:26
 msgid "Import all data"
-msgstr ""
+msgstr "Alle Daten importieren"
 
 #: /views/account_settings/index.ctp:34
 msgid "Leave a moving address"
@@ -854,12 +970,11 @@ msgstr "Benutzerkonto löschen"
 
 #: /views/accounts/add_step_1.ctp:4
 msgid "Specify an url and let us try to auto discover"
-msgstr ""
+msgstr "Geben Sie einfach eine URL an. Wir versuchen herauszubekommen, welcher Dienst dazu gehört."
 
-# /views/accounts/add_step_1.ctp:5;14
-#: /views/accounts/add_step_1.ctp:5
+#: /views/accounts/add_step_1.ctp:5;14
 msgid "Could not detect a service or a feed"
-msgstr ""
+msgstr "Es konnte kein Dienst oder Feed gefunden werden"
 
 #: /views/accounts/add_step_1.ctp:8
 #: /views/contacts/add.ctp:24
@@ -868,13 +983,13 @@ msgstr "ODER"
 
 #: /views/accounts/add_step_1.ctp:11
 msgid "Specify service and account id"
-msgstr ""
+msgstr "Wählen Sie den Dienst und geben Sie die zugehörige Benutzerkennung ein"
 
 #: /views/accounts/add_step_1.ctp:12
 #: /views/accounts/index.ctp:18
 #: /views/elements/accounts/index.ctp:19
 msgid "Service"
-msgstr ""
+msgstr "Dienst"
 
 #: /views/accounts/add_step_1.ctp:17
 msgid "Next step"
@@ -887,59 +1002,32 @@ msgstr "Überschrift"
 #: /views/accounts/add_step_2_preview.ctp:16
 #: /views/accounts/edit.ctp:6
 msgid "Servicetype"
-msgstr ""
+msgstr "Dienstart"
 
 #: /views/accounts/add_step_2_preview.ctp:22
 #: /views/admin/system_update.ctp:114
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: /views/accounts/add_step_2_preview.ctp:26
 msgid "Feed"
-msgstr ""
+msgstr "Feed"
 
 #: /views/accounts/add_step_2_preview.ctp:29
 msgid "Items"
-msgstr ""
+msgstr "Artikel"
 
 #: /views/accounts/add_step_2_preview.ctp:40
 msgid "OK. Save it!"
-msgstr ""
+msgstr "Ok. Speichern!"
 
 #: /views/accounts/add_step_2_preview.ctp:41
 msgid "Forget it"
-msgstr ""
-
-#: /views/accounts/add_step_3_friends.ctp:7
-#: /views/locations/add.ctp:11
-#: /views/locations/index.ctp:23
-#: /views/syndications/index.ctp:28
-msgid "Name"
-msgstr ""
-
-#: /views/accounts/add_step_3_friends.ctp:9
-msgid "ignore"
-msgstr ""
-
-#: /views/accounts/add_step_3_friends.ctp:10
-msgid "create as"
-msgstr ""
-
-#: /views/accounts/add_step_3_friends.ctp:12
-msgid "assign to"
-msgstr ""
-
-#: /views/accounts/add_step_3_friends.ctp:23
-msgid "Add contacts"
-msgstr "Kontakte hinzufügen"
-
-#: /views/accounts/add_step_3_friends.ctp:24
-msgid "Skip adding friends"
-msgstr ""
+msgstr "Verwerfen"
 
 #: /views/accounts/edit.ctp:4
 msgid "Edit service details"
-msgstr ""
+msgstr "Details des Dienstes bearbeiten"
 
 #: /views/accounts/edit.ctp:10
 msgid "Change"
@@ -951,17 +1039,18 @@ msgstr ""
 
 #: /views/accounts/index.ctp:19
 #: /views/elements/accounts/index.ctp:18
+#: /views/identities/password_recovery.ctp:7
 msgid "Username"
 msgstr "Benutzername"
 
 # /views/accounts/index.ctp:48;77
 # /views/identities/password_settings.ctp:25;59
 # /views/identities/profile_settings.ctp:33;91
-#: /views/accounts/index.ctp:48
+#: /views/accounts/index.ctp:48;77
 #: /views/identities/display_settings.ctp:23
-#: /views/identities/password_settings.ctp:25
+#: /views/identities/password_settings.ctp:25;59
 #: /views/identities/privacy_settings.ctp:6
-#: /views/identities/profile_settings.ctp:33
+#: /views/identities/profile_settings.ctp:33;91
 #: /views/openid_sites/index.ctp:26
 #: /views/syndications/index.ctp:66
 msgid "Save changes"
@@ -969,7 +1058,7 @@ msgstr "Änderungen speichern"
 
 #: /views/accounts/index.ctp:56
 msgid "Posting to Twitter.com"
-msgstr ""
+msgstr "Nachrichten zu Twitter.com schicken"
 
 #: /views/accounts/index.ctp:58
 msgid ""
@@ -997,16 +1086,16 @@ msgid ""
 msgstr ""
 
 #: /views/admin/system_update.ctp:8
-msgid "Extension"
-msgstr ""
+msgid "Extensions"
+msgstr "Erweiterungen"
 
-# /views/admins/system_update.ctp:11;27;43;78
-#: /views/admin/system_update.ctp:11
+#: /views/admin/system_update.ctp:11;27;43;78
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 # /views/admins/system_update.ctp:11;27;43;60;78
-#: /views/admin/system_update.ctp:11
+#: /views/admin/system_update.ctp:11;27;43;60;78
+#: /views/elements/languages.ctp:10
 msgid "OK"
 msgstr "OK"
 
@@ -1020,11 +1109,11 @@ msgstr "Verzeichnisse"
 
 #: /views/admin/system_update.ctp:32
 msgid "Some directories are not writeable!"
-msgstr ""
+msgstr "In einige Verzeichnissen kann nicht geschrieben werden!"
 
 #: /views/admin/system_update.ctp:36
 msgid "not writeable"
-msgstr ""
+msgstr "kein Schreibzugriff möglich"
 
 #: /views/admin/system_update.ctp:48
 msgid "Some constants need to be fixed!"
@@ -1035,29 +1124,29 @@ msgid "Database"
 msgstr "Datenbank"
 
 # /views/admins/system_update.ctp:60;84
-#: /views/admin/system_update.ctp:60
+#: /views/admin/system_update.ctp:60;84
 msgid "Configuration"
 msgstr "Konfiguration"
 
 #: /views/admin/system_update.ctp:62
 msgid "Actual version #"
-msgstr ""
+msgstr "Aktuelle Versionsnummer"
 
 #: /views/admin/system_update.ctp:64
 msgid "Updating to #"
-msgstr ""
+msgstr "Wird aktualisiert auf Versionsnummer"
 
 #: /views/admin/system_update.ctp:74
 msgid "Database up-to-date!"
-msgstr ""
+msgstr "Datenbank ist auf dem neusten Stand!"
 
 #: /views/admin/system_update.ctp:87
 msgid "database.php in /app/config/ not found!"
-msgstr ""
+msgstr "database.php in /app/config/ wurde nicht gefunden!"
 
 #: /views/admin/system_update.ctp:89
 msgid "Cannot connect to database!"
-msgstr ""
+msgstr "Verbindung zur Datenbank kann nicht hergestellt werden!"
 
 #: /views/admin/system_update.ctp:96
 msgid "Errors!"
@@ -1065,7 +1154,7 @@ msgstr "Fehler!"
 
 #: /views/admin/system_update.ctp:98
 msgid "Please correct the errors above and then return to this URL, to finish the update."
-msgstr ""
+msgstr "Bitte korrigieren Sie die oben aufgeführten Fehler und rufen Sie anschließend diese URL erneut auf um das Update abzuschließen."
 
 #: /views/admin/system_update.ctp:102
 msgid "Talk back to NoseRub.com"
@@ -1140,23 +1229,23 @@ msgstr ""
 
 #: /views/contacts/add.ctp:9
 msgid "Add a contact with an URL or NoseRub-ID"
-msgstr ""
+msgstr "Kontakt mit einer URL oder NoseRub-ID hinzufügen"
 
 #: /views/contacts/add.ctp:12
 msgid "NoseRub-ID / URL"
-msgstr ""
+msgstr "URL / NoseRub-ID"
 
 #: /views/contacts/add.ctp:15
 msgid "This user could not be found at the other server"
-msgstr ""
+msgstr "Dieser Benutzer konnte auf dem angegebenen Server nicht gefunden werden"
 
 #: /views/contacts/add.ctp:16
 msgid "This is no valid NoseRub-ID or URL!"
-msgstr ""
+msgstr "Dies ist keine gültige URL oder NoseRub-ID"
 
 #: /views/contacts/add.ctp:18
 msgid "This user has already been added as a contact."
-msgstr ""
+msgstr "Sie haben diesen Benutzer bereits als Kontakt hinzugefügt."
 
 #: /views/contacts/add.ctp:20
 msgid "Add"
@@ -1202,35 +1291,35 @@ msgstr "Art der Beziehung definiert"
 
 #: /views/contacts/edit.ctp:26
 msgid "Click on a term to choose it and/or add a term to specify the relationship and group your contacts."
-msgstr ""
+msgstr "Klicken Sie die gewünschten Begriffe an, oder erstellen Sie eigene um die Art der Kontaktbeziehung zu beschreiben."
 
 #: /views/contacts/edit.ctp:31
 msgid "Friendship"
-msgstr ""
+msgstr "Freundschaftlich"
 
 #: /views/contacts/edit.ctp:35
 msgid "Geographical"
-msgstr ""
+msgstr "Geografisch"
 
 #: /views/contacts/edit.ctp:39
 msgid "Familiy"
-msgstr ""
+msgstr "Familiär"
 
 #: /views/contacts/edit.ctp:43
 msgid "Physical"
-msgstr ""
+msgstr "Physisch"
 
 #: /views/contacts/edit.ctp:47
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 #: /views/contacts/edit.ctp:69
 msgid "Add your own tags"
-msgstr ""
+msgstr "Fügen Sie Ihre eigenen Tags hinzu"
 
 #: /views/contacts/edit.ctp:70
 msgid "separated by space"
-msgstr ""
+msgstr "mit Leerzeichen voneinander trennen"
 
 #: /views/contacts/edit.ctp:73
 msgid "Make some notes"
@@ -1241,13 +1330,13 @@ msgid "No contacts yet."
 msgstr "Bisher keine Kontakte hinzugefügt."
 
 # /views/contacts/index.ctp:14;30
-#: /views/contacts/index.ctp:14
+#: /views/contacts/index.ctp:14;30
 msgid "Add new contact"
 msgstr "Kontakt hinzufügen"
 
 #: /views/contacts/index.ctp:18
 msgid "NoseRub Contacts"
-msgstr ""
+msgstr "NoseRub Kontakte"
 
 #: /views/contacts/index.ctp:23
 msgid "Private Contacts"
@@ -1255,49 +1344,53 @@ msgstr "Private Kontakte"
 
 #: /views/contacts/info.ctp:42
 msgid "Back to list of contacts"
-msgstr ""
+msgstr "Zurück zur Kontaktliste"
 
 #: /views/elements/hash_not_valid.ctp:1
 msgid "Admin-Hash invalid"
-msgstr ""
+msgstr "Ungültiger Admin-Hash"
 
 #: /views/elements/hash_not_valid.ctp:3
-msgid "In order to access these urls, you need to specify a valid <strong>NOSERUB_ADMIN_HASH</strong> in <em>noserub.php</em> and use it here."
+msgid "In order to access these urls, you need to specify a valid <strong>NoseRub.admin_hash</strong> in <em>noserub.php</em> and use it here."
 msgstr ""
+
+#: /views/elements/languages.ctp:4
+msgid "Language"
+msgstr "Sprache"
 
 #: /views/elements/metanav.ctp:8
 msgid "You are logged in as <strong>%s</strong>"
 msgstr "Sie sind als <strong>%s</strong> eingeloggt."
 
-#: /views/elements/metanav.ctp:30
+#: /views/elements/metanav.ctp:31
 msgid "Logout"
 msgstr "Abmelden"
 
 # /views/identities/login.ctp:23;36
+#: /views/elements/metanav.ctp:41
 #: /views/elements/identities/openid_login_form.ctp:10
-#: /views/elements/metanav.ctp:39
-#: /views/identities/login.ctp:23
+#: /views/identities/login.ctp:19;32
 msgid "Login"
 msgstr "Einloggen"
 
 #: /views/elements/accounts/index.ctp:12
 msgid "No accounts yet."
-msgstr "Sie haben noch "
+msgstr "Sie haben noch"
 
 #: /views/elements/accounts/index.ctp:58
 msgid "Add new account"
-msgstr ""
+msgstr "Neues Webkonto hinzufügen"
 
 # /views/identities/index.ctp:168;188;207
-#: /views/elements/contacts/box.ctp:2
+#: /views/elements/contacts/box.ctp:3
 #: /views/elements/locations/choose.ctp:4
-#: /views/identities/index.ctp:167
+#: /views/identities/index.ctp:167;187;206
 msgid "manage"
 msgstr "Verwalten"
 
 #: /views/elements/contacts/list.ctp:66
 msgid "Info"
-msgstr ""
+msgstr "Informationen"
 
 #: /views/elements/contacts/list.ctp:68
 msgid "Remove Contact"
@@ -1309,11 +1402,11 @@ msgstr "Kontakt bearbeiten"
 
 #: /views/elements/contacts/list.ctp:72
 msgid "Manage Services"
-msgstr ""
+msgstr "Wekonten verwalten"
 
 #: /views/elements/contacts/list.ctp:73
 msgid "Add Service"
-msgstr ""
+msgstr "Webkonto hinzufügen"
 
 #: /views/elements/contacts/tag_filter.ctp:4
 msgid "Filter"
@@ -1332,27 +1425,83 @@ msgstr "Alle"
 msgid "Update"
 msgstr "Aktualisieren"
 
+#: /views/elements/email/html/entry/notify_comment.ctp:2
+#: /views/elements/email/text/entry/notify_comment.ctp:1
+msgid "%s commented an entry of yours"
+msgstr "%s hat einen Ihrer Beiträge kommentiert"
+
+#: /views/elements/email/html/entry/notify_favorite.ctp:2
+#: /views/elements/email/text/entry/notify_favorite.ctp:1
+msgid "%s marked an entry of yours as favorite"
+msgstr "%s hat einen Ihrer Beiträge als Favorit markiert"
+
+#: /views/elements/email/html/identity/notify_contact.ctp:2
+#: /views/elements/email/text/identity/notify_contact.ctp:1
+msgid "%s added you as a contact"
+msgstr "%s hat Sie als Kontakt hinzugefügt"
+
+#: /views/elements/email/html/identity/notify_contact.ctp:5
+#: /views/elements/email/text/identity/notify_contact.ctp:2
+msgid "Go to his/her profile to see who it is"
+msgstr "Besuchen Sie sein/ihr Profil um mehr über die Person zu erfahren"
+
+#: /views/elements/email/html/identity/password_recovery.ctp:2
+#: /views/elements/email/text/identity/password_recovery.ctp:1
+msgid "You requested a new password for %s"
+msgstr "Sie haben ein neues Passwort für %s angefordert"
+
+#: /views/elements/email/html/identity/password_recovery.ctp:6
+#: /views/elements/email/text/identity/password_recovery.ctp:2
+msgid "Please click here to set a new password"
+msgstr "Bitte klicken Sie hier um ein neues Passwort zu wählen"
+
+#: /views/elements/email/html/identity/password_recovery.ctp:10
+#: /views/elements/email/html/identity/register.ctp:19
+#: /views/elements/email/text/identity/password_recovery.ctp:5
+#: /views/elements/email/text/identity/register.ctp:5
+msgid "Thanks!"
+msgstr "Vielen Dank!"
+
+#: /views/elements/email/html/identity/register.ctp:5
+#: /views/elements/email/text/identity/register.ctp:1
+msgid "Welcome to %s!"
+msgstr "Willkommen zu %s!"
+
+#: /views/elements/email/html/identity/register.ctp:9
+#: /views/elements/email/text/identity/register.ctp:2
+msgid "Please click here to verify your email address"
+msgstr "Hier klicken, um Ihre E-Mail-Adresse zu bestätigen"
+
+#: /views/elements/email/html/identity/register.ctp:12
+msgid "If you cannot click on that link, copy the following URL to your browser"
+msgstr "Wenn Sie den Link nicht anklicken können, kopieren Sie bitte die folgende URL und fügen Sie sie in Ihren Browser ein"
+
+#: /views/elements/email/html/identity/register.ctp:16
+#: /views/elements/email/text/identity/register.ctp:4
+msgid "If you do not click on this link, the account will automatically be deleted after 14 days."
+msgstr "Wenn Sie nicht auf den Link klicken, wird das Benutzerkonto nach 14 Tagen automatisch gelöscht."
+
 #: /views/elements/entries/favorited_by.ctp:3
 msgid "Favorited by %d users: "
-msgstr ""
+msgstr "Favorit von %d Benutzern: "
 
 #: /views/elements/identities/items.ctp:14
 msgid "There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"
-msgstr ""
+msgstr "Im Moment gibt es keine Aktivitäten in Ihrem Netzwerk.<br />Fügen Sie doch schon vorhandene Webkonten hinzu, oder laden Freunde ein, die Sie dann als Kontakt anlegen können."
 
-#: /views/elements/identities/items.ctp:30
+#: /views/elements/identities/items.ctp:31
 msgid "%d activities"
 msgstr "%d Einträge"
 
-#: /views/elements/identities/items.ctp:40
+#: /views/elements/identities/items.ctp:44
 msgid "Today"
 msgstr "Heute"
 
-#: /views/elements/identities/items.ctp:42
+#: /views/elements/identities/items.ctp:46
 msgid "Yesterday"
 msgstr "Gestern"
 
-#: /views/elements/identities/items.ctp:55
+#: /views/elements/identities/items.ctp:59
 msgid "From"
 msgstr "Von"
 
@@ -1365,17 +1514,17 @@ msgid "Your OpenID"
 msgstr "Ihre OpenID"
 
 #: /views/elements/identities/openid_login_form.ctp:6
-#: /views/identities/login.ctp:17
+#: /views/identities/login.ctp:13
 msgid "Invalid OpenID"
 msgstr "Ungültige OpenID"
 
 #: /views/elements/identities/openid_login_form.ctp:7
-#: /views/identities/login.ctp:18
+#: /views/identities/login.ctp:14
 msgid "Verification cancelled"
 msgstr ""
 
 #: /views/elements/identities/openid_login_form.ctp:8
-#: /views/identities/login.ctp:19
+#: /views/identities/login.ctp:15
 msgid "OpenID authentication failed: %s"
 msgstr ""
 
@@ -1399,30 +1548,46 @@ msgstr "Alle registrierten Benutzer"
 
 #: /views/elements/identities/privacy_settings.ctp:9
 msgid "Updates"
-msgstr ""
+msgstr "Neue Beiträge"
 
 #: /views/elements/identities/privacy_settings.ctp:11
 msgid ""
 "We want to show not logged in users, what is going on inside. \n"
 "        So, if you give us your permisson, we will show your updates\n"
 "        there for everyone."
-msgstr ""
+msgstr "Wir wollen nicht-eingeloggten Benutzer zeigen, was auf dieser Plattform passiert. Wenn Sie es uns erlauben zeigen wir Ihre neuen Beiträge für alle auf der Startseite an."
 
 #: /views/elements/identities/privacy_settings.ctp:15
 msgid "show my updates on frontpage"
-msgstr ""
+msgstr "Zeige meine neuen Beiträge auch auf der Startseite"
 
 #: /views/elements/identities/privacy_settings.ctp:16
 msgid "don't show them"
-msgstr ""
+msgstr "Zeige sie nicht"
 
 #: /views/elements/identities/privacy_settings.ctp:19
 msgid "Communication"
-msgstr ""
+msgstr "Kommunikation"
 
-#: /views/elements/identities/privacy_settings.ctp:20
+#: /views/elements/identities/privacy_settings.ctp:21
 msgid "Which persons may send me e-Mails?"
-msgstr ""
+msgstr "Wer darf mir E-Mails senden?"
+
+#: /views/elements/identities/privacy_settings.ctp:24
+msgid "Notify me when the following happens"
+msgstr "Informiere mich, wenn folgendes geschieht"
+
+#: /views/elements/identities/privacy_settings.ctp:26
+msgid "Someone adds me as contact"
+msgstr "Ich werde als Kontakt hinzugefügt"
+
+#: /views/elements/identities/privacy_settings.ctp:29
+msgid "Someone makes a comment on one of my entries"
+msgstr "Meine Beiträge werden kommentiert"
+
+#: /views/elements/identities/privacy_settings.ctp:32
+msgid "Someone marks one of my entries as favorite"
+msgstr "Meine Beiträge werden als Favorit gespeichert"
 
 #: /views/elements/identities/what_are_you_doing.ctp:1
 msgid "What are you doing?"
@@ -1458,15 +1623,23 @@ msgstr "Wo Sind Sie denn?"
 msgid "Accounts refreshed"
 msgstr ""
 
-#: /views/entries/view.ctp:13
+#: /views/entries/view.ctp:2
+msgid "There is no such entry available."
+msgstr ""
+
+#: /views/entries/view.ctp:17
 msgid "Unmark Entry as favorite"
 msgstr "Eintrag nicht mehr als Favorit markieren"
 
-#: /views/entries/view.ctp:13
+#: /views/entries/view.ctp:17
 msgid "Mark Entry as favorite"
 msgstr "Eintrag als Favoriten markieren"
 
-#: /views/entries/view.ctp:31
+#: /views/entries/view.ctp:23
+msgid "External permalink"
+msgstr "Externer Permalink"
+
+#: /views/entries/view.ctp:39
 msgid "Add comment"
 msgstr "Kommentar hinzufügen"
 
@@ -1475,7 +1648,7 @@ msgid "not supported by NoseRub"
 msgstr ""
 
 # /views/helpers/xfn.php:9;17;24;34
-#: /views/helpers/xfn.php:9
+#: /views/helpers/xfn.php:9;17;24;34
 msgid "no selection"
 msgstr "Keine Auswahl"
 
@@ -1485,47 +1658,47 @@ msgstr "Kontakt"
 
 #: /views/helpers/xfn.php:11
 msgid "acquaintance"
-msgstr ""
+msgstr "Bekannter"
 
 #: /views/helpers/xfn.php:12
 msgid "friend"
-msgstr ""
+msgstr "Freund"
 
 #: /views/helpers/xfn.php:18
 msgid "co-resident"
-msgstr ""
+msgstr "Mitbewohner"
 
 #: /views/helpers/xfn.php:19
 msgid "neighbor"
-msgstr ""
+msgstr "Nachbar"
 
 #: /views/helpers/xfn.php:25
 msgid "child"
-msgstr ""
+msgstr "Kind"
 
 #: /views/helpers/xfn.php:26
 msgid "parent"
-msgstr ""
+msgstr "Eltern"
 
 #: /views/helpers/xfn.php:27
 msgid "sibling"
-msgstr ""
+msgstr "Geschwister"
 
 #: /views/helpers/xfn.php:28
 msgid "spouse"
-msgstr ""
+msgstr "Partner"
 
 #: /views/helpers/xfn.php:29
 msgid "kin"
-msgstr ""
+msgstr "Verwandtschaft"
 
 #: /views/helpers/xfn.php:35
 msgid "met"
-msgstr ""
+msgstr "Getroffen"
 
 #: /views/helpers/xfn.php:36
 msgid "want-to-meet"
-msgstr ""
+msgstr "Möchte ich gerne treffen"
 
 #: /views/identities/account_deleted.ctp:2
 msgid "Your account and all information about it was successfully deleted."
@@ -1535,9 +1708,13 @@ msgstr ""
 msgid "Thanks for using our service!"
 msgstr ""
 
+#: /views/identities/comments.ctp:4
+msgid "Entries that %s commented on."
+msgstr "Beiträge die von %s kommentiert wurden"
+
 #: /views/identities/display_settings.ctp:6
 msgid "Filter, which should be shown, when selecting <em>Overview</em> as filter."
-msgstr ""
+msgstr "Welche Beiträge sollen angezeigt werden, wenn <em>Übersicht</em> ausgewählt wird."
 
 #: /views/identities/favorites.ctp:4
 msgid "Entries that %s marked as favorites."
@@ -1548,7 +1725,7 @@ msgid "Either this account does not exist, or it is only available for the user 
 msgstr ""
 
 # /views/identities/index.ctp:126;143
-#: /views/identities/index.ctp:126
+#: /views/identities/index.ctp:126;143
 msgid "edit"
 msgstr "Bearbeiten"
 
@@ -1572,16 +1749,16 @@ msgstr "Aktivitäten der Kontakte"
 msgid "Mutual Contacts"
 msgstr "Gemeinsame Kontakte"
 
-# /views/identities/index.ctp:201;226
-#: /views/identities/index.ctp:200
+#: /views/identities/index.ctp:200;225
 msgid "Add new service"
-msgstr ""
+msgstr "Webkonto hinzufügen"
 
 #: /views/identities/index.ctp:208
 msgid "Contact"
 msgstr "Kontakt"
 
 #: /views/identities/index.ctp:214
+#: /views/identities/password_recovery.ctp:8
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -1589,18 +1766,47 @@ msgstr "E-Mail"
 msgid "Synced usernames"
 msgstr ""
 
-#: /views/identities/login.ctp:14
+#: /views/identities/login.ctp:10
 msgid "Your %s OpenID"
 msgstr "Ihre %s OpenID"
 
 # /views/identities/login.ctp:21;34
-#: /views/identities/login.ctp:21
+#: /views/identities/login.ctp:17;30
 msgid "Remember me"
 msgstr "An mich erinnern"
 
+#: /views/identities/login.ctp:36
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+#: /views/identities/password_recovery.ctp:3
+msgid "Please enter username or password. We will then send you an email with a link to set a new password."
+msgstr "Bitte geben Sie Ihren Benutzernamen, oder die E-Mail Adresse an. Sie bekommen dann eine E-Mail mit der Sie ein neues Passwort setzen können."
+
+#: /views/identities/password_recovery.ctp:10
+msgid "Send me the link"
+msgstr "E-Mail zusenden"
+
+#: /views/identities/password_recovery_password.ctp:3
+msgid "Please enter your new password (twice). It needs to be at least 6 characters long."
+msgstr "Bitte geben Sie Ihr neues Passwort (zweimal) ein. Es muss mindestens sechs Zeichen lang sein."
+
+#: /views/identities/password_recovery_password.ctp:7
+#: /views/registration/register.ctp:20
+msgid "Password"
+msgstr "Passwort"
+
+#: /views/identities/password_recovery_password.ctp:8
+msgid "Password (repeated)"
+msgstr "Passwort (wiederholt)"
+
+#: /views/identities/password_recovery_password.ctp:10
+msgid "Save new password"
+msgstr "Neues Passwort speichern"
+
 #: /views/identities/password_settings.ctp:4
 msgid "In order to change your password, you have to enter your current password and then the new one."
-msgstr ""
+msgstr "Um Ihr Password zu ändern, müssen Sie Ihr aktuelles eingeben, sowie das neue."
 
 #: /views/identities/password_settings.ctp:15
 msgid "API Settings"
@@ -1637,16 +1843,16 @@ msgstr "Neues Passwort"
 #: /views/identities/password_settings.ctp:49
 #: /views/registration/register.ctp:21
 msgid "Passwords must be at least 6 characters in length"
-msgstr ""
+msgstr "Passwörter müssen mindestens sechs Zeichen lang sein"
 
 #: /views/identities/password_settings.ctp:53
 msgid "New password repeated"
-msgstr ""
+msgstr "Neues Passwort (wiederholt)"
 
 #: /views/identities/password_settings.ctp:54
 #: /views/registration/register.ctp:26
 msgid "Passwords must match"
-msgstr ""
+msgstr "Die Passwörter müssen identisch sein"
 
 #: /views/identities/privacy_settings.ctp:11
 msgid ""
@@ -1659,7 +1865,7 @@ msgid "Photo"
 msgstr "Foto"
 
 # /views/identities/profile_settings.ctp:9;18
-#: /views/identities/profile_settings.ctp:9
+#: /views/identities/profile_settings.ctp:9;18
 msgid "Your current photo"
 msgstr "Ihr aktuelles Foto"
 
@@ -1709,7 +1915,7 @@ msgstr "Männlich"
 
 #: /views/identities/profile_settings.ctp:56
 msgid "Make a statement"
-msgstr ""
+msgstr "Was möchten Sie mitteilen?"
 
 #: /views/identities/profile_settings.ctp:58
 msgid "HTML is not allowed; newlines are preserved; URLs with http:// and https:// will turn into links"
@@ -1721,35 +1927,35 @@ msgstr "Über"
 
 #: /views/identities/profile_settings.ctp:64
 msgid "Geolocation"
-msgstr ""
+msgstr "Geo-Lokalisierung"
 
 #: /views/identities/profile_settings.ctp:66
 msgid "Address for geolocation (<strong>private</strong>)"
-msgstr ""
+msgstr "Adresse für die Geo-Lokalisierung (<strong>nicht öffentlich</strong>)"
 
 #: /views/identities/profile_settings.ctp:71
 #: /views/locations/index.ctp:34
 msgid "Latitude"
-msgstr ""
+msgstr "Breitengrad"
 
 #: /views/identities/profile_settings.ctp:72
 #: /views/locations/index.ctp:35
 msgid "Longitude"
-msgstr ""
+msgstr "Längengrad"
 
 #: /views/identities/profile_settings.ctp:76
 msgid "The address is used to determine the geolocation. This address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address."
-msgstr ""
+msgstr "Die Adresse wird genutzt, um Ihre Geo-Lokalisierung zu bestimmen. Die Adresse wird <strong>nicht</stong> für andere zur Ansicht dargestellt, nur die Koordinaten."
 
 #: /views/identities/profile_settings.ctp:80
 msgid "Address for your profile (<strong>public</strong>)"
-msgstr ""
+msgstr "<strong>Öffentlich</strong> sichtbare Adresse"
 
 #: /views/identities/profile_settings.ctp:84
 msgid ""
 "Here you can specify, how you would like your address to be displayed. For instance: <strong>Paris, France</strong><br />\n"
 "            If you leave it empty, nothing will be shown on your profile page."
-msgstr ""
+msgstr "Sie können hier angeben, wie Ihre Adresse dargestellt werden soll. Zum Beispiel: <strong>Hamburg, Deutschland</strong><br />Sie können das Feld natürlich auch leer lassen. Dann wird auf Ihrem Profil keine Adresse angezeigt."
 
 #: /views/identities/send_message.ctp:9
 msgid "Subject"
@@ -1767,21 +1973,17 @@ msgstr "Zuletzt aktiv"
 msgid "My Contacts"
 msgstr "Meine Kontakte"
 
-#: /views/identities/social_stream.ctp:35
-msgid "Newbies"
-msgstr "Neu angemeldet"
-
 #: /views/layouts/default.ctp:3
 msgid "Welcome to %s"
 msgstr "Willkommen bei %s"
 
 #: /views/layouts/default.ctp:33
 msgid "Social Stream Feed"
-msgstr ""
+msgstr "Aktivitäten-Feed"
 
 #: /views/locations/add.ctp:4
 msgid "Add a new location"
-msgstr ""
+msgstr "Neuen Ort hinzufügen"
 
 #: /views/locations/add.ctp:7
 msgid ""
@@ -1791,8 +1993,14 @@ msgid ""
 msgstr ""
 
 #: /views/locations/add.ctp:11
+#: /views/locations/index.ctp:23
+#: /views/syndications/index.ctp:28
+msgid "Name"
+msgstr "Name"
+
+#: /views/locations/add.ctp:11
 msgid "You need to specify a name."
-msgstr ""
+msgstr "Sie müssen einen Namen angeben"
 
 #: /views/locations/add.ctp:12
 msgid "Address"
@@ -1845,17 +2053,17 @@ msgid "Application <strong>%s</strong> asked for permission to access your data"
 msgstr ""
 
 #: /views/oauth/authorize.ctp:5
-#: /views/omb/authorize_form.ctp:5
+#: /views/omb_local_service/authorize_form.ctp:5
 msgid "allow"
-msgstr ""
+msgstr "Erlauben"
 
 #: /views/oauth/authorize.ctp:6
-#: /views/omb/authorize_form.ctp:6
+#: /views/omb_local_service/authorize_form.ctp:6
 msgid "deny"
-msgstr ""
+msgstr "Verweigern"
 
 #: /views/oauth/no_token.ctp:1
-#: /views/omb/no_token.ctp:1
+#: /views/omb_local_service/no_token.ctp:1
 msgid "Error! No token specified."
 msgstr ""
 
@@ -1919,17 +2127,17 @@ msgstr ""
 msgid "Consumer secret"
 msgstr ""
 
-#: /views/omb/authorize_form.ctp:2
+#: /views/omb_local_service/authorize_form.ctp:2
 msgid "Allow access?"
-msgstr ""
+msgstr "Zugriff erlauben?"
 
 #: /views/omb_subscriptions/subscribe.ctp:3
-msgid "URL of your profile"
+msgid "URL of your profile on another compatible microblogging service"
 msgstr ""
 
 #: /views/omb_subscriptions/subscribe.ctp:4
 msgid "Subscribe"
-msgstr ""
+msgstr "Als Kontakt hinzufügen"
 
 #: /views/openid_sites/index.ctp:2
 msgid ""
@@ -1939,19 +2147,19 @@ msgstr ""
 
 #: /views/openid_sites/index.ctp:8
 msgid "Site"
-msgstr ""
+msgstr "Website"
 
 #: /views/openid_sites/index.ctp:9
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: /views/openid_sites/index.ctp:10
 msgid "Fullname"
-msgstr ""
+msgstr "Vollständiger Name"
 
 #: /views/openid_sites/index.ctp:11
 msgid "Gender"
-msgstr ""
+msgstr "Geschlecht"
 
 #: /views/openid_sites/no_openid_sites.ctp:2
 msgid "No OpenID sites found."
@@ -1977,6 +2185,18 @@ msgstr ""
 msgid "Please try the desired action again. If you think you got this message by error, please contact us."
 msgstr ""
 
+#: /views/peers/jobs_poll.ctp:1
+msgid "Polled comments"
+msgstr ""
+
+#: /views/peers/jobs_poll.ctp:11
+msgid "Polled favorites"
+msgstr ""
+
+#: /views/peers/jobs_sync.ctp:1
+msgid "Updated peers"
+msgstr ""
+
 #: /views/registration/register.ctp:2
 msgid "If you have an %s OpenID, please follow this %s to register a new NoseRub account."
 msgstr ""
@@ -1998,7 +2218,7 @@ msgstr ""
 #: /views/registration/register.ctp:12
 #: /views/registration/register_with_openid_step_2.ctp:8
 msgid "The username is already taken"
-msgstr ""
+msgstr "Der Benutzername ist bereits vergeben"
 
 #: /views/registration/register.ctp:15
 #: /views/registration/register_with_openid_step_2.ctp:11
@@ -2009,10 +2229,6 @@ msgstr ""
 #: /views/registration/register_with_openid_step_2.ctp:12
 msgid "Please enter a valid E-Mail address"
 msgstr ""
-
-#: /views/registration/register.ctp:20
-msgid "Password"
-msgstr "Passwort"
 
 #: /views/registration/register.ctp:25
 msgid "Password repeated"
@@ -2031,10 +2247,9 @@ msgstr ""
 msgid "Congratulations. You're now ready to %s to %s."
 msgstr ""
 
-# /views/registration/verify.ctp:3;7
-#: /views/registration/verify.ctp:3
+#: /views/registration/verify.ctp:3;7
 msgid "login"
-msgstr ""
+msgstr "Login"
 
 #: /views/registration/verify.ctp:7
 msgid "Sorry. The verification link did not work. Maybe you're already done and just need to proceed to %s?"
@@ -2042,7 +2257,7 @@ msgstr ""
 
 #: /views/searches/index.ctp:6
 msgid "with all the following words"
-msgstr ""
+msgstr "die folgende Wörter enthalten"
 
 #: /views/searches/index.ctp:9
 msgid "Go"
@@ -2050,7 +2265,7 @@ msgstr "Los"
 
 #: /views/searches/index.ctp:17
 msgid "Search results for <strong>%s</strong>"
-msgstr ""
+msgstr "Resultat der Suche nach <strong>%s>/strong>"
 
 #: /views/syndications/add.ctp:3
 msgid "Select a name. This is just visible for you and should help you to organize your feeds."
@@ -2082,7 +2297,7 @@ msgstr ""
 
 #: /views/syndications/add.ctp:74
 msgid "Create Feed"
-msgstr ""
+msgstr "Feed erstellen"
 
 #: /views/syndications/index.ctp:11
 msgid "You can create Feeds from your own social activities or those of friends in your network. This feeds then can be used by your RSS-Reader or you can integrate it on your website to show everyone, what you did in the last couple of hours and days."
@@ -2090,37 +2305,44 @@ msgstr ""
 
 #: /views/syndications/index.ctp:16
 msgid "Your feeds"
-msgstr ""
+msgstr "Ihre Feeds"
 
-# /views/syndications/index.ctp:18;50
-#: /views/syndications/index.ctp:18
+#: /views/syndications/index.ctp:18;50
 msgid "Create a new feed"
-msgstr ""
+msgstr "Neuen Feed anlegen"
 
 #: /views/syndications/index.ctp:22
 msgid "You did not create any feeds yet."
-msgstr ""
+msgstr "Sie haben bisher noch keine Feeds angelegt."
 
 #: /views/syndications/index.ctp:56
 msgid "Generic feed"
-msgstr ""
+msgstr "Generischer Feed"
 
 #: /views/syndications/index.ctp:61
 msgid "If you want a feed with all your updates being available at<br />%s<br />please enable the following option."
-msgstr ""
+msgstr "Wenn Sie einen Feed mit all Ihren neuen Beiträgen unter<br />%s<br />benutzen wollen, aktivieren Sie bitte diese Auswahl."
 
 #: /views/syndications/index.ctp:63
 msgid "Enable generic feed"
-msgstr ""
+msgstr "Generischen Feed aktivieren"
 
 #: /views/syndications/shell_upload.ctp:1
 msgid "Uploaded feeds"
 msgstr ""
 
+#: /views/themed/default/identities/widget_users_new.ctp:3
+msgid "Newbies"
+msgstr "Neu angemeldet"
+
 #: /webroot/test.php:99
 msgid "Debug setting does not allow access to this url."
-msgstr ""
+msgstr "Die DEBUG-Einstellungen erlauben den Zugriff auf diese URL nicht."
 
+#~ msgid "not defined! (see %s)"
+#~ msgstr "nicht definiert (siehe %s)"
+#~ msgid "Add contacts"
+#~ msgstr "Kontakte hinzufügen"
 #~ msgid "Social activity"
 #~ msgstr "Aktiviäten in Sozialen Netzwerken"
 
