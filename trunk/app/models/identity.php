@@ -204,6 +204,14 @@ class Identity extends AppModel {
 		return $contacts;
     }
     
+    public function getIdentityByUsername($username) {
+    	$splitted = $this->splitUsername($username);
+		$this->contain();
+		$identity = $this->findByUsername($splitted['username']);
+		
+        return $identity;
+    }
+    
     /**
      * Returns mutual contacts of two identities, or false if there are no mutual contacts.
      */
@@ -867,7 +875,7 @@ class Identity extends AppModel {
     	if(Configure::read('NoseRub.use_cdn')) {
             $url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
         } else {
-            $url = FULL_BASE_URL . Router::url('/static/avatars/');
+            $url = Router::url('/static/avatars/', true);
         }
         
         return $url;

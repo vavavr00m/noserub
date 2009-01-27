@@ -198,11 +198,9 @@ class ContactsController extends AppController {
             $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
         }
         
-        # remove contact_type relationships
-        $sql = 'DELETE FROM ' . $this->Contact->ContactTypesContact->tablePrefix . 'contact_types_contacts WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactTypesContact->query($sql);
-        $sql = 'DELETE FROM ' . $this->Contact->ContactsNoserubContactType->tablePrefix . 'contacts_noserub_contact_types WHERE contact_id=' . $contact_id;
-        $this->Contact->ContactsNoserubContactType->query($sql);
+        $this->Contact->deleteContactTypeAssociations($contact_id);
+        $this->Contact->OmbAccessToken->deleteByContactId($contact_id);
+        $this->Contact->OmbLocalServiceAccessToken->deleteByContactId($contact_id);
         
         # remove this contact
         $with_identity_id = $contact['Contact']['with_identity_id'];

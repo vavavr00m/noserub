@@ -1,14 +1,13 @@
 <?php
 
 App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
-App::import('Vendor', array('OmbConstants', 'OmbParamKeys'));
+App::import('Vendor', array('OmbConstants', 'OmbParamKeys', 'UrlUtil'));
 
-class OmbController extends AppController {
-	public $uses = array('Entry', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
+class OmbLocalServiceController extends AppController {
+	public $uses = array('Entry', 'Identity', 'OmbAccessToken', 'OmbDataStore', 'OmbRequestToken');
 	public $components = array('RequestHandler');
 	
 	public function request_token() {
-		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -29,7 +28,6 @@ class OmbController extends AppController {
 	}
 	
 	public function access_token() {
-		exit(); // disabled for release
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
@@ -52,7 +50,6 @@ class OmbController extends AppController {
 	}
 	
 	public function authorize() {
-		exit(); // disabled for release
 		if (!$this->isCorrectOMBVersion()) {
 			echo __('Invalid OMB version', true);
 			exit;
@@ -90,7 +87,6 @@ class OmbController extends AppController {
 	}
 	
 	public function authorize_form() {
-		exit(); // disabled for release
 		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
 			echo __('Invalid request', true);
 			exit;
@@ -100,7 +96,27 @@ class OmbController extends AppController {
 			$this->set('headline', __('Authorize access', true));
 		} else {
 			if (isset($this->params['form']['allow'])) {
-				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'));
+				$data['Identity']['is_local'] = false;
+				$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_PROFILE));
+				
+				$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
+			
+				if ($existingIdentityId) {
+					$this->Identity->id = $existingIdentityId;
+				}
+				
+				$this->Identity->save($data, true, array('is_local', 'username'));
+				
+				if ($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR) != '') {
+					$this->Identity->uploadPhotoByUrl($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR));
+				}
+				
+				$data['OmbListeneeIdentifier']['identity_id'] = $existingIdentityId;
+				$data['OmbListeneeIdentifier']['identifier'] = $this->Session->read('OMB.'.OmbParamKeys::LISTENEE);
+				ClassRegistry::init('OmbListeneeIdentifier')->save($data, true, array('identity_id', 'identifier'));
+				
+				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'), $existingIdentityId);
+
 				$redirectTo = $this->Session->read('OMB.oauth_callback');
 				
 				if (strpos($redirectTo, '?') === false) {
@@ -115,6 +131,13 @@ class OmbController extends AppController {
 				$redirectTo .= '&omb_version='.OAuthUtil::urlencodeRFC3986(OmbConstants::VERSION);
 				$redirectTo .= '&omb_listener_nickname='.OAuthUtil::urlencodeRFC3986($identity['local_username']);
 				$redirectTo .= '&omb_listener_profile='.OAuthUtil::urlencodeRFC3986('http://'.$identity['username']);
+				$redirectTo .= '&omb_listener_location='.OAuthUtil::urlencodeRFC3986($identity['address_shown']);
+				$redirectTo .= '&omb_listener_fullname='.OAuthUtil::urlencodeRFC3986($identity['name']);
+				$redirectTo .= '&omb_listener_bio='.OAuthUtil::urlencodeRFC3986(substr($identity['about'], 0, 139));
+				
+				if ($identity['photo'] != '') {
+					$redirectTo .= '&omb_listener_avatar='.OAuthUtil::urlencodeRFC3986($this->getAvatarUrl($identity['photo']));
+				}
 			} else {
 				$redirectTo = '/';
 			}
@@ -126,11 +149,24 @@ class OmbController extends AppController {
 	}
 	
 	public function post_notice() {
-		exit(); // disabled for release
 		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
 			header('HTTP/1.1 403 Forbidden');
 			echo __('Invalid request', true);
 			exit;
+		}
+		
+		$server = $this->getServer();
+		
+		// to avoid an "invalid signature" error we have to unset this param
+		unset($_GET['url']);
+		
+		try {
+			$request = OAuthRequest::from_request();
+			$server->verify_request($request);
+		} catch (OAuthException $e) {
+			header('HTTP/1.1 403 Forbidden');
+			print($e->getMessage());
+			die();
 		}
 		
 		$requiredParams = array(OmbParamKeys::LISTENEE, OmbParamKeys::NOTICE, OmbParamKeys::NOTICE_CONTENT);
@@ -141,8 +177,12 @@ class OmbController extends AppController {
 				exit;
 			}
 		}
-		
-		// TODO add notice
+
+		$identityId = ClassRegistry::init('OmbListeneeIdentifier')->field('identity_id', array('identifier' => $this->params['form'][OmbParamKeys::LISTENEE]));
+		$noticeUrl = $this->params['form'][OmbParamKeys::NOTICE];
+		$notice = $this->params['form'][OmbParamKeys::NOTICE_CONTENT];
+
+		$this->Entry->addOmbNotice($identityId, $noticeUrl, $notice);
 		
 		echo OmbParamKeys::VERSION . '=' . OmbConstants::VERSION;
 		exit;
@@ -150,6 +190,28 @@ class OmbController extends AppController {
 	
 	public function update_profile() {
 		// TODO add implementation
+	}
+	
+	private function getAvatarUrl($avatarName) {
+		$avatarUrl = '';
+		
+		if (trim($avatarName) != '') {
+			if ($this->isGravatarUrl($avatarName)) {
+				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
+			} else {
+				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+			}
+		}
+		
+		return $avatarUrl;
+	}
+	
+	private function get96x96GravatarUrl($gravatarUrl) {
+		return $gravatarUrl . '?s=96';
+	}
+	
+	private function isGravatarUrl($avatarName) {
+		return (stripos($avatarName, 'http://gravatar.com') === 0);
 	}
 	
 	private function getServer() {
