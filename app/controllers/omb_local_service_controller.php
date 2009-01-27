@@ -155,6 +155,20 @@ class OmbLocalServiceController extends AppController {
 			exit;
 		}
 		
+		$server = $this->getServer();
+		
+		// to avoid an "invalid signature" error we have to unset this param
+		unset($_GET['url']);
+		
+		try {
+			$request = OAuthRequest::from_request();
+			$server->verify_request($request);
+		} catch (OAuthException $e) {
+			header('HTTP/1.1 403 Forbidden');
+			print($e->getMessage());
+			die();
+		}
+		
 		$requiredParams = array(OmbParamKeys::LISTENEE, OmbParamKeys::NOTICE, OmbParamKeys::NOTICE_CONTENT);
 		
 		foreach ($requiredParams as $requiredParam) {
