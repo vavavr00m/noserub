@@ -10,8 +10,10 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    public $helpers = array('javascript', 'html', 'form');
+    public $helpers = array('noserub', 'javascript', 'html', 'form');
     public $components = array('menu', 'Cookie');
+    public $view = 'Theme';
+    public $theme = 'default';
     
     /**
      * Never ever "use" something here, or the migrations will fail.

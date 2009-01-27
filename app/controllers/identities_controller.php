@@ -181,7 +181,7 @@ class IdentitiesController extends AppController {
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
         $filter = $this->getFilter($session_identity);
-        # get last 100 items
+        # get last 50 items
         $conditions = array(
             'filter'      => $filter
         );
@@ -209,7 +209,6 @@ class IdentitiesController extends AppController {
             $this->render('../syndications/feed');
         } else {
         	$this->set('base_url_for_avatars', $this->Identity->getBaseUrlForAvatars());
-            $this->set('newbies', $this->Identity->getNewbies(9));
             $this->set('identities', $identities);
             $this->set('items', $items);
             $this->set('filter', $filter);
@@ -1181,4 +1180,9 @@ class IdentitiesController extends AppController {
 		$this->set('data', $data);
 		$this->api->render();
 	}
+	
+	public function widget_users_new() {
+	    $this->set('data', $this->Identity->getNewbies(9));
+	}
+	
 }
