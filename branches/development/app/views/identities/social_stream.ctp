@@ -28,7 +28,7 @@ $is_self = isset($about_identity['id']) &&
     	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? __('Contacts', true) : __('Latest active', true)), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
     	<?php if(isset($contacts) && $is_self) { ?>
     	    <hr />
-    	    <?php echo $this->element('contacts/box', array('box_head' => __('My Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars, 'manage' => true)); ?>
+    	    <?php echo $noserub->widgetMyContacts(); ?>
     	<?php } ?>
     	<?php echo $noserub->widgetNewestUsers(); ?>
     </div>

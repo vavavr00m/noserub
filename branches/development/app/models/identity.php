@@ -193,16 +193,6 @@ class Identity extends AppModel {
             return false;
         }
     }
-
-    /**
-     * Returns the contacts of the specified identity, ordered by created
-     */
-    public function getContacts($identityId, $limit = null) {
-        $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
-		$contacts = $this->Contact->findAllByIdentityId($identityId, null, 'WithIdentity.created DESC', $limit);
-		
-		return $contacts;
-    }
     
     public function getIdentityByUsername($username) {
     	$splitted = $this->splitUsername($username);
