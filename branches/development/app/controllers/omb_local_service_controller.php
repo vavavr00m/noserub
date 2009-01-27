@@ -101,9 +101,14 @@ class OmbLocalServiceController extends AppController {
 				
 				$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
 			
-				if (!$existingIdentityId) {
-					$this->Identity->save($data, true, array('is_local', 'username'));
-					$existingIdentityId = $this->Identity->id;
+				if ($existingIdentityId) {
+					$this->Identity->id = $existingIdentityId;
+				}
+				
+				$this->Identity->save($data, true, array('is_local', 'username'));
+				
+				if ($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR) != '') {
+					$this->Identity->uploadPhotoByUrl($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR));
 				}
 				
 				$data['OmbListeneeIdentifier']['identity_id'] = $existingIdentityId;
