@@ -164,18 +164,18 @@
     <div id="sidebar">
 	
 	    <?php if($relationship_status == 'self') { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/contacts/'; ?>"><?php __('manage'); ?></a></span>
-    	<?php } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => __('Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
-    	<p class="morefriends">
-    		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
-    		<strong><?php echo $num_private_contacts; ?></strong> private contacts
-    		<?php if(($relationship_status == 'self' && ($num_noserub_contacts+$num_private_contacts > 0)) || 
-    		         ($num_noserub_contacts > 0)) { ?>
-    		    <a href="<?php echo $noserub_url . '/network/'; ?>"><?php __("Contact's Social Stream"); ?></a>
-    		<?php } ?>
-        </p>
-    
+	        <?php echo $noserub->widgetMyContacts(); ?>
+    	<?php } else { ?>
+        	<?php echo $this->element('contacts/box', array('box_head' => __('Contacts', true), 'data' => $contacts, 'static_base_url' => $base_url_for_avatars)); ?>
+        	<p class="morefriends">
+        		<strong><?php echo $num_noserub_contacts; ?></strong> NoseRub contacts<br />
+        		<strong><?php echo $num_private_contacts; ?></strong> private contacts
+        		<?php if(($relationship_status == 'self' && ($num_noserub_contacts+$num_private_contacts > 0)) || 
+        		         ($num_noserub_contacts > 0)) { ?>
+        		    <a href="<?php echo $noserub_url . '/network/'; ?>"><?php __("Contact's Social Stream"); ?></a>
+        		<?php } ?>
+            </p>
+        <?php } ?>
         <hr />
 	
 	    <?php if(isset($mutual_contacts)) {

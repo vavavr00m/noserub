@@ -94,7 +94,7 @@ class IdentitiesController extends AppController {
                 $this->set('communications', $communications);
                 
                 # get contacts of the displayed profile
-                $all_contacts = $this->Identity->getContacts($data['Identity']['id']);
+                $all_contacts = $this->Identity->Contact->getForIdentity($data['Identity']['id']);
 
                 $num_private_contacts = 0;
                 $num_noserub_contacts = 0;
@@ -147,7 +147,7 @@ class IdentitiesController extends AppController {
             
             $filter = $this->getFilter($session_identity);
 
-            # get last 100 items
+            # get last 50 items
             $conditions = array(
                 'identity_id' => $data['Identity']['id'],
                 'filter'      => $filter
@@ -198,7 +198,7 @@ class IdentitiesController extends AppController {
         # also get my contacts, when I'm logged in
         $logged_in_identity_id = $this->Session->read('Identity.id');
         if($logged_in_identity_id) {
-        	$this->set('contacts', $this->Identity->getContacts($logged_in_identity_id, 9));
+        	$this->set('contacts', $this->Identity->Contact->getForIdentity($logged_in_identity_id, 9));
         }
         
         if($output === 'rss') {

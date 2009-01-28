@@ -6,6 +6,7 @@ Router::connect('/social_stream/:filter/:output/', array('controller' => 'identi
 Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => 'send'));
 
 Router::connect('/widget/users/new/', array('controller' => 'identities', 'action' => 'widget_users_new'));
+Router::connect('/widget/contacts/my/', array('controller' => 'contacts', 'action' => 'widget_my_contacts'));
 
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 

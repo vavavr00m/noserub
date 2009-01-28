@@ -72,9 +72,10 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->write(self::ACCESS_TOKEN_URL_KEY, $localServiceDefinition->getAccessTokenUrl());
 				$this->Session->write(self::LOCAL_SERVICE_ID_KEY, $localServiceId);
 				
+				$callbackUrl = Configure::read('NoseRub.full_base_url') . $username . '/callback';
 				$identity = $this->Identity->getIdentityByUsername($username);
 				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
-				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams);
+				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams, $callbackUrl);
 			} catch (Exception $e) {
 				$this->flashMessage('Error', $e->getMessage());
 			}
