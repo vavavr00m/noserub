@@ -87,39 +87,41 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function authorize_form() {
-		if (!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
+		if(!$this->Session->check('Identity') || !$this->Session->check('OMB')) {
 			echo __('Invalid request', true);
 			exit;
 		}
 
-		if (empty($this->params['form'])) {
+		if(empty($this->params['form'])) {
 			$this->set('headline', __('Authorize access', true));
 		} else {
-			if (isset($this->params['form']['allow'])) {
+			if(isset($this->params['form']['allow'])) {
 				$data['Identity']['is_local'] = false;
 				$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_PROFILE));
 				
 				$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
 			
-				if ($existingIdentityId) {
+				if($existingIdentityId) {
 					$this->Identity->id = $existingIdentityId;
+				} else {
+				    $this->Identity->create();
 				}
 				
 				$this->Identity->save($data, true, array('is_local', 'username'));
 				
-				if ($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR) != '') {
+				if($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR) != '') {
 					$this->Identity->uploadPhotoByUrl($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR));
 				}
 				
-				$data['OmbListeneeIdentifier']['identity_id'] = $existingIdentityId;
+				$data['OmbListeneeIdentifier']['identity_id'] = $this->Identity->id;
 				$data['OmbListeneeIdentifier']['identifier'] = $this->Session->read('OMB.'.OmbParamKeys::LISTENEE);
 				ClassRegistry::init('OmbListeneeIdentifier')->save($data, true, array('identity_id', 'identifier'));
 				
-				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'), $existingIdentityId);
+				$this->OmbRequestToken->authorize($this->Session->read('OMB.oauth_token'), $this->Session->read('Identity.id'), $this->Identity->id);
 
 				$redirectTo = $this->Session->read('OMB.oauth_callback');
 				
-				if (strpos($redirectTo, '?') === false) {
+				if(strpos($redirectTo, '?') === false) {
 					$redirectTo .= '?';
 				} else {
 					$redirectTo .= '&';
@@ -135,7 +137,7 @@ class OmbLocalServiceController extends AppController {
 				$redirectTo .= '&omb_listener_fullname='.OAuthUtil::urlencodeRFC3986($identity['name']);
 				$redirectTo .= '&omb_listener_bio='.OAuthUtil::urlencodeRFC3986(substr($identity['about'], 0, 139));
 				
-				if ($identity['photo'] != '') {
+				if($identity['photo'] != '') {
 					$redirectTo .= '&omb_listener_avatar='.OAuthUtil::urlencodeRFC3986($this->getAvatarUrl($identity['photo']));
 				}
 			} else {
