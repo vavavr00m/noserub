@@ -92,6 +92,24 @@ class Contact extends AppModel {
     }
     
     /**
+     * Returns the contacts of the specified identity, ordered by created
+     */
+    public function getForIdentity($identityId, $limit = null) {
+        $this->contain(array('WithIdentity', 'NoserubContactType'));
+		return $this->find(
+		    'all',
+		    array(
+		        'conditions' => array(
+		            'identity_id' => $identityId
+		        ),
+		        'order' => 'WithIdentity.created DESC',
+		        'limit' => $limit
+		    )
+		);
+    }
+    
+    
+    /**
      * retrieves list of contacts for given filter
      *
      * @param int $identity_id
