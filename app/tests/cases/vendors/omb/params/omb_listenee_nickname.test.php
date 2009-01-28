@@ -8,4 +8,11 @@ class OmbListeneeNicknameTest extends CakeTestCase {
 		$this->assertEqual(OmbParamKeys::LISTENEE_NICKNAME, $listeneeNickname->getKey());
 		$this->assertEqual($nickname, $listeneeNickname->getValue());
 	}
+	
+	public function testDotsInNicknameAreRemoved() {
+		$nickname = 'nick.nick.nick';
+		$nicknameWithoutDots = 'nicknicknick';
+		$listeneeNickname = new OmbListeneeNickname($nickname);
+		$this->assertEqual($nicknameWithoutDots, $listeneeNickname->getValue());
+	}
 }

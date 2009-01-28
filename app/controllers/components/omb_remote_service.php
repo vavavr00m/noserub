@@ -130,7 +130,7 @@ class OmbRemoteServiceComponent extends Object {
 		return $data;
 	}
 	
-	public function redirectToAuthorizationPage($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams) {
+	public function redirectToAuthorizationPage($authorizeUrl, $requestToken, OmbAuthorizationParams $ombAuthorizationParams, $callbackUrl) {
 		$authUrl = $this->removeQueryStringIfLaconica($authorizeUrl);
 		$consumer = $this->getConsumer();
 		$request = OAuthRequest::from_consumer_and_token($consumer, $requestToken, 'GET', $authUrl, array());
@@ -140,7 +140,7 @@ class OmbRemoteServiceComponent extends Object {
 			$request->set_parameter($key, $value);
 		}
 
-		$request->set_parameter('oauth_callback', Configure::read('NoseRub.full_base_url') . $params[OmbParamKeys::LISTENEE_NICKNAME].'/callback');
+		$request->set_parameter('oauth_callback', $callbackUrl);
 		
 		if ($this->isLaconica($authorizeUrl)) {
 			// adding querystring param we removed above
