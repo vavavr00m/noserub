@@ -360,6 +360,7 @@ class Entry extends AppModel {
     }
     
     public function addOmbNotice($identity_id, $notice_url, $notice) {
+        $restricted = $this->getRestricted($identity_id);
     	$text = htmlspecialchars(strip_tags($notice), ENT_QUOTES, 'UTF-8');
         $text = $this->shorten($text);
         
@@ -374,7 +375,7 @@ class Entry extends AppModel {
             'url'             => $notice_url,
             'uid'             => '',
             'content'         => $text,
-            'restricted'      => false
+            'restricted'      => $restricted
         );
         
         $this->create();
