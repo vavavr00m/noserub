@@ -21,9 +21,7 @@ class RegistrationController extends AppController {
 
         if(!empty($this->data)) {
             if($this->Identity->register($this->data)) {
-                App::import('Model', 'Mail');
-                $Mail = new Mail();
-                $Mail->registerIdentity($this->data['Identity']['email'], $this->Identity->field('hash'));
+            	ClassRegistry::init('Mail')->registerIdentity($this->data['Identity']['email'], $this->Identity->field('hash'));
                 
                 $url = $this->url->http('/pages/register/thanks/');
                 $this->redirect($url);
@@ -95,6 +93,7 @@ class RegistrationController extends AppController {
     		$this->data['Identity']['openid_server_url'] = $this->Session->read('Registration.openid_server_url');
     		
     		if($this->Identity->register($this->data)) {
+    			ClassRegistry::init('Mail')->registerIdentity($this->data['Identity']['email'], $this->Identity->field('hash'));
 	    		$this->removeRegistrationDataFromSession();
     			$this->redirect('/pages/register/thanks/');
             }
