@@ -151,22 +151,7 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function post_notice() {
-		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
-			header('HTTP/1.1 403 Forbidden');
-			echo __('Invalid request', true);
-			exit;
-		}
-		
-		$server = $this->getServer();
-		
-		try {
-			$request = OAuthRequest::from_request();
-			$server->verify_request($request);
-		} catch (OAuthException $e) {
-			header('HTTP/1.1 403 Forbidden');
-			print($e->getMessage());
-			die();
-		}
+		$this->verifyRequestOrDie();
 		
 		$requiredParams = array(OmbParamKeys::LISTENEE, OmbParamKeys::NOTICE, OmbParamKeys::NOTICE_CONTENT);
 		
@@ -188,7 +173,23 @@ class OmbLocalServiceController extends AppController {
 	}
 	
 	public function update_profile() {
-		// TODO add implementation
+		$this->verifyRequestOrDie();
+
+		if (!isset($this->params['form'][OmbParamKeys::LISTENEE])) {
+			echo __('Missing parameter: ', true) . OmbParamKeys::LISTENEE;
+			exit;
+		}
+		
+		if (isset($this->params['form'][OmbParamKeys::LISTENEE_AVATAR])) {
+			$identityId = ClassRegistry::init('OmbListeneeIdentifier')->field('identity_id', array('identifier' => $this->params['form'][OmbParamKeys::LISTENEE]));
+			
+			if ($identityId) {
+				$this->Identity->id = $identityId;
+				$this->Identity->uploadPhotoByUrl($this->params['form'][OmbParamKeys::LISTENEE_AVATAR]);
+			}
+		}
+		
+		exit;
 	}
 	
 	private function getAvatarUrl($avatarName) {
@@ -224,6 +225,25 @@ class OmbLocalServiceController extends AppController {
 	private function isCorrectOMBVersion($type = 'url') {
 		return (isset($this->params[$type][OmbParamKeys::VERSION]) && 
 				$this->params[$type][OmbParamKeys::VERSION] == OmbConstants::VERSION);
+	}
+
+	private function verifyRequestOrDie() {
+		if (!$this->RequestHandler->isPost() || !$this->isCorrectOMBVersion('form')) {
+			header('HTTP/1.1 403 Forbidden');
+			echo __('Invalid request', true);
+			exit;
+		}
+		
+		$server = $this->getServer();
+		
+		try {
+			$request = OAuthRequest::from_request();
+			$server->verify_request($request);
+		} catch (OAuthException $e) {
+			header('HTTP/1.1 403 Forbidden');
+			print($e->getMessage());
+			die();
+		}
 	}
 	
 	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
