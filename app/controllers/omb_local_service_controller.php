@@ -159,9 +159,6 @@ class OmbLocalServiceController extends AppController {
 		
 		$server = $this->getServer();
 		
-		// to avoid an "invalid signature" error we have to unset this param
-		unset($_GET['url']);
-		
 		try {
 			$request = OAuthRequest::from_request();
 			$server->verify_request($request);
