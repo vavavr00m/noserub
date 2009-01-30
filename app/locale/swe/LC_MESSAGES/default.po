@@ -8,17 +8,14 @@ msgstr ""
 "Project-Id-Version: noserub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2009-01-27 20:07+0100\n"
-"PO-Revision-Date: 2009-01-30 00:07+0100\n"
+"PO-Revision-Date: 2009-01-30 22:13+0100\n"
 "Last-Translator: Dirk Olbertz <dirk.olbertz@gmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-01-29 22:56+0000\n"
+"X-Launchpad-Export-Date: 2009-01-30 21:12+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
-"X-Poedit-Language: Swedish\n"
-"X-Poedit-Country: SWEDEN\n"
-"X-Poedit-SourceCharset: utf-8\n"
 
 #: /app_controller.php:136
 msgid "You may not call this route from the shell!"
@@ -1693,297 +1690,299 @@ msgstr "partner"
 
 #: /views/helpers/xfn.php:29
 msgid "kin"
-msgstr ""
+msgstr "släkt"
 
 #: /views/helpers/xfn.php:35
 msgid "met"
-msgstr ""
+msgstr "träffat"
 
 #: /views/helpers/xfn.php:36
 msgid "want-to-meet"
-msgstr ""
+msgstr "vill träffa"
 
 #: /views/identities/account_deleted.ctp:2
 msgid "Your account and all information about it was successfully deleted."
-msgstr ""
+msgstr "Dina konton och all information i dessa raderades felfritt."
 
 #: /views/identities/account_deleted.ctp:5
 msgid "Thanks for using our service!"
-msgstr ""
+msgstr "Tack för att du att du använder våran tjänst!"
 
 #: /views/identities/comments.ctp:4
 msgid "Entries that %s commented on."
-msgstr ""
+msgstr "Inlägg som %s har kommenterat på."
 
 #: /views/identities/display_settings.ctp:6
 msgid "Filter, which should be shown, when selecting <em>Overview</em> as filter."
-msgstr ""
+msgstr "Filter, vilket som ska visas när <em>Översikt</em> väljs som ett filter."
 
 #: /views/identities/favorites.ctp:4
 msgid "Entries that %s marked as favorites."
-msgstr ""
+msgstr "Inlägg som %s har markerat som favoriter."
 
 #: /views/identities/index.ctp:3
 msgid "Either this account does not exist, or it is only available for the user who created it."
-msgstr ""
+msgstr "Antingen så finns inte detta konto, eller så går det bara att komma åt ifrån den användare som skapade det."
 
 #: /views/identities/index.ctp:126;143
 msgid "edit"
-msgstr ""
+msgstr "redigera"
 
 #: /views/identities/index.ctp:127
 msgid "Relationship"
-msgstr ""
+msgstr "Förhållande"
 
 #: /views/identities/index.ctp:144
 msgid "Notes"
-msgstr ""
+msgstr "Noteringar"
 
 #: /views/identities/index.ctp:147
 msgid "Add some notes here."
-msgstr ""
+msgstr "Lägg till några noteringar här."
 
 #: /views/identities/index.ctp:175
 msgid "Contact's Social Stream"
-msgstr ""
+msgstr "Kontaktens sociala flöde"
 
 #: /views/identities/index.ctp:182
 msgid "Mutual Contacts"
-msgstr ""
+msgstr "Gemensamma kontakter"
 
 #: /views/identities/index.ctp:200;225
 msgid "Add new service"
-msgstr ""
+msgstr "Lägg till en ny tjänst"
 
 #: /views/identities/index.ctp:208
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: /views/identities/index.ctp:214
 #: /views/identities/password_recovery.ctp:8
 msgid "E-Mail"
-msgstr ""
+msgstr "E-post"
 
 #: /views/identities/jobs_sync_all.ctp:1
 msgid "Synced usernames"
-msgstr ""
+msgstr "Synkade användarnamn"
 
 #: /views/identities/login.ctp:10
 msgid "Your %s OpenID"
-msgstr ""
+msgstr "DItt %s OpenID"
 
 #: /views/identities/login.ctp:17;30
 msgid "Remember me"
-msgstr ""
+msgstr "Kom ihåg mig"
 
 #: /views/identities/login.ctp:36
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Glömt ditt lösenord?"
 
 #: /views/identities/password_recovery.ctp:3
 msgid "Please enter username or password. We will then send you an email with a link to set a new password."
-msgstr ""
+msgstr "Var god mata in ditt användarnamn eller lösenord. Vi kommer sen att skicka meddelande till din e-post med en länk för att att mata in ett nytt lösenord."
 
 #: /views/identities/password_recovery.ctp:10
 msgid "Send me the link"
-msgstr ""
+msgstr "Skicka mig länken"
 
 #: /views/identities/password_recovery_password.ctp:3
 msgid "Please enter your new password (twice). It needs to be at least 6 characters long."
-msgstr ""
+msgstr "Var god att mata in ditt lösenord (två gånger). Det behöver vara minst 6 tecken långt."
 
 #: /views/identities/password_recovery_password.ctp:7
 #: /views/registration/register.ctp:20
 msgid "Password"
-msgstr ""
+msgstr "Lösenord"
 
 #: /views/identities/password_recovery_password.ctp:8
 msgid "Password (repeated)"
-msgstr ""
+msgstr "Lösenord (igen)"
 
 #: /views/identities/password_recovery_password.ctp:10
 msgid "Save new password"
-msgstr ""
+msgstr "Spara nytt lösenord"
 
 #: /views/identities/password_settings.ctp:4
 msgid "In order to change your password, you have to enter your current password and then the new one."
-msgstr ""
+msgstr "För att kunna ändra ditt lösenord så behöver du mata in ditt nuvarande lösenord och sen det nya."
 
 #: /views/identities/password_settings.ctp:15
 msgid "API Settings"
-msgstr ""
+msgstr "API-inställningar"
 
 #: /views/identities/password_settings.ctp:17
 msgid "For more information, please check out our API-Documentation: %s"
-msgstr ""
+msgstr "För mer information, var god kolla våran API-dokumentation: %s"
 
 #: /views/identities/password_settings.ctp:23
 msgid "API activated"
-msgstr ""
+msgstr "API aktiverad"
 
 #: /views/identities/password_settings.ctp:24
 msgid "API hash"
-msgstr ""
+msgstr "API-hash"
 
 #: /views/identities/password_settings.ctp:35
 msgid "Change your password"
-msgstr ""
+msgstr "Ändra ditt lösenord"
 
 #: /views/identities/password_settings.ctp:43
 msgid "Old password"
-msgstr ""
+msgstr "Gammalt lösenord"
 
 #: /views/identities/password_settings.ctp:44
 msgid "Password is not correct"
-msgstr ""
+msgstr "Lösenord är inte korrekt"
 
 #: /views/identities/password_settings.ctp:48
 msgid "New password"
-msgstr ""
+msgstr "Nytt lösenord"
 
 #: /views/identities/password_settings.ctp:49
 #: /views/registration/register.ctp:21
 msgid "Passwords must be at least 6 characters in length"
-msgstr ""
+msgstr "Lösenordet måste bestå av minst 6 tecken."
 
 #: /views/identities/password_settings.ctp:53
 msgid "New password repeated"
-msgstr ""
+msgstr "Nya lösenordet igen"
 
 #: /views/identities/password_settings.ctp:54
 #: /views/registration/register.ctp:26
 msgid "Passwords must match"
-msgstr ""
+msgstr "Lösenorden måste matcha"
 
 #: /views/identities/privacy_settings.ctp:11
 msgid ""
 "If you would like to discuss what and how to save from public\n"
 "    viewing, please join us at %s."
-msgstr ""
+msgstr "Om du vill diskutera vad och hur du sparar på att visa publikt,  anslut dig till oss på %s"
 
 #: /views/identities/profile_settings.ctp:6
 msgid "Photo"
-msgstr ""
+msgstr "Foto"
 
 #: /views/identities/profile_settings.ctp:9;18
 msgid "Your current photo"
-msgstr ""
+msgstr "Ditt nuvarande foto"
 
 #: /views/identities/profile_settings.ctp:21
 msgid "Remove photo"
-msgstr ""
+msgstr "Radera foto"
 
 #: /views/identities/profile_settings.ctp:25
 msgid "Size may not exceed 150x150 pixels. If you don't have one with the right size, try %s.<br />GIF, JPG and PNG allowed."
-msgstr ""
+msgstr "Storleken får inte överstiga 150x150 pixlar. Om du inte har en bild med rätt storlek, prova %s.<br />GIF, JPG och PNG är tillåtet."
 
 #: /views/identities/profile_settings.ctp:27
 msgid "Photo/Portrait"
-msgstr ""
+msgstr "Foto/Poträtt"
 
 #: /views/identities/profile_settings.ctp:31
 msgid "load from Gravatar.com"
-msgstr ""
+msgstr "ladda från Gravatar.com"
 
 #: /views/identities/profile_settings.ctp:40
 msgid "Personal data"
-msgstr ""
+msgstr "Personlig data"
 
 #: /views/identities/profile_settings.ctp:42
 msgid "Your firstname"
-msgstr ""
+msgstr "Ditt förnamn"
 
 #: /views/identities/profile_settings.ctp:46
 msgid "Your lastname"
-msgstr ""
+msgstr "Ditt efternamn"
 
 #: /views/identities/profile_settings.ctp:49
 msgid "Sex"
-msgstr ""
+msgstr "Kön"
 
 #: /views/identities/profile_settings.ctp:50
 msgid "rather not say"
-msgstr ""
+msgstr "vill helst inte säga"
 
 #: /views/identities/profile_settings.ctp:51
 msgid "female"
-msgstr ""
+msgstr "kvinna"
 
 #: /views/identities/profile_settings.ctp:52
 msgid "male"
-msgstr ""
+msgstr "man"
 
 #: /views/identities/profile_settings.ctp:56
 msgid "Make a statement"
-msgstr ""
+msgstr "Gör ett påstående"
 
 #: /views/identities/profile_settings.ctp:58
 msgid "HTML is not allowed; newlines are preserved; URLs with http:// and https:// will turn into links"
-msgstr ""
+msgstr "HTML är inte tillåtet; nya rader sparas; URLs med http:// och https:// kommer att göras om till länkar"
 
 #: /views/identities/profile_settings.ctp:60
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: /views/identities/profile_settings.ctp:64
 msgid "Geolocation"
-msgstr ""
+msgstr "Geografisk plats"
 
 #: /views/identities/profile_settings.ctp:66
 msgid "Address for geolocation (<strong>private</strong>)"
-msgstr ""
+msgstr "Adress för geografisk plats (<strong>privat</strong>)"
 
 #: /views/identities/profile_settings.ctp:71
 #: /views/locations/index.ctp:34
 msgid "Latitude"
-msgstr ""
+msgstr "Latitud"
 
 #: /views/identities/profile_settings.ctp:72
 #: /views/locations/index.ctp:35
 msgid "Longitude"
-msgstr ""
+msgstr "Longitud"
 
 #: /views/identities/profile_settings.ctp:76
 msgid "The address is used to determine the geolocation. This address will <strong>not</strong> be displayed to anyone else, just the geolocation, if you enter a valid address."
-msgstr ""
+msgstr "Adressen används för att bestämma din geografiska plats. Denna adressen kommer <strong>inte</strong> att visas för någon annan, bara geografiska platsen, om du matar in en giltig adress."
 
 #: /views/identities/profile_settings.ctp:80
 msgid "Address for your profile (<strong>public</strong>)"
-msgstr ""
+msgstr "Adress för din profil (<strong>publik</strong>)"
 
 #: /views/identities/profile_settings.ctp:84
 msgid ""
 "Here you can specify, how you would like your address to be displayed. For instance: <strong>Paris, France</strong><br />\n"
 "            If you leave it empty, nothing will be shown on your profile page."
 msgstr ""
+"Här kan du specificera hur du vill att din adress ska visas. T ex: <strong>Paris, France</strong><br />\n"
+"           Om du lämnar det tomt så kommer inget att visas på din profilsida."
 
 #: /views/identities/send_message.ctp:9
 msgid "Subject"
-msgstr ""
+msgstr "Ämne"
 
 #: /views/identities/send_message.ctp:11
 msgid "Message"
-msgstr ""
+msgstr "Meddelande"
 
 #: /views/identities/social_stream.ctp:28
 msgid "Latest active"
-msgstr ""
+msgstr "Senast aktiva"
 
 #: /views/identities/social_stream.ctp:31
 msgid "My Contacts"
-msgstr ""
+msgstr "Mina kontakter"
 
 #: /views/layouts/default.ctp:3
 msgid "Welcome to %s"
-msgstr ""
+msgstr "Välkommen till %s"
 
 #: /views/layouts/default.ctp:33
 msgid "Social Stream Feed"
-msgstr ""
+msgstr "Socialt flödesfeed"
 
 #: /views/locations/add.ctp:4
 msgid "Add a new location"
-msgstr ""
+msgstr "Lägg till en ny plats"
 
 #: /views/locations/add.ctp:7
 msgid ""
@@ -1991,24 +1990,27 @@ msgid ""
 "            The address is only used to geocode the location and will not be displayed.<br />\n"
 "            You can mostly just use <em>Town, Country</em> to specify an address."
 msgstr ""
+"Namnet kommer att visas när du väljer en plats som din nuvarande plats. <br />\n"
+"            Adressen är bara till för den geografiska plats och kommer inte att visas.<br />\n"
+"            Du kan oftast använda <em>Stad, Land</em> för att specificera en adress."
 
 #: /views/locations/add.ctp:11
 #: /views/locations/index.ctp:23
 #: /views/syndications/index.ctp:28
 msgid "Name"
-msgstr ""
+msgstr "Namn"
 
 #: /views/locations/add.ctp:11
 msgid "You need to specify a name."
-msgstr ""
+msgstr "Du måste specificera ett namn."
 
 #: /views/locations/add.ctp:12
 msgid "Address"
-msgstr ""
+msgstr "Adress"
 
 #: /views/locations/add.ctp:16
 msgid "Create Location"
-msgstr ""
+msgstr "Skapa plats"
 
 #: /views/locations/index.ctp:6
 msgid ""
@@ -2016,112 +2018,114 @@ msgid ""
 "    will be able to set this location on your profile page to tell, where you \n"
 "    currently are."
 msgstr ""
+"När du lagt till några platser som t ex <em>Home</em> och <em>Kontor</em> så \n"
+"    kommer du att kunna ställa in var din nuvarande plats är på din profilsida."
 
 #: /views/locations/index.ctp:11
 msgid "Your locations"
-msgstr ""
+msgstr "Dina platser"
 
 #: /views/locations/index.ctp:13
 msgid "Create a new Location"
-msgstr ""
+msgstr "Skapa en ny plats"
 
 #: /views/locations/index.ctp:17
 msgid "You did not create any locations yet."
-msgstr ""
+msgstr "Du har inte skapat några platser än."
 
 #: /views/locations/index.ctp:24
 msgid "Address (hidden)"
-msgstr ""
+msgstr "Adress (dold)"
 
 #: /views/locations/index.ctp:32
 msgid "Not entered"
-msgstr ""
+msgstr "Ej angivet"
 
 #: /views/locations/index.ctp:39
 #: /views/oauth_consumers/index.ctp:40
 #: /views/syndications/index.ctp:43
 msgid "Delete"
-msgstr ""
+msgstr "Ta bort"
 
 #: /views/locations/index.ctp:40
 #: /views/oauth_consumers/index.ctp:41
 msgid "Edit"
-msgstr ""
+msgstr "Redigera"
 
 #: /views/oauth/authorize.ctp:2
 msgid "Application <strong>%s</strong> asked for permission to access your data"
-msgstr ""
+msgstr "Applikationen <strong>%s</strong> frågar efter ankomst till din data."
 
 #: /views/oauth/authorize.ctp:5
 #: /views/omb_local_service/authorize_form.ctp:5
 msgid "allow"
-msgstr ""
+msgstr "tillåt"
 
 #: /views/oauth/authorize.ctp:6
 #: /views/omb_local_service/authorize_form.ctp:6
 msgid "deny"
-msgstr ""
+msgstr "neka"
 
 #: /views/oauth/no_token.ctp:1
 #: /views/omb_local_service/no_token.ctp:1
 msgid "Error! No token specified."
-msgstr ""
+msgstr "Fel! Ingen symbol specificerad"
 
 #: /views/oauth_consumers/add.ctp:4
 msgid "Register your application"
-msgstr ""
+msgstr "Registrera din applikation"
 
 #: /views/oauth_consumers/add.ctp:8
 msgid "You need to specify an application name."
-msgstr ""
+msgstr "Du behöver specificera ett namn för applikationen"
 
 #: /views/oauth_consumers/add.ctp:9
 msgid "Callback Url (optional)"
-msgstr ""
+msgstr "Callback URL (valfritt)"
 
 #: /views/oauth_consumers/add.ctp:9
 msgid "You need to specify a valid url"
-msgstr ""
+msgstr "Du måste specificera en giltig url"
 
 #: /views/oauth_consumers/index.ctp:5
 msgid "OAuth parameters"
-msgstr ""
+msgstr "OAuth-parametrar"
 
 #: /views/oauth_consumers/index.ctp:7
 msgid "Request Token URL"
-msgstr ""
+msgstr "behörighetstoken URL"
 
 #: /views/oauth_consumers/index.ctp:8
 msgid "User Authorization URL"
-msgstr ""
+msgstr "Användarens behörighets-URL"
 
 #: /views/oauth_consumers/index.ctp:9
 msgid "Access Token URL"
-msgstr ""
+msgstr "åtkomsttoken URL"
 
 #: /views/oauth_consumers/index.ctp:10
 msgid "Signature method"
-msgstr ""
+msgstr "Signaturmetod"
 
 #: /views/oauth_consumers/index.ctp:13
 msgid "Your applications"
-msgstr ""
+msgstr "Dina applikationer"
 
 #: /views/oauth_consumers/index.ctp:19
 msgid "You did not register any applications yet."
-msgstr ""
+msgstr "Du har inte registrerat några applikationer än."
 
 #: /views/oauth_consumers/index.ctp:25
 msgid "Application name"
-msgstr ""
+msgstr "Applikationens namn"
 
 #: /views/oauth_consumers/index.ctp:26
 msgid "Callback url"
-msgstr ""
+msgstr "Callback url"
 
 #: /views/oauth_consumers/index.ctp:27
 msgid "Consumer key"
-msgstr ""
+msgstr "konsumentnyckel"
 
 #: /views/oauth_consumers/index.ctp:28
 msgid "Consumer secret"
@@ -2129,53 +2133,55 @@ msgstr ""
 
 #: /views/omb_local_service/authorize_form.ctp:2
 msgid "Allow access?"
-msgstr ""
+msgstr "Tillåt åtkomst?"
 
 #: /views/omb_subscriptions/subscribe.ctp:3
 msgid "URL of your profile on another compatible microblogging service"
-msgstr ""
+msgstr "URL till din profil på en annan kompatibel mikrobloggartjänst"
 
 #: /views/omb_subscriptions/subscribe.ctp:4
 msgid "Subscribe"
-msgstr ""
+msgstr "Prenumerera"
 
 #: /views/openid_sites/index.ctp:2
 msgid ""
 "Below is a list of sites you have visited. You will not be prompted to approve identifying yourself to \n"
 "    sites you have checked."
 msgstr ""
+"Nedan visas en lista på webbplatser som du har besökt. Du kommer inte att bli frågad om något\n"
+"    godkännande av identitet på de webbplatser du har markerat."
 
 #: /views/openid_sites/index.ctp:8
 msgid "Site"
-msgstr ""
+msgstr "Webbplats"
 
 #: /views/openid_sites/index.ctp:9
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #: /views/openid_sites/index.ctp:10
 msgid "Fullname"
-msgstr ""
+msgstr "Fullständiga namn"
 
 #: /views/openid_sites/index.ctp:11
 msgid "Gender"
-msgstr ""
+msgstr "Kön"
 
 #: /views/openid_sites/no_openid_sites.ctp:2
 msgid "No OpenID sites found."
-msgstr ""
+msgstr "Inga OpenID sajter funna."
 
 #: /views/openid_sites/no_openid_sites.ctp:10
 msgid "You probably never used your <strong>NoseRub-ID</strong> to <strong>log in at any OpenID site</strong>. Did you know, that your NoseRub-ID <strong>is</strong> an OpenID?"
-msgstr ""
+msgstr "Du har förmodligen aldrig använt ditt <strong>NoseRub-ID</strong> för att <strong>logga in på någon annan OpenID webbplats</strong>. Visste du att ditt NoseRub-ID <strong>är</strong> ett OpenID?"
 
 #: /views/openid_sites/no_openid_sites.ctp:14
 msgid "You can use your OpenID on any one of a growing number of sites (nearly ten-thousand) which support OpenID.<br />If one of your favorite sites doesn’t support OpenID yet, ask them when they will!"
-msgstr ""
+msgstr "Du kan använda ditt OpenID på någon av de växande antalet webbplatser som har stöd för OpenID (ungefär tusentals)<br />Om någon av dina favoritwebbplatser inte stöder OpenID än, fråga dem om de kommer att göra det!"
 
 #: /views/openid_sites/no_openid_sites.ctp:18
 msgid "% gives you an overview of sites where you can use your OpenID to log in today."
-msgstr ""
+msgstr "%s ger dig en överblick på de webbplatser där du kan logga in med ett OpenID idag."
 
 #: /views/pages/security_check.ctp:2
 msgid "The last action you performed, caused a security issue. Mostly, this happened because of a timed out session. But this can also happen, when you browse the application with different browsers / windows at the same time. This is not forbidden, but some actions that perform changes, might then not work all the time."
@@ -2183,11 +2189,11 @@ msgstr ""
 
 #: /views/pages/security_check.ctp:5
 msgid "Please try the desired action again. If you think you got this message by error, please contact us."
-msgstr ""
+msgstr "Var god försök att göra den senaste åtgärden igen. Om du tror att du fick detta meddelande pga ett fel, var god kontakta oss."
 
 #: /views/peers/jobs_poll.ctp:1
 msgid "Polled comments"
-msgstr ""
+msgstr "Röstade kommentarer"
 
 #: /views/peers/jobs_poll.ctp:11
 msgid "Polled favorites"
@@ -2228,7 +2234,7 @@ msgstr ""
 #: /views/registration/register.ctp:16
 #: /views/registration/register_with_openid_step_2.ctp:12
 msgid "Please enter a valid E-Mail address"
-msgstr ""
+msgstr "Var god mata in en giltig e-postadress"
 
 #: /views/registration/register.ctp:25
 msgid "Password repeated"
@@ -2261,7 +2267,7 @@ msgstr ""
 
 #: /views/searches/index.ctp:9
 msgid "Go"
-msgstr ""
+msgstr "Gå"
 
 #: /views/searches/index.ctp:17
 msgid "Search results for <strong>%s</strong>"
