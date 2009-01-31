@@ -27,16 +27,7 @@ class RegistrationController extends AppController {
                 $this->redirect($url);
             }
         } else {
-            # set default value for this privacy setting
-            $this->data = array(
-                'Identity' => array(
-                    'frontpage_updates' => 1,
-                    'allow_emails'      => 2,
-                    'notify_contact'    => 1,
-                    'notify_comment'    => 1,
-                    'notify_favorite'   => 1
-                )
-            );
+            $this->data = $this->getDefaultPrivacySettings();
         }
 
         $this->set('headline', __('Register a new NoseRub account', true));
@@ -98,6 +89,8 @@ class RegistrationController extends AppController {
     			$this->redirect('/pages/register/thanks/');
             }
     	} else {
+    		$this->data = $this->getDefaultPrivacySettings();
+    		
     		if ($this->Session->check('Registration.email')) {
     			$this->data['Identity']['email'] = $this->Session->read('Registration.email');
     		}
@@ -105,8 +98,6 @@ class RegistrationController extends AppController {
     		if ($this->Session->check('Registration.nickname')) {
     			$this->data['Identity']['username'] = $this->Session->read('Registration.nickname');
     		}
-    		
-    		$this->data['Identity']['frontpage_updates'] = 1;
     	}
     }
     
@@ -136,6 +127,15 @@ class RegistrationController extends AppController {
     		echo $e->getMessage();
     		exit();
     	}
+    }
+    
+	private function getDefaultPrivacySettings() {
+    	return array('Identity' => array('frontpage_updates' => 1,
+                    					 'allow_emails'      => 2,
+                    					 'notify_contact'    => 1,
+                    					 'notify_comment'    => 1,
+                    					 'notify_favorite'   => 1
+                						));
     }
     
 	private function getOpenIDResponseIfSuccess($returnTo) {
