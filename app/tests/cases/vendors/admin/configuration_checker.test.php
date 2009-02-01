@@ -1,6 +1,6 @@
 <?php
 
-App::import('Model', 'ConfigurationChecker');
+App::import('Vendor', 'ConfigurationChecker');
 
 class ConfigurationCheckerTest extends CakeTestCase {
 	private $checker = null;
