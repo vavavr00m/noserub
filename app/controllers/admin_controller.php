@@ -1,7 +1,7 @@
 <?php
  
 class AdminController extends AppController {
-    public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
+    public $uses = array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
     
     public function beforeFilter() {
         if(defined('SHELL_DISPATCHER') && SHELL_DISPATCHER) {
@@ -31,6 +31,8 @@ class AdminController extends AppController {
         if(!empty($directories)) {
             return;
         }
+        
+        CacheCleaner::cleanUp();
         
         $constants = $this->ConfigurationChecker->check();
         $this->set('constants', $constants);
