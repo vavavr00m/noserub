@@ -86,6 +86,11 @@ or
     http://<server_name>/
 depending on how you set it up in step #2.
 
+If you are upgrading from a previous version of NoseRub you also have to delete
+the content of the following directories:
+    noserub/app/tmp/cache/models
+    noserub/app/tmp/cache/persistent
+
 
 
 5. Set up cron job
