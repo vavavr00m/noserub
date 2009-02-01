@@ -373,7 +373,7 @@ class Entry extends AppModel {
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $with_markup,
             'url'             => $notice_url,
-            'uid'             => '',
+            'uid'             => md5($notice_url),
             'content'         => $text,
             'restricted'      => $restricted
         );
