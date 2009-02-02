@@ -25,10 +25,13 @@ $is_self = isset($about_identity['id']) &&
             echo $this->element('locations/choose', array('identity' => $about_identity));
             echo '<hr />';
         } ?>
-    	<?php echo $this->element('contacts/box', array('box_head' => ($menu['main'] == 'network' ? __('Contacts', true) : __('Latest active', true)), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => ($menu['main'] == 'network' ? true : false))); ?>
-    	<?php if(isset($contacts) && $is_self) { ?>
-    	    <hr />
-    	    <?php echo $noserub->widgetMyContacts(); ?>
-    	<?php } ?>
+        <?php if($menu['main'] != 'network') {
+            echo $this->element('contacts/box', array('box_head' => __('Latest active', true), 'data' => $identities, 'static_base_url' => $base_url_for_avatars, 'manage' => false));
+        } ?>
+    	<?php if(isset($contacts) && $is_self) {
+    	    echo $noserub->widgetMyContacts();
+    	} else if(isset($about_identity['id'])){
+    	    echo $noserub->widgetContacts(array('identity_id' => $about_identity['id']));
+    	} ?>
     	<?php echo $noserub->widgetNewestUsers(); ?>
     </div>
