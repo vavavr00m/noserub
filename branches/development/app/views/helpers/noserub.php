@@ -6,6 +6,11 @@
 class NoserubHelper extends AppHelper {
     public $helpers = array('Session');
     
+    public function widgetContacts($options) {
+        $options[] = 'return';
+        return $this->output($this->requestAction('/widget/contacts/', $options));
+    }
+    
     public function widgetMyContacts() {
         if($this->Session->read('Identity.id')) {
             return $this->output($this->requestAction('/widget/contacts/my/', array('return')));

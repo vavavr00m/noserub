@@ -114,10 +114,11 @@ class Contact extends AppModel {
      *
      * @param int $identity_id
      * @param array $filter
+     * @param int $limit
      *
      * @return array
      */
-    public function getForDisplay($identity_id, $filter) {
+    public function getForDisplay($identity_id, $filter, $limit = null) {
         # TODO: figure out how to do this properly in CakePHP, so that
         # I don't need to fetch all data, before removing it afterwards.
         
@@ -141,7 +142,8 @@ class Contact extends AppModel {
             'all',
             array(
                 'conditions' => $conditions,
-                'order'      => 'WithIdentity.username ASC'
+                'order'      => 'WithIdentity.username ASC',
+                'limit'      => $limit
             )
         );
         # extract the kind of tag we need to test here
