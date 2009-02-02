@@ -158,6 +158,12 @@ class Entry extends AppModel {
             $saveable = array_keys($entry);
             $this->save($entry, $saveable, true);
             $entry['id'] = $this->id;
+            if(!$item['uid']) {
+                # now set url and uid
+                $url = Router::url('/entry/' . $this->id . '/', true);
+                $this->saveField('url', $url);
+                $this->saveField('uid', md5($url));
+            }
         }
         
         return $entry;
@@ -316,7 +322,15 @@ class Entry extends AppModel {
             );
                       
             $this->create();
-            $this->save($data);
+            if($this->save($data)) {    
+                # now set url and uid
+                $url = Router::url('/entry/' . $this->id . '/', true);
+                $this->saveField('url', $url);
+                $this->saveField('uid', md5($url));
+            } else {
+                $this->log('could not save entry (setLocation):', LOG_ERROR);
+                $this->log(print_r($data, true), LOG_ERROR);
+            }
             
             #App::import('Model', 'Xmpp');
             #$this->Xmpp = new Xmpp();
@@ -351,7 +365,15 @@ class Entry extends AppModel {
         );
         
         $this->create();
-        $this->save($data);
+        if($this->save($data)) {    
+            # now set url and uid
+            $url = Router::url('/entry/' . $this->id . '/', true);
+            $this->saveField('url', $url);
+            $this->saveField('uid', md5($url));
+        } else {
+            $this->log('could not save entry (addMicropublish):', LOG_ERROR);
+            $this->log(print_r($data, true), LOG_ERROR);
+        }
         
         $this->sendToTwitter($identity_id, $text);
         $this->sendToOmb($identity_id, $this->id, $text);
@@ -468,6 +490,9 @@ class Entry extends AppModel {
             $url = Router::url('/entry/' . $this->id . '/', true);
             $this->saveField('url', $url);
             $this->saveField('uid', md5($url));
+        } else {
+            $this->log('could not save entry (addNoseRub):', LOG_ERROR);
+            $this->log(print_r($data, true), LOG_ERROR);
         }
         return true;
     }
@@ -563,6 +588,11 @@ class Entry extends AppModel {
      * @return array
      */
     public function getByUid($uid, $url = null) {
+        if(!$uid) {
+            # normally this shouldn't happen, but you never know...
+            return false;
+        }
+        
         $conditions = array('Entry.uid' => $uid);
         if($url) {
             $conditions['Entry.url'] = $url;
