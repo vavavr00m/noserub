@@ -1,7 +1,8 @@
 <?php
- 
+App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'WriteableFoldersChecker'));
+
 class AdminController extends AppController {
-    public $uses = array('ConfigurationChecker', 'ExtensionsChecker', 'Migration', 'WriteableFoldersChecker');
+    public $uses = array('Migration');
     
     public function beforeFilter() {
         if(defined('SHELL_DISPATCHER') && SHELL_DISPATCHER) {
@@ -32,6 +33,9 @@ class AdminController extends AppController {
             return;
         }
         
+        CacheCleaner::cleanUp();
+        
+        $this->ConfigurationChecker = new ConfigurationChecker();
         $constants = $this->ConfigurationChecker->check();
         $this->set('constants', $constants);
         if(!empty($constants)) {
