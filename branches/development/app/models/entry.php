@@ -158,7 +158,7 @@ class Entry extends AppModel {
             $saveable = array_keys($entry);
             $this->save($entry, $saveable, true);
             $entry['id'] = $this->id;
-            if(!$item['uid']) {
+            if(!$entry['uid']) {
                 # now set url and uid
                 $url = Router::url('/entry/' . $this->id . '/', true);
                 $this->saveField('url', $url);
