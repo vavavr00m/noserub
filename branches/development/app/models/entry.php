@@ -669,7 +669,7 @@ class Entry extends AppModel {
         $success = true;
         
         if($error_msg) {
-            $this->log('cURL error (' . $errmsg . ') when trying to send msg to twitter for ' . $twitter_username, LOG_DEBUG);
+            $this->log('cURL error (' . $error_msg . ') when trying to send msg to twitter for ' . $twitter_username, LOG_DEBUG);
             $success = false;
         }
         
