@@ -601,6 +601,39 @@ class ContactsController extends AppController {
         $this->api->render();
     }
     
+    /**
+     * contacts of a given identity.
+     */
+    public function widget_contacts() {
+        $session_identity = $this->Session->read('Identity');
+        
+        $identity_id = $this->params['identity_id'];
+        $this->Contact->Identity->contain();
+        $this->Contact->Identity->id = $identity_id;
+        $this->set('identity', $this->Contact->Identity->read());
+        
+        $tag_filter = $this->Session->read('Filter.Contact.Tag');
+        if(!$tag_filter) {
+            $tag_filter = 'all';
+        }
+        
+        $is_self = $session_identity && $session_identity['id'] == $identity_id;
+        # get (filtered) contacts
+        if($is_self) {
+            # this is my network, so I can show every contact
+            $contact_filter = array('tag' => $tag_filter);
+        } else {
+            # this is someone elses network, so I show only the noserub contacts
+            $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
+        }
+        $data = $this->Contact->getForDisplay($identity_id, $contact_filter, 9);
+        $contacts = array();
+        foreach($data as $key => $value) {
+            $contacts[] = $value['WithIdentity'];
+        }
+        $this->set('data', $contacts);
+    }
+    
     public function widget_my_contacts() {
         $logged_in_identity_id = $this->Session->read('Identity.id');
         if(!$logged_in_identity_id) {
