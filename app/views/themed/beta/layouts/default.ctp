@@ -1,3 +1,8 @@
+<?php
+    $app_name = Configure::read('NoseRub.app_name');
+    $headline = isset($headline) ? $headline : sprintf(__('Welcome to %s', true), $app_name);
+    $title    = $app_name . ' - ' . $headline;
+?>
 <!--Force IE6 into quirks mode with this comment tag-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
