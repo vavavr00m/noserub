@@ -168,6 +168,15 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
+        $session_theme = $this->Session->read('theme');
+        if(isset($this->params['url']['theme'])) {
+            $session_theme = $this->params['url']['theme'];
+            $this->Session->write('theme', $session_theme);
+        }
+        if($session_theme) {
+            $this->theme = $session_theme;
+        }
+    
         if($this->viewPath != 'errors' && strpos($this->here, '/system/update') === false) {
 	        if(!isset($this->Identity)) {
 	            App::import('Model', 'Identity');
