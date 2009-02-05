@@ -8,7 +8,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title; ?></title>
 
 <!-- Meta Tags -->
@@ -29,21 +29,20 @@
 <body>
 
 <div id="framecontent">
-<div class="innertube">
-
-<h1>CSS Left Frame Layout</h1>
-<h3>Sample text here</h3>
-
-</div>
+    <div class="innertube">
+        <?php echo $noserub->widgetNavigation('main'); ?>
+    </div>
 </div>
 
 
 <div id="maincontent">
-<div class="innertube">
-
-<?php echo $content_for_layout; ?>
-
-</div>
+    <div id="metanavi">
+        <?php echo $noserub->widgetNavigation('meta'); ?>
+    </div>
+    
+    <div class="innertube">
+        <?php echo $content_for_layout; ?>
+    </div>
 </div>
 
 

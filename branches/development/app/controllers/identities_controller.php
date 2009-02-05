@@ -1184,5 +1184,4 @@ class IdentitiesController extends AppController {
 	public function widget_users_new() {
 	    $this->set('data', $this->Identity->getNewbies(9));
 	}
-	
 }

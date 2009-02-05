@@ -28,6 +28,17 @@ class AppController extends Controller {
      */
     public $uses = array(); 
     
+    /**
+     * a "context" array that will hold information about
+     * the current status. That means: which pages is being
+     * displayed, which is the logged in user, etc..
+     * The goal is to have this universally available in all
+     * controllers and all views.
+     */
+    public $context = array(
+        'logged_in_identity' => null
+    );
+    
     public function flashMessage($type, $message) {
         $flash_messages = $this->Session->read('FlashMessages');
         $flash_messages[$type][] = $message;
@@ -143,6 +154,8 @@ class AppController extends Controller {
                 exit;
             }
         }
+        
+        $this->updateContext();
     }
     
     public function ensureSecurityToken() {
@@ -185,9 +198,15 @@ class AppController extends Controller {
 	        # set new security_token
 	        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
         }
+        
+        $this->set('context', $this->context);
     }
     
     public function afterFilter() {
         $this->Session->write('FlashMessages', array());
+    }
+    
+    protected function updateContext() {
+        $this->context['logged_in_user'] = $this->Session->read('Identity');
     }
 }
