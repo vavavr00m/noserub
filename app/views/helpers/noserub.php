@@ -23,6 +23,13 @@ class NoserubHelper extends AppHelper {
         return $this->output($this->requestAction('/widget/users/new/', array('return')));
     }
     
+    public function widgetNavigation($type = 'meta') {
+        if($type != 'meta' && $type != 'main') {
+            return $this->output('');
+        }
+        return $this->output($this->requestAction('/widget/navigation/', array('return', 'type' => $type)));
+    }
+    
     public function fnAvatarBaseUrl() {
         $url = '';
     	

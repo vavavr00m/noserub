@@ -86,6 +86,9 @@ class Identity extends AppModel {
                 $data['local']           = $username['local'];
                 $data['servername']      = $username['servername'];
                 $data['name']            = trim($data['firstname'] . ' ' . $data['lastname']);
+                if(!$data['name']) {
+                    $data['name'] = $username['local_username'];
+                }
             } else {
                 foreach($data as $key => $item) {
                     $checkModels = array('WithIdentity', 'Identity');
@@ -99,6 +102,9 @@ class Identity extends AppModel {
                             $item[$modelName]['local']           = $username['local'];
                             $item[$modelName]['servername']      = $username['servername'];
                             $item[$modelName]['name']            = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                            if(!$item[$modelName]['name']) {
+                                $item[$modelName]['name'] = $username['local_username'];
+                            }
                             $data[$key] = $item;
                         }
                     }
@@ -503,12 +509,14 @@ class Identity extends AppModel {
         $server_name = FULL_BASE_URL . Router::url('/');
         $server_name = $this->removeHttpWww($server_name);
         $local = stripos($username, $server_name) === 0;
-        $result = array('username'        => $username,
-                        'local_username'  => $local_username,
-                        'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
-                        'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
-                        'servername'      => $servername,
-                        'local'           => $local ? 1 : 0);
+        $result = array(
+            'username'        => $username,
+            'local_username'  => $local_username,
+            'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
+            'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
+            'servername'      => $servername,
+            'local'           => $local ? 1 : 0
+        );
         
         return $result;
     }

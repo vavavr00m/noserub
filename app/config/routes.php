@@ -8,6 +8,7 @@ Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => '
 Router::connect('/widget/users/new/', array('controller' => 'identities', 'action' => 'widget_users_new'));
 Router::connect('/widget/contacts/', array('controller' => 'contacts', 'action' => 'widget_contacts'));
 Router::connect('/widget/contacts/my/', array('controller' => 'contacts', 'action' => 'widget_my_contacts'));
+Router::connect('/widget/navigation/', array('controller' => 'pages', 'action' => 'widget_navigation'));
 
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 

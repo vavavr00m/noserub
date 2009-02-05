@@ -19,6 +19,27 @@ background: navy;
 color: white;
 }
 
+#metanavi {
+    top; 0
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    height: 30px;    
+    text-align: right;
+}
+
+#metanavi ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    float: right;
+}
+
+#metanavi li {
+    float: left;
+    margin: 0 0.15em;
+}
+
 #maincontent{
 position: fixed;
 top: 0; 
