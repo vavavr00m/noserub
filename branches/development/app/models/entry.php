@@ -608,6 +608,12 @@ class Entry extends AppModel {
         );
     }
     
+    public function getUid($entry_id) {
+    	$this->id = $entry_id;
+        
+    	return $this->field('uid');
+    }
+    
     private function sendToOmb($identity_id, $entry_id, $text) {
     	App::import('Component', 'OmbRemoteService');
     	OmbRemoteServiceComponent::createRemoteService()->postNotice($identity_id, $entry_id, $text);
