@@ -16,10 +16,8 @@ class Comment extends AppModel {
         $this->save($data);
         $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
         
-        # get uid of that Entry
         $original_entry_id = $data['entry_id'];
-        $this->Entry->id = $original_entry_id;
-        $uid = $this->Entry->field('uid');
+        $uid = $this->Entry->getUid($original_entry_id);
         
         if($uid) {
             # get all entries with this uid
