@@ -14,15 +14,9 @@ class Account extends AppModel {
      * get's data from RSS (for example) of this
      * account.
      *
-     * @param int $account_id
-     *
      * @return array
      */
-    public function getData($account_id = null) {
-        if($account_id) {
-            $this->id = $account_id;
-        }
-        
+    public function getData() {
         $this->contain();
         $account = $this->read();
         $account = $account['Account'];
