@@ -249,12 +249,12 @@ class Contact extends AppModel {
         $data = $this->findAllByIdentityId($identity_id);
         $contacts = array();
         foreach($data as $item) {
-            $is_local   = $item['WithIdentity']['is_local'];
+            $network_id   = $item['WithIdentity']['network_id'];
             $is_private = $item['WithIdentity']['namespace'] ? 1 : 0;
             
             $contact = array(
                 'username'   => $is_private ? $item['WithIdentity']['single_username'] : $item['WithIdentity']['username'],
-                'is_local'   => $is_local,
+                'network_id' => $network_id,
                 'is_private' => $is_private,
                 'firstname'  => $item['WithIdentity']['firstname'],
                 'lastname'   => $item['WithIdentity']['lastname'],
@@ -284,7 +284,7 @@ class Contact extends AppModel {
      * Import the contacts and also create accounts for those
      * contacts.
      */
-    public function import($identity_id, $data) {
+    public function import($context, $identity_id, $data) {
         # get identity first
         $this->Identity->contain();
         $this->Identity->id = $identity_id;
@@ -296,7 +296,7 @@ class Contact extends AppModel {
             if($item['is_private']) {
                 $username = $username . '@' . $identity['Identity']['local_username'];
             }
-            $new_splitted = $this->Identity->splitUsername($username, $item['is_local']);
+            $new_splitted = $this->Identity->splitUsername($username, $item['network_id'] == $context['network_id']);
         
             # check, if we already have that username
             $this->Identity->contain();

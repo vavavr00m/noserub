@@ -232,15 +232,22 @@ class Identity extends AppModel {
     /**
      * Returns the newest identities.
      */
-    public function getNewbies($limit = null) {
+    public function getNewbies($context, $limit = null) {
         $this->contain();
 
-        $newbies = $this->find('all', array('conditions' => array('is_local' => 1,
-        														  'frontpage_updates' => 1,
-        														  'hash' => '',
-        														  'username NOT LIKE "%@%"'),
-        									'order' => array('Identity.created DESC'),
-        									'limit' => $limit));
+        $newbies = $this->find(
+            'all', 
+            array(
+                'conditions' => array(
+                    'network_id' => $context['network_id'],
+        			'frontpage_updates' => 1,
+        			'hash' => '',
+        			'username NOT LIKE "%@%"'
+        		),
+        		'order' => array('Identity.created DESC'),
+        		'limit' => $limit
+        	)
+        );
         
         return $newbies;
     }
@@ -419,7 +426,7 @@ class Identity extends AppModel {
         return isset($hcards[0]) ? $hcards[0] : false;
     }
     
-    public function register($data) {
+    public function register($context, $data) {
         $isAccountWithOpenID = isset($data['Identity']['openid']);
     	
     	# transform it to a real username
@@ -430,7 +437,7 @@ class Identity extends AppModel {
             return false;
         }
         $this->create();
-        $data['Identity']['is_local'] = 1;
+        $data['Identity']['network_id']       = $context['network_id'];
         $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
@@ -589,7 +596,7 @@ class Identity extends AppModel {
         $vcard = $data['Identity'];  
         $vcard['username'] = $vcard['local_username'];      
         $to_remove = array(
-            'id', 'is_local', 'password', 'openid', 'openid_identity', 
+            'id', 'network_id', 'password', 'openid', 'openid_identity', 
             'openid_server_url', 'email', 'last_location_id', 
             'api_hash', 'api_active', 'hash', 'security_token',
             'last_generic_feed_upload', 'last_sync', 'created', 'modified',
@@ -619,7 +626,7 @@ class Identity extends AppModel {
         );
     }
     
-    public function import($data) {
+    public function import($context, $data) {
         if(!$this->exists()) {
             return false;
         }
@@ -664,7 +671,7 @@ class Identity extends AppModel {
         }
         
         $contacts = isset($data['contacts']) ? $data['contacts'] : array();
-        if(!$this->Contact->import($this->id, $contacts)) {
+        if(!$this->Contact->import($context, $this->id, $contacts)) {
             $this->log('error on importing contacts');
             return false;
         }
@@ -727,8 +734,8 @@ class Identity extends AppModel {
         
         if(!$identity) {
             $data = array(
-                'username' => $username,
-                'is_local' => 0
+                'username'   => $username,
+                'network_id' => 0
             );
             $this->create();
             $this->save($data);
@@ -828,7 +835,7 @@ class Identity extends AppModel {
     
     private function getSaveableFields($isAccountWithOpenID) {
     	$saveable = array(
-    	    'is_local', 'username', 'email', 'hash', 'frontpage_updates', 
+    	    'network_id', 'username', 'email', 'hash', 'frontpage_updates', 
     	    'allow_emails', 'overview_filters', 'notify_contact',
     	    'notify_comment', 'notify_favorite', 'created', 'modified'
     	);

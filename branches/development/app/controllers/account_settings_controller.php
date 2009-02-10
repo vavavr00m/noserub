@@ -81,7 +81,7 @@ class AccountSettingsController extends AppController {
             $this->flashMessage('alert', __("Couldn't import the data!", true));
         } else {
             $this->Identity->id = $this->session_identity['id'];
-            if($this->Identity->import($data)) {
+            if($this->Identity->import($this->context, $data)) {
                 $this->flashMessage('success', __('Import completed', true));
             } else {
                 $this->flashMessage('alert', __('There was an error during import!', true));
