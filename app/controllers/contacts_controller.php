@@ -143,9 +143,9 @@ class ContactsController extends AppController {
                 # check, if this is unique
                 if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
                     $this->Contact->Identity->create();
-                    $identity = array('is_local' => 1,
+                    $identity = array('network_id' => $this->context['network_id'],
                                       'username' => $new_splitted['username']);
-                    $saveable = array('is_local', 'username', 'created', 'modified');
+                    $saveable = array('network_id', 'username', 'created', 'modified');
                     $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {

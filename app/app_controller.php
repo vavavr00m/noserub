@@ -36,7 +36,8 @@ class AppController extends Controller {
      * controllers and all views.
      */
     public $context = array(
-        'logged_in_identity' => null
+        'logged_in_identity' => null,
+        'network_id' => 1 # default for now
     );
     
     public function flashMessage($type, $message) {

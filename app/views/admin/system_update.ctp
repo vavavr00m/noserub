@@ -59,9 +59,9 @@
         <p id="message" class="success">
             <?php __('Configuration'); ?>: <strong><?php __('OK'); ?></strong>
         </p>
-        <h2><?php __('Actual version #'); echo $current_migration; ?></h2>
+        <h2><?php __('Actual version #'); echo ' ' . $current_migration; ?></h2>
         <?php if(isset($migrations)) { ?>
-            <?php __('Updating to #');echo $most_recent_migration; ?>:<br />
+            <?php __('Updating to #');echo ' ' . $most_recent_migration; ?>:<br />
             <ul>
                 <?php foreach($migrations['sql'] as $idx => $migration) { ?>
                     <li><?php echo $migration['name']; ?></li>
@@ -115,6 +115,9 @@
             </div>
             <div class="input text">
                 <input type="hidden" name="talkback[migrations]" value="<?php echo $most_recent_migration; ?>"><strong><?php __('DB Version'); ?>:</strong> <?php echo $most_recent_migration; ?>
+            </div>
+            <div class="input checkbox">
+                <input type="checkbox" name="talkback[allow_add]"><strong><?php __('Add this site to http://noserub.com/'); ?></strong>
             </div>
         </fieldset>
         <fieldset>

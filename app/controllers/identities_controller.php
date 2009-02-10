@@ -50,9 +50,9 @@ class IdentitiesController extends AppController {
                 'first',
                 array(
                     'conditions' => array(
-                        'username'  => $username,
-                        'is_local'  => 1,
-                        'hash'      => ''
+                        'username'   => $username,
+                        'network_id' => $this->context['network_id'],
+                        'hash'       => ''
                     )
                 )
             );
@@ -709,7 +709,7 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $identity = $this->Identity->findById($identity_id);
 
-        if(!$identity || $identity['Identity']['is_local'] == 1) {
+        if(!$identity || $identity['Identity']['network_id'] == $this->context['network_id']) {
             # we could not find it, or this is a local identity
             return false;
         }
@@ -745,7 +745,17 @@ class IdentitiesController extends AppController {
         
         # get all not local identities
         $this->Identity->contain();
-        $identities = $this->Identity->find('all', array('conditions' => array('is_local' => 0), 'order' => array('last_sync ASC')));
+        $identities = $this->Identity->find(
+            'all', 
+            array(
+                'conditions' => array(
+                    'network_id' => $this->context['network_id']
+                ), 
+                'order' => array(
+                    'last_sync ASC'
+                )
+            )
+        );
         $synced = array();
         foreach($identities as $identity) {
             $this->Identity->sync($identity['Identity']['id'], $identity['Identity']['username']);       
@@ -921,7 +931,7 @@ class IdentitiesController extends AppController {
                 return;
             }
         } else if($this->data) {
-            $conditions = array('is_local' => 1);
+            $conditions = array('network_id' => $this->context['network_id']);
             if($this->data['Identity']['username']) {
                 $splitted = $this->Identity->splitUsername($this->data['Identity']['username']);
                 $conditions['Identity.username'] = $splitted['username'];
@@ -1074,9 +1084,9 @@ class IdentitiesController extends AppController {
         if (Configure::read('NoseRub.api_info_active')) {
             $this->Identity->contain();
             $conditions = array(
-                'is_local' => 1,
-                'email <>' => '',
-                'hash'     => '',
+                'network_id' => $this->context['network_id'],
+                'email <>'   => '',
+                'hash'       => '',
                 'NOT username LIKE "%@"'
             );
             App::import('Model', 'Migration');
@@ -1182,6 +1192,6 @@ class IdentitiesController extends AppController {
 	}
 	
 	public function widget_users_new() {
-	    $this->set('data', $this->Identity->getNewbies(9));
+	    $this->set('data', $this->Identity->getNewbies($this->context, 9));
 	}
 }
