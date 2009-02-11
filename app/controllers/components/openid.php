@@ -93,6 +93,14 @@ class OpenidComponent extends Object {
 		return $response;
 	}
 	
+	public function isOpenIDResponse() {
+		if (count($_GET) > 1 && isset($this->controller->params['url']['openid_ns'])) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private function getConsumer() {
 		return new Auth_OpenID_Consumer($this->getStore());
 	}

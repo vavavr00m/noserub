@@ -581,7 +581,7 @@ class IdentitiesController extends AppController {
     	$this->checkSecure();
     	$sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
     	
-    	if (!empty($this->data) || count($this->params['url']) > 1) {
+    	if (!empty($this->data) || $this->openid->isOpenIDResponse()) {
     		if (isset($this->data['Identity']['username'])) {
     			$identity = $this->Identity->check($this->data);
     		} else {

@@ -41,7 +41,7 @@ class RegistrationController extends AppController {
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, $sregFields);
     	} else {
-    		if (count($this->params['url']) > 1) {
+    		if ($this->openid->isOpenIDResponse()) {
     			$response = $this->getOpenIDResponseIfSuccess($returnTo);
 
     			$identity = $this->Identity->checkOpenID($response);
