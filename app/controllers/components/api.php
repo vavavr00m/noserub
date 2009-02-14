@@ -3,7 +3,7 @@
 class ApiComponent extends Object {
     private $controller = null;
 	
-	public function startUp($controller) {
+	public function initialize($controller) {
 		$this->controller = $controller;
 	}
 	
