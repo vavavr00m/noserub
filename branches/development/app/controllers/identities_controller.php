@@ -1104,48 +1104,6 @@ class IdentitiesController extends AppController {
         $this->set('data', $data);
         $this->api->render();
     }
-
-	/**
-	 * return the last 100 favorites
-	 *
-	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
-	 */
-	public function api_favorites() {
-		# get last 100 favorites
-		$this->Identity->Entry->Favorite->contain();
-		$favorites = $this->Identity->Entry->Favorite->find(
-			'all',
-			array(
-				'fields' => 'Favorite.entry_id',
-				'order'  => 'Favorite.created DESC',
-				'limit'  => 100
-			)
-		);
-		$entry_ids = Set::extract($favorites, '{n}.Favorite.entry_id');
-		$conditions = array(
-			'entry_id' => $entry_ids
-		);
-		$items = $this->Identity->Entry->getForDisplay($conditions, 100, true);
-        
-        usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);
-
-		# clean up the data, so we only have the neccessary stuff
-		$data = array();
-		foreach($items as $item) {
-			foreach($item['FavoritedBy'] as $favorited_by) {
-				$data[] = array(
-					'uid'          => $item['Entry']['uid'],
-					'url'          => $item['Entry']['url'],
-					'favorited_by' => $favorited_by['Identity']['username'],
-					'favorited_on' => $favorited_by['created'] 
-				);
-			}
-		}
-
-		$this->set('data', $data);
-		$this->api->render();
-	}
 	
 	public function widget_users_new() {
 	    $this->set('data', $this->Identity->getNewbies($this->context, 9));
