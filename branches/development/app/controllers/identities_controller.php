@@ -1076,35 +1076,6 @@ class IdentitiesController extends AppController {
         $this->api->render();
 	}
 	
-	/**
-     * used to return number of registered, active users, and some other
-     * values.
-     */
-    public function api_info() {
-        if (Configure::read('NoseRub.api_info_active')) {
-            $this->Identity->contain();
-            $conditions = array(
-                'network_id' => $this->context['network_id'],
-                'email <>'   => '',
-                'hash'       => '',
-                'NOT username LIKE "%@"'
-            );
-            App::import('Model', 'Migration');
-            $Migration = new Migration();
-            $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
-            $data = array(
-                'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
-                'registration_type' => Configure::read('NoseRub.registration_type'),
-                'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
-                'migration' => $Migration->getCurrentMigration()
-            );
-        } else {
-            $data = array();
-        }
-        $this->set('data', $data);
-        $this->api->render();
-    }
-	
 	public function widget_users_new() {
 	    $this->set('data', $this->Identity->getNewbies($this->context, 9));
 	}
