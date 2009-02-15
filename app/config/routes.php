@@ -28,7 +28,7 @@ Router::connect('/pages/omb/:action', array('controller' => 'omb_local_service')
 Router::connect('/pages/password/recovery/*', array('controller' => 'identities', 'action' => 'password_recovery'));
 Router::connect('/pages/password/set/*', array('controller' => 'identities', 'action' => 'password_recovery_set'));
 
-Router::connect('/api/:result_type/info/', array('controller' => 'identities', 'action' => 'api_info'));
+Router::connect('/api/:result_type/info/', array('plugin' => 'api', 'controller' => 'system_api', 'action' => 'info'));
 Router::connect('/api/:result_type/comments/', array('plugin' => 'api', 'controller' => 'comments_api', 'action' => 'get_comments'));
 Router::connect('/api/:result_type/favorites/', array('plugin' => 'api', 'controller' => 'favorites_api', 'action' => 'get_favorites'));
 
