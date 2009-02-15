@@ -29,7 +29,7 @@ Router::connect('/pages/password/recovery/*', array('controller' => 'identities'
 Router::connect('/pages/password/set/*', array('controller' => 'identities', 'action' => 'password_recovery_set'));
 
 Router::connect('/api/:result_type/info/', array('controller' => 'identities', 'action' => 'api_info'));
-Router::connect('/api/:result_type/comments/', array('controller' => 'identities', 'action' => 'api_comments'));
+Router::connect('/api/:result_type/comments/', array('plugin' => 'api', 'controller' => 'comments_api', 'action' => 'get_comments'));
 Router::connect('/api/:result_type/favorites/', array('controller' => 'identities', 'action' => 'api_favorites'));
 
 // OAuth-enabled API methods
