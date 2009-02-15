@@ -1,5 +1,5 @@
 <?php
 
 class ApiAppController extends AppController {
-	// empty
+	public $components = array('Api');
 }

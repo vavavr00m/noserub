@@ -2,7 +2,7 @@
 
 class FavoritesApiController extends ApiAppController {
 	public $uses = array('Favorite');
-	public $components = array('Api', 'Cluster');
+	public $components = array('Cluster');
 	
 	/**
 	 * return the last 100 favorites

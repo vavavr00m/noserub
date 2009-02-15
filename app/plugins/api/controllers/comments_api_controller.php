@@ -2,7 +2,6 @@
 
 class CommentsApiController extends ApiAppController {
 	public $uses = array('Comment');
-	public $components = array('Api');
 	
 	/**
 	 * return the last 100 comments
