@@ -1,6 +1,6 @@
 <ul>
     <li>
-        <?php echo $html->link(__('Settings', true), '/' . $context['logged_in_user']['local_username'] . '/settings/'); ?>
+        <?php echo $html->link(__('Settings', true), '/' . $context['logged_in_identity']['local_username'] . '/settings/'); ?>
     </li>
     <li>
         <?php echo $html->link(__('Logout', true), '/pages/logout/' . $security_token); ?>

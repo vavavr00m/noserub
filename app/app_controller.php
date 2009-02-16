@@ -208,6 +208,6 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
-        $this->context['logged_in_user'] = $this->Session->read('Identity');
+        $this->context['logged_in_identity'] = $this->Session->read('Identity');
     }
 }
