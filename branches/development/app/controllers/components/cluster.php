@@ -39,7 +39,8 @@ class ClusterComponent extends Object {
     public function removeDuplicates($data) {
         $cleaned = array();
         foreach($data as $idx => $item) {
-            $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($item['Entry']['title']));
+            $title = $item['Entry']['title'] ? $item['Entry']['title'] : $item['Entry']['id'];
+            $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($title));
             
             if(isset($cleaned[$key])) {
                 $both_with_comments = (
