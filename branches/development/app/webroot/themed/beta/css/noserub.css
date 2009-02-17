@@ -1,24 +1,105 @@
-body{
-margin: 0;
-padding: 0;
-border: 0;
-overflow: hidden;
-height: 100%; 
-max-height: 100%; 
+/*** The Essential Code ***/
+
+body {
+	min-width: 630px;         /* 2 x (LC fullwidth + CC padding) + RC fullwidth */
 }
 
-#framecontent{
-position: absolute;
-top: 0;
-bottom: 0; 
-left: 0;
-width: 200px; /*Width of frame div*/
-height: 100%;
-overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
-background: navy;
-color: white;
+#container {
+	padding-left: 200px;      /* LC fullwidth */
+	padding-right: 190px;     /* RC fullwidth + CC padding */
 }
 
+#container .column {
+	position: relative;
+	float: left;
+}
+
+#center {
+	padding: 10px 20px;       /* CC padding */
+	width: 100%;
+}
+
+#left {
+	width: 180px;             /* LC width */
+	padding: 0 10px;          /* LC padding */
+	right: 240px;             /* LC fullwidth + CC padding */
+	margin-left: -100%;
+}
+
+#right {
+	width: 130px;             /* RC width */
+	padding: 0 10px;          /* RC padding */
+	margin-right: -100%;
+}
+
+#footer {
+	clear: both;
+}
+
+/*** IE Fix ***/
+* html #left {
+	left: 150px;              /* RC fullwidth */
+}
+
+/*** Equal-height Columns ***/
+
+#container {
+	overflow: hidden;
+}
+
+#container .column {
+	padding-bottom: 1001em;     /* X + padding-bottom */
+	margin-bottom: -1000em;     /* X */
+}
+
+/*** Footer Fix ***/
+
+* html body {
+	overflow: hidden;
+}
+
+* html #footer-wrapper {
+	float: left;
+	position: relative;
+	width: 100%;
+	padding-bottom: 10010px;
+	margin-bottom: -10000px;
+	background: #FFF;         /*** Same as body background ***/
+}
+
+/*** Just for Looks ***/
+
+body {
+	margin: 0;
+	padding: 0;
+	background: #FFF;
+}
+
+#header, #footer {
+	font-size: large;
+	text-align: center;
+	padding: 0.3em 0;
+	background: #999;
+}
+
+#left {
+	background: #66F;
+}
+
+#center {
+	background: #DDD;
+}
+
+#right {
+	background: #F66;
+}
+
+#container .column {
+	padding-top: 1em;
+	text-align: justify;
+}
+
+/**** just some crap to have the meta navigation inline ****/
 #metanavi {
     top; 0
     left: 200px;
@@ -38,27 +119,4 @@ color: white;
 #metanavi li {
     float: left;
     margin: 0 0.15em;
-}
-
-#maincontent{
-position: fixed;
-top: 0; 
-left: 200px; /*Set left value to WidthOfFrameDiv*/
-right: 0;
-bottom: 0;
-overflow: auto; 
-background: #fff;
-}
-
-.innertube{
-margin: 15px; /*Margins for inner DIV inside each DIV (to provide padding)*/
-}
-
-* html body{ /*IE6 hack*/
-padding: 0 0 0 200px; /*Set value to (0 0 0 WidthOfFrameDiv)*/
-}
-
-* html #maincontent{ /*IE6 hack*/
-height: 100%; 
-width: 100%; 
 }

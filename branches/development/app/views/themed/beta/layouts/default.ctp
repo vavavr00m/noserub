@@ -4,8 +4,7 @@
     $title    = $app_name . ' - ' . $headline;
 ?>
 <!--Force IE6 into quirks mode with this comment tag-->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -28,23 +27,28 @@
 
 <body>
 
-<div id="framecontent">
-    <div class="innertube">
-        <?php echo $noserub->widgetNavigation('main'); ?>
-    </div>
+<div id="header">
+    <?php echo $noserub->widgetNavigation('meta'); ?>
 </div>
 
 
-<div id="maincontent">
-    <div id="metanavi">
-        <?php echo $noserub->widgetNavigation('meta'); ?>
-    </div>
-    
-    <div class="innertube">
+<div id="container">
+    <div id="center" class="column">
         <?php echo $content_for_layout; ?>
     </div>
+
+    <div id="left" class="column">
+        <?php echo $noserub->widgetNavigation('main'); ?>
+    </div>
+    
+    <div id="right" class="column">
+        <h2>right column</h2>
+    </div>
 </div>
 
-
+<div id="footer-wrapper">
+	<div id="footer">This is the footer.</div>
+</div>
+	
 </body>
 </html>
