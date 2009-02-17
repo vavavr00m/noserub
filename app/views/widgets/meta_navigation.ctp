@@ -1,3 +1,4 @@
+<div id="metanavi">
 <ul>
     <?php if($context['logged_in_identity']) { ?>
         <li>
@@ -11,3 +12,4 @@
         <?php echo $this->element('languages'); ?>
     </li>
 </ul>
+</div>
