@@ -8,26 +8,26 @@ class NoserubHelper extends AppHelper {
     
     public function widgetContacts($options) {
         $options[] = 'return';
-        return $this->output($this->requestAction('/widget/contacts/', $options));
+        return $this->output($this->requestAction('/widgets/contacts_for_identity/', $options));
     }
     
     public function widgetMyContacts() {
         if($this->Session->read('Identity.id')) {
-            return $this->output($this->requestAction('/widget/contacts/my/', array('return')));
+            return $this->output($this->requestAction('/widgets/my_contacts/', array('return')));
         } else {
             return $this->output('');
         }
     }
     
     public function widgetNewestUsers() {
-        return $this->output($this->requestAction('/widget/users/new/', array('return')));
+        return $this->output($this->requestAction('/widgets/new_users/', array('return')));
     }
     
     public function widgetNavigation($type = 'meta') {
         if($type != 'meta' && $type != 'main') {
             return $this->output('');
         }
-        return $this->output($this->requestAction('/widget/navigation/', array('return', 'type' => $type)));
+        return $this->output($this->requestAction('/widgets/navigation/', array('return', 'type' => $type)));
     }
     
     public function fnAvatarBaseUrl() {
