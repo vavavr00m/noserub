@@ -1,12 +1,12 @@
 # LANGUAGE translation of CakePHP Application
 # Copyright YEAR NAME <EMAIL@ADDRESS>
-# Generated from file: Revision: 1057 /noserub/app/webroot/test.php
+# Generated from file: Revision: 1057 /app/webroot/test.php
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-01-27 20:07+0100\n"
+"POT-Creation-Date: 2009-02-18 19:20+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -15,16 +15,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /app_controller.php:136
+#: /app_controller.php:148
 msgid "You may not call this route from the shell!"
 msgstr ""
 
-#: /app_controller.php:142
+#: /app_controller.php:154
 #: /controllers/auth_controller.php:105
 msgid "Error"
 msgstr ""
 
-#: /app_controller.php:142
+#: /app_controller.php:154
 msgid "This route is only accessible from the shell!"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgid "Marked the entry."
 msgstr ""
 
 #: /controllers/entries_controller.php:193
-#: /controllers/identities_controller.php:770
+#: /controllers/identities_controller.php:780
 #: /controllers/peers_controller.php:24;62
 msgid "Value for NoseRub.cron_hash from noserub.php does not match or is empty!"
 msgstr ""
@@ -351,35 +351,35 @@ msgstr ""
 msgid "Account deleted"
 msgstr ""
 
-#: /controllers/identities_controller.php:917;982
+#: /controllers/identities_controller.php:927;992
 msgid "The password recovery link is not valid!"
 msgstr ""
 
-#: /controllers/identities_controller.php:942
+#: /controllers/identities_controller.php:952
 msgid "The account could not be found!"
 msgstr ""
 
-#: /controllers/identities_controller.php:946
+#: /controllers/identities_controller.php:956
 msgid "No email address found!"
 msgstr ""
 
-#: /controllers/identities_controller.php:952
+#: /controllers/identities_controller.php:962
 msgid "Please look into your inbox for the password recovery email."
 msgstr ""
 
-#: /controllers/identities_controller.php:966;985
+#: /controllers/identities_controller.php:976;995
 msgid "Something went wrong. Please try again!"
 msgstr ""
 
-#: /controllers/identities_controller.php:988
+#: /controllers/identities_controller.php:998
 msgid "The two passwords were not the same!"
 msgstr ""
 
-#: /controllers/identities_controller.php:991
+#: /controllers/identities_controller.php:1001
 msgid "The password is too short!"
 msgstr ""
 
-#: /controllers/identities_controller.php:998
+#: /controllers/identities_controller.php:1008
 msgid "You now can log in with your new password."
 msgstr ""
 
@@ -474,11 +474,11 @@ msgstr ""
 msgid "Invalid OMB version"
 msgstr ""
 
-#: /controllers/omb_local_service_controller.php:64;176
+#: /controllers/omb_local_service_controller.php:64;160;179
 msgid "Missing parameter: "
 msgstr ""
 
-#: /controllers/omb_local_service_controller.php:91;154
+#: /controllers/omb_local_service_controller.php:91;233
 #: /controllers/omb_subscriptions_controller.php:50
 msgid "Invalid request"
 msgstr ""
@@ -499,23 +499,23 @@ msgstr ""
 msgid "There was a security problem"
 msgstr ""
 
-#: /controllers/registration_controller.php:44
+#: /controllers/registration_controller.php:33
 msgid "Register a new NoseRub account"
 msgstr ""
 
-#: /controllers/registration_controller.php:48
+#: /controllers/registration_controller.php:37
 msgid "Register a new NoseRub account - Step 1/2"
 msgstr ""
 
-#: /controllers/registration_controller.php:90
+#: /controllers/registration_controller.php:79
 msgid "Register a new NoseRub account - Step 2/2"
 msgstr ""
 
-#: /controllers/registration_controller.php:115
+#: /controllers/registration_controller.php:105
 msgid "Thanks for your registration!"
 msgstr ""
 
-#: /controllers/registration_controller.php:122
+#: /controllers/registration_controller.php:112
 msgid "Verify your e-mail address"
 msgstr ""
 
@@ -547,7 +547,7 @@ msgstr ""
 msgid "Add new Feed"
 msgstr ""
 
-#: /controllers/syndications_controller.php:314
+#: /controllers/syndications_controller.php:256
 msgid "none - no CDN defined in noserub.php"
 msgstr ""
 
@@ -555,15 +555,15 @@ msgstr ""
 msgid "OpenID Authentication Redirect"
 msgstr ""
 
-#: /models/comment.php:96
+#: /models/comment.php:94
 msgid "%d comments from %s, %d imported"
 msgstr ""
 
-#: /models/entry.php:507
+#: /models/entry.php:533
 msgid "marked a new favorite: %s"
 msgstr ""
 
-#: /models/entry.php:515
+#: /models/entry.php:541
 msgid "commented on: %s"
 msgstr ""
 
@@ -736,6 +736,7 @@ msgstr ""
 
 #: /models/menu.php:262
 #: /tests/cases/models/menu.test.php:70;215;397
+#: /views/widgets/main_navigation.ctp:20
 msgid "My Profile"
 msgstr ""
 
@@ -759,6 +760,7 @@ msgstr ""
 #: /tests/cases/models/menu.test.php:448
 #: /views/admin/system_update.ctp:40
 #: /views/elements/metanav.ctp:19;21
+#: /views/widgets/meta_navigation.ctp:5
 msgid "Settings"
 msgstr ""
 
@@ -779,54 +781,6 @@ msgstr ""
 
 #: /models/peer.php:78
 msgid "no peers updated"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:68;80
-msgid "obsolete! Please remove it from noserub.php"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:98
-msgid "not defined in noserub.php"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:159
-msgid "value might only be: true or false"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:169
-msgid "value must be false or a string!"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:183
-msgid "value must end with a slash!"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:197
-msgid "value must be numeric!"
-msgstr ""
-
-#: /models/admin/configuration_checker.php:209
-msgid "value might only be: \"%s\""
-msgstr ""
-
-#: /models/admin/extensions_checker.php:9
-msgid "must be enabled"
-msgstr ""
-
-#: /models/admin/extensions_checker.php:13
-msgid "needed for communicating with other servers"
-msgstr ""
-
-#: /models/admin/extensions_checker.php:17
-msgid "needed for image handling"
-msgstr ""
-
-#: /models/admin/extensions_checker.php:21
-msgid "GMP or BCMath"
-msgstr ""
-
-#: /models/admin/extensions_checker.php:21
-msgid "needed for OpenID functionality"
 msgstr ""
 
 #: /vendors/sex.php:33
@@ -859,6 +813,54 @@ msgstr ""
 
 #: /vendors/sex.php:61
 msgid "his"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:68;80
+msgid "obsolete! Please remove it from noserub.php"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:98
+msgid "not defined in noserub.php"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:159
+msgid "value might only be: true or false"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:169
+msgid "value must be false or a string!"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:183
+msgid "value must end with a slash!"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:197
+msgid "value must be numeric!"
+msgstr ""
+
+#: /vendors/admin/configuration_checker.php:209
+msgid "value might only be: \"%s\""
+msgstr ""
+
+#: /vendors/admin/extensions_checker.php:9
+msgid "must be enabled"
+msgstr ""
+
+#: /vendors/admin/extensions_checker.php:13
+msgid "needed for communicating with other servers"
+msgstr ""
+
+#: /vendors/admin/extensions_checker.php:17
+msgid "needed for image handling"
+msgstr ""
+
+#: /vendors/admin/extensions_checker.php:21
+msgid "GMP or BCMath"
+msgstr ""
+
+#: /vendors/admin/extensions_checker.php:21
+msgid "needed for OpenID functionality"
 msgstr ""
 
 #: /views/account_settings/import.ctp:2
@@ -1147,7 +1149,11 @@ msgstr ""
 msgid "DB Version"
 msgstr ""
 
-#: /views/admin/system_update.ctp:121
+#: /views/admin/system_update.ctp:120
+msgid "Add this site to http://noserub.com/"
+msgstr ""
+
+#: /views/admin/system_update.ctp:124
 msgid "Send to NoseRub.com"
 msgstr ""
 
@@ -1329,18 +1335,53 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
+#: /views/elements/login.ctp:7;27
+#: /views/identities/login.ctp:17;30
+msgid "Remember me"
+msgstr ""
+
+#: /views/elements/login.ctp:9;29
+#: /views/elements/metanav.ctp:41
+#: /views/elements/identities/openid_login_form.ctp:10
+#: /views/identities/login.ctp:19;32
+msgid "Login"
+msgstr ""
+
+#: /views/elements/login.ctp:13
+#: /views/identities/login.ctp:36
+msgid "Forgot your password?"
+msgstr ""
+
+#: /views/elements/login.ctp:20
+#: /views/identities/login.ctp:10
+msgid "Your %s OpenID"
+msgstr ""
+
+#: /views/elements/login.ctp:23
+#: /views/elements/identities/openid_login_form.ctp:6
+#: /views/identities/login.ctp:13
+msgid "Invalid OpenID"
+msgstr ""
+
+#: /views/elements/login.ctp:24
+#: /views/elements/identities/openid_login_form.ctp:7
+#: /views/identities/login.ctp:14
+msgid "Verification cancelled"
+msgstr ""
+
+#: /views/elements/login.ctp:25
+#: /views/elements/identities/openid_login_form.ctp:8
+#: /views/identities/login.ctp:15
+msgid "OpenID authentication failed: %s"
+msgstr ""
+
 #: /views/elements/metanav.ctp:8
 msgid "You are logged in as <strong>%s</strong>"
 msgstr ""
 
 #: /views/elements/metanav.ctp:31
+#: /views/widgets/meta_navigation.ctp:8
 msgid "Logout"
-msgstr ""
-
-#: /views/elements/metanav.ctp:41
-#: /views/elements/identities/openid_login_form.ctp:10
-#: /views/identities/login.ctp:19;32
-msgid "Login"
 msgstr ""
 
 #: /views/elements/accounts/index.ctp:12
@@ -1353,7 +1394,8 @@ msgstr ""
 
 #: /views/elements/contacts/box.ctp:3
 #: /views/elements/locations/choose.ctp:4
-#: /views/identities/index.ctp:167;187;206
+#: /views/identities/index.ctp:187;206
+#: /views/widgets/my_contacts.ctp:2
 msgid "manage"
 msgstr ""
 
@@ -1482,21 +1524,6 @@ msgstr ""
 msgid "Your OpenID"
 msgstr ""
 
-#: /views/elements/identities/openid_login_form.ctp:6
-#: /views/identities/login.ctp:13
-msgid "Invalid OpenID"
-msgstr ""
-
-#: /views/elements/identities/openid_login_form.ctp:7
-#: /views/identities/login.ctp:14
-msgid "Verification cancelled"
-msgstr ""
-
-#: /views/elements/identities/openid_login_form.ctp:8
-#: /views/identities/login.ctp:15
-msgid "OpenID authentication failed: %s"
-msgstr ""
-
 #: /views/elements/identities/openid_login_form.ctp:9
 msgid "e.g. http://user123.myopenid.com/"
 msgstr ""
@@ -1507,7 +1534,8 @@ msgstr ""
 
 #: /views/elements/identities/privacy_settings.ctp:4
 #: /views/identities/index.ctp:169
-#: /views/identities/social_stream.ctp:28
+#: /views/widgets/contacts_for_identity.ctp:3
+#: /views/widgets/main_navigation.ctp:8
 msgid "Contacts"
 msgstr ""
 
@@ -1706,6 +1734,7 @@ msgid "Add some notes here."
 msgstr ""
 
 #: /views/identities/index.ctp:175
+#: /views/widgets/my_contacts.ctp:51
 msgid "Contact's Social Stream"
 msgstr ""
 
@@ -1730,20 +1759,8 @@ msgstr ""
 msgid "Synced usernames"
 msgstr ""
 
-#: /views/identities/login.ctp:10
-msgid "Your %s OpenID"
-msgstr ""
-
-#: /views/identities/login.ctp:17;30
-msgid "Remember me"
-msgstr ""
-
-#: /views/identities/login.ctp:36
-msgid "Forgot your password?"
-msgstr ""
-
 #: /views/identities/password_recovery.ctp:3
-msgid "Please enter username or password. We will then send you an email with a link to set a new password."
+msgid "Please enter username or email address. We will then send you an email with a link to set a new password."
 msgstr ""
 
 #: /views/identities/password_recovery.ctp:10
@@ -1923,15 +1940,12 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:28
+#: /views/identities/social_stream.ctp:29
 msgid "Latest active"
 msgstr ""
 
-#: /views/identities/social_stream.ctp:31
-msgid "My Contacts"
-msgstr ""
-
 #: /views/layouts/default.ctp:3
+#: /views/themed/beta/layouts/default.ctp:3
 msgid "Welcome to %s"
 msgstr ""
 
@@ -2124,7 +2138,7 @@ msgid "You can use your OpenID on any one of a growing number of sites (nearly t
 msgstr ""
 
 #: /views/openid_sites/no_openid_sites.ctp:18
-msgid "% gives you an overview of sites where you can use your OpenID to log in today."
+msgid "%s gives you an overview of sites where you can use your OpenID to log in today."
 msgstr ""
 
 #: /views/pages/security_check.ctp:2
@@ -2281,7 +2295,28 @@ msgstr ""
 msgid "Uploaded feeds"
 msgstr ""
 
-#: /views/themed/default/identities/widget_users_new.ctp:3
+#: /views/widgets/contacts_for_identity.ctp:2
+msgid "more"
+msgstr ""
+
+#: /views/widgets/main_navigation.ctp:2
+msgid "Hi %s!"
+msgstr ""
+
+#: /views/widgets/main_navigation.ctp:5
+msgid "Home"
+msgstr ""
+
+#: /views/widgets/main_navigation.ctp:8
+msgid "close"
+msgstr ""
+
+#: /views/widgets/main_navigation.ctp:10
+#: /views/widgets/my_contacts.ctp:3
+msgid "My Contacts"
+msgstr ""
+
+#: /views/widgets/new_users.ctp:3
 msgid "Newbies"
 msgstr ""
 

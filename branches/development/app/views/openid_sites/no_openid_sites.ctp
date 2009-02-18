@@ -15,5 +15,5 @@
 </p>
 
 <p class="infotext">
-	<?php echo sprintf(__('% gives you an overview of sites where you can use your OpenID to log in today.', true), '<a href="http://openiddirectory.com/">The OpenID Directory</a>'); ?>
+	<?php echo sprintf(__('%s gives you an overview of sites where you can use your OpenID to log in today.', true), '<a href="http://openiddirectory.com/">The OpenID Directory</a>'); ?>
 </p>
