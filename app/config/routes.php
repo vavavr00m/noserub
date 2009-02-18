@@ -37,7 +37,7 @@ Router::connect('/api/:result_type/locations/', array('controller' => 'locations
 Router::connect('/api/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities_api', 'action' => 'get_vcard'));
 Router::connect('/api/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 Router::connect('/api/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts_api', 'action' => 'get_contacts'));
-Router::connect('/api/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
+Router::connect('/api/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts_api', 'action' => 'get_accounts'));
 
 Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('controller' => 'identities', 'action' => 'api_get_last_location'));
 Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('controller' => 'locations', 'action' => 'api_set'));
@@ -46,7 +46,7 @@ Router::connect('/api/:username/:api_hash/:result_type/locations/', array('contr
 Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities_api', 'action' => 'get_vcard'));
 Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('controller' => 'syndications', 'action' => 'api_get'));
 Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts_api', 'action' => 'get_contacts'));
-Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('controller' => 'accounts', 'action' => 'api_get'));
+Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts_api', 'action' => 'get_accounts'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
 

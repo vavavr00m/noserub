@@ -348,32 +348,4 @@ class AccountsController extends AppController {
 		$this->Session->write('Service.add.type', $data['service_type_id']);
 		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
     }
-    
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-
-        $this->Account->contain(array('ServiceType', 'Service'));
-        $accounts = $this->Account->findAllByIdentityId($identity_id);
-
-        $data = array();
-        foreach($accounts as $item) {
-            $data[] = array(
-                'title' => $item['Account']['title'],
-                'url'   => $item['Account']['account_url'],
-                'icon'  => $item['Service']['icon'],
-                'type'  => $item['ServiceType']['name']
-            );
-        }
-        $this->set('data', $data);
-        
-        $this->api->render();
-    }
 }
