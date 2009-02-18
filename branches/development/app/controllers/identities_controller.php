@@ -1011,43 +1011,6 @@ class IdentitiesController extends AppController {
     }
     
     /**
-     * returns a "vcard" of the authenticated user
-     */
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-			
-		$this->Identity->id = $identity_id; 
-        $this->Identity->contain('Location');
-        $data = $this->Identity->read();
-        
-        $this->set(
-            'data', 
-            array(
-                'firstname'     => $data['Identity']['firstname'],
-                'lastname'      => $data['Identity']['lastname'],
-                'url'           => 'http://' . $data['Identity']['username'],
-                'photo'         => $this->Identity->getPhotoUrl($data),
-                'about'         => $data['Identity']['about'],
-                'address'       => $data['Identity']['address_shown'],
-                'last_location' => array(
-                    'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
-                    'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
-                )
-            )
-        );
-        
-        $this->api->render();
-    }
-    
-    /**
      * returns information about the last location
      */
 	public function api_get_last_location() {
