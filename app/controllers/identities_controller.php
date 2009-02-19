@@ -8,8 +8,7 @@ class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
-        'geocoder', 'url', 'cluster', 'openid', 'cdn', 
-        'Cookie', 'api', 'OauthServiceProvider'
+        'geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie'
     );
     
     /**
@@ -1009,33 +1008,4 @@ class IdentitiesController extends AppController {
             $this->redirect('/pages/login/');
         }
     }
-    
-    /**
-     * returns information about the last location
-     */
-	public function api_get_last_location() {
-		if(isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-			$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-		
-		$this->Identity->id = $identity_id;
-		$this->Identity->contain('Location');
-		
-		$data = $this->Identity->read();
-        $this->set(
-            'data', 
-            array(
-                'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
-                'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
-            )
-        );
-        
-        $this->api->render();
-	}
 }
