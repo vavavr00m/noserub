@@ -2,7 +2,7 @@
 
 class LocationsApiController extends ApiAppController {
 	public $uses = array('Location');
-	public $components = array('OauthServiceProvider');
+	public $components = array('Geocoder', 'OauthServiceProvider');
 	private $identity_id = null;
 	
 	public function beforeFilter() {
@@ -16,6 +16,49 @@ class LocationsApiController extends ApiAppController {
 			$this->identity_id = $accessToken->field('identity_id', array('token_key' => $key));
 		}
 	}
+	
+	public function add_location() {
+        $name    = isset($this->params['url']['name'])    ? $this->params['url']['name']    : '';
+        $address = isset($this->params['url']['address']) ? $this->params['url']['address'] : '';
+        $set_to  = isset($this->params['url']['set_to'])  ? $this->params['url']['set_to']  :  0;
+        
+        if(!$name) {
+            $this->set('code', -2);
+            $this->set('msg', __('parameter wrong', true));
+        } else {
+            # test, whether we already have this location
+            $conditions = array(
+                'identity_id' => $this->identity_id,
+                'name'        => $name
+            );
+            if($this->Location->hasAny($conditions)) {
+                $this->set('code', -3);
+                $this->set('msg', __('duplicate dataset', true));
+            } else {
+                $data = array(
+                    'identity_id' => $this->identity_id,
+                    'name'        => $name,
+                    'address'     => $address
+                );
+                if($address) {
+                    $geolocation = $this->Geocoder->get($address);
+                    if($geolocation !== false) {
+                        $data['latitude']  = $geolocation['latitude'];
+                        $data['longitude'] = $geolocation['longitude'];
+                    }
+                }
+                $this->Location->create();
+                $this->Location->save($data, true, array_keys($data));
+                
+                if($set_to == 1) {
+                    $this->Location->cacheQueries = false;
+                    $this->Location->setTo($identity_id, $this->Location->id);
+                }
+            }
+        }
+        
+        $this->Api->render();
+    }
 	
 	public function get_last_location() {
 		$this->Location->Identity->id = $this->identity_id;
@@ -50,6 +93,15 @@ class LocationsApiController extends ApiAppController {
                 )
             )
         );
+        
+        $this->Api->render();
+    }
+    
+	public function set_location($location_id) {
+        if(!$this->Location->setTo($this->identity_id, $location_id)) {
+            $this->set('code', -1);
+            $this->set('msg', __('dataset not found', true));
+        }
         
         $this->Api->render();
     }
