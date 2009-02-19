@@ -2,6 +2,7 @@
 
 class SyndicationsApiController extends ApiAppController {
 	public $uses = array('Syndication');
+	public $components = array('OauthServiceProvider');
 	private $identity_id = null;
 	
 	public function beforeFilter() {
