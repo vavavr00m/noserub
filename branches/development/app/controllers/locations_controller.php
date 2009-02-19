@@ -146,37 +146,6 @@ class LocationsController extends AppController {
     	$this->redirect($url);
     }
     
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-    	} else {
-	    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-	    	$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-    	}
-    	
-        $this->Location->contain();
-        $data = $this->Location->findAllByIdentityId($identity_id, array('id', 'name'));
-        
-        $this->Location->Identity->recursive = 0;
-        $this->Location->Identity->id = $identity_id;
-        $last_location_id = $this->Location->Identity->field('last_location_id');
-        
-        $this->set(
-            'data', 
-            array(
-                'Locations' => $data,
-                'Identity'  => array(
-                    'last_location_id' => $last_location_id
-                )
-            )
-        );
-        
-        $this->api->render();
-    }
-    
     public function api_set($location_id) {
     	if (isset($this->params['username'])) {
     		$identity = $this->api->getIdentity();
