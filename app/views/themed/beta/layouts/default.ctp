@@ -27,28 +27,16 @@
 
 <body>
 
-<div id="header">
+<div id="logo">
     <?php echo $noserub->widgetNavigation('meta'); ?>
 </div>
 
 
-<div id="container">
-    <div id="center" class="column">
-        <?php echo $content_for_layout; ?>
-    </div>
-
-    <div id="left" class="column">
-        <?php echo $noserub->widgetNavigation('main'); ?>
-    </div>
+<div id="links">
+    <?php echo $noserub->widgetNavigation('main'); ?>
+</div>
     
-    <div id="right" class="column">
-        <h2>right column</h2>
-    </div>
-</div>
+<?php echo $content_for_layout; ?>
 
-<div id="footer-wrapper">
-	<div id="footer">This is the footer.</div>
-</div>
-	
 </body>
 </html>

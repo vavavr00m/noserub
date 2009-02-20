@@ -8,12 +8,6 @@
             <h2><?php __('Contacts'); ?></h2><span><?php __('close'); ?></span>
             <ul>
                 <li><?php echo $html->link(__('My Contacts', true), '/' . $context['logged_in_identity']['local_username'] . '/contacts/'); ?></li>
-                <?php foreach($contact_tags['noserub_contact_type_ids'] as $tag) { ?>
-                    <li><?php echo $html->link($tag, '/' . $context['logged_in_identity']['local_username'] . '/network/rel:' . $tag); ?></li>
-                <?php } ?>
-                <?php foreach($contact_tags['contact_type_ids'] as $tag) { ?>
-                    <li><?php echo $html->link($tag, '/' . $context['logged_in_identity']['local_username'] . '/network/rel:' . $tag); ?></li>
-                <?php } ?>
             </ul>
         </li>
         <li id="profile">
