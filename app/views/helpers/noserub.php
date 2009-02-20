@@ -7,31 +7,30 @@ class NoserubHelper extends AppHelper {
     public $helpers = array('Session');
     
     public function widgetContacts($options) {
-        $options[] = 'return';
-        return $this->output($this->requestAction('/widgets/contacts_for_identity/', $options));
+        return $this->out('/widgets/contacts_for_identity/');
     }
     
     public function widgetMyContacts() {
         if($this->Session->read('Identity.id')) {
-            return $this->output($this->requestAction('/widgets/my_contacts/', array('return')));
+            return $this->out('/widgets/my_contacts/');
         } else {
-            return $this->output('');
+            return $this->out('');
         }
     }
     
     public function widgetNewestUsers() {
-        return $this->output($this->requestAction('/widgets/new_users/', array('return')));
+        return $this->out('/widgets/new_users/');
     }
     
     public function widgetContactFilter() {
-        return $this->output($this->requestAction('/widgets/contact_filter', array('return')));
+        return $this->out('/widgets/contact_filter');
     }
     
     public function widgetNavigation($type = 'meta') {
         if($type != 'meta' && $type != 'main') {
-            return $this->output('');
+            return $this->out('');
         }
-        return $this->output($this->requestAction('/widgets/navigation/', array('return', 'type' => $type)));
+        return $this->out('/widgets/navigation/', array('return', 'type' => $type));
     }
     
     public function fnAvatarBaseUrl() {
@@ -44,5 +43,18 @@ class NoserubHelper extends AppHelper {
         }
         
         return $url;
+    }
+
+    /**
+     * wrapper for some functionality we need
+     * for every widget
+     */
+    private function out($action, $data = array()) {        
+        $data[] = 'return';
+        
+        $View = ClassRegistry::getObject('view');
+        $data['context'] = $View->viewVars['context'];
+
+        return $this->output($this->requestAction($action, $data));
     }
 }

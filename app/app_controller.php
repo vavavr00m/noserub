@@ -36,8 +36,10 @@ class AppController extends Controller {
      * controllers and all views.
      */
     public $context = array(
-        'logged_in_identity' => null,
-        'network_id' => 1 # default for now
+        'logged_in_identity' => false,
+        'network_id' => 1, # default for now
+        'identity' => false, # the identity we're looking at,
+        'is_self' => false # wether the identity we look at is the logged in identity
     );
     
     public function flashMessage($type, $message) {
@@ -208,6 +210,32 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
+        if(isset($this->params['requested']) && $this->params['requested']) {
+            # copy the context from the former request
+            $this->context = $this->params['context'];
+            return;
+        }
+
         $this->context['logged_in_identity'] = $this->Session->read('Identity');
+        
+        # if we're looking on the page of someone else, get the identity
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        if($username) {
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity;
+            }
+            
+            $splitted = $this->Identity->splitUsername($username);
+            $username = $splitted['username'];
+            
+            $this->Identity->contain();
+            $data = $this->Identity->findByUsername($username);
+            $this->context['identity'] = $data['Identity'];
+        }
+        
+        if($this->context['logged_in_identity'] && $this->context['identity']) {
+            $this->context['is_self'] = $this->context['logged_in_identity']['id'] == $this->context['identity']['id'];
+        }
     }
 }
