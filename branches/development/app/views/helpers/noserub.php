@@ -23,6 +23,10 @@ class NoserubHelper extends AppHelper {
         return $this->output($this->requestAction('/widgets/new_users/', array('return')));
     }
     
+    public function widgetContactFilter() {
+        return $this->output($this->requestAction('/widgets/contact_filter', array('return')));
+    }
+    
     public function widgetNavigation($type = 'meta') {
         if($type != 'meta' && $type != 'main') {
             return $this->output('');

@@ -9,6 +9,12 @@ class ContactsController extends AppController {
     public function index() {
         $this->checkUnsecure();
         
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render();
+            return;
+        }
+        
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -395,6 +401,12 @@ class ContactsController extends AppController {
      */
     public function network() {
         $this->checkUnsecure();
+        
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('../identities/network');
+            return;
+        }
         
         $session_identity = $this->Session->read('Identity');
         

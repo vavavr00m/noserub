@@ -175,7 +175,13 @@ class IdentitiesController extends AppController {
     public function social_stream() {
         $this->checkUnsecure();
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
-    	
+
+    	if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('../pages/home');
+            return;
+        }
+        
         $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 

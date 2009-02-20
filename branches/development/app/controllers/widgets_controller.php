@@ -7,14 +7,21 @@ class WidgetsController extends AppController {
      */
      public function navigation() {
          $type = isset($this->params['type']) ? $this->params['type'] : 'main';
-
+         $this->render($type . '_navigation');
+ 	}
+ 	
+ 	/**
+ 	 * Filters
+ 	 */
+ 	 
+ 	public function contact_filter() {
  	    if($this->context['logged_in_identity']) {
  	        $this->dynamicUse('Contact');
-
- 	        $this->set('contact_tags', $this->Contact->getTagList($this->context['logged_in_identity']['id']));     	    
-         }
-         
-         $this->render($type . '_navigation');
+ 	    
+ 	        $this->set('contact_tags', $this->Contact->getTagList($this->context['logged_in_identity']['id']));
+        } else {
+            return false;
+        }
  	}
  	
     /**
