@@ -190,8 +190,8 @@ class Identity extends AppModel {
         }
     }
     
-    public function getIdentityByUsername($username) {
-    	$splitted = $this->splitUsername($username);
+    public function getIdentityByLocalUsername($localUsername) {
+    	$splitted = $this->splitUsername($localUsername);
 		$this->contain();
 		$identity = $this->findByUsername($splitted['username']);
 		

@@ -227,13 +227,9 @@ class IdentitiesController extends AppController {
  	 */
     public function favorites() {
         $this->checkUnsecure();
-        
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $username = $splitted['username'];
 
-        $this->Identity->contain();
-        $identity = $this->Identity->findByUsername($username);
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        $identity = $this->Identity->getIdentityByLocalUsername($username);
         
         $conditions = array(
             'favorited_by' => $identity['Identity']['id']
@@ -247,7 +243,7 @@ class IdentitiesController extends AppController {
 
         $this->set('items', $items);
         $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's favorites", true), $username));
+        $this->set('headline', sprintf(__("%s's favorites", true), $identity['Identity']['username']));
     }
     
 	/**
@@ -257,11 +253,7 @@ class IdentitiesController extends AppController {
         $this->checkUnsecure();
         
         $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $username = $splitted['username'];
-
-        $this->Identity->contain();
-        $identity = $this->Identity->findByUsername($username);
+        $identity = $this->Identity->getIdentityByLocalUsername($username);
         
         $conditions = array(
             'commented_by' => $identity['Identity']['id']
@@ -270,12 +262,12 @@ class IdentitiesController extends AppController {
         $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
         
         usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);        
+        $items = $this->cluster->removeDuplicates($items);
         $items = $this->cluster->create($items);
 
         $this->set('items', $items);
         $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's comments", true), $username));
+        $this->set('headline', sprintf(__("%s's comments", true), $identity['Identity']['username']));
     }
 
     public function send_message() {
