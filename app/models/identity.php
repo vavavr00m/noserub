@@ -173,17 +173,7 @@ class Identity extends AppModel {
     		    $identity['Identity']['openid_server_url'] = $openIDServerUrl;
     		    $this->save($identity, false);
     		}
-    	} else {
-    		if (NOSERUB_ALLOW_REMOTE_LOGIN) {
-    			# is it a remote user?
-    			$username = $this->splitUsername($openIDResponse->identity_url);
-    			$identity = $this->find(array('Identity.username' => $username['username']));
-    		} else {
-    			return false;
-    		}
-    	}
-    	
-    	if ($identity) {
+    		
     		return $identity;
     	}
     	
