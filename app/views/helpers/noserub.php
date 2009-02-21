@@ -6,8 +6,8 @@
 class NoserubHelper extends AppHelper {
     public $helpers = array('Session');
     
-    public function widgetContacts() {
-        return $this->out('/widgets/contacts_for_identity/');
+    public function widgetContacts($options = array()) {
+        return $this->out('/widgets/contacts_for_identity/', $options);
     }
     
     public function widgetMyContacts() {
