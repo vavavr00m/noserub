@@ -24,10 +24,6 @@ if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', substr(Configure::read('NoseRub.full_base_url'), 0, -1));
 }
 
-# temporary constant for development purposes
-# TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
-define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
-
 Configure::write('Languages', array(
     'de-de' => 'Deutsch',
     'en-en' => 'English',
