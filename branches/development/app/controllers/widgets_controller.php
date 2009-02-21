@@ -63,16 +63,39 @@ class WidgetsController extends AppController {
             # this is someone elses network, so I show only the noserub contacts
             $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
         }
-        $data = $this->Contact->getForDisplay($identity_id, $contact_filter, 9);
+        
+        $layout = isset($this->params['layout']) ? $this->params['layout'] : '';
+        if($layout == 'list') {
+            $limit = null;
+        } else {
+            $limit = 9;
+        }
+        
+        $data = $this->Contact->getForDisplay($identity_id, $contact_filter, $limit);
+        $this->set('data', $data);
+        /*
         $contacts = array();
         foreach($data as $key => $value) {
             $contacts[] = $value['WithIdentity'];
         }
         $this->set('data', $contacts);
+        */
+        if($layout == 'list') {
+            $this->render('contacts_list');
+        } else {
+            $this->render('contacts_box');
+        }
      }
 
      public function my_contacts() {
         $this->dynamicUse('Contact');
+        
+        $layout = isset($this->params['layout']) ? $this->params['layout'] : '';
+        if($layout == 'list') {
+            $limit = null;
+        } else {
+            $limit = 9;
+        }
         
         $logged_in_identity_id = $this->Session->read('Identity.id');
         if(!$logged_in_identity_id) {
@@ -80,27 +103,27 @@ class WidgetsController extends AppController {
         }
         
         # get contacts of the displayed profile
-        $all_contacts = $this->Contact->getForIdentity($logged_in_identity_id);
+        $all_contacts = $this->Contact->getForIdentity($logged_in_identity_id, array(), $limit);
         
         $contacts = array();
-        $num_private_contacts = 0;
-        $num_noserub_contacts = 0;
         foreach($all_contacts as $contact) {
             if(strpos($contact['WithIdentity']['username'], '@') === false) {
-                $num_noserub_contacts++;
                 if(count($contacts) < 9) {
                     $contacts[] = $contact;
                 }
             } else {
-                $num_private_contacts++;
                 if(count($contacts) < 9) {
                     $contacts[] = $contact;
                 }
             }
         }
-        $this->set('num_private_contacts', $num_private_contacts);
-        $this->set('num_noserub_contacts', $num_noserub_contacts);
         $this->set('data', $contacts);
+        
+        if($layout == 'list') {
+            $this->render('contacts_list');
+        } else {
+            $this->render('contacts_box');
+        }
      }
      
     /**

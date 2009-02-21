@@ -1,6 +1,6 @@
 <?php if($data) { ?>
-    <span class="more"><a rel="me" href="<?php echo Router::Url('/' . $identity['Identity']['local_username'] . '/contacts/'); ?>"><?php __('more'); ?></a></span>
-    <h4><?php __('Contacts'); ?></h4>
+    <span class="more"><a href="<?php echo Router::Url('/' . $session->read('Identity.local_username') . '/contacts/'); ?>"><?php __('manage'); ?></a></span>
+    <h4><?php __('My Contacts'); ?></h4>
     <p class="contactsbox">
         <?php foreach($data as $item) { ?>
             <?php 
