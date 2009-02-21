@@ -80,30 +80,6 @@ class AppController extends Controller {
             $this->redirect(str_replace('https://', 'http://', FULL_BASE_URL) . $this->here);
         }
     }
-       
-    private function auto_login() {
-        $li = $this->Cookie->read('li'); # login id
-            
-        if($li) {
-            if(!isset($this->Identity)) {
-                App::import('Model', 'Identity');
-                $this->Identity = new Identity();
-            }
-            
-            $this->Identity->contain();
-            $identity = $this->Identity->findById($li);
-
-            if(!$identity) {
-                # not found. delete the cookie.
-                $this->Cookie->del('li');
-            } else {
-                $this->Session->write('Identity', $identity['Identity']);
-                # refresh auto login cookie
-                $this->Cookie->write('li', $li, true, '4 weeks');
-            }
-        }
-            
-    }
 
     public function beforeFilter() {
         # check for auto-login
@@ -236,6 +212,29 @@ class AppController extends Controller {
         
         if($this->context['logged_in_identity'] && $this->context['identity']) {
             $this->context['is_self'] = $this->context['logged_in_identity']['id'] == $this->context['identity']['id'];
+        }
+    }
+    
+	private function auto_login() {
+        $login_id = $this->Cookie->read('li'); # login id
+            
+        if($login_id) {
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity();
+            }
+            
+            $this->Identity->contain();
+            $identity = $this->Identity->findById($login_id);
+
+            if(!$identity) {
+                # not found. delete the cookie.
+                $this->Cookie->del('li');
+            } else {
+                $this->Session->write('Identity', $identity['Identity']);
+                # refresh auto login cookie
+                $this->Cookie->write('li', $login_id, true, '4 weeks');
+            }
         }
     }
 }
