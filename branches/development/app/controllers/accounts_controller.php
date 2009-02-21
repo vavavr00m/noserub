@@ -4,7 +4,6 @@
 class AccountsController extends AppController {
     public $uses = array('Account');
     public $helpers = array('flashmessage');
-    public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
         $this->checkSecure();
