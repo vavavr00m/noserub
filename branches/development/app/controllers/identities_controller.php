@@ -17,6 +17,12 @@ class IdentitiesController extends AppController {
     public function index() {
         $this->checkUnsecure();
         
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('profile');
+            return;
+        }
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $username = $splitted['username'];
