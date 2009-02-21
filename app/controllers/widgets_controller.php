@@ -2,6 +2,8 @@
 
 class WidgetsController extends AppController {
     
+    public $components = array('cluster');
+    
     /**
      * Various elements / pages
      */
@@ -101,17 +103,59 @@ class WidgetsController extends AppController {
         $this->set('data', $contacts);
      }
      
-     /**
-      * private methods
-      */
+    /**
+     * Lifestream
+     **/
+     
+    public function lifestream() {
+        $this->dynamicUse('Contact');
+        
+        $type = $this->params['type'];
+
+        $show_in_overview = $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
+        $filter = $show_in_overview;
+
+        if($type == 'network') {
+            $data = $this->Contact->getForDisplay($this->context['logged_in_identity']['id'], array('tag' => 'all'));
+        
+            # we need to go through all this now and get Accounts and Services
+            # also save all contacts
+            $contacts = array();
+            foreach($data as $key => $value) {
+                $contacts[] = $value['WithIdentity'];
+            }
+
+            $contact_ids = Set::extract($contacts, '{n}.id');
+            $contact_ids[] = $this->context['logged_in_identity']['id'];
+        } else {
+            $contact_ids = array($this->context['identity']['id']);
+        }
+        # get last 100 items
+        $conditions = array(
+            'filter'      => $filter,
+            'identity_id' => $contact_ids
+        );
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 50, true);
+        if($items) {
+            usort($items, 'sort_items');
+            $items = $this->cluster->removeDuplicates($items);
+            $items = $this->cluster->create($items);
+        }
+    
+        $this->set('data', $items);
+    }
+    
+    /**
+     * private methods
+     */
       
-     /**
-      * imports model when they are not available yet. this
-      * is similar to the uses() array in Cake, but more specific
-      * to what is needed.
-      *
-      * @param mixed $models either string or array of model names
-      */
+    /**
+     * imports model when they are not available yet. this
+     * is similar to the uses() array in Cake, but more specific
+     * to what is needed.
+     *
+     * @param mixed $models either string or array of model names
+     */
      private function dynamicUse($models) {
          if(!is_array($models)) {
              $models = array($models);

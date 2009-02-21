@@ -6,7 +6,7 @@
 class NoserubHelper extends AppHelper {
     public $helpers = array('Session');
     
-    public function widgetContacts($options) {
+    public function widgetContacts() {
         return $this->out('/widgets/contacts_for_identity/');
     }
     
@@ -30,7 +30,15 @@ class NoserubHelper extends AppHelper {
         if($type != 'meta' && $type != 'main') {
             return $this->out('');
         }
-        return $this->out('/widgets/navigation/', array('return', 'type' => $type));
+        return $this->out('/widgets/navigation/', array('type' => $type));
+    }
+    
+    public function widgetNetworkLifestream() {
+        return $this->out('/widgets/lifestream/', array('type' => 'network'));
+    }
+    
+    public function widgetSingleLifestream() {
+        return $this->out('/widgets/lifestream/', array('type' => 'single'));
     }
     
     public function fnAvatarBaseUrl() {
