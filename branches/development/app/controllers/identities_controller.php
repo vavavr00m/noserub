@@ -667,7 +667,13 @@ class IdentitiesController extends AppController {
     		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
     		$this->Session->delete('OpenidLogin.remember');
     		$response = $this->getOpenIDResponseIfSuccess($returnTo);
-    		return $this->Identity->getIdentityByOpenIDResponse($response);
+    		$identity = $this->Identity->getIdentityByOpenIDResponse($response);
+    		
+    		if ($identity) {
+    			return $identity;
+    		}
+    		
+    		return $this->Identity->createGuestIdentity($response->identity_url);
     	}
     }
         
