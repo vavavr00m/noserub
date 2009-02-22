@@ -13,8 +13,8 @@ INSTALL
 0. What do I need?
 ------------------
 You need MySQL and PHP 5. MySQL 5 is strongly advised. PHP 5 must have 
-enabled either the GMP extension or the Bcmath extension plus the GD, curl, and
-SPL (Standard PHP Library) extensions. Also make sure that the value for 
+enabled either the GMP extension or the Bcmath extension plus the GD, curl, dom, 
+and SPL (Standard PHP Library) extensions. Also make sure that the value for 
 "memory_limit" in your php.ini is higher than 8MB. 
 
 Your webserver (I assume Apache, never tried something else) should 
