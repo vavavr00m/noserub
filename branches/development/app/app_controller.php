@@ -163,7 +163,7 @@ class AppController extends Controller {
             }
         }
         
-        if(!$this->Identity->checkSecurityToken($session_identity_id, $security_token)) {
+        if(!$this->Identity->isCorrectSecurityToken($session_identity_id, $security_token)) {
             $this->redirect('/pages/security_check/', null, true);
         }
     }
