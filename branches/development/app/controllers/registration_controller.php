@@ -44,7 +44,7 @@ class RegistrationController extends AppController {
     		if ($this->openid->isOpenIDResponse()) {
     			$response = $this->getOpenIDResponseIfSuccess($returnTo);
 
-    			$identity = $this->Identity->checkOpenID($response);
+    			$identity = $this->Identity->getIdentityByOpenIDResponse($response);
     			
     			if ($identity) {
     				# already registered, so we perform a login

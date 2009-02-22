@@ -667,7 +667,7 @@ class IdentitiesController extends AppController {
     		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
     		$this->Session->delete('OpenidLogin.remember');
     		$response = $this->getOpenIDResponseIfSuccess($returnTo);
-    		return $this->Identity->checkOpenID($response);
+    		return $this->Identity->getIdentityByOpenIDResponse($response);
     	}
     }
         
@@ -675,8 +675,7 @@ class IdentitiesController extends AppController {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
-        # make sure the login cookie is invalid
-        # set cookie
+        # delete login cookie
         $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
