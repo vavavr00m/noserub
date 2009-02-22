@@ -9,6 +9,10 @@ class ExtensionsChecker {
 			$result = am($result, array('SPL (Standard PHP Library)' => __('must be enabled', true)));
 		}
 		
+		if (!extension_loaded('dom')) {
+			$result = am($result, array('dom' => __('must be enabled', true)));
+		}
+		
         if (!extension_loaded('curl')) {
         	$result = am($result, array('curl' => __('needed for communicating with other servers', true)));
         }
