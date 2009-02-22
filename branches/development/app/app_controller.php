@@ -186,7 +186,8 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
-        if(isset($this->params['requested']) && $this->params['requested']) {
+        if(isset($this->params['requested']) && 
+           $this->params['requested'] && !empty($this->params['context'])) {
             # copy the context from the former request
             $this->context = $this->params['context'];
             return;
