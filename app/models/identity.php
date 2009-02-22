@@ -155,6 +155,19 @@ class Identity extends AppModel {
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
+    public function createGuestIdentity($openID) {
+    	App::import('Vendor', 'UrlUtil');
+    	$data = array(
+    				'network_id' => 0,
+    				'username' => trim(UrlUtil::removeHttpAndHttps($openID), '/'),
+    				'openid' => $openID
+    			);
+
+    	$this->save($data, false);
+    	
+    	return $this->findById($this->id);
+    }
+    
     public function getIdentityByOpenIDResponse($openIDResponse) {
     	$this->contain();
     	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
