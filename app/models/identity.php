@@ -155,7 +155,7 @@ class Identity extends AppModel {
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
-    public function checkOpenID($openIDResponse) {
+    public function getIdentityByOpenIDResponse($openIDResponse) {
     	$this->contain();
     	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
     	
