@@ -180,7 +180,7 @@ class Identity extends AppModel {
     	return false;
     }
     
-    public function checkSecurityToken($identity_id, $security_token) {
+    public function isCorrectSecurityToken($identity_id, $security_token) {
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
