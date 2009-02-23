@@ -14,6 +14,7 @@
             <?php echo $html->link(__('My Profile', true), '/' . $context['logged_in_identity']['local_username'] . '/'); ?>
         </li>
     </ul>
+    <?php echo $noserub->widgetAdminMenu(); ?>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
 <?php } ?>

@@ -1,4 +1,4 @@
-<h2><?php __('Updated peers'); ?></h2>
+<h2><?php __('Updated networks'); ?></h2>
 <?php if(!is_array($data)) {
     echo $data;
 } else { ?>

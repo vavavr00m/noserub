@@ -38,23 +38,23 @@ class Comment extends AppModel {
     }
     
     /**
-     * poll new comments from peers
+     * poll new comments from networks
      */
     public function poll() {
-        App::import('Model', 'Peer');
+        App::import('Model', 'Network');
         App::import('Model', 'Mail');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
         
         $Mail = new Mail();
         
-        $Peer = new Peer();
-        $peers = $Peer->getEnabledPeers();
+        $Network = new Network();
+        $networks = $Network->getEnabled();
         
         $polled = array();
         
-        foreach($peers as $peer) {
-            $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/comments/');
+        foreach($networks as $network) {
+            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/json/comments/');
             $comments = Zend_Json::decode($json_data);
             if(!isset($comments['data']) || !is_array($comments['data'])) {
                 $comments = array('data' => array());
@@ -91,7 +91,7 @@ class Comment extends AppModel {
                 }
             }
             
-            $polled[] = sprintf(__('%d comments from %s, %d imported', true), count($comments['data']), $peer['Peer']['name'], $imported);
+            $polled[] = sprintf(__('%d comments from %s, %d imported', true), count($comments['data']), $network['Network']['name'], $imported);
         }
         
         return $polled;

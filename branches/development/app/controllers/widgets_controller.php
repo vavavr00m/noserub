@@ -12,6 +12,12 @@ class WidgetsController extends AppController {
          $this->render($type . '_navigation');
  	}
  	
+ 	public function admin_navigation() {
+ 	}
+ 	
+ 	public function admin_login() {
+ 	}
+ 	
  	/**
  	 * Filters
  	 */

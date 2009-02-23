@@ -39,7 +39,8 @@ class AppController extends Controller {
         'logged_in_identity' => false,
         'network_id' => 1, # default for now
         'identity' => false, # the identity we're looking at,
-        'is_self' => false # wether the identity we look at is the logged in identity
+        'is_self' => false, # wether the identity we look at is the logged in identity
+        'admin_id' => false # wether the identity is logged in with admin access right now
     );
     
     public function flashMessage($type, $message) {
@@ -194,6 +195,12 @@ class AppController extends Controller {
         }
 
         $this->context['logged_in_identity'] = $this->Session->read('Identity');
+        
+        if($this->Session->read('Admin.id')) {
+            $this->context['admin_id'] = $this->Session->read('Admin.id');
+        } else {
+            $this->context['admin_id'] = 0;
+        }
         
         # if we're looking on the page of someone else, get the identity
         $username = isset($this->params['username']) ? $this->params['username'] : '';
