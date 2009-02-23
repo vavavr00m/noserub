@@ -33,6 +33,14 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/navigation/', array('type' => $type));
     }
     
+    public function widgetAdminMenu() {
+        return $this->out('/widgets/admin_navigation/');
+    }
+    
+    public function widgetAdminLogin() {
+        return $this->out('/widgets/admin_login/');
+    }
+    
     public function widgetNetworkLifestream() {
         return $this->out('/widgets/lifestream/', array('type' => 'network'));
     }

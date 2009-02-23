@@ -53,6 +53,8 @@ Router::connect('/auth/:action', array('controller' => 'auth'));
 Router::connect('/search', array('controller' => 'searches', 'action' => 'index'));
 Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view'));
 
+Router::connect('/admins/:action', array('controller' => 'admins'));
+
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));
@@ -105,22 +107,27 @@ Router::connect('/:username/:filter', array('controller' => 'identities', 'actio
 
 Router::connect('/jobs/cron/:cron_hash/identities/sync/all/', array('controller' => 'identities', 'action' => 'cron_sync_all'));
 Router::connect('/jobs/cron/:cron_hash/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'cron_update'));
-Router::connect('/jobs/cron/:cron_hash/peers/sync/', array('controller' => 'peers', 'action' => 'cron_sync'));
-Router::connect('/jobs/cron/:cron_hash/peers/poll/', array('controller' => 'peers', 'action' => 'cron_poll'));
+Router::connect('/jobs/cron/:cron_hash/peers/sync/', array('controller' => 'networks', 'action' => 'cron_sync')); # deprecated
+Router::connect('/jobs/cron/:cron_hash/peers/poll/', array('controller' => 'networks', 'action' => 'cron_poll')); # deprecated
+Router::connect('/jobs/cron/:cron_hash/networks/sync/', array('controller' => 'networks', 'action' => 'cron_sync'));
+Router::connect('/jobs/cron/:cron_hash/networks/poll/', array('controller' => 'networks', 'action' => 'cron_poll')); 
+
 
 Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entries', 'action' => 'jobs_update'));
 Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
 Router::connect('/jobs/:admin_hash/sync/all/', array('controller' => 'identities', 'action' => 'jobs_sync_all'));
-Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admin', 'action' => 'system_update'));
+Router::connect('/jobs/:admin_hash/system/update/', array('controller' => 'admins', 'action' => 'system_update'));
 Router::connect('/jobs/:admin_hash/xmpp/start/', array('controller' => 'xmpp', 'action' => 'shell_run'));
 
 /**
  * Shell routes that can only be accessed through the shell_dispatcher
  */ 
-Router::connect('/jobs/shell/system/update/', array('controller' => 'admin', 'action' => 'shell_system_update')); 
+Router::connect('/jobs/shell/system/update/', array('controller' => 'admins', 'action' => 'shell_system_update')); 
 Router::connect('/jobs/shell/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
 Router::connect('/jobs/shell/feeds/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/jobs/shell/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/jobs/shell/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));
-Router::connect('/jobs/shell/peers/sync/', array('controller' => 'peers', 'action' => 'shell_sync'));
-Router::connect('/jobs/shell/peers/poll/', array('controller' => 'peers', 'action' => 'shell_poll'));
+Router::connect('/jobs/shell/peers/sync/', array('controller' => 'networks', 'action' => 'shell_sync')); # deprecated
+Router::connect('/jobs/shell/peers/poll/', array('controller' => 'networks', 'action' => 'shell_poll')); # deprecated
+Router::connect('/jobs/shell/networks/sync/', array('controller' => 'networks', 'action' => 'shell_sync'));
+Router::connect('/jobs/shell/networks/poll/', array('controller' => 'networks', 'action' => 'shell_poll'));

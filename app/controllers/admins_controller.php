@@ -1,15 +1,37 @@
 <?php
 App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'WriteableFoldersChecker'));
 
-class AdminController extends AppController {
+class AdminsController extends AppController {
     public $uses = array('Migration');
     
+    public function index() {
+        
+    }
+    
+    public function login() {
+        $this->Session->write('Admin.id', 1);
+        $this->redirect('/admins/');
+    }
+    
+    public function logout() {
+        $this->ensureSecurityToken();
+        $this->Session->delete('Admin');
+        $this->redirect('/admins/');
+    }
+    
     public function beforeFilter() {
+        parent::beforeFilter();
+        
         if(defined('SHELL_DISPATCHER') && SHELL_DISPATCHER) {
             return;
         }
         
-    	$admin_hash = isset($this->params['admin_hash']) ? $this->params['admin_hash'] : '';
+        if(!isset($this->params['admin_hash'])) {
+            # this is not a admin_hash route
+            return;
+        } else 
+        
+    	$admin_hash = $this->params['admin_hash'];
         
         if($admin_hash != Configure::read('NoseRub.admin_hash') || $admin_hash == '') {
             # there is nothing to do for us here

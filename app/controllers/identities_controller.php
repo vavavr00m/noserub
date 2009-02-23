@@ -685,6 +685,7 @@ class IdentitiesController extends AppController {
         $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
+        $this->Session->delete('Admin');
         $this->redirect($this->url->http('/'));
     }
     

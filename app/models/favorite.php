@@ -5,23 +5,23 @@ class Favorite extends AppModel {
     public $belongsTo = array('Identity', 'Entry');
 
     /**
-     * poll new favorites from peers
+     * poll new favorites from networks
      */
     public function poll() {
-        App::import('Model', 'Peer');
+        App::import('Model', 'Network');
         App::import('Model', 'Mail');
         App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
         App::import('Vendor', 'WebExtractor');
         
         $Mail = new Mail();
         
-        $Peer = new Peer();
-        $peers = $Peer->getEnabledPeers();
+        $Network = new Network();
+        $networks = $Network->getEnabled();
         
         $polled = array();
         
-        foreach($peers as $peer) {
-            $json_data = WebExtractor::fetchUrl($peer['Peer']['url'] . '/api/json/favorites/');
+        foreach($networks as $network) {
+            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/json/favorites/');
             $favorites = Zend_Json::decode($json_data);
             if(!isset($favorites['data']) || !is_array($favorites['data'])) {
                 $favorites = array('data' => array());
@@ -56,7 +56,7 @@ class Favorite extends AppModel {
                 }
             }
             
-            $polled[] = sprintf(__('%d favorites from %s, %d imported', true), count($favorites['data']), $peer['Peer']['name'], $imported);
+            $polled[] = sprintf(__('%d favorites from %s, %d imported', true), count($favorites['data']), $network['Network']['name'], $imported);
         }
         
         return $polled;

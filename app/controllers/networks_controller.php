@@ -1,13 +1,13 @@
 <?php
-class PeersController extends AppController {
-    public $uses = array('Peer');
+class NetworksController extends AppController {
+    public $uses = array('Network');
     
 
     public function jobs_sync() {
-        $this->set('data', $this->Peer->sync());
+        $this->set('data', $this->Network->sync());
     }
     /**
-     * retrieves a list of peers from http://noserub.com/peers
+     * retrieves a list of networks from http://noserub.com/networks
      * and syncs this list with the ones in the local database
      */
     public function shell_sync() {
@@ -42,7 +42,7 @@ class PeersController extends AppController {
     }
 
     /**
-     * shell method to retrieve comments and favorites from peers
+     * shell method to retrieve comments and favorites from networks
      */
     public function shell_poll() {
         $this->params['admin_hash'] = Configure::read('NoseRub.admin_hash');
