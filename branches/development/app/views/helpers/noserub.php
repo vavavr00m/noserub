@@ -48,6 +48,10 @@ class NoserubHelper extends AppHelper {
     public function widgetSingleLifestream() {
         return $this->out('/widgets/lifestream/', array('type' => 'single'));
     }
+
+    public function formNetworks() {
+        return $this->out('/widgets/form_networks/');
+    }
     
     public function fnAvatarBaseUrl() {
         $url = '';

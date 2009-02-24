@@ -3,18 +3,100 @@
  
 class Network extends AppModel {
     
-	public function getEnabled() {
-		$this->contain();
-		return $this->find(
-            'all',
-            array(
-                'conditions' => array(
-                    'disabled' => 0,
-                    'is_local' => 1
-                ),
-                'order' => 'last_sync ASC'
+    public $hasMany = array('Identity', 'Group', 'Admin');
+    
+    public $hasAndBelongsToMany = array(
+            'NetworkSubscriber' => array(
+                'className'  => 'Identity',
+                'joinTable'  => 'network_subscriptions',
+                'foreignKey' => 'network_id',
+                'associationForeignKey' => 'identity_id'
             )
-        );        
+    );
+    
+	public function getEnabled() {
+		return $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'disabled' => 0,
+                'is_local' => 1
+            ),
+            'order' => 'last_sync ASC'
+        ));        
+	}
+	
+	public function getSubscribable($context) {
+		return $this->find('all',array(
+            'contain' => array(
+                'NetworkSubscriber' => array(
+                    'conditions' => array(
+                        'identity_id' => $context['logged_in_identity']
+                    )
+                )
+            ),
+            'conditions' => array(
+                'disabled' => 0,
+                'allow_subscriptions' => 1,
+                'is_local' => 0
+            ),
+            'order' => 'name ASC'
+        ));        
+	}
+	
+	/**
+	 * subscribes an identity to the current network ($this->id)
+	 */
+	public function subscribe($identity_id) {
+	    if(!$this->field('allow_subscriptions')) {
+	        return;
+	    }
+	    
+	    $subscribed = $this->find('first', array(
+	        'contain' => array(
+	            'NetworkSubscriber' => array(
+	                'conditions' => array(
+	                    'NetworkSubscription.identity_id' => $identity_id,
+	                    'NetworkSubscription.network_id'  => $this->id
+	                )
+	            ),
+	        ),
+	        'fields' => array('Network.id')
+	    ));
+	    
+	    if(empty($subscribed['NetworkSubscriber'])) {
+	        $data = array(
+	            'Network' => array('id' => $this->id),
+	            'NetworkSubscriber' => array(
+	                'identity_id' => $identity_id
+	            )
+	        );
+	        
+	        $this->create();
+	        $this->save($data);
+	    }
+	}
+	
+	public function unsubscribe($identity_id) {
+	    $subscribed = $this->find('first', array(
+	        'contain' => array(
+	            'NetworkSubscriber' => array(
+	                'conditions' => array(
+	                    'NetworkSubscription.identity_id' => $identity_id,
+	                    'NetworkSubscription.network_id'  => $this->id
+	                )
+	            ),
+	        ),
+	        'fields' => array('Network.id')
+	    ));
+	    
+	    if(!empty($subscribed['NetworkSubscriber'])) {
+	        $this->NetworkSubscription->deleteAll(
+	            array(
+                    'identity_id' => $identity_id,
+                    'network_id'  => $this->id
+	            )
+	        );
+	    }
 	}
 	
     /**
