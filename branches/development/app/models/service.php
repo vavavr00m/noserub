@@ -133,6 +133,7 @@ class Service extends AppModel {
             		$item['title']   = $item['content'];
             	}
             } else {
+                $this->log('service_id ' . $service_id . ' not found!', LOG_DEBUG);
             	$item['content'] = $feeditem->get_content();
             }
 			$item = $service_type_filter->filter($item);
@@ -276,7 +277,11 @@ class Service extends AppModel {
     	}
     	
     	$this->recursive = 0;
-    	$service = $this->find(array('Service.id' => $service_id), array('Service.internal_name'));
+    	$service = $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array('Service.id' => $service_id),
+    	    'fields' => array('Service.internal_name')
+    	));
     	
     	if(!$service) {
     		return false;
@@ -289,7 +294,7 @@ class Service extends AppModel {
 /**
  * Base class for all services.
  */
-abstract class AbstractService {
+abstract class AbstractService extends Object {
 	private $service_id;
 	
 	public function __construct($service_id) {
@@ -340,7 +345,7 @@ abstract class AbstractService {
 
 class ServiceTypeFilterFactory {
 	public static function getFilter($service_type_id) {
-		if ($service_type_id == 1) {
+		if($service_type_id == 1) {
 			return new PhotoFilter();
 		}
 		
