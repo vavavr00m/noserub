@@ -3,15 +3,41 @@
  
 class Identity extends AppModel {
 	public $hasOne = array('TwitterAccount');
-    public $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Syndication', 'Entry');
-    public $belongsTo = array('Location' => array('className'  => 'Location',
-                                               'foreignKey' => 'last_location_id'));
+    public $hasMany = array(
+        'Account', 'Contact', 'ContactType', 'Consumer', 
+        'OpenidSite', 'Location', 'Syndication', 'Entry'
+    );
+    
+    public $belongsTo = array(
+        'Location' => array('className'  => 'Location',
+                            'foreignKey' => 'last_location_id'),
+        'Network'
+    );
+    
     public $hasAndBelongsToMany = array(
             'FavoriteEntries' => array(
                 'className' => 'Favorite',
                 'joinTable' => 'favorites',
                 'foreignKey' => 'identity_id',
                 'associationForeignKey' => 'entry_id'
+            ),
+            'SubscribedGroup' => array(
+                'className'  => 'Group',
+                'joinTable'  => 'group_subscriptions',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'group_id'
+            ),
+            'AdministratingGroup' => array(
+                'className' => 'Group',
+                'joinTable' => 'group_admins',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'group_id' 
+            ),
+            'SubscribedNetwork' => array(
+                'className' => 'Network',
+                'joinTable' => 'network_subscriptions',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'network_id'
             )
     );
     
@@ -113,6 +139,38 @@ class Identity extends AppModel {
         }
     
         return parent::afterFind($data);
+    }
+    
+    public function getSubscribedGroups($context) {
+        $data = false;
+        if($context['logged_in_identity']) {
+            $this->id = $context['logged_in_identity']['id'];
+            $data = $this->find('first', array(
+                'contain' => array('SubscribedGroup')
+            ));
+
+            if($data) {
+                $data = $data['SubscribedGroup'];
+            }
+        }
+
+        return $data;
+    }
+    
+    public function getSubscribedNetworks($context) {
+        $data = false;
+        if($context['logged_in_identity']) {
+            $this->id = $context['logged_in_identity']['id'];
+            $networks = $this->find('first', array(
+                'contain' => array('SubscribedNetwork', 'Network')
+            ));
+            if($networks) {
+                $data = $networks['SubscribedNetwork'];
+                $data[] = $networks['Network'];
+            }
+        }
+        
+        return $data;
     }
     
     /**

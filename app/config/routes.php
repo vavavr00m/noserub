@@ -54,6 +54,7 @@ Router::connect('/search', array('controller' => 'searches', 'action' => 'index'
 Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view'));
 
 Router::connect('/admins/:action', array('controller' => 'admins'));
+Router::connect('/networks/:action', array('controller' => 'networks'));
 
 Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));

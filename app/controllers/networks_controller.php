@@ -2,7 +2,37 @@
 class NetworksController extends AppController {
     public $uses = array('Network');
     
-
+    public function index() {
+    
+    }
+    
+    public function subscription() {
+        if(!$this->data) {
+            $this->redirect('/networks/');
+            return;
+        }
+        
+        if(!$this->context['logged_in_identity']) {
+            $this->redirect('/networks/');
+            return;
+        }
+        
+        foreach($this->data['SubscribeNetwork'] as $network_id => $action) {
+            $this->Network->id = $network_id;
+            switch($action) {
+                case -1:
+                    $this->Network->unsubscribe($this->context['logged_in_identity']['id']);
+                    break;
+                    
+                case 1:
+                    $this->Network->subscribe($this->context['logged_in_identity']['id']);
+                    break;
+            }
+        }
+        
+        $this->redirect('/networks/');
+    }
+    
     public function jobs_sync() {
         $this->set('data', $this->Network->sync());
     }

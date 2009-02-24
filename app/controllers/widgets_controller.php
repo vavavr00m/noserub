@@ -3,11 +3,18 @@
 class WidgetsController extends AppController {
     
     public $components = array('cluster');
+    public $helpers = array('nicetime');
     
     /**
      * Various elements / pages
      */
+     
      public function navigation() {
+         $this->dynamicUse('Identity');
+         
+         $this->set('groups', $this->Identity->getSubscribedGroups($this->context));
+         $this->set('networks', $this->Identity->getSubscribedNetworks($this->context));
+    
          $type = isset($this->params['type']) ? $this->params['type'] : 'main';
          $this->render($type . '_navigation');
  	}
@@ -16,6 +23,19 @@ class WidgetsController extends AppController {
  	}
  	
  	public function admin_login() {
+ 	}
+ 	
+ 	/**
+ 	 * Networks
+ 	 */
+ 	
+ 	/**
+ 	 * display a form to manage networks
+ 	 */
+    public function form_networks() {
+        $this->dynamicUse('Network');
+        
+        $this->set('networks', $this->Network->getSubscribable($this->context));        
  	}
  	
  	/**
@@ -35,6 +55,7 @@ class WidgetsController extends AppController {
     /**
      * Identities / Users
      */
+    
     public function new_users() {
         $this->dynamicUse('Identity');
         
