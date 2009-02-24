@@ -603,13 +603,16 @@ class IdentitiesController extends AppController {
                         $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
                     
-                    if (!$this->Session->check('Login.success_url')) {
+                    if(!$this->Session->check('Login.success_url')) {
 	                    $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
 	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
                     } else {
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
                     	$this->Session->delete('Login.success_url');
                     }
+                    
+                    $this->Identity->id = $identity['Identity']['id'];
+                    $this->Identity->saveField('last_login', date('Y-m-d H:i:s'));
                     
                     $this->redirect($url);
                 }

@@ -2,15 +2,43 @@
 App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'WriteableFoldersChecker'));
 
 class AdminsController extends AppController {
-    public $uses = array('Migration');
+    public $uses = array('Admin', 'Migration');
     
     public function index() {
         
     }
     
     public function login() {
-        $this->Session->write('Admin.id', 1);
-        $this->redirect('/admins/');
+        if(!$this->context['logged_in_identity']) {
+            # you need to be logged in as identity,
+            # if you want to gain admin access
+            $this->redirect('/admins/');
+            return;
+        }
+        
+        if(!$this->data) {
+            # don't call this route directly
+            $this->redirect('/admins/');
+            return;
+        }
+        
+        $admin = $this->Admin->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => $this->context['network_id'],
+                'username' => $this->data['Admin']['username'],
+                'password' => md5($this->data['Admin']['password']),
+            )
+        ));
+        
+        if($admin) {
+            $this->Admin->id = $admin['Admin']['id'];
+            $this->Admin->saveField('last_login', date('Y-m-d H:i:s'));
+            $this->Session->write('Admin.id', $admin['Admin']['id']);
+            $this->redirect('/admins/');
+        } else {
+            $this->redirect('/admins');
+        }
     }
     
     public function logout() {
