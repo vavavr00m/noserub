@@ -10,7 +10,10 @@ class TwitpicService extends AbstractService {
 	}
 	
 	public function getContent($feeditem) {
-		return $feeditem->get_content();
+		# cut off the username
+		$content = $feeditem->get_content();
+        $content = substr($content, strpos($content, ': ') + 2);
+        return $content;
 	}
 	
 	public function getFeedUrl($username) {
