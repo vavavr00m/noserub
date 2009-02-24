@@ -27,4 +27,3 @@ $data = array(
 
 $Network->id = 1;
 $Network->save($data);
-$this->log(print_r($data, 1), LOG_DEBUG);

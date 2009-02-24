@@ -239,6 +239,9 @@ class AppController extends Controller {
                 # not found. delete the cookie.
                 $this->Cookie->del('li');
             } else {
+                $this->Identity->id = $identity['Identity']['id'];
+                $this->Identity->saveField('last_login', date('Y-m-d H:i:s'));
+                
                 $this->Session->write('Identity', $identity['Identity']);
                 # refresh auto login cookie
                 $this->Cookie->write('li', $login_id, true, '4 weeks');
