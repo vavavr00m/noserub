@@ -83,10 +83,12 @@ class AppController extends Controller {
     }
 
     public function beforeFilter() {
-        # check for auto-login
-        if(!$this->Session->check('Identity.id')) {
-            $this->auto_login();
-        }        
+        if(strpos($this->here, '/system/update') === false) {
+            # check for auto-login
+            if(!$this->Session->check('Identity.id')) {
+                $this->auto_login();
+            }
+        }
         
         $session_theme = $this->Session->read('theme');
         if(isset($this->params['url']['theme'])) {
@@ -187,6 +189,10 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
+        if(strpos($this->here, '/system/update') !== false) {
+            return;
+        }
+        
         if(isset($this->params['requested']) && 
            $this->params['requested'] && !empty($this->params['context'])) {
             # copy the context from the former request
