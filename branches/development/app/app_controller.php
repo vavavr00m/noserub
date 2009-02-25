@@ -83,10 +83,10 @@ class AppController extends Controller {
     }
 
     public function beforeFilter() {
-        if(strpos($this->here, '/system/update') === false) {
+        if(!$this->isSystemUpdatePage()) {
             # check for auto-login
             if(!$this->Session->check('Identity.id')) {
-                $this->auto_login();
+                $this->autoLogin();
             }
         }
         
@@ -172,7 +172,7 @@ class AppController extends Controller {
     }
     
     public function beforeRender() {
-        if($this->viewPath != 'errors' && strpos($this->here, '/system/update') === false) {
+        if($this->viewPath != 'errors' && !$this->isSystemUpdatePage()) {
 	        if(!isset($this->Identity)) {
 	            App::import('Model', 'Identity');
 	            $this->Identity = new Identity();
@@ -189,7 +189,7 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
-        if(strpos($this->here, '/system/update') !== false) {
+        if($this->isSystemUpdatePage()) {
             return;
         }
         
@@ -229,7 +229,7 @@ class AppController extends Controller {
         }
     }
     
-	private function auto_login() {
+	private function autoLogin() {
         $login_id = $this->Cookie->read('li'); # login id
             
         if($login_id) {
@@ -253,5 +253,9 @@ class AppController extends Controller {
                 $this->Cookie->write('li', $login_id, true, '4 weeks');
             }
         }
+    }
+    
+    private function isSystemUpdatePage() {
+    	return (strpos($this->here, '/system/update') !== false) ? true : false;
     }
 }
