@@ -115,7 +115,6 @@ class Service extends AppModel {
     		    break;
     		}
     		
-    		$item['title']     = $feeditem->get_title();
     		$item['url']       = $feeditem->get_link();
             $item['intro']     = $intro;
             $item['type']      = $token;
@@ -127,14 +126,11 @@ class Service extends AppModel {
 
             if($service) {
             	$item['content'] = $service->getContent($feeditem);
-            	
-            	if($service instanceof TwitterService ||
-            	   $service instanceof IdenticaService) {
-            		$item['title']   = $item['content'];
-            	}
+            	$item['title']   = $service->getTitle($feeditem);            	
             } else {
                 $this->log('service_id ' . $service_id . ' not found!', LOG_DEBUG);
             	$item['content'] = $feeditem->get_content();
+            	$item['title']   = $feeditem->get_title();
             }
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
@@ -332,6 +328,10 @@ abstract class AbstractService extends Object {
 	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
+	}
+	
+	public function getTitle($feeditem) {
+	    return $feeditem->get_title();
 	}
 	
 	public function getFeedUrl($username) {
