@@ -9,8 +9,12 @@ class GooglecodeService extends AbstractService {
 		return 'http://code.google.com/u/'.$username;
 	}
 	
+	public function getTitle($feeditem) {
+		return strip_tags($feeditem->get_content());
+	}
+	
 	public function getContent($feeditem) {
-		return $feeditem->get_content();
+		return $feeditem->get_title();
 	}
 	
 	public function getFeedUrl($username) {

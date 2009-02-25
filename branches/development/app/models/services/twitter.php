@@ -9,6 +9,10 @@ class TwitterService extends AbstractService {
 		return 'http://twitter.com/'.$username;
 	}
 	
+	public function getTitle($feeditem) {
+	    return $this->getContent($feeditem);
+	}
+	
 	public function getContent($feeditem) {
 		# cut off the username
 		$content = $feeditem->get_content();
