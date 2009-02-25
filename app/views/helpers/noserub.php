@@ -40,7 +40,7 @@ class NoserubHelper extends AppHelper {
     public function widgetAdminLogin() {
         return $this->out('/widgets/admin_login/');
     }
-    
+
     public function widgetNetworkLifestream() {
         return $this->out('/widgets/lifestream/', array('type' => 'network'));
     }
@@ -49,13 +49,19 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/lifestream/', array('type' => 'single'));
     }
 
-    public function widgetGroups() {
-        return $this->out('/widgets/groups/');
+    /**
+     * generic method for the more simple widgets
+     * 
+     * TODO: think about adding a whitelist
+     */
+    public function __call($name, $arguments) {
+        $name = str_replace('widget', '', $name);
+        $name = Inflector::underscore($name);
+        
+        return $this->out('/widgets/' . $name, $arguments);
     }
+        
     
-    public function widgetNetworks() {
-        return $this->out('/widgets/networks/');
-    }
     
     public function formNetworks() {
         return $this->out('/widgets/form_networks/');

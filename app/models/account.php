@@ -10,6 +10,22 @@ class Account extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
+                
+    /**
+     * get either all web accounts, or all
+     * those with is_contact = 1
+     */
+    public function get($identity_id, $type) {
+        return $this->find('all', array(
+            'contain' => array('Service'),
+            'conditions' => array(
+                'identity_id' => $identity_id,
+                'is_contact'  => ($type == 'contact')
+            )
+        ));
+    }
+    
+    
     /**
      * get's data from RSS (for example) of this
      * account.
