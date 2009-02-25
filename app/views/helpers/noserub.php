@@ -18,27 +18,11 @@ class NoserubHelper extends AppHelper {
         }
     }
     
-    public function widgetNewestUsers() {
-        return $this->out('/widgets/new_users/');
-    }
-    
-    public function widgetContactFilter() {
-        return $this->out('/widgets/contact_filter');
-    }
-    
     public function widgetNavigation($type = 'meta') {
         if($type != 'meta' && $type != 'main') {
             return $this->out('');
         }
         return $this->out('/widgets/navigation/', array('type' => $type));
-    }
-    
-    public function widgetAdminMenu() {
-        return $this->out('/widgets/admin_navigation/');
-    }
-    
-    public function widgetAdminLogin() {
-        return $this->out('/widgets/admin_login/');
     }
 
     public function widgetNetworkLifestream() {
@@ -59,9 +43,7 @@ class NoserubHelper extends AppHelper {
         $name = Inflector::underscore($name);
         
         return $this->out('/widgets/' . $name, $arguments);
-    }
-        
-    
+    }    
     
     public function formNetworks() {
         return $this->out('/widgets/form_networks/');
