@@ -33,5 +33,5 @@ $is_self = isset($about_identity['id']) &&
     	} else if(isset($about_identity['id'])){
     	    echo $noserub->widgetContacts(array('identity_id' => $about_identity['id']));
     	} ?>
-    	<?php echo $noserub->widgetNewestUsers(); ?>
+    	<?php echo $noserub->widgetNewUsers(); ?>
     </div>

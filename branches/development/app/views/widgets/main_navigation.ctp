@@ -40,7 +40,7 @@
             <?php } ?>
         </li>
     </ul>
-    <?php echo $noserub->widgetAdminMenu(); ?>
+    <?php echo $noserub->widgetAdminNavigation(); ?>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
 <?php } ?>
