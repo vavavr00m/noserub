@@ -141,33 +141,34 @@ class Identity extends AppModel {
         return parent::afterFind($data);
     }
     
-    public function getSubscribedGroups($context) {
+    public function getSubscribedGroups() {
+        if(!$this->id) {
+            return false;
+        }
+        
         $data = false;
-        if($context['logged_in_identity']) {
-            $this->id = $context['logged_in_identity']['id'];
-            $data = $this->find('first', array(
-                'contain' => array('SubscribedGroup')
-            ));
-
-            if($data) {
-                $data = $data['SubscribedGroup'];
-            }
+        $data = $this->find('first', array(
+            'contain' => array('SubscribedGroup')
+        ));
+        if($data) {
+            $data = $data['SubscribedGroup'];
         }
 
         return $data;
     }
     
-    public function getSubscribedNetworks($context) {
+    public function getSubscribedNetworks() {
+        if(!$this->id) {
+            return false;
+        }
+        
         $data = false;
-        if($context['logged_in_identity']) {
-            $this->id = $context['logged_in_identity']['id'];
-            $networks = $this->find('first', array(
-                'contain' => array('SubscribedNetwork', 'Network')
-            ));
-            if($networks) {
-                $data = $networks['SubscribedNetwork'];
-                $data[] = $networks['Network'];
-            }
+        $networks = $this->find('first', array(
+            'contain' => array('SubscribedNetwork', 'Network')
+        ));
+        if($networks) {
+            $data = $networks['SubscribedNetwork'];
+            $data[] = $networks['Network'];
         }
         
         return $data;

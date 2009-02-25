@@ -4,6 +4,6 @@
 </div>
 
 <div id="rechts">
-    <h2><?php __('Accounts'); ?></h2>
     <?php echo $noserub->widgetContacts(); ?>
+    <?php echo $noserub->widgetNetworks(); ?>
 </div>
