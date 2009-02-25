@@ -1,5 +1,5 @@
-<?php if($context['logged_in_identity']) { ?>
-    <?php if(!$context['admin_id']) { ?>
+<?php if(Configure::read('context.logged_in_identity')) { ?>
+    <?php if(!Configure::read('context.admin_id')) { ?>
         <h2><?php __('Admin-Login'); ?></h2>
         <?php echo $form->create(array('url' => '/admins/login/')); ?>
         <?php echo $form->input('Admin.username', array('label' => __('Admin username', true))); ?>

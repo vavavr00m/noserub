@@ -9,7 +9,7 @@ class AdminsController extends AppController {
     }
     
     public function login() {
-        if(!$this->context['logged_in_identity']) {
+        if(!Configure::read('context.logged_in_identity')) {
             # you need to be logged in as identity,
             # if you want to gain admin access
             $this->redirect('/admins/');
@@ -25,7 +25,7 @@ class AdminsController extends AppController {
         $admin = $this->Admin->find('first', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => $this->context['network_id'],
+                'network_id' => Configure::read('context.network.id'),
                 'username' => $this->data['Admin']['username'],
                 'password' => md5($this->data['Admin']['password']),
             )

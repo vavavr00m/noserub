@@ -28,21 +28,6 @@ class AppController extends Controller {
      */
     public $uses = array(); 
     
-    /**
-     * a "context" array that will hold information about
-     * the current status. That means: which pages is being
-     * displayed, which is the logged in user, etc..
-     * The goal is to have this universally available in all
-     * controllers and all views.
-     */
-    public $context = array(
-        'logged_in_identity' => false,
-        'network_id' => 1, # default for now
-        'identity' => false, # the identity we're looking at,
-        'is_self' => false, # wether the identity we look at is the logged in identity
-        'admin_id' => false # wether the identity is logged in with admin access right now
-    );
-    
     public function flashMessage($type, $message) {
         $flash_messages = $this->Session->read('FlashMessages');
         $flash_messages[$type][] = $message;
@@ -180,8 +165,6 @@ class AppController extends Controller {
 	        # set new security_token
 	        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
         }
-        
-        $this->set('context', $this->context);
     }
     
     public function afterFilter() {
@@ -193,19 +176,25 @@ class AppController extends Controller {
             return;
         }
         
-        if(isset($this->params['requested']) && 
-           $this->params['requested'] && !empty($this->params['context'])) {
-            # copy the context from the former request
-            $this->context = $this->params['context'];
-            return;
+        if(!isset($this->Network)) {
+            App::import('Model', 'Network');
+            $this->Network = new Network;
         }
+        
+        # get the network data. right now, always
+        # for network_id 1
+        $data = $this->Network->find('first', array(
+            'contain' => false,
+            'conditions' => array('id' => 1)
+        ));
+        Configure::write('context.network', $data['Network']);
 
-        $this->context['logged_in_identity'] = $this->Session->read('Identity');
+        Configure::write('context.logged_in_identity', $this->Session->read('Identity'));
         
         if($this->Session->read('Admin.id')) {
-            $this->context['admin_id'] = $this->Session->read('Admin.id');
+            Configure::write('context.admin_id', $this->Session->read('Admin.id'));
         } else {
-            $this->context['admin_id'] = 0;
+            Configure::write('context.admin_id', 0);
         }
         
         # if we're looking on the page of someone else, get the identity
@@ -221,11 +210,11 @@ class AppController extends Controller {
             
             $this->Identity->contain();
             $data = $this->Identity->findByUsername($username);
-            $this->context['identity'] = $data['Identity'];
+            Configure::write('context.identity', $data['Identity']);
         }
         
-        if($this->context['logged_in_identity'] && $this->context['identity']) {
-            $this->context['is_self'] = $this->context['logged_in_identity']['id'] == $this->context['identity']['id'];
+        if(Configure::read('context.logged_in_identity') && Configure::read('context.identity')) {
+            Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
         }
     }
     

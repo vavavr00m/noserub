@@ -294,14 +294,14 @@ class Identity extends AppModel {
     /**
      * Returns the newest identities.
      */
-    public function getNewbies($context, $limit = null) {
+    public function getNewbies($limit = null) {
         $this->contain();
 
         $newbies = $this->find(
             'all', 
             array(
                 'conditions' => array(
-                    'network_id' => $context['network_id'],
+                    'network_id' => Configure::read('context.network.id'),
         			'frontpage_updates' => 1,
         			'hash' => '',
         			'username NOT LIKE "%@%"'
@@ -488,7 +488,7 @@ class Identity extends AppModel {
         return isset($hcards[0]) ? $hcards[0] : false;
     }
     
-    public function register($context, $data) {
+    public function register($data) {
         $isAccountWithOpenID = isset($data['Identity']['openid']);
     	
     	# transform it to a real username
@@ -499,7 +499,7 @@ class Identity extends AppModel {
             return false;
         }
         $this->create();
-        $data['Identity']['network_id']       = $context['network_id'];
+        $data['Identity']['network_id']       = Configure::read('context.network.id');
         $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
@@ -688,7 +688,7 @@ class Identity extends AppModel {
         );
     }
     
-    public function import($context, $data) {
+    public function import($data) {
         if(!$this->exists()) {
             return false;
         }
@@ -733,7 +733,7 @@ class Identity extends AppModel {
         }
         
         $contacts = isset($data['contacts']) ? $data['contacts'] : array();
-        if(!$this->Contact->import($context, $this->id, $contacts)) {
+        if(!$this->Contact->import($this->id, $contacts)) {
             $this->log('error on importing contacts');
             return false;
         }

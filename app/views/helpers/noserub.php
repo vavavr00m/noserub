@@ -68,9 +68,6 @@ class NoserubHelper extends AppHelper {
     private function out($action, $data = array()) {        
         $data[] = 'return';
         
-        $View = ClassRegistry::getObject('view');
-        $data['context'] = $View->viewVars['context'];
-
         return $this->output($this->requestAction($action, $data));
     }
 }

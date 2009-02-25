@@ -31,7 +31,6 @@ class ConfigurationChecker {
 			new ConfigDefinition('NoseRub.admin_hash'),
 			new ConfigDefinition('NoseRub.allow_twitter_bridge', new BooleanValidator()),
 			new ConfigDefinition('NoseRub.api_info_active', new BooleanValidator()),
-			new ConfigDefinition('NoseRub.app_name'),
 			new ConfigDefinition('NoseRub.cdn_s3_access_key'),
 			new ConfigDefinition('NoseRub.cdn_s3_secret_key'),
 			new ConfigDefinition('NoseRub.cdn_s3_bucket'),

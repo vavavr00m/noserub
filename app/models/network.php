@@ -25,12 +25,12 @@ class Network extends AppModel {
         ));        
 	}
 	
-	public function getSubscribable($context) {
+	public function getSubscribable() {
 		return $this->find('all',array(
             'contain' => array(
                 'NetworkSubscriber' => array(
                     'conditions' => array(
-                        'identity_id' => $context['logged_in_identity']
+                        'identity_id' => Configure::read('context.logged_in_identity')
                     )
                 )
             ),

@@ -3,7 +3,7 @@
 /**
  * The name of this NoseRub server. This is used for the title.
  */
-Configure::write('NoseRub.app_name', 'NoseRub');
+#Configure::write('NoseRub.app_name', 'NoseRub');
 
 /**
  * The URL, under which your NoseRub installation

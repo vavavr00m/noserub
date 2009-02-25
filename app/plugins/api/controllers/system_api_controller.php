@@ -17,7 +17,8 @@ class SystemApiController extends ApiAppController {
                 'num_users' => $this->getNumberOfUsers(),
                 'registration_type' => Configure::read('NoseRub.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
-                'migration' => $this->Migration->getCurrentMigration()
+                'migration' => $this->Migration->getCurrentMigration(),
+                'allow_subscriptions' => Configure::read('context.network.allow_subscriptions')
             );
         }
         
@@ -28,7 +29,7 @@ class SystemApiController extends ApiAppController {
     private function getNumberOfUsers() {
     	$this->Identity->contain();
         $conditions = array(
-            'network_id' => $this->context['network_id'],
+            'network_id' => Configure::read('context.Network.id'),
             'email <>'   => '',
             'hash'       => '',
             'NOT username LIKE "%@"'
