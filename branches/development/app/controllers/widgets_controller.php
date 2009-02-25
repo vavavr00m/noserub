@@ -12,8 +12,13 @@ class WidgetsController extends AppController {
      public function navigation() {
          $this->dynamicUse('Identity');
          
-         $this->set('groups', $this->Identity->getSubscribedGroups($this->context));
-         $this->set('networks', $this->Identity->getSubscribedNetworks($this->context));
+         if($this->context['logged_in_identity']) {
+             $this->Identity->id = $this->context['logged_in_identity']['id'];
+         } else {
+             $this->Identity->id = false;
+         }
+         $this->set('groups', $this->Identity->getSubscribedGroups());
+         $this->set('networks', $this->Identity->getSubscribedNetworks());
     
          $type = isset($this->params['type']) ? $this->params['type'] : 'main';
          $this->render($type . '_navigation');
@@ -28,6 +33,16 @@ class WidgetsController extends AppController {
  	/**
  	 * Networks
  	 */
+ 	
+ 	/**
+ 	 * display networks that this user subscribed to
+ 	 */
+ 	public function networks() {
+        $this->dynamicUse('Identity');
+ 	     
+ 	    $this->Identity->id = $this->getIdentityId();
+ 	    $this->set('networks', $this->Identity->getSubscribedNetworks());
+ 	}
  	
  	/**
  	 * display a form to manage networks
