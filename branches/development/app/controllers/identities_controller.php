@@ -56,7 +56,7 @@ class IdentitiesController extends AppController {
                 array(
                     'conditions' => array(
                         'username'   => $username,
-                        'network_id' => $this->context['network_id'],
+                        'network_id' => Configure::read('context.network.id'),
                         'hash'       => ''
                     )
                 )
@@ -339,7 +339,7 @@ class IdentitiesController extends AppController {
                 $msg .= __('If you want to reply to this message, go to ', true) . 'http://' . $session_identity['username'] . '/' . "\n";
             
                 $email = $about_identity['Identity']['email'];
-                if(!mail($email, '['. Configure::read('NoseRub.app_name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
+                if(!mail($email, '['. Configure::read('context.network.name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
                     $this->flashMessage('alert', __('Your Message could not be delivered to ', true) . $name);
                 } else {
@@ -721,7 +721,7 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $identity = $this->Identity->findById($identity_id);
 
-        if(!$identity || $identity['Identity']['network_id'] == $this->context['network_id']) {
+        if(!$identity || $identity['Identity']['network_id'] == Configure::read('context.network.id')) {
             # we could not find it, or this is a local identity
             return false;
         }
@@ -761,7 +761,7 @@ class IdentitiesController extends AppController {
             'all', 
             array(
                 'conditions' => array(
-                    'network_id' => $this->context['network_id']
+                    'network_id' => Configure::read('context.network.id')
                 ), 
                 'order' => array(
                     'last_sync ASC'
@@ -943,7 +943,7 @@ class IdentitiesController extends AppController {
                 return;
             }
         } else if($this->data) {
-            $conditions = array('network_id' => $this->context['network_id']);
+            $conditions = array('network_id' => Configure::read('context.network.id'));
             if($this->data['Identity']['username']) {
                 $splitted = $this->Identity->splitUsername($this->data['Identity']['username']);
                 $conditions['Identity.username'] = $splitted['username'];

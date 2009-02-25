@@ -16,8 +16,8 @@ class WidgetsController extends AppController {
     public function navigation() {
         $this->dynamicUse('Identity');
          
-        if($this->context['logged_in_identity']) {
-            $this->Identity->id = $this->context['logged_in_identity']['id'];
+        if(Configure::read('context.logged_in_identity')) {
+            $this->Identity->id = Configure::read('context.logged_in_identity.id');
         } else {
             $this->Identity->id = false;
         }
@@ -74,7 +74,7 @@ class WidgetsController extends AppController {
     public function form_networks() {
         $this->dynamicUse('Network');
         
-        $this->set('networks', $this->Network->getSubscribable($this->context));        
+        $this->set('networks', $this->Network->getSubscribable());        
  	}
  	
  	/**
@@ -96,10 +96,10 @@ class WidgetsController extends AppController {
  	 */
  	 
  	public function contact_filter() {
- 	    if($this->context['is_self']) {
+ 	    if(Configure::read('Context.is_self')) {
  	        $this->dynamicUse('Contact');
  	    
- 	        $this->set('contact_tags', $this->Contact->getTagList($this->context['logged_in_identity']['id']));
+ 	        $this->set('contact_tags', $this->Contact->getTagList(Configure::read('context.logged_in_identity.id')));
         } else {
             return false;
         }
@@ -112,7 +112,7 @@ class WidgetsController extends AppController {
     public function new_users() {
         $this->dynamicUse('Identity');
         
-	    $this->set('data', $this->Identity->getNewbies($this->context, 9));
+	    $this->set('data', $this->Identity->getNewbies(9));
 	}
 	
 	/**
@@ -136,7 +136,7 @@ class WidgetsController extends AppController {
         }
         
         # get (filtered) contacts
-        if($this->context['is_self']) {
+        if(Configure::read('context.is_self')) {
             # this is my network, so I can show every contact
             $contact_filter = array('tag' => $tag_filter);
         } else {
@@ -219,7 +219,7 @@ class WidgetsController extends AppController {
         $filter = $show_in_overview;
 
         if($type == 'network') {
-            $data = $this->Contact->getForDisplay($this->context['logged_in_identity']['id'], array('tag' => 'all'));
+            $data = $this->Contact->getForDisplay(Configure::read('context.logged_in_identity.id'), array('tag' => 'all'));
         
             # we need to go through all this now and get Accounts and Services
             # also save all contacts
@@ -229,9 +229,9 @@ class WidgetsController extends AppController {
             }
 
             $contact_ids = Set::extract($contacts, '{n}.id');
-            $contact_ids[] = $this->context['logged_in_identity']['id'];
+            $contact_ids[] = Configure::read('context.logged_in_identity.id');
         } else {
-            $contact_ids = array($this->context['identity']['id']);
+            $contact_ids = array(Configure::read('context.identity.id'));
         }
         # get last 100 items
         $conditions = array(
@@ -284,11 +284,11 @@ class WidgetsController extends AppController {
         if(!$identity_id) {
             # if no identity_id was given in the params, use the one
             # from the current page
-            if($this->context['identity']) {
-                $identity_id = $this->context['identity']['id'];
-            } else if($this->context['logged_in_identity']) {
+            if(Configure::read('context.identity')) {
+                $identity_id = Configure::read('context.identity.id');
+            } else if(Configure::read('context.logged_in_identity')) {
                 # if not, use the logged in identity
-                $identity_id = $this->context['logged_in_identity']['id'];
+                $identity_id = Configure::read('context.logged_in_identity.id');
             }
          }
      

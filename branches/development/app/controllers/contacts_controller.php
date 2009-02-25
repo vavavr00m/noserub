@@ -149,7 +149,7 @@ class ContactsController extends AppController {
                 # check, if this is unique
                 if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
                     $this->Contact->Identity->create();
-                    $identity = array('network_id' => $this->context['network_id'],
+                    $identity = array('network_id' => Configure::read('context.network.id'),
                                       'username' => $new_splitted['username']);
                     $saveable = array('network_id', 'username', 'created', 'modified');
                     $this->Contact->Identity->save($identity, true, $saveable);
