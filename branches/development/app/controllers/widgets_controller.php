@@ -5,23 +5,27 @@ class WidgetsController extends AppController {
     public $components = array('cluster');
     public $helpers = array('nicetime');
     
+    private $generic_methods = array(
+        'admin_navigation', 'admin_login'
+    );
+        
     /**
      * Various elements / pages
      */
      
-     public function navigation() {
-         $this->dynamicUse('Identity');
+    public function navigation() {
+        $this->dynamicUse('Identity');
          
-         if($this->context['logged_in_identity']) {
-             $this->Identity->id = $this->context['logged_in_identity']['id'];
-         } else {
-             $this->Identity->id = false;
-         }
-         $this->set('groups', $this->Identity->getSubscribedGroups());
-         $this->set('networks', $this->Identity->getSubscribedNetworks());
-    
-         $type = isset($this->params['type']) ? $this->params['type'] : 'main';
-         $this->render($type . '_navigation');
+        if($this->context['logged_in_identity']) {
+            $this->Identity->id = $this->context['logged_in_identity']['id'];
+        } else {
+            $this->Identity->id = false;
+        }
+        $this->set('groups', $this->Identity->getSubscribedGroups());
+        $this->set('networks', $this->Identity->getSubscribedNetworks());
+        
+        $type = isset($this->params['type']) ? $this->params['type'] : 'main';
+        $this->render($type . '_navigation');
  	}
  	
  	public function admin_navigation() {
@@ -29,6 +33,26 @@ class WidgetsController extends AppController {
  	
  	public function admin_login() {
  	}
+ 	
+ 	/**
+ 	 * Accounts
+ 	 */
+ 	public function accounts() {
+ 	    $this->dynamicUse('Account');
+ 	    
+ 	    $identity_id = $this->getIdentityId();
+ 	    $this->set('accounts', $this->Account->get($identity_id, 'web'));
+ 	} 
+ 	
+ 	/**
+ 	 * Communications
+ 	 */
+ 	public function communications() {
+ 	    $this->dynamicUse('Account');
+ 	    
+ 	    $identity_id = $this->getIdentityId();
+        $this->set('communications', $this->Account->get($identity_id, 'contact'));
+ 	} 
  	
  	/**
  	 * Networks
