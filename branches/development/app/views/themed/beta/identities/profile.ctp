@@ -5,5 +5,6 @@
 
 <div id="rechts">
     <?php echo $noserub->widgetContacts(); ?>
+    <?php echo $noserub->widgetGroups(); ?>
     <?php echo $noserub->widgetNetworks(); ?>
 </div>

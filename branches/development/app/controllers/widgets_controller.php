@@ -54,6 +54,20 @@ class WidgetsController extends AppController {
  	}
  	
  	/**
+ 	 * Groups
+ 	 */
+ 	
+ 	/**
+ 	 * display groups that this user subscribed to
+ 	 */
+ 	public function groups() {
+        $this->dynamicUse('Identity');
+ 	     
+ 	    $this->Identity->id = $this->getIdentityId();
+ 	    $this->set('groups', $this->Identity->getSubscribedGroups());
+ 	}
+ 	
+ 	/**
  	 * Filters
  	 */
  	 

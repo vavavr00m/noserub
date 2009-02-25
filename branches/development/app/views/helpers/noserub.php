@@ -49,8 +49,12 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/lifestream/', array('type' => 'single'));
     }
 
+    public function widgetGroups() {
+        return $this->out('/widgets/groups/');
+    }
+    
     public function widgetNetworks() {
-        return $this->out('/widgets/networks');
+        return $this->out('/widgets/networks/');
     }
     
     public function formNetworks() {
