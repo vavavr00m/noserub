@@ -88,15 +88,15 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, whether host of email address matches NoseRub.registration_restricted_hosts
+     * check, whether host of email address matches context.network.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (Configure::read('NoseRub.registration_restricted_hosts') === false ||
+        if (Configure::read('context.network.registration_restricted_hosts') === false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', Configure::read('NoseRub.registration_restricted_hosts')));
+        return in_array($host, explode(' ', Configure::read('context.network.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {

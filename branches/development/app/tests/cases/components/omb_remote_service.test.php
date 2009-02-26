@@ -9,7 +9,7 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 	
 	public function setUp() {
 		$this->component = new OmbRemoteServiceComponent();
-		$this->urlOfXRDS = Configure::read('NoseRub.full_base_url') . 'testing/identica_0.6.xrds';
+		$this->urlOfXRDS = Configure::read('context.network.url') . 'testing/identica_0.6.xrds';
 	}
 	
 	public function testDiscoverLocalService() {
@@ -23,7 +23,7 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 	
 	public function testDiscoverLocalServiceFromNonExistingUrl() {
 		try {
-			$this->component->discoverLocalService(Configure::read('NoseRub.full_base_url') . 'testing/notexisting');
+			$this->component->discoverLocalService(Configure::read('context.network.url') . 'testing/notexisting');
 			$this->assertTrue(false);
 		} catch (Exception $e) {
 			$this->assertTrue(true);

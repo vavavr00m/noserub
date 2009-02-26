@@ -36,7 +36,7 @@ class AppController extends Controller {
     
     /**
      * Makes sure we redirect to the https url,
-     * when NoseRub.use_ssl is used and we're not
+     * when context.network.use_ssl is used and we're not
      * on a secure page
      */
     public function checkSecure() {
@@ -44,7 +44,7 @@ class AppController extends Controller {
             return;
         }
         
-        if(Configure::read('NoseRub.use_ssl')) {
+        if(Configure::read('context.network.use_ssl')) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);

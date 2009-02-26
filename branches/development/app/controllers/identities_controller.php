@@ -649,16 +649,16 @@ class IdentitiesController extends AppController {
     private function loginWithOpenID() {
     	$protocol = 'http://';
     	
-    	if (Configure::read('NoseRub.use_ssl')) {
+    	if(Configure::read('context.network.use_ssl')) {
     		$protocol = 'https://';
     	}
     	
     	$returnTo = $protocol.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
     	
-    	if (!empty($this->data)) {
+    	if(!empty($this->data)) {
     		$this->Session->write('OpenidLogin.remember', $this->data['Identity']['remember']);
     		
-    		if (Configure::read('NoseRub.use_ssl')) {
+    		if(Configure::read('context.network.use_ssl')) {
     			$this->Session->write('OpenidLogin.openid', $this->data['Identity']['openid']);
     			// we switch to http for submitting the OpenID to the OpenID provider to avoid browser warning 
     			$this->redirect(str_replace('https', 'http', Router::url('/pages/login/openid', true)));
@@ -672,7 +672,7 @@ class IdentitiesController extends AppController {
     		$response = $this->getOpenIDResponseIfSuccess($returnTo);
     		$identity = $this->Identity->getIdentityByOpenIDResponse($response);
     		
-    		if ($identity) {
+    		if($identity) {
     			return $identity;
     		}
     		
