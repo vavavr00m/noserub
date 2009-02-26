@@ -92,7 +92,7 @@ class AppController extends Controller {
         if(!$language) {
             # if not, get NoseRub default language and save it
             # in the session
-            $language = Configure::read('NoseRub.default_language');
+            $language = Configure::read('context.network.default_language');
             $this->Session->write('Config.language', $language);
         }
         # now set the language
