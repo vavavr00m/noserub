@@ -20,7 +20,7 @@ Configure::write('NoseRub.full_base_url', 'http://');
 /**
  * Default Language for this installation
  */
-Configure::write('NoseRub.default_language', 'en-en'); # try 'de-de' :-)
+#Configure::write('NoseRub.default_language', 'en-en'); # try 'de-de' :-)
 
 /**
  * A hash value to protect some admin routes from execution by
@@ -61,7 +61,7 @@ Configure::write('NoseRub.manual_feeds_update', false);
  * invitation = only the admin can invite people to register. 
  *              (this is yet not implemented)
  */
-Configure::write('NoseRub.registration_type', 'all');
+#Configure::write('NoseRub.registration_type', 'all');
 
 /**
  * E-Mail address, that is put into the From: header,
@@ -98,7 +98,7 @@ Configure::write('NoseRub.use_ssl', false);
  * on which you want to use the API Key.
  * If set to false, no geocoding is done.
  */
-Configure::write('NoseRub.google_maps_key', false);
+#Configure::write('NoseRub.google_maps_key', false);
 
 /**
  * For better reliability, NoseRub can store some data to

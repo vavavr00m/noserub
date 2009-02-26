@@ -15,7 +15,7 @@ class SystemApiController extends ApiAppController {
             $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->getNumberOfUsers(),
-                'registration_type' => Configure::read('NoseRub.registration_type'),
+                'registration_type' => Configure::read('context.network.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
                 'migration' => $this->Migration->getCurrentMigration(),
                 'allow_subscriptions' => Configure::read('context.network.allow_subscriptions')

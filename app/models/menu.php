@@ -136,7 +136,7 @@ class MenuFactory {
 		$registrationType = '';
 		
 		if(!isset($options['registration_type'])) {
-			$registrationType = Configure::read('NoseRub.registration_type');
+			$registrationType = Configure::read('context.network.registration_type');
 		} else {
 			$registrationType = $options['registration_type'];
 		}
