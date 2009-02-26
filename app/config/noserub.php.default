@@ -15,7 +15,7 @@
  * http://myserver.com/ here. When your installation is available
  * directly under http://myserver.com/, just put http://myserver.com/ here.
  */
-Configure::write('NoseRub.full_base_url', 'http://');
+#Configure::write('NoseRub.full_base_url', 'http://');
 
 /**
  * Default Language for this installation
@@ -86,7 +86,7 @@ Configure::write('NoseRub.smtp_options', array(
  * When true, https (Port 443) is used for sensitive 
  * pages like /pages/login/ and /pages/register/
  */
-Configure::write('NoseRub.use_ssl', false);
+#Configure::write('NoseRub.use_ssl', false);
 
 /**
  * We need a geocoder for get Latitude/Longitude for
@@ -125,7 +125,7 @@ Configure::write('NoseRub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
  * define this setting. You can add more than one host:
  * Configure::write('NoseRub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
  */
-Configure::write('NoseRub.registration_restricted_hosts', false);
+#Configure::write('NoseRub.registration_restricted_hosts', false);
 
 Configure::write('NoseRub.xmpp_full_feed_user', '');
 Configure::write('NoseRub.xmpp_full_feed_password', '');
@@ -148,7 +148,7 @@ Configure::write('NoseRub.xmpp_full_feed_port', 5222);
  * only the information, if this setting is used. If so, your site will be
  * flagged as "not public" on http://noserub.com/sites/.
  */
-Configure::write('NoseRub.api_info_active', false);
+#Configure::write('NoseRub.api_info_active', false);
 
 /**
  * If you, as the admin of this NoseRub installation do not feel

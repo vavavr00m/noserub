@@ -11,8 +11,8 @@ class SystemApiController extends ApiAppController {
     public function info() {
         $data = array();
     	
-    	if (Configure::read('NoseRub.api_info_active')) {
-            $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
+    	if (Configure::read('context.network.api_info_active')) {
+            $restricted_hosts = Configure::read('context.network.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->getNumberOfUsers(),
                 'registration_type' => Configure::read('context.network.registration_type'),

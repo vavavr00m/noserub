@@ -23,7 +23,7 @@ Configure::write('context', array(
 
 Configure::write('NoseRub.version', '0.8.2a');
 
-define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('NoseRub.full_base_url') . ' (http://noserub.com/)');
+define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('context.network.url') . ' (http://noserub.com/)');
 
 ini_set('user_agent', NOSERUB_USER_AGENT);
 
@@ -35,8 +35,8 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,register,social_stream,search,groups,entry');
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', substr(Configure::read('NoseRub.full_base_url'), 0, -1));
+if(!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', substr(Configure::read('context.network.url'), 0, -1));
 }
 
 Configure::write('Languages', array(

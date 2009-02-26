@@ -3,7 +3,7 @@
     if(Configure::read('NoseRub.use_cdn')) {
         $feed_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/';
     } else {
-        $feed_url = Configure::read('NoseRub.full_base_url') . $url . '/feeds/';
+        $feed_url = Configure::read('context.network.url') . $url . '/feeds/';
     } 
 ?>
 <?php $flashmessage->render(); ?>

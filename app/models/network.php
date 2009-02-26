@@ -116,7 +116,7 @@ class Network extends AppModel {
         
         $updated_networks = array();
         foreach($data as $item) {
-            if($item['url'] == Configure::read('NoseRub.full_base_url')) {
+            if($item['url'] == Configure::read('context.network.url')) {
                 # we don't need to set ourselves to that list
                 continue;
             }
