@@ -665,7 +665,7 @@ class IdentitiesController extends AppController {
     		}
     		
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, FULL_BASE_URL);
-    		exit;
+    		return;
     	} else {
     		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
     		$this->Session->delete('OpenidLogin.remember');
