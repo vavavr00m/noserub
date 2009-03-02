@@ -5,7 +5,12 @@
     <ul>
         <?php if(isset($menu) && $menu['logged_in']) { ?>
             <li class="first">
-                <?php echo sprintf(__('You are logged in as <strong>%s</strong>', true), $session->read('Identity.local_username')); ?>
+                <?php if(Configure::read('context.is_guest')) {
+                    $label = $session->read('Identity.username') . ' (' . __('Open-ID', true) . ')';
+                } else {
+                    $label = $session->read('Identity.local_username');
+                } ?>
+                <?php echo sprintf(__('You are logged in as <strong>%s</strong>', true), $label); ?>
             </li>
             <li><?php echo $this->element('languages'); ?></li>
             <li>
