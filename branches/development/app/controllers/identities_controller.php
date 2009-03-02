@@ -584,8 +584,8 @@ class IdentitiesController extends AppController {
     	$this->checkSecure();
     	$sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
     	
-    	if (!empty($this->data) || $this->openid->isOpenIDResponse()) {
-    		if (isset($this->data['Identity']['username'])) {
+    	if(!empty($this->data) || $this->openid->isOpenIDResponse()) {
+    		if(isset($this->data['Identity']['username'])) {
     			$identity = $this->Identity->check($this->data);
     		} else {
     			$identity = $this->loginWithOpenID();
@@ -595,7 +595,7 @@ class IdentitiesController extends AppController {
     		    $this->Session->write('Config.language', $identity['Identity']['language']);
     		    
                 $this->Session->write('Identity', $identity['Identity']);
-                if ($this->Session->check($sessionKeyForOpenIDRequest)) {
+                if($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth');
                 } else {
                     # check, if we should remember this user
@@ -604,8 +604,14 @@ class IdentitiesController extends AppController {
                     } 
                     
                     if(!$this->Session->check('Login.success_url')) {
-	                    $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
-	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
+                        if($this->Session('Login.is_guest')) {
+	                        $this->flashMessage('success', __('Welcome! It\'s nice to have you here.', true));
+	                        $url = $this->url->http('/', true);
+                        } else {
+                            $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
+                            $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
+                        }
+	                    
                     } else {
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
                     	$this->Session->delete('Login.success_url');
@@ -634,7 +640,7 @@ class IdentitiesController extends AppController {
     	$this->checkUnsecure();
     	$openid = $this->Session->read('OpenidLogin.openid');
     	
-    	if ($openid) {
+    	if($openid) {
     		$returnTo = 'https://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
     		$realm = str_replace('http://', 'https://', FULL_BASE_URL);
 		    $this->authenticateOpenID($openid, $returnTo, $realm);

@@ -18,6 +18,7 @@ Configure::write('context', array(
     'network' => array('id' => 1), # default for now, needed for old menu component
     'identity' => false, # the identity we're looking at,
     'is_self' => false, # wether the identity we look at is the logged in identity
+    'is_guest' => false, # wether the identity only logged in with OpenID, without account
     'admin_id' => false # wether the identity is logged in with admin access right now
 ));
 

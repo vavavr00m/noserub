@@ -224,12 +224,21 @@ class Identity extends AppModel {
 
     	$this->save($data, false);
     	
-    	return $this->findById($this->id);
+    	return $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array('id' => $this->id)
+    	));
     }
     
     public function getIdentityByOpenIDResponse($openIDResponse) {
     	$this->contain();
-    	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
+    	$identity = $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array(
+    	        'Identity.hash'   => '', 
+    	        'Identity.openid' => $openIDResponse->identity_url
+    	    )
+    	));
     	
     	if ($identity) {
     		$openIDIdentity = $openIDResponse->message->getArg('http://openid.net/signon/1.0', 'identity');

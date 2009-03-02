@@ -216,6 +216,11 @@ class AppController extends Controller {
         if(Configure::read('context.logged_in_identity') && Configure::read('context.identity')) {
             Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
         }
+        
+        if(Configure::read('context.logged_in_identity')) {
+            $logged_in_identity = Configure::read('context.logged_in_identity');
+            Configure::write('context.is_guest', $logged_in_identity ? true : false);
+        }
     }
     
 	private function autoLogin() {
