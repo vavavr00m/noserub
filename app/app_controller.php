@@ -219,7 +219,7 @@ class AppController extends Controller {
         
         if(Configure::read('context.logged_in_identity')) {
             $logged_in_identity = Configure::read('context.logged_in_identity');
-            Configure::write('context.is_guest', $logged_in_identity ? true : false);
+            Configure::write('context.is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
         }
     }
     

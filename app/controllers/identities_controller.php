@@ -604,7 +604,7 @@ class IdentitiesController extends AppController {
                     } 
                     
                     if(!$this->Session->check('Login.success_url')) {
-                        if($this->Session('Login.is_guest')) {
+                        if($this->Session->read('Login.is_guest')) {
 	                        $this->flashMessage('success', __('Welcome! It\'s nice to have you here.', true));
 	                        $url = $this->url->http('/', true);
                         } else {
