@@ -12,8 +12,13 @@ class AdminsController extends AppController {
         if(!Configure::read('context.logged_in_identity')) {
             # you need to be logged in as identity,
             # if you want to gain admin access
-            $this->redirect('/admins/');
-            return;
+            
+            # but if there is no identity yet, to which you could log in...
+            $this->dynamicUse('Identity');
+            if($this->Identity->isIdentityAvailableForLogin()) {
+                $this->redirect('/admins/');
+                return;
+            }
         }
         
         if(!$this->data) {

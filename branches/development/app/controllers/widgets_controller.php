@@ -253,26 +253,6 @@ class WidgetsController extends AppController {
      */
       
     /**
-     * imports model when they are not available yet. this
-     * is similar to the uses() array in Cake, but more specific
-     * to what is needed.
-     *
-     * @param mixed $models either string or array of model names
-     */
-     private function dynamicUse($models) {
-         if(!is_array($models)) {
-             $models = array($models);
-         }
-
-        foreach($models as $model) {
-             if(!isset($this->{$model})) {
-                 App::import('Model', $model);
-                 eval ("\$this->{$model} = new {$model}();");
-             }
-         }
-     }
-     
-    /**
      * If no identity_id was given by param, we're looking
      * for the identity we currently look at. if none
      * is found, the logged in identity is used
