@@ -190,7 +190,8 @@ class AppController extends Controller {
         
         if(!$data['Network']['url']) {
             # when no URL is found, we try to guess it
-            $data['Network']['url'] = 'http://' . $_SERVER['HTTP_HOST'] . $this->webroot;
+            $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+            $data['Network']['url'] = 'http://' . $http_host . $this->webroot;
         }
         
         Configure::write('context.network', $data['Network']);
