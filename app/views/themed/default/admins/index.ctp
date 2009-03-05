@@ -1,5 +1,5 @@
 <div class="vcard">
-    <h2>Admin</h2>
+    <?php echo $noserub->formAdminSettings(); ?>
 </div>
 <div id="sidebar">
     <?php echo $noserub->widgetAdminLogin(); ?>

@@ -49,6 +49,10 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/form_networks/');
     }
     
+    public function formAdminSettings() {
+        return $this->out('/widgets/form_admin_settings/');
+    }
+    
     public function fnAvatarBaseUrl() {
         $url = '';
     	

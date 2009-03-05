@@ -256,27 +256,50 @@ class AppController extends Controller {
         }
     }
     
-    private function isSystemUpdatePage() {
-    	return (strpos($this->here, '/system/update') !== false) ? true : false;
+    /**
+     * stores the validation errors and the actual data that was
+     * submitted to the session. this is needed, because of our
+     * widget system and doing redirects in it.
+     *
+     * you can see how it is used in AdminsController::settings()
+     *
+     * also see AppController::retrieveFormErrors()
+     */
+    public function storeFormErrors($modelName, $data, $validationErrors) {
+        $formErrors = $this->Session->read('FormErrors');
+        if(!$formErrors) {
+            $formErrors = array();
+        }
+        $formErrors[$modelName] = array(
+            'data' => $data,
+            'validationErrors' => $validationErrors
+        );
+        $this->Session->write('FormErrors', $formErrors);
     }
     
     /**
-     * imports model when they are not available yet. this
-     * is similar to the uses() array in Cake, but more specific
-     * to what is needed.
+     * retrieving form errors for a given model from the session.
+     * $this->data is set to the previous data, so we can show
+     * the user what was wrong and also retsore the validationErrors,
+     * so that the form helpers can display them.
      *
-     * @param mixed $models either string or array of model names
+     * you can see how it is used in WidgetsController::form_admin_settings()
+     *
+     * also see AppController::storeFormErrors()
      */
-     protected function dynamicUse($models) {
-         if(!is_array($models)) {
-             $models = array($models);
-         }
-
-        foreach($models as $model) {
-             if(!isset($this->{$model})) {
-                 App::import('Model', $model);
-                 eval ("\$this->{$model} = new {$model}();");
-             }
-         }
-     }
+    public function retrieveFormErrors($modelName) {
+        $formErrors = $this->Session->read('FormErrors');
+        if(is_array($formErrors)) {
+            if(isset($formErrors[$modelName])) {
+                $this->data = $formErrors[$modelName]['data'];
+                $this->{$modelName}->validationErrors = $formErrors[$modelName]['validationErrors'];
+                unset($formErrors[$modelName]);
+                $this->Session->write('FormErrors', $formErrors);
+            }
+        }
+    }
+    
+    private function isSystemUpdatePage() {
+    	return (strpos($this->here, '/system/update') !== false) ? true : false;
+    }
 }
