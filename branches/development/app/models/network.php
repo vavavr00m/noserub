@@ -5,6 +5,19 @@ class Network extends AppModel {
     
     public $hasMany = array('Identity', 'Group', 'Admin');
     
+    public $validate = array(
+        'url' => array(
+            'rule'    => array('validateUrl'),
+            'message' => '' # must be set via beforeValidate due to using gettext
+        )
+    );
+    
+    public function beforeValidate($options = array()) {
+        $this->validate['url']['message'] = __('The URL must start with http:// or https://', true);
+        
+        return parent::beforeValidate($options);
+    }
+    
     public $hasAndBelongsToMany = array(
             'NetworkSubscriber' => array(
                 'className'  => 'Identity',
@@ -41,6 +54,11 @@ class Network extends AppModel {
             ),
             'order' => 'name ASC'
         ));        
+	}
+	
+	public function validateUrl($data) {
+	    $url = strtolower($data['url']);
+	    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
 	}
 	
 	/**

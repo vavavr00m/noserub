@@ -4,7 +4,7 @@ class WidgetsController extends AppController {
     
     public $components = array('cluster');
     public $helpers = array('nicetime');
-    
+       
     private $generic_methods = array(
         'admin_navigation', 'admin_login'
     );
@@ -14,7 +14,7 @@ class WidgetsController extends AppController {
      */
      
     public function navigation() {
-        $this->dynamicUse('Identity');
+        $this->loadModel('Identity');
          
         if(Configure::read('context.logged_in_identity')) {
             $this->Identity->id = Configure::read('context.logged_in_identity.id');
@@ -28,17 +28,36 @@ class WidgetsController extends AppController {
         $this->render($type . '_navigation');
  	}
  	
+ 	/**
+ 	 * Admin
+ 	 */
+ 	 
  	public function admin_navigation() {
  	}
  	
  	public function admin_login() {
  	}
  	
+ 	public function form_admin_settings() {
+ 	    if(Configure::read('context.admin_id')) {
+ 	        $this->loadModel('Network');
+ 	        $this->retrieveFormErrors('Network');
+ 	        if(!$this->data) {
+         	    $this->data = $this->Network->find('first', array(
+         	        'contain' => false,
+         	        'conditions' => array(
+         	            'Network.id' => Configure::read('context.network.id')
+         	        )
+         	    ));
+ 	        }
+        }
+ 	}
+ 	
  	/**
  	 * Accounts
  	 */
  	public function accounts() {
- 	    $this->dynamicUse('Account');
+ 	    $this->loadModel('Account');
  	    
  	    $identity_id = $this->getIdentityId();
  	    $this->set('accounts', $this->Account->get($identity_id, 'web'));
@@ -48,7 +67,7 @@ class WidgetsController extends AppController {
  	 * Communications
  	 */
  	public function communications() {
- 	    $this->dynamicUse('Account');
+ 	    $this->loadModel('Account');
  	    
  	    $identity_id = $this->getIdentityId();
         $this->set('communications', $this->Account->get($identity_id, 'contact'));
@@ -62,7 +81,7 @@ class WidgetsController extends AppController {
  	 * display networks that this user subscribed to
  	 */
  	public function networks() {
-        $this->dynamicUse('Identity');
+        $this->loadModel('Identity');
  	     
  	    $this->Identity->id = $this->getIdentityId();
  	    $this->set('networks', $this->Identity->getSubscribedNetworks());
@@ -72,7 +91,7 @@ class WidgetsController extends AppController {
  	 * display a form to manage networks
  	 */
     public function form_networks() {
-        $this->dynamicUse('Network');
+        $this->loadModel('Network');
         
         $this->set('networks', $this->Network->getSubscribable());        
  	}
@@ -85,7 +104,7 @@ class WidgetsController extends AppController {
  	 * display groups that this user subscribed to
  	 */
  	public function groups() {
-        $this->dynamicUse('Identity');
+        $this->loadModel('Identity');
  	     
  	    $this->Identity->id = $this->getIdentityId();
  	    $this->set('groups', $this->Identity->getSubscribedGroups());
@@ -97,7 +116,7 @@ class WidgetsController extends AppController {
  	 
  	public function contact_filter() {
  	    if(Configure::read('Context.is_self')) {
- 	        $this->dynamicUse('Contact');
+ 	        $this->loadModel('Contact');
  	    
  	        $this->set('contact_tags', $this->Contact->getTagList(Configure::read('context.logged_in_identity.id')));
         } else {
@@ -110,7 +129,7 @@ class WidgetsController extends AppController {
      */
     
     public function new_users() {
-        $this->dynamicUse('Identity');
+        $this->loadModel('Identity');
         
 	    $this->set('data', $this->Identity->getNewbies(9));
 	}
@@ -123,7 +142,7 @@ class WidgetsController extends AppController {
      * contacts of a given identity.
      */
     public function contacts_for_identity() {
-        $this->dynamicUse('Contact');
+        $this->loadModel('Contact');
          
         $identity_id = $this->getIdentityId();
         $this->Contact->Identity->contain();
@@ -168,7 +187,7 @@ class WidgetsController extends AppController {
      }
 
      public function my_contacts() {
-        $this->dynamicUse('Contact');
+        $this->loadModel('Contact');
         
         $layout = isset($this->params['layout']) ? $this->params['layout'] : '';
         if($layout == 'list') {
@@ -211,7 +230,7 @@ class WidgetsController extends AppController {
      **/
      
     public function lifestream() {
-        $this->dynamicUse('Contact');
+        $this->loadModel('Contact');
         
         $type = $this->params['type'];
 

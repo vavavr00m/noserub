@@ -8,13 +8,29 @@ class AdminsController extends AppController {
         
     }
     
+    public function settings() {
+        if(!Configure::read('context.admin_id')) {
+            $this->redirect('/admins/');
+        }
+        if(empty($this->params['form']['cancel'])) {
+            $this->loadModel('Network');
+        
+            $this->Network->set($this->data);
+            $this->Network->id = Configure::read('context.network.id');
+            if(!$this->Network->save($this->data)) {
+                $this->storeFormErrors('Network', $this->data, $this->Network->validationErrors);
+            } 
+        }
+        $this->redirect('/admins/');
+    }
+    
     public function login() {
         if(!Configure::read('context.logged_in_identity')) {
             # you need to be logged in as identity,
             # if you want to gain admin access
             
             # but if there is no identity yet, to which you could log in...
-            $this->dynamicUse('Identity');
+            $this->loadModel('Identity');
             if($this->Identity->isIdentityAvailableForLogin()) {
                 $this->redirect('/admins/');
                 return;
