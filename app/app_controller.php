@@ -187,6 +187,12 @@ class AppController extends Controller {
             'contain' => false,
             'conditions' => array('id' => 1)
         ));
+        
+        if(!$data['Network']['url']) {
+            # when no URL is found, we try to guess it
+            $data['Network']['url'] = 'http://' . $_SERVER['HTTP_HOST'] . $this->webroot;
+        }
+        
         Configure::write('context.network', $data['Network']);
 
         Configure::write('context.logged_in_identity', $this->Session->read('Identity'));
@@ -252,4 +258,24 @@ class AppController extends Controller {
     private function isSystemUpdatePage() {
     	return (strpos($this->here, '/system/update') !== false) ? true : false;
     }
+    
+    /**
+     * imports model when they are not available yet. this
+     * is similar to the uses() array in Cake, but more specific
+     * to what is needed.
+     *
+     * @param mixed $models either string or array of model names
+     */
+     protected function dynamicUse($models) {
+         if(!is_array($models)) {
+             $models = array($models);
+         }
+
+        foreach($models as $model) {
+             if(!isset($this->{$model})) {
+                 App::import('Model', $model);
+                 eval ("\$this->{$model} = new {$model}();");
+             }
+         }
+     }
 }

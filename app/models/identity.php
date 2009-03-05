@@ -1013,6 +1013,24 @@ class Identity extends AppModel {
         return $data;
     }
     
+    /**
+     * tests, if there is an identity available in this network to
+     * which someone could log in. this is needed to decide wether
+     * the admin route can be access without being logged in as
+     * an identity.
+     */
+    public function isIdentityAvailableForLogin() {
+        return $this->find('count', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Configure::read('context.network.id'),
+                'hash' => '',
+                'username <>' => '',
+                'password <>' => ''
+            )
+        ));
+    }
+    
     private function startsWithHttp($string) {
     	return (strpos($string, 'http://') === 0 ||
                 strpos($string, 'https://') === 0);
