@@ -4,7 +4,5 @@
 </div>
 
 <div id="rechts">
-    <p>
-        Hier könnten die Sub-Punkte des Admin-Menüs erscheinen. Oder aber doch rechts in der Navi.
-    </p>
+    <?php echo $noserub->widgetAdminNavigation(); ?>
 </div>
