@@ -17,7 +17,13 @@ class AdminsController extends AppController {
         
             $this->Network->set($this->data);
             $this->Network->id = Configure::read('context.network.id');
-            if(!$this->Network->save($this->data)) {
+            $saveable = array(
+                'name', 'url', 'description', 'default_language',
+                'latitude', 'longitude', 'google_maps_key',
+                'registration_type', 'registration_restricted_hosts',
+                'use_ssl', 'api_info_active', 'allow_subscriptions'
+            );
+            if(!$this->Network->save($this->data, true, $saveable)) {
                 $this->storeFormErrors('Network', $this->data, $this->Network->validationErrors);
             } 
         }
