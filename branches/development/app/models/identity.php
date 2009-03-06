@@ -91,7 +91,7 @@ class Identity extends AppModel {
      * check, whether host of email address matches context.network.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (Configure::read('context.network.registration_restricted_hosts') === false ||
+        if (Configure::read('context.network.registration_restricted_hosts') == false ||
             $email == '') {
             return true;
         }
