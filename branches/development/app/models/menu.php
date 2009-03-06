@@ -127,7 +127,9 @@ class MenuFactory {
 	
 	private function getMainMenuForRemoteUser($controller, $action) {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
-		$menuItems[] = new MyProfileMenuItem($controller, $action);
+		$menuItems[] = new MyFavoritesMenuItem($controller, $action);
+		$menuItems[] = new MyCommentsMenuItem($controller, $action);
+		$menuItems[] = new SettingsMenuItem($controller, $action);
 		
 		return $menuItems;
 	}
@@ -344,7 +346,7 @@ class SettingsMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	public function __construct($controller, $action, $localUsername) {
+	public function __construct($controller, $action, $localUsername = '') {
 		parent::__construct(__('Settings', true), '/' . $localUsername . '/settings/', false);
 		$this->controller = $controller;
 		$this->action = $action;
