@@ -10,11 +10,17 @@ class AccountsController extends AppController {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        if(!$session_identity) {
+            # only a logged in user will see this
+            $this->redirect('/');
+        }
         
         # get identity that is displayed
         $identity = $this->getIdentity($splitted['username']);
-        if(!$identity) {
-            # this identity is not here
+        if(!$identity || 
+           $identity['Identity']['id'] != $session_identity['id']) {
+            # this identity is not here, or it is not the logged
+            # in identity
             $this->redirect('/');
         }
         $this->set('about_identity', $identity['Identity']);
