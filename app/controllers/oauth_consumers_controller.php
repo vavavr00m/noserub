@@ -2,6 +2,7 @@
 
 class OauthConsumersController extends AppController {
 	public $uses = array('Consumer');
+	public $components = array('url');
 	public $helpers = array('flashmessage');
 	private $session_identity = null;
 	
