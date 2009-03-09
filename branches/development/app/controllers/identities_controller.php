@@ -16,6 +16,7 @@ class IdentitiesController extends AppController {
      */
     public function index() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
         
         if($this->theme == 'beta') {
             # hack to render the beta theme
@@ -180,6 +181,8 @@ class IdentitiesController extends AppController {
      */
     public function social_stream() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
+        
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
 
     	if($this->theme == 'beta') {
@@ -233,9 +236,19 @@ class IdentitiesController extends AppController {
  	 */
     public function favorites() {
         $this->checkUnsecure();
-
+        $this->grantAccess('all');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity = $this->Identity->getIdentityByLocalUsername($username);
+        
+        if($username) {
+            $identity = $this->Identity->getIdentityByLocalUsername($username);
+        } else {
+            $identity = Configure::read('context.logged_in_identity');
+            if(!$identity) {
+                $this->redirect('/');
+            }
+            $identity = array('Identity' => $identity);
+        }
         
         $conditions = array(
             'favorited_by' => $identity['Identity']['id']
@@ -257,9 +270,19 @@ class IdentitiesController extends AppController {
 	 */
 	public function comments() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
         
         $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $identity = $this->Identity->getIdentityByLocalUsername($username);
+
+        if($username) {
+            $identity = $this->Identity->getIdentityByLocalUsername($username);
+        } else {
+            $identity = Configure::read('context.logged_in_identity');
+            if(!$identity) {
+                $this->redirect('/');
+            }
+            $identity = array('Identity' => $identity);
+        }
         
         $conditions = array(
             'commented_by' => $identity['Identity']['id']
@@ -268,7 +291,7 @@ class IdentitiesController extends AppController {
         $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
         
         usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);
+        $items = $this->cluster->removeDuplicates($items, false);
         $items = $this->cluster->create($items);
 
         $this->set('items', $items);
@@ -277,6 +300,7 @@ class IdentitiesController extends AppController {
     }
 
     public function send_message() {
+        $this->grantAccess('user');
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -353,16 +377,12 @@ class IdentitiesController extends AppController {
     
     public function profile_settings() {
         $this->checkSecure();
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+               
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -431,17 +451,13 @@ class IdentitiesController extends AppController {
     }
     
     public function display_settings() {
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
-        if($this->data) {
+         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
@@ -470,16 +486,12 @@ class IdentitiesController extends AppController {
     }
     
     public function privacy_settings() {
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+                
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -526,16 +538,12 @@ class IdentitiesController extends AppController {
     
     public function password_settings() {
         $this->checkSecure();
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username'] ) {
-            # this is not the logged in user or the user used an OpenID to register
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+                
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -904,6 +912,8 @@ class IdentitiesController extends AppController {
      *       to the database
      */
     public function switch_language() {
+        $this->grantAccess('all');
+        
         $language = $this->data['Config']['language'];
         $languages = Configure::read('Languages');
         if(!isset($languages[$language])) {
@@ -935,6 +945,8 @@ class IdentitiesController extends AppController {
      * allows user to retrieve a link to then reset the password
      */
     public function password_recovery($recovery_hash = null) {
+        $this->grantAccess('all');
+        
         if(!is_null($recovery_hash)) {
             $this->Identity->contain();
             $identity = $this->Identity->find(

@@ -22,7 +22,7 @@
                          $action == 'OauthConsumers.index' ||
                          $action == 'AccountSettings.index') {
                     __('Settings');
-                } else { ?>
+                } else if(!Configure::read('context.is_guest')) { ?>
                     <?php echo $html->link(__('Settings', true), '/' . $session->read('Identity.local_username') . '/settings/'); ?>
                 <?php } ?>
             </li>
