@@ -299,6 +299,112 @@ class AppController extends Controller {
         }
     }
     
+    /**
+     * who may access this controller method. each role
+     * inherits from the other.
+     *
+     * roles: visitor -> guest -> user -> admin
+     *
+     * will be extended later with pseudo roles
+     * like 'group admin', etc.. They then will
+     * have params, eg:
+     *   $this->grantAccess('group_admin' => $this->Group->id);
+     *
+     * other access tokens:
+     * - self: only if the logged in user looks at it's own
+     *         page, he/she may see it
+     */
+    public function grantAccess($access) {
+        if(!is_array($access)) {
+            $access = array($access);
+        }
+        
+        foreach($access as $allow) {
+            if($allow == 'all') {
+                return;
+            }
+            # no need to test for 'visitor', as
+            # this is the default behaviour
+            if($allow == 'guest') {
+                if(Configure::read('context.is_guest') ||
+                   Configure::read('context.logged_in_identity') ||
+                   Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_visitors');
+                }
+            } else if($allow == 'user') {
+                if(Configure::read('context.logged_in_identity') ||
+                   Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_guests');
+                }
+            } else if($allow == 'admin') {
+                if(Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_users');
+                }
+            } else if($allow == 'self') {
+                if(Configure::read('context.is_self')) {
+                    return;
+                } else {
+                    $this->info_route('only_allowed_for_self');
+                }
+            } else {
+                $this->error_route('unknown_access');
+            }
+        }
+        
+        $this->error_route('unknown_access');
+    }
+    
+    /**
+     * denies access for specific roles. for instance
+     * the login page for already logged in users.
+     * 
+     * roles *do not* inherit the behaviour!
+     */
+    public function denyAccess($access) {
+        if(!is_array($access)) {
+            $access = array($access);
+        }
+        
+        foreach($access as $deny) {
+            if($allow == 'none') {
+                return;
+            }
+            # no need to test for 'visitor', as
+            # this is the default behaviour
+            if($deny == 'guest') {
+                if(Configure::read('context.is_guest')) {
+                    $this->info_route('not_allowed_for_guests');
+                }
+            } else if($deny == 'user') {
+                if(Configure::read('context.logged_in_identity'))  {
+                    $this->info_route('not_allowed_for_users');
+                }
+            } else if($deny == 'admin') {
+                if(Configure::read('context.is_admin')) {
+                    $this->info_route('not_allowed_for_admins');
+                }
+            } else {
+                $this->error_route('unknown_access');
+            }
+        }
+        
+        $this->error_route('unknown_access');
+    }
+    
+    protected function error_route($action) {
+        $this->redirect('/pages/error/' . $action);
+    }
+    
+    protected function info_route($action) {
+        $this->redirect('/pages/info/' . $action);
+    }
+    
     private function isSystemUpdatePage() {
     	return (strpos($this->here, '/system/update') !== false) ? true : false;
     }

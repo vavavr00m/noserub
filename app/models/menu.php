@@ -129,7 +129,6 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new MyFavoritesMenuItem($controller, $action);
 		$menuItems[] = new MyCommentsMenuItem($controller, $action);
-		$menuItems[] = new SettingsMenuItem($controller, $action);
 		
 		return $menuItems;
 	}
@@ -280,8 +279,7 @@ class MyFavoritesMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername = null) {
-		// TODO adding link for profile of remote user
-		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/favorites/';
+	    $link = '/pages/favorites/';
 		
 		parent::__construct(__('My Favorites', true), $link, false);
 		$this->controller = $controller;
@@ -302,8 +300,7 @@ class MyCommentsMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername = null) {
-		// TODO adding link for profile of remote user
-		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/comments/';
+		$link = '/pages/comments/';
 		
 		parent::__construct(__('My Comments', true), $link, false);
 		$this->controller = $controller;
