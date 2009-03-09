@@ -679,9 +679,13 @@ class IdentitiesController extends AppController {
     		$identity = $this->Identity->getIdentityByOpenIDResponse($response);
     		
     		if($identity) {
+    			if ($identity['Identity']['network_id'] == 0) {
+    				$this->Session->write('Login.is_guest', true);
+    			}
     			return $identity;
     		}
     		
+    		$this->Session->write('Login.is_guest', true);
     		return $this->Identity->createGuestIdentity($response->identity_url);
     	}
     }
