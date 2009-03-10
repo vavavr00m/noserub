@@ -115,7 +115,7 @@ class Account extends AppModel {
         
         # delete all accounts that were not found
         foreach($accounts as $item) {
-            $this->log('delete account: ' . $item['account_url'], LOG_DEBUG);
+            $this->log('delete account: ' . $item['Account']['account_url'], LOG_DEBUG);
             $this->delete($item['Account']['id'], false);
             $this->Entry->deleteAll(
                 array(
