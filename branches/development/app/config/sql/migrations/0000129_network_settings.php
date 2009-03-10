@@ -1,8 +1,12 @@
 <?php
 
-App::import('Model', 'Network');
-$Network = new Network();
-
+/**
+ * we cannot import a model like "Network" to do a proper 
+ * "Network->save()", because it is associated with other
+ * models that will be created in a later migration.
+ *
+ * We therefore need to write the update query by ourselfs.
+ */
 $name     = Configure::read('NoseRub.app_name') ? Configure::read('NoseRub.app_name') : 'NoseRub';
 $feeds    = Configure::read('NoseRub.manual_feeds_update') ? 1 : 0;
 $register = Configure::read('NoseRub.registration_type') == 'all' ? 1 : 2;
@@ -25,5 +29,10 @@ $data = array(
     'created'  => $now
 );
 
-$Network->id = 1;
-$Network->save($data);
+$updates = array();
+foreach($data as $field => $value) {
+    $updates[] = $field . '="' . $value . '"';
+}
+$sql = 'UPDATE networks SET ' . join(',', $updates) . ' WHERE id=1';
+
+$this->query($sql);

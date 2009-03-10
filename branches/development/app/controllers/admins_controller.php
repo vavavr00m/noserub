@@ -2,7 +2,12 @@
 App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'WriteableFoldersChecker'));
 
 class AdminsController extends AppController {
-    public $uses = array('Admin', 'Migration');
+    
+    /**
+     * Do not include 'Admin' here!
+     * Migrations would not be working then!
+     */
+    public $uses = array('Migration');
     
     public function index() {
         
@@ -48,6 +53,11 @@ class AdminsController extends AppController {
             $this->redirect('/admins/');
             return;
         }
+        
+        # not via uses, as /system/update/ will
+        # fail, because the admins table is created
+        # later on in the process...
+        $this->loadModel('Admin');
         
         $admin = $this->Admin->find('first', array(
             'contain' => false,
@@ -133,7 +143,7 @@ class AdminsController extends AppController {
             
                 $this->set('migrations', $migrations);
             }
-        }
+        }        
     }
     
     /**

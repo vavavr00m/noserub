@@ -107,7 +107,7 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new SearchMenuItem($controller, $action);
 		
-		if($registrationType == 'all') {
+		if($registrationType == 1) {
 			$menuItems[] = new RegisterMenuItem($controller, $action);
 		}
 		
@@ -137,7 +137,15 @@ class MenuFactory {
 		$registrationType = '';
 		
 		if(!isset($options['registration_type'])) {
-			$registrationType = Configure::read('context.network.registration_type');
+            if($options['action'] != 'system_update') {
+    		    # this is a workaround, as the context isn't available here
+    		    App::import('Model', 'Network');
+    		    $Network = new Network();
+    		    $Network->id = 1;
+    		    $registrationType = $Network->field('registration_type');
+	        } else {
+	            $registrationType = 0;
+	        }
 		} else {
 			$registrationType = $options['registration_type'];
 		}
