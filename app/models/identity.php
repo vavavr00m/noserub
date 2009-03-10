@@ -380,11 +380,12 @@ class Identity extends AppModel {
                 $result['Identity']['longitude']     = 0;
         	} else if(strpos($url, 'friendfeed.com/') > 0) {
                 # Fix for friendfeed, as they don't support hCard
-                $info_content_start = strpos($content, '<div class="streaminfo"');
-                $info_content_end   = strpos($content, 'id="feedcontainer"');
+                $info_content_start = strpos($content, '<table class="feedprofile">');
+                $info_content_end   = strpos($content, '</a></div></td>');
                 $info_content = substr($content, $info_content_start, $info_content_end-$info_content_start);
-                if(preg_match('/<img .*src="http:\/\/friendfeed\..*\/pictures-(.*)"/iU', $info_content, $matches)) {
-                    $result['Identity']['photo'] = 'http://friendfeed.s3.amazonaws.com/pictures-' . $matches[1];
+                
+                if(preg_match('/<img .*src="http:\/\/i\.friendfeed\..*\/p-(.*)"/iU', $info_content, $matches)) {
+                    $result['Identity']['photo'] = 'http://i.friendfeed.com/p-' . $matches[1];
                 }
                 if(preg_match('/<span.*>(.*)<\/span>/iU', $info_content, $matches)) {
                     $name = split(' ', $matches[1]);

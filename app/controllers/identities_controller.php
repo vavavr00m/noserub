@@ -749,6 +749,7 @@ class IdentitiesController extends AppController {
             # check, if there is a new photo
             $this->Identity->id = $identity_id;
             $this->recursive = 0;
+            $this->Identity->contain();
             $data = $this->Identity->read();
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
