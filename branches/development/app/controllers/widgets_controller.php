@@ -53,6 +53,25 @@ class WidgetsController extends AppController {
         }
  	}
  	
+ 	public function form_admin_password() {
+ 	    if(Configure::read('context.admin_id')) {
+ 	        $this->loadModel('Admin');
+ 	        $this->retrieveFormErrors('Admin');
+ 	        if(!$this->data) {
+         	    $this->data = $this->Admin->find('first', array(
+         	        'contain' => false,
+         	        'conditions' => array(
+         	            'Admin.id' => Configure::read('context.admin_id')
+         	        )
+         	    ));
+ 	        }
+ 	        
+ 	        # remove the password field, else it would be displayed
+ 	        # in the form (the MD5 version)
+ 	        $this->data['Admin']['password'] = '';
+        }
+ 	}
+ 	
  	/**
  	 * Accounts
  	 */
