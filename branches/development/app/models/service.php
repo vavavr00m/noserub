@@ -235,7 +235,7 @@ class Service extends AppModel {
     	App::import('Vendor', 'simplepie'.DS.'simplepie');
         $feed = new SimplePie();
         $feed->set_feed_url($feed_url);
-        $feed->set_useragent(NOSERUB_USER_AGENT);
+        $feed->set_useragent(Configure::read('noserub.user_agent'));
         $feed->enable_cache(false);
         $feed->force_feed(true); 
         

@@ -13,7 +13,7 @@ class Network extends AppModel {
     );
     
     public function beforeValidate($options = array()) {
-        $this->validate['url']['message'] = __('The URL must start with http:// or https://', true);
+        $this->validate['url']['message'] = __('The URL must start with http:// or https:// and end with a /', true);
         
         return parent::beforeValidate($options);
     }
@@ -58,7 +58,9 @@ class Network extends AppModel {
 	
 	public function validateUrl($data) {
 	    $url = strtolower($data['url']);
-	    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
+	    
+	    return (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) &&
+	           strpos(strrev($url), '/') === 0;
 	}
 	
 	/**
