@@ -44,7 +44,7 @@ class TwitterAccount extends AppModel {
     		CURLOPT_RETURNTRANSFER	=> true,
     		CURLOPT_FAILONERROR		=> true,
     		CURLOPT_HEADER			=> false,
-    		CURLOPT_USERAGENT		=> NOSERUB_USER_AGENT,
+    		CURLOPT_USERAGENT		=> Configure::read('noserub.user_agent'),
     		CURLOPT_CONNECTTIMEOUT	=> 120,  
     		CURLOPT_TIMEOUT			=> 120,
     		
