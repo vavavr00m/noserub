@@ -21,24 +21,24 @@ class Identity extends AppModel {
                 'foreignKey' => 'identity_id',
                 'associationForeignKey' => 'entry_id'
             ),
-            // 'SubscribedGroup' => array(
-            //                 'className'  => 'Group',
-            //                 'joinTable'  => 'group_subscriptions',
-            //                 'foreignKey' => 'identity_id',
-            //                 'associationForeignKey' => 'group_id'
-            //             ),
+            'SubscribedGroup' => array(
+                                        'className'  => 'Group',
+                                        'joinTable'  => 'group_subscriptions',
+                                        'foreignKey' => 'identity_id',
+                                        'associationForeignKey' => 'group_id'
+                                    ),
             //             'AdministratingGroup' => array(
             //                 'className' => 'Group',
             //                 'joinTable' => 'group_admins',
             //                 'foreignKey' => 'identity_id',
             //                 'associationForeignKey' => 'group_id' 
             //             ),
-            //             'SubscribedNetwork' => array(
-            //                 'className' => 'Network',
-            //                 'joinTable' => 'network_subscriptions',
-            //                 'foreignKey' => 'identity_id',
-            //                 'associationForeignKey' => 'network_id'
-            //             )
+                        'SubscribedNetwork' => array(
+                                        'className' => 'Network',
+                                        'joinTable' => 'network_subscriptions',
+                                        'foreignKey' => 'identity_id',
+                                        'associationForeignKey' => 'network_id'
+                                    )
     );
     
     public $validate = array(
