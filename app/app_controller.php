@@ -196,6 +196,10 @@ class AppController extends Controller {
         
         Configure::write('context.network', $data['Network']);
 
+        # set the user agent here, as we didn't know about the network.url before
+        define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('context.network.url') . ' (http://noserub.com/)');
+        ini_set('user_agent', NOSERUB_USER_AGENT);
+        
         Configure::write('context.logged_in_identity', $this->Session->read('Identity'));
         
         if($this->Session->read('Admin.id')) {
