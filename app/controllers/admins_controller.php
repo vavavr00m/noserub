@@ -9,11 +9,42 @@ class AdminsController extends AppController {
      */
     public $uses = array('Migration');
     
-    public function index() {
-        
+    public function index() {    
+    }
+    
+    public function password() {
+        $this->checkSecure();
+        if(!Configure::read('context.admin_id')) {
+            $this->redirect('/admins/');
+        }
+        if($this->data && empty($this->params['form']['cancel'])) {
+            $this->loadModel('Admin');
+            
+            $this->Admin->set($this->data);
+            $this->Admin->id = Configure::read('context.admin_id');
+            
+            $password = $this->Admin->field('password');
+            if($password != md5($this->data['Admin']['password'])) {
+                $this->Admin->invalidate('password', __('Wrong password', true));
+                $this->storeFormErrors('Admin', $this->data, $this->Admin->validationErrors);
+            } else {
+                if($this->Admin->validates()) {
+                    $this->data['Admin']['password'] = md5($this->data['Admin']['new_password']);
+                    $saveable = array('password');
+                    $this->Admin->save($this->data, false, $saveable);
+                    $this->redirect('/admins/');
+                } else {
+                    $this->storeFormErrors('Admin', $this->data, $this->Admin->validationErrors);
+                }
+            }
+            $this->redirect('/admins/password/');
+        } else if($this->data) {
+            $this->redirect('/admins/password/');
+        }
     }
     
     public function settings() {
+        $this->checkSecure();
         if(!Configure::read('context.admin_id')) {
             $this->redirect('/admins/');
         }
