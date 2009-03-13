@@ -74,7 +74,7 @@ class MenuFactoryTest extends CakeTestCase {
 	// anonymous user
 	
 	public function testGetMainMenuForWebUsersWithRegistrationPossibility() {
-		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all'));
+		$mainMenu = $this->factory->getMainMenu(array('registration_type' => 1));
 		$this->assertEqual(3, count($mainMenu->getMenuItems()));
 		$this->assertMenuForAnonymousUser($mainMenu, false, false, false);
 	}
@@ -83,7 +83,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$registerActions = array('register', 'register_with_openid_step_1', 'register_with_openid_step_2');
 		
 		foreach ($registerActions as $action) {
-			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 'all', 'controller' => 'Registration', 'action' => $action));
+			$mainMenu = $this->factory->getMainMenu(array('registration_type' => 1, 'controller' => 'Registration', 'action' => $action));
 			$this->assertMenuForAnonymousUser($mainMenu, false, false, true);
 		}
 	}
