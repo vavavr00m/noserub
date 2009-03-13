@@ -65,9 +65,10 @@ class MenuFactoryTest extends CakeTestCase {
 	public function testGetMainMenuForRemoteUser() {
 		$mainMenu = $this->factory->getMainMenu(array('is_local' => false));
 		$menuItems = $mainMenu->getMenuItems();
-		$this->assertEqual(2, count($menuItems));
+		$this->assertEqual(3, count($menuItems));
 		$this->assertMenuItem($menuItems[0], __('All Users', true), '/social_stream/', false);
-		$this->assertMenuItem($menuItems[1], __('My Profile', true), '', false);
+		$this->assertMenuItem($menuItems[1], __('My Favorites', true), '/pages/favorites/', false);
+		$this->assertMenuItem($menuItems[2], __('My Comments', true), '/pages/comments/', false);
 	}
 	
 	// anonymous user
@@ -213,7 +214,7 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertMenuItem($menuItems[0], __('With my Contacts', true), '/' . $localUsername . '/network/', $myContactsActive);
 		$this->assertMenuItem($menuItems[1], __('All Users', true), '/social_stream/', $socialStreamActive);
 		$this->assertMenuItem($menuItems[2], __('My Profile', true), '/' . $localUsername . '/', $myProfileActive);
-		$this->assertMenuItem($menuItems[3], __('My Favorites', true), '/' . $localUsername . '/favorites/', $favoritesActive);
+		$this->assertMenuItem($menuItems[3], __('My Favorites', true), '/pages/favorites/', $favoritesActive);
 	}
 	
 	private function assertMenuItem(MenuItem $menuItem, $label, $link, $isActive) {
