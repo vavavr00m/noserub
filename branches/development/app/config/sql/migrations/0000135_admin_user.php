@@ -1,10 +1,7 @@
 <?php
 
-App::import('Model', 'Admin');
-$Admin = new Admin();
-
-$Admin->id = 1;
-$Admin->saveField('password', md5(Configure::read('NoseRub.admin_hash')));
+$sql = 'UPDATE admins SET password="' . md5(Configure::read('NoseRub.admin_hash')) . '" WHERE id=1';
+$this->query($sql);
 
 # this sets the default password for the admin user for network 1 to the 
 # value of the hash for the admin routes. this seems good enough, as the
