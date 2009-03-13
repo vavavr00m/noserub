@@ -1,28 +1,6 @@
 <?php
 
 /**
- * The name of this NoseRub server. This is used for the title.
- */
-#Configure::write('NoseRub.app_name', 'NoseRub');
-
-/**
- * The URL, under which your NoseRub installation
- * can be found. This could be http://myserver.com/ or
- * http://myserver.com/stuff/
- * Please make sure, you don't include the noserub directory.
- * That means, when you have NoseRub installed in
- * http://myserver.com/noserub/, you would have to enter only
- * http://myserver.com/ here. When your installation is available
- * directly under http://myserver.com/, just put http://myserver.com/ here.
- */
-#Configure::write('NoseRub.full_base_url', 'http://');
-
-/**
- * Default Language for this installation
- */
-#Configure::write('NoseRub.default_language', 'en-en'); # try 'de-de' :-)
-
-/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities
@@ -55,15 +33,6 @@ Configure::write('NoseRub.cron_hash', '');
 Configure::write('NoseRub.manual_feeds_update', false);
 
 /**
- * all = everyone can register
- * none = no one is allowed to register from that point on.
- *        all previously registered identities aren't altered
- * invitation = only the admin can invite people to register. 
- *              (this is yet not implemented)
- */
-#Configure::write('NoseRub.registration_type', 'all');
-
-/**
  * E-Mail address, that is put into the From: header,
  * when sending out emails.
  */
@@ -81,24 +50,6 @@ Configure::write('NoseRub.smtp_options', array(
 	'username' => 'your_smtp_username',
 	'password' => 'your_smtp_password'
 ));
-
-/**
- * When true, https (Port 443) is used for sensitive 
- * pages like /pages/login/ and /pages/register/
- */
-#Configure::write('NoseRub.use_ssl', false);
-
-/**
- * We need a geocoder for get Latitude/Longitude for
- * given addresses. We use GoogleMaps for it and
- * also to display the map. You need to sign up
- * for a GoogleMaps API Key and can do so with no cost
- * here: http://www.google.com/apis/maps/signup.html
- * Make sure you enter the correct URL for the server
- * on which you want to use the API Key.
- * If set to false, no geocoding is done.
- */
-#Configure::write('NoseRub.google_maps_key', false);
 
 /**
  * For better reliability, NoseRub can store some data to
@@ -120,35 +71,10 @@ Configure::write('NoseRub.cdn_s3_access_key', '');
 Configure::write('NoseRub.cdn_s3_secret_key', '');
 Configure::write('NoseRub.cdn_s3_bucket', 'cdn.mynoserubserver.com');
 
-/**
- * If you want to restrict the email addresses of users that can register,
- * define this setting. You can add more than one host:
- * Configure::write('NoseRub.registration_restricted_hosts', 'mycompany.com myothercompany.com');
- */
-#Configure::write('NoseRub.registration_restricted_hosts', false);
-
 Configure::write('NoseRub.xmpp_full_feed_user', '');
 Configure::write('NoseRub.xmpp_full_feed_password', '');
 Configure::write('NoseRub.xmpp_full_feed_server', 'jabber.identoo.com');
 Configure::write('NoseRub.xmpp_full_feed_port', 5222);
-
-/**
- * If you want your server being displayed on http://noserub.com/sites
- * and display the number of your registered users there, please contact
- * dirk.olbertz@gmail.com for listing on that page and set the following
- * value to 'true'.
- *
- * Beside the number of users on your site, this method also transfers
- * the settings NoseRub.registration_restricted_hosts and 
- * NoseRub.registration_type to noserub.com. In addition, information about
- * how up to date your installation is (id of newest database migration)
- * gathered, so we know which versions are used out there.
- *
- * We don't send the content of NoseRub.registration_restricted_hosts, but
- * only the information, if this setting is used. If so, your site will be
- * flagged as "not public" on http://noserub.com/sites/.
- */
-#Configure::write('NoseRub.api_info_active', false);
 
 /**
  * If you, as the admin of this NoseRub installation do not feel

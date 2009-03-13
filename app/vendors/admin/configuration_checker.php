@@ -1,7 +1,22 @@
 <?php
 
 class ConfigurationChecker {
-	protected $obsoleteConfigKeys = array('Language.default');
+    /**
+     * value is the migration that at least must be executed before
+     * this ConfigKey becomes obsolete
+     */
+	protected $obsoleteConfigKeys = array(
+	    'Language.default' => 0,
+	    'NoseRub.api_info_active' => 129,
+	    'NoseRub.default_language' => 129,
+	    'NoseRub.app_name' => 129,
+	    'NoseRub.full_base_url' => 129,
+	    'NoseRub.google_maps_key' => 129,
+	    'NoseRub.registration_restricted_hosts' => 129,
+	    'NoseRub.registration_type' => 129,
+	    'NoseRub.use_ssl' => 129
+	);
+	
 	protected $obsoleteConstants = array('NOSERUB_ADMIN_HASH',
 										 'NOSERUB_ALLOW_TWITTER_BRIDGE', 
 										 'NOSERUB_API_INFO_ACTIVE',
@@ -26,7 +41,13 @@ class ConfigurationChecker {
 										 'NOSERUB_XMPP_FULL_FEED_PORT');
 	protected $configDefinitions = array();
     
+    protected $currentMigration = 0;
+    
 	public function __construct() {
+	    App::import('Model', 'Migration');
+	    $Migration = new Migration;
+	    $this->currentMigration = $Migration->getCurrentMigration();
+	    
 		$this->configDefinitions = array(
 			new ConfigDefinition('NoseRub.admin_hash'),
 			new ConfigDefinition('NoseRub.allow_twitter_bridge', new BooleanValidator()),
@@ -62,8 +83,9 @@ class ConfigurationChecker {
 	protected function checkForObsoleteConfigKeys() {
 		$out = array();
 		
-		foreach ($this->obsoleteConfigKeys as $obsoleteConfigKey) {
-			if ($this->isConfigKeySet($obsoleteConfigKey)) {
+		foreach($this->obsoleteConfigKeys as $obsoleteConfigKey => $minMigration) {
+			if($this->isConfigKeySet($obsoleteConfigKey) &&
+			   $this->currentMigration >= $minMigration) {
 				$out[$obsoleteConfigKey] = __('obsolete! Please remove it from noserub.php', true);
 			}
 		}
