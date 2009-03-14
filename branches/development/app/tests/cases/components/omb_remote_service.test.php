@@ -9,7 +9,7 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 	
 	public function setUp() {
 		$this->component = new OmbRemoteServiceComponent();
-		$this->urlOfXRDS = Configure::read('context.network.url') . 'testing/identica_0.6.xrds';
+		$this->urlOfXRDS = FULL_BASE_URL . '/testing/identica_0.6.xrds';
 	}
 	
 	public function testDiscoverLocalService() {
