@@ -175,7 +175,9 @@ class AdminsController extends AppController {
             
                 $this->set('migrations', $migrations);
             }
-        }        
+        }
+        
+        $this->set('headline', 'Upgrading your NoseRub installation');
     }
     
     /**
