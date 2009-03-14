@@ -19,7 +19,7 @@ class ConfigurationCheckerTest extends CakeTestCase {
 		
 		$configKey = 'obsolete_config_key';
 		Configure::write($configKey, '');
-		$this->checker->setObsoleteConfigKeys(array($configKey));
+		$this->checker->setObsoleteConfigKeys(array($configKey => 0));
 
 		$result = $this->checker->publicCheckForObsoleteConfigKeys();
 		$this->assertValidationError($configKey, $result);
