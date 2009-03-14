@@ -1,7 +1,11 @@
 <?php
     $app_name = Configure::read('context.network.name');
     $headline = isset($headline) ? $headline : sprintf(__('Welcome to %s', true), $app_name);
-    $title    = $app_name . ' - ' . $headline;
+    if ($app_name != '') {
+    	$title = $app_name . ' - ' . $headline;
+    } else {
+    	$title = $headline;
+    }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
