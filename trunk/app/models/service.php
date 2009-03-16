@@ -115,7 +115,6 @@ class Service extends AppModel {
     		    break;
     		}
     		
-    		$item['title']     = $feeditem->get_title();
     		$item['url']       = $feeditem->get_link();
             $item['intro']     = $intro;
             $item['type']      = $token;
@@ -127,13 +126,11 @@ class Service extends AppModel {
 
             if($service) {
             	$item['content'] = $service->getContent($feeditem);
-            	
-            	if($service instanceof TwitterService ||
-            	   $service instanceof IdenticaService) {
-            		$item['title']   = $item['content'];
-            	}
+            	$item['title']   = $service->getTitle($feeditem);            	
             } else {
+                $this->log('service_id ' . $service_id . ' not found!', LOG_DEBUG);
             	$item['content'] = $feeditem->get_content();
+            	$item['title']   = $feeditem->get_title();
             }
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
@@ -238,7 +235,7 @@ class Service extends AppModel {
     	App::import('Vendor', 'simplepie'.DS.'simplepie');
         $feed = new SimplePie();
         $feed->set_feed_url($feed_url);
-        $feed->set_useragent(NOSERUB_USER_AGENT);
+        $feed->set_useragent(Configure::read('noserub.user_agent'));
         $feed->enable_cache(false);
         $feed->force_feed(true); 
         
@@ -276,7 +273,11 @@ class Service extends AppModel {
     	}
     	
     	$this->recursive = 0;
-    	$service = $this->find(array('Service.id' => $service_id), array('Service.internal_name'));
+    	$service = $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array('Service.id' => $service_id),
+    	    'fields' => array('Service.internal_name')
+    	));
     	
     	if(!$service) {
     		return false;
@@ -289,7 +290,7 @@ class Service extends AppModel {
 /**
  * Base class for all services.
  */
-abstract class AbstractService {
+abstract class AbstractService extends Object {
 	private $service_id;
 	
 	public function __construct($service_id) {
@@ -329,6 +330,10 @@ abstract class AbstractService {
 		return $feeditem->get_content();
 	}
 	
+	public function getTitle($feeditem) {
+	    return $feeditem->get_title();
+	}
+	
 	public function getFeedUrl($username) {
 		return false;
 	}
@@ -340,7 +345,7 @@ abstract class AbstractService {
 
 class ServiceTypeFilterFactory {
 	public static function getFilter($service_type_id) {
-		if ($service_type_id == 1) {
+		if($service_type_id == 1) {
 			return new PhotoFilter();
 		}
 		

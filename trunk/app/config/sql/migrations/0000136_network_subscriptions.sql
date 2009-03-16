@@ -1,0 +1,1 @@
+CREATE TABLE  `network_subscriptions` (`id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT ,`identity_id` INT( 11 ) UNSIGNED NOT NULL ,`network_id` INT( 11 ) UNSIGNED NOT NULL ,PRIMARY KEY (  `id` ) ,INDEX (  `identity_id` ,  `network_id` )) ENGINE = MYISAM

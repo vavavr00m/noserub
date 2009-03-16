@@ -6,11 +6,23 @@ if(file_exists(APP . '/config/noserub.php')) {
     die('noserub.php not found!');
 }
 
-Configure::write('NoseRub.version', '0.8.1');
+/**
+ * a "context" array that will hold information about
+ * the current status. That means: which pages is being
+ * displayed, which is the logged in user, etc..
+ * The goal is to have this universally available in all
+ * controllers and all views.
+ */
+Configure::write('context', array(
+    'logged_in_identity' => false,
+    'network' => array('id' => 1), # default for now, needed for old menu component
+    'identity' => false, # the identity we're looking at,
+    'is_self' => false, # wether the identity we look at is the logged in identity
+    'is_guest' => false, # wether the identity only logged in with OpenID, without account
+    'admin_id' => false # wether the identity is logged in with admin access right now
+));
 
-define('NOSERUB_USER_AGENT', 'NoseRub bot from ' . Configure::read('NoseRub.full_base_url') . ' (http://noserub.com/)');
-
-ini_set('user_agent', NOSERUB_USER_AGENT);
+Configure::write('NoseRub.version', '0.8.2a');
 
 define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 
@@ -20,13 +32,9 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,register,social_stream,search,groups,entry');
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', substr(Configure::read('NoseRub.full_base_url'), 0, -1));
+if(!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', substr(Configure::read('context.network.url'), 0, -1));
 }
-
-# temporary constant for development purposes
-# TODO remove constant NOSERUB_ALLOW_REMOTE_LOGIN when remote login is working
-define('NOSERUB_ALLOW_REMOTE_LOGIN', false);
 
 Configure::write('Languages', array(
     'de-de' => 'Deutsch',
@@ -34,7 +42,9 @@ Configure::write('Languages', array(
     'fr-fr' => 'Français',
     #'es-es' => 'Español',
     'ko-kr' => '한국어', # Korean
-    'sv' => 'Svenska',
+    'nn'    => 'Norsk',
+    'fi'    => 'Suomi',
+    'sv'    => 'Svenska',
     'tr'    => 'Turkish'
 ));
 

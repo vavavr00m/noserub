@@ -5,10 +5,7 @@ class MailsController extends AppController {
     public $components = array('Email');
     
     public function send() {
-        if(!isset($this->params['bare']) || 
-           !$this->params['bare']) {
-            # check that this can only be accessed through
-            # requestAction
+        if(!$this->isRequestAction()) {
             return false;
         }
         
@@ -28,5 +25,9 @@ class MailsController extends AppController {
         }
         
         $this->Email->send();
+    }
+    
+    private function isRequestAction() {
+    	return isset($this->params['bare']) && $this->params['bare'];
     }
 }

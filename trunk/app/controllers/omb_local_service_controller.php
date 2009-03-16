@@ -96,8 +96,8 @@ class OmbLocalServiceController extends AppController {
 			$this->set('headline', __('Authorize access', true));
 		} else {
 			if(isset($this->params['form']['allow'])) {
-				$data['Identity']['is_local'] = false;
-				$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_PROFILE));
+				$data['Identity']['network_id'] = 0;
+				$data['Identity']['username']   = UrlUtil::removeHttpAndHttps($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_PROFILE));
 				
 				$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
 			
@@ -107,7 +107,7 @@ class OmbLocalServiceController extends AppController {
 				    $this->Identity->create();
 				}
 				
-				$this->Identity->save($data, true, array('is_local', 'username'));
+				$this->Identity->save($data, true, array('network_id', 'username'));
 				
 				if($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR) != '') {
 					$this->Identity->uploadPhotoByUrl($this->Session->read('OMB.'.OmbParamKeys::LISTENEE_AVATAR));
@@ -199,7 +199,7 @@ class OmbLocalServiceController extends AppController {
 			if ($this->isGravatarUrl($avatarName)) {
 				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
 			} else {
-				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+				$avatarUrl = Configure::read('context.network.url').'static/avatars/'.$avatarName.'-medium.jpg';
 			}
 		}
 		

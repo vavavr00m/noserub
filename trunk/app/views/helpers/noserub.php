@@ -6,21 +6,51 @@
 class NoserubHelper extends AppHelper {
     public $helpers = array('Session');
     
-    public function widgetContacts($options) {
-        $options[] = 'return';
-        return $this->output($this->requestAction('/widget/contacts/', $options));
+    public function widgetContacts($options = array()) {
+        return $this->out('/widgets/contacts_for_identity/', $options);
     }
     
     public function widgetMyContacts() {
         if($this->Session->read('Identity.id')) {
-            return $this->output($this->requestAction('/widget/contacts/my/', array('return')));
+            return $this->out('/widgets/my_contacts/');
         } else {
-            return $this->output('');
+            return $this->out('');
         }
     }
     
-    public function widgetNewestUsers() {
-        return $this->output($this->requestAction('/widget/users/new/', array('return')));
+    public function widgetNavigation($type = 'meta') {
+        if($type != 'meta' && $type != 'main') {
+            return $this->out('');
+        }
+        return $this->out('/widgets/navigation/', array('type' => $type));
+    }
+
+    public function widgetNetworkLifestream() {
+        return $this->out('/widgets/lifestream/', array('type' => 'network'));
+    }
+    
+    public function widgetSingleLifestream() {
+        return $this->out('/widgets/lifestream/', array('type' => 'single'));
+    }
+
+    /**
+     * generic method for the more simple widgets
+     * 
+     * TODO: think about adding a whitelist
+     */
+    public function __call($name, $arguments) {
+        $name = str_replace('widget', '', $name);
+        $name = Inflector::underscore($name);
+        
+        return $this->out('/widgets/' . $name, $arguments);
+    }    
+    
+    public function formNetworks() {
+        return $this->out('/widgets/form_networks/');
+    }
+    
+    public function formAdminSettings() {
+        return $this->out('/widgets/form_admin_settings/');
     }
     
     public function fnAvatarBaseUrl() {
@@ -33,5 +63,15 @@ class NoserubHelper extends AppHelper {
         }
         
         return $url;
+    }
+
+    /**
+     * wrapper for some functionality we need
+     * for every widget
+     */
+    private function out($action, $data = array()) {        
+        $data[] = 'return';
+        
+        return $this->output($this->requestAction($action, $data));
     }
 }

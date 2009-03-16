@@ -3,16 +3,42 @@
  
 class Identity extends AppModel {
 	public $hasOne = array('TwitterAccount');
-    public $hasMany = array('Account', 'Contact', 'ContactType', 'Consumer', 'OpenidSite', 'Location', 'Syndication', 'Entry');
-    public $belongsTo = array('Location' => array('className'  => 'Location',
-                                               'foreignKey' => 'last_location_id'));
+    public $hasMany = array(
+        'Account', 'Contact', 'ContactType', 'Consumer', 
+        'OpenidSite', 'Location', 'Syndication', 'Entry'
+    );
+    
+    public $belongsTo = array(
+        'Location' => array('className'  => 'Location',
+                            'foreignKey' => 'last_location_id'),
+        'Network'
+    );
+    
     public $hasAndBelongsToMany = array(
             'FavoriteEntries' => array(
                 'className' => 'Favorite',
                 'joinTable' => 'favorites',
                 'foreignKey' => 'identity_id',
                 'associationForeignKey' => 'entry_id'
-            )
+            ),
+            'SubscribedGroup' => array(
+                                        'className'  => 'Group',
+                                        'joinTable'  => 'group_subscriptions',
+                                        'foreignKey' => 'identity_id',
+                                        'associationForeignKey' => 'group_id'
+                                    ),
+            //             'AdministratingGroup' => array(
+            //                 'className' => 'Group',
+            //                 'joinTable' => 'group_admins',
+            //                 'foreignKey' => 'identity_id',
+            //                 'associationForeignKey' => 'group_id' 
+            //             ),
+                        'SubscribedNetwork' => array(
+                                        'className' => 'Network',
+                                        'joinTable' => 'network_subscriptions',
+                                        'foreignKey' => 'identity_id',
+                                        'associationForeignKey' => 'network_id'
+                                    )
     );
     
     public $validate = array(
@@ -62,15 +88,15 @@ class Identity extends AppModel {
     }    
     
     /**
-     * check, whether host of email address matches NoseRub.registration_restricted_hosts
+     * check, whether host of email address matches context.network.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (Configure::read('NoseRub.registration_restricted_hosts') === false ||
+        if (Configure::read('context.network.registration_restricted_hosts') == false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', Configure::read('NoseRub.registration_restricted_hosts')));
+        return in_array($host, explode(' ', Configure::read('context.network.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {
@@ -86,6 +112,9 @@ class Identity extends AppModel {
                 $data['local']           = $username['local'];
                 $data['servername']      = $username['servername'];
                 $data['name']            = trim($data['firstname'] . ' ' . $data['lastname']);
+                if(!$data['name']) {
+                    $data['name'] = $username['local_username'];
+                }
             } else {
                 foreach($data as $key => $item) {
                     $checkModels = array('WithIdentity', 'Identity');
@@ -99,6 +128,9 @@ class Identity extends AppModel {
                             $item[$modelName]['local']           = $username['local'];
                             $item[$modelName]['servername']      = $username['servername'];
                             $item[$modelName]['name']            = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                            if(!$item[$modelName]['name']) {
+                                $item[$modelName]['name'] = $username['local_username'];
+                            }
                             $data[$key] = $item;
                         }
                     }
@@ -107,6 +139,39 @@ class Identity extends AppModel {
         }
     
         return parent::afterFind($data);
+    }
+    
+    public function getSubscribedGroups() {
+        if(!$this->id) {
+            return false;
+        }
+        
+        $data = false;
+        $data = $this->find('first', array(
+            'contain' => array('SubscribedGroup')
+        ));
+        if($data) {
+            $data = $data['SubscribedGroup'];
+        }
+
+        return $data;
+    }
+    
+    public function getSubscribedNetworks() {
+        if(!$this->id) {
+            return false;
+        }
+        
+        $data = false;
+        $networks = $this->find('first', array(
+            'contain' => array('SubscribedNetwork', 'Network')
+        ));
+        if($networks) {
+            $data = $networks['SubscribedNetwork'];
+            $data[] = $networks['Network'];
+        }
+        
+        return $data;
     }
     
     /**
@@ -149,9 +214,31 @@ class Identity extends AppModel {
                                  'Identity.password' => md5($data['Identity']['password'])));
     }
     
-    public function checkOpenID($openIDResponse) {
+    public function createGuestIdentity($openID) {
+    	App::import('Vendor', 'UrlUtil');
+    	$data = array(
+    				'network_id' => 0,
+    				'username' => trim(UrlUtil::removeHttpAndHttps($openID), '/'),
+    				'openid' => $openID
+    			);
+
+    	$this->save($data, false);
+    	
+    	return $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array('id' => $this->id)
+    	));
+    }
+    
+    public function getIdentityByOpenIDResponse($openIDResponse) {
     	$this->contain();
-    	$identity = $this->find(array('Identity.hash' => '', 'Identity.openid' => $openIDResponse->identity_url));
+    	$identity = $this->find('first', array(
+    	    'contain' => false,
+    	    'conditions' => array(
+    	        'Identity.hash'   => '', 
+    	        'Identity.openid' => $openIDResponse->identity_url
+    	    )
+    	));
     	
     	if ($identity) {
     		$openIDIdentity = $openIDResponse->message->getArg('http://openid.net/signon/1.0', 'identity');
@@ -167,24 +254,14 @@ class Identity extends AppModel {
     		    $identity['Identity']['openid_server_url'] = $openIDServerUrl;
     		    $this->save($identity, false);
     		}
-    	} else {
-    		if (NOSERUB_ALLOW_REMOTE_LOGIN) {
-    			# is it a remote user?
-    			$username = $this->splitUsername($openIDResponse->identity_url);
-    			$identity = $this->find(array('Identity.username' => $username['username']));
-    		} else {
-    			return false;
-    		}
-    	}
-    	
-    	if ($identity) {
+    		
     		return $identity;
     	}
     	
     	return false;
     }
     
-    public function checkSecurityToken($identity_id, $security_token) {
+    public function isCorrectSecurityToken($identity_id, $security_token) {
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
@@ -194,8 +271,8 @@ class Identity extends AppModel {
         }
     }
     
-    public function getIdentityByUsername($username) {
-    	$splitted = $this->splitUsername($username);
+    public function getIdentityByLocalUsername($localUsername) {
+    	$splitted = $this->splitUsername($localUsername);
 		$this->contain();
 		$identity = $this->findByUsername($splitted['username']);
 		
@@ -229,12 +306,19 @@ class Identity extends AppModel {
     public function getNewbies($limit = null) {
         $this->contain();
 
-        $newbies = $this->find('all', array('conditions' => array('is_local' => 1,
-        														  'frontpage_updates' => 1,
-        														  'hash' => '',
-        														  'username NOT LIKE "%@%"'),
-        									'order' => array('Identity.created DESC'),
-        									'limit' => $limit));
+        $newbies = $this->find(
+            'all', 
+            array(
+                'conditions' => array(
+                    'network_id' => Configure::read('context.network.id'),
+        			'frontpage_updates' => 1,
+        			'hash' => '',
+        			'username NOT LIKE "%@%"'
+        		),
+        		'order' => array('Identity.created DESC'),
+        		'limit' => $limit
+        	)
+        );
         
         return $newbies;
     }
@@ -296,11 +380,12 @@ class Identity extends AppModel {
                 $result['Identity']['longitude']     = 0;
         	} else if(strpos($url, 'friendfeed.com/') > 0) {
                 # Fix for friendfeed, as they don't support hCard
-                $info_content_start = strpos($content, '<div class="streaminfo"');
-                $info_content_end   = strpos($content, 'id="feedcontainer"');
+                $info_content_start = strpos($content, '<table class="feedprofile">');
+                $info_content_end   = strpos($content, '</a></div></td>');
                 $info_content = substr($content, $info_content_start, $info_content_end-$info_content_start);
-                if(preg_match('/<img .*src="http:\/\/friendfeed\..*\/pictures-(.*)"/iU', $info_content, $matches)) {
-                    $result['Identity']['photo'] = 'http://friendfeed.s3.amazonaws.com/pictures-' . $matches[1];
+                
+                if(preg_match('/<img .*src="http:\/\/i\.friendfeed\..*\/p-(.*)"/iU', $info_content, $matches)) {
+                    $result['Identity']['photo'] = 'http://i.friendfeed.com/p-' . $matches[1];
                 }
                 if(preg_match('/<span.*>(.*)<\/span>/iU', $info_content, $matches)) {
                     $name = split(' ', $matches[1]);
@@ -424,7 +509,7 @@ class Identity extends AppModel {
             return false;
         }
         $this->create();
-        $data['Identity']['is_local'] = 1;
+        $data['Identity']['network_id']       = Configure::read('context.network.id');
         $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
@@ -503,12 +588,14 @@ class Identity extends AppModel {
         $server_name = FULL_BASE_URL . Router::url('/');
         $server_name = $this->removeHttpWww($server_name);
         $local = stripos($username, $server_name) === 0;
-        $result = array('username'        => $username,
-                        'local_username'  => $local_username,
-                        'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
-                        'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
-                        'servername'      => $servername,
-                        'local'           => $local ? 1 : 0);
+        $result = array(
+            'username'        => $username,
+            'local_username'  => $local_username,
+            'single_username' => isset($local_username_namespace[0]) ? $local_username_namespace[0] : $local_username,
+            'namespace'       => isset($local_username_namespace[1]) ? $local_username_namespace[1] : '',
+            'servername'      => $servername,
+            'local'           => $local ? 1 : 0
+        );
         
         return $result;
     }
@@ -581,7 +668,7 @@ class Identity extends AppModel {
         $vcard = $data['Identity'];  
         $vcard['username'] = $vcard['local_username'];      
         $to_remove = array(
-            'id', 'is_local', 'password', 'openid', 'openid_identity', 
+            'id', 'network_id', 'password', 'openid', 'openid_identity', 
             'openid_server_url', 'email', 'last_location_id', 
             'api_hash', 'api_active', 'hash', 'security_token',
             'last_generic_feed_upload', 'last_sync', 'created', 'modified',
@@ -719,8 +806,8 @@ class Identity extends AppModel {
         
         if(!$identity) {
             $data = array(
-                'username' => $username,
-                'is_local' => 0
+                'username'   => $username,
+                'network_id' => 0
             );
             $this->create();
             $this->save($data);
@@ -820,7 +907,7 @@ class Identity extends AppModel {
     
     private function getSaveableFields($isAccountWithOpenID) {
     	$saveable = array(
-    	    'is_local', 'username', 'email', 'hash', 'frontpage_updates', 
+    	    'network_id', 'username', 'email', 'hash', 'frontpage_updates', 
     	    'allow_emails', 'overview_filters', 'notify_contact',
     	    'notify_comment', 'notify_favorite', 'created', 'modified'
     	);
@@ -903,7 +990,7 @@ class Identity extends AppModel {
             )
         );
     }
-    
+        
     /**
      * go through all $model to load the identity
      *
@@ -925,6 +1012,24 @@ class Identity extends AppModel {
         }
         
         return $data;
+    }
+    
+    /**
+     * tests, if there is an identity available in this network to
+     * which someone could log in. this is needed to decide wether
+     * the admin route can be access without being logged in as
+     * an identity.
+     */
+    public function isIdentityAvailableForLogin() {
+        return $this->find('count', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Configure::read('context.network.id'),
+                'hash' => '',
+                'username <>' => '',
+                'password <>' => ''
+            )
+        ));
     }
     
     private function startsWithHttp($string) {

@@ -48,7 +48,9 @@ class hcard extends microformat_base {
                         $src = $photo->getAttribute('src');
                     }
                     if($src) {
+                        # use the first photo we find
                         $item['photo'] = $src;
+                        break;
                     }
                 }
                 

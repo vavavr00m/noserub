@@ -14,7 +14,7 @@ class RegistrationController extends AppController {
         
         $this->checkSecure();
         
-        if(Configure::read('NoseRub.registration_type') != 'all') {
+        if(Configure::read('context.network.registration_type') != 1) {
             $url = $this->url->http('/');
             $this->redirect($url);
         }
@@ -41,10 +41,10 @@ class RegistrationController extends AppController {
     	if (!empty($this->data)) {
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, $sregFields);
     	} else {
-    		if (count($this->params['url']) > 1) {
+    		if ($this->openid->isOpenIDResponse()) {
     			$response = $this->getOpenIDResponseIfSuccess($returnTo);
 
-    			$identity = $this->Identity->checkOpenID($response);
+    			$identity = $this->Identity->getIdentityByOpenIDResponse($response);
     			
     			if ($identity) {
     				# already registered, so we perform a login

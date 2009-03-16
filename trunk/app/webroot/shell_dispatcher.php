@@ -85,8 +85,8 @@ if($argc == 2) {
     
     $_SERVER['REQUEST_URI'] = $argv[1];       
    
-    if(Configure::read('NoseRub.full_base_url') && !defined('FULL_BASE_URL')) {
-        define('FULL_BASE_URL', Configure::read('NoseRub.full_base_url'));
+    if(Configure::read('context.network.url') && !defined('FULL_BASE_URL')) {
+        define('FULL_BASE_URL', Configure::read('context.network.url'));
     }
 
     define('SHELL_START_TIMESTAMP', date('Y-m-d H:i:s'));

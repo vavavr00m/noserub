@@ -12,10 +12,6 @@ class GeocoderComponentTestCase extends CakeTestCase {
 		$this->component = new GeocoderComponent();
 	}
 	
-	public function skip() {
-		$this->skipif(!Configure::read('NoseRub.google_maps_key'), 'NoseRub.google_maps_key not set in noserub.php');
-	}
-	
 	public function testGet1() {
 	    $address = 'Kölnstraße 129, 53111 Bonn, Deutschland';
 	    $address = 'Eupener Straße, Köln';

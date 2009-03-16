@@ -36,7 +36,7 @@ class AppController extends Controller {
     
     /**
      * Makes sure we redirect to the https url,
-     * when NoseRub.use_ssl is used and we're not
+     * when context.network.use_ssl is used and we're not
      * on a secure page
      */
     public function checkSecure() {
@@ -44,7 +44,7 @@ class AppController extends Controller {
             return;
         }
         
-        if(Configure::read('NoseRub.use_ssl')) {
+        if(Configure::read('context.network.use_ssl')) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
@@ -66,36 +66,23 @@ class AppController extends Controller {
             $this->redirect(str_replace('https://', 'http://', FULL_BASE_URL) . $this->here);
         }
     }
-       
-    private function auto_login() {
-        $li = $this->Cookie->read('li'); # login id
-            
-        if($li) {
-            if(!isset($this->Identity)) {
-                App::import('Model', 'Identity');
-                $this->Identity = new Identity();
-            }
-            
-            $this->Identity->contain();
-            $identity = $this->Identity->findById($li);
-
-            if(!$identity) {
-                # not found. delete the cookie.
-                $this->Cookie->del('li');
-            } else {
-                $this->Session->write('Identity', $identity['Identity']);
-                # refresh auto login cookie
-                $this->Cookie->write('li', $li, true, '4 weeks');
-            }
-        }
-            
-    }
 
     public function beforeFilter() {
-        # check for auto-login
-        if(!$this->Session->check('Identity.id')) {
-            $this->auto_login();
-        }        
+        if(!$this->isSystemUpdatePage()) {
+            # check for auto-login
+            if(!$this->Session->check('Identity.id')) {
+                $this->autoLogin();
+            }
+        }
+        
+        $session_theme = $this->Session->read('theme');
+        if(isset($this->params['url']['theme'])) {
+            $session_theme = $this->params['url']['theme'];
+            $this->Session->write('theme', $session_theme);
+        }
+        if($session_theme) {
+            $this->theme = $session_theme;
+        }
         
         # Localization
         App::import('Core', 'l10n');
@@ -105,7 +92,7 @@ class AppController extends Controller {
         if(!$language) {
             # if not, get NoseRub default language and save it
             # in the session
-            $language = Configure::read('NoseRub.default_language');
+            $language = Configure::read('context.network.default_language');
             $this->Session->write('Config.language', $language);
         }
         # now set the language
@@ -143,6 +130,8 @@ class AppController extends Controller {
                 exit;
             }
         }
+        
+        $this->updateContext();
     }
     
     public function ensureSecurityToken() {
@@ -162,13 +151,13 @@ class AppController extends Controller {
             }
         }
         
-        if(!$this->Identity->checkSecurityToken($session_identity_id, $security_token)) {
+        if(!$this->Identity->isCorrectSecurityToken($session_identity_id, $security_token)) {
             $this->redirect('/pages/security_check/', null, true);
         }
     }
     
     public function beforeRender() {
-        if($this->viewPath != 'errors' && strpos($this->here, '/system/update') === false) {
+        if($this->viewPath != 'errors' && !$this->isSystemUpdatePage()) {
 	        if(!isset($this->Identity)) {
 	            App::import('Model', 'Identity');
 	            $this->Identity = new Identity();
@@ -180,5 +169,247 @@ class AppController extends Controller {
     
     public function afterFilter() {
         $this->Session->write('FlashMessages', array());
+    }
+    
+    protected function updateContext() {
+        if($this->isSystemUpdatePage()) {
+            return;
+        }
+        
+        if(!isset($this->Network)) {
+            App::import('Model', 'Network');
+            $this->Network = new Network;
+        }
+        
+        # get the network data. right now, always
+        # for network_id 1
+        $data = $this->Network->find('first', array(
+            'contain' => false,
+            'conditions' => array('id' => 1)
+        ));
+        
+        if(!$data['Network']['url']) {
+            # when no URL is found, we try to guess it
+            $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+            $data['Network']['url'] = 'http://' . $http_host . $this->webroot;
+        }
+        
+        Configure::write('context.network', $data['Network']);
+
+        # set the user agent here, as we didn't know about the network.url before
+        Configure::write('noserub.user_agent', 'NoseRub bot from ' . Configure::read('context.network.url') . ' (http://noserub.com/)');
+        ini_set('user_agent', Configure::read('noserub.user_agent'));
+        
+        Configure::write('context.logged_in_identity', $this->Session->read('Identity'));
+        
+        if($this->Session->read('Admin.id')) {
+            Configure::write('context.admin_id', $this->Session->read('Admin.id'));
+        } else {
+            Configure::write('context.admin_id', 0);
+        }
+        
+        # if we're looking on the page of someone else, get the identity
+        $username = isset($this->params['username']) ? $this->params['username'] : '';
+        if($username) {
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity;
+            }
+            
+            $splitted = $this->Identity->splitUsername($username);
+            $username = $splitted['username'];
+            
+            $this->Identity->contain();
+            $data = $this->Identity->findByUsername($username);
+            Configure::write('context.identity', $data['Identity']);
+        }
+        
+        if(Configure::read('context.logged_in_identity') && Configure::read('context.identity')) {
+            Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
+        }
+        
+        if(Configure::read('context.logged_in_identity')) {
+            $logged_in_identity = Configure::read('context.logged_in_identity');
+            Configure::write('context.is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
+        }
+    }
+    
+	private function autoLogin() {
+        $login_id = $this->Cookie->read('li'); # login id
+            
+        if($login_id) {
+            if(!isset($this->Identity)) {
+                App::import('Model', 'Identity');
+                $this->Identity = new Identity();
+            }
+            
+            $this->Identity->contain();
+            $identity = $this->Identity->findById($login_id);
+
+            if(!$identity) {
+                # not found. delete the cookie.
+                $this->Cookie->del('li');
+            } else {
+                $this->Identity->id = $identity['Identity']['id'];
+                $this->Identity->saveField('last_login', date('Y-m-d H:i:s'));
+                
+                $this->Session->write('Identity', $identity['Identity']);
+                # refresh auto login cookie
+                $this->Cookie->write('li', $login_id, true, '4 weeks');
+            }
+        }
+    }
+    
+    /**
+     * stores the validation errors and the actual data that was
+     * submitted to the session. this is needed, because of our
+     * widget system and doing redirects in it.
+     *
+     * you can see how it is used in AdminsController::settings()
+     *
+     * also see AppController::retrieveFormErrors()
+     */
+    public function storeFormErrors($modelName, $data, $validationErrors) {
+        $formErrors = $this->Session->read('FormErrors');
+        if(!$formErrors) {
+            $formErrors = array();
+        }
+        $formErrors[$modelName] = array(
+            'data' => $data,
+            'validationErrors' => $validationErrors
+        );
+        $this->Session->write('FormErrors', $formErrors);
+    }
+    
+    /**
+     * retrieving form errors for a given model from the session.
+     * $this->data is set to the previous data, so we can show
+     * the user what was wrong and also retsore the validationErrors,
+     * so that the form helpers can display them.
+     *
+     * you can see how it is used in WidgetsController::form_admin_settings()
+     *
+     * also see AppController::storeFormErrors()
+     */
+    public function retrieveFormErrors($modelName) {
+        $formErrors = $this->Session->read('FormErrors');
+        if(is_array($formErrors)) {
+            if(isset($formErrors[$modelName])) {
+                $this->data = $formErrors[$modelName]['data'];
+                $this->{$modelName}->validationErrors = $formErrors[$modelName]['validationErrors'];
+                unset($formErrors[$modelName]);
+                $this->Session->write('FormErrors', $formErrors);
+            }
+        }
+    }
+    
+    /**
+     * who may access this controller method. each role
+     * inherits from the other.
+     *
+     * roles: visitor -> guest -> user -> admin
+     *
+     * will be extended later with pseudo roles
+     * like 'group admin', etc.. They then will
+     * have params, eg:
+     *   $this->grantAccess('group_admin' => $this->Group->id);
+     *
+     * other access tokens:
+     * - self: only if the logged in user looks at it's own
+     *         page, he/she may see it
+     */
+    public function grantAccess($access) {
+        if(!is_array($access)) {
+            $access = array($access);
+        }
+        
+        foreach($access as $allow) {
+            if($allow == 'all') {
+                return;
+            }
+            # no need to test for 'visitor', as
+            # this is the default behaviour
+            if($allow == 'guest') {
+                if(Configure::read('context.is_guest') ||
+                   Configure::read('context.logged_in_identity') ||
+                   Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_visitors');
+                }
+            } else if($allow == 'user') {
+                if(Configure::read('context.logged_in_identity') ||
+                   Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_guests');
+                }
+            } else if($allow == 'admin') {
+                if(Configure::read('context.is_admin')) {
+                    return;
+                } else {
+                    $this->info_route('not_allowed_for_users');
+                }
+            } else if($allow == 'self') {
+                if(Configure::read('context.is_self')) {
+                    return;
+                } else {
+                    $this->info_route('only_allowed_for_self');
+                }
+            } else {
+                $this->error_route('unknown_access');
+            }
+        }
+        
+        $this->error_route('unknown_access');
+    }
+    
+    /**
+     * denies access for specific roles. for instance
+     * the login page for already logged in users.
+     * 
+     * roles *do not* inherit the behaviour!
+     */
+    public function denyAccess($access) {
+        if(!is_array($access)) {
+            $access = array($access);
+        }
+        
+        foreach($access as $deny) {
+            if($allow == 'none') {
+                return;
+            }
+            # no need to test for 'visitor', as
+            # this is the default behaviour
+            if($deny == 'guest') {
+                if(Configure::read('context.is_guest')) {
+                    $this->info_route('not_allowed_for_guests');
+                }
+            } else if($deny == 'user') {
+                if(Configure::read('context.logged_in_identity'))  {
+                    $this->info_route('not_allowed_for_users');
+                }
+            } else if($deny == 'admin') {
+                if(Configure::read('context.is_admin')) {
+                    $this->info_route('not_allowed_for_admins');
+                }
+            } else {
+                $this->error_route('unknown_access');
+            }
+        }
+        
+        $this->error_route('unknown_access');
+    }
+    
+    protected function error_route($action) {
+        $this->redirect('/pages/error/' . $action);
+    }
+    
+    protected function info_route($action) {
+        $this->redirect('/pages/info/' . $action);
+    }
+    
+    private function isSystemUpdatePage() {
+    	return (strpos($this->here, '/system/update') !== false) ? true : false;
     }
 }

@@ -1,6 +1,6 @@
 <?php if($verify_ok) { ?>
     <p>
-        <?php echo sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), Configure::read('NoseRub.app_name')); ?>
+        <?php echo sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), Configure::read('context.network.name')); ?>
     </p>
 <?php } else { ?>
     <p>

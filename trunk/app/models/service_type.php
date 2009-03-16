@@ -43,12 +43,12 @@ class ServiceType extends AppModel {
 	/**
 	 * returns array of ids for an array of tokens
 	 */
-	public function getList($tokens) {
+	public function getList(array $tokens) {
 	    $ids = array();
 	    foreach($tokens as $token) {
 	        $this->contain();
 	        $fields = array('id');
-	        $data = $this->findByToken($token);
+	        $data = $this->findByToken($token, $fields);
 	        if($data) {
 	        	$ids[] = $data['ServiceType']['id'];
 	        }

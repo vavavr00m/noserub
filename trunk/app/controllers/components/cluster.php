@@ -33,13 +33,17 @@ class ClusterComponent extends Object {
      * *not* the cluster!
      *
      * @param array $data
-     *
+     * @param bool $look_at_comments if enabled, entries with comments
+     *        are not removed, although they have the same content.
+     *        TODO: check, wether the comments are identical and
+     *              therefore the entries could be removed.
      * @return array
      */
-    public function removeDuplicates($data) {
+    public function removeDuplicates($data, $look_at_comments = true) {
         $cleaned = array();
         foreach($data as $idx => $item) {
-            $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($item['Entry']['title']));
+            $title = $item['Entry']['title'] ? $item['Entry']['title'] : $item['Entry']['id'];
+            $key = $item['Entry']['identity_id'] . '.' . md5(strip_tags($title));
             
             if(isset($cleaned[$key])) {
                 $both_with_comments = (
@@ -48,7 +52,7 @@ class ClusterComponent extends Object {
                 );
 
                 # we already have this
-                if($both_with_comments) {
+                if($look_at_comments && $both_with_comments) {
                     # if both have comments/favorites, keep both!
                     $cleaned[$key . '.' . $idx] = $item;
                 } else if(!$cleaned[$key]['Comment'] && !$cleaned[$key]['FavoritedBy']) {

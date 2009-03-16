@@ -10,7 +10,7 @@ class OmbListeneeAvatar extends OmbParam {
 			if ($this->isGravatarUrl($avatarName)) {
 				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
 			} else {
-				$avatarUrl = Configure::read('NoseRub.full_base_url').'static/avatars/'.$avatarName.'-medium.jpg';
+				$avatarUrl = Configure::read('context.network.url').'static/avatars/'.$avatarName.'-medium.jpg';
 			}
 		}
 		

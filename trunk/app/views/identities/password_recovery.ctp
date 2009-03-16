@@ -1,6 +1,6 @@
 <?php $flashmessage->render(); ?>
 <p>
-    <?php __('Please enter username or password. We will then send you an email with a link to set a new password.'); ?>
+    <?php __('Please enter username or email address. We will then send you an email with a link to set a new password.'); ?>
 </p>
 <?php echo $form->create('Identity', array('url' => '/pages/password/recovery')); ?>
     <fieldset>
