@@ -129,6 +129,21 @@ class WidgetsController extends AppController {
  	    $this->set('groups', $this->Identity->getSubscribedGroups());
  	}
  	
+ 	public function groups_overview() {
+ 	    $this->loadModel('Group');
+ 	    $this->set('groups', $this->Group->getOverview());
+ 	}
+ 	
+ 	public function new_groups() {
+ 	    $this->loadModel('Group');
+ 	    $this->set('groups', $this->Group->getNew());
+ 	}
+ 	
+ 	public function popular_groups() {
+ 	    $this->loadModel('Group');
+ 	    $this->set('groups', $this->Group->getPopular());
+ 	}
+ 	
  	/**
  	 * Filters
  	 */
