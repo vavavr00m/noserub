@@ -7,6 +7,8 @@ Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => '
 
 Router::connect('/widgets/:action', array('controller' => 'widgets'));
 
+Router::connect('/groups/:action', array('controller' => 'groups'));
+
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 Router::connect('/pages/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/pages/comments/', array('controller' => 'identities', 'action' => 'comments'));
