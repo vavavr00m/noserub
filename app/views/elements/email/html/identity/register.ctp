@@ -2,7 +2,7 @@
 $verify_link = Router::url('/pages/verify/' . $hash . '/', true);
 ?>
 <h1>
-	<?php echo sprintf(__('Welcome to %s!', true), Configure::read('NoseRub.app_name')); ?>
+	<?php echo sprintf(__('Welcome to %s!', true), Configure::read('context.network.name')); ?>
 </h1>
 <p>
 	<a href="<?php echo Router::url('/pages/verify/' . $hash . '/', true); ?>">

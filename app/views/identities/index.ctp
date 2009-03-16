@@ -22,7 +22,7 @@
             if(Configure::read('NoseRub.use_cdn')) {
                 $feed_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/feeds/' . $data['Identity']['local_username'] . '.rss';
             } else {
-                $feed_url = Configure::read('NoseRub.full_base_url') . $url . '/feeds/rss';
+                $feed_url = Configure::read('context.network.url') . $url . '/feeds/rss';
             }
             $this->addScript('<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="' . $feed_url . '" />');
         }

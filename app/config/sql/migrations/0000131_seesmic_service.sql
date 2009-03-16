@@ -1,0 +1,1 @@
+INSERT INTO `services` (`id` , `internal_name`, `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('76', 'Seesmic', 'Seesmic', 'http://seesmic.com/', '6', '', 'seesmic.gif', '1', '0', NOW(), NOW());

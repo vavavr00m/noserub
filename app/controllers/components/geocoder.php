@@ -5,18 +5,14 @@ class GeocoderComponent extends Object {
     /**
      * returns an array with latitude and longitude
      * for the given address or false, when no result
-     * was found - or no API key is given. 
+     * was found
      *
      * @param  string $address
      * @return array with keys 'longitude', 'latitude'
      * @access 
      */
     public function get($address) {
-        if(Configure::read('NoseRub.google_maps_key') === false) {
-            return false;
-        }
-        
-        $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address) . '&key=' . Configure::read('NoseRub.google_maps_key');
+        $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address);
         
         App::import('Vendor', 'WebExtractor');
 		$response = WebExtractor::fetchUrl($url);

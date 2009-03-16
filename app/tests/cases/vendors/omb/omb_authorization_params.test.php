@@ -73,7 +73,7 @@ class OmbAuthorizationParamsTest extends CakeTestCase {
 	}
 	
 	private function getPhotoUrl() {
-		return Configure::read('NoseRub.full_base_url').'static/avatars/'.$this->photo.'-medium.jpg';
+		return Configure::read('context.network.url').'static/avatars/'.$this->photo.'-medium.jpg';
 	}
 	
 	private function getProfileUrl() {

@@ -16,17 +16,17 @@ class OmbSubscriptionsController extends AppController {
 		
 		try {
 			$response = new OmbAuthorizationResponse($this->params['url']);
-			$identity = $this->Identity->getIdentityByUsername($username);
+			$identity = $this->Identity->getIdentityByLocalUsername($username);
 
-			$data['Identity']['is_local'] = false;
-			$data['Identity']['username'] = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
+			$data['Identity']['network_id'] = 0;
+			$data['Identity']['username']   = UrlUtil::removeHttpAndHttps($response->getProfileUrl());
 			
 			$existingIdentityId = $this->Identity->field('id', array('Identity.username' => $data['Identity']['username']));
 			if ($existingIdentityId) {
 				$this->Identity->id = $existingIdentityId;
 			}
 			
-			$this->Identity->save($data, true, array('is_local', 'username'));
+			$this->Identity->save($data, true, array('network_id', 'username'));
 			$this->Identity->Contact->add($identity['Identity']['id'], $this->Identity->id);
 			$contactId = $this->Identity->Contact->id;
 		
@@ -72,8 +72,8 @@ class OmbSubscriptionsController extends AppController {
 				$this->Session->write(self::ACCESS_TOKEN_URL_KEY, $localServiceDefinition->getAccessTokenUrl());
 				$this->Session->write(self::LOCAL_SERVICE_ID_KEY, $localServiceId);
 				
-				$callbackUrl = Configure::read('NoseRub.full_base_url') . $username . '/callback';
-				$identity = $this->Identity->getIdentityByUsername($username);
+				$callbackUrl = Configure::read('context.network.url') . $username . '/callback';
+				$identity = $this->Identity->getIdentityByLocalUsername($username);
 				$ombAuthorizationParams = new OmbAuthorizationParams($localServiceDefinition->getLocalId(), $identity);
 				$this->OmbRemoteService->redirectToAuthorizationPage($localServiceDefinition->getAuthorizeUrl(), $requestToken, $ombAuthorizationParams, $callbackUrl);
 			} catch (Exception $e) {

@@ -4,10 +4,16 @@
 class ContactsController extends AppController {
     public $uses = array('Contact');
     public $helpers = array('nicetime', 'flashmessage', 'xfn');
-    public $components = array('cluster', 'api', 'OauthServiceProvider');
+    public $components = array('cluster');
     
     public function index() {
         $this->checkUnsecure();
+        
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render();
+            return;
+        }
         
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
@@ -143,9 +149,9 @@ class ContactsController extends AppController {
                 # check, if this is unique
                 if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
                     $this->Contact->Identity->create();
-                    $identity = array('is_local' => 1,
+                    $identity = array('network_id' => Configure::read('context.network.id'),
                                       'username' => $new_splitted['username']);
-                    $saveable = array('is_local', 'username', 'created', 'modified');
+                    $saveable = array('network_id', 'username', 'created', 'modified');
                     $this->Contact->Identity->save($identity, true, $saveable);
                     
                     if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
@@ -396,6 +402,12 @@ class ContactsController extends AppController {
     public function network() {
         $this->checkUnsecure();
         
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('../identities/network');
+            return;
+        }
+        
         $session_identity = $this->Session->read('Identity');
         
         if(!isset($this->params['username'])) {
@@ -549,118 +561,5 @@ class ContactsController extends AppController {
 		}
         
         $this->redirect('/' . $splitted['local_username']);
-    }
-    
-    /**
-     * returns list of all contacts for this user
-     */
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-    	                                     
-        # get all noserub contacts
-        $this->Contact->contain(array('WithIdentity', 'NoserubContactType'));
-        
-        $conditions = array(
-            'Contact.identity_id' => $identity_id,
-            'WithIdentity.username NOT LIKE "%@%"'
-        );
-    	$data = $this->Contact->find('all', array('conditions' => $conditions,
-    											  'order' => array('WithIdentity.created DESC')));   
-        
-        $contacts = array();
-        foreach($data as $item) {
-            $xfn = array();
-            foreach($item['NoserubContactType'] as $nct) {
-                if($nct['is_xfn']) {
-                    $xfn[] = $nct['name'];
-                }
-            }
-            if(!$xfn) {
-                $xfn[] = 'contact';
-            }
-            
-            $contact = array(
-                'url' => 'http://' . $item['WithIdentity']['username'],
-                'firstname' => $item['WithIdentity']['firstname'],
-                'lastname'  => $item['WithIdentity']['lastname'],
-                'photo'     => $this->Contact->Identity->getPhotoUrl($item, 'WithIdentity', true),
-                'xfn'       => join(' ', $xfn)
-            );
-            $contacts[] = $contact;
-        }
-        
-        $this->set('data', $contacts);
-        $this->api->render();
-    }
-    
-    /**
-     * contacts of a given identity.
-     */
-    public function widget_contacts() {
-        $session_identity = $this->Session->read('Identity');
-        
-        $identity_id = $this->params['identity_id'];
-        $this->Contact->Identity->contain();
-        $this->Contact->Identity->id = $identity_id;
-        $this->set('identity', $this->Contact->Identity->read());
-        
-        $tag_filter = $this->Session->read('Filter.Contact.Tag');
-        if(!$tag_filter) {
-            $tag_filter = 'all';
-        }
-        
-        $is_self = $session_identity && $session_identity['id'] == $identity_id;
-        # get (filtered) contacts
-        if($is_self) {
-            # this is my network, so I can show every contact
-            $contact_filter = array('tag' => $tag_filter);
-        } else {
-            # this is someone elses network, so I show only the noserub contacts
-            $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
-        }
-        $data = $this->Contact->getForDisplay($identity_id, $contact_filter, 9);
-        $contacts = array();
-        foreach($data as $key => $value) {
-            $contacts[] = $value['WithIdentity'];
-        }
-        $this->set('data', $contacts);
-    }
-    
-    public function widget_my_contacts() {
-        $logged_in_identity_id = $this->Session->read('Identity.id');
-        if(!$logged_in_identity_id) {
-            return false;
-        }
-        
-        # get contacts of the displayed profile
-        $all_contacts = $this->Contact->getForIdentity($logged_in_identity_id);
-
-        $contacts = array();
-        $num_private_contacts = 0;
-        $num_noserub_contacts = 0;
-        foreach($all_contacts as $contact) {
-            if(strpos($contact['WithIdentity']['username'], '@') === false) {
-                $num_noserub_contacts++;
-                if(count($contacts) < 9) {
-                    $contacts[] = $contact;
-                }
-            } else {
-                $num_private_contacts++;
-                if(count($contacts) < 9) {
-                    $contacts[] = $contact;
-                }
-            }
-        }
-        $this->set('num_private_contacts', $num_private_contacts);
-        $this->set('num_noserub_contacts', $num_noserub_contacts);
-        $this->set('data', $contacts);
     }
 }

@@ -4,18 +4,23 @@
 class AccountsController extends AppController {
     public $uses = array('Account');
     public $helpers = array('flashmessage');
-    public $components = array('api', 'OauthServiceProvider');
     
     public function index() {
         $this->checkSecure();
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Account->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
+        if(!$session_identity) {
+            # only a logged in user will see this
+            $this->redirect('/');
+        }
         
         # get identity that is displayed
         $identity = $this->getIdentity($splitted['username']);
-        if(!$identity) {
-            # this identity is not here
+        if(!$identity || 
+           $identity['Identity']['id'] != $session_identity['id']) {
+            # this identity is not here, or it is not the logged
+            # in identity
             $this->redirect('/');
         }
         $this->set('about_identity', $identity['Identity']);
@@ -348,33 +353,5 @@ class AccountsController extends AppController {
     	$this->Session->write('Service.add.data', $data);
 		$this->Session->write('Service.add.type', $data['service_type_id']);
 		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
-    }
-    
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-
-        $this->Account->contain(array('ServiceType', 'Service'));
-        $accounts = $this->Account->findAllByIdentityId($identity_id);
-
-        $data = array();
-        foreach($accounts as $item) {
-            $data[] = array(
-                'title' => $item['Account']['title'],
-                'url'   => $item['Account']['account_url'],
-                'icon'  => $item['Service']['icon'],
-                'type'  => $item['ServiceType']['name']
-            );
-        }
-        $this->set('data', $data);
-        
-        $this->api->render();
     }
 }

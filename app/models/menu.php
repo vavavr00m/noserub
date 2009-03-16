@@ -107,7 +107,7 @@ class MenuFactory {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
 		$menuItems[] = new SearchMenuItem($controller, $action);
 		
-		if($registrationType == 'all') {
+		if($registrationType == 1) {
 			$menuItems[] = new RegisterMenuItem($controller, $action);
 		}
 		
@@ -127,7 +127,8 @@ class MenuFactory {
 	
 	private function getMainMenuForRemoteUser($controller, $action) {
 		$menuItems[] = new SocialStreamMenuItem($controller, $action);
-		$menuItems[] = new MyProfileMenuItem($controller, $action);
+		$menuItems[] = new MyFavoritesMenuItem($controller, $action);
+		$menuItems[] = new MyCommentsMenuItem($controller, $action);
 		
 		return $menuItems;
 	}
@@ -136,7 +137,15 @@ class MenuFactory {
 		$registrationType = '';
 		
 		if(!isset($options['registration_type'])) {
-			$registrationType = Configure::read('NoseRub.registration_type');
+            if($options['action'] != 'system_update') {
+    		    # this is a workaround, as the context isn't available here
+    		    App::import('Model', 'Network');
+    		    $Network = new Network();
+    		    $Network->id = 1;
+    		    $registrationType = $Network->field('registration_type');
+	        } else {
+	            $registrationType = 0;
+	        }
 		} else {
 			$registrationType = $options['registration_type'];
 		}
@@ -278,8 +287,7 @@ class MyFavoritesMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername = null) {
-		// TODO adding link for profile of remote user
-		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/favorites/';
+	    $link = '/pages/favorites/';
 		
 		parent::__construct(__('My Favorites', true), $link, false);
 		$this->controller = $controller;
@@ -300,8 +308,7 @@ class MyCommentsMenuItem extends MenuItem {
 	private $action = null;
 	
 	public function __construct($controller, $action, $localUsername = null) {
-		// TODO adding link for profile of remote user
-		$link = ($localUsername == null) ? '' : '/' . $localUsername . '/comments/';
+		$link = '/pages/comments/';
 		
 		parent::__construct(__('My Comments', true), $link, false);
 		$this->controller = $controller;
@@ -344,7 +351,7 @@ class SettingsMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	public function __construct($controller, $action, $localUsername) {
+	public function __construct($controller, $action, $localUsername = '') {
 		parent::__construct(__('Settings', true), '/' . $localUsername . '/settings/', false);
 		$this->controller = $controller;
 		$this->action = $action;

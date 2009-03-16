@@ -8,8 +8,7 @@ class IdentitiesController extends AppController {
     public $uses = array('Identity');
     public $helpers = array('openid', 'nicetime', 'flashmessage');
     public $components = array(
-        'geocoder', 'url', 'cluster', 'openid', 'cdn', 
-        'Cookie', 'api', 'OauthServiceProvider'
+        'geocoder', 'url', 'cluster', 'openid', 'cdn', 'Cookie'
     );
     
     /**
@@ -17,6 +16,13 @@ class IdentitiesController extends AppController {
      */
     public function index() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
+        
+        if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('profile');
+            return;
+        }
         
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
@@ -50,9 +56,9 @@ class IdentitiesController extends AppController {
                 'first',
                 array(
                     'conditions' => array(
-                        'username'  => $username,
-                        'is_local'  => 1,
-                        'hash'      => ''
+                        'username'   => $username,
+                        'network_id' => Configure::read('context.network.id'),
+                        'hash'       => ''
                     )
                 )
             );
@@ -175,8 +181,16 @@ class IdentitiesController extends AppController {
      */
     public function social_stream() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
+        
     	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
-    	
+
+    	if($this->theme == 'beta') {
+            # hack to render the beta theme
+            $this->render('../pages/home');
+            return;
+        }
+        
         $session_identity = $this->Session->read('Identity');
         $output = isset($this->params['output']) ? $this->params['output']   : 'html';
 
@@ -222,13 +236,19 @@ class IdentitiesController extends AppController {
  	 */
     public function favorites() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
         
         $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $username = $splitted['username'];
-
-        $this->Identity->contain();
-        $identity = $this->Identity->findByUsername($username);
+        
+        if($username) {
+            $identity = $this->Identity->getIdentityByLocalUsername($username);
+        } else {
+            $identity = Configure::read('context.logged_in_identity');
+            if(!$identity) {
+                $this->redirect('/');
+            }
+            $identity = array('Identity' => $identity);
+        }
         
         $conditions = array(
             'favorited_by' => $identity['Identity']['id']
@@ -242,7 +262,7 @@ class IdentitiesController extends AppController {
 
         $this->set('items', $items);
         $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's favorites", true), $username));
+        $this->set('headline', sprintf(__("%s's favorites", true), $identity['Identity']['username']));
     }
     
 	/**
@@ -250,13 +270,19 @@ class IdentitiesController extends AppController {
 	 */
 	public function comments() {
         $this->checkUnsecure();
+        $this->grantAccess('all');
         
         $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $username = $splitted['username'];
 
-        $this->Identity->contain();
-        $identity = $this->Identity->findByUsername($username);
+        if($username) {
+            $identity = $this->Identity->getIdentityByLocalUsername($username);
+        } else {
+            $identity = Configure::read('context.logged_in_identity');
+            if(!$identity) {
+                $this->redirect('/');
+            }
+            $identity = array('Identity' => $identity);
+        }
         
         $conditions = array(
             'commented_by' => $identity['Identity']['id']
@@ -265,15 +291,16 @@ class IdentitiesController extends AppController {
         $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
         
         usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);        
+        $items = $this->cluster->removeDuplicates($items, false);
         $items = $this->cluster->create($items);
 
         $this->set('items', $items);
         $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's comments", true), $username));
+        $this->set('headline', sprintf(__("%s's comments", true), $identity['Identity']['username']));
     }
 
     public function send_message() {
+        $this->grantAccess('user');
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
@@ -336,7 +363,7 @@ class IdentitiesController extends AppController {
                 $msg .= __('If you want to reply to this message, go to ', true) . 'http://' . $session_identity['username'] . '/' . "\n";
             
                 $email = $about_identity['Identity']['email'];
-                if(!mail($email, '['. Configure::read('NoseRub.app_name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
+                if(!mail($email, '['. Configure::read('context.network.name') . '] ' . $clean_subject, $msg, 'From: ' . Configure::read('NoseRub.email_from'))) {
                     $this->log('mail could not be sent: '.$email . ' / ' . $clean_subject);
                     $this->flashMessage('alert', __('Your Message could not be delivered to ', true) . $name);
                 } else {
@@ -350,16 +377,12 @@ class IdentitiesController extends AppController {
     
     public function profile_settings() {
         $this->checkSecure();
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+               
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -428,17 +451,13 @@ class IdentitiesController extends AppController {
     }
     
     public function display_settings() {
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
-        if($this->data) {
+         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
@@ -467,16 +486,12 @@ class IdentitiesController extends AppController {
     }
     
     public function privacy_settings() {
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+                
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -523,16 +538,12 @@ class IdentitiesController extends AppController {
     
     public function password_settings() {
         $this->checkSecure();
+        $this->grantAccess('self');
+        
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted = $this->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || $session_identity['username'] != $splitted['username'] ) {
-            # this is not the logged in user or the user used an OpenID to register
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
+                
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -581,8 +592,8 @@ class IdentitiesController extends AppController {
     	$this->checkSecure();
     	$sessionKeyForOpenIDRequest = 'Noserub.lastOpenIDRequest';
     	
-    	if (!empty($this->data) || count($this->params['url']) > 1) {
-    		if (isset($this->data['Identity']['username'])) {
+    	if(!empty($this->data) || $this->openid->isOpenIDResponse()) {
+    		if(isset($this->data['Identity']['username'])) {
     			$identity = $this->Identity->check($this->data);
     		} else {
     			$identity = $this->loginWithOpenID();
@@ -592,7 +603,7 @@ class IdentitiesController extends AppController {
     		    $this->Session->write('Config.language', $identity['Identity']['language']);
     		    
                 $this->Session->write('Identity', $identity['Identity']);
-                if ($this->Session->check($sessionKeyForOpenIDRequest)) {
+                if($this->Session->check($sessionKeyForOpenIDRequest)) {
                 	$this->redirect('/auth');
                 } else {
                     # check, if we should remember this user
@@ -600,13 +611,22 @@ class IdentitiesController extends AppController {
                         $this->Cookie->write('li', $identity['Identity']['id'], true, '4 weeks');
                     } 
                     
-                    if (!$this->Session->check('Login.success_url')) {
-	                    $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
-	                    $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
+                    if(!$this->Session->check('Login.success_url')) {
+                        if($this->Session->read('Login.is_guest')) {
+	                        $this->flashMessage('success', __('Welcome! It\'s nice to have you here.', true));
+	                        $url = $this->url->http('/', true);
+                        } else {
+                            $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
+                            $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
+                        }
+	                    
                     } else {
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
                     	$this->Session->delete('Login.success_url');
                     }
+                    
+                    $this->Identity->id = $identity['Identity']['id'];
+                    $this->Identity->saveField('last_login', date('Y-m-d H:i:s'));
                     
                     $this->redirect($url);
                 }
@@ -628,7 +648,7 @@ class IdentitiesController extends AppController {
     	$this->checkUnsecure();
     	$openid = $this->Session->read('OpenidLogin.openid');
     	
-    	if ($openid) {
+    	if($openid) {
     		$returnTo = 'https://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
     		$realm = str_replace('http://', 'https://', FULL_BASE_URL);
 		    $this->authenticateOpenID($openid, $returnTo, $realm);
@@ -643,28 +663,38 @@ class IdentitiesController extends AppController {
     private function loginWithOpenID() {
     	$protocol = 'http://';
     	
-    	if (Configure::read('NoseRub.use_ssl')) {
+    	if(Configure::read('context.network.use_ssl')) {
     		$protocol = 'https://';
     	}
     	
     	$returnTo = $protocol.$_SERVER['SERVER_NAME'].$this->webroot.'pages/login';
     	
-    	if (!empty($this->data)) {
+    	if(!empty($this->data)) {
     		$this->Session->write('OpenidLogin.remember', $this->data['Identity']['remember']);
     		
-    		if (Configure::read('NoseRub.use_ssl')) {
+    		if(Configure::read('context.network.use_ssl')) {
     			$this->Session->write('OpenidLogin.openid', $this->data['Identity']['openid']);
     			// we switch to http for submitting the OpenID to the OpenID provider to avoid browser warning 
     			$this->redirect(str_replace('https', 'http', Router::url('/pages/login/openid', true)));
     		}
     		
     		$this->authenticateOpenID($this->data['Identity']['openid'], $returnTo, FULL_BASE_URL);
-    		exit;
+    		return;
     	} else {
     		$this->data['Identity']['remember'] = $this->Session->read('OpenidLogin.remember');
     		$this->Session->delete('OpenidLogin.remember');
     		$response = $this->getOpenIDResponseIfSuccess($returnTo);
-    		return $this->Identity->checkOpenID($response);
+    		$identity = $this->Identity->getIdentityByOpenIDResponse($response);
+    		
+    		if($identity) {
+    			if ($identity['Identity']['network_id'] == 0) {
+    				$this->Session->write('Login.is_guest', true);
+    			}
+    			return $identity;
+    		}
+    		
+    		$this->Session->write('Login.is_guest', true);
+    		return $this->Identity->createGuestIdentity($response->identity_url);
     	}
     }
         
@@ -672,11 +702,11 @@ class IdentitiesController extends AppController {
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
-        # make sure the login cookie is invalid
-        # set cookie
+        # delete login cookie
         $this->Cookie->del('li');
         
         $this->Session->delete('Identity');
+        $this->Session->delete('Admin');
         $this->redirect($this->url->http('/'));
     }
     
@@ -709,7 +739,7 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $identity = $this->Identity->findById($identity_id);
 
-        if(!$identity || $identity['Identity']['is_local'] == 1) {
+        if(!$identity || $identity['Identity']['network_id'] == Configure::read('context.network.id')) {
             # we could not find it, or this is a local identity
             return false;
         }
@@ -719,6 +749,7 @@ class IdentitiesController extends AppController {
             # check, if there is a new photo
             $this->Identity->id = $identity_id;
             $this->recursive = 0;
+            $this->Identity->contain();
             $data = $this->Identity->read();
             if($data['Identity']['photo'] && strpos($data['Identity']['photo'], 'ttp://') > 0) {
                 $filename = $this->Identity->uploadPhotoByUrl($data['Identity']['photo']);
@@ -745,7 +776,17 @@ class IdentitiesController extends AppController {
         
         # get all not local identities
         $this->Identity->contain();
-        $identities = $this->Identity->find('all', array('conditions' => array('is_local' => 0), 'order' => array('last_sync ASC')));
+        $identities = $this->Identity->find(
+            'all', 
+            array(
+                'conditions' => array(
+                    'network_id' => 0
+                ), 
+                'order' => array(
+                    'last_sync ASC'
+                )
+            )
+        );
         $synced = array();
         foreach($identities as $identity) {
             $this->Identity->sync($identity['Identity']['id'], $identity['Identity']['username']);       
@@ -872,6 +913,8 @@ class IdentitiesController extends AppController {
      *       to the database
      */
     public function switch_language() {
+        $this->grantAccess('all');
+        
         $language = $this->data['Config']['language'];
         $languages = Configure::read('Languages');
         if(!isset($languages[$language])) {
@@ -903,6 +946,8 @@ class IdentitiesController extends AppController {
      * allows user to retrieve a link to then reset the password
      */
     public function password_recovery($recovery_hash = null) {
+        $this->grantAccess('all');
+        
         if(!is_null($recovery_hash)) {
             $this->Identity->contain();
             $identity = $this->Identity->find(
@@ -921,7 +966,7 @@ class IdentitiesController extends AppController {
                 return;
             }
         } else if($this->data) {
-            $conditions = array('is_local' => 1);
+            $conditions = array('network_id' => Configure::read('context.network.id'));
             if($this->data['Identity']['username']) {
                 $splitted = $this->Identity->splitUsername($this->data['Identity']['username']);
                 $conditions['Identity.username'] = $splitted['username'];
@@ -999,190 +1044,4 @@ class IdentitiesController extends AppController {
             $this->redirect('/pages/login/');
         }
     }
-    
-    /**
-     * returns a "vcard" of the authenticated user
-     */
-    public function api_get() {
-    	if (isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-			
-		$this->Identity->id = $identity_id; 
-        $this->Identity->contain('Location');
-        $data = $this->Identity->read();
-        
-        $this->set(
-            'data', 
-            array(
-                'firstname'     => $data['Identity']['firstname'],
-                'lastname'      => $data['Identity']['lastname'],
-                'url'           => 'http://' . $data['Identity']['username'],
-                'photo'         => $this->Identity->getPhotoUrl($data),
-                'about'         => $data['Identity']['about'],
-                'address'       => $data['Identity']['address_shown'],
-                'last_location' => array(
-                    'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
-                    'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
-                )
-            )
-        );
-        
-        $this->api->render();
-    }
-    
-    /**
-     * returns information about the last location
-     */
-	public function api_get_last_location() {
-		if(isset($this->params['username'])) {
-    		$identity = $this->api->getIdentity();
-        	$this->api->exitWith404ErrorIfInvalid($identity);
-        	$identity_id = $identity['Identity']['id'];
-		} else {
-			$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
-		
-		$this->Identity->id = $identity_id;
-		$this->Identity->contain('Location');
-		
-		$data = $this->Identity->read();
-        $this->set(
-            'data', 
-            array(
-                'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
-                'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
-            )
-        );
-        
-        $this->api->render();
-	}
-	
-	/**
-     * used to return number of registered, active users, and some other
-     * values.
-     */
-    public function api_info() {
-        if (Configure::read('NoseRub.api_info_active')) {
-            $this->Identity->contain();
-            $conditions = array(
-                'is_local' => 1,
-                'email <>' => '',
-                'hash'     => '',
-                'NOT username LIKE "%@"'
-            );
-            App::import('Model', 'Migration');
-            $Migration = new Migration();
-            $restricted_hosts = Configure::read('NoseRub.registration_restricted_hosts');
-            $data = array(
-                'num_users' => $this->Identity->find('count', array('conditions' => $conditions)),
-                'registration_type' => Configure::read('NoseRub.registration_type'),
-                'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
-                'migration' => $Migration->getCurrentMigration()
-            );
-        } else {
-            $data = array();
-        }
-        $this->set('data', $data);
-        $this->api->render();
-    }
-
-	/**
-	 * return the last 100 favorites
-	 *
-	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
-	 */
-	public function api_favorites() {
-		# get last 100 favorites
-		$this->Identity->Entry->Favorite->contain();
-		$favorites = $this->Identity->Entry->Favorite->find(
-			'all',
-			array(
-				'fields' => 'Favorite.entry_id',
-				'order'  => 'Favorite.created DESC',
-				'limit'  => 100
-			)
-		);
-		$entry_ids = Set::extract($favorites, '{n}.Favorite.entry_id');
-		$conditions = array(
-			'entry_id' => $entry_ids
-		);
-		$items = $this->Identity->Entry->getForDisplay($conditions, 100, true);
-        
-        usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);
-
-		# clean up the data, so we only have the neccessary stuff
-		$data = array();
-		foreach($items as $item) {
-			foreach($item['FavoritedBy'] as $favorited_by) {
-				$data[] = array(
-					'uid'          => $item['Entry']['uid'],
-					'url'          => $item['Entry']['url'],
-					'favorited_by' => $favorited_by['Identity']['username'],
-					'favorited_on' => $favorited_by['created'] 
-				);
-			}
-		}
-
-		$this->set('data', $data);
-		$this->api->render();
-	}
-	
-	/**
-	 * return the last 100 comments
-	 *
-	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
-	 */
-	public function api_comments() {
-		# get last 100 comments
-		$this->Identity->Entry->Comment->contain('Entry', 'Identity');
-		$comments = $this->Identity->Entry->Comment->find(
-			'all',
-			array(
-				'order'  => 'Comment.published_on DESC',
-				'limit'  => 100
-			)
-		);
-		
-		# clean up the data, so we only have the neccessary stuff
-		$data = array();
-		foreach($comments as $comment) {
-			if($comment['Entry']['url']) {
-				$url = $comment['Entry']['url'];
-			} else {
-				$url = Router::url('/entry/' . $comment['Entry']['id'], true);
-			}
-			
-			if($comment['Entry']['uid']) {
-				$uid = $comment['Entry']['uid'];
-			} else {
-				$uid = md5($url);
-			}
-			
-			$data[] = array(
-				'uid'          => $uid,
-				'url'          => $url,
-				'commented_by' => $comment['Identity']['username'],
-				'commented_on' => $comment['Comment']['published_on'],
-				'comment'      => $comment['Comment']['content']
-			);
-		}
-
-		$this->set('data', $data);
-		$this->api->render();
-	}
-	
-	public function widget_users_new() {
-	    $this->set('data', $this->Identity->getNewbies(9));
-	}
-	
 }

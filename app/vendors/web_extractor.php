@@ -13,7 +13,7 @@ class WebExtractor {
 			} else {
 				$curl = curl_init($url);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($curl, CURLOPT_USERAGENT, NOSERUB_USER_AGENT);
+				curl_setopt($curl, CURLOPT_USERAGENT, Configure::read('noserub.user_agent'));
 				$content = curl_exec($curl);
 				curl_close($curl);
 				return $content;
