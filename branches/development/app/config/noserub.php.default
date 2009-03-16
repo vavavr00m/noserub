@@ -43,6 +43,7 @@ Configure::write('NoseRub.email_from', 'info@...');
  * uses them to send out emails. Otherwise, the php mail
  * settings are used. 
  */
+/*
 Configure::write('NoseRub.smtp_options', array(
 	'port'     => '25',
 	'timeout'  => '30',
@@ -50,7 +51,7 @@ Configure::write('NoseRub.smtp_options', array(
 	'username' => 'your_smtp_username',
 	'password' => 'your_smtp_password'
 ));
-
+*/
 /**
  * For better reliability, NoseRub can store some data to
  * a Content Delivery Network (CDN). You can enable the
