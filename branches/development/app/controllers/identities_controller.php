@@ -780,7 +780,7 @@ class IdentitiesController extends AppController {
             'all', 
             array(
                 'conditions' => array(
-                    'network_id' => Configure::read('context.network.id')
+                    'network_id' => 0
                 ), 
                 'order' => array(
                     'last_sync ASC'
