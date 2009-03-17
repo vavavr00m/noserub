@@ -36,6 +36,15 @@ class WidgetsController extends AppController {
  	}
  	
  	public function admin_login() {
+ 	    if(!Configure::read('context.logged_in_identity')) {
+ 	        # but if there is no identity yet, to which you could log in...
+            $this->loadModel('Identity');
+            if(!$this->Identity->isIdentityAvailableForLogin()) {
+                Configure::write('context.show_admin_login', true);
+            } else {
+                Configure::write('context.show_admin_login', false);
+            }
+        }
  	}
  	
  	public function form_admin_settings() {
