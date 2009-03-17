@@ -73,7 +73,7 @@ class AdminsController extends AppController {
             
             # but if there is no identity yet, to which you could log in...
             $this->loadModel('Identity');
-            if($this->Identity->isIdentityAvailableForLogin()) {
+            if(!$this->Identity->isIdentityAvailableForLogin()) {
                 Configure::write('context.show_admin_login', true);
                 $this->redirect('/admins/');
                 return;
