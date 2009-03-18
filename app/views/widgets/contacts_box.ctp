@@ -1,6 +1,17 @@
+<?php
+    if($data) {
+        $label = __('manage', true);
+    } else {
+        $label = __('add new', true);
+    }
+?>
+<span class="more">
+    <a href="<?php echo Router::Url('/' . $session->read('Identity.local_username') . '/contacts/'); ?>">
+        <?php echo $label; ?>
+    </a>
+</span>
+<h4><?php __('My Contacts'); ?></h4>
 <?php if($data) { ?>
-    <span class="more"><a href="<?php echo Router::Url('/' . $session->read('Identity.local_username') . '/contacts/'); ?>"><?php __('manage'); ?></a></span>
-    <h4><?php __('My Contacts'); ?></h4>
     <p class="contactsbox">
         <?php foreach($data as $item) { ?>
             <?php 
