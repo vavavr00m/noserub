@@ -331,7 +331,9 @@ abstract class AbstractService extends Object {
 	}
 	
 	public function getTitle($feeditem) {
-	    return $feeditem->get_title();
+		$title = $feeditem->get_title();
+
+		return $title ? $title : 'Untitled';
 	}
 	
 	public function getFeedUrl($username) {
