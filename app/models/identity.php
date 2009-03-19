@@ -216,14 +216,22 @@ class Identity extends AppModel {
     
     public function createGuestIdentity($openID) {
     	App::import('Vendor', 'UrlUtil');
-    	$data = array(
-    				'network_id' => 0,
-    				'username' => trim(UrlUtil::removeHttpAndHttps($openID), '/'),
-    				'openid' => $openID
-    			);
+		$username = trim(UrlUtil::removeHttpAndHttps($openID), '/');
+		$identity = $this->findByUsername($username, array('contain' => false));
 
-    	$this->save($data, false);
-    	
+		if ($identity) {
+			$this->id = $identity['Identity']['id'];
+			$this->saveField('openid', $openID);
+		} else {
+	    	$data = array(
+    					'network_id' => 0,
+    		 			'username' => $username,
+   						'openid' => $openID
+    				);
+
+	    	$this->save($data, false);
+    	}
+
     	return $this->find('first', array(
     	    'contain' => false,
     	    'conditions' => array('id' => $this->id)
