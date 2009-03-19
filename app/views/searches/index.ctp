@@ -21,3 +21,8 @@
     </div>
     
 <?php } ?>
+<?php if ($q && empty($items)) { ?>
+	<div>
+		<h4><?php echo __('No results found.', true); ?></h4>
+	</div>
+<?php }?>
