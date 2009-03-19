@@ -76,8 +76,8 @@ or
     http://<server_name>/jobs/<NoseRub.admin_hash>/system/update
 depending on how you set it up in step #2.
 
-If neccessary, this page will show your settings you need to make, or it will
-display database updates. Even when installing noserub for the first time, it
+If neccessary, this page will show you settings you need to make, or it will
+display database updates. Even when installing NoseRub for the first time, it
 is normal to see database updates.
 
 If you get a OK for Settings and the Database, you now can call
