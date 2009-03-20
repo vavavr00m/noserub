@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: translate.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: translate.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -370,6 +370,8 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		if (!empty($model->translateTable) && $model->translateTable !== $this->runtime[$model->alias]['model']->useTable) {
 			$this->runtime[$model->alias]['model']->setSource($model->translateTable);
+		} elseif (empty($model->translateTable) && empty($model->translateModel)) {
+			$this->runtime[$model->alias]['model']->setSource('i18n');
 		}
 		return $this->runtime[$model->alias]['model'];
 	}

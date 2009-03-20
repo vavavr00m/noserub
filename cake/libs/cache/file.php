@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: file.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * File Storage engine for cache
  *
@@ -34,7 +34,7 @@ class FileEngine extends CacheEngine {
 /**
  * Instance of File class
  *
- * @var object
+ * @var File
  * @access private
  */
 	var $__File = null;

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: configure.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: configure.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -246,19 +246,22 @@ class Configure extends Object {
 /**
  * Used to store a dynamic variable in the Configure instance.
  *
- * Usage
+ * Usage:
+ * {{{
  * Configure::write('One.key1', 'value of the Configure::One[key1]');
  * Configure::write(array('One.key1' => 'value of the Configure::One[key1]'));
  * Configure::write('One', array(
  *     'key1' => 'value of the Configure::One[key1]',
  *     'key2' => 'value of the Configure::One[key2]'
  * );
+ * 
  * Configure::write(array(
  *     'One.key1' => 'value of the Configure::One[key1]',
  *     'One.key2' => 'value of the Configure::One[key2]'
  * ));
+ * }}}
  *
- * @link          http://book.cakephp.org/view/412/write
+ * @link http://book.cakephp.org/view/412/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return void
