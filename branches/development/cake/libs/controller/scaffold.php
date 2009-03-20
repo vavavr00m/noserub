@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: scaffold.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: scaffold.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Scaffold.
  *
@@ -39,7 +39,7 @@ class Scaffold extends Object {
 /**
  * Controller object
  *
- * @var object
+ * @var Controller
  * @access public
  */
 	var $controller = null;

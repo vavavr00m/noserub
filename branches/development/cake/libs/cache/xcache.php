@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xcache.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: xcache.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Xcache storage engine for cache.
  *
@@ -107,11 +107,12 @@ class XcacheEngine extends CacheEngine {
  */
 	function clear() {
 		$this->__auth();
-		for ($i = 0, $max = xcache_count(XC_TYPE_VAR); $i < $max; $i++) {
+		$max = xcache_count(XC_TYPE_VAR);
+		for ($i = 0; $i < $max; $i++) {
 			xcache_clear_cache(XC_TYPE_VAR, $i);
 		}
 		$this->__auth(true);
-		return xcache_count(XC_TYPE_VAR) == 0;
+		return true;
 	}
 /**
  * Populates and reverses $_SERVER authentication values

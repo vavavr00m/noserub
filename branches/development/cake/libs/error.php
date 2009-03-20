@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: error.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: error.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Error handler
  *
@@ -70,7 +70,7 @@ class ErrorHandler extends Object {
 /**
  * Controller instance.
  *
- * @var object
+ * @var Controller
  * @access public
  */
 	var $controller = null;
@@ -151,7 +151,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'code' => '404',
 			'name' => __('Not Found', true),
-			'message' => $url,
+			'message' => h($url),
 			'base' => $this->controller->base
 		));
 		$this->_outputMessage('error404');
