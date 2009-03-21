@@ -230,6 +230,11 @@ class AppController extends Controller {
         
         if(Configure::read('context.logged_in_identity')) {
             $logged_in_identity = Configure::read('context.logged_in_identity');
+            if(!isset($logged_in_identity['network_id'])) {
+                # this can only happen when people are still
+                # logged in after a /system/update
+                $logged_in_identity['network_id'] = 1;
+            }
             Configure::write('context.is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
         }
     }
