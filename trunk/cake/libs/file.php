@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: file.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -42,7 +42,7 @@ class File extends Object {
 /**
  * Folder object of the File
  *
- * @var object
+ * @var Folder
  * @access public
  */
 	var $Folder = null;
@@ -375,11 +375,11 @@ class File extends Object {
 		return false;
 	}
 /**
-* Returns the full path of the File.
-*
-* @return string Full path to file
-* @access public
-*/
+ * Returns the full path of the File.
+ *
+ * @return string Full path to file
+ * @access public
+ */
 	function pwd() {
 		if (is_null($this->path)) {
 			$this->path = $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: cache.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -52,7 +52,7 @@ class CacheHelper extends AppHelper {
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
- * @var object
+ * @var View
  * @access public
  */
 	var $view;

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: l10n.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: l10n.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -381,7 +381,6 @@ class L10n extends Object {
 		if (Configure::read('Config.language') === null) {
 			Configure::write('Config.language', $this->lang);
 		}
-		Configure::write('charset', $this->charset);
 
 		if ($language) {
 			return $language;

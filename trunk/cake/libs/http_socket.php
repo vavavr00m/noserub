@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: http_socket.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * HTTP Socket connection class.
  *
@@ -66,7 +66,7 @@ class HttpSocket extends CakeSocket {
 			'fragment' => null
 		),
 		'auth' => array(
-			'method' => 'basic',
+			'method' => 'Basic',
 			'user' => null,
 			'pass' => null
 		),
@@ -121,7 +121,7 @@ class HttpSocket extends CakeSocket {
 				'port' => 80
 			),
 			'auth' => array(
-				'method' => 'basic',
+				'method' => 'Basic',
 				'user' => null,
 				'pass' => null
 			),
