@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: object.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -38,7 +38,7 @@ class Object {
 /**
  * Log object
  *
- * @var object
+ * @var CakeLog
  * @access protected
  */
 	var $_log = null;
@@ -248,7 +248,11 @@ class Object {
 		$objectArray = array(&$object);
 		$data = str_replace('\\', '\\\\', serialize($objectArray));
 		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
-		cache($file, $data, '+1 day');
+		$duration = '+999 days';
+		if (Configure::read() >= 1) {
+			$duration = '+10 seconds';
+		}
+		cache($file, $data, $duration);
 	}
 /**
  * Open the persistent class file for reading
@@ -267,14 +271,16 @@ class Object {
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
-					App::import('Model', Inflector::classify($key));
+					if (strpos($key, '_behavior') !== false) {
+						App::import('Behavior', Inflector::classify(substr($key, 0, -9)));
+					} else {
+						App::import('Model', Inflector::classify($key));
+					}
+					unset ($value);
 				}
 				unset($vars);
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
-					foreach ($vars['0'][$key]->Behaviors->_attached as $behavior) {
-						App::import('Behavior', $behavior);
-					}
 					ClassRegistry::addObject($key, $value);
 					unset ($value);
 				}

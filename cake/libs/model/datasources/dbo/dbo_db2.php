@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_db2.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dbo_db2.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * IBM DB2 for DBO
  *
@@ -513,8 +513,8 @@ class DboDb2 extends DboSource {
  * do not correspond to a particular model belong under array
  * key 0.
  *
- * 1.  Gets the column headers
- *
+ * 1. Gets the column headers
+ * {{{
  * Post.id
  * Post.title
  *
@@ -529,7 +529,7 @@ class DboDb2 extends DboSource {
  *          [0] => Post
  *          [1] => title
  *      )
- *
+ * }}}
  * @param unknown_type $results
  */
 	function resultSet(&$results, $sql = null) {

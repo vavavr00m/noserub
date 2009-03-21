@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: css.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: css.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -95,7 +95,7 @@ if (!class_exists('File')) {
 
 	header("Date: " . date("D, j M Y G:i:s ", $templateModified) . 'GMT');
 	header("Content-Type: text/css");
-	header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
+	header("Expires: " . gmdate("D, d M Y H:i:s", time() + DAY) . " GMT");
 	header("Cache-Control: max-age=86400, must-revalidate"); // HTTP/1.1
 	header("Pragma: cache");        // HTTP/1.0
 	print $output;
