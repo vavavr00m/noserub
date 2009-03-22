@@ -2,11 +2,11 @@
 class DeliciousService extends AbstractService {
 	
 	public function detectService($url) {
-		return $this->extractUsername($url, array('#del.icio.us/(.+)#'));
+		return $this->extractUsername($url, array('#del.icio.us/(.+)#', '#delicious.com/(.+)#'));
 	}
 	
 	public function getAccountUrl($username) {
-		return 'http://del.icio.us/'.$username;
+		return 'http://delicious.com/'.$username;
 	}
 	
 	public function getContent($feeditem) {
