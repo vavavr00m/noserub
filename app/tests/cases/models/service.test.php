@@ -44,6 +44,9 @@ class ServiceTest extends CakeTestCase {
 	public function testDetectDeliciousService() {
 		$result = $this->service->detectService('del.icio.us/username');
 		$this->assertService(2, 'username', $result);
+		
+		$result = $this->service->detectService('delicious.com/username');
+		$this->assertService(2, 'username', $result);
 	}
 	
 	public function testDetectDeviantartService() {
