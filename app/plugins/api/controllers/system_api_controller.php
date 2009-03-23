@@ -29,7 +29,7 @@ class SystemApiController extends ApiAppController {
     private function getNumberOfUsers() {
     	$this->Identity->contain();
         $conditions = array(
-            'network_id' => Configure::read('context.Network.id'),
+            'network_id' => Configure::read('context.network.id'),
             'email <>'   => '',
             'hash'       => '',
             'NOT username LIKE "%@"'
