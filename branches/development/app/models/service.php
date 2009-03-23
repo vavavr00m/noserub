@@ -128,7 +128,7 @@ class Service extends AppModel {
             	$item['content'] = $service->getContent($feeditem);
             	$item['title']   = $service->getTitle($feeditem);            	
             } else {
-                $this->log('service_id ' . $service_id . ' not found!', LOG_DEBUG);
+                # when no service was found, this is a simple RSS feed
             	$item['content'] = $feeditem->get_content();
             	$item['title']   = $feeditem->get_title();
             }
