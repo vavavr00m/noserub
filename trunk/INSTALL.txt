@@ -88,16 +88,55 @@ depending on how you set it up in step #2.
 
 
 
-5. Set up cron job
+5. Log in to the admin area
+---------------------------
+Call
+    http://<server_name>/noserub/admins/
+or
+    http://<server_name>/admins/
+depending on how you set it up in step #2.
+
+If you're updating your NoseRub installation, you need to log in as a user in
+order to be able to log in as an admin. This is done for security reasons.
+
+You log in to the admin area with "admin" as username (without the ", of course)
+and the NoseRub.admin_hash as your password. You're advised to change the admin
+password after first log in.
+
+Please note, that the admin password is not bound to NoseRub.admin_hash, but only
+set to it on the first /system/update you call. So, if you change the NoseRub.admin_hash
+later on, the admin password would not change.
+
+
+
+6. Set up cron job
 ------------------
 If you set the value for NoseRub.manual_feeds_update in noserub.php to "true", 
 you have to run the following command via cron to update the feed cache:
 
     php noserub/app/webroot/shell_dispatcher.php /jobs/shell/cache/feed/refresh/ 
 
+In order to sync comments and favorites from NoseRub installations, you need to add
+the following cron jobs:
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/peers/poll/
+and
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/peers/sync/
 
+The cron job "/peers/poll/" polls comments and favorites from all NoseRub installations
+that are listed on http://noserub.com/sites. If you want your installation to appear there,
+enable the appropriate checkbox at the bottom of /system/update/ and send the information
+to NoseRub.com
 
-6. What now?
+The cron job "/peers/sync/" gets all sites from http://noserub.com/sites/ and stores the list
+in your database for faster access. It is sufficient to call this cron job only once a day.
+
+In order to update information about contacts from other NoseRub sites, you would need to add
+the following cron job:
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/identities/sync/all/
+    
+    
+
+7. What now?
 ------------
 Do you have questions, or just want to know more about NoseRub? Just visit the
 following sites:
