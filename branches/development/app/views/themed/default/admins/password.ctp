@@ -1,7 +1,7 @@
-<div class="vcard">
+<div id="inhalt">
     <?php echo $noserub->formAdminPassword(); ?>
 </div>
-<div id="sidebar">
+<div id="rechts">
     <?php echo $noserub->widgetAdminLogin(); ?>
     <?php echo $noserub->widgetAdminNavigation(); ?>
 </div>
