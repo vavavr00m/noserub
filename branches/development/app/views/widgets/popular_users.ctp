@@ -1,29 +1,9 @@
-<?php
-    if(Configure::read('context.is_self')) {
-        if($data) {
-            $label = __('manage', true);
-        } else {
-            $label = __('add new', true);
-        }
-    } else {
-        $label = false;
-    }
-?>
-
-<?php if($label) { ?>
-    <span class="more">
-        <a href="<?php echo Router::Url('/' . $session->read('Identity.local_username') . '/contacts/'); ?>">
-            <?php echo $label; ?>
-        </a>
-    </span>
-    <h2><?php __('My Contacts'); ?></h2>
-<?php } ?>
-
 <?php if($data) { ?>
+    <hr />
+    <h4><?php __('Popular Users'); ?></h4>
     <p class="contactsbox">
         <?php foreach($data as $item) { ?>
-            <?php 
-            
+            <?php               
             if(isset($item['NoserubContactType']) && $item['NoserubContactType']) {
                 $rel_data = array();
                 foreach($item['NoserubContactType'] as $contact_type) {
@@ -39,17 +19,17 @@
             } else {
                 $rel = 'contact';
             }
-    
+        
             if(isset($item['WithIdentity'])) {
                 $item = $item['WithIdentity'];
             } else if(isset($item['Identity'])) {
                 $item = $item['Identity'];
             }
-    
+        
             ?>
             <a href="http://<?php echo $item['username']; ?>" rel="<?php echo $rel; ?>">
                 <?php if($item['photo']) {
-                    if (UrlUtil::startsWithHttpOrHttps($item['photo'])) {
+                    if(UrlUtil::startsWithHttpOrHttps($item['photo'])) {
                         # contains a complete path, eg. from not local identities
                         $contact_photo = $item['photo'];
                     } else {
@@ -64,4 +44,3 @@
         <?php } ?>
     </p>
 <?php } ?>
-    	

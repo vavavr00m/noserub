@@ -158,7 +158,7 @@ class WidgetsController extends AppController {
  	 */
  	 
  	public function contact_filter() {
- 	    if(Configure::read('Context.is_self')) {
+ 	    if(Configure::read('context.is_self')) {
  	        $this->loadModel('Contact');
  	    
  	        $this->set('contact_tags', $this->Contact->getTagList(Configure::read('context.logged_in_identity.id')));
@@ -173,8 +173,12 @@ class WidgetsController extends AppController {
     
     public function new_users() {
         $this->loadModel('Identity');
-        
 	    $this->set('data', $this->Identity->getNewbies(9));
+	}
+	
+	public function popular_users() {
+	    $this->loadModel('Identity');
+	    $this->set('data', $this->Identity->getPopular(9));
 	}
 	
 	/**

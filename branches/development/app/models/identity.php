@@ -312,23 +312,42 @@ class Identity extends AppModel {
      * Returns the newest identities.
      */
     public function getNewbies($limit = null) {
-        $this->contain();
-
-        $newbies = $this->find(
-            'all', 
-            array(
-                'conditions' => array(
-                    'network_id' => Configure::read('context.network.id'),
-        			'frontpage_updates' => 1,
-        			'hash' => '',
-        			'username NOT LIKE "%@%"'
-        		),
-        		'order' => array('Identity.created DESC'),
-        		'limit' => $limit
-        	)
-        );
+        return $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Configure::read('context.network.id'),
+    			'frontpage_updates' => 1,
+    			'hash' => '',
+    			'hash <>' => '#deleted#',
+    			'username NOT LIKE "%@%"'
+    		),
+    		'order' => array('Identity.created DESC'),
+    		'limit' => $limit
+        ));
+    }
+    
+    /**
+     * Returns the most popular identities.
+     *
+     * Right now this is just by the number of
+     * people who added them as contact.
+     */
+    public function getPopular($limit = null) {
+        $ids = $this->Contact->getPopular($limit);
         
-        return $newbies;
+        return $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Configure::read('context.network.id'),
+                'id' => $ids,
+    			'frontpage_updates' => 1,
+    			'hash' => '',
+    			'hash <>' => '#deleted#',
+    			'username NOT LIKE "%@%"'
+    		),
+    		'order' => array('Identity.created DESC'),
+    		'limit' => $limit
+        ));
     }
     
     /**
