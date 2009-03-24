@@ -75,15 +75,6 @@ class AppController extends Controller {
             }
         }
         
-        $session_theme = $this->Session->read('theme');
-        if(isset($this->params['url']['theme'])) {
-            $session_theme = $this->params['url']['theme'];
-            $this->Session->write('theme', $session_theme);
-        }
-        if($session_theme) {
-            $this->theme = $session_theme;
-        }
-        
         # Localization
         App::import('Core', 'l10n');
         $this->L10n = new L10n();
