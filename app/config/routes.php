@@ -1,6 +1,6 @@
 <?php
 
-Router::connect('/', array('controller' => 'contacts', 'action' => 'network'));
+Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
 Router::connect('/social_stream/:filter/:output/', array('controller' => 'identities', 'action' => 'social_stream'));
 
 Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => 'send'));

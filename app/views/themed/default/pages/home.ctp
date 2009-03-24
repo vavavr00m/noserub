@@ -1,6 +1,7 @@
 <div id="inhalt">
     <h2>Startseite des Netzwerkes</h2>
-    <p>
-        Mal ein Test ohne rechte Spalte.
-    </p>
+</div>
+<div id="rechts">
+    <?php echo $noserub->widgetNewUsers(); ?>
+    <?php echo $noserub->widgetPopularUsers(); ?>
 </div>

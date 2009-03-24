@@ -42,4 +42,5 @@
     </ul>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
+    <?php echo $html->link(__('Register a new account', true), '/pages/register/'); ?>
 <?php } ?>

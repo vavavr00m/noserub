@@ -42,6 +42,28 @@ class Contact extends AppModel {
     }
     
     /**
+     * get a list of $limit most popular contacts. that
+     * means those who are contact by most of the others.
+     *
+     * @param int $limit
+     * 
+     * @return array
+     */
+    public function getPopular($limit) {
+        $data = $this->find('all', array(
+            'contain' => false,
+            'fields' => array(
+                'COUNT(identity_id) AS count_identity_id',
+                'with_identity_id'
+            ),
+            'group' => 'with_identity_id',
+            'order' => 'count_identity_id DESC'
+        ));
+        
+        return Set::extract($data, '{n}.Contact.with_identity_id');
+    }
+    
+    /**
      * get list of all contact tags, that are used by this user
      *
      * @param int $identity_id

@@ -2,6 +2,9 @@
 class PagesController extends AppController {
     public $uses = array();
     
+    public function home() {    
+    }
+    
     public function display() {
         $this->redirect('/social_stream/');
     }
