@@ -4,6 +4,11 @@ $session_identity_id    = isset($session_identity['id']) ? $session_identity['id
 
 $show_photo = true;
 
+if(!$data) { ?>
+    <p>
+        <?php __('There are no contacts yet.'); ?>
+    </p>
+<?php }
 foreach($data as $item) {
     if($item['WithIdentity']['namespace'] != '' && $session_local_username != $item['WithIdentity']['namespace']) {
         # don't display local contacts to anyone else, but the owner
@@ -63,16 +68,10 @@ foreach($data as $item) {
             $is_private = ($session_local_username != '' && $item['WithIdentity']['namespace'] == $session_local_username);
                 
             $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
-            if($identity_id == $session_identity_id && $session_identity_id != 0) { ?>
-                <?php if(!$is_private && !$item['WithIdentity']['local']) { ?>
-                    <dd class="contact_option"><?php echo $html->link(__('Info', true), '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/info/'); ?></dd>
-                <?php } ?>
-                <dd class="contact_option"><?php echo $html->link(__('Remove Contact', true), '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
-                <dd class="contact_option"><?php echo $html->link(__('Edit Contact', true), '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
-            <?php } ?>
-            <?php if($is_private) { ?>
-                <dd><?php echo $html->link(__('Manage Services', true), '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/'); ?></dd>
-                <dd><?php echo $html->link(__('Add Service', true), '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/add/'); ?></dd>
+            if(Configure::read('context.is_self')) { ?>
+                <dd class="contact_option"><?php echo $html->link(__('Info', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/info/'); ?></dd>
+                <dd class="contact_option"><?php echo $html->link(__('Remove Contact', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$security_token.'/'); ?></dd>
+                <dd class="contact_option"><?php echo $html->link(__('Edit Contact', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
             <?php } ?>
 	</dl>
 <?php }

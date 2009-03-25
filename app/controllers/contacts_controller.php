@@ -15,143 +15,85 @@ class ContactsController extends AppController {
      * todo: check for existing identities
      */
     public function add() {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted         = $this->Contact->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
-            $this->redirect('/');
-        }
+        $this->grantAccess('user');
         
         if($this->data) {
             $this->Contact->data = $this->data;
-            # check, wether this should be a local contact or a real noserub contact
-            if(isset($this->params['form']['add'])) {
-                # this is a contact with a NoseRub-ID
-                $identity_username = trim($this->data['Contact']['noserub_id']);
-                $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username, false);
+            $identity_username = trim($this->data['Contact']['noserub_id']);
+            $identity_username_splitted = $this->Contact->Identity->splitUsername($identity_username, false);
 
-                # so, check, if this is really the case
-                if($identity_username === '') {
-                    $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
-                    $this->render();
-                    return;
-                }
+            # so, check, if this is really the case
+            if($identity_username === '') {
+                $this->Contact->invalidate('noserub_id', 'no_valid_noserub_id');
+                $this->render();
+                return;
+            }
+            
+            # see, if we already have it
+            $identity = $this->Contact->Identity->findByUsername($identity_username_splitted['username']);
+            if(!$identity) {
+                # no, so create the new identity
+                $this->Contact->Identity->create();
+                $identity = array('username' => $identity_username_splitted['username']);
+                $saveable = array('username');
+                $this->Contact->Identity->save($identity, false, $saveable);
+                $new_identity_id = $this->Contact->Identity->id;
                 
-                # check, if this is the logged in user
-                if($session_identity['username'] == $identity_username_splitted['username'] ||
-                   'www.'.$session_identity['username'] == $identity_username_splitted['username']) {
-                    $this->Contact->invalidate('noserub_id', 'own_noserub_id');
-                    $this->render();
-                    return;
-                }
-                
-                # see, if we already have it
-                $identity = $this->Contact->Identity->findByUsername($identity_username_splitted['username']);
-                if(!$identity) {
-                    # no, so create the new identity
-                    $this->Contact->Identity->create();
-                    $identity = array('username' => $identity_username_splitted['username']);
-                    $saveable = array('username');
-                    $this->Contact->Identity->save($identity, false, $saveable);
-                    $new_identity_id = $this->Contact->Identity->id;
-                    
-                    # get user data
-                    $result = $this->requestAction('/jobs/' . Configure::read('NoseRub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
-                    if($result == false) {
-                        # user could not be found, so delete it
-                        $this->Contact->Identity->id = $new_identity_id;
-                        $this->Contact->Identity->delete();
-                        $this->flashMessage('error', __('Could not add contact.', true));
-                        $this->Contact->invalidate('noserub_id', 'user_not_found');
-                        $this->render();
-                        return;
-                    }
-                } else {
-                    # it's already there, so we can go ahead and add it
-                	$new_identity_id = $identity['Identity']['id'];                	
-                }
-                
-                # now create the contact relationship
-                
-                # but first make sure, that this connection is not already there
-                if ($this->Contact->hasAny(array('identity_id' => $session_identity['id'], 'with_identity_id' => $new_identity_id))) {
-                    $this->Contact->invalidate('noserub_id', 'unique');
-                    $this->render();
-                    return;
-                }
-                
-                if($this->Contact->add($session_identity['id'], $new_identity_id)) {
-                    $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $new_identity_id, null);
-                    $this->flashMessage('success', __('New contact added.', true));
-    			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-    			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
-			    } else {
-			        $this->flashMessage('error', __('Could not add contact.', true));
-			    }
-            } else if(isset($this->params['form']['create']) && $this->Contact->validates()) {
-                # we now need to create a new identity and a new contact
-                # create the username with the special namespace
-                $new_identity_username = $this->data['Contact']['username'] . '@' . $splitted['local_username'];
-                $new_splitted = $this->Contact->Identity->splitUsername($new_identity_username);
-                
-                # check, if this is unique
-                if(!$this->Contact->Identity->hasAny(array('username' => $new_splitted['username']))) {
-                    $this->Contact->Identity->create();
-                    $identity = array('network_id' => Configure::read('context.network.id'),
-                                      'username' => $new_splitted['username']);
-                    $saveable = array('network_id', 'username', 'created', 'modified');
-                    $this->Contact->Identity->save($identity, true, $saveable);
-                    
-                    if($this->Contact->add($session_identity['id'], $this->Contact->Identity->id)) {
-                        $this->flashMessage('success', __('New contact added.', true));
-        			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
-        			    $this->redirect('/' . $splitted['local_username'] . '/contacts/' . $this->Contact->id . '/edit/');
-    			    } else {
-        			    $this->flashMessage('error', 'Could not add contact');
-        			}
-                } else {
-                	$this->Contact->invalidate('username', 'unique');
+                # get user data
+                $result = $this->requestAction('/jobs/' . Configure::read('NoseRub.admin_hash') . '/sync/identity/' . $new_identity_id . '/');
+                if($result == false) {
+                    # user could not be found, so delete it
+                    $this->Contact->Identity->id = $new_identity_id;
+                    $this->Contact->Identity->delete();
+                    $this->flashMessage('error', __('Could not add contact.', true));
+                    $this->Contact->invalidate('noserub_id', 'user_not_found');
                     $this->render();
                     return;
                 }
             } else {
-                # we should never come here, unless the username doesn't validate
-            	$this->render();
+                # it's already there, so we can go ahead and add it
+            	$new_identity_id = $identity['Identity']['id'];                	
+            }
+            
+            # now create the contact relationship
+            
+            # but first make sure, that this connection is not already there
+            if($this->Contact->hasAny(
+               array(
+                    'identity_id'      => Configure::read('context.logged_in_identity.id'), 
+                    'with_identity_id' => $new_identity_id
+               ))) {
+                $this->Contact->invalidate('noserub_id', 'unique');
+                $this->render();
                 return;
             }
-        }
-        
-        if($splitted['username'] == $session_identity['username']) {
-            $this->set('headline', __('Add a contact to your social network', true));
-        } else {
-            $this->set('headline', sprintf(__("Add a contact to %s's social network", true), $splitted['local_username']));
-        }
+            
+            if($this->Contact->add(Configure::read('context.logged_in_identity.id'), $new_identity_id)) {
+                $this->Contact->Identity->Entry->addNewContact(Configure::read('context.logged_in_identity.id'), $new_identity_id, null);
+                $this->flashMessage('success', __('New contact added.', true));
+			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
+			    $this->redirect('/contacts/' . $this->Contact->id . '/edit/');
+		    } else {
+		        $this->flashMessage('error', __('Could not add contact.', true));
+		    }
+        }        
     }
         
     public function delete() {
+        $this->grantAccess('user');
         $contact_id        = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
-        $username          = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted          = $this->Contact->Identity->splitUsername($username);
-        $session_identity  = $this->Session->read('Identity');
         
-        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
-        }
-
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
         
         # check, if the contact belongs to the identity
         $this->Contact->contain();
         $contact = $this->Contact->find(array('id'          => $contact_id,
-                                              'identity_id' => $session_identity['id']));
+                                              'identity_id' => Configure::read('context.logged_in_identity.id')));
     
         if(!$contact) {
             # contact not found for logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+            $this->redirect('/contacts/');
         }
         
         $this->Contact->deleteContactTypeAssociations($contact_id);
@@ -163,22 +105,8 @@ class ContactsController extends AppController {
         $this->Contact->id = $contact_id;
         $this->Contact->delete();
         $this->flashMessage('success', __('Removed the contact.', true));
-        
-        # get the other identity in order to determine, if
-        # this was a local identity and therefore can be deleted
-        $this->Contact->Identity->contain();
-        $with_identity = $this->Contact->WithIdentity->findById($with_identity_id);
-        
-        if($with_identity['WithIdentity']['namespace'] == $session_identity['local_username']) {
-            # it's only local, so delete the identity
-            $this->Contact->Identity->id = $with_identity_id;
-            $this->Contact->Identity->delete();
-            
-            # now delete the accounts, too
-            $this->Contact->Identity->Account->deleteByIdentityId($with_identity_id);
-        }
 
-        $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+        $this->redirect('/contacts/');
     }
     
     /**
@@ -187,23 +115,20 @@ class ContactsController extends AppController {
      * data we have about that identity.
      */
     public function info() {
+        $this->grantAccess('user');
+        
         $contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$username   = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted   = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
-        
-        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
-        }
- 
+         
         # get the contact
 		$this->Contact->contain('Identity', 'WithIdentity');
 	    $contact = $this->Contact->findById($contact_id);
 	    
         if($session_identity['id'] != $contact['Contact']['identity_id']) {
             # this is not a contact of the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+            $this->redirect('//contacts/');
         }
         
         $this->set('contact', $contact);
@@ -217,23 +142,20 @@ class ContactsController extends AppController {
     }
     
     public function edit() {
+        $this->grantAccess('user');
+         
     	$contact_id = isset($this->params['contact_id']) ? $this->params['contact_id'] : '';
     	$username   = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted   = $this->Contact->Identity->splitUsername($username);
         $session_identity = $this->Session->read('Identity');
         
-        if(!$session_identity || !$username || $splitted['username'] != $session_identity['username']) {
-            # this is not the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
-        }
-        
         # get the contact
 	    $this->Contact->contain(array('Identity', 'WithIdentity', 'ContactType', 'NoserubContactType'));
 	    $contact = $this->Contact->findById($contact_id);
 	    
-        if($session_identity['id'] != $contact['Contact']['identity_id']) {
+        if(Configure::read('context.logged_in_identity.id') != $contact['Contact']['identity_id']) {
             # this is not a contact of the logged in user
-            $this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+            $this->redirect('/contacts/');
         }
     	
     	# get currently selected types (pre- and user-defined)
@@ -265,7 +187,7 @@ class ContactsController extends AppController {
     	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
     	    
     	    # extract contact types from new tags and clean them up
-    	    $new_tags = $this->Contact->ContactType->extract($session_identity['id'], $new_tags);
+    	    $new_tags = $this->Contact->ContactType->extract(Configure::read('context.logged_in_identity.id'), $new_tags);
     	    
     	    # merge manual tags with noserub contact types
     	    $entered_noserub_contact_types = $this->Contact->NoserubContactType->merge($this->data['NoserubContactType'], $new_tags['noserub_contact_type_ids']);
@@ -298,7 +220,7 @@ class ContactsController extends AppController {
                 if($tag) {
                     $data = array(
                         'ContactType' => array(
-                            'identity_id' => $session_identity['id'],
+                            'identity_id' => Configure::read('context.logged_in_identity.id'),
                             'name'        => $tag));
                     $this->Contact->ContactType->create();
                     $this->Contact->ContactType->save($data);
@@ -327,19 +249,17 @@ class ContactsController extends AppController {
             }
                 	    
     		$this->flashMessage('success', __('Contact updated.', true));
-    		$this->redirect('/' . $session_identity['local_username'] . '/contacts/');
+    		$this->redirect('/contacts/');
     	}
     	
     	$this->set('contact', $contact);
     	$this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
     	
-    	$this->set('headline', __('Edit the contact details', true));
-    	
     	$this->Contact->NoserubContactType->contain();
 	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
 	    
 	    $this->Contact->ContactType->contain();
-	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId($session_identity['id']));
+	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId(Configure::read('context.logged_in_identity.id')));
     }
     
     /**

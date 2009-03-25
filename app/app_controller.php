@@ -213,10 +213,16 @@ class AppController extends Controller {
             $this->Identity->contain();
             $data = $this->Identity->findByUsername($username);
             Configure::write('context.identity', $data['Identity']);
+        } else {
+            Configure::write('context.identity', false);
         }
         
-        if(Configure::read('context.logged_in_identity') && Configure::read('context.identity')) {
+        if(Configure::read('context.identity') && Configure::read('context.logged_in_identity')) {
+            # logged in user is the same as the user that is currently displayed
             Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
+        } else if(Configure::read('context.identity') === false && Configure::read('context.logged_in_identity')) {
+            # if no username is given, the logged in user is always "is_self"
+            Configure::write('context.is_self', true);
         }
         
         if(Configure::read('context.logged_in_identity')) {
