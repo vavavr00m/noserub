@@ -7,7 +7,8 @@
         <li id="contacts">
             <h2><?php __('Contacts'); ?></h2>
             <ul>
-                <li><?php echo $html->link(__('My Contacts', true), '/' . Configure::read('context.logged_in_identity.local_username') . '/contacts/'); ?></li>
+                <li><?php echo $html->link(__('My Contacts', true), '/contacts/'); ?></li>
+                <li><?php echo $html->link(__('Add new contact', true), '/contacts/add/'); ?></li>
             </ul>
         </li>
         <li id="profile">
@@ -42,5 +43,7 @@
     </ul>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
-    <?php echo $html->link(__('Register a new account', true), '/pages/register/'); ?>
+    <?php if(Configure::read('context.network.registration_type') == 1) {
+        echo $html->link(__('Register a new account', true), '/pages/register/');
+    } ?>
 <?php } ?>
