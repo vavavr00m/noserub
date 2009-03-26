@@ -1,7 +1,6 @@
 <?php
 
 Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
-Router::connect('/social_stream/:filter/:output/', array('controller' => 'identities', 'action' => 'social_stream'));
 
 Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => 'send'));
 
@@ -62,7 +61,9 @@ Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view')
 Router::connect('/admins/:action', array('controller' => 'admins'));
 Router::connect('/networks/:action', array('controller' => 'networks'));
 
-Router::connect('/:username/network/:filter', array('controller' => 'contacts', 'action' => 'network'));
+Router::connect('/:username/social_stream/:filter', array('controller' => 'identities', 'action' => 'social_stream'));
+Router::connect('/:username/groups/', array('controller' => 'groups', 'action' => 'index'));
+Router::connect('/:username/networks/', array('controller' => 'networks', 'action' => 'index'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));
 Router::connect('/:username/contacts/:contact_id/info/', array('controller' => 'contacts', 'action' => 'info'));

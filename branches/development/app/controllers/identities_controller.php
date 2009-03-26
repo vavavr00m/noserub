@@ -22,15 +22,12 @@ class IdentitiesController extends AppController {
     }
     
     /**
-     * Displays the social stream of the whole plattform.
+     * Displays the social stream of the
+     * logged_in_identitiy's contacts
      */
     public function social_stream() {
         $this->checkUnsecure();
-        $this->grantAccess('all');
-        
-    	header('X-XRDS-Location: http://'.$_SERVER['SERVER_NAME'].$this->webroot.'pages/yadis.xrdf');
-
-        $this->render('../pages/home');
+        $this->grantAccess('self');        
     }
     
 	/**
