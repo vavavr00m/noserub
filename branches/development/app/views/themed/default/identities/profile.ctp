@@ -1,5 +1,6 @@
 <div id="inhalt">
-    <h2>Profilseite</h2>
+    <?php echo $noserub->widgetProfile(); ?>
+    <?php echo $noserub->widgetPhotos(); ?>
     <?php echo $noserub->widgetSingleLifestream(); ?>
 </div>
 

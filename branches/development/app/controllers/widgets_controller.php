@@ -82,8 +82,16 @@ class WidgetsController extends AppController {
  	}
  	
  	/**
+ 	 * Profiles
+ 	 */
+ 	
+ 	public function profile() {
+ 	} 
+ 	
+ 	/**
  	 * Accounts
  	 */
+ 	
  	public function accounts() {
  	    $this->loadModel('Account');
  	    
@@ -312,6 +320,10 @@ class WidgetsController extends AppController {
         }
     
         $this->set('data', $items);
+    }
+    
+    public function photos() {
+        
     }
     
     /**

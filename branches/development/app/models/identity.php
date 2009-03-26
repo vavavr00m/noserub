@@ -269,7 +269,8 @@ class Identity extends AppModel {
     	return false;
     }
     
-    public function isCorrectSecurityToken($identity_id, $security_token) {
+    public function isCorrectSecurityToken($security_token) {
+        $identity_id = Configure::read('context.logged_in_identity.id');
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
@@ -628,18 +629,18 @@ class Identity extends AppModel {
     }
     
     /**
-     * Updates the security token for given $identity_id
+     * Updates the security token for logged in identity
      */
-    public function updateSecurityToken($identity_id) {
+    public function updateSecurityToken() {
+        $identity_id = Configure::read('context.logged_in_identity.id');
+        $security_token = false;
         if($identity_id) {
             $this->id = $identity_id;
             $security_token = md5($identity_id.time());
-            $this->saveField('security_token', $security_token);
-            
-            return $security_token;
-        }
+            $this->saveField('security_token', $security_token);            
+        } 
         
-        return false;
+        Configure::write('context.security_token', $security_token);
     }
     
     /**

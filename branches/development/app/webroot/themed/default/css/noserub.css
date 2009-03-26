@@ -83,7 +83,7 @@ margin:0px;
 } 
 
 /**** just some crap to have the meta navigation inline ****/
-#metanavi {
+.navi {
     top; 0
     left: 200px;
     right: 0;
@@ -92,14 +92,14 @@ margin:0px;
     text-align: right;
 }
 
-#metanavi ul {
+.navi ul {
     list-style: none;
     padding: 0;
     margin: 0;
     float: right;
 }
 
-#metanavi li {
+.navi li {
     float: left;
     margin: 0 0.15em;
 }
