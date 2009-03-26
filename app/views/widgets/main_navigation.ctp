@@ -1,21 +1,24 @@
 <?php if(Configure::read('context.logged_in_identity')) { ?>
+    <?php
+        $base_url = '/' . Configure::read('context.logged_in_identity.local_username') . '/';
+    ?>
     <?php echo sprintf(__('Hi %s!', true), Configure::read('context.logged_in_identity.name')); ?>
     <ul id="nav main">
         <li id="home">
-            <?php echo $html->link(__('Home', true), '/' . Configure::read('context.logged_in_identity.local_username') . '/network/'); ?>
+            <?php echo $html->link(__('Home', true), $base_url . 'social_stream/'); ?>
         </li>
         <li id="contacts">
             <h2><?php __('Contacts'); ?></h2>
             <ul>
-                <li><?php echo $html->link(__('My Contacts', true), '/contacts/'); ?></li>
-                <li><?php echo $html->link(__('Add new contact', true), '/contacts/add/'); ?></li>
+                <li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
+                <li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
             </ul>
         </li>
         <li id="profile">
-            <?php echo $html->link(__('My Profile', true), '/' . Configure::read('context.logged_in_identity.local_username') . '/'); ?>
+            <?php echo $html->link(__('My Profile', true), $base_url); ?>
         </li>
         <li id="groups">
-            <?php echo $html->link(__('Groups', true), '/groups/'); ?>
+            <?php echo $html->link(__('Groups', true), $base_url . '/groups/'); ?>
             <?php if($groups) { ?>
                 <ul>
                     <?php foreach($groups as $group) { ?>
@@ -25,7 +28,7 @@
             <?php } ?>
         </li>
         <li id="networks">
-            <?php echo $html->link(__('Networks', true), '/networks/'); ?>
+            <?php echo $html->link(__('Networks', true), $base_url . '/networks/'); ?>
             <?php if($networks) { ?>
                 <ul>
                     <?php foreach($networks as $network) { ?>
