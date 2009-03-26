@@ -4,14 +4,14 @@
  * in NoseRub themes
  */
 class NoserubHelper extends AppHelper {
-    public $helpers = array('Session');
+    public $helpers = array('session', 'html');
     
     public function widgetContacts($options = array()) {
         return $this->out('/widgets/contacts_for_identity/', $options);
     }
     
     public function widgetMyContacts() {
-        if($this->Session->read('Identity.id')) {
+        if($this->session->read('Identity.id')) {
             return $this->out('/widgets/my_contacts/');
         } else {
             return $this->out('');
@@ -54,17 +54,55 @@ class NoserubHelper extends AppHelper {
     }
     
     public function fnAvatarBaseUrl() {
-        $url = '';
-    	
-    	if(Configure::read('NoseRub.use_cdn')) {
-            $url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
-        } else {
-            $url = Router::url('/static/avatars/', true);
-        }
-        
-        return $url;
+        return Configure::read('context.avatar_base_url');
     }
 
+    public function fnProfilePhotoUrl() {
+        $photo = Configure::read('context.identity.photo');
+        if($photo) {
+            if(strpos($photo, 'http://') === 0 ||
+               strpos($photo, 'https://') === 0) {
+                # contains a complete path, eg. from not local identities
+                $photo_url = $photo;
+            } else {
+                $photo_url = $this->fnAvatarBaseUrl() . $photo . '.jpg';
+            }	                
+        } else {
+        	App::import('Vendor', 'sex');
+            $photo_url = Sex::getImageUrl(Configure::read('context.identity.sex'));
+        }
+        
+        return $photo_url;
+    }
+    
+    public function fnSecurityToken() {
+        return Configure::read('context.security_token');
+    }
+    
+    public function link($url) {
+        switch($url) {
+            case '/add/as/contact/':
+                return $this->linkAddAsContact();
+            
+            default:
+                return '';
+        }
+    }
+    
+    private function linkAddAsContact() {
+        if(Configure::read('context.is_self') || 
+           !Configure::read('context.logged_in_identity') ||
+           Configure::read('context.is_guest')) {
+            return '';
+        }
+        
+        if(Configure::read('context.is_contact')) {
+            return __('This is one of your contacts.', true);
+        }
+        
+        return $this->html->link(__('Add as contact', true), '/' . Configure::read('context.identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken());
+    }
+    
     /**
      * wrapper for some functionality we need
      * for every widget

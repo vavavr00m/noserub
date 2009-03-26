@@ -127,10 +127,8 @@ class AppController extends Controller {
     
     public function ensureSecurityToken() {
         if(!isset($this->Identity)) {
-            App::import('Model', 'Identity');
-            $this->Identity = new Identity();
+            $this->loadModel('Identity');
         }
-        $session_identity_id = $this->Session->read('Identity.id');
         if(isset($this->params['form']['security_token'])) {
             # POST
             $security_token = $this->params['form']['security_token'];
@@ -142,19 +140,21 @@ class AppController extends Controller {
             }
         }
         
-        if(!$this->Identity->isCorrectSecurityToken($session_identity_id, $security_token)) {
-            $this->redirect('/pages/security_check/', null, true);
+        if(!$this->Identity->isCorrectSecurityToken($security_token)) {
+            $this->redirect('/pages/security_check/');
         }
     }
     
     public function beforeRender() {
-        if($this->viewPath != 'errors' && !$this->isSystemUpdatePage()) {
-	        if(!isset($this->Identity)) {
-	            App::import('Model', 'Identity');
-	            $this->Identity = new Identity();
-	        }
-	        # set new security_token
-	        $this->set('security_token', $this->Identity->updateSecurityToken($this->Session->read('Identity.id')));
+        if($this->name != 'Widgets') {
+            # only update it once for a page rendering
+            if($this->viewPath != 'errors' && !$this->isSystemUpdatePage()) {
+    	        if(!isset($this->Identity)) {
+    	            $this->loadModel('Identity');
+    	        }
+    	        # update security_token
+    	        $this->Identity->updateSecurityToken();
+            }
         }
     }
     
@@ -163,13 +163,18 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
+        if($this->name == 'Widgets') {
+            # don't update the context for the requestActions
+            # of the widgets
+            return;
+        }
+        
         if($this->isSystemUpdatePage()) {
             return;
         }
         
         if(!isset($this->Network)) {
-            App::import('Model', 'Network');
-            $this->Network = new Network;
+            $this->loadModel('Network');
         }
         
         # get the network data. right now, always
@@ -203,8 +208,7 @@ class AppController extends Controller {
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         if($username) {
             if(!isset($this->Identity)) {
-                App::import('Model', 'Identity');
-                $this->Identity = new Identity;
+                $this->loadModel('Identity');
             }
             
             $splitted = $this->Identity->splitUsername($username);
@@ -213,10 +217,23 @@ class AppController extends Controller {
             $this->Identity->contain();
             $data = $this->Identity->findByUsername($username);
             Configure::write('context.identity', $data['Identity']);
+            
+            # check, if logged_in_identity is contact
+            Configure::write('context.is_contact', false);
+            if(Configure::read('context.logged_in_identity')) {
+                if($this->Identity->Contact->find('first', array(
+                    'conditions' => array(
+                        'identity_id' => Configure::read('context.logged_in_identity.id'),
+                        'with_identity_id' => $data['Identity']['id']
+                    )
+                   ))) {
+                    Configure::write('context.is_contact', true);
+                };
+            }
         } else {
             Configure::write('context.identity', false);
         }
-        
+
         if(Configure::read('context.identity') && Configure::read('context.logged_in_identity')) {
             # logged in user is the same as the user that is currently displayed
             Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
@@ -234,6 +251,13 @@ class AppController extends Controller {
             }
             Configure::write('context.is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
         }
+        
+    	if(Configure::read('NoseRub.use_cdn')) {
+            $avatar_base_url = 'http://s3.amazonaws.com/' . Configure::read('NoseRub.cdn_s3_bucket') . '/avatars/';
+        } else {
+            $avatar_base_url = Router::url('/static/avatars/', true);
+        }
+        Configure::write('context.avatar_base_url', $avatar_base_url);
     }
     
 	private function autoLogin() {
@@ -241,8 +265,7 @@ class AppController extends Controller {
             
         if($login_id) {
             if(!isset($this->Identity)) {
-                App::import('Model', 'Identity');
-                $this->Identity = new Identity();
+                $this->loadModel('Identity');
             }
             
             $this->Identity->contain();
