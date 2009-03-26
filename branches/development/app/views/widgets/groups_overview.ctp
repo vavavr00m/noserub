@@ -13,5 +13,5 @@
     ?></p>
 <?php } ?>
 <?php if(Configure::read('context.logged_in_identity')) { 
-    echo $html->link(__('Add new group', true), '/groups/add/_t:' . $security_token);
+    echo $html->link(__('Add new group', true), '/groups/add/_t:' . $noserub->fnSecurityToken());
 } ?>
