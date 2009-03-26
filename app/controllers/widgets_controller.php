@@ -86,6 +86,14 @@ class WidgetsController extends AppController {
  	 */
  	
  	public function profile() {
+ 	    $identity_id = $this->getIdentityId();
+ 	    if($identity_id == Configure::read('context.logged_in_identity.id')) {
+ 	        $data = Configure::read('context.logged_in_identity');
+ 	    } else {
+ 	        $data = Configure::read('context.identity');
+ 	    }
+ 	    
+ 	    $this->set('data', $data);
  	} 
  	
  	/**

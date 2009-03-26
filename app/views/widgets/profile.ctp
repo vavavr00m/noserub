@@ -1,11 +1,11 @@
 <?php
-$base_url = '/' . Configure::read('context.identity.local_username') . '/';
-$name = Configure::read('context.identity.name');
+$base_url = '/' . $data['local_username'] . '/';
+$name = $data['name'];
 ?>
 <div class="vcard">
     <?php echo $html->image($noserub->fnProfilePhotoUrl(), array('class' => 'photo', 'alt' => $name)); ?>
     <?php echo $html->tag('span', $name, array('class' => 'fn')); ?>
-    <?php echo $html->link(Configure::read('context.identity.username'), 'http://' . Configure::read('context.identity.username')); ?>
+    <?php echo $html->link($data['username'], 'http://' . $data['username']); ?>
 </div>
 <?php echo $noserub->link('/add/as/contact/'); ?>
 <div class="navi">

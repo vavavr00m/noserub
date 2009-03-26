@@ -1,4 +1,5 @@
 <div id="inhalt">
+    <?php echo $noserub->widgetProfile(); ?>
     <?php echo $noserub->widgetContacts(array('layout' => 'list')); ?>
 </div>
 

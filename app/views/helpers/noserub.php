@@ -58,7 +58,12 @@ class NoserubHelper extends AppHelper {
     }
 
     public function fnProfilePhotoUrl() {
-        $photo = Configure::read('context.identity.photo');
+        if(Configure::read('context.identity')) {
+            $identity = Configure::read('context.identity');
+        } else {
+            $identity = Configure::read('context.logged_in_identity');
+        }
+        $photo = $identity['photo'];
         if($photo) {
             if(strpos($photo, 'http://') === 0 ||
                strpos($photo, 'https://') === 0) {
@@ -69,7 +74,7 @@ class NoserubHelper extends AppHelper {
             }	                
         } else {
         	App::import('Vendor', 'sex');
-            $photo_url = Sex::getImageUrl(Configure::read('context.identity.sex'));
+            $photo_url = Sex::getImageUrl($identity['sex']);
         }
         
         return $photo_url;
