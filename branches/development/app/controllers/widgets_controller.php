@@ -97,6 +97,13 @@ class WidgetsController extends AppController {
  	} 
  	
  	/**
+ 	 * User Settings
+ 	 */
+ 	 
+ 	public function settings_navigation() {
+ 	}
+ 	
+ 	/**
  	 * Accounts
  	 */
  	
