@@ -1,4 +1,4 @@
-<div id="content" class="wrapper">
+<div id="inhalt">
 <?php $no_error = true; ?>
 <p id="message" class="info">
     <?php __('Information about the current state of your NoseRub instance. Please
