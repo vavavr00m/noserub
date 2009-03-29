@@ -57,7 +57,8 @@ class AdminsController extends AppController {
                 'name', 'url', 'description', 'default_language',
                 'latitude', 'longitude', 'google_maps_key',
                 'registration_type', 'registration_restricted_hosts',
-                'use_ssl', 'api_info_active', 'allow_subscriptions'
+                'use_ssl', 'api_info_active', 'allow_subscriptions',
+				'twitter_consumer_key', 'twitter_consumer_secret'
             );
             if(!$this->Network->save($this->data, true, $saveable)) {
                 $this->storeFormErrors('Network', $this->data, $this->Network->validationErrors);
