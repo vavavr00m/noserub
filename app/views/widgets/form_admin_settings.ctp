@@ -52,6 +52,13 @@ if($this->data) {
     echo '</p>';
     echo '</fieldset>';
 
+	echo '<fieldset><legend>' . __('Twitter', true) . '</legend>';
+	echo '<p>';
+	__('To allow the users on your network to post to Twitter, you have to register your network at <a href="http://twitter.com/oauth_clients">Twitter</a> and enter the generated consumer key and secret below.');
+	echo '</p>';
+	echo $form->input('Network.twitter_consumer_key', array('label' => __('Consumer key', true)));
+	echo $form->input('Network.twitter_consumer_secret', array('label' => __('Consumer secret', true)));
+
     echo '<fieldset><legend>' . __('Misc', true) . '</legend>';
     echo $form->input('Network.use_ssl', array('label' => __('Use SSL', true)));    
     echo '<p>';
