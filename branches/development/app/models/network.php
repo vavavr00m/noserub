@@ -2,8 +2,15 @@
 /* SVN FILE: $Id:$ */
  
 class Network extends AppModel {
-    
     public $hasMany = array('Identity', 'Group', 'Admin');
+    public $hasAndBelongsToMany = array(
+            'NetworkSubscriber' => array(
+                'className'  => 'Identity',
+                'joinTable'  => 'network_subscriptions',
+                'foreignKey' => 'network_id',
+                'associationForeignKey' => 'identity_id'
+            )
+    );
     
     public $validate = array(
         'url' => array(
@@ -17,15 +24,6 @@ class Network extends AppModel {
         
         return parent::beforeValidate($options);
     }
-    
-    public $hasAndBelongsToMany = array(
-            'NetworkSubscriber' => array(
-                'className'  => 'Identity',
-                'joinTable'  => 'network_subscriptions',
-                'foreignKey' => 'network_id',
-                'associationForeignKey' => 'identity_id'
-            )
-    );
     
 	public function getEnabled() {
 		return $this->find('all', array(
