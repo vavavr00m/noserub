@@ -87,14 +87,6 @@ Configure::write('NoseRub.xmpp_full_feed_port', 5222);
 Configure::write('NoseRub.allow_twitter_bridge', true);
 
 /**
- * To allow the users on your site to post to Twitter, you have to register 
- * your NoseRub installation at Twitter (http://twitter.com/oauth_clients) 
- * and add the generated consumer key and secret here.
- */
-Configure::write('NoseRub.twitter_consumer_key', '');
-Configure::write('NoseRub.twitter_consumer_secret', '');
-
-/**
  * Uncomment this line if you get the following error when you try 
  * to authenticate your OpenID: "Fatal error: Define 
  * Auth_OpenID_RAND_SOURCE as null to continue with an insecure 
