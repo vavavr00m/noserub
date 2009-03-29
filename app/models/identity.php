@@ -352,6 +352,57 @@ class Identity extends AppModel {
     }
     
     /**
+     * returns the last active identities
+     */
+    public function getLastActive($limit, $with_restricted = false) {
+        $this->Entry->contain();
+        $fields = array('DISTINCT Entry.identity_id');
+        $conditions = array();
+        if(!$with_restricted) {
+            $conditions['restricted'] = 0;
+        }
+        $entries = $this->Entry->find(
+            'all',
+            array(
+                'fields'     => $fields,
+                'conditions' => $conditions,
+                'order'      => 'Entry.published_on DESC',
+                'limit'      => $limit
+            )
+        );
+        $identity_ids = Set::extract($entries, '{n}.Entry.identity_id');
+
+        $this->contain();
+        return $this->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'id' => $identity_ids
+                ),
+                'limit' => $limit
+            )
+        );
+    }
+    
+    /**
+     * Returns the last logged in identities.
+     */
+    public function getLastLoggedIn($limit = null) {
+        return $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Configure::read('context.network.id'),
+    			'frontpage_updates' => 1,
+    			'hash' => '',
+    			'hash <>' => '#deleted#',
+    			'username NOT LIKE "%@%"'
+    		),
+    		'order' => array('Identity.last_login DESC'),
+    		'limit' => $limit
+        ));
+    }
+    
+    /**
      * Opens the NoseRub page and parses the FOAF data
      * This is not a real FOAF-Paser, but rather a lame excuse...
      * Please also see /app/views/elements/foaf.ctp for another hack within
@@ -984,39 +1035,6 @@ class Identity extends AppModel {
         }
         
         return $url;
-    }
-    
-    /**
-     * returns the last active identities
-     */
-    public function getLastActive($limit, $with_restricted = false) {
-        $this->Entry->contain();
-        $fields = array('DISTINCT Entry.identity_id');
-        $conditions = array();
-        if(!$with_restricted) {
-            $conditions['restricted'] = 0;
-        }
-        $entries = $this->Entry->find(
-            'all',
-            array(
-                'fields'     => $fields,
-                'conditions' => $conditions,
-                'order'      => 'Entry.published_on DESC',
-                'limit'      => $limit
-            )
-        );
-        $identity_ids = Set::extract($entries, '{n}.Entry.identity_id');
-
-        $this->contain();
-        return $this->find(
-            'all',
-            array(
-                'conditions' => array(
-                    'id' => $identity_ids
-                ),
-                'limit' => $limit
-            )
-        );
     }
         
     /**

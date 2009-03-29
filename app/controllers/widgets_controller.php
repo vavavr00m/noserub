@@ -203,6 +203,16 @@ class WidgetsController extends AppController {
 	    $this->loadModel('Identity');
 	    $this->set('data', $this->Identity->getPopular(9));
 	}
+
+	public function last_active_users() {
+	    $this->loadModel('Identity');
+	    $this->set('data', $this->Identity->getLastActive(9));
+	}
+	
+	public function last_logged_in_users() {
+	    $this->loadModel('Identity');
+	    $this->set('data', $this->Identity->getLastLoggedIn(9));
+	}
 	
 	/**
 	 * Contacts
