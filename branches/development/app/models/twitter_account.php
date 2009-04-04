@@ -3,6 +3,17 @@
 class TwitterAccount extends AppModel {
 	public $belongsTo = array('Identity');
 	
+	public function saveAccessToken($identity_id, $access_token_key, $access_token_secret) {
+		$id = $this->field('id', array('identity_id' => $identity_id));
+
+		$data[$this->name]['id'] = $id ? $id : '';
+		$data[$this->name]['identity_id'] = $identity_id;
+		$data[$this->name]['access_token_key'] = $access_token_key;
+		$data[$this->name]['access_token_secret'] = $access_token_secret;
+
+		return $this->save($data);
+	}
+
 	public function update($identity_id, $data) {
 		$id = $this->field('id', array('identity_id' => $identity_id));
 		
