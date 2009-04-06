@@ -1,5 +1,5 @@
 <?php
-    $base_url = '/' . Configure::read('context.logged_in_identity.local_username') . '/';
+    $base_url = '/' . Context::read('logged_in_identity.local_username') . '/';
 ?>
 <ul>	
     <li><?php echo $html->link(__('Profile', true), $base_url . 'settings/profile/') ?></li>

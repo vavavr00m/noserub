@@ -29,7 +29,7 @@ class Mail extends AppModel {
         $this->send(array(
             'template' => 'identity/password_recovery',
             'to'       => $email,
-            'subject'  => sprintf(__('%s password recovery', true), Configure::read('context.network.name')),
+            'subject'  => sprintf(__('%s password recovery', true), Context::read('network.name')),
             'data' => array(
                 'recovery_hash' => $recovery_hash,
                 'username'      => $username
@@ -55,7 +55,7 @@ class Mail extends AppModel {
             $this->send(array(
                 'template' => 'entry/notify_favorite',
                 'to'       => $favorite_identity['Identity']['email'],
-                'subject'  => sprintf(__('%s: Someone marked your entry a favorite', true), Configure::read('context.network.name')),
+                'subject'  => sprintf(__('%s: Someone marked your entry a favorite', true), Context::read('network.name')),
                 'data' => array(
                     'username'    => $data['Identity']['username'],
                     'entry_id'    => $entry_id,
@@ -84,7 +84,7 @@ class Mail extends AppModel {
             $this->send(array(
                 'template' => 'entry/notify_comment',
                 'to'       => $comment_identity['Identity']['email'],
-                'subject'  => sprintf(__('%s: Someone commented on your entry', true), Configure::read('context.network.name')),
+                'subject'  => sprintf(__('%s: Someone commented on your entry', true), Context::read('network.name')),
                 'data' => array(
                     'username'    => $data['Identity']['username'],
                     'entry_id'    => $entry_id,
@@ -110,7 +110,7 @@ class Mail extends AppModel {
             $this->send(array(
                 'template' => 'identity/notify_contact',
                 'to'       => $contacted_identity['Identity']['email'],
-                'subject'  => sprintf(__('%s: Someone added you as contact', true), Configure::read('context.network.name')),
+                'subject'  => sprintf(__('%s: Someone added you as contact', true), Context::read('network.name')),
                 'data' => array(
                     'username' => $data['Identity']['username']
                 )
@@ -122,7 +122,7 @@ class Mail extends AppModel {
         $this->send(array(
             'template' => 'identity/register',
             'to'       => $email,
-            'subject'  => sprintf(__('Your %s registration', true), Configure::read('context.network.name')),
+            'subject'  => sprintf(__('Your %s registration', true), Context::read('network.name')),
             'data' => array(
                 'hash' => $hash
             )

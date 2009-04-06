@@ -1,5 +1,5 @@
 <?php
-    $url = Router::url('/' . Configure::read('context.logged_in_identity.local_username'));
+    $url = Router::url('/' . Context::read('logged_in_identity.local_username'));
 ?>
 <div id="inhalt">
     <p class="infotext">

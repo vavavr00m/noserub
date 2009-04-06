@@ -7,13 +7,30 @@ if(file_exists(APP . '/config/noserub.php')) {
 }
 
 /**
+ * This is just a simple wrapper to make
+ * the 'Context' more visible.
+ */
+class Context {
+    public static function read($key = '') {
+        if($key) {
+            $key = 'context.' . $key;
+        }
+        return Configure::read($key);
+    }
+    
+    public static function write($key, $value) {
+        return Configure::write('context' . $key, $value);
+    }    
+}
+
+/**
  * a "context" array that will hold information about
  * the current status. That means: which pages is being
  * displayed, which is the logged in user, etc..
  * The goal is to have this universally available in all
  * controllers and all views.
  */
-Configure::write('context', array(
+Context::write('', array(
     'logged_in_identity' => false,
     'network' => array('id' => 1), # default for now, needed for old menu component
     'identity' => false, # the identity we're looking at,
@@ -33,7 +50,7 @@ define('NOSERUB_RESERVED_USERNAMES', 'api,pages,jobs,tests,noserub,auth,login,re
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
 if(!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', substr(Configure::read('context.network.url'), 0, -1));
+	define('FULL_BASE_URL', substr(Context::read('network.url'), 0, -1));
 }
 
 Configure::write('Languages', array(

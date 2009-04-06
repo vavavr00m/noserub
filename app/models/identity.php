@@ -91,12 +91,12 @@ class Identity extends AppModel {
      * check, whether host of email address matches context.network.registration_restricted_hosts
      */
     public function validateRestrictedEmail($email, $params = array()) {
-        if (Configure::read('context.network.registration_restricted_hosts') == false ||
+        if (Context::read('network.registration_restricted_hosts') == false ||
             $email == '') {
             return true;
         }
         list($local, $host) = explode('@', $email['email']);
-        return in_array($host, explode(' ', Configure::read('context.network.registration_restricted_hosts')));
+        return in_array($host, explode(' ', Context::read('network.registration_restricted_hosts')));
     }
     
     public function afterFind($data) {
@@ -270,7 +270,7 @@ class Identity extends AppModel {
     }
     
     public function isCorrectSecurityToken($security_token) {
-        $identity_id = Configure::read('context.logged_in_identity.id');
+        $identity_id = Context::read('logged_in_identity.id');
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
@@ -316,7 +316,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Configure::read('context.network.id'),
+                'network_id' => Context::read('network.id'),
     			'frontpage_updates' => 1,
     			'hash' => '',
     			'hash <>' => '#deleted#',
@@ -339,7 +339,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Configure::read('context.network.id'),
+                'network_id' => Context::read('network.id'),
                 'id' => $ids,
     			'frontpage_updates' => 1,
     			'hash' => '',
@@ -391,7 +391,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Configure::read('context.network.id'),
+                'network_id' => Context::read('network.id'),
     			'frontpage_updates' => 1,
     			'hash' => '',
     			'hash <>' => '#deleted#',
@@ -588,7 +588,7 @@ class Identity extends AppModel {
             return false;
         }
         $this->create();
-        $data['Identity']['network_id']       = Configure::read('context.network.id');
+        $data['Identity']['network_id']       = Context::read('network.id');
         $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
@@ -683,7 +683,7 @@ class Identity extends AppModel {
      * Updates the security token for logged in identity
      */
     public function updateSecurityToken() {
-        $identity_id = Configure::read('context.logged_in_identity.id');
+        $identity_id = Context::read('logged_in_identity.id');
         $security_token = false;
         if($identity_id) {
             $this->id = $identity_id;
@@ -691,7 +691,7 @@ class Identity extends AppModel {
             $this->saveField('security_token', $security_token);            
         } 
         
-        Configure::write('context.security_token', $security_token);
+        Context::write('security_token', $security_token);
     }
     
     /**
@@ -1070,7 +1070,7 @@ class Identity extends AppModel {
         return $this->find('count', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Configure::read('context.network.id'),
+                'network_id' => Context::read('network.id'),
                 'hash' => '',
                 'username <>' => '',
                 'password <>' => ''

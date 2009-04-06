@@ -54,14 +54,14 @@ class NoserubHelper extends AppHelper {
     }
     
     public function fnAvatarBaseUrl() {
-        return Configure::read('context.avatar_base_url');
+        return Context::read('avatar_base_url');
     }
 
     public function fnProfilePhotoUrl() {
-        if(Configure::read('context.identity')) {
-            $identity = Configure::read('context.identity');
+        if(Context::read('identity')) {
+            $identity = Context::read('identity');
         } else {
-            $identity = Configure::read('context.logged_in_identity');
+            $identity = Context::read('logged_in_identity');
         }
         $photo = $identity['photo'];
         if($photo) {
@@ -81,7 +81,7 @@ class NoserubHelper extends AppHelper {
     }
     
     public function fnSecurityToken() {
-        return Configure::read('context.security_token');
+        return Context::read('security_token');
     }
     
     public function link($url) {
@@ -95,17 +95,17 @@ class NoserubHelper extends AppHelper {
     }
     
     private function linkAddAsContact() {
-        if(Configure::read('context.is_self') || 
-           !Configure::read('context.logged_in_identity') ||
-           Configure::read('context.is_guest')) {
+        if(Context::read('is_self') || 
+           !Context::read('logged_in_identity') ||
+           Context::read('is_guest')) {
             return '';
         }
         
-        if(Configure::read('context.is_contact')) {
+        if(Context::read('is_contact')) {
             return __('This is one of your contacts.', true);
         }
         
-        return $this->html->link(__('Add as contact', true), '/' . Configure::read('context.identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken());
+        return $this->html->link(__('Add as contact', true), '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken());
     }
     
     /**

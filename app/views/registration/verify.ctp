@@ -1,7 +1,7 @@
 <div id="inhalt">
     <?php if($verify_ok) { ?>
         <p>
-            <?php echo sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), Configure::read('context.network.name')); ?>
+            <?php echo sprintf(__("Congratulations. You're now ready to %s to %s.", true), $html->link(__('login', true), '/pages/login/'), Context::read('network.name')); ?>
         </p>
     <?php } else { ?>
         <p>

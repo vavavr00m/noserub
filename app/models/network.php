@@ -41,7 +41,7 @@ class Network extends AppModel {
             'contain' => array(
                 'NetworkSubscriber' => array(
                     'conditions' => array(
-                        'identity_id' => Configure::read('context.logged_in_identity')
+                        'identity_id' => Context::read('logged_in_identity')
                     )
                 )
             ),
@@ -134,7 +134,7 @@ class Network extends AppModel {
         
         $updated_networks = array();
         foreach($data as $item) {
-            if($item['url'] == Configure::read('context.network.url')) {
+            if($item['url'] == Context::read('network.url')) {
                 # we don't need to set ourselves to that list
                 continue;
             }

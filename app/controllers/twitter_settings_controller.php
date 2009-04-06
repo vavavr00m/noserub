@@ -13,9 +13,9 @@ class TwitterSettingsController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->consumerKey = Configure::read('context.network.twitter_consumer_key');
-		$this->consumerSecret = Configure::read('context.network.twitter_consumer_secret');
-		$this->identityID = Configure::read('context.logged_in_identity.id');
+		$this->consumerKey = Context::read('network.twitter_consumer_key');
+		$this->consumerSecret = Context::read('network.twitter_consumer_secret');
+		$this->identityID = Context::read('logged_in_identity.id');
 	}
 
 	public function index() {

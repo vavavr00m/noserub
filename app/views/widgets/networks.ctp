@@ -3,7 +3,7 @@
     <ul>
         <?php foreach($networks as $network) { ?>
             <li>
-                <?php if($network['id'] == Configure::read('context.network.id')) {
+                <?php if($network['id'] == Context::read('network.id')) {
                     echo $network['name'];
                 } else {
                     echo $html->link($network['name'], $network['url']); 

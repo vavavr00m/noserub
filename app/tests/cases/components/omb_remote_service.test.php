@@ -23,7 +23,7 @@ class OmbRemoteServiceComponentTest extends CakeTestCase {
 	
 	public function testDiscoverLocalServiceFromNonExistingUrl() {
 		try {
-			$this->component->discoverLocalService(Configure::read('context.network.url') . 'testing/notexisting');
+			$this->component->discoverLocalService(Context::read('network.url') . 'testing/notexisting');
 			$this->assertTrue(false);
 		} catch (Exception $e) {
 			$this->assertTrue(true);

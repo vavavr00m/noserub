@@ -199,7 +199,7 @@ class OmbLocalServiceController extends AppController {
 			if ($this->isGravatarUrl($avatarName)) {
 				$avatarUrl = $this->get96x96GravatarUrl($avatarName);
 			} else {
-				$avatarUrl = Configure::read('context.network.url').'static/avatars/'.$avatarName.'-medium.jpg';
+				$avatarUrl = Context::read('network.url').'static/avatars/'.$avatarName.'-medium.jpg';
 			}
 		}
 		

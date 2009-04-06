@@ -68,7 +68,7 @@ foreach($data as $item) {
             $is_private = ($session_local_username != '' && $item['WithIdentity']['namespace'] == $session_local_username);
                 
             $identity_id = isset($item['Contact']['identity_id']) ? $item['Contact']['identity_id'] : $item['identity_id'];
-            if(Configure::read('context.is_self')) { ?>
+            if(Context::read('is_self')) { ?>
                 <dd class="contact_option"><?php echo $html->link(__('Info', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/info/'); ?></dd>
                 <dd class="contact_option"><?php echo $html->link(__('Remove Contact', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/delete/'.$noserub->fnSecurityToken().'/'); ?></dd>
                 <dd class="contact_option"><?php echo $html->link(__('Edit Contact', true), '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
