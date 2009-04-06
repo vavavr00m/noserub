@@ -19,7 +19,7 @@ class Context {
     }
     
     public static function write($key, $value) {
-        return Configure::write('context' . $key, $value);
+        return Configure::write('context.' . $key, $value);
     }    
 }
 
