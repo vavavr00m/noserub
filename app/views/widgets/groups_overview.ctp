@@ -12,6 +12,4 @@
         __('There are currently no groups available.');
     ?></p>
 <?php } ?>
-<?php if(Context::read('logged_in_identity')) { 
-    echo $html->link(__('Add new group', true), '/groups/add/_t:' . $noserub->fnSecurityToken());
-} ?>
+<?php echo $noserub->link('/groups/add/'); ?>
