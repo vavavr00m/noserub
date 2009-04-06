@@ -89,6 +89,9 @@ class NoserubHelper extends AppHelper {
             case '/add/as/contact/':
                 return $this->linkAddAsContact();
             
+            case '/groups/add/':
+                return $this->linkGroupAdd();
+                
             default:
                 return '';
         }
@@ -106,6 +109,14 @@ class NoserubHelper extends AppHelper {
         }
         
         return $this->html->link(__('Add as contact', true), '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken());
+    }
+    
+    private function linkGroupAdd() {
+        if(!Context::read('logged_in_identity')) {
+            return '';
+        }
+        
+        return $this->html->link(__('Add new group', true), '/groups/add/_t:' . $this->fnSecurityToken());
     }
     
     /**
