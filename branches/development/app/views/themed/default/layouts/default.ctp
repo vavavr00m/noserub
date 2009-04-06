@@ -28,9 +28,12 @@
 <body>
 
 <div id="logo">
-    <?php echo $noserub->widgetNavigation('meta'); ?>
+    <?php echo $html->link('Logo: ' . Context::read('network.name'), '/'); ?>
 </div>
 
+<div id="meta">
+    <?php echo $noserub->widgetNavigation('meta'); ?>
+</div>
 
 <div id="links">
     <?php echo $noserub->widgetNavigation('main'); ?>

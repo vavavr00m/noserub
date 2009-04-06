@@ -44,11 +44,18 @@ background-color: transparent;
 
 #logo { 
 position: absolute;
+left: 10px; 
+text-align: left;
+top: 20px;
+}
+
+#meta { 
+position: absolute;
 right: 2%; 
-width: 96%; 
 text-align: right;
 top: 20px;
 }
+
 
 #links { 
 position: absolute; 
