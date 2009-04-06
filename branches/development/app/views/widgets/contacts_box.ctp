@@ -1,5 +1,5 @@
 <?php
-    if(Configure::read('context.is_self')) {
+    if(Context::read('is_self')) {
         if($data) {
             $label = __('manage', true);
         } else {

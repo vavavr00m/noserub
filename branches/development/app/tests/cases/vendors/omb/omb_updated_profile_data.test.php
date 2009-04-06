@@ -42,7 +42,7 @@ class OmbUpdatedProfileDataTest extends CakeTestCase {
 	}
 	
 	public function testConstructWithUpdatedAvatar() {
-		$avatarUrl = Configure::read('context.network.url').'static/avatars/'.$this->avatar.'-medium.jpg';
+		$avatarUrl = Context::read('network.url').'static/avatars/'.$this->avatar.'-medium.jpg';
 		$profileData = $this->createProfileDataWithAvatar();
 		$this->assertEqual($avatarUrl, $profileData[OmbParamKeys::LISTENEE_AVATAR]);
 	}

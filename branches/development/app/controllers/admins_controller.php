@@ -14,14 +14,14 @@ class AdminsController extends AppController {
     
     public function password() {
         $this->checkSecure();
-        if(!Configure::read('context.admin_id')) {
+        if(!Context::read('admin_id')) {
             $this->redirect('/admins/');
         }
         if($this->data && empty($this->params['form']['cancel'])) {
             $this->loadModel('Admin');
             
             $this->Admin->set($this->data);
-            $this->Admin->id = Configure::read('context.admin_id');
+            $this->Admin->id = Context::read('admin_id');
             
             $password = $this->Admin->field('password');
             if($password != md5($this->data['Admin']['password'])) {
@@ -45,14 +45,14 @@ class AdminsController extends AppController {
     
     public function settings() {
         $this->checkSecure();
-        if(!Configure::read('context.admin_id')) {
+        if(!Context::read('admin_id')) {
             $this->redirect('/admins/');
         }
         if(empty($this->params['form']['cancel'])) {
             $this->loadModel('Network');
         
             $this->Network->set($this->data);
-            $this->Network->id = Configure::read('context.network.id');
+            $this->Network->id = Context::read('network.id');
             $saveable = array(
                 'name', 'url', 'description', 'default_language',
                 'latitude', 'longitude', 'google_maps_key',
@@ -68,7 +68,7 @@ class AdminsController extends AppController {
     }
     
     public function login() {
-        if(!Configure::read('context.logged_in_identity')) {
+        if(!Context::read('logged_in_identity')) {
             # you need to be logged in as identity,
             # if you want to gain admin access
             
@@ -94,7 +94,7 @@ class AdminsController extends AppController {
         $admin = $this->Admin->find('first', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Configure::read('context.network.id'),
+                'network_id' => Context::read('network.id'),
                 'username' => $this->data['Admin']['username'],
                 'password' => md5($this->data['Admin']['password']),
             )

@@ -111,7 +111,7 @@
                 <?php __("We don't send any other data beside what you can verify here, once you click that button."); ?>
             </legend>
             <div class="input text">
-                <input type="hidden" name="talkback[url]" value="<?php echo Configure::read('context.network.url'); ?>"><strong><?php __('URL'); ?>:</strong> <?php echo Configure::read('context.network.url'); ?>
+                <input type="hidden" name="talkback[url]" value="<?php echo Context::read('network.url'); ?>"><strong><?php __('URL'); ?>:</strong> <?php echo Context::read('network.url'); ?>
             </div>
             <div class="input text">
                 <input type="hidden" name="talkback[migrations]" value="<?php echo $most_recent_migration; ?>"><strong><?php __('DB Version'); ?>:</strong> <?php echo $most_recent_migration; ?>

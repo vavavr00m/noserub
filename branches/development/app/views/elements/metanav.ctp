@@ -5,7 +5,7 @@
     <ul>
         <?php if(isset($menu) && $menu['logged_in']) { ?>
             <li class="first">
-                <?php if(Configure::read('context.is_guest')) {
+                <?php if(Context::read('is_guest')) {
                     $label = $session->read('Identity.username') . ' (' . __('Open-ID', true) . ')';
                 } else {
                     $label = $session->read('Identity.local_username');
@@ -22,7 +22,7 @@
                          $action == 'OauthConsumers.index' ||
                          $action == 'AccountSettings.index') {
                     __('Settings');
-                } else if(!Configure::read('context.is_guest')) { ?>
+                } else if(!Context::read('is_guest')) { ?>
                     <?php echo $html->link(__('Settings', true), '/' . $session->read('Identity.local_username') . '/settings/'); ?>
                 <?php } ?>
             </li>

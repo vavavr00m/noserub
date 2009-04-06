@@ -44,7 +44,7 @@ class AppController extends Controller {
             return;
         }
         
-        if(Configure::read('context.network.use_ssl')) {
+        if(Context::read('network.use_ssl')) {
             $server_port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 0;
             if($server_port != 443) {
                 $this->redirect(str_replace('http://', 'https://', FULL_BASE_URL) . $this->here);
@@ -83,7 +83,7 @@ class AppController extends Controller {
         if(!$language) {
             # if not, get NoseRub default language and save it
             # in the session
-            $language = Configure::read('context.network.default_language');
+            $language = Context::read('network.default_language');
             $this->Session->write('Config.language', $language);
         }
         # now set the language
@@ -190,18 +190,18 @@ class AppController extends Controller {
             $data['Network']['url'] = 'http://' . $http_host . $this->webroot;
         }
         
-        Configure::write('context.network', $data['Network']);
+        Context::write('network', $data['Network']);
 
         # set the user agent here, as we didn't know about the network.url before
-        Configure::write('noserub.user_agent', 'NoseRub bot from ' . Configure::read('context.network.url') . ' (http://noserub.com/)');
+        Configure::write('noserub.user_agent', 'NoseRub bot from ' . Context::read('network.url') . ' (http://noserub.com/)');
         ini_set('user_agent', Configure::read('noserub.user_agent'));
         
-        Configure::write('context.logged_in_identity', $this->Session->read('Identity'));
+        Context::write('logged_in_identity', $this->Session->read('Identity'));
         
         if($this->Session->read('Admin.id')) {
-            Configure::write('context.admin_id', $this->Session->read('Admin.id'));
+            Context::write('admin_id', $this->Session->read('Admin.id'));
         } else {
-            Configure::write('context.admin_id', 0);
+            Context::write('admin_id', 0);
         }
         
         # if we're looking on the page of someone else, get the identity
@@ -216,40 +216,40 @@ class AppController extends Controller {
             
             $this->Identity->contain();
             $data = $this->Identity->findByUsername($username);
-            Configure::write('context.identity', $data['Identity']);
+            Context::write('identity', $data['Identity']);
             
             # check, if logged_in_identity is contact
-            Configure::write('context.is_contact', false);
-            if(Configure::read('context.logged_in_identity')) {
+            Context::read('is_contact', false);
+            if(Context::read('logged_in_identity')) {
                 if($this->Identity->Contact->find('first', array(
                     'conditions' => array(
-                        'identity_id' => Configure::read('context.logged_in_identity.id'),
+                        'identity_id' => Context::read('logged_in_identity.id'),
                         'with_identity_id' => $data['Identity']['id']
                     )
                    ))) {
-                    Configure::write('context.is_contact', true);
+                    Context::write('is_contact', true);
                 };
             }
         } else {
-            Configure::write('context.identity', false);
+            Context::write('identity', false);
         }
 
-        if(Configure::read('context.identity') && Configure::read('context.logged_in_identity')) {
+        if(Context::read('identity') && Context::read('logged_in_identity')) {
             # logged in user is the same as the user that is currently displayed
-            Configure::write('context.is_self', Configure::read('context.logged_in_identity.id') == Configure::read('context.identity.id'));
-        } else if(Configure::read('context.identity') === false && Configure::read('context.logged_in_identity')) {
+            Context::write('is_self', Context::read('logged_in_identity.id') == Context::read('identity.id'));
+        } else if(Context::read('identity') === false && Context::read('logged_in_identity')) {
             # if no username is given, the logged in user is always "is_self"
-            Configure::write('context.is_self', true);
+            Context::write('is_self', true);
         }
         
-        if(Configure::read('context.logged_in_identity')) {
-            $logged_in_identity = Configure::read('context.logged_in_identity');
+        if(Context::read('logged_in_identity')) {
+            $logged_in_identity = Context::read('logged_in_identity');
             if(!isset($logged_in_identity['network_id'])) {
                 # this can only happen when people are still
                 # logged in after a /system/update
                 $logged_in_identity['network_id'] = 1;
             }
-            Configure::write('context.is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
+            Context::write('is_guest', $logged_in_identity['network_id'] == 0 ? true : false);
         }
         
     	if(Configure::read('NoseRub.use_cdn')) {
@@ -257,7 +257,7 @@ class AppController extends Controller {
         } else {
             $avatar_base_url = Router::url('/static/avatars/', true);
         }
-        Configure::write('context.avatar_base_url', $avatar_base_url);
+        Context::write('avatar_base_url', $avatar_base_url);
     }
     
 	private function autoLogin() {
@@ -355,28 +355,28 @@ class AppController extends Controller {
             # no need to test for 'visitor', as
             # this is the default behaviour
             if($allow == 'guest') {
-                if(Configure::read('context.is_guest') ||
-                   Configure::read('context.logged_in_identity') ||
-                   Configure::read('context.is_admin')) {
+                if(Context::read('is_guest') ||
+                   Context::read('logged_in_identity') ||
+                   Context::read('is_admin')) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_visitors');
                 }
             } else if($allow == 'user') {
-                if(Configure::read('context.logged_in_identity') ||
-                   Configure::read('context.is_admin')) {
+                if(Context::read('logged_in_identity') ||
+                   Context::read('is_admin')) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_guests');
                 }
             } else if($allow == 'admin') {
-                if(Configure::read('context.is_admin')) {
+                if(Context::read('is_admin')) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_users');
                 }
             } else if($allow == 'self') {
-                if(Configure::read('context.is_self')) {
+                if(Context::read('is_self')) {
                     return;
                 } else {
                     $this->info_route('only_allowed_for_self');
@@ -407,15 +407,15 @@ class AppController extends Controller {
             # no need to test for 'visitor', as
             # this is the default behaviour
             if($deny == 'guest') {
-                if(Configure::read('context.is_guest')) {
+                if(Context::read('is_guest')) {
                     $this->info_route('not_allowed_for_guests');
                 }
             } else if($deny == 'user') {
-                if(Configure::read('context.logged_in_identity'))  {
+                if(Context::read('logged_in_identity'))  {
                     $this->info_route('not_allowed_for_users');
                 }
             } else if($deny == 'admin') {
-                if(Configure::read('context.is_admin')) {
+                if(Context::read('is_admin')) {
                     $this->info_route('not_allowed_for_admins');
                 }
             } else {

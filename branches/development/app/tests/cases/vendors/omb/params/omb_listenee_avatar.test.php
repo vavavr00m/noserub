@@ -4,7 +4,7 @@ App::import('Vendor', 'OmbListeneeAvatar');
 class OmbListeneeAvatarTest extends CakeTestCase {
 	public function testConstruct() {
 		$avatarName = 'myavatar';
-		$avatarUrl = Configure::read('context.network.url').'static/avatars/'.$avatarName.'-medium.jpg';
+		$avatarUrl = Context::read('network.url').'static/avatars/'.$avatarName.'-medium.jpg';
 		$listeneeAvatar = new OmbListeneeAvatar($avatarName);
 		$this->assertEqual(OmbParamKeys::LISTENEE_AVATAR, $listeneeAvatar->getKey());
 		$this->assertEqual($avatarUrl, $listeneeAvatar->getValue());

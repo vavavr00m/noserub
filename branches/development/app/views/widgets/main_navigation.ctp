@@ -1,8 +1,8 @@
-<?php if(Configure::read('context.logged_in_identity')) { ?>
+<?php if(Context::read('logged_in_identity')) { ?>
     <?php
-        $base_url = '/' . Configure::read('context.logged_in_identity.local_username') . '/';
+        $base_url = '/' . Context::read('logged_in_identity.local_username') . '/';
     ?>
-    <?php echo sprintf(__('Hi %s!', true), Configure::read('context.logged_in_identity.name')); ?>
+    <?php echo sprintf(__('Hi %s!', true), Context::read('logged_in_identity.name')); ?>
     <ul id="nav main">
         <li id="home">
             <?php echo $html->link(__('Home', true), $base_url . 'social_stream/'); ?>
@@ -33,7 +33,7 @@
                 <ul>
                     <?php foreach($networks as $network) { ?>
                         <li>
-                            <?php if($network['id'] == Configure::read('context.Network.id')) {
+                            <?php if($network['id'] == Context::read('Network.id')) {
                                 echo $network['name'];
                             } else {
                                 echo $html->link($network['name'], $network['url']); 
@@ -46,7 +46,7 @@
     </ul>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
-    <?php if(Configure::read('context.network.registration_type') == 1) {
+    <?php if(Context::read('network.registration_type') == 1) {
         echo $html->link(__('Register a new account', true), '/pages/register/');
     } ?>
 <?php } ?>

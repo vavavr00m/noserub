@@ -16,8 +16,8 @@ class WidgetsController extends AppController {
     public function navigation() {
         $this->loadModel('Identity');
          
-        if(Configure::read('context.logged_in_identity')) {
-            $this->Identity->id = Configure::read('context.logged_in_identity.id');
+        if(Context::read('logged_in_identity')) {
+            $this->Identity->id = Context::read('logged_in_identity.id');
         } else {
             $this->Identity->id = false;
         }
@@ -36,26 +36,26 @@ class WidgetsController extends AppController {
  	}
  	
  	public function admin_login() {
- 	    if(!Configure::read('context.logged_in_identity')) {
+ 	    if(!Context::read('logged_in_identity')) {
  	        # but if there is no identity yet, to which you could log in...
             $this->loadModel('Identity');
             if(!$this->Identity->isIdentityAvailableForLogin()) {
-                Configure::write('context.show_admin_login', true);
+                Context::write('show_admin_login', true);
             } else {
-                Configure::write('context.show_admin_login', false);
+                Context::write('show_admin_login', false);
             }
         }
  	}
  	
  	public function form_admin_settings() {
- 	    if(Configure::read('context.admin_id')) {
+ 	    if(Context::read('admin_id')) {
  	        $this->loadModel('Network');
  	        $this->retrieveFormErrors('Network');
  	        if(!$this->data) {
          	    $this->data = $this->Network->find('first', array(
          	        'contain' => false,
          	        'conditions' => array(
-         	            'Network.id' => Configure::read('context.network.id')
+         	            'Network.id' => Context::read('network.id')
          	        )
          	    ));
  	        }
@@ -63,14 +63,14 @@ class WidgetsController extends AppController {
  	}
  	
  	public function form_admin_password() {
- 	    if(Configure::read('context.admin_id')) {
+ 	    if(Context::read('admin_id')) {
  	        $this->loadModel('Admin');
  	        $this->retrieveFormErrors('Admin');
  	        if(!$this->data) {
          	    $this->data = $this->Admin->find('first', array(
          	        'contain' => false,
          	        'conditions' => array(
-         	            'Admin.id' => Configure::read('context.admin_id')
+         	            'Admin.id' => Context::read('admin_id')
          	        )
          	    ));
  	        }
@@ -87,10 +87,10 @@ class WidgetsController extends AppController {
  	
  	public function profile() {
  	    $identity_id = $this->getIdentityId();
- 	    if($identity_id == Configure::read('context.logged_in_identity.id')) {
- 	        $data = Configure::read('context.logged_in_identity');
+ 	    if($identity_id == Context::read('logged_in_identity.id')) {
+ 	        $data = Context::read('logged_in_identity');
  	    } else {
- 	        $data = Configure::read('context.identity');
+ 	        $data = Context::read('identity');
  	    }
  	    
  	    $this->set('data', $data);
@@ -181,10 +181,10 @@ class WidgetsController extends AppController {
  	 */
  	 
  	public function contact_filter() {
- 	    if(Configure::read('context.is_self')) {
+ 	    if(Context::read('is_self')) {
  	        $this->loadModel('Contact');
  	    
- 	        $this->set('contact_tags', $this->Contact->getTagList(Configure::read('context.logged_in_identity.id')));
+ 	        $this->set('contact_tags', $this->Contact->getTagList(Context::read('logged_in_identity.id')));
         } else {
             return false;
         }
@@ -235,7 +235,7 @@ class WidgetsController extends AppController {
         }
         
         # get (filtered) contacts
-        if(Configure::read('context.is_self')) {
+        if(Context::read('is_self')) {
             # this is my network, so I can show every contact
             $contact_filter = array('tag' => $tag_filter);
         } else {
@@ -318,7 +318,7 @@ class WidgetsController extends AppController {
         $filter = $show_in_overview;
 
         if($type == 'network') {
-            $data = $this->Contact->getForDisplay(Configure::read('context.logged_in_identity.id'), array('tag' => 'all'));
+            $data = $this->Contact->getForDisplay(Context::read('logged_in_identity.id'), array('tag' => 'all'));
         
             # we need to go through all this now and get Accounts and Services
             # also save all contacts
@@ -328,9 +328,9 @@ class WidgetsController extends AppController {
             }
 
             $contact_ids = Set::extract($contacts, '{n}.id');
-            $contact_ids[] = Configure::read('context.logged_in_identity.id');
+            $contact_ids[] = Context::read('logged_in_identity.id');
         } else {
-            $contact_ids = array(Configure::read('context.identity.id'));
+            $contact_ids = array(Context::read('identity.id'));
         }
         # get last 100 items
         $conditions = array(
@@ -367,11 +367,11 @@ class WidgetsController extends AppController {
         if(!$identity_id) {
             # if no identity_id was given in the params, use the one
             # from the current page
-            if(Configure::read('context.identity')) {
-                $identity_id = Configure::read('context.identity.id');
-            } else if(Configure::read('context.logged_in_identity')) {
+            if(Context::read('identity')) {
+                $identity_id = Context::read('identity.id');
+            } else if(Context::read('logged_in_identity')) {
                 # if not, use the logged in identity
-                $identity_id = Configure::read('context.logged_in_identity.id');
+                $identity_id = Context::read('logged_in_identity.id');
             }
          }
      

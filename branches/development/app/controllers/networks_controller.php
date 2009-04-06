@@ -12,7 +12,7 @@ class NetworksController extends AppController {
             return;
         }
         
-        if(!Configure::read('context.logged_in_identity')) {
+        if(!Context::read('logged_in_identity')) {
             $this->redirect('/networks/');
             return;
         }
@@ -21,11 +21,11 @@ class NetworksController extends AppController {
             $this->Network->id = $network_id;
             switch($action) {
                 case -1:
-                    $this->Network->unsubscribe(Configure::read('context.logged_in_identity.id'));
+                    $this->Network->unsubscribe(Context::read('logged_in_identity.id'));
                     break;
                     
                 case 1:
-                    $this->Network->subscribe(Configure::read('context.logged_in_identity.id'));
+                    $this->Network->subscribe(Context::read('logged_in_identity.id'));
                     break;
             }
         }

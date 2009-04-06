@@ -36,7 +36,7 @@ class MenuComponent extends Object {
 		$menuOptions = array('controller' => $controller->name, 'action' => $controller->action);
         
         if($this->Session->check('Identity')) {
-        	$isLocal = $this->Session->read('Identity.network_id') == Configure::read('context.network.id') ? true : false;
+        	$isLocal = $this->Session->read('Identity.network_id') == Context::read('network.id') ? true : false;
         	$localUsername = $this->Session->read('Identity.local_username');
         	$menuOptions = am($menuOptions, array('is_local' => $isLocal, 'local_username' => $localUsername));
         }
