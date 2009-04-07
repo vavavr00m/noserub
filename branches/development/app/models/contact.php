@@ -318,7 +318,7 @@ class Contact extends AppModel {
             if($item['is_private']) {
                 $username = $username . '@' . $identity['Identity']['local_username'];
             }
-            $new_splitted = $this->Identity->splitUsername($username, $item['network_id'] == Context::read('network.id'));
+            $new_splitted = $this->Identity->splitUsername($username, $item['network_id'] == Context::NetworkId());
         
             # check, if we already have that username
             $this->Identity->contain();

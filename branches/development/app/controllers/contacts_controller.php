@@ -60,7 +60,7 @@ class ContactsController extends AppController {
             # but first make sure, that this connection is not already there
             if($this->Contact->hasAny(
                array(
-                    'identity_id'      => Context::read('logged_in_identity.id'), 
+                    'identity_id'      => Context::loggedInIdentityId(), 
                     'with_identity_id' => $new_identity_id
                ))) {
                 $this->Contact->invalidate('noserub_id', 'unique');
@@ -68,8 +68,8 @@ class ContactsController extends AppController {
                 return;
             }
             
-            if($this->Contact->add(Context::read('logged_in_identity.id'), $new_identity_id)) {
-                $this->Contact->Identity->Entry->addNewContact(Context::read('logged_in_identity.id'), $new_identity_id, null);
+            if($this->Contact->add(Context::loggedInIdentityId(), $new_identity_id)) {
+                $this->Contact->Identity->Entry->addNewContact(Context::loggedInIdentityId(), $new_identity_id, null);
                 $this->flashMessage('success', __('New contact added.', true));
 			    $this->Session->write('Contacts.add.Contact.id', $this->Contact->id);
 			    $this->redirect('/contacts/' . $this->Contact->id . '/edit/');
@@ -89,7 +89,7 @@ class ContactsController extends AppController {
         # check, if the contact belongs to the identity
         $this->Contact->contain();
         $contact = $this->Contact->find(array('id'          => $contact_id,
-                                              'identity_id' => Context::read('logged_in_identity.id')));
+                                              'identity_id' => Context::loggedInIdentityId()));
     
         if(!$contact) {
             # contact not found for logged in user
@@ -153,7 +153,7 @@ class ContactsController extends AppController {
 	    $this->Contact->contain(array('Identity', 'WithIdentity', 'ContactType', 'NoserubContactType'));
 	    $contact = $this->Contact->findById($contact_id);
 	    
-        if(Context::read('logged_in_identity.id') != $contact['Contact']['identity_id']) {
+        if(Context::loggedInIdentityId() != $contact['Contact']['identity_id']) {
             # this is not a contact of the logged in user
             $this->redirect('/contacts/');
         }
@@ -187,7 +187,7 @@ class ContactsController extends AppController {
     	    $new_tags = $this->Contact->NoserubContactType->extract($this->data['Tags']['own']);
     	    
     	    # extract contact types from new tags and clean them up
-    	    $new_tags = $this->Contact->ContactType->extract(Context::read('logged_in_identity.id'), $new_tags);
+    	    $new_tags = $this->Contact->ContactType->extract(Context::loggedInIdentityId(), $new_tags);
     	    
     	    # merge manual tags with noserub contact types
     	    $entered_noserub_contact_types = $this->Contact->NoserubContactType->merge($this->data['NoserubContactType'], $new_tags['noserub_contact_type_ids']);
@@ -220,7 +220,7 @@ class ContactsController extends AppController {
                 if($tag) {
                     $data = array(
                         'ContactType' => array(
-                            'identity_id' => Context::read('logged_in_identity.id'),
+                            'identity_id' => Context::loggedInIdentityId(),
                             'name'        => $tag));
                     $this->Contact->ContactType->create();
                     $this->Contact->ContactType->save($data);
@@ -259,7 +259,7 @@ class ContactsController extends AppController {
 	    $this->set('noserub_contact_types', $this->Contact->NoserubContactType->find('all'));	    
 	    
 	    $this->Contact->ContactType->contain();
-	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId(Context::read('logged_in_identity.id')));
+	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId(Context::loggedInIdentityId()));
     }
     
     /**

@@ -42,7 +42,7 @@ class IdentitiesController extends AppController {
         if($username) {
             $identity = $this->Identity->getIdentityByLocalUsername($username);
         } else {
-            $identity = Context::read('logged_in_identity');
+            $identity = Context::isLoggedInIdentity();
             if(!$identity) {
                 $this->redirect('/');
             }
@@ -76,7 +76,7 @@ class IdentitiesController extends AppController {
         if($username) {
             $identity = $this->Identity->getIdentityByLocalUsername($username);
         } else {
-            $identity = Context::read('logged_in_identity');
+            $identity = Context::isLoggedInIdentity();
             if(!$identity) {
                 $this->redirect('/');
             }
@@ -539,7 +539,7 @@ class IdentitiesController extends AppController {
         $this->Identity->contain();
         $identity = $this->Identity->findById($identity_id);
 
-        if(!$identity || $identity['Identity']['network_id'] == Context::read('network.id')) {
+        if(!$identity || $identity['Identity']['network_id'] == Context::NetworkId()) {
             # we could not find it, or this is a local identity
             return false;
         }
@@ -766,7 +766,7 @@ class IdentitiesController extends AppController {
                 return;
             }
         } else if($this->data) {
-            $conditions = array('network_id' => Context::read('network.id'));
+            $conditions = array('network_id' => Context::NetworkId());
             if($this->data['Identity']['username']) {
                 $splitted = $this->Identity->splitUsername($this->data['Identity']['username']);
                 $conditions['Identity.username'] = $splitted['username'];
