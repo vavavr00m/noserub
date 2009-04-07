@@ -2,7 +2,8 @@
 
 App::import('Vendor', 'oauth-consumer'.DS.'oauth_consumer');
 
-class TwitterSettingsController extends AppController {
+class TwitterAccountsController extends AppController {
+	public $uses = array('TwitterAccount');
 	public $components = array('RequestHandler');
 	const ACCESS_TOKEN_URL = 'http://twitter.com/oauth/access_token';
 	const REQUEST_TOKEN_URL = 'http://twitter.com/oauth/request_token';
@@ -20,16 +21,14 @@ class TwitterSettingsController extends AppController {
 
 	public function index() {
 		if ($this->RequestHandler->isGet()) {
-			$twitterAccount = ClassRegistry::init('TwitterAccount');
-
 			if (isset($this->params['url']['oauth_token'])) {
 				$requestToken = $this->Session->read('twitter_request_token');
 				$consumer = $this->createConsumer();
 				$accessToken = $consumer->getAccessToken(self::ACCESS_TOKEN_URL, $requestToken);
-				$twitterAccount->saveAccessToken($this->identityID, $accessToken->key, $accessToken->secret);
+				$this->TwitterAccount->saveAccessToken($this->identityID, $accessToken->key, $accessToken->secret);
 			}
 			$this->set('isTwitterFeatureEnabled', $this->isTwitterFeatureEnabled());
-			$this->set('hasTwitterAccount', $twitterAccount->hasAny(array('identity_id' => $this->identityID)));
+			$this->set('hasTwitterAccount', $this->TwitterAccount->hasAny(array('identity_id' => $this->identityID)));
 		} else {
 			$consumer = $this->createConsumer();
 			$requestToken = $consumer->getRequestToken(self::REQUEST_TOKEN_URL);
