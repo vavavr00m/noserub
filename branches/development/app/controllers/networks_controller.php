@@ -12,7 +12,7 @@ class NetworksController extends AppController {
             return;
         }
         
-        if(!Context::read('logged_in_identity')) {
+        if(!Context::isLoggedInIdentity()) {
             $this->redirect('/networks/');
             return;
         }

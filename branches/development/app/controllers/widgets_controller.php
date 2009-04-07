@@ -161,6 +161,9 @@ class WidgetsController extends AppController {
  	    $this->set('groups', $this->Identity->getSubscribedGroups());
  	}
  	
+ 	public function form_groups_add() {
+ 	}
+ 	
  	public function groups_overview() {
  	    $this->loadModel('Group');
  	    $this->set('groups', $this->Group->getOverview());
