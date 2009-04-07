@@ -53,6 +53,10 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/form_admin_settings/');
     }
     
+    public function formGroupAdd() {
+        return $this->out('/widgets/form_groups_add/');
+    }
+    
     public function fnAvatarBaseUrl() {
         return Context::read('avatar_base_url');
     }
@@ -116,7 +120,7 @@ class NoserubHelper extends AppHelper {
             return '';
         }
         
-        return $this->html->link(__('Add new group', true), '/groups/add/_t:' . $this->fnSecurityToken());
+        return $this->html->link(__('Add new group', true), '/groups/add/');
     }
     
     /**

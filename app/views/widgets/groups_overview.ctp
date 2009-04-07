@@ -1,12 +1,6 @@
 <?php __('Groups'); ?>
 <?php if($groups) { ?>
-    <ul>
-        <?php foreach($groups as $group) { ?>
-            <li>
-                <?php echo $html->link($group['Group']['name'], '/groups/' .$group['Group']['slug'] . '/'); ?>
-            </li>
-        <?php } ?>
-    </ul>
+    <?php echo $this->element('groups/list'); ?>
 <?php } else { ?>
     <p><?php
         __('There are currently no groups available.');

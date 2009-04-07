@@ -11,7 +11,7 @@
  */
 class AppController extends Controller {
     public $helpers = array('noserub', 'javascript', 'html', 'form');
-    public $components = array('menu', 'Cookie');
+    public $components = array('Cookie', 'RequestHandler');
     public $view = 'Theme';
     public $theme = 'default';
     
@@ -94,10 +94,7 @@ class AppController extends Controller {
             strtoupper(substr($this->L10n->locale, 3, 2)) . 
             '.' . $this->L10n->charset
         );
-        
-        # set menu data
-        $this->menu->setViewData($this);  
-        
+                
         /**
          * 	Don't you EVER remove this line else you will make the whole 
          * 	application a swiss cheese for XSS!

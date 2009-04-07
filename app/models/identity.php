@@ -22,23 +22,23 @@ class Identity extends AppModel {
                 'associationForeignKey' => 'entry_id'
             ),
             'SubscribedGroup' => array(
-                                        'className'  => 'Group',
-                                        'joinTable'  => 'group_subscriptions',
-                                        'foreignKey' => 'identity_id',
-                                        'associationForeignKey' => 'group_id'
+                'className'  => 'Group',
+                'joinTable'  => 'group_subscriptions',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'group_id'
                                     ),
-            //             'AdministratingGroup' => array(
-            //                 'className' => 'Group',
-            //                 'joinTable' => 'group_admins',
-            //                 'foreignKey' => 'identity_id',
-            //                 'associationForeignKey' => 'group_id' 
-            //             ),
-                        'SubscribedNetwork' => array(
-                                        'className' => 'Network',
-                                        'joinTable' => 'network_subscriptions',
-                                        'foreignKey' => 'identity_id',
-                                        'associationForeignKey' => 'network_id'
-                                    )
+            'AdministratingGroup' => array(
+                'className' => 'Group',
+                'joinTable' => 'group_admins',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'group_id' 
+            ),
+            'SubscribedNetwork' => array(
+                            'className' => 'Network',
+                            'joinTable' => 'network_subscriptions',
+                            'foreignKey' => 'identity_id',
+                            'associationForeignKey' => 'network_id'
+                        )
     );
     
     public $validate = array(
