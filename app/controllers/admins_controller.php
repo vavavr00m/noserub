@@ -14,7 +14,7 @@ class AdminsController extends AppController {
     
     public function password() {
         $this->checkSecure();
-        if(!Context::read('admin_id')) {
+        if(!Context::isAdmin()) {
             $this->redirect('/admins/');
         }
         if($this->data && empty($this->params['form']['cancel'])) {
@@ -45,14 +45,14 @@ class AdminsController extends AppController {
     
     public function settings() {
         $this->checkSecure();
-        if(!Context::read('admin_id')) {
+        if(!Context::isAdmin()) {
             $this->redirect('/admins/');
         }
         if(empty($this->params['form']['cancel'])) {
             $this->loadModel('Network');
         
             $this->Network->set($this->data);
-            $this->Network->id = Context::read('network.id');
+            $this->Network->id = Context::NetworkId();
             $saveable = array(
                 'name', 'url', 'description', 'default_language',
                 'latitude', 'longitude', 'google_maps_key',
@@ -68,7 +68,7 @@ class AdminsController extends AppController {
     }
     
     public function login() {
-        if(!Context::read('logged_in_identity')) {
+        if(!Context::isLoggedInIdentity()) {
             # you need to be logged in as identity,
             # if you want to gain admin access
             
@@ -94,7 +94,7 @@ class AdminsController extends AppController {
         $admin = $this->Admin->find('first', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Context::read('network.id'),
+                'network_id' => Context::NetworkId(),
                 'username' => $this->data['Admin']['username'],
                 'password' => md5($this->data['Admin']['password']),
             )

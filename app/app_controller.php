@@ -219,11 +219,11 @@ class AppController extends Controller {
             Context::write('identity', $data['Identity']);
             
             # check, if logged_in_identity is contact
-            Context::read('is_contact', false);
-            if(Context::read('logged_in_identity')) {
+            Context::write('is_contact', false);
+            if(Context::isLoggedInIdentity()) {
                 if($this->Identity->Contact->find('first', array(
                     'conditions' => array(
-                        'identity_id' => Context::read('logged_in_identity.id'),
+                        'identity_id' => Context::loggedInIdentityId(),
                         'with_identity_id' => $data['Identity']['id']
                     )
                    ))) {
@@ -234,16 +234,16 @@ class AppController extends Controller {
             Context::write('identity', false);
         }
 
-        if(Context::read('identity') && Context::read('logged_in_identity')) {
+        if(Context::read('identity') && Context::isLoggedInIdentity()) {
             # logged in user is the same as the user that is currently displayed
-            Context::write('is_self', Context::read('logged_in_identity.id') == Context::read('identity.id'));
-        } else if(Context::read('identity') === false && Context::read('logged_in_identity')) {
+            Context::write('is_self', Context::loggedInIdentityId() == Context::read('identity.id'));
+        } else if(Context::read('identity') === false && Context::isLoggedInIdentity()) {
             # if no username is given, the logged in user is always "is_self"
             Context::write('is_self', true);
         }
         
-        if(Context::read('logged_in_identity')) {
-            $logged_in_identity = Context::read('logged_in_identity');
+        if(Context::isLoggedInIdentity()) {
+            $logged_in_identity = Context::isLoggedInIdentity();
             if(!isset($logged_in_identity['network_id'])) {
                 # this can only happen when people are still
                 # logged in after a /system/update
@@ -355,28 +355,28 @@ class AppController extends Controller {
             # no need to test for 'visitor', as
             # this is the default behaviour
             if($allow == 'guest') {
-                if(Context::read('is_guest') ||
-                   Context::read('logged_in_identity') ||
-                   Context::read('is_admin')) {
+                if(Context::isGuest() ||
+                   Context::isLoggedInIdentity() ||
+                   Context::isAdmin()) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_visitors');
                 }
             } else if($allow == 'user') {
-                if(Context::read('logged_in_identity') ||
-                   Context::read('is_admin')) {
+                if(Context::isLoggedInIdentity() ||
+                   Context::isAdmin()) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_guests');
                 }
             } else if($allow == 'admin') {
-                if(Context::read('is_admin')) {
+                if(Context::isAdmin()) {
                     return;
                 } else {
                     $this->info_route('not_allowed_for_users');
                 }
             } else if($allow == 'self') {
-                if(Context::read('is_self')) {
+                if(Context::isSelf()) {
                     return;
                 } else {
                     $this->info_route('only_allowed_for_self');
@@ -407,15 +407,15 @@ class AppController extends Controller {
             # no need to test for 'visitor', as
             # this is the default behaviour
             if($deny == 'guest') {
-                if(Context::read('is_guest')) {
+                if(Context::isGuest()) {
                     $this->info_route('not_allowed_for_guests');
                 }
             } else if($deny == 'user') {
-                if(Context::read('logged_in_identity'))  {
+                if(Context::isLoggedInIdentity())  {
                     $this->info_route('not_allowed_for_users');
                 }
             } else if($deny == 'admin') {
-                if(Context::read('is_admin')) {
+                if(Context::isAdmin()) {
                     $this->info_route('not_allowed_for_admins');
                 }
             } else {

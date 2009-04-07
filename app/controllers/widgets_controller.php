@@ -16,8 +16,8 @@ class WidgetsController extends AppController {
     public function navigation() {
         $this->loadModel('Identity');
          
-        if(Context::read('logged_in_identity')) {
-            $this->Identity->id = Context::read('logged_in_identity.id');
+        if(Context::isLoggedInIdentity()) {
+            $this->Identity->id = Context::loggedInIdentityId();
         } else {
             $this->Identity->id = false;
         }
@@ -36,7 +36,7 @@ class WidgetsController extends AppController {
  	}
  	
  	public function admin_login() {
- 	    if(!Context::read('logged_in_identity')) {
+ 	    if(!Context::isLoggedInIdentity()) {
  	        # but if there is no identity yet, to which you could log in...
             $this->loadModel('Identity');
             if(!$this->Identity->isIdentityAvailableForLogin()) {
@@ -48,14 +48,14 @@ class WidgetsController extends AppController {
  	}
  	
  	public function form_admin_settings() {
- 	    if(Context::read('admin_id')) {
+ 	    if(Context::isAdmin()) {
  	        $this->loadModel('Network');
  	        $this->retrieveFormErrors('Network');
  	        if(!$this->data) {
          	    $this->data = $this->Network->find('first', array(
          	        'contain' => false,
          	        'conditions' => array(
-         	            'Network.id' => Context::read('network.id')
+         	            'Network.id' => Context::NetworkId()
          	        )
          	    ));
  	        }
@@ -63,7 +63,7 @@ class WidgetsController extends AppController {
  	}
  	
  	public function form_admin_password() {
- 	    if(Context::read('admin_id')) {
+ 	    if(Context::isAdmin()) {
  	        $this->loadModel('Admin');
  	        $this->retrieveFormErrors('Admin');
  	        if(!$this->data) {
@@ -87,8 +87,8 @@ class WidgetsController extends AppController {
  	
  	public function profile() {
  	    $identity_id = $this->getIdentityId();
- 	    if($identity_id == Context::read('logged_in_identity.id')) {
- 	        $data = Context::read('logged_in_identity');
+ 	    if($identity_id == Context::loggedInIdentityId()) {
+ 	        $data = Context::isLoggedInIdentity();
  	    } else {
  	        $data = Context::read('identity');
  	    }
@@ -181,10 +181,10 @@ class WidgetsController extends AppController {
  	 */
  	 
  	public function contact_filter() {
- 	    if(Context::read('is_self')) {
+ 	    if(Context::isSelf()) {
  	        $this->loadModel('Contact');
  	    
- 	        $this->set('contact_tags', $this->Contact->getTagList(Context::read('logged_in_identity.id')));
+ 	        $this->set('contact_tags', $this->Contact->getTagList(Context::loggedInIdentityId()));
         } else {
             return false;
         }
@@ -235,7 +235,7 @@ class WidgetsController extends AppController {
         }
         
         # get (filtered) contacts
-        if(Context::read('is_self')) {
+        if(Context::isSelf()) {
             # this is my network, so I can show every contact
             $contact_filter = array('tag' => $tag_filter);
         } else {
@@ -318,7 +318,7 @@ class WidgetsController extends AppController {
         $filter = $show_in_overview;
 
         if($type == 'network') {
-            $data = $this->Contact->getForDisplay(Context::read('logged_in_identity.id'), array('tag' => 'all'));
+            $data = $this->Contact->getForDisplay(Context::loggedInIdentityId(), array('tag' => 'all'));
         
             # we need to go through all this now and get Accounts and Services
             # also save all contacts
@@ -328,7 +328,7 @@ class WidgetsController extends AppController {
             }
 
             $contact_ids = Set::extract($contacts, '{n}.id');
-            $contact_ids[] = Context::read('logged_in_identity.id');
+            $contact_ids[] = Context::loggedInIdentityId();
         } else {
             $contact_ids = array(Context::read('identity.id'));
         }
@@ -369,9 +369,9 @@ class WidgetsController extends AppController {
             # from the current page
             if(Context::read('identity')) {
                 $identity_id = Context::read('identity.id');
-            } else if(Context::read('logged_in_identity')) {
+            } else if(Context::isLoggedInIdentity()) {
                 # if not, use the logged in identity
-                $identity_id = Context::read('logged_in_identity.id');
+                $identity_id = Context::loggedInIdentityId();
             }
          }
      

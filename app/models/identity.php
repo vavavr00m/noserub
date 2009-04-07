@@ -270,7 +270,7 @@ class Identity extends AppModel {
     }
     
     public function isCorrectSecurityToken($security_token) {
-        $identity_id = Context::read('logged_in_identity.id');
+        $identity_id = Context::loggedInIdentityId();
         if($identity_id && $security_token) {
             $this->id = $identity_id;
             $db_security_token = $this->field('security_token');
@@ -316,7 +316,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Context::read('network.id'),
+                'network_id' => Context::NetworkId(),
     			'frontpage_updates' => 1,
     			'hash' => '',
     			'hash <>' => '#deleted#',
@@ -339,7 +339,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Context::read('network.id'),
+                'network_id' => Context::NetworkId(),
                 'id' => $ids,
     			'frontpage_updates' => 1,
     			'hash' => '',
@@ -391,7 +391,7 @@ class Identity extends AppModel {
         return $this->find('all', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Context::read('network.id'),
+                'network_id' => Context::NetworkId(),
     			'frontpage_updates' => 1,
     			'hash' => '',
     			'hash <>' => '#deleted#',
@@ -588,7 +588,7 @@ class Identity extends AppModel {
             return false;
         }
         $this->create();
-        $data['Identity']['network_id']       = Context::read('network.id');
+        $data['Identity']['network_id']       = Context::NetworkId();
         $data['Identity']['overview_filters'] = 'photo,video,link,text,micropublish,event,document,location,noserub';
         
         if (!$isAccountWithOpenID) { 
@@ -683,7 +683,7 @@ class Identity extends AppModel {
      * Updates the security token for logged in identity
      */
     public function updateSecurityToken() {
-        $identity_id = Context::read('logged_in_identity.id');
+        $identity_id = Context::loggedInIdentityId();
         $security_token = false;
         if($identity_id) {
             $this->id = $identity_id;
@@ -1070,7 +1070,7 @@ class Identity extends AppModel {
         return $this->find('count', array(
             'contain' => false,
             'conditions' => array(
-                'network_id' => Context::read('network.id'),
+                'network_id' => Context::NetworkId(),
                 'hash' => '',
                 'username <>' => '',
                 'password <>' => ''
