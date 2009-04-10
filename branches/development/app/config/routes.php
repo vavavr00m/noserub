@@ -87,6 +87,7 @@ Router::connect('/:username/settings/account/import/', array('controller' => 'ac
 Router::connect('/:username/settings/account/redirect/', array('controller' => 'account_settings', 'action' => 'redirect_url'));
 Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 Router::connect('/:username/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
+Router::connect('/:username/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
 
 Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
 Router::connect('/:username/settings/feeds/:syndication_id/delete/:security_token/', array('controller' => 'syndications', 'action' => 'delete'));
