@@ -3,6 +3,10 @@
 class TwitterAccount extends AppModel {
 	public $belongsTo = array('Identity');
 	
+	public function deleteByIdentityId($identity_id) {
+		return $this->deleteAll(array('identity_id' => $identity_id));
+	}
+
 	public function saveAccessToken($identity_id, $access_token_key, $access_token_secret) {
 		$id = $this->field('id', array('identity_id' => $identity_id));
 

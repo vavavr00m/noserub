@@ -10,13 +10,11 @@ class TwitterAccountsController extends AppController {
 	const AUTHORIZE_URL = 'http://twitter.com/oauth/authorize';
 	private $consumerKey = '';
 	private $consumerSecret = '';
-	private $identityID = '';
 
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->consumerKey = Context::read('network.twitter_consumer_key');
 		$this->consumerSecret = Context::read('network.twitter_consumer_secret');
-		$this->identityID = Context::loggedInIdentityId();
 	}
 
 	public function index() {
@@ -25,16 +23,29 @@ class TwitterAccountsController extends AppController {
 				$requestToken = $this->Session->read('twitter_request_token');
 				$consumer = $this->createConsumer();
 				$accessToken = $consumer->getAccessToken(self::ACCESS_TOKEN_URL, $requestToken);
-				$this->TwitterAccount->saveAccessToken($this->identityID, $accessToken->key, $accessToken->secret);
+				$this->TwitterAccount->saveAccessToken(Context::loggedInIdentityId(), $accessToken->key, $accessToken->secret);
 			}
 			$this->set('isTwitterFeatureEnabled', $this->isTwitterFeatureEnabled());
-			$this->set('hasTwitterAccount', $this->TwitterAccount->hasAny(array('identity_id' => $this->identityID)));
+			$this->set('hasTwitterAccount', $this->TwitterAccount->hasAny(array('identity_id' => Context::loggedInIdentityId())));
 		} else {
 			$consumer = $this->createConsumer();
 			$requestToken = $consumer->getRequestToken(self::REQUEST_TOKEN_URL);
 			$this->Session->write('twitter_request_token', $requestToken);
 			$this->redirect(self::AUTHORIZE_URL . '?oauth_token=' . $requestToken->key . '&oauth_callback=' . urlencode(FULL_BASE_URL . $this->here));
 		}
+	}
+
+	public function delete() {
+		$this->ensureSecurityToken();
+
+		if ($this->TwitterAccount->deleteByIdentityId(Context::loggedInIdentityId())) {
+			$this->flashMessage('success', __('Twitter Account successfully removed', true));
+		} else {
+			$this->flashMessage('alert', __('Twitter Account couldn\'t be removed', true));
+		}
+
+		$identity = Context::read('identity');
+		$this->redirect('/' . $identity['local_username'] . '/settings/twitter');
 	}
 
 	private function createConsumer() {
