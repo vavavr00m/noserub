@@ -1,5 +1,5 @@
 <?php
-App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'WriteableFoldersChecker'));
+App::import('Vendor', array('CacheCleaner', 'ConfigurationChecker', 'ExtensionsChecker', 'RandomNumberGeneratorChecker', 'WriteableFoldersChecker'));
 
 class AdminsController extends AppController {
     
@@ -145,6 +145,7 @@ class AdminsController extends AppController {
     	// XXX security_token is set to avoid "undefined variable" error in view
     	$this->set('security_token', '');
         $this->set('extensions', ExtensionsChecker::check());
+		$this->set('random_number_generator', RandomNumberGeneratorChecker::check());
         
         $directories = WriteableFoldersChecker::check();
         $this->set('directories', $directories);

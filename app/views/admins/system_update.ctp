@@ -21,6 +21,17 @@
 	    <?php } ?>
     </ul>
 <?php } ?>
+<h2><?php __('Random Number Generator'); ?></h2>
+<?php if($random_number_generator === true) { ?>
+	<p id="message" class="success">
+		<?php __('Status'); ?>: <strong><?php __('OK'); ?></strong>
+	</p>
+<?php } else { ?>
+    <?php $no_error = false; ?>
+	<p id="message" class="alert">
+		<?php echo $random_number_generator; ?>
+	</p>
+<?php } ?>
 <h2><?php __('Directories'); ?></h2>
 <?php if(empty($directories)) { ?>
     <p id="message" class="success">
