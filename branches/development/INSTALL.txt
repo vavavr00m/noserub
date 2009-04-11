@@ -1,4 +1,4 @@
-This is the installation instruction for NoseRub in PHP.
+These are the installation instructions for NoseRub for PHP.
 
 
 UPDATE
