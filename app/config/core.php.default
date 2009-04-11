@@ -1,5 +1,9 @@
 <?php
 /**
+ * A random string used in security hashing methods.
+ */
+	Configure::write('Security.salt', 'DYhG93b0qy37dhsa67823WwvniR2G0FgaC9mi');
+/**
  * CakePHP Debug Level:
  *
  * Production Mode:
@@ -121,10 +125,6 @@
  * 'Security.level' is set to 'high'.
  */
 	Configure::write('Security.level', 'low');
-/**
- * A random string used in security hashing methods.
- */
-	Configure::write('Security.salt', 'DYhG93b0qy37dhsa67823WwvniR2G0FgaC9mi');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
