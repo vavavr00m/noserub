@@ -1,6 +1,7 @@
 <?php
 
 class ConfigurationChecker {
+	const DEFAULT_SECURITY_SALT = 'DYhG93b0qy37dhsa67823WwvniR2G0FgaC9mi';
     /**
      * value is the migration that at least must be executed before
      * this ConfigKey becomes obsolete
@@ -73,7 +74,8 @@ class ConfigurationChecker {
 	}
 
 	public function check() {
-		$out = $this->checkForObsoleteConstants();
+		$out = $this->checkForSecuritySalt();
+		$out = am($out, $this->checkForObsoleteConstants());
 		$out = am($out, $this->checkForObsoleteConfigKeys());
 		$out = am($out, $this->checkForRequiredConfigSettings());
 		
@@ -118,6 +120,16 @@ class ConfigurationChecker {
 			} else {
 				$out[$configDefinition->getKey()] = __('not defined in noserub.php', true);
 			}
+		}
+		
+		return $out;
+	}
+	
+	protected function checkForSecuritySalt() {
+		$out = array();
+		
+		if (Configure::read('Security.salt') == self::DEFAULT_SECURITY_SALT) {
+			$out['Security.salt'] = __('contains default value. Please change its value in core.php', true);
 		}
 		
 		return $out;
