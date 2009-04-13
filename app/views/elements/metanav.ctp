@@ -23,7 +23,7 @@
                          $action == 'AccountSettings.index') {
                     __('Settings');
                 } else if(!Context::read('is_guest')) { ?>
-                    <?php echo $html->link(__('Settings', true), '/' . $session->read('Identity.local_username') . '/settings/'); ?>
+                    <?php echo $html->link(__('Settings', true), '/settings/'); ?>
                 <?php } ?>
             </li>
             <li>

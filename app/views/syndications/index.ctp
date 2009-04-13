@@ -15,7 +15,7 @@
 
 <h2><?php __('Your feeds'); ?></h2>
 <p class="infotext">
-<a href="<?php echo $url . '/settings/feeds/add/'; ?>" class="addmore"><?php __('Create a new feed'); ?></a>
+<a href="/settings/feeds/add/" class="addmore"><?php __('Create a new feed'); ?></a>
 </p>
 <?php if(!$data) { ?>
     <p class="infotext">
@@ -40,14 +40,14 @@
                 </td>
                 <td>
                 	<ul>
-                   		<li class="delete icon"><?php echo $html->link(__('Delete', true), '/' . $session_identity['local_username'] . '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/' . $security_token . '/'); ?></li>
+                   		<li class="delete icon"><?php echo $html->link(__('Delete', true), '/settings/feeds/'.  $item['Syndication']['id'] . '/delete/' . $security_token . '/'); ?></li>
                    	</ul>
                 </td>
             </tr>
         <?php } ?>
     </table>
     <p class="infotext">
-        <a href="<?php echo $url . '/settings/feeds/add/'; ?>" class="addmore"><?php __('Create a new feed'); ?></a>
+        <a href="/settings/feeds/add/" class="addmore"><?php __('Create a new feed'); ?></a>
     </p>
 <?php } ?>
 

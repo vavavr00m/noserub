@@ -77,39 +77,39 @@ Router::connect('/:username/messages/new/*', array('controller' => 'identities',
 Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
 Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
 
-Router::connect('/:username/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
-Router::connect('/:username/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
-Router::connect('/:username/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
-Router::connect('/:username/settings/account/', array('controller' => 'account_settings', 'action' => 'index'));
-Router::connect('/:username/settings/account/export/:security_token/', array('controller' => 'account_settings', 'action' => 'export'));
-Router::connect('/:username/settings/account/import_data/:security_token/', array('controller' => 'account_settings', 'action' => 'import_data'));
-Router::connect('/:username/settings/account/import/', array('controller' => 'account_settings', 'action' => 'import'));
-Router::connect('/:username/settings/account/redirect/', array('controller' => 'account_settings', 'action' => 'redirect_url'));
-Router::connect('/:username/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
-Router::connect('/:username/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
-Router::connect('/:username/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
+Router::connect('/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
+Router::connect('/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
+Router::connect('/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
+Router::connect('/settings/account/', array('controller' => 'account_settings', 'action' => 'index'));
+Router::connect('/settings/account/export/:security_token/', array('controller' => 'account_settings', 'action' => 'export'));
+Router::connect('/settings/account/import_data/:security_token/', array('controller' => 'account_settings', 'action' => 'import_data'));
+Router::connect('/settings/account/import/', array('controller' => 'account_settings', 'action' => 'import'));
+Router::connect('/settings/account/redirect/', array('controller' => 'account_settings', 'action' => 'redirect_url'));
+Router::connect('/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
+Router::connect('/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
+Router::connect('/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
 
-Router::connect('/:username/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
-Router::connect('/:username/settings/feeds/:syndication_id/delete/:security_token/', array('controller' => 'syndications', 'action' => 'delete'));
-Router::connect('/:username/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
+Router::connect('/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
+Router::connect('/settings/feeds/:syndication_id/delete/:security_token/', array('controller' => 'syndications', 'action' => 'delete'));
+Router::connect('/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 
-Router::connect('/:username/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
-Router::connect('/:username/settings/locations/:location_id/delete/:security_token', array('controller' => 'locations', 'action' => 'delete'));
-Router::connect('/:username/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
-Router::connect('/:username/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
+Router::connect('/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
+Router::connect('/settings/locations/:location_id/delete/:security_token', array('controller' => 'locations', 'action' => 'delete'));
+Router::connect('/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
+Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
 
-Router::connect('/:username/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
-Router::connect('/:username/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_2_preview'));
-Router::connect('/:username/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
-Router::connect('/:username/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
-Router::connect('/:username/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
+Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
+Router::connect('/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_2_preview'));
+Router::connect('/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
+Router::connect('/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
+Router::connect('/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
 
-Router::connect('/:username/settings/oauth/add', array('controller' => 'oauth_consumers', 'action' => 'add'));
-Router::connect('/:username/settings/oauth/:consumer_id/delete/:security_token', array('controller' => 'oauth_consumers', 'action' => 'delete'));
-Router::connect('/:username/settings/oauth/:consumer_id/edit/', array('controller' => 'oauth_consumers', 'action' => 'edit'));
-Router::connect('/:username/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
+Router::connect('/settings/oauth/add', array('controller' => 'oauth_consumers', 'action' => 'add'));
+Router::connect('/settings/oauth/:consumer_id/delete/:security_token', array('controller' => 'oauth_consumers', 'action' => 'delete'));
+Router::connect('/settings/oauth/:consumer_id/edit/', array('controller' => 'oauth_consumers', 'action' => 'edit'));
+Router::connect('/settings/oauth', array('controller' => 'oauth_consumers', 'action' => 'index'));
 
-Router::connect('/:username/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
+Router::connect('/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
 Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));

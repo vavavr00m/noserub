@@ -184,7 +184,7 @@
 	    } ?>
 	    
 	    <?php if($relationship_status == 'self') { ?>
-    	    <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>"><?php __('manage'); ?></a></span>
+    	    <span class="more"><a href="/settings/accounts/'"><?php __('manage'); ?></a></span>
     	<?php } ?>
 	    <h4>On the web</h4>
 	    <ul class="whoissidebar">
@@ -197,13 +197,13 @@
 	    </ul>
 	    <?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
             <p>
-                <?php echo $html->link(__('Add new service', true), '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+                <?php echo $html->link(__('Add new service', true), '/settings/accounts/add/', array('class' => 'addmore')); ?>
             </p>
 	    <?php } ?>
 	    <hr />
 
     <?php if($relationship_status == 'self') { ?>
-        <span class="more"><a href="<?php echo $noserub_url . '/settings/accounts/'; ?>"><?php __('manage'); ?></a></span>
+        <span class="more"><a href="/settings/accounts/'"><?php __('manage'); ?></a></span>
     <?php } ?>
 	<h4><?php __('Contact'); ?></h4>
 	<ul class="whoissidebar">
@@ -222,7 +222,7 @@
 	</ul>
 	<?php if(isset($session_identity) && ($relationship_status == 'self' || $session_identity['local_username'] == $about_identity['namespace'])) { ?>
         <p>
-            <?php echo $html->link(__('Add new service', true), '/' . ($relationship_status == 'self' ? $session_identity['local_username'] : $about_identity['local_username']) . '/settings/accounts/', array('class' => 'addmore')); ?>
+            <?php echo $html->link(__('Add new service', true), '/settings/accounts/', array('class' => 'addmore')); ?>
         </p>
     <?php } ?>
     <hr />

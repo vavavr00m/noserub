@@ -1,5 +1,4 @@
 <?php 
-    $url = Router::url('/' . $session_identity['local_username']);
 	$flashmessage->render(); 
 ?>
 <h3><?php __('OAuth parameters'); ?></h3>
@@ -12,7 +11,7 @@
 
 <h3><?php __('Your applications'); ?></h3>
 <p class="infotext">
-	<?php echo $html->link(__('Register new application', true), $url.'/settings/oauth/add', array('class' => 'addmore')); ?>
+	<?php echo $html->link(__('Register new application', true), '/settings/oauth/add', array('class' => 'addmore')); ?>
 </p>
 <?php if (empty($consumers)): ?>
 	<p class="infotext">
@@ -37,8 +36,8 @@
 				<td><?php echo $consumer['Consumer']['consumer_secret']; ?></td>
 				<td>
 					<ul>
-                   		<li class="delete icon"><a href="<?php echo  $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>"><?php __('Delete'); ?></a></li>
-                   		<li class="edit icon"><a href="<?php echo $url . '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
+                   		<li class="delete icon"><a href="<?php echo  '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>"><?php __('Delete'); ?></a></li>
+                   		<li class="edit icon"><a href="<?php echo '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
                    	</ul>
 				</td>
 			</tr>

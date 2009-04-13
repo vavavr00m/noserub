@@ -63,9 +63,8 @@ class MenuFactory {
 				}
 			}
 		} elseif ($this->showSettingsSubMenu($controller, $action)) {
-			$localUsername = $this->value($options, 'local_username');
 			$isOpenIDUser = $this->value($options, 'openid_user', false);
-			$menuItems = $this->getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser);
+			$menuItems = $this->getSettingsSubMenu($controller, $action, $isOpenIDUser);
 		}
 		
 		if (empty($menuItems)) {
@@ -120,7 +119,7 @@ class MenuFactory {
 		$menuItems[] = new MyProfileMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new MyFavoritesMenuItem($controller, $action, $localUsername);
 		$menuItems[] = new MyCommentsMenuItem($controller, $action, $localUsername);
-		$menuItems[] = new SettingsMenuItem($controller, $action, $localUsername);
+		$menuItems[] = new SettingsMenuItem($controller, $action);
 		
 		return $menuItems;
 	}
@@ -153,8 +152,8 @@ class MenuFactory {
 		return $registrationType;
 	}
 	
-	private function getSettingsSubMenu($controller, $action, $localUsername, $isOpenIDUser) {
-		$link = '/' . $localUsername . '/settings/';
+	private function getSettingsSubMenu($controller, $action, $isOpenIDUser) {
+		$link = '/settings/';
 
 		$menuItems[] = new MenuItem(__('Profile', true), $link . 'profile/', $controller == 'Identities' && $action == 'profile_settings');
 		$menuItems[] = new MenuItem(__('Accounts', true), $link . 'accounts/', $controller == 'Accounts');
@@ -351,8 +350,8 @@ class SettingsMenuItem extends MenuItem {
 	private $controller = null;
 	private $action = null;
 	
-	public function __construct($controller, $action, $localUsername = '') {
-		parent::__construct(__('Settings', true), '/' . $localUsername . '/settings/', false);
+	public function __construct($controller, $action) {
+		parent::__construct(__('Settings', true), '/settings/', false);
 		$this->controller = $controller;
 		$this->action = $action;
 	}

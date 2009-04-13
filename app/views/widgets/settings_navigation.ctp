@@ -1,15 +1,12 @@
-<?php
-    $base_url = '/' . Context::read('logged_in_identity.local_username') . '/';
-?>
 <ul>	
-    <li><?php echo $html->link(__('Profile', true), $base_url . 'settings/profile/') ?></li>
-    <li><?php echo $html->link(__('Accounts', true), $base_url . 'settings/accounts/') ?></li>
-    <li><?php echo $html->link(__('Locations', true), $base_url . 'settings/locations/') ?></li>
-	<li><?php echo $html->link(__('Display', true), $base_url . 'settings/display/') ?></li>
-	<li><?php echo $html->link(__('Privacy', true), $base_url . 'settings/privacy/') ?></li>
-	<li><?php echo $html->link(__('Feeds', true), $base_url . 'settings/feeds/') ?></li>
-	<li><?php echo $html->link(__('OpenID', true), $base_url . 'settings/openid/') ?></li>
-	<li><?php echo $html->link(__('OAuth', true), $base_url . 'settings/oauth/') ?></li>
-	<li><?php echo $html->link(__('Password & API', true), $base_url . 'settings/password/') ?></li>
-	<li><?php echo $html->link(__('Manage', true), $base_url . 'settings/account/') ?></li>
+    <li><?php echo $html->link(__('Profile', true), '/settings/profile/') ?></li>
+    <li><?php echo $html->link(__('Accounts', true), '/settings/accounts/') ?></li>
+    <li><?php echo $html->link(__('Locations', true), '/settings/locations/') ?></li>
+	<li><?php echo $html->link(__('Display', true), '/settings/display/') ?></li>
+	<li><?php echo $html->link(__('Privacy', true), '/settings/privacy/') ?></li>
+	<li><?php echo $html->link(__('Feeds', true), '/settings/feeds/') ?></li>
+	<li><?php echo $html->link(__('OpenID', true), '/settings/openid/') ?></li>
+	<li><?php echo $html->link(__('OAuth', true), '/settings/oauth/') ?></li>
+	<li><?php echo $html->link(__('Password & API', true), '/settings/password/') ?></li>
+	<li><?php echo $html->link(__('Manage', true), '/settings/account/') ?></li>
 </ul>
