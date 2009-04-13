@@ -42,9 +42,9 @@
                         <td><?php if($show_action_links) {
                         		echo '<ul>';
 										  if ($item['Service']['id'] == 8) {
-										  echo '<li class="edit icon">' . $html->link('Edit Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/edit/') . '</li>';
+										  echo '<li class="edit icon">' . $html->link('Edit Account', '/settings/accounts/'.  $account_id . '/edit/') . '</li>';
 										  }
-                                echo '<li class="delete icon">' . $html->link('Remove Account', '/' . $about_identity['local_username'] . '/settings/accounts/'.  $account_id . '/delete/'.$noserub->fnSecurityToken().'/') . '</li>';
+                                echo '<li class="delete icon">' . $html->link('Remove Account', '/settings/accounts/'.  $account_id . '/delete/'.$noserub->fnSecurityToken().'/') . '</li>';
                                 echo '</ul>';
                         } ?></td>
                     </tr>
@@ -55,6 +55,6 @@
 <?php } ?>
 <?php if($show_action_links) { ?>
 	<p class="infotext">
-	    <?php echo $html->link(__('Add new account', true), '/' . $about_identity['local_username'] . '/settings/accounts/add/', array('class' => 'addmore')); ?>
+	    <?php echo $html->link(__('Add new account', true), '/settings/accounts/add/', array('class' => 'addmore')); ?>
 	</p>
 <?php } ?>

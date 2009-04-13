@@ -47,8 +47,7 @@ class TwitterAccountsController extends AppController {
 			$this->flashMessage('alert', __('Twitter Account couldn\'t be removed', true));
 		}
 
-		$identity = Context::read('identity');
-		$this->redirect('/' . $identity['local_username'] . '/settings/twitter');
+		$this->redirect('/settings/twitter');
 	}
 
 	private function createConsumer() {

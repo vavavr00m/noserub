@@ -5,13 +5,12 @@ class AccountSettingsController extends AppController {
 	public $components = array('url');
 	public $helpers = array('flashmessage');
 	private $session_identity = null;
-	private $username = null;
 
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($this->username);
+		$username = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted = $this->Identity->splitUsername($username);
         $this->session_identity = $this->Session->read('Identity');
         
         if(!$this->session_identity || $this->session_identity['username'] != $splitted['username']) {
@@ -72,7 +71,7 @@ class AccountSettingsController extends AppController {
             }
         } 
             
-        $this->redirect('/' . $this->username . '/settings/account/');
+        $this->redirect('/settings/account/');
     }
     
 	public function import_data() {
@@ -88,7 +87,7 @@ class AccountSettingsController extends AppController {
             }
         }
             
-        $this->redirect('/' . $this->username . '/settings/account/');
+        $this->redirect('/settings/account/');
     }
     
 	public function redirect_url() {
@@ -106,7 +105,7 @@ class AccountSettingsController extends AppController {
             $this->flashMessage('success', __('Redirect URL saved.', true));
         }
         
-        $this->redirect('/' . $this->username . '/settings/account/');
+        $this->redirect('/settings/account/');
     }
     
 	private function deleteAccount($identity, $confirm) {

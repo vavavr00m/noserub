@@ -10,8 +10,8 @@
 </p>
 <h2><?php __('Are you sure to proceed?'); ?></h2>
 <p>
-    <?php echo $html->link(__('No, take me back', true), '/'.$session->read('Identity.local_username').'/settings/account/'); ?>
+    <?php echo $html->link(__('No, take me back', true), '/settings/account/'); ?>
 </p>
 <p>
-    <?php echo $html->link(__('Yes, import the data', true), '/'.$session->read('Identity.local_username').'/settings/account/import_data/' . $security_token . '/'); ?>
+    <?php echo $html->link(__('Yes, import the data', true), '/settings/account/import_data/' . $security_token . '/'); ?>
 </p>

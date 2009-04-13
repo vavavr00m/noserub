@@ -166,7 +166,7 @@ class AccountsController extends AppController {
                         $this->Account->invalidate('username', 1);
                     }
 	            } else {
-	            	$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
+	            	$this->saveToSessionAndRedirectToPreview($data);
 	            }
     		} else {
     			$this->Session->write('Service.add.id', 8); # any rss feed
@@ -177,7 +177,7 @@ class AccountsController extends AppController {
     			if (!$data) {
     				$this->Account->invalidate('url', 1);
     			} else {
-    				$this->saveToSessionAndRedirectToPreview($data, $splitted['local_username']);
+    				$this->saveToSessionAndRedirectToPreview($data);
     			}
     		}
     	}
@@ -192,8 +192,6 @@ class AccountsController extends AppController {
     }
     
     public function add_step_2_preview() {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted         = $this->Account->Identity->splitUsername($username);
         $identity_id      = $this->Session->read('Service.add.account.to.identity_id');
         $session_identity = $this->Session->read('Identity');
         $data             = $this->Session->read('Service.add.data');
@@ -248,7 +246,7 @@ class AccountsController extends AppController {
             # we're done!
             if($identity_id == $session_identity['id']) {
                 # new account for the logged in user, so we redirect to his/her account settings
-                $this->redirect('/' . $username . '/settings/accounts/');
+                $this->redirect('/settings/accounts/');
             } else {
                 # new account for a private contact. redirect to his/her profile
                 $this->Account->Identity->contain();
@@ -265,7 +263,6 @@ class AccountsController extends AppController {
     }
     
     public function edit($account_id) {
-        $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $session_identity = $this->Session->read('Identity');
         $identity_id      = $session_identity['id'];
 
@@ -290,7 +287,7 @@ class AccountsController extends AppController {
             $this->Account->id = $account_id;
             if($this->Account->save($this->data, true, array('title', 'service_type_id'))) {
                 $this->Account->Feed->updateServiceType($this->Account->id, $this->data['Account']['service_type_id']);
-                $this->redirect('/' . $username . '/settings/accounts/');
+                $this->redirect('/settings/accounts/');
             }
         }
         
@@ -338,7 +335,7 @@ class AccountsController extends AppController {
             $this->flashMessage('success', __('Account deleted.', true));
         }
         
-        $this->redirect('/' . $splitted['local_username'] . '/settings/accounts/');
+        $this->redirect('/settings/accounts/');
     }
     
     private function getIdentity($username) {
@@ -348,9 +345,9 @@ class AccountsController extends AppController {
         return $identity;
     }
     
-    private function saveToSessionAndRedirectToPreview($data, $username) {
+    private function saveToSessionAndRedirectToPreview($data) {
     	$this->Session->write('Service.add.data', $data);
 		$this->Session->write('Service.add.type', $data['service_type_id']);
-		$this->redirect('/' . $username . '/settings/accounts/add/preview/');
+		$this->redirect('/settings/accounts/add/preview/');
     }
 }

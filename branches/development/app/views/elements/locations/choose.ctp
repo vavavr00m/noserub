@@ -1,7 +1,4 @@
-<?php
-    $noserub_url = 'http://' . $identity['username'];
-?>
-<span class="more"><a href="<?php echo $noserub_url . '/settings/locations/'; ?>"><?php __('manage'); ?></a></span>
+<span class="more"><a href="/settings/locations/"><?php __('manage'); ?></a></span>
 	
 <h4><?php __('Location'); ?></h4>
 	

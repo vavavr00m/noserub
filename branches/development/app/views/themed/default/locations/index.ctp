@@ -10,7 +10,7 @@
 
     <h2><?php __('Your locations'); ?></h2>
     <p class="infotext">
-        <a href="<?php echo $url . '/settings/locations/add/'; ?>" class="addmore"><?php __('Create a new Location'); ?></a>
+        <a href="/settings/locations/add/" class="addmore"><?php __('Create a new Location'); ?></a>
     </p>
     <?php if(!$data) { ?>
         <p class="infotext">
@@ -36,8 +36,8 @@
                     </td>
                     <td>
                     	<ul>
-                       		<li class="delete icon"><a href="<?php echo  $url . '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $noserub->fnSecurityToken() . '/'; ?>"><?php __('Delete'); ?></a></li>
-                       		<li class="edit icon"><a href="<?php echo $url . '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
+                       		<li class="delete icon"><a href="<?php echo '/settings/locations/'.  $item['Location']['id'] . '/delete/' . $noserub->fnSecurityToken() . '/'; ?>"><?php __('Delete'); ?></a></li>
+                       		<li class="edit icon"><a href="<?php echo '/settings/locations/'.  $item['Location']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
                        	</ul>
                     </td>
                 </tr>

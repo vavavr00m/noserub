@@ -136,14 +136,14 @@ class MenuFactoryTest extends CakeTestCase {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser'));
 		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
-		$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
+		$this->assertSettingsSubMenu($subMenu, false, $settingState);
 	}
 	
 	public function testGetSettingsSubMenuWhenLoggedInWithOpenID() {
 		$subMenu = $this->factory->getSubMenu(array('controller' => 'Identities', 'action' => 'privacy_settings', 'local_username' => 'testuser', 'openid_user' => true));
 		$this->assertEqual(10, count($subMenu->getMenuItems()));
 		$settingState = new SettingState('Privacy');
-		$this->assertSettingsSubMenu($subMenu, true, 'testuser', $settingState);		
+		$this->assertSettingsSubMenu($subMenu, true, $settingState);		
 	}
 	
 	public function testGetSettingsSubMenuWithOneItemSelected() {
@@ -165,7 +165,7 @@ class MenuFactoryTest extends CakeTestCase {
 			}
 			
 			$settingState = new SettingState($activeItem);
-			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
+			$this->assertSettingsSubMenu($subMenu, false, $settingState);
 		}
 		
 		$identityActions = array('profile_settings', 'privacy_settings', 'password_settings');
@@ -184,7 +184,7 @@ class MenuFactoryTest extends CakeTestCase {
 			}
 			
 			$settingState = new SettingState($activeItem);
-			$this->assertSettingsSubMenu($subMenu, false, 'testuser', $settingState);
+			$this->assertSettingsSubMenu($subMenu, false, $settingState);
 		}
 	}
 	
@@ -223,9 +223,9 @@ class MenuFactoryTest extends CakeTestCase {
 		$this->assertIdentical($isActive, $menuItem->isActive());
 	}
 	
-	private function assertSettingsSubMenu(Menu $subMenu, $isMenuForOpenIDUser, $localUsername, SettingState $settingState) {
+	private function assertSettingsSubMenu(Menu $subMenu, $isMenuForOpenIDUser, SettingState $settingState) {
 		$menuItems = $subMenu->getMenuItems();
-		$link = '/' . $localUsername . '/settings/';
+		$link = '/settings/';
 		$i = 0;
 		$this->assertMenuItem($menuItems[$i++], __('Profile', true), $link . 'profile/', $settingState->isProfileActive());
 		$this->assertMenuItem($menuItems[$i++], __('Accounts', true), $link . 'accounts/', $settingState->isAccountsActive());
@@ -428,21 +428,21 @@ class SettingsMenuItemTest extends CakeTestCase {
 		$controllers = array('AccountSettings', 'Accounts', 'OpenidSites', 'Syndications');
 		
 		foreach ($controllers as $controller) {
-			$menuItem = new SettingsMenuItem($controller, '', 'testuser');
-			$this->assertMenuItem($menuItem, '/testuser/settings/', true);
+			$menuItem = new SettingsMenuItem($controller, '');
+			$this->assertMenuItem($menuItem, '/settings/', true);
 		}
 		
 		$identityActions = array('password_settings', 'privacy_settings', 'profile_settings');
 		
 		foreach ($identityActions as $action) {
-			$menuItem = new SettingsMenuItem('Identities', $action, 'user');
-			$this->assertMenuItem($menuItem, '/user/settings/', true);
+			$menuItem = new SettingsMenuItem('Identities', $action);
+			$this->assertMenuItem($menuItem, '/settings/', true);
 		}
 	}
 	
 	public function testCreateNotActivatedSettingsMenuItem() {
-		$menuItem = new SettingsMenuItem('SomeController', 'someaction', 'test');
-		$this->assertMenuItem($menuItem, '/test/settings/', false);
+		$menuItem = new SettingsMenuItem('SomeController', 'someaction');
+		$this->assertMenuItem($menuItem, '/settings/', false);
 	}
 	
 	private function assertMenuItem($menuItem, $link, $isActive) {

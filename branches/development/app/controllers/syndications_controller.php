@@ -155,7 +155,7 @@ class SyndicationsController extends AppController {
             # everything ok, we can delete now...
             $this->Syndication->delete($syndication_id);
             $this->flashMessage('success', __('Feed deleted.', true));
-            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
+            $url = $this->url->http('/settings/feeds/');
         	$this->redirect($url);
         }
     }
@@ -207,7 +207,7 @@ class SyndicationsController extends AppController {
             } 
             
             $this->flashMessage('success', __('Feed added.', true));
-            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/feeds/');
+            $url = $this->url->http('/settings/feeds/');
         	$this->redirect($url);
         } else {
             # get all accounts from this user, that have feeds

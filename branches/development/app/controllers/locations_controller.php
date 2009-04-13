@@ -50,7 +50,7 @@ class LocationsController extends AppController {
                 $this->Location->create();
                 if($this->Location->save($this->data)) {
                     $this->flashMessage('success', __('Location added.', true));
-                    $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+                    $url = $this->url->http('/settings/locations/');
                 	$this->redirect($url);
                 } else {
                     $this->flashMessage('error', __('Location could not be created.', true));
@@ -81,7 +81,7 @@ class LocationsController extends AppController {
         $location = $this->Location->find(array('id' => $location_id, 'identity_id' => $session_identity['id']));
         if(!$location) {
             $this->flashMessage('error', __('Location could not be edited.', true));
-            $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+            $url = $this->url->http('/settings/locations/');
             $this->redirect($url);
         }
             
@@ -103,7 +103,7 @@ class LocationsController extends AppController {
                 } else {
                     $this->flashMessage('error', __('Location could not be created.', true));
                 }
-                $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+                $url = $this->url->http('/settings/locations/');
             	$this->redirect($url);
             } else {
                 $this->Location->invalidate('name');
@@ -142,7 +142,7 @@ class LocationsController extends AppController {
             $this->flashMessage('error', __('Location could not be deleted.', true));
         }
         
-        $url = $this->url->http('/' . urlencode(strtolower($session_identity['local_username'])) . '/settings/locations/');
+        $url = $this->url->http('/settings/locations/');
     	$this->redirect($url);
     }
 }

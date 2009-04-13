@@ -102,6 +102,6 @@ class OauthConsumersController extends AppController {
 	}
 	
 	private function getOAuthSettingsUrl() {
-		return '/'.$this->session_identity['local_username'].'/settings/oauth';
+		return '/settings/oauth';
 	}
 }

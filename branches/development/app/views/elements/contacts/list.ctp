@@ -69,8 +69,8 @@ foreach($data as $item) {
                 <dd class="contact_option"><?php echo $html->link(__('Edit Contact', true), '/' . $session_local_username . '/contacts/' . (isset($item['Contact']['id']) ? $item['Contact']['id'] : $item['id']) . '/edit/'); ?></dd>
             <?php } ?>
             <?php if($is_private) { ?>
-                <dd><?php echo $html->link(__('Manage Services', true), '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/'); ?></dd>
-                <dd><?php echo $html->link(__('Add Service', true), '/' . $item['WithIdentity']['local_username'] . '/settings/accounts/add/'); ?></dd>
+                <dd><?php echo $html->link(__('Manage Services', true), '/settings/accounts/'); ?></dd>
+                <dd><?php echo $html->link(__('Add Service', true), '/settings/accounts/add/'); ?></dd>
             <?php } ?>
 	</dl>
 <?php }
