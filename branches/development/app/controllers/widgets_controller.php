@@ -1,13 +1,8 @@
 <?php
 
 class WidgetsController extends AppController {
-    
     public $components = array('cluster');
     public $helpers = array('nicetime');
-       
-    private $generic_methods = array(
-        'admin_navigation', 'admin_login'
-    );
         
     /**
      * Various elements / pages
@@ -289,14 +284,8 @@ class WidgetsController extends AppController {
         
         $contacts = array();
         foreach($all_contacts as $contact) {
-            if(strpos($contact['WithIdentity']['username'], '@') === false) {
-                if(count($contacts) < 9) {
-                    $contacts[] = $contact;
-                }
-            } else {
-                if(count($contacts) < 9) {
-                    $contacts[] = $contact;
-                }
+            if(count($contacts) < 9) {
+                $contacts[] = $contact;
             }
         }
         $this->set('data', $contacts);
