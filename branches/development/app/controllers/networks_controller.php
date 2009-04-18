@@ -7,12 +7,7 @@ class NetworksController extends AppController {
     }
     
     public function subscription() {
-        if(!$this->data) {
-            $this->redirect('/networks/');
-            return;
-        }
-        
-        if(!Context::isLoggedInIdentity()) {
+        if(!$this->data || !Context::isLoggedInIdentity()) {
             $this->redirect('/networks/');
             return;
         }
