@@ -4,7 +4,7 @@ class OauthConsumersController extends AppController {
 	public $uses = array('Consumer');
 	public $components = array('url');
 	public $helpers = array('flashmessage');
-	private $session_identity = null;
+	private $logged_in_identity = null;
 	
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -13,20 +13,20 @@ class OauthConsumersController extends AppController {
 			$this->redirect('/');
 		}
 
-        $this->session_identity = $this->Session->read('Identity');
+        $this->logged_in_identity = Context::read('logged_in_identity');
 	}
 	
 	public function index() {
 		$this->Consumer->contain();
-		$this->set('consumers', $this->Consumer->findAllByIdentityId($this->session_identity['id']));
-		$this->set('session_identity', $this->session_identity);
+		$this->set('consumers', $this->Consumer->findAllByIdentityId($this->logged_in_identity['id']));
+		$this->set('session_identity', $this->logged_in_identity);
 		$this->set('headline', 'OAuth');
 	}
 	
 	public function add() {
 		if ($this->data) {
 			if ($this->data['Consumer']['application_name']) {
-				if ($this->Consumer->add($this->session_identity['id'], $this->data['Consumer']['application_name'], $this->data['Consumer']['callback_url'])) {
+				if ($this->Consumer->add($this->logged_in_identity['id'], $this->data['Consumer']['application_name'], $this->data['Consumer']['callback_url'])) {
 					$this->flashMessage('success', __('Application registered.', true));
 					$this->redirect($this->getOAuthSettingsUrl());
 				} else {
@@ -37,7 +37,7 @@ class OauthConsumersController extends AppController {
 			}
 		}
 		
-		$this->set('session_identity', $this->session_identity);
+		$this->set('session_identity', $this->logged_in_identity);
 		$this->set('headline', __('Register new application', true));
 	}
 	
@@ -49,7 +49,7 @@ class OauthConsumersController extends AppController {
 		}
 		
 		$this->Consumer->contain();
-		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']));
+		$consumer = $this->Consumer->find(array('id' => $consumer_id, 'identity_id' => $this->logged_in_identity['id']));
 		
 		if (!$consumer) {
 			$this->flashMessage('error', __('Application could not be edited.', true));
@@ -72,7 +72,7 @@ class OauthConsumersController extends AppController {
 			$this->data = $consumer;
 		}
 		
-		$this->set('session_identity', $this->session_identity);
+		$this->set('session_identity', $this->logged_in_identity);
 		$this->set('headline', __('Edit application', true));
         $this->render('add');
 	}
@@ -86,7 +86,7 @@ class OauthConsumersController extends AppController {
 		
 		$this->ensureSecurityToken();
 		
-		if ($this->Consumer->hasAny(array('id' => $consumer_id, 'identity_id' => $this->session_identity['id']))) {
+		if ($this->Consumer->hasAny(array('id' => $consumer_id, 'identity_id' => $this->logged_in_identity['id']))) {
             $this->Consumer->delete($consumer_id);
             
             $this->flashMessage('success', __('Application deleted.', true));            
