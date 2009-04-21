@@ -9,15 +9,11 @@ class OauthConsumersController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		
-		$username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Consumer->Identity->splitUsername($username);
+		if (!Context::isLoggedInIdentity()) {
+			$this->redirect('/');
+		}
+
         $this->session_identity = $this->Session->read('Identity');
-        
-        if(!$this->session_identity || $this->session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
 	}
 	
 	public function index() {
