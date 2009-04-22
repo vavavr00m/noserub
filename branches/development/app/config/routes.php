@@ -77,6 +77,10 @@ Router::connect('/:username/messages/new/*', array('controller' => 'identities',
 Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
 Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
 
+Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
+Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
+Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
+
 Router::connect('/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
 Router::connect('/settings/privacy/', array('controller' => 'identities', 'action' => 'privacy_settings'));
@@ -111,17 +115,12 @@ Router::connect('/settings/oauth', array('controller' => 'oauth_consumers', 'act
 
 Router::connect('/settings/*', array('controller' => 'identities', 'action' => 'profile_settings'));
 
-Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
-Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
-Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
-
 Router::connect('/jobs/cron/:cron_hash/identities/sync/all/', array('controller' => 'identities', 'action' => 'cron_sync_all'));
 Router::connect('/jobs/cron/:cron_hash/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'cron_update'));
 Router::connect('/jobs/cron/:cron_hash/peers/sync/', array('controller' => 'networks', 'action' => 'cron_sync')); # deprecated
 Router::connect('/jobs/cron/:cron_hash/peers/poll/', array('controller' => 'networks', 'action' => 'cron_poll')); # deprecated
 Router::connect('/jobs/cron/:cron_hash/networks/sync/', array('controller' => 'networks', 'action' => 'cron_sync'));
 Router::connect('/jobs/cron/:cron_hash/networks/poll/', array('controller' => 'networks', 'action' => 'cron_poll')); 
-
 
 Router::connect('/jobs/:admin_hash/entries/update/', array('controller' => 'entries', 'action' => 'jobs_update'));
 Router::connect('/jobs/:admin_hash/sync/identity/:identity_id/', array('controller' => 'identities', 'action' => 'jobs_sync'));
