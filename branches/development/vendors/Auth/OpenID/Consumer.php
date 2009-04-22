@@ -921,7 +921,7 @@ class Auth_OpenID_GenericConsumer {
         // in the signed return_to.
         $bare_args = $message->getArgs(Auth_OpenID_BARE_NS);
         foreach ($bare_args as $key => $value) {
-        	if (Auth_OpenID::arrayGet($q, $key) != $value) {
+            if (Auth_OpenID::arrayGet($q, $key) != $value) {
                 return new Auth_OpenID_FailureResponse(null,
                   sprintf("Parameter %s = %s not in return_to URL",
                           $key, $value));
@@ -1295,7 +1295,8 @@ class Auth_OpenID_GenericConsumer {
             Auth_OpenID_OPENID2_NS => array_merge($basic_sig_fields,
                                                   array('response_nonce',
                                                         'claimed_id',
-                                                        'assoc_handle')),
+                                                        'assoc_handle',
+                                                        'op_endpoint')),
             Auth_OpenID_OPENID1_NS => array_merge($basic_sig_fields,
                                                   array('nonce'))
             );
