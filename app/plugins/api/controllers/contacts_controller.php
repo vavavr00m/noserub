@@ -1,6 +1,6 @@
 <?php
 
-class ContactsApiController extends ApiAppController {
+class ContactsController extends ApiAppController {
 	public $uses = array('Contact');
 	public $components = array('OauthServiceProvider');
 	private $identity_id = null;

@@ -1,6 +1,6 @@
 <?php
 
-class FavoritesApiController extends ApiAppController {
+class FavoritesController extends ApiAppController {
 	public $uses = array('Favorite');
 	public $components = array('Cluster');
 	

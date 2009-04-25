@@ -1,6 +1,6 @@
 <?php
 
-class CommentsApiController extends ApiAppController {
+class CommentsController extends ApiAppController {
 	public $uses = array('Comment');
 	
 	/**

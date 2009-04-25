@@ -1,7 +1,7 @@
 <?php
 
-// TODO "SystemApi" is not very expressive, a better name is needed   
-class SystemApiController extends ApiAppController {
+// TODO "System" is not very expressive, a better name is needed   
+class SystemController extends ApiAppController {
 	public $uses = array('Identity', 'Migration');
 	
 	/**

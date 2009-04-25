@@ -1,6 +1,6 @@
 <?php
 
-class SyndicationsApiController extends ApiAppController {
+class SyndicationsController extends ApiAppController {
 	public $uses = array('Syndication');
 	public $components = array('OauthServiceProvider');
 	private $identity_id = null;
