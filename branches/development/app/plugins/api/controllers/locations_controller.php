@@ -1,6 +1,6 @@
 <?php
 
-class LocationsApiController extends ApiAppController {
+class LocationsController extends ApiAppController {
 	public $uses = array('Location');
 	public $components = array('Geocoder', 'OauthServiceProvider');
 	private $identity_id = null;
