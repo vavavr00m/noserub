@@ -2,7 +2,7 @@
 /**
  * A simple OpenID consumer component for CakePHP.
  * 
- * Requires version 2.1.0 of PHP OpenID library from http://openidenabled.com/php-openid/
+ * Requires at least version 2.1.0 of PHP OpenID library from http://openidenabled.com/php-openid/
  * 
  * To make use of Email Address to URL Transformation (EAUT), you also need the
  * EAUT library: http://code.google.com/p/eaut/
@@ -86,6 +86,18 @@ class OpenidComponent extends Object {
 		}
 	}
 	
+	/**
+	 * Removes expired associations and nonces. 
+	 *
+	 * This method is not called in the normal operation of the component. It provides a way
+	 * for store admins to keep their storage from filling up with expired data.
+	 */
+	public function cleanup() {
+		$store = $this->getStore();
+
+		return $store->cleanup();
+	}
+
 	public function getResponse($currentUrl) {
 		$consumer = $this->getConsumer();
 		$response = $consumer->complete($currentUrl, $this->getQuery());
