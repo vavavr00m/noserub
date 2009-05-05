@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: request_handler.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: request_handler.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -524,6 +524,7 @@ class RequestHandlerComponent extends Object {
 			return $this->ext;
 		}
 
+		$types = $type;
 		if (is_string($type)) {
 			$types = array($type);
 		}
@@ -550,7 +551,11 @@ class RequestHandlerComponent extends Object {
             return $accepts[0];
 		}
 
-		$accepts = array_intersect($this->__acceptTypes, $accepts);
+		$acceptedTypes = array();
+		foreach ($this->__acceptTypes as $type) {
+			$acceptedTypes[] = $this->mapType($type);
+		}
+		$accepts = array_intersect($acceptedTypes, $accepts);
 		return $accepts[0];
 	}
 /**

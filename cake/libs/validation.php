@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: validation.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: validation.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Validation Class.  Used for validation of model data
  *
@@ -798,6 +798,7 @@ class Validation extends Object {
  *	an optional fragment (anchor tag)
  *
  * @param string $check Value to check
+ * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
  * @return boolean Success
  * @access public
  */
