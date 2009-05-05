@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: auth.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: auth.php 8166 2009-05-04 21:17:19Z gwoo $ */
 
 /**
  * Authentication component
@@ -337,6 +337,11 @@ class AuthComponent extends Object {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
+					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
+						$query = $controller->params['url'];
+						unset($query['url']);
+						$url .= Router::queryString($query, array());
+					}
 					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect($loginAction);
 					return false;

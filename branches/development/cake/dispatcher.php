@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dispatcher.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: dispatcher.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.
@@ -344,7 +344,8 @@ class Dispatcher extends Object {
 			return $this->base = $base;
 		}
 		if (!$baseUrl) {
-			$base = dirname(env('PHP_SELF'));
+			$replace = array('<', '>', '*', '\'', '"');
+			$base = str_replace($replace, '', dirname(env('PHP_SELF')));
 
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);
