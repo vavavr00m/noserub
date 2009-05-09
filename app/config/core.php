@@ -1,31 +1,8 @@
 <?php
-/* SVN FILE: $Id: core.php 7089 2008-06-02 17:35:56Z gwoo $ */
 /**
- * This is core configuration file.
- *
- * Use it to configure core behavior of Cake.
- *
- * PHP versions 4 and 5
- *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.app.config
- * @since			CakePHP(tm) v 0.2.9
- * @version			$Revision$
- * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * A random string used in security hashing methods.
  */
+	Configure::write('Security.salt', 'DYhG93b0qy37dhsa67823WwvniR2G0FgaC9mi');
 /**
  * CakePHP Debug Level:
  *
@@ -148,10 +125,6 @@
  * 'Security.level' is set to 'high'.
  */
 	Configure::write('Security.level', 'low');
-/**
- * A random string used in security hashing methods.
- */
-	Configure::write('Security.salt', 'DYhG93b0qy37dhsa67823WwvniR2G0FgaC9mi');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
