@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: controller.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: controller.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * The ControllerTask handles creating and updating controller files.
  *
@@ -465,11 +465,11 @@ class ControllerTask extends Shell {
 		$out .= "\tvar \$autoRender = false;\n}\n\n";
 		$out .= "class {$className}ControllerTest extends CakeTestCase {\n";
 		$out .= "\tvar \${$className} = null;\n\n";
-		$out .= "\tfunction setUp() {\n\t\t\$this->{$className} = new Test{$className}();";
+		$out .= "\tfunction startTest() {\n\t\t\$this->{$className} = new Test{$className}();";
 		$out .= "\n\t\t\$this->{$className}->constructClasses();\n\t}\n\n";
 		$out .= "\tfunction test{$className}ControllerInstance() {\n";
 		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}Controller'));\n\t}\n\n";
-		$out .= "\tfunction tearDown() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
+		$out .= "\tfunction endTest() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
 
 		$path = CONTROLLER_TESTS;
 		if (isset($this->plugin)) {

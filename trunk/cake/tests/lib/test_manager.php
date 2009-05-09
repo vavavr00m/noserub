@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: test_manager.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: test_manager.php 8120 2009-03-19 20:25:10Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -277,6 +277,8 @@ class TestManager {
 		}
 
 		$files = glob($directory . DS . '*');
+		$files = $files ? $files : array();
+
 		foreach ($files as $file) {
 			if (is_dir($file)) {
 				$fileList = array_merge($fileList, $this->_getRecursiveFileList($file, $fileTestFunction));

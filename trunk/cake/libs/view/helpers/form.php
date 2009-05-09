@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: form.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -559,7 +559,8 @@ class FormHelper extends AppHelper {
 /**
  * Generates a form input element complete with label and wrapper div
  *
- * Options - See each field type method for more information.
+ * Options - See each field type method for more information. Any options that are part of 
+ * $attributes or $options for the different type methods can be included in $options for input().
  *
  * - 'type' - Force the type of widget you want. e.g. ```type => 'select'```
  * - 'label' - control the label
@@ -848,11 +849,14 @@ class FormHelper extends AppHelper {
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-
-		$output = $this->hidden($fieldName, array(
+		$hiddenOptions = array(
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
-		));
+		);
+		if (isset($options['disabled'])) {
+			$hiddenOptions['disabled'] = 'disabled';
+		}
+		$output = $this->hidden($fieldName, $hiddenOptions);
 
 		return $this->output($output . sprintf(
 			$this->Html->tags['checkbox'],
@@ -931,7 +935,7 @@ class FormHelper extends AppHelper {
 
 		if (!isset($value) || $value === '') {
 			$hidden = $this->hidden($fieldName, array(
-				'id' => $attributes['id'] . '_', 'value' => ''
+				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
 			));
 		}
 		$out = $hidden . join($inbetween, $out);

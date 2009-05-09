@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: javascript.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: javascript.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Javascript Helper class file.
  *
@@ -319,7 +319,7 @@ class JavascriptHelper extends AppHelper {
  * @return string Escaped string.
  */
 	function escapeString($string) {
-		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
+		$escape = array('\n' => '\\\n', "\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
 		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 /**

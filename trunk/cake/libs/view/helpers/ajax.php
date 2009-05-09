@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: ajax.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: ajax.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * Helper for AJAX operations.
  *
@@ -81,7 +81,8 @@ class AjaxHelper extends AppHelper {
  */
 	var $dragOptions = array(
 		'handle', 'revert', 'snap', 'zindex', 'constraint', 'change', 'ghosting',
-		'starteffect', 'reverteffect', 'endeffect'
+		'starteffect', 'reverteffect', 'endeffect', 'scroll', 'scrollSensitivity',
+		'onStart', 'onDrag', 'onEnd'
 	);
 /**
  * Options for droppable.
