@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: string.php 1266 2008-12-19 10:05:47Z dhofstet $ */
+/* SVN FILE: $Id: string.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * String handling methods.
  *
@@ -19,7 +19,7 @@
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0.5551
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: dhofstet $
+ * @modifiedby    $LastChangedBy: gwoo $
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -237,6 +237,8 @@ class String extends Object {
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 		} else {
+			asort($data);
+
 			$hashKeys = array_map('md5', array_keys($data));
 			$tempData = array_combine(array_keys($data), array_values($hashKeys));
 			foreach ($tempData as $key => $hashVal) {

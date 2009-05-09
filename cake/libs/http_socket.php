@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: http_socket.php 8166 2009-05-04 21:17:19Z gwoo $ */
 /**
  * HTTP Socket connection class.
  *
@@ -846,7 +846,7 @@ class HttpSocket extends CakeSocket {
 		$cookies = array();
 		foreach ((array)$header['Set-Cookie'] as $cookie) {
 			$parts = preg_split('/(?<![^;]");[ \t]*/', $cookie);
-			list($name, $value) = explode('=', array_shift($parts));
+			list($name, $value) = explode('=', array_shift($parts), 2);
 			$cookies[$name] = compact('value');
 			foreach ($parts as $part) {
 				if (strpos($part, '=') !== false) {
