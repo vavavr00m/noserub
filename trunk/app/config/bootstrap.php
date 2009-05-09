@@ -22,7 +22,7 @@ Configure::write('context', array(
     'admin_id' => false # wether the identity is logged in with admin access right now
 ));
 
-Configure::write('NoseRub.version', '0.8.2');
+Configure::write('NoseRub.version', '0.8.3');
 
 define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 
