@@ -1,4 +1,3 @@
-<div class="navi">
 <ul>
     <?php if(Context::read('logged_in_identity')) { ?>
         <li>
@@ -8,8 +7,7 @@
             <?php echo $html->link(__('Logout', true), '/pages/logout/' . $noserub->fnSecurityToken()); ?>
         </li>
     <?php } ?>
-    <li>
+    <li class="lang">
         <?php echo $this->element('languages'); ?>
     </li>
 </ul>
-</div>

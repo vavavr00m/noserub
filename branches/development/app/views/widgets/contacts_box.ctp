@@ -22,4 +22,3 @@
 <?php if($data) { ?>
     <?php echo $this->element('contacts/box'); ?>
 <?php } ?>
-    	

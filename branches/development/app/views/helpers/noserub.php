@@ -61,7 +61,7 @@ class NoserubHelper extends AppHelper {
         return Context::read('avatar_base_url');
     }
 
-    public function fnProfilePhotoUrl() {
+    public function fnProfilePhotoUrl($size = 'default') {
         if(Context::read('identity')) {
             $identity = Context::read('identity');
         } else {
@@ -74,11 +74,18 @@ class NoserubHelper extends AppHelper {
                 # contains a complete path, eg. from not local identities
                 $photo_url = $photo;
             } else {
+                if($size == 'small') {
+                    $photo .= '-small';
+                }
                 $photo_url = $this->fnAvatarBaseUrl() . $photo . '.jpg';
             }	                
         } else {
         	App::import('Vendor', 'sex');
-            $photo_url = Sex::getImageUrl($identity['sex']);
+        	if($size == 'small') {
+        	    $photo_url = Sex::getSmallImageUrl($identity['sex']);
+        	} else {
+                $photo_url = Sex::getImageUrl($identity['sex']);
+            }
         }
         
         return $photo_url;
@@ -112,7 +119,7 @@ class NoserubHelper extends AppHelper {
             return __('This is one of your contacts.', true);
         }
         
-        return $this->html->link(__('Add as contact', true), '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken());
+        return $this->html->link(__('Add as contact', true), '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken(), array('class' => 'button-add-contact'));
     }
     
     private function linkGroupAdd() {

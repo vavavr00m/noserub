@@ -8,7 +8,7 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
     $filter = '';
 }
 ?>
-<div id="lifestream">
+<h2><?php __('Lifestream'); ?></h2>
  <?php if(empty($data)) { ?>
     <p>
     	<?php __("There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"); ?>
@@ -25,28 +25,15 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 break;
             }
             
-            if($filter != 'photo') {
-                $num_of_activities = count($cluster);
-                echo '<span class="more">';
-                $label = sprintf(__('%d activities', true), $num_of_activities);
-                if($num_of_activities > $max_num_items_per_day &&
-                   $display_more_link) {
-                    # if only one day is displayed, we don't
-                    # need the "more" link
-                    echo '<a href="#">' . $label . '</a>';
-                } else {
-                    echo $label;
-                }
-                echo '</span>';
-            }
-        
             if($date == $today) { 
-                echo '<h2>' . __('Today', true) . '</h2>'; 
+                echo '<h3>' . __('Today', true) . '</h3>'; 
             } else if($date == $yesterday) {
-                echo '<h2>' . __('Yesterday', true) . '</h2>';
+                echo '<h3>' . __('Yesterday', true) . '</h3>';
             } else {
                 echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             }
+            echo '<ul class="lifestream">';
+            
             if($filter == 'photo') {
                 foreach($cluster as $item) { ?>
                     <span class="photothumb">
@@ -63,27 +50,11 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 <?php } ?>
                 <br class="clear" />
             <?php } else { 
-                $num_displayed = 0;
-                ?>
-                
-                <ul class="networklist">
-                    <?php foreach($cluster as $item) { ?>
-                        <?php
-                            if($num_displayed == $max_num_items_per_day &&
-                               $display_more_link) {
-                               # if only one day is displayed, show all the
-                               # entries, not only $max_num_items_per_day
-                                echo '</ul>';
-                                echo '<ul class="networklist extended">';
-                            }
-                        
-                            echo $this->renderElement('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));
-                        ?>
-                        
-                        <?php $num_displayed++; ?>
-                    <?php } ?>
-                </ul>
-            <?php } ?>
+                foreach($cluster as $item) {
+                    echo $this->renderElement('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));    
+                }                    
+            } ?>
+            </ul>
         <?php } ?>
 <?php } ?>
 </div>

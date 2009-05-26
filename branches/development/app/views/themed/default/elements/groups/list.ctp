@@ -3,7 +3,7 @@
     // the markup will be different with the "real" theme/design.
     
 ?>
-<ul>
+<ul class="block-groups">
     <?php foreach($groups as $group) { ?>
         <?php
             if(isset($group['Group'])) {

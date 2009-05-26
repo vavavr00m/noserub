@@ -2,22 +2,33 @@
     <?php
         $base_url = '/' . Context::read('logged_in_identity.local_username') . '/';
     ?>
-    <?php echo sprintf(__('Hi %s!', true), Context::read('logged_in_identity.name')); ?>
-    <ul id="nav main">
-        <li id="home">
+    <h4>
+        <?php echo $html->image($noserub->fnProfilePhotoUrl('small'), array('class' => 'userimage', 'alt' => Context::read('logged_in_identity.name'))); ?>
+		<?php echo sprintf(__('Hi %s!', true), Context::read('logged_in_identity.name')); ?>
+	</h4>
+	
+    <p class="notifications">
+		3 new notifications<br />
+		<a href="#">check them out</a>
+	</p>
+		
+    <ul>
+        <li>
             <?php echo $html->link(__('Home', true), $base_url . 'social_stream/'); ?>
         </li>
-        <li id="contacts">
-            <h2><?php __('Contacts'); ?></h2>
-            <ul>
-                <li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
-                <li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
-            </ul>
-        </li>
-        <li id="profile">
+        <li>
+			<a class="toggle" href="#">(close)</a>
+			<a href="#"><?php __('Contacts'); ?></a>
+			<ul>
+				<li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
+				<li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
+			</ul>
+		</li>
+        <li>
             <?php echo $html->link(__('My Profile', true), $base_url); ?>
         </li>
-        <li id="groups">
+        <li>
+            <a class="toggle" href="#">(close)</a>
             <?php echo $html->link(__('Groups', true), $base_url . '/groups/'); ?>
             <?php if($groups) { ?>
                 <ul>
@@ -27,7 +38,8 @@
                 </ul>
             <?php } ?>
         </li>
-        <li id="networks">
+        <li>
+            <a class="toggle" href="#">(close)</a>
             <?php echo $html->link(__('Networks', true), $base_url . '/networks/'); ?>
             <?php if($networks) { ?>
                 <ul>

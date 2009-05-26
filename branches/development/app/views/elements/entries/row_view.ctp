@@ -7,6 +7,7 @@
     }
 ?>
 <li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
+    <p>
     <span class="date">
         <?php
             if(!$with_date) {
@@ -47,4 +48,5 @@
     <span>
         <?php echo $this->renderElement('comments/view', array('data' => $item)); ?>
     </span>
+    </p>
 </li>
