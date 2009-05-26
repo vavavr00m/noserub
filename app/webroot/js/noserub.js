@@ -13,12 +13,12 @@ var noserub = function() {
 };
 
 noserub.fn = noserub.prototype = {
-    debug: false,
+    debug: true,
     
     start: function(data) {
-        if(typeof data.debug != 'undefined') {
-            this.debug = data.debug;
-        }
+        //if(typeof data.debug != 'undefined') {
+        //    this.debug = data.debug;
+        //}
         this.log('noserub_js started');
         
         try {

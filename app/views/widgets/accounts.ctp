@@ -1,6 +1,6 @@
-<?php __('Accounts'); ?>
+<h2><?php __('On the web'); ?></h2>
 <?php if($accounts) { ?>
-    <ul>
+    <ul class="block-links">
         <?php foreach($accounts as $account) { ?>
             <li>
                 <?php

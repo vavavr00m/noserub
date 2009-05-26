@@ -1,7 +1,10 @@
-<div id="inhalt">
+<div id="bd-main-hd">
     <h2>Startseite des Netzwerkes</h2>
 </div>
-<div id="rechts">
+<div id="bd-main-bd">
+</div>
+
+<div id="bd-main-sidebar">
     <?php echo $noserub->widgetNewUsers(); ?>
     <?php echo $noserub->widgetPopularUsers(); ?>
     <?php echo $noserub->widgetLastActiveUsers(); ?>

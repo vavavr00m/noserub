@@ -1,5 +1,7 @@
-<p class="contactsbox">
+<div class="block-friends">
+    <ul>
     <?php foreach($data as $item) { ?>
+        <li>
         <?php               
         if(isset($item['NoserubContactType']) && $item['NoserubContactType']) {
             $rel_data = array();
@@ -30,13 +32,18 @@
                     # contains a complete path, eg. from not local identities
                     $contact_photo = $item['photo'];
                 } else {
-                    $contact_photo = $noserub->fnAvatarBaseUrl() . $item['photo'].'-small.jpg';
+                    $contact_photo = $noserub->fnAvatarBaseUrl() . $item['photo'].'-medium.jpg';
                 }	                
             } else {
                 App::import('Vendor', 'sex');
-            	$contact_photo = Sex::getSmallImageUrl($item['sex']);
+            	$contact_photo = Sex::getMediumImageUrl($item['sex']);
             } ?>
-            <img src="<?php echo $contact_photo; ?>" width="35" height="35" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
+            <img src="<?php echo $contact_photo; ?>" width="62" height="62" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
         </a>
+        </li>
     <?php } ?>
-</p>
+    </ul>
+    <p class="more">
+		<a href="#"><?php __('show more'); ?></a>
+	</p>
+</div>

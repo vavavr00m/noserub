@@ -3,43 +3,77 @@
     $headline = isset($headline) ? $headline : sprintf(__('Welcome to %s', true), $app_name);
     $title    = $app_name . ' - ' . $headline;
 ?>
-<!--Force IE6 into quirks mode with this comment tag-->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?php echo $title; ?></title>
 
-<!-- Meta Tags -->
-	<?php echo $html->charset('UTF-8')?>
-	<meta http-equiv="Content-Language" content="en" />
-	<meta name="robots" content="all" />
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<meta http-equiv="Content-Language" content="en" />
+		<title><?php echo $title; ?></title>
 
-	<link rel="Shortcut Icon" type="image/x-icon" href="<?php echo FULL_BASE_URL . Router::url('/'); ?>favicon.ico" />
-	<?php echo $scripts_for_layout; ?>
-
-<!-- CSS -->
-	 <?php echo $this->element('css'); ?>
-	                   
-<!-- JavaScript -->
-	<?php echo $this->element('javascript'); ?>
-</head>
-
-<body>
-
-<div id="logo">
-    <?php echo $html->link('Logo: ' . Context::read('network.name'), '/'); ?>
-</div>
-
-<div id="meta">
-    <?php echo $noserub->widgetNavigation('meta'); ?>
-</div>
-
-<div id="links">
-    <?php echo $noserub->widgetNavigation('main'); ?>
-</div>
-    
-<?php echo $content_for_layout; ?>
-
-</body>
+        <?php echo $this->element('css'); ?>
+	</head>
+	<body id="top">
+		<div id="hd">
+		    <?php echo $html->link($html->image('logo.png', array('alt' => $app_name . ' - Logo')), '/', array('class' => 'logo'), false, false); ?>
+			<?php echo $noserub->widgetNavigation('meta'); ?>
+			<form method="post" action="">
+				<p>
+					<input type="text" name="term" value="" />
+				</p>
+			</form>
+		</div>
+		<div id="bd">
+			<div id="bd-inner">
+				<div id="sidebar">
+				    <div>
+				        <?php echo $noserub->widgetNavigation('main'); ?>
+				    </div>
+				    <div>
+						<ul>
+							<li>
+								<a class="toggle" href="#">(close)</a>
+								<a href="#">Invite People</a>
+								<p>
+									Let's build a better community together!
+									<a href="#">Invite your co-workers, friends and classmates.</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div id="bd-main">
+                    <?php echo $content_for_layout; ?>
+				</div>
+			</div>
+		</div>
+		<div id="ft">
+			<div>
+				<h5>ThisNetworksName</h5>
+				<ul>
+					<li><a href="#">My Homepage</a></li>
+					<li><a href="#">My Contacts</a></li>
+					<li><a href="#">My Networks</a></li>
+					<li><a href="#">Settings</a></li>
+				</ul>
+			</div><div>
+				<h5>SomeMore</h5>
+				<ul>
+					<li><a href="#">This is a link</a></li>
+					<li><a href="#">This is a link</a></li>
+					<li><a href="#">This is a link</a></li>
+					<li><a href="#">This is a link</a></li>
+				</ul>
+			</div><div>
+				<h5>Legal</h5>
+				<ul>
+					<li><a href="#">User Agreement</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+					<li><a href="#">Copyright Policy</a></li>
+				</ul>
+			</div>
+		</div>
+	</body>
 </html>
