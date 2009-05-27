@@ -17,7 +17,7 @@
             <?php echo $html->link(__('Home', true), $base_url . 'social_stream/'); ?>
         </li>
         <li>
-			<a class="toggle" href="#">(close)</a>
+			<a class="toggle" href="#">(-)</a>
 			<a href="#"><?php __('Contacts'); ?></a>
 			<ul>
 				<li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
@@ -28,7 +28,7 @@
             <?php echo $html->link(__('My Profile', true), $base_url); ?>
         </li>
         <li>
-            <a class="toggle" href="#">(close)</a>
+            <a class="toggle" href="#">(-)</a>
             <?php echo $html->link(__('Groups', true), $base_url . '/groups/'); ?>
             <?php if($groups) { ?>
                 <ul>
@@ -39,7 +39,7 @@
             <?php } ?>
         </li>
         <li>
-            <a class="toggle" href="#">(close)</a>
+            <a class="toggle" href="#">(-)</a>
             <?php echo $html->link(__('Networks', true), $base_url . '/networks/'); ?>
             <?php if($networks) { ?>
                 <ul>
