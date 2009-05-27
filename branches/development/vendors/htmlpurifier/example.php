@@ -9,6 +9,6 @@ $config->set('HTML', 'Allowed', 'img[src|alt]');
 
 $purifier = new HTMLPurifier($config);
 $clean_html = $purifier->purify($dirty_html);
-$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);
-echo $clean_html . "\n\n";
+#$clean_html = str_replace('<img src=', '<img width="75" height="75" src=', $clean_html);
+echo '{' . $clean_html . "}\n\n";
 ?>

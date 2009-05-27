@@ -381,7 +381,7 @@ class PhotoFilter implements IServiceTypeFilter {
 		$img_src = substr($clean_html, stripos($clean_html, '<img '));
 		$img_src = substr($img_src, 0, stripos($img_src, '>'));
 		
-		$item['content'] = '<a href="' . $item['url'] . '">' . $img_src . '</a>';
+		$iten['content'] = $img_src;
 		
 		return $item;
 	}
