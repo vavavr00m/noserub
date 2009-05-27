@@ -345,7 +345,7 @@ class WidgetsController extends AppController {
         $items = $this->Entry->getForDisplay(
             array(
                 'filter' => array('photo'),
-                'identity_id' => Context::loggedInIdentityId()
+                'identity_id' => $this->getIdentityId()
             ),
             5, 
             true
