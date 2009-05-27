@@ -34,7 +34,7 @@
 				    <div>
 						<ul>
 							<li>
-								<a class="toggle" href="#">(close)</a>
+								<a class="toggle" href="#">(-)</a>
 								<a href="#">Invite People</a>
 								<p>
 									Let's build a better community together!
@@ -75,5 +75,6 @@
 				</ul>
 			</div>
 		</div>
+        <?php echo $this->element('javascript'); ?>
 	</body>
 </html>
