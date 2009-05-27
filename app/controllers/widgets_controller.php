@@ -324,7 +324,7 @@ class WidgetsController extends AppController {
         } else {
             $contact_ids = array(Context::read('identity.id'));
         }
-        # get last 100 items
+        # get last 50 items
         $conditions = array(
             'filter'      => $filter,
             'identity_id' => $contact_ids
@@ -340,7 +340,21 @@ class WidgetsController extends AppController {
     }
     
     public function photos() {
-        
+        $this->loadModel('Entry');
+    
+        $items = $this->Entry->getForDisplay(
+            array(
+                'filter' => array('photo'),
+                'identity_id' => Context::loggedInIdentityId()
+            ),
+            5, 
+            true
+        );
+        if($items) {
+            usort($items, 'sort_items');
+        }
+    
+        $this->set('data', $items);    
     }
     
     /**
