@@ -57,4 +57,3 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
             </ul>
         <?php } ?>
 <?php } ?>
-</div>
