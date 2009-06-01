@@ -3,6 +3,14 @@ class EntriesController extends AppController {
     public $uses = array('Entry', 'Xmpp');
     public $helpers = array('nicetime', 'flashmessage');
     
+    
+    /**
+     * This is the page /:username/activities
+     */
+    public function profile() {
+        Context::setPage('profile.activities');
+    }
+    
     /**
      * Display one entry - permalink for an entry
      *

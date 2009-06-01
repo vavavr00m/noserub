@@ -6,6 +6,14 @@ class NetworksController extends AppController {
     
     }
     
+    /**
+     * This is the page /:username/networks
+     */
+    public function profile() {
+        Context::setPage('profile.networks');
+    }
+
+
     public function subscription() {
         if(!$this->data || !Context::isLoggedInIdentity()) {
             $this->redirect('/networks/');
