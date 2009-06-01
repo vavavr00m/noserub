@@ -26,9 +26,9 @@ $name = $data['name'];
 	</ul>
 </div>
 <ul>
-    <li class="active"><?php echo $html->link(__('Profile', true), $base_url); ?></li>
-    <li><?php echo $html->link(__('Lifestream', true), $base_url . 'activities/'); ?></li>
-    <li><?php echo $html->link(__('Contacts', true), $base_url . 'contacts/'); ?></li>
-    <li><?php echo $html->link(__('Groups', true), $base_url . 'groups/'); ?></li>
-    <li><?php echo $html->link(__('Networks', true), $base_url . 'networks/'); ?></li>
+    <li<?php echo Context::isPage('profile.home') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Profile', true), $base_url); ?></li>
+    <li<?php echo Context::isPage('profile.activities') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Activities', true), $base_url . 'activities/'); ?></li>
+    <li<?php echo Context::isPage('profile.contacts') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Contacts', true), $base_url . 'contacts/'); ?></li>
+    <li<?php echo Context::isPage('profile.groups') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Groups', true), $base_url . 'groups/'); ?></li>
+    <li<?php echo Context::isPage('profile.networks') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Networks', true), $base_url . 'networks/'); ?></li>
 </ul>

@@ -18,6 +18,8 @@ class IdentitiesController extends AppController {
         $this->checkUnsecure();
         $this->grantAccess('all');
         
+        Context::setPage('profile.home');
+        
         $this->render('profile');
     }
     

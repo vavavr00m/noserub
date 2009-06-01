@@ -3,7 +3,13 @@ class GroupsController extends AppController {
     public $uses = array('Group');
     
     public function index() {
+    }
     
+    /**
+     * This is the page /:username/groups
+     */
+    public function profile() {
+        Context::setPage('profile.groups');
     }
     
     public function add() {

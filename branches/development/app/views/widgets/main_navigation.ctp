@@ -14,7 +14,7 @@
 		
     <ul>
         <li>
-            <?php echo $html->link(__('Home', true), $base_url . 'social_stream/'); ?>
+            <?php echo $html->link(__('Home', true), '/activities/'); ?>
         </li>
         <li>
 			<a class="toggle" href="#">(-)</a>

@@ -43,6 +43,28 @@ class Context {
     public static function networkId() {
         return Configure::read('context.network.id');
     }
+    
+    
+    public static function setPage($page) {
+        $split = explode('.', $page);
+        $pageStructure = array();
+        
+        foreach($split as $part) {
+            $pageStructure[] = strtolower($part);    
+        }
+        
+        return Configure::write('context.page_structure', $pageStructure);
+    }
+    
+    /**
+     * @param string $pageStructure eg. profile.lifestream
+     *
+     * @return bool
+     */
+    public static function isPage($pageStructure) {
+        $contextPageStructure = join('.', Configure::read('context.page_structure'));
+        return strtolower($pageStructure) == $contextPageStructure;
+    }
 }
 
 /**
@@ -52,11 +74,12 @@ class Context {
  * The goal is to have this universally available in all
  * controllers and all views.
  */
-Context::write('', array(
+Configure::write('context', array(
     'logged_in_identity' => false,
-    'network' => array('id' => 1), # default for now, needed for old menu component
-    'identity' => false, # the identity we're looking at,
-    'is_self' => false, # wether the identity we look at is the logged in identity
-    'is_guest' => false, # wether the identity only logged in with OpenID, without account
-    'admin_id' => false # wether the identity is logged in with admin access right now
+    'network' => array('id' => 1), // default for now, needed for old menu component
+    'identity' => false, // the identity we're looking at,
+    'is_self' => false, // wether the identity we look at is the logged in identity
+    'is_guest' => false, // wether the identity only logged in with OpenID, without account
+    'admin_id' => false, // wether the identity is logged in with admin access right now,
+    'page_structure' => array() // on which page/subpage are we?
 ));

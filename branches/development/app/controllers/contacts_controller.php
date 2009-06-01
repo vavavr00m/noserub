@@ -8,6 +8,8 @@ class ContactsController extends AppController {
     
     public function index() {
         $this->checkUnsecure();
+        
+        Context::setPage('profile.contacts');
     }
     
     /**

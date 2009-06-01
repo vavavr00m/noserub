@@ -59,25 +59,7 @@ Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view')
 Router::connect('/admins/:action', array('controller' => 'admins'));
 Router::connect('/networks/:action', array('controller' => 'networks'));
 
-Router::connect('/:username/social_stream/:filter', array('controller' => 'identities', 'action' => 'social_stream'));
-Router::connect('/:username/groups/', array('controller' => 'groups', 'action' => 'index'));
-Router::connect('/:username/networks/', array('controller' => 'networks', 'action' => 'index'));
-Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
-Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));
-Router::connect('/:username/contacts/:contact_id/info/', array('controller' => 'contacts', 'action' => 'info'));
-Router::connect('/:username/contacts/:contact_id/delete/:security_token', array('controller' => 'contacts', 'action' => 'delete'));
-Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
-Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
-Router::connect('/:username/add/as/contact/:security_token/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
-Router::connect('/:username/xrds', array('controller' => 'identities', 'action' => 'xrds'));
-Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
-Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
-Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
-Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
-
-Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
-Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
-Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
+Router::connect('/activities/', array('controller' => 'identities', 'action' => 'social_stream'));
 
 Router::connect('/settings/display/', array('controller' => 'identities', 'action' => 'display_settings'));
 Router::connect('/settings/password/', array('controller' => 'identities', 'action' => 'password_settings'));
@@ -138,3 +120,26 @@ Router::connect('/jobs/shell/peers/sync/', array('controller' => 'networks', 'ac
 Router::connect('/jobs/shell/peers/poll/', array('controller' => 'networks', 'action' => 'shell_poll')); # deprecated
 Router::connect('/jobs/shell/networks/sync/', array('controller' => 'networks', 'action' => 'shell_sync'));
 Router::connect('/jobs/shell/networks/poll/', array('controller' => 'networks', 'action' => 'shell_poll'));
+
+/**
+ * All routes starting with "/:username/" need to be put last
+ */
+Router::connect('/:username/activities/', array('controller' => 'entries', 'action' => 'profile'));
+Router::connect('/:username/groups/', array('controller' => 'groups', 'action' => 'profile'));
+Router::connect('/:username/networks/', array('controller' => 'networks', 'action' => 'profile'));
+Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
+Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));
+Router::connect('/:username/contacts/:contact_id/info/', array('controller' => 'contacts', 'action' => 'info'));
+Router::connect('/:username/contacts/:contact_id/delete/:security_token', array('controller' => 'contacts', 'action' => 'delete'));
+Router::connect('/:username/contacts/*/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
+Router::connect('/:username/contacts/', array('controller' => 'contacts', 'action' => 'index'));
+Router::connect('/:username/add/as/contact/:security_token/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
+Router::connect('/:username/xrds', array('controller' => 'identities', 'action' => 'xrds'));
+Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
+Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
+Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
+Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
+
+Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
+Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
+Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
