@@ -1,4 +1,4 @@
 <?php if($groups) { ?>
-    <?php __('New Groups'); ?>
+    <h2><?php __('New Groups'); ?></h2>
     <?php echo $this->element('groups/box'); ?>
 <?php } ?>

@@ -1,5 +1,6 @@
-<div id="inhalt">
-    <form id="IdentityPrivacySettingsForm" method="post" action="<?php echo $this->here; ?>">
+<div id="bd-main-hd">
+</div>
+<div id="bd-main-bd">    <form id="IdentityPrivacySettingsForm" method="post" action="<?php echo $this->here; ?>">
         <?php echo $this->element('identities/privacy_settings'); ?>
         <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
         <fieldset>
@@ -13,6 +14,6 @@
     </p>
 </div>
 
-<div id="rechts">
+<div id="bd-main-sidebar">
     <?php echo $noserub->widgetSettingsNavigation(); ?>
 </div>

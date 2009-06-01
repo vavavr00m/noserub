@@ -1,4 +1,6 @@
-<div id="inhalt">
+<div id="bd-main-hd">
+</div>
+<div id="bd-main-bd">
     <?php	if(!isset($session_identity["openid"])){	?>
     <p class="infotext">
     	<?php __('In order to change your password, you have to enter your current password and then the new one.'); ?>
@@ -63,6 +65,6 @@
     <?php	}	?>
 </div>
 
-<div id="rechts">
+<div id="bd-main-sidebar">
     <?php echo $noserub->widgetSettingsNavigation(); ?>
 </div>
