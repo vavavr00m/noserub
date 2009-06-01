@@ -1,4 +1,6 @@
-<div id="inhalt">
+<div id="bd-main-hd">
+</div>
+<div id="bd-main-bd">
     <?php $flashmessage->render(); ?>
     <form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
         <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
@@ -96,6 +98,6 @@
     </div>
 </div>
 
-<div id="rechts">
+<div id="bd-main-sidebar">
     <?php echo $noserub->widgetSettingsNavigation(); ?>
 </div>

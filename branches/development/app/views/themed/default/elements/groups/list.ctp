@@ -1,9 +1,8 @@
 <?php
     // actually, this is the same as elements/groups/box.ctp, but
-    // the markup will be different with the "real" theme/design.
-    
+    // the markup will be different with the "real" theme/design. 
 ?>
-<ul class="block-groups">
+<ul>
     <?php foreach($groups as $group) { ?>
         <?php
             if(isset($group['Group'])) {

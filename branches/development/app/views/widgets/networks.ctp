@@ -1,6 +1,6 @@
-<?php __('Networks'); ?>
+<h2><?php __('Networks'); ?></h2>
 <?php if($networks) { ?>
-    <ul>
+    <ul class="block-groups">
         <?php foreach($networks as $network) { ?>
             <li>
                 <?php if($network['id'] == Context::read('network.id')) {
