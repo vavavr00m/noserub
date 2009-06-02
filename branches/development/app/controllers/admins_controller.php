@@ -142,10 +142,12 @@ class AdminsController extends AppController {
      * and possible new constants. 
      */
     public function system_update() {
-    	// XXX security_token is set to avoid "undefined variable" error in view
-    	$this->set('security_token', '');
+        // XXX security_token is set to avoid "undefined variable" error in view
+        $this->set('security_token', '');
         $this->set('extensions', ExtensionsChecker::check());
-		$this->set('random_number_generator', RandomNumberGeneratorChecker::check());
+		    $this->set('random_number_generator', RandomNumberGeneratorChecker::check());
+        
+        $this->layout = 'system_update';
         
         $directories = WriteableFoldersChecker::check();
         $this->set('directories', $directories);
