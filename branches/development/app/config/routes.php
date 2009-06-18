@@ -82,6 +82,7 @@ Router::connect('/settings/locations/:location_id/delete/:security_token', array
 Router::connect('/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
 Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
 
+Router::connect('/settings/accounts/communication/', array('controller' => 'accounts', 'action' => 'settings_communication'));
 Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add_step_1'));
 Router::connect('/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_2_preview'));
 Router::connect('/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));

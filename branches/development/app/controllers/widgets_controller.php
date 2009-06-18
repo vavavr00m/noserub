@@ -358,6 +358,23 @@ class WidgetsController extends AppController {
     }
     
     /**
+     * Settings
+     */
+     
+    public function account_settings_web() {
+        
+    }
+    
+    public function account_settings_communication() {
+        $this->loadModel('Account');
+        $this->set('data', $this->Account->getCommunication(Context::loggedInIdentityId()));
+    }
+    
+    public function account_settings_twitter() {
+        
+    }
+    
+    /**
      * private methods
      */
       

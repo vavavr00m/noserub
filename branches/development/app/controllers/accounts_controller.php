@@ -9,6 +9,51 @@ class AccountsController extends AppController {
         $this->grantAccess('self');
     }
     
+    public function settings_communication() {
+        $this->grantAccess('self');
+        if($this->RequestHandler->isPost()) {           
+            $current_data = $this->Account->getCommunication(Context::loggedInIdentityId());
+        
+            foreach($this->data['Service'] as $service_id => $value) {
+                $found = false;
+                for($i=0; $i<count($current_data); $i++) {
+                    if(isset($current_data[$i]['Account']) && 
+                       $current_data[$i]['Service']['id'] == $service_id) {
+                        // let's check, wether there was some change with this account
+                        if($value['username'] == '') {
+                            // the username has been removed
+                            $found = true;
+                            $this->Account->id = $current_data[$i]['Account']['id'];
+                            $this->Account->delete();
+                        } else if($value['username'] != $current_data[$i]['Account']['username']) {
+                            // the username has changed!
+                            $found = true;
+                            $this->Account->id = $current_data[$i]['Account']['id'];
+                            $this->Account->saveField('username', $value['username']);
+                            $account_url = $this->Account->Service->getAccountUrl($service_id, $value['username']);
+                            $this->Account->saveField('account_url', $account_url);
+                        } else if($value['username'] == $current_data[$i]['Account']['username']) {
+                            $found = true;
+                        }
+                    }
+                }
+                
+                if(!$found && $value['username']) {
+                    // this is a new account for this user
+                    $new_account = array(
+                        'identity_id' => Context::loggedInIdentityId(),
+                        'service_id'  => $service_id,
+                        'service_type_id' => $this->Account->Service->getServiceTypeId($service_id),
+                        'username'        => $value['username'],
+                        'account_url'     => $this->Account->Service->getAccountUrl($service_id, $value['username']));
+                    $this->Account->create();
+                    $this->Account->save($new_account, true, array('identity_id', 'service_id', 'service_type_id', 'username', 'account_url', 'created', 'modified'));
+                }
+            }
+        }
+        $this->redirect($this->referer());
+    }
+    
     /**
      * This is going to be obsolete, once AccountsController::settings() is done.
      */
