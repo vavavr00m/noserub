@@ -33,8 +33,6 @@ class AccountSettingsController extends AppController {
             $this->Identity->contain();
             $this->data = $this->Identity->read();
         }
-        
-        $this->set('headline', __('Manage your account', true));
     }
     
 	public function export() {

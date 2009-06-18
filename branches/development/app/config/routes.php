@@ -86,7 +86,7 @@ Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'ac
 Router::connect('/settings/accounts/add/preview/', array('controller' => 'accounts', 'action' => 'add_step_2_preview'));
 Router::connect('/settings/accounts/*/edit/', array('controller' => 'accounts', 'action' => 'edit'));
 Router::connect('/settings/accounts/:account_id/delete/:security_token/', array('controller' => 'accounts', 'action' => 'delete'));
-Router::connect('/settings/accounts/', array('controller' => 'accounts', 'action' => 'index'));
+Router::connect('/settings/accounts/', array('controller' => 'accounts', 'action' => 'settings'));
 
 Router::connect('/settings/oauth/add', array('controller' => 'oauth_consumers', 'action' => 'add'));
 Router::connect('/settings/oauth/:consumer_id/delete/:security_token', array('controller' => 'oauth_consumers', 'action' => 'delete'));
