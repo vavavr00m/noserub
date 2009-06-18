@@ -5,6 +5,13 @@ class AccountsController extends AppController {
     public $uses = array('Account');
     public $helpers = array('flashmessage');
     
+    public function settings() {
+        $this->grantAccess('self');
+    }
+    
+    /**
+     * This is going to be obsolete, once AccountsController::settings() is done.
+     */
     public function index() {
         $this->checkSecure();
         $this->grantAccess('self');
