@@ -1,10 +1,10 @@
-<div id="inhalt">
-    <p class="infotext">
+<div id="bd-main-hd">
+    <h2><?php __('Account Settings'); ?></h2>
+    <p>
         <?php __('Here you can add all your own social/online activities and import friends in your network.'); ?>
     </p>
-
-    <hr class="space" />
-
+</div>
+<div id="bd-main-bd">
     <div class="left">
         <?php echo $this->element('accounts/index'); ?>
     </div>
@@ -81,6 +81,6 @@
     <?php } ?>
 </div>
 
-<div id="rechts">
+<div id="bd-main-sidebar">
     <?php echo $noserub->widgetSettingsNavigation(); ?>
 </div>
