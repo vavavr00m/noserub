@@ -65,6 +65,36 @@ class Context {
         $contextPageStructure = join('.', Configure::read('context.page_structure'));
         return strtolower($pageStructure) == $contextPageStructure;
     }
+    
+    /**
+     * Returns the currently selected language
+     * 
+     * @param string $part - 'language' returns 'en' from 'en-us'
+     *                       'country'  returns 'us' from 'en-us'
+     *                       'all'      returns 'en-us' from 'en-us'
+     *
+     * @return string
+     */
+    public static function language($part = 'language') {
+        $language = Configure::read('context.language');
+        
+        if($part == 'full') {
+            return $language;
+        }
+        
+        $parts = split('-', $language);
+        if(count($parts) < 1) {
+            return $language;
+        }
+        
+        if($part == 'language') {
+            return $parts[0];
+        } else if($part == 'country') {
+            return $parts[1];
+        }
+        
+        return '';
+    }
 }
 
 /**
