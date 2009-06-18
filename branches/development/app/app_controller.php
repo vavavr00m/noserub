@@ -255,6 +255,8 @@ class AppController extends Controller {
             $avatar_base_url = Router::url('/static/avatars/', true);
         }
         Context::write('avatar_base_url', $avatar_base_url);
+        
+        Context::write('language', $this->Session->read('Config.language'));
     }
     
 	private function autoLogin() {
