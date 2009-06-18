@@ -10,7 +10,36 @@ class Account extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
                                 'required' => VALID_NOT_EMPTY));
 
-                
+    
+    /**
+     * Returns all communication services along
+     * with the specified users accounts for them
+     *
+     * @param int $identity_id the user
+     *
+     * @return array
+     */
+    public function getCommunication($identity_id) {
+        $this->contain();
+		$accounts = $this->find('all', array(
+		    'conditions' => array(
+		        'identity_id' => $identity_id
+		    )
+		));
+        
+        $services = $this->Service->getContactAccounts();
+        
+        for($i=0; $i<count($accounts); $i++) {
+            for($j=0; $j<count($services); $j++) {
+                if($services[$j]['Service']['id'] == $accounts[$i]['Account']['service_id']) {
+                    $services[$j]['Account'] = $accounts[$i]['Account'];
+                }
+            }
+        }
+        
+        return $services;
+    }            
+    
     /**
      * get either all web accounts, or all
      * those with is_contact = 1
