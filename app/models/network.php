@@ -20,7 +20,7 @@ class Network extends AppModel {
     );
     
     public function beforeValidate($options = array()) {
-        $this->validate['url']['message'] = __('The URL must start with http:// or https:// and end with a /', true);
+        $this->validate['url']['message'] = __('The URL must start with http:// or https://', true);
         
         return parent::beforeValidate($options);
     }
@@ -59,6 +59,13 @@ class Network extends AppModel {
 	    
 	    return (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) &&
 	           strpos(strrev($url), '/') === 0;
+	}
+	
+	public function save($data = null, $validate = true, $fieldList = array()) {
+		if (isset($data['Network']['url'])) {
+			$data['Network']['url'] = $this->ensureUrlEndsWithSlash($data['Network']['url']);
+		}
+		parent::save($data, $validate, $fieldList);
 	}
 	
 	/**
@@ -178,5 +185,9 @@ class Network extends AppModel {
         }
         
         return $updated_networks;
+    }
+    
+    private function ensureUrlEndsWithSlash($url) {
+    	return (strpos(strrev($url), '/') === 0) ? $url : $url . '/';
     }
 }
