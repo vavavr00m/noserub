@@ -6,7 +6,7 @@ if($this->data) {
     echo '<fieldset><legend>' . __('Network', true) . '</legend>';
     echo $form->input('Network.url');
     echo '<p>';
-    __('The URL, under which your NoseRub installation can be found. This could be http://myserver.com/ or http://myserver.com/stuff/<br />Please make sure, you do not include the noserub directory. That means, when you have NoseRub installed in http://myserver.com/noserub/, you would have to enter only http://myserver.com/ here. When your installation is available directly under http://myserver.com/, just put http://myserver.com/ here. Also, the URL must end with a /.');
+    __('The URL, under which your NoseRub installation can be found. This could be http://myserver.com/ or http://myserver.com/stuff/<br />Please make sure, you do not include the noserub directory. That means, when you have NoseRub installed in http://myserver.com/noserub/, you would have to enter only http://myserver.com/ here. When your installation is available directly under http://myserver.com/, just put http://myserver.com/ here.');
     echo '</p>';
     
     echo $form->input('Network.name');
