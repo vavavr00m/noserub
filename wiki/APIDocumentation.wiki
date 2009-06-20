@@ -1,0 +1,6 @@
+#summary NoseRub API Documentation
+
+More to come...
+
+===Help Methods===
+[http://code.google.com/p/noserub help/test]
