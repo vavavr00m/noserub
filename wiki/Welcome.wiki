@@ -1,6 +1,5 @@
-#summary One-sentence summary of this page.
+#summary NoseRub welcome page.
 
 = Introduction =
 
-ApiDocumentation
-
+[http://code.google.com/p/noserub/wiki/APIDocumentation API Documentation] 
