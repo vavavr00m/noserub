@@ -3,4 +3,4 @@
 More to come...
 
 ===Help Methods===
-[http://code.google.com/p/noserub help/test]
+[http://code.google.com/p/noserub/wiki/HelpTest help/test]
