@@ -1,0 +1,3 @@
+#summary Documentation of the software design of NoseRub
+
+Some content...
