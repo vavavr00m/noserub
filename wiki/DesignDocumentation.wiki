@@ -2,4 +2,4 @@
 
 =Networks and Groups=
 
-http://code.google.com/p/noserub/wiki/uml/network.png
+http://noserub.googlecode.com/svn/wiki/uml/network.png
