@@ -5,9 +5,7 @@
     </p>
 </div>
 <div id="bd-main-bd">
-    <?php echo $noserub->accountSettingsWeb(); ?>
-    
-    <?php echo $noserub->accountSettingsCommunication(); ?>
+    <?php echo $noserub->formAccounts(); ?>
     
     <?php echo $noserub->accountSettingsTwitter(); ?> 
 
@@ -17,8 +15,4 @@
     </div>
 
 --->
-</div>
-
-<div id="bd-main-sidebar">
-    <?php echo $noserub->widgetSettingsNavigation(); ?>
 </div>

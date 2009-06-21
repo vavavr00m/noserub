@@ -361,13 +361,12 @@ class WidgetsController extends AppController {
      * Settings
      */
      
-    public function account_settings_web() {
-        
-    }
-    
-    public function account_settings_communication() {
+    public function form_accounts() {
         $this->loadModel('Account');
-        $this->set('data', $this->Account->getCommunication(Context::loggedInIdentityId()));
+        $this->retrieveFormErrors('Account');
+        $this->set('data', $this->Account->get(Context::loggedInIdentityId()));
+        $this->set('services', $this->Account->Service->find('list', array('order' => 'name')));
+        $this->set('service_types', $this->Account->ServiceType->find('list'));
     }
     
     public function account_settings_twitter() {
