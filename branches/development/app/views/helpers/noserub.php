@@ -57,6 +57,10 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/form_groups_add/');
     }
     
+    public function formAccounts() {
+        return $this->out('/widgets/form_accounts/');
+    }
+    
     public function fnAvatarBaseUrl() {
         return Context::read('avatar_base_url');
     }

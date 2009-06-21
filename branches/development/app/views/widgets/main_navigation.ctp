@@ -25,7 +25,11 @@
 			</ul>
 		</li>
         <li>
+            <a class="toggle" href="#">(-)</a>
             <?php echo $html->link(__('My Profile', true), $base_url); ?>
+            <ul>
+                <li><?php echo $html->link(__('My Accounts', true), '/settings/accounts/'); ?></li>
+            </ul>
         </li>
         <li>
             <a class="toggle" href="#">(-)</a>
