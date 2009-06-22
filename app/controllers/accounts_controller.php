@@ -84,6 +84,37 @@ class AccountsController extends AppController {
         $this->redirect($this->referer());
     }
     
+    public function edit() {
+        $this->grantAccess('self');
+        
+        if($this->RequestHandler->isPut()) {
+            $this->ensureSecurityToken();
+            pr($this->data);
+            exit;
+        }
+    }
+    
+    public function delete() {
+        $this->grantAccess('self');
+        
+        if($this->RequestHandler->isPut()) {
+            $this->ensureSecurityToken();
+            
+            $account = $this->Account->find(
+                'first',
+                array(
+                    'Account.id' => $this->data['Account']['id'],
+                    'Account.identity_id' => Context::loggedInIdentityId()
+                )
+            );
+            if($account) {
+                $this->Account->id = $this->data['Account']['id'];
+                $this->Account->deleteWithAssociated();
+                $this->redirect('/settings/accounts/');
+            }
+        } 
+    }
+    
     public function settings_communication() {
         $this->grantAccess('self');
         if($this->RequestHandler->isPost()) {           
@@ -373,7 +404,7 @@ class AccountsController extends AppController {
         $this->set('headline', __('Preview the data', true));
     }
     
-    public function edit($account_id) {
+    public function edit_old($account_id) {
         $session_identity = $this->Session->read('Identity');
         $identity_id      = $session_identity['id'];
 
@@ -405,7 +436,7 @@ class AccountsController extends AppController {
         $this->render('edit');
     }
     
-    public function delete() {
+    public function delete_old() {
         $account_id       = isset($this->params['account_id']) ? $this->params['account_id'] : '';
         $username         = isset($this->params['username'])   ? $this->params['username']   : '';
         $splitted         = $this->Account->Identity->splitUsername($username);

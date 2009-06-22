@@ -257,6 +257,8 @@ class AppController extends Controller {
         Context::write('avatar_base_url', $avatar_base_url);
         
         Context::write('language', $this->Session->read('Config.language'));
+        
+        Context::write('params', $this->params);
     }
     
 	private function autoLogin() {

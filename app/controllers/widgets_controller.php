@@ -365,7 +365,29 @@ class WidgetsController extends AppController {
         $this->loadModel('Account');
         $this->retrieveFormErrors('Account');
         $this->set('data', $this->Account->get(Context::loggedInIdentityId()));
-        $this->set('services', $this->Account->Service->find('list', array('order' => 'name')));
+        $services = $this->Account->Service->find('list', array('order' => 'name'));
+        unset($services[8]);
+        $this->set('services', $services);
+        $this->set('service_types', $this->Account->ServiceType->find('list'));
+    }
+    
+    public function form_account_edit() {
+        $this->loadModel('Account');
+        $this->retrieveFormErrors('Account');
+        $params = Context::read('params.named');
+        $account_id = $params['id'];
+        $this->data = $this->Account->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Account.id' => $account_id,
+                    'Account.identity_id' => Context::loggedInIdentityId()
+                )
+            )
+        );
+        $services = $this->Account->Service->find('list', array('order' => 'name'));
+        unset($services[8]);
+        $this->set('services', $services);
         $this->set('service_types', $this->Account->ServiceType->find('list'));
     }
     
