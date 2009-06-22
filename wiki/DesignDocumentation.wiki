@@ -3,3 +3,17 @@
 =Networks and Groups=
 
 http://noserub.googlecode.com/svn/wiki/uml/network.png
+
+Networks and Groups are new concepts in NoseRub 0.9. A Network represents a single social network (e.g. a network 
+for PHP programmers), and each social network can contain multiple Groups (for example, the network for PHP 
+programmers could contain the groups "beginners" and "design patterns"). With this addition, it will be possible to 
+use a single NoseRub installation to host many social networks. 
+
+Each Network can be managed by many Admins, though each Admin can only manage one Network, due to security 
+considerations. For the same reason we have a separate Admin model, and don't allow Identities to manage Networks. 
+Identities can subscribe to many Networks, and each Identity has one "home" Network. In the future it is possible 
+we have to introduce a NetworkSubscription model for the n:n association between Network and Identity.
+
+Each Group can be managed by many Identities, and many Identities can subscribe to a Group. In the future it is 
+possible we have to introduce models for those associations (GroupSubscription, GroupAdmin), though currently this 
+would be overkill. 
