@@ -50,6 +50,13 @@ class Account extends AppModel {
     }
     
     /**
+     * @TODO make sure everything associated with this account is deleted
+     */
+    public function deleteWithAssociated() {
+        $this->delete();
+    }
+    
+    /**
      * 
      */
     public function update($identity_id, $data) {
