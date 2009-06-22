@@ -12,21 +12,34 @@ class Account extends AppModel {
          
     
     /**
-     * get all web accounts for given identity_id
+     * get all accounts for given identity_id
      *
      * @param int $identity_id
+     * @param string $type 'all' => all accounts
+     *                     'web' => all web accounts
+     *                     'communication' => all communication accounts
      *
      * @return array
      */
-    public function get($identity_id) {
+    public function get($identity_id, $type = 'all') {
+        $conditions = array(
+            'Account.identity_id' => $identity_id
+        );
+        switch($type) {
+            case 'web':
+                $conditions['Service.is_contact'] = 0;
+                break;
+                
+            case 'communication':
+                $conditions['Service.is_contact'] = 1;
+                break;
+        }
+        
         return $this->find('all', array(
             'contain' => array('Service'),
-            'conditions' => array(
-                'identity_id' => $identity_id
-            )
+            'conditions' => $conditions
         ));
     }
-    
     
     /**
      * get's data from RSS (for example) of this

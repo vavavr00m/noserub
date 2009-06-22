@@ -89,8 +89,34 @@ class AccountsController extends AppController {
         
         if($this->RequestHandler->isPut()) {
             $this->ensureSecurityToken();
-            pr($this->data);
-            exit;
+            
+            $account = $this->Account->find(
+                'first',
+                array(
+                    'contain' => 'Service',
+                    'conditions' => array(
+                        'Account.id' => $this->data['Account']['id'],
+                        'Account.identity_id' => Context::loggedInIdentityId()
+                    )
+                )
+            );
+            if($account) {
+                if($account['Service']['is_contact']) {
+                    $saveable = array(
+                        'username', 'title', 'account_url'
+                    );
+                } else {
+                    $saveable = array(
+                        'service_type_id', 'username', 'title',
+                        'account_url', 'feed_url'
+                    );
+                }
+                
+                $this->Account->id = $account['Account']['id'];
+                $this->Account->save($this->data, true, $saveable);
+                
+                $this->redirect('/settings/accounts/');
+            }
         }
     }
     
@@ -103,8 +129,10 @@ class AccountsController extends AppController {
             $account = $this->Account->find(
                 'first',
                 array(
-                    'Account.id' => $this->data['Account']['id'],
-                    'Account.identity_id' => Context::loggedInIdentityId()
+                    'conditions' => array(
+                        'Account.id' => $this->data['Account']['id'],
+                        'Account.identity_id' => Context::loggedInIdentityId()
+                    )
                 )
             );
             if($account) {

@@ -116,7 +116,7 @@ class WidgetsController extends AppController {
  	    $this->loadModel('Account');
  	    
  	    $identity_id = $this->getIdentityId();
-        $this->set('communications', $this->Account->get($identity_id, 'contact'));
+        $this->set('communications', $this->Account->get($identity_id, 'communication'));
  	} 
  	
  	/**
