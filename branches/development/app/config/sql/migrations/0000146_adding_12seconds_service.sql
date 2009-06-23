@@ -1,0 +1,1 @@
+INSERT INTO  `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`) VALUES (84 ,  'twelveseconds',  '12Seconds',  'http://12seconds.tv',  '6',  '',  '12seconds.gif',  '1',  '0',  '30', NOW( ) , NOW( ));
