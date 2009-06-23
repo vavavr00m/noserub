@@ -38,6 +38,18 @@ class Comment extends AppModel {
     }
     
     /**
+     * Deletes all comments for given entry_id
+     *
+     * @param  $entry_id for which all entries should be removed
+     * @return 
+     * @access 
+     */
+    public function deleteByEntryId($entry_id) {
+        $this->contain();
+        return $this->deleteAll(array('Comment.entry_id' => $entry_id));
+    }
+    
+    /**
      * poll new comments from networks
      */
     public function poll() {
