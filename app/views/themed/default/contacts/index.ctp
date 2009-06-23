@@ -2,6 +2,7 @@
     <?php echo $noserub->widgetProfile(); ?>
 </div>
  <div id="bd-main-bd">
+    <?php echo $noserub->widgetFlashMessage(); ?>
     <?php echo $noserub->widgetContacts(array('layout' => 'list')); ?>
 </div>
 

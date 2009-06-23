@@ -2,8 +2,6 @@
 
 <br class="clear" />
 
-<?php $flashmessage->render(); ?>
-
 <form id="Identity/messages/new/Form" method="post" action="<?php echo $this->here; ?>">
     <fieldset>
         <?php echo $form->input('Message.subject', array('label' => __('Subject', true) . ':', 'size' => 64)); ?>

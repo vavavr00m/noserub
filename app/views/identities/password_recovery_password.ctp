@@ -1,4 +1,3 @@
-<?php $flashmessage->render(); ?>
 <p>
     <?php __('Please enter your new password (twice). It needs to be at least 6 characters long.'); ?>
 </p>

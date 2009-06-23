@@ -8,7 +8,6 @@ class OmbSubscriptionsController extends AppController {
 	const REQUEST_TOKEN_KEY = 'omb.requestToken';
 	const LOCAL_SERVICE_ID_KEY = 'omb.localServiceId';
 	public $uses = array('Identity', 'OmbLocalService');
-	public $helpers = array('flashmessage');
 	public $components = array('OmbRemoteService');
 	
 	public function callback() {

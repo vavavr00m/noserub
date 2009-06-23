@@ -1,7 +1,7 @@
 <div id="bd-main-hd">
 </div>
 <div id="bd-main-bd">
-    <?php $flashmessage->render(); ?>
+    <?php echo $noserub->widgetFlashMessage(); ?>
     <form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
         <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
         <div id="settings_photo" class="right">

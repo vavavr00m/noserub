@@ -3,6 +3,7 @@
 </div>
 
 <div id="bd-main-bd">
+    <?php echo $noserub->widgetFlashMessage(); ?>
     <?php echo $noserub->formNetworks(); ?>
 </div>
 

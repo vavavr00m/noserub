@@ -6,7 +6,6 @@
         $feed_url = Context::read('network.url') . $url . '/feeds/';
     } 
 ?>
-<?php $flashmessage->render(); ?>
 <p class="infotext">
     <?php __('You can create Feeds from your own social activities or those of friends in your network. This feeds then can be used by your RSS-Reader or you can integrate it on your website to show everyone, what you did in the last couple of hours and days.'); ?>
 </p>
