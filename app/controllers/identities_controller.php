@@ -415,13 +415,13 @@ class IdentitiesController extends AppController {
                     if(!$this->Session->check('Login.success_url')) {
                         if($this->Session->read('Login.is_guest')) {
 	                        $this->flashMessage('success', __('Welcome! It\'s nice to have you here.', true));
-	                        $url = $this->url->http('/social_stream');
+	                        $url = $this->url->http('/');
                         } else {
                             $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
-                            $url = $this->url->http('/' . urlencode(strtolower($identity['Identity']['local_username'])) . '/network/');
-                        }
-	                    
+                            $url = $this->url->http('/activities/');
+                        }	                    
                     } else {
+                        $this->flashMessage('success', __('Welcome! It\'s nice to have you back.', true));
                     	$url = $this->url->http($this->Session->read('Login.success_url'));
                     	$this->Session->delete('Login.success_url');
                     }
