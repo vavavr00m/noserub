@@ -16,4 +16,11 @@ we have to introduce a NetworkSubscription model for the n:n association between
 
 Each Group can be managed by many Identities, and many Identities can subscribe to a Group. In the future it is 
 possible we have to introduce models for those associations (GroupSubscription, GroupAdmin), though currently this 
-would be overkill. 
+would be overkill.
+
+=Locations=
+
+http://noserub.googlecode.com/svn/wiki/uml/locations.png 
+
+The Locations sub-system is trivial: an Identity can define multiple Locations, plus we are interested in the latest 
+Location the Identity set.
