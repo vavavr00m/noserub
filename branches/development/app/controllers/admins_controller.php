@@ -111,7 +111,6 @@ class AdminsController extends AppController {
     }
     
     public function logout() {
-        $this->ensureSecurityToken();
         $this->Session->delete('Admin');
         $this->redirect('/admins/');
     }

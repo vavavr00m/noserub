@@ -386,7 +386,6 @@ class WidgetsController extends AppController {
             )
         );
         $services = $this->Account->Service->find('list', array('order' => 'name'));
-        unset($services[8]);
         $this->set('services', $services);
         $this->set('service_types', $this->Account->ServiceType->find('list'));
     }

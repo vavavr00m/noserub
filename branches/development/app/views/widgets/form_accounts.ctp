@@ -39,7 +39,12 @@ echo $form->end(array('label' => __('Auto discover', true)));
                     <?php echo $item['Service']['name']; ?>
                 </td>
                 <td><?php if($item['Account']['account_url']) {
-                    echo $html->link($item['Account']['username'], $item['Account']['account_url']);
+                    if($item['Account']['service_id'] == 8) {
+                        $username = $item['Account']['account_url'];
+                    } else {
+                        $username = $item['Account']['username'];
+                    }
+                    echo $html->link($username, $item['Account']['account_url']);
                 } else {
                     echo $item['Account']['username'];
                 } ?></td>

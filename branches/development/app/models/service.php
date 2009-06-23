@@ -162,30 +162,30 @@ class Service extends AppModel {
     public function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
         # needed for autodiscovery of feed
     	$feed = $this->createSimplePie($feed_url, true);
-        @$feed->init();
-        if($feed->error()) {
-            return false;
-        }
+        $feed->init();
         
         $data = array();
-        $data['title']       = $feed->get_title();
+        $data['title'] = $feed->get_title();
         $data['account_url'] = $feed->get_link();
-        $data['feed_url']    = $feed->feed_url;
+        
+        if($feed->error()) {
+            $data['feed_url'] = '';
+            $data['account_url'] = $feed_url;
+        } else {
+            $data['feed_url'] = $feed->feed_url;
+        }
         
         unset($feed);
         
         if(!$data['account_url']) {
             $data['account_url'] = $data['feed_url'];
         }
+        
         $data['service_id']      = 8; # any RSS-Feed
         $data['username']        = 'RSS-Feed';
         $data['service_type_id'] = $service_type_id;
         
         $items = $this->feed2array($username, 8, $data['service_type_id'], $data['feed_url'], 5, null);
-    	
-    	if(!$items) {
-            return false;
-        }
         
         $data['items'] = $items;
         
@@ -207,10 +207,6 @@ class Service extends AppModel {
         if($service['Service']['has_feed'] == 1) {
             $data['feed_url'] = $this->getFeedUrl($service_id, $account_username);
             $items            = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
-        
-            if(!$items) {
-                return false;
-            }
         } else {
             $data['feed_url'] = '';
             $items = array();
@@ -237,15 +233,17 @@ class Service extends AppModel {
         $feed->set_feed_url($feed_url);
         $feed->set_useragent(Configure::read('noserub.user_agent'));
         $feed->enable_cache(false);
-        $feed->force_feed(true); 
         
         if($autodiscovery) {
             $autodiscovery_level = SIMPLEPIE_LOCATOR_ALL;
+            $feed->force_feed(false); 
         } else {
             $autodiscovery_level = SIMPLEPIE_LOCATOR_NONE;
+            $feed->force_feed(true); 
 		}
         
         $feed->set_autodiscovery_level($autodiscovery_level);
+        $feed->set_autodiscovery_cache_duration(0);
         
         return $feed;
     }

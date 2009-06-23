@@ -294,6 +294,31 @@ class Entry extends AppModel {
     }
     
     /**
+     * Deletes all entries for given account_id
+     *
+     * @param  $account_id for which all entries should be removed
+     * @return 
+     * @access 
+     */
+    public function deleteByAccountId($account_id) {
+        $data = $this->find(
+            'all',
+            array(
+                'contain' => false,
+                'conditions' => array(
+                    'Entry.account_id' => $account_id
+                ),
+                'fields' => 'Entry.id'
+        ));
+        foreach($data as $item) {
+            $this->id = $item['Entry']['id'];
+            $this->delete();
+            
+            $this->Comment->deleteByEntryId($this->id);
+        }
+    }
+    
+    /**
      * New entry after setting a location
      *
      * @param int $identity_id
