@@ -80,7 +80,7 @@ Router::connect('/settings/feeds/', array('controller' => 'syndications', 'actio
 Router::connect('/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
 Router::connect('/settings/locations/:location_id/delete/:security_token', array('controller' => 'locations', 'action' => 'delete'));
 Router::connect('/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
-Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'index'));
+Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'settings'));
 
 Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/settings/accounts/edit/*', array('controller' => 'accounts', 'action' => 'edit'));

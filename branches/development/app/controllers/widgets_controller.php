@@ -394,6 +394,12 @@ class WidgetsController extends AppController {
         
     }
     
+    public function form_locations() {
+        $this->loadModel('Location');
+        $this->retrieveFormErrors('Location');
+        $this->set('data', $this->Location->get(Context::loggedInIdentityId()));
+    }
+    
     /**
      * private methods
      */

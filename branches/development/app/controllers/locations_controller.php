@@ -3,37 +3,18 @@ class LocationsController extends AppController {
     public $uses = array('Location');
     public $components = array('url', 'geocoder');
     
-    public function index() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Location->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
+    public function settings() {
+        $this->grantAccess('self');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
-        $this->Location->contain();
-        $data = $this->Location->findAllByIdentityId($session_identity['id']);
-        
-        $this->set('data', $data);
-        $this->set('session_identity', $session_identity);
-        $this->set('headline', __('Manage your locations', true));
+        Context::setPage('settings.location');
     }
-    
+        
     public function add() {
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Location->Identity->splitUsername($username);
-        $session_identity = $this->Session->read('Identity');
+        $this->grantAccess('self');
         
-        if(!$session_identity || $session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-        
-        if($this->data) {
+        if($this->RequestHandler->isPost()) {
+            $this->ensureSecurityToken();
+            
             if($this->data['Location']['name']) {
                 if($this->data['Location']['address']) {
                     $geolocation = $this->geocoder->get($this->data['Location']['address']);
@@ -45,21 +26,20 @@ class LocationsController extends AppController {
                         $this->data['Location']['longitude'] = 0;
                     }
                 }
-                $this->data['Location']['identity_id'] = $session_identity['id'];
+                $this->data['Location']['identity_id'] = Context::loggedInIdentityId();
                 $this->Location->create();
                 if($this->Location->save($this->data)) {
                     $this->flashMessage('success', __('Location added.', true));
-                    $url = $this->url->http('/settings/locations/');
-                	$this->redirect($url);
                 } else {
                     $this->flashMessage('error', __('Location could not be created.', true));
                 }
             } else {
-                $this->Location->invalidate('name');
+                $this->Location->invalidate('name', __('You need to specify a name.', true));
+                $this->storeFormErrors('Location', $this->data, $this->Location->validationErrors);
             }
-        } 
+        }
         
-        $this->set('headline', __('Add new Location', true));
+        $this->redirect($this->referer());
     }
     
     public function edit() {

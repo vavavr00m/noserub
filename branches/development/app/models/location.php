@@ -4,6 +4,26 @@
 class Location extends AppModel {
     public $belongsTo = array('Identity');                                                   
 
+    /**
+     * get all locations for the logged in identity
+     *
+     * @param int $identity_id
+     *
+     * @return array
+     */
+    public function get($identity_id) {
+        return $this->find(
+            'all',
+            array(
+                'contain' => false,
+                'conditions' => array(
+                    'Location.identity_id' => $identity_id
+                ),
+                'order' => 'Location.name'
+            )
+        );
+    }
+    
     public function setTo($identity_id, $location_id) {
         # check, that this location belongs to that identity
         $this->contain();
