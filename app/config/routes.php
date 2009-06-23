@@ -78,8 +78,8 @@ Router::connect('/settings/feeds/:syndication_id/delete/:security_token/', array
 Router::connect('/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 
 Router::connect('/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
-Router::connect('/settings/locations/:location_id/delete/:security_token', array('controller' => 'locations', 'action' => 'delete'));
-Router::connect('/settings/locations/:location_id/edit/', array('controller' => 'locations', 'action' => 'edit'));
+Router::connect('/settings/locations/delete/', array('controller' => 'locations', 'action' => 'delete'));
+Router::connect('/settings/locations/edit/*', array('controller' => 'locations', 'action' => 'edit'));
 Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'settings'));
 
 Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));

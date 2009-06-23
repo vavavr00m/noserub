@@ -400,6 +400,22 @@ class WidgetsController extends AppController {
         $this->set('data', $this->Location->get(Context::loggedInIdentityId()));
     }
     
+    public function form_locations_edit() {
+        $this->loadModel('Location');
+        $this->retrieveFormErrors('Location');
+        $params = Context::read('params.named');
+        $location_id = $params['id'];
+        $this->data = $this->Location->find(
+            'first',
+            array(
+                'conditions' => array(
+                    'Location.id' => $location_id,
+                    'Location.identity_id' => Context::loggedInIdentityId()
+                )
+            )
+        );
+    }
+
     /**
      * private methods
      */
