@@ -312,9 +312,8 @@ class Entry extends AppModel {
         ));
         foreach($data as $item) {
             $this->id = $item['Entry']['id'];
-            $this->delete();
-            
             $this->Comment->deleteByEntryId($this->id);
+            $this->delete();
         }
     }
     
