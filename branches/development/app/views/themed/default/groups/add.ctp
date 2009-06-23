@@ -2,6 +2,7 @@
     <h2><?php __('Add a new group'); ?></h2>
 </div>
 <div id="bd-main-bd">
+    <?php echo $noserub->widgetFlashMessage(); ?>
     <?php echo $noserub->formGroupAdd(); ?>
 </div>
 

@@ -1,6 +1,3 @@
-<?php 
-	$flashmessage->render(); 
-?>
 <h3><?php __('OAuth parameters'); ?></h3>
 <ul class="infotext">
 	<li><?php __('Request Token URL'); ?>: <strong><?php echo Router::url('/pages/oauth/request_token', true); ?></strong></li>

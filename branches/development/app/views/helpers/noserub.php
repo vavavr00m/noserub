@@ -33,6 +33,23 @@ class NoserubHelper extends AppHelper {
         return $this->out('/widgets/lifestream/', array('type' => 'single'));
     }
 
+    public function widgetFlashMessage() {
+        $flash_messages = $this->session->read('FlashMessages');
+        
+        $out = '';
+        if($flash_messages) {
+            foreach($flash_messages as $type => $messages) {
+                $out .= '<div id="message" class="' . $type . '">';
+                foreach($messages as $message) {
+                    $out .= '<p>' . $message . '</p>';
+                }
+                $out .= '</div>';
+            }
+        }
+                
+        return $this->output($out);
+    }
+    
     /**
      * generic method for the more simple widgets
      * 

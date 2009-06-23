@@ -3,7 +3,6 @@
  
 class AccountsController extends AppController {
     public $uses = array('Account');
-    public $helpers = array('flashmessage');
     
     public function settings() {
         $this->grantAccess('self');
@@ -73,6 +72,7 @@ class AccountsController extends AppController {
                 );
                 $this->Account->create();
                 $this->Account->save($info, true, $saveable);
+                $this->flashMessage('success', __('Account has been created', true));
                 
                 if($this->Account->id) {
                     // save feed information to entry table
@@ -120,6 +120,7 @@ class AccountsController extends AppController {
                 
                 $this->Account->id = $account['Account']['id'];
                 $this->Account->save($this->data, true, $saveable);
+                $this->flashMessage('success', __('Changes have been saved', true));
                 
                 $this->redirect('/settings/accounts/');
             }
@@ -144,6 +145,7 @@ class AccountsController extends AppController {
             if($account) {
                 $this->Account->id = $this->data['Account']['id'];
                 $this->Account->deleteWithAssociated();
+                $this->flashMessage('success', __('Account has been deleted', true));
                 $this->redirect('/settings/accounts/');
             }
         } 

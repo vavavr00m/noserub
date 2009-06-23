@@ -1,5 +1,4 @@
 <div id="inhalt">
-    <?php $flashmessage->render(); ?>         
     <dl id="hcard-<?php echo $contact['WithIdentity']['local_username']; ?>" class="vcards contacts <?php echo $contact['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">
         <dt>
             <a href="<?php echo 'http://' . $contact['WithIdentity']['username']; ?>">

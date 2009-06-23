@@ -6,7 +6,6 @@
     	    $is_owner = isset($session_identity) &&
     	                $session_identity['id'] == $data['Identity']['id'];
     	?>
-    	<?php $flashmessage->render(); ?>
     	<div class="vcard">
     	    <?php echo $this->renderElement('identities/mini_profile'); ?>
     	</div>

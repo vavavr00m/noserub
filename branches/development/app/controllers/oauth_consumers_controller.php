@@ -3,7 +3,6 @@
 class OauthConsumersController extends AppController {
 	public $uses = array('Consumer');
 	public $components = array('url');
-	public $helpers = array('flashmessage');
 	private $logged_in_identity = null;
 	
 	public function beforeFilter() {

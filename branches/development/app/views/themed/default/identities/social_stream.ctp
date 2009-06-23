@@ -2,6 +2,7 @@
     <h1><?php __("Social Stream of your contact's activities")?></h1>
 </div>
 <div id="bd-main-bd">
+    <?php echo $noserub->widgetFlashMessage(); ?>
     <?php echo $noserub->widgetNetworkLifestream(); ?>
 </div>
 

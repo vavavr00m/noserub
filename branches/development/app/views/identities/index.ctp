@@ -45,8 +45,6 @@
     <!-- profile -->
 	
     <div id="hcard-<?php echo $data['Identity']['local_username']; ?>" class="vcard">
-
-        <?php $flashmessage->render(); ?>
         
         <div id="photo">
         	<img class="photo" src="<?php echo $profile_photo; ?>" width="130" height="130" alt="<?php echo $data['Identity']['local_username']; ?>'s Picture" />

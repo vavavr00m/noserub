@@ -1,4 +1,3 @@
-<?php $flashmessage->render(); ?>
 <?php if(isset($form_error) && !empty($form_error)) { 
     echo '<p>'. $form_error . '</p>';
 } ?>
