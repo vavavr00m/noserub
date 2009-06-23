@@ -9,11 +9,4 @@
     <?php echo $noserub->formAccounts(); ?>
     
     <?php echo $noserub->accountSettingsTwitter(); ?> 
-
-<!---
-    <div class="left">
-        <?php //echo $this->element('accounts/index'); ?>
-    </div>
-
---->
 </div>
