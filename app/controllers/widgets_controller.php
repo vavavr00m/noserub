@@ -92,6 +92,16 @@ class WidgetsController extends AppController {
  	} 
  	
  	/**
+ 	 * Entries
+ 	 */
+ 	
+ 	/**
+ 	 * Form to add an entry
+ 	 */ 
+ 	public function form_add_entry() {
+ 	}
+ 	
+ 	/**
  	 * User Settings
  	 */
  	 

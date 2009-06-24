@@ -13,7 +13,7 @@
     <!-- API Box -->
     <div id="locationsapi" class="<?php if(!isset($session_identity["openid"])){ ?>right<?php }else{?>left<?php } ?>">
         <form id="APISettingsForm" method="post" action="<?php echo $this->here; ?>">
-        	<input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
+        	<?php echo $noserub->fnSecurityTokenInput(); ?>
         	<fieldset>
         		<legend><?php __('API Settings'); ?></legend>
         		<p class="infotext">
@@ -55,7 +55,7 @@
                     echo $form->input('Identity.passwd2', array('type' => 'password', 
                                                                 'label' => __('New password repeated', true), 
                                                                 'error' => __('Passwords must match', true))); ?>
-                <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
+                <?php echo $noserub->fnSecurityTokenInput(); ?>
             </fieldset>
     
             <fieldset>

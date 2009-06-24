@@ -3,7 +3,7 @@
 <div id="bd-main-bd">
     <?php echo $noserub->widgetFlashMessage(); ?>
     <form id="IdentitySettingsForm" enctype="multipart/form-data" method="post" action="<?php echo $this->here; ?>">
-        <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
+        <?php echo $noserub->fnSecurityTokenInput(); ?>
         <div id="settings_photo" class="right">
             <fieldset>
                 <legend><?php __('Photo'); ?></legend>

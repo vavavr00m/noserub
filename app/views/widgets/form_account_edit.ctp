@@ -1,7 +1,7 @@
 <h2><?php __('Edit account'); ?></h2>
 <?php 
 echo $form->create(array('url' => '/settings/accounts/edit/id:' . $this->data['Account']['id']));
-echo '<input type="hidden" name="security_token" value="' . $noserub->fnSecurityToken() . '" />';
+echo $noserub->fnSecurityTokenInput();
 echo $form->input('id', array('type' => 'hidden'));
 echo __('Service', true) . ': ' . $services[$this->data['Account']['service_id']];
 if(!$this->data['Service']['is_contact']) {
@@ -21,7 +21,7 @@ echo $form->end(array('label' => __('Save', true)));
 </p>
 <?php 
 echo $form->create(array('url' => '/settings/accounts/delete/'));
-echo '<input type="hidden" name="security_token" value="' . $noserub->fnSecurityToken() . '" />';
+echo $noserub->fnSecurityTokenInput();
 echo $form->input('id', array('type' => 'hidden'));
 echo $form->end(array('label' => __('Delete account', true))); 
 ?>

@@ -31,7 +31,7 @@
     	    <hr class="clear" />
     	    <div>
     	        <form id="MakeCommentForm" method="post" action="<?php echo $this->here ?>">
-    	            <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
+    	            <?php echo $noserub->fnSecurityTokenInput(); ?>
     	            <fieldset>
     	        	    <?php echo $form->textarea('Comment.content', array('columns' => 80, 'rows' => 10)); ?>
     	        	</fieldset>
