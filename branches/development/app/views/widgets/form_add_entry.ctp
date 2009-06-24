@@ -27,6 +27,11 @@ switch($entry_add_modus) {
         echo $form->input('Entry.description', array('label' => __('Description', true)));
         echo $form->input('Entry.url', array('label' => __('URL', true)));
         break;
+        
+    case 'text':
+        echo $form->input('Entry.title', array('label' => __('Title', true)));
+        echo $form->input('Entry.text', array('type' => 'textarea', 'label' => false));
+        break;
 }
 
 echo $form->end(array('label' => __('Send', true))); 

@@ -36,7 +36,12 @@ class Entry extends AppModel {
             
             case 'link':
                 return $this->addLink($identity_id, $data['description'], $data['url'], $restricted);
+                
+            case 'text':
+                return $this->addText($identity_id, $data['title'], $data['text'], $restricted);
         }
+        
+        return false;
     }
     /**
      * updates the entries
@@ -528,6 +533,35 @@ class Entry extends AppModel {
         
         $this->create();
         return $this->save($data);
+    }
+    
+    public function addText($identity_id, $title, $text, $restricted = false) {
+        if(is_null($restricted)) {
+            $restricted = $this->getRestricted($identity_id);
+        }
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'service_type_id' => 3,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $title,
+            'url'             => '',
+            'uid'             => '',
+            'content'         => $text,
+            'restricted'      => $restricted
+        );
+        
+        $this->create();
+        if($this->save($data)) {    
+            # now set url and uid
+            $url = Router::url('/entry/' . $this->id . '/', true);
+            $this->saveField('url', $url);
+            $this->saveField('uid', md5($url));
+        } else {
+            return false;
+        }
+        
+        return true;
     }
     
     public function addNoseRub($identity_id, $value, $restricted = false) {
