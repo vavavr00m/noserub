@@ -1,4 +1,4 @@
-function noserub_theme_start() {
+function noserub_theme_start(context) {
     $('a.toggle').click(function(e) {
         e.preventDefault();
         if($(this).text() == '(-)') {
@@ -7,5 +7,7 @@ function noserub_theme_start() {
             $(this).text('(-)');
         }
         $(this).siblings('ul').toggle();
-    })
+    });
+    
+    console.dir(context);
 }
