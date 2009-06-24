@@ -95,6 +95,31 @@ class Context {
         
         return '';
     }
+    
+    /*
+     * Returns a copy of the whole context for usage in JS.
+     * Because of this, some fields like the users hashed password
+     * will be removed from the context.
+     *
+     * @return array
+     */
+    public static function forJs() {
+        $data = Configure::read('context');
+        
+        unset($data['logged_in_identity']['password']);
+        unset($data['logged_in_identity']['password_recovery_hash']);
+        unset($data['logged_in_identity']['security_token']);
+        unset($data['logged_in_identity']['hash']);
+        unset($data['logged_in_identity']['api_hash']);
+        
+        unset($data['identity']['password']);
+        unset($data['identity']['password_recovery_hash']);
+        unset($data['identity']['security_token']);
+        unset($data['identity']['hash']);
+        unset($data['identity']['api_hash']);
+        
+        return $data;
+    }
 }
 
 /**
