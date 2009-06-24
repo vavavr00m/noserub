@@ -13,13 +13,20 @@ class EntriesController extends AppController {
         if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
             
-            $identity_id = Context::loggedInIdentityId();
-            
-            switch($this->data['service_type']) {
-                case 'micropublish':
-                    $this->Entry->addMicropublish($identity_id, $this->data['text'], null);
+            if($this->Entry->add(
+                $this->data['Entry']['service_type'], 
+                $this->data['Entry'], 
+                Context::loggedInIdentityId(), 
+                null)) {
+                    
+                $this->flashMessage('success', __('New entry was created.', true));
+            } else {
+                $this->flashMessage('error', __('New entry could not be created.', true));
             }
-            $this->flashMessage('success', __('New entry was created.', true));
+        } else {
+            if(isset($this->params['named']['modus'])) {
+                $this->Session->write('entry_add_modus', $this->params['named']['modus']);
+            }
         }
         
         $this->redirect($this->referer());

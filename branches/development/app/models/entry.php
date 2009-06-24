@@ -21,6 +21,24 @@ class Entry extends AppModel {
 
     
     /**
+     * Adding a new entry
+     *
+     * @param string $type of the entry
+     * @param int $identity_id of the owner
+     * @param int $restricted
+     *
+     * @return bool
+     */
+    public function add($type, $data, $identity_id, $restricted = false) {
+        switch($type) {
+            case 'micropublish':
+                return $this->addMicropublish($identity_id, $data['text'], $restricted);
+            
+            case 'link':
+                return $this->addLink($identity_id, $data['description'], $data['url'], $restricted);
+        }
+    }
+    /**
      * updates the entries
      *
      * @param int $account_id
@@ -490,6 +508,26 @@ class Entry extends AppModel {
             }
         }
         return $text;
+    }
+    
+    public function addLink($identity_id, $description, $url, $restricted = false) {
+        if(is_null($restricted)) {
+            $restricted = $this->getRestricted($identity_id);
+        }
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'service_type_id' => 2,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $description,
+            'url'             => $url,
+            'uid'             => md5($url),
+            'content'         => '<a href="' . $url . '">' . $description . '</a>',
+            'restricted'      => $restricted
+        );
+        
+        $this->create();
+        return $this->save($data);
     }
     
     public function addNoseRub($identity_id, $value, $restricted = false) {

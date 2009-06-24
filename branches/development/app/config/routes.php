@@ -54,7 +54,7 @@ Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('plugin
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
 Router::connect('/search', array('controller' => 'searches', 'action' => 'index'));
-Router::connect('/entry/add/', array('controller' => 'entries', 'action' => 'add'));
+Router::connect('/entry/add/*', array('controller' => 'entries', 'action' => 'add'));
 Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view'));
 
 Router::connect('/admins/:action', array('controller' => 'admins'));

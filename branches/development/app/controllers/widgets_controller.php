@@ -99,6 +99,8 @@ class WidgetsController extends AppController {
  	 * Form to add an entry
  	 */ 
  	public function form_add_entry() {
+ 	    $this->loadModel('ServiceType');
+ 	    $this->set('filters', $this->ServiceType->getFilters());
  	}
  	
  	/**
