@@ -96,6 +96,19 @@ class Context {
         return '';
     }
     
+    public static function entryAddModus($modus = null) {
+        if(is_null($modus)) {
+            $modus = Configure::read('context.entry_add_modus');
+            if(!$modus) {
+                $modus = 'micropublish';
+            }
+        } else {
+            Configure::write('context.entry_add_modus', $modus);
+        }
+        
+        return $modus;
+    } 
+    
     /*
      * Returns a copy of the whole context for usage in JS.
      * Because of this, some fields like the users hashed password
@@ -144,5 +157,5 @@ Configure::write('context', array(
     'is_self' => false, // wether the identity we look at is the logged in identity
     'is_guest' => false, // wether the identity only logged in with OpenID, without account
     'admin_id' => false, // wether the identity is logged in with admin access right now,
-    'page_structure' => array() // on which page/subpage are we?
+    'page_structure' => array(), // on which page/subpage are we?
 ));

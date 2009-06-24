@@ -259,6 +259,8 @@ class AppController extends Controller {
         Context::write('language', $this->Session->read('Config.language'));
         
         Context::write('params', $this->params);
+        
+        Context::entryAddModus($this->Session->read('entry_add_modus'));
     }
     
 	private function autoLogin() {
