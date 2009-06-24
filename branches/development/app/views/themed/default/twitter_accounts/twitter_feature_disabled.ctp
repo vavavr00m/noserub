@@ -1,8 +1,8 @@
-<div id="inhalt">
-	<div id="left">
+<div id="bd-main" class="with-sidebar">
+	<div id="bd-main-bd">
 		Twitter feature is not enabled in your network.
 	</div>
-</div>
-<div id="rechts">
-    <?php echo $noserub->widgetSettingsNavigation(); ?>
+	<div id="bd-main-sidebar">
+		<?php echo $noserub->widgetSettingsNavigation(); ?>
+	</div>
 </div>

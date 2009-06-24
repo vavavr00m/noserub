@@ -1,5 +1,5 @@
-<div id="inhalt">
-	<div id="left">
+<div id="bd-main" class="with-sidebar">
+	<div id="bd-main-bd">
 		<?php if ($hasTwitterAccount): ?>
 			Twitter-Account defined.
 			<ul>
@@ -11,7 +11,7 @@
 			<?php echo $form->end(); ?>
 		<?php endif; ?>
 	</div>
-</div>
-<div id="rechts">
-    <?php echo $noserub->widgetSettingsNavigation(); ?>
+	<div id="bd-main-sidebar">
+		<?php echo $noserub->widgetSettingsNavigation(); ?>
+	</div>
 </div>

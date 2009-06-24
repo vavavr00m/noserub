@@ -87,14 +87,15 @@ html, body {
 	list-style-type:none;
 }
 #hd li {
-	float:left;
+	display:inline;
 	line-height:19px;
-	margin-right:1em;
+	margin-left:1em;
 }
 #hd li.lang {
 	background:url(../img/icon_world.png) left center no-repeat;
 	float:right;
-	margin-right:0;
+	margin-left:0;
+	margin-top:10px;
 	padding-left:49px;
 }
 #hd li.lang div.submit {
@@ -186,9 +187,12 @@ html, body {
 	width:990px;
 }
 #bd-main {
-	background:#fff url(../img/vr_bd_main_sidebar_bottom.png) 505px bottom no-repeat;
+	background-color:#fff;
 	float:right;
 	width:790px;
+}
+#bd-main.with-sidebar {
+	background:#fff url(../img/vr_bd_main_sidebar_bottom.png) 505px bottom no-repeat;
 }
 #bd-main h2 {
 	border-bottom:2px solid #eee;
@@ -413,6 +417,7 @@ html, body {
 	color:#a5d9e8;
 	float:left;
 	font-weight:bold;
+	outline:none;
 	padding:.5em 1.5em;
 	text-decoration:none;
 }
@@ -561,8 +566,11 @@ html, body {
  */
 #bd-main-bd {
 	color:#333;
-	float:left;
 	padding:35px 20px 35px 15px;
+	width:755px;
+}
+#bd-main.with-sidebar #bd-main-bd {
+	float:left;
 	width:470px;
 }
 #bd-main-bd .photos {
