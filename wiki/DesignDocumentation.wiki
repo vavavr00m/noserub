@@ -24,3 +24,11 @@ http://noserub.googlecode.com/svn/wiki/uml/locations.png
 
 The Locations sub-system is trivial: an Identity can define multiple Locations, plus we are interested in the latest 
 Location the Identity set.
+
+=Twitter Account=
+
+http://noserub.googlecode.com/svn/wiki/uml/twitteraccount.png
+
+Each Identity can specify one TwitterAccount to which the Identity's messages are forwarded. In NoseRub 0.8, the 
+TwitterAccount stores username/password to authenticate with Twitter whereas in NoseRub 0.9 the authentication will 
+happen via OAuth. 
