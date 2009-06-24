@@ -5,6 +5,27 @@ class EntriesController extends AppController {
     
     
     /**
+     * Adding an entry
+     */
+    public function add() {
+        $this->grantAccess('guest');
+        
+        if($this->RequestHandler->isPost()) {
+            $this->ensureSecurityToken();
+            
+            $identity_id = Context::loggedInIdentityId();
+            
+            switch($this->data['service_type']) {
+                case 'micropublish':
+                    $this->Entry->addMicropublish($identity_id, $this->data['text'], null);
+            }
+            $this->flashMessage('success', __('New entry was created.', true));
+        }
+        
+        $this->redirect($this->referer());
+    }
+     
+    /**
      * This is the page /:username/activities
      */
     public function profile() {
