@@ -1,5 +1,5 @@
 <div>
-	<form id="IdentityPagesLoginForm" method="post" action="/pages/login/">
+    <?php echo $form->create(array('url' => '/pages/login/')); ?>
 	    <fieldset>
 	        <?php echo $form->input('Identity.username'); ?>
 	        <?php echo $form->input('Identity.password', array('type' => 'password')); ?>
