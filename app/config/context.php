@@ -110,13 +110,21 @@ class Context {
         unset($data['logged_in_identity']['password_recovery_hash']);
         unset($data['logged_in_identity']['security_token']);
         unset($data['logged_in_identity']['hash']);
+        unset($data['logged_in_identity']['api_active']);
         unset($data['logged_in_identity']['api_hash']);
         
         unset($data['identity']['password']);
         unset($data['identity']['password_recovery_hash']);
         unset($data['identity']['security_token']);
         unset($data['identity']['hash']);
+        unset($data['identity']['api_active']);
         unset($data['identity']['api_hash']);
+        unset($data['identity']['email']);
+        unset($data['identity']['notify_comment']);
+        unset($data['identity']['notify_contact']);
+        unset($data['identity']['notify_favorite']);
+        unset($data['identity']['overview_filters']);
+        unset($data['identity']['address']);
         
         return $data;
     }
