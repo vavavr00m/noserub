@@ -91,6 +91,11 @@ html, body {
 	line-height:19px;
 	margin-left:1em;
 }
+#hd li.left {
+	float:left;
+	margin-left:0;
+	margin-right:1em;
+}
 #hd li.lang {
 	background:url(../img/icon_world.png) left center no-repeat;
 	float:right;
@@ -115,6 +120,27 @@ html, body {
 #hd li.lang a {
 	background:url(../img/icon_lang.png) right center no-repeat;
 	padding-right:12px;
+}
+#hd li.lang ul.lang-list {
+	background-color:#fff;
+	border-bottom:1px solid #ddd;
+	border-right:1px solid #ddd;
+	float:left;
+	padding:3px;
+	position:absolute;
+}
+#hd ul.lang-list li {
+	display:block;
+	line-height:1.5em;
+	margin:0;
+}
+#hd ul.lang-list li.selected {
+	background-color:#eee;
+}
+#hd ul.lang-list a {
+	background:none;
+	display:block;
+	padding:0 15px 0 30px;
 }
 #hd > form {
 	clear:both;
