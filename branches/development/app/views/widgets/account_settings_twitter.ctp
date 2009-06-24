@@ -13,7 +13,7 @@
        discuss this issue!'); ?>
     </p>
     <form method="POST" action="<?php echo $this->here; ?>">
-        <input type="hidden" name="security_token" value="<?php echo $noserub->fnSecurityToken(); ?>">
+        <?php echo $noserub->fnSecurityTokenInput(); ?>
         <fieldset>
             <?php echo $form->checkbox('TwitterAccount.bridge_active'); ?><?php __('Post my <em>what are you doing</em> entries to Twitter.com'); ?>
     		<?php echo $form->input('TwitterAccount.username', array('label' => 'Twitter Username')); ?>

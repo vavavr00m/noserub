@@ -56,27 +56,14 @@ class NoserubHelper extends AppHelper {
      * TODO: think about adding a whitelist
      */
     public function __call($name, $arguments) {
-        $name = str_replace('widget', '', $name);
+        if(strpos($name, 'widget') === 0) {
+            $name = str_replace('widget', '', $name);
+        } 
+        
         $name = Inflector::underscore($name);
         
         return $this->out('/widgets/' . $name, $arguments);
     }    
-    
-    public function formNetworks() {
-        return $this->out('/widgets/form_networks/');
-    }
-    
-    public function formAdminSettings() {
-        return $this->out('/widgets/form_admin_settings/');
-    }
-    
-    public function formGroupAdd() {
-        return $this->out('/widgets/form_groups_add/');
-    }
-    
-    public function formAccounts() {
-        return $this->out('/widgets/form_accounts/');
-    }
     
     public function fnAvatarBaseUrl() {
         return Context::read('avatar_base_url');
@@ -114,6 +101,10 @@ class NoserubHelper extends AppHelper {
     
     public function fnSecurityToken() {
         return Context::read('security_token');
+    }
+    
+    public function fnSecurityTokenInput() {
+        return '<input type="hidden" name="security_token" value="' . $this->fnSecurityToken() . '" />';
     }
     
     public function link($url) {

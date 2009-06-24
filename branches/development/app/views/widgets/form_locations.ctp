@@ -6,7 +6,7 @@
 </p>
 <?php
 echo $form->create(array('url' => '/settings/locations/add/'));
-echo '<input type="hidden" name="security_token" value="' . $noserub->fnSecurityToken() . '" />';
+echo $noserub->fnSecurityTokenInput();
 echo $form->input('Location.name', array('label' => __('Name', true), 'size' => 64));
 echo $form->input('Location.address', array('label' => __('Address', true), 'size' => 64));
 echo $form->end(array('label' => __('Create Location', true))); 

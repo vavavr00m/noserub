@@ -1,7 +1,7 @@
 <h2><?php __('Add new account'); ?></h2>
 <?php 
 echo $form->create(array('url' => '/settings/accounts/add/'));
-echo '<input type="hidden" name="security_token" value="' . $noserub->fnSecurityToken() . '" />';
+echo $noserub->fnSecurityTokenInput();
 echo $form->input('service_id', array('label' => __('Service', true), 'type' => 'select', 'options' => $services));
 echo $form->input('username', array('label' => __('Username', true)));
 echo $form->input('label', array('label' => __('Label', true) . ' (' . __('optional', true) . ')'));
@@ -10,7 +10,7 @@ echo $form->end(array('label' => __('Add', true)));
 <h2><?php __('Auto discover Profile URL'); ?></h2>
 <?php
 echo $form->create(array('url' => '/settings/accounts/add/'));
-echo '<input type="hidden" name="security_token" value="' . $noserub->fnSecurityToken() . '" />';
+echo $noserub->fnSecurityTokenInput();
 echo $form->input(
     'url', 
     array(
