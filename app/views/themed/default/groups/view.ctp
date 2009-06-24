@@ -1,13 +1,15 @@
-<div id="bd-main-hd">
-    <h2><?php __('Groups'); ?></h2>
-</div>
-<div id="bd-main-bd">
-    <?php echo $noserub->widgetFlashMessage(); ?>
-    <?php echo $noserub->widgetGroupsOverview(); ?>
-</div>
+<div id="bd-main-bd" class="with-sidebar">
+	<div id="bd-main-hd">
+		<h2><?php __('Groups'); ?></h2>
+	</div>
+	<div id="bd-main-bd">
+    	<?php echo $noserub->widgetFlashMessage(); ?>
+		<?php echo $noserub->widgetGroupsOverview(); ?>
+	</div>
 
-<div id="bd-main-sidebar">
-    <?php echo $noserub->widgetPopularGroups(); ?>
-    <?php echo $noserub->widgetNewGroups(); ?>
-    <?php echo $noserub->widgetGroups(); ?>
+	<div id="bd-main-sidebar">
+		<?php echo $noserub->widgetPopularGroups(); ?>
+		<?php echo $noserub->widgetNewGroups(); ?>
+		<?php echo $noserub->widgetGroups(); ?>
+	</div>
 </div>
