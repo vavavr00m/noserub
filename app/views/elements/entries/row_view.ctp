@@ -36,7 +36,8 @@
             echo $intro; 
         ?>
     </span>
-	<?php if($item['Entry']['service_type_id'] == 1) { ?>
+	<?php if($item['Entry']['service_type_id'] == 1 ||
+	    (!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == 3)) { ?>
 		<span>
 			<br />
         	<?php echo $item['Entry']['content']; ?>
