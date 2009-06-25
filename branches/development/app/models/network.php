@@ -36,6 +36,18 @@ class Network extends AppModel {
         ));        
 	}
 	
+	public function getNumberOfUsers($network_id) {
+		$this->Identity->contain();
+        $conditions = array(
+            'network_id' => $network_id,
+            'email <>'   => '',
+            'hash'       => '',
+            'NOT username LIKE "%@"'
+        );
+        
+        return $this->Identity->find('count', array('conditions' => $conditions));
+	}
+	
 	public function getSubscribable() {
 		return $this->find('all',array(
             'contain' => array(

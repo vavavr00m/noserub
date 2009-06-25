@@ -14,7 +14,7 @@ class SystemController extends ApiAppController {
     	if (Context::read('network.api_info_active')) {
             $restricted_hosts = Context::read('network.registration_restricted_hosts');
             $data = array(
-                'num_users' => $this->getNumberOfUsers(),
+                'num_users' => $this->Identity->Network->getNumberOfUsers(Context::read('network.id')),
                 'registration_type' => Context::read('network.registration_type'),
                 'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
                 'migration' => $this->Migration->getCurrentMigration(),
@@ -24,17 +24,5 @@ class SystemController extends ApiAppController {
         
         $this->set('data', $data);
         $this->Api->render();
-    }
-    
-    private function getNumberOfUsers() {
-    	$this->Identity->contain();
-        $conditions = array(
-            'network_id' => Context::read('network.id'),
-            'email <>'   => '',
-            'hash'       => '',
-            'NOT username LIKE "%@"'
-        );
-        
-        return $this->Identity->find('count', array('conditions' => $conditions));
     }
 }
