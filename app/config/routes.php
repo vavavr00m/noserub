@@ -28,7 +28,7 @@ Router::connect('/pages/password/set/*', array('controller' => 'identities', 'ac
 
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
 
-Router::connect('/api/:result_type/info/', array('plugin' => 'api', 'controller' => 'system', 'action' => 'info'));
+Router::connect('/api/:result_type/info/', array('plugin' => 'api', 'controller' => 'network_info', 'action' => 'info'));
 Router::connect('/api/:result_type/comments/', array('plugin' => 'api', 'controller' => 'comments', 'action' => 'get_comments'));
 Router::connect('/api/:result_type/favorites/', array('plugin' => 'api', 'controller' => 'favorites', 'action' => 'get_favorites'));
 
