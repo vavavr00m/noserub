@@ -2,7 +2,10 @@
 /* SVN FILE: $Id:$ */
  
 class Entry extends AppModel {
-    public $belongsTo = array('Identity', 'Account', 'ServiceType');
+    public $belongsTo = array(
+        'Identity', 'Account', 
+        'ServiceType', 'Group'
+    );
     
     public $hasMany = array(
         'Comment', 
@@ -29,16 +32,17 @@ class Entry extends AppModel {
      *
      * @return bool
      */
-    public function add($type, $data, $identity_id, $restricted = false) {
+    public function add($type, $data, $identity_id, $group_id = 0, $restricted = false) {
+        // @todo check that $identity_id is subscribed to $group_id
         switch($type) {
             case 'micropublish':
-                return $this->addMicropublish($identity_id, $data['text'], $restricted);
+                return $this->addMicropublish($identity_id, $data['text'], $group_id, $restricted);
             
             case 'link':
-                return $this->addLink($identity_id, $data['description'], $data['url'], $restricted);
+                return $this->addLink($identity_id, $data['description'], $data['url'], $group_id, $restricted);
                 
             case 'text':
-                return $this->addText($identity_id, $data['title'], $data['text'], $restricted);
+                return $this->addText($identity_id, $data['title'], $data['text'], $group_id, $restricted);
         }
         
         return false;
@@ -390,7 +394,7 @@ class Entry extends AppModel {
         }
     }
     
-    public function addMicropublish($identity_id, $text, $restricted = false) {
+    public function addMicropublish($identity_id, $text, $group_id = 0, $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
@@ -402,6 +406,7 @@ class Entry extends AppModel {
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
+            'group_id'        => $group_id,
             'service_type_id' => 5,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $with_markup,
@@ -515,13 +520,14 @@ class Entry extends AppModel {
         return $text;
     }
     
-    public function addLink($identity_id, $description, $url, $restricted = false) {
+    public function addLink($identity_id, $description, $url, $group_id = 0, $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
+            'group_id'        => $group_id,
             'service_type_id' => 2,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $description,
@@ -535,13 +541,14 @@ class Entry extends AppModel {
         return $this->save($data);
     }
     
-    public function addText($identity_id, $title, $text, $restricted = false) {
+    public function addText($identity_id, $title, $text, $group_id = 0, $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
+            'group_id'        => $group_id,
             'service_type_id' => 3,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $title,

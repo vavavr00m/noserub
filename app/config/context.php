@@ -36,6 +36,10 @@ class Context {
         return Configure::read('context.admin_id') != 0;
     }
     
+    public static function isLoggedIn() {
+        return Context::loggedInIdentityId() > 0;
+    }
+    
     public static function loggedInIdentityId() {
         return Configure::read('context.logged_in_identity.id');
     }
@@ -108,6 +112,16 @@ class Context {
         
         return $modus;
     } 
+    
+    public static function groupId() {
+        $group_id = Configure::read('context.group.id');
+        
+        return $group_id ? $group_id : 0;
+    }
+    
+    public static function groupSlug() {
+        return Configure::read('context.group.slug');
+    }
     
     /*
      * Returns a copy of the whole context for usage in JS.

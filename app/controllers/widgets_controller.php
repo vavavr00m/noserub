@@ -100,7 +100,12 @@ class WidgetsController extends AppController {
  	 */ 
  	public function form_add_entry() {
  	    $this->loadModel('ServiceType');
- 	    $this->set('filters', $this->ServiceType->getFilters());
+	    $filters = $this->ServiceType->getFilters();
+ 	    unset($filters['audio']);
+ 	    unset($filters['noserub']);
+ 	    unset($filters['video']);
+ 	    unset($filters['document']);
+ 	    $this->set('filters', $filters);
  	}
  	
  	/**
@@ -169,6 +174,20 @@ class WidgetsController extends AppController {
  	}
  	
  	public function form_groups_add() {
+ 	}
+ 	
+ 	public function group_overview() {
+ 	    if(Context::groupId()) {
+ 	        $this->loadModel('Entry');
+     	    $this->set('data', $this->Entry->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'Entry.group_id' => Context::groupId()
+                ),
+                'order' => 'Entry.published_on DESC',
+                'limit' => 10
+            )));
+        }
  	}
  	
  	public function groups_overview() {
