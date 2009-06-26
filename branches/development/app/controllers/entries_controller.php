@@ -16,7 +16,8 @@ class EntriesController extends AppController {
             if($this->Entry->add(
                 $this->data['Entry']['service_type'], 
                 $this->data['Entry'], 
-                Context::loggedInIdentityId(), 
+                Context::loggedInIdentityId(),
+                $this->data['Entry']['group_id'], 
                 null)) {
                     
                 $this->flashMessage('success', __('New entry was created.', true));

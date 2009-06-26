@@ -4,6 +4,8 @@
 class Group extends AppModel {
     public $belongsTo = array('Network');
     
+    public $hasMany = array('Entry');
+    
     public $hasAndBelongsToMany = array(
         'GroupSubscriber' => array(
             'className'  => 'Identity',

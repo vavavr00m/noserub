@@ -6,6 +6,7 @@ Router::connect('/jobs/send_mail/', array('controller' => 'mails', 'action' => '
 
 Router::connect('/widgets/:action', array('controller' => 'widgets'));
 
+Router::connect('/groups/entry/:slug/*', array('controller' => 'entries', 'action' => 'view'));
 Router::connect('/groups/:action', array('controller' => 'groups'));
 
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));

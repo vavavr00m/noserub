@@ -34,14 +34,21 @@ class GroupsController extends AppController {
     public function view($slug) {
         $this->Group->contain();
         $group = $this->Group->find('first', array(
+            'contain' => false,
             'conditions' => array(
                 'network_id' => Context::networkId(),
                 'slug' => strtolower($slug)
             ),
-            'fields' => 'Group.id'
         ));
         if(!$group) {
             $this->redirect('/groups/');
         }
+        
+        Context::write('group', array(
+            'id' => $group['Group']['id'],
+            'slug' => $slug
+        ));
+        
+        $this->set('group', $group);
     }
 }

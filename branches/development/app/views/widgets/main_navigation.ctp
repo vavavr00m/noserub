@@ -37,7 +37,7 @@
             <?php if($groups) { ?>
                 <ul>
                     <?php foreach($groups as $group) { ?>
-                        <li><?php echo $html->link($group['name'], '/groups/' . $group['slug']); ?></li>
+                        <li><?php echo $html->link($group['name'], '/groups/view/' . $group['slug']); ?></li>
                     <?php } ?>
                 </ul>
             <?php } ?>
