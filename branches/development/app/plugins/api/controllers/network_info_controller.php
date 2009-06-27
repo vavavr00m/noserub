@@ -22,6 +22,5 @@ class NetworkInfoController extends ApiAppController {
         }
         
         $this->set('data', $data);
-        $this->Api->render();
     }
 }
