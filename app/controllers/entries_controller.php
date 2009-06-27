@@ -32,7 +32,7 @@ class EntriesController extends AppController {
         
         $this->redirect($this->referer());
     }
-     
+    
     /**
      * This is the page /:username/activities
      */
@@ -48,62 +48,34 @@ class EntriesController extends AppController {
     public function view($entry_id) {
         $this->checkUnsecure();
         
-        $session_identity = $this->Session->read('Identity');
+        Context::write('entry.id', $entry_id);
+
+        // check, if this belongs to a group
+        $this->Entry->id = $entry_id;
+        $group_id = $this->Entry->field('group_id');    
         
-        if(isset($this->data['Comment']['content'])) {
-            # a comment was posted
-            
-            # make sure, that the correct security token is set
-            $this->ensureSecurityToken();
-            
-            if(!$session_identity) {
-                $this->flashMessage('alert', __('You need to be logged in to add a comment.', true));
-            } else if(!$this->data['Comment']['content']) {
-                $this->flashMessage('alert', __('You forgot to write something.', true));
-            } else {
-                $this->flashMessage('success', __('Comment added.', true));
-                
-                $data = array(
-                    'entry_id'     => $entry_id,
-                    'identity_id'  => $session_identity['id'],
-                    'content'      => $this->data['Comment']['content'],
-                    'published_on' => date('Y-m-d H:m:i')
-                );
-                $this->Entry->Comment->createForAll($data);
-                $this->data = array();
-                
-                $this->Entry->addComment($session_identity['id'], $entry_id);
-            }
-            
-        } 
-        
-        $this->Entry->contain(
-            'Identity', 'Account', 'ServiceType',
-            'FavoritedBy', 'Comment'
-        );
-        
-        $data = $this->Entry->findById($entry_id);
-        if($data) {
-            $data = $this->Entry->Identity->addIdentity('FavoritedBy', $data);
-            $data = $this->Entry->Identity->addIdentity('Comment', $data);
-        
-            # go through all favorites. if it's the current identity, set a marker
-            foreach($data['FavoritedBy'] as $item) {
-                if($session_identity['id'] == $item['identity_id']) {
-                    $this->set('already_marked', true);
-                    break;
-                }
-            }
+        if($group_id && empty($this->params['slug'])) {
+            // this entry belongs to a group, but
+            // the URL has no group slug
+            $this->Entry->Group->id = $group_id;
+            $slug = $this->Entry->Group->field('slug');
+            $this->redirect('/groups/entry/' . $slug . '/' . $entry_id);
         }
-        $this->set('data', $data);
-        $this->set('base_url_for_avatars', $this->Entry->Identity->getBaseUrlForAvatars());
-        $this->set('session_identity', $session_identity);
         
-        if(isset($data['Identity']['id']) && 
-           $session_identity['id'] == $data['Identity']['id']) {
-               $this->set('headline', __('Edit your entry', true));
-           } else {
-               $this->set('headline', __('Permalink', true));
+        if($group_id) {
+            $this->set(
+                'group', 
+                $this->Entry->Group->find('first', array(
+                    'contain' => false,
+                    'conditions' => array(
+                        'Group.id' => $group_id
+                    )
+                ))
+            );
+            
+            $this->render('group_view');
+        } else {
+            $this->render('view');
         }
     }
     
