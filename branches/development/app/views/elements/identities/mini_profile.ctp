@@ -12,7 +12,7 @@ if($data['photo']) {
            # contains a complete path, eg. from not local identities
            $profile_photo = $data['photo'];
        } else {
-           $profile_photo = $base_url_for_avatars . $data['photo'] . '.jpg';
+           $profile_photo = $noserub->fnAvatarBaseUrl() . $data['photo'] . '.jpg';
        }
 } else {
 	App::import('Vendor', 'sex');

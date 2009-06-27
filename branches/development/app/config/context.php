@@ -113,6 +113,12 @@ class Context {
         return $modus;
     } 
     
+    public static function entryId() {
+        $entry_id = Configure::read('context.entry.id');
+        
+        return $entry_id ? $entry_id : 0;
+    }
+    
     public static function groupId() {
         $group_id = Configure::read('context.group.id');
         

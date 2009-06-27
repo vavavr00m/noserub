@@ -109,6 +109,47 @@ class WidgetsController extends AppController {
  	}
  	
  	/**
+ 	 * Display an entry with all comments and favorites
+ 	 */
+ 	public function view_entry() {
+ 	    $this->loadModel('Entry');
+ 	    
+        $data = $this->Entry->find('first', array(
+            'contain' => array(
+                'Identity', 'Account', 'ServiceType',
+                'FavoritedBy', 'Comment'
+            ),
+            'conditions' => array(
+                'Entry.id' => Context::entryId()
+        )));
+        
+        if($data) {
+            $data = $this->Entry->Identity->addIdentity('FavoritedBy', $data);
+            $data = $this->Entry->Identity->addIdentity('Comment', $data);
+        
+            # go through all favorites. if it's the current identity, set a marker
+            foreach($data['FavoritedBy'] as $item) {
+                if(Context::loggedInIdentityId() == $item['identity_id']) {
+                    $this->set('already_marked', true);
+                    break;
+                }
+            }
+        }
+        $this->set('data', $data);
+ 	}
+ 	
+ 	/**
+ 	 * Comments
+ 	 */
+ 	 
+ 	/**
+ 	 * form to add a comment to an entry
+ 	 */
+ 	public function form_add_comment() {
+ 	    
+ 	}
+ 	
+ 	/**
  	 * User Settings
  	 */
  	 

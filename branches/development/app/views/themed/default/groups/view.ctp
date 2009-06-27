@@ -1,4 +1,4 @@
-<div id="bd-main-bd" class="with-sidebar">
+<div id="bd-main" class="with-sidebar">
 	<div id="bd-main-hd">
 		<h2><?php echo __('Group') . ': ' . $group['Group']['name']; ?></h2>
 	</div>
