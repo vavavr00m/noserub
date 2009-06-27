@@ -2,6 +2,7 @@
    
 class NetworkInfoController extends ApiAppController {
 	public $uses = array('Identity', 'Migration');
+	public $helpers = array('Xml');
 	
 	/**
      * used to return number of registered, active users, and some other
@@ -19,6 +20,9 @@ class NetworkInfoController extends ApiAppController {
                 'migration' => $this->Migration->getCurrentMigration(),
                 'allow_subscriptions' => Context::read('network.allow_subscriptions')
             );
+        } else {
+        	$data = array('error' => 'Info-API is disabled');
+        	header("HTTP/1.0 403 Forbidden");
         }
         
         $this->set('data', $data);
