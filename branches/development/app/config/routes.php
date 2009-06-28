@@ -8,7 +8,7 @@ Router::connect('/widgets/:action', array('controller' => 'widgets'));
 
 Router::connect('/groups/entry/:slug/*', array('controller' => 'entries', 'action' => 'view'));
 Router::connect('/groups/:action', array('controller' => 'groups'));
-Router::connect('/comment/:action', array('controller' => 'comments'));
+Router::connect('/comments/:action', array('controller' => 'comments'));
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
 
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
