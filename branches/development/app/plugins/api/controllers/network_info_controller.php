@@ -16,13 +16,13 @@ class NetworkInfoController extends ApiAppController {
             $data = array(
                 'num_users' => $this->Identity->Network->getNumberOfUsers(Context::read('network.id')),
                 'registration_type' => Context::read('network.registration_type'),
-                'restricted_hosts'  => $restricted_hosts ? 'yes' : 'no',
+                'restricted_hosts'  => $restricted_hosts ? true : false,
                 'migration' => $this->Migration->getCurrentMigration(),
-                'allow_subscriptions' => Context::read('network.allow_subscriptions')
+                'allow_subscriptions' => Context::read('network.allow_subscriptions') ? true : false
             );
         } else {
         	$data = array('error' => 'Info-API is disabled');
-        	header("HTTP/1.0 403 Forbidden");
+        	header("HTTP/1.0 503 Service Unavailable");
         }
         
         $this->set('data', $data);
