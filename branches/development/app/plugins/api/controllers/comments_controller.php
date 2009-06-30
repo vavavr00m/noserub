@@ -2,6 +2,7 @@
 
 class CommentsController extends ApiAppController {
 	public $uses = array('Comment');
+	const MAX_RECENT_COMMENTS = 100;
 	
 	/**
 	 * return the last 100 comments
@@ -9,14 +10,7 @@ class CommentsController extends ApiAppController {
 	 * todo: make this configurable by date (eg. get all comments since 2008-12-01 12:34:29)
 	 */
 	public function get_comments() {
-		$this->Comment->contain('Entry', 'Identity');
-		$comments = $this->Comment->find(
-			'all',
-			array(
-				'order'  => 'Comment.published_on DESC',
-				'limit'  => 100
-			)
-		);
+		$comments = $this->Comment->getRecent(self::MAX_RECENT_COMMENTS);
 
 		$this->set('data', $this->cleanUpData($comments));
 		$this->Api->render();

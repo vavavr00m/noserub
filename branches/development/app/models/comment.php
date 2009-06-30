@@ -49,6 +49,13 @@ class Comment extends AppModel {
         return $this->deleteAll(array('Comment.entry_id' => $entry_id));
     }
     
+    public function getRecent($limit) {
+    	$this->contain('Entry', 'Identity');
+		
+    	return $this->find('all', array('order' => 'Comment.published_on DESC', 
+    									'limit' => $limit));
+    }
+    
     /**
      * poll new comments from networks
      */
