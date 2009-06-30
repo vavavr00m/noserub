@@ -47,6 +47,7 @@
             
         case 'photo':
             echo $this->element('webcam_snapshot');
+            echo '<h3>' . __('Upload Photo', true) . '</h3>';
             break;
     }
 

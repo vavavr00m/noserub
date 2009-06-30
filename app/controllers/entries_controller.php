@@ -9,20 +9,41 @@ class EntriesController extends AppController {
      */
     public function add() {
         $this->grantAccess('guest');
-        
         if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
-            
-            if($this->Entry->add(
+            if(!$this->data) {
+                // this is probably a webcam upload
+                $data = $GLOBALS["HTTP_RAW_POST_DATA"];
+                $title = urldecode($this->params['named']['title']);
+                $filename = md5(uniqid()) . '.jpg';
+                $path = PHOTO_DIR . $filename;
+                $group_id = isset($this->params['named']['group_id']) ? $this->params['named']['group_id'] : 0;
+                if(file_put_contents($path, $data)) {
+                    $this->log('after put', LOG_DEBUG);
+                    $this->Entry->add(
+                        'webcam',
+                        array(
+                            'filename' => $filename,
+                            'title' => $title
+                        ),
+                        Context::loggedInIdentityId(),
+                        $group_id,
+                        null
+                    );
+                    $this->flashMessage('success', __('Photo was uploaded', true));
+                } else {
+                    $this->flashMessage('alert', __('Could not upload photo', true));
+                }
+            } else if($this->Entry->add(
                 $this->data['Entry']['service_type'], 
                 $this->data['Entry'], 
                 Context::loggedInIdentityId(),
                 $this->data['Entry']['group_id'], 
                 null)) {
                     
-                $this->flashMessage('success', __('New entry was created.', true));
+                $this->flashMessage('success', __('New entry was created', true));
             } else {
-                $this->flashMessage('error', __('New entry could not be created.', true));
+                $this->flashMessage('alert', __('New entry could not be created', true));
             }
         } else {
             $is_group = isset($this->params['named']['is_group']) ? $this->params['named']['is_group'] : false;

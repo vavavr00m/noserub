@@ -1,5 +1,5 @@
 function noserub_theme_start(context) {
-	if(console) {
+	if(typeof console != "undefined") {
     	console.dir(context);
 	}
 	
