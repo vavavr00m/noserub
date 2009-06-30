@@ -645,8 +645,15 @@ class Entry extends AppModel {
         $this->addNoseRub($identity_id, $message, $restricted);
     }
     
-    /**
-     */
+    public function addGroup($identity_id, $group_id, $restriced = false) {
+        $this->Group->id = $group_id;
+        $slug = $this->Group->field('slug');
+        $name = $this->Group->field('name');
+        
+        $message = sprintf(__('created a new group: %s', true), '<a href="' . Router::url('/groups/view/' . $slug) . '">' . $name . '</a>');
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
     public function getMessage($entry) {
         $this->Identity->contain();
         $fields = array(

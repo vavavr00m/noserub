@@ -34,11 +34,11 @@ class Identity extends AppModel {
                 'associationForeignKey' => 'group_id' 
             ),
             'SubscribedNetwork' => array(
-                            'className' => 'Network',
-                            'joinTable' => 'network_subscriptions',
-                            'foreignKey' => 'identity_id',
-                            'associationForeignKey' => 'network_id'
-                        )
+                'className' => 'Network',
+                'joinTable' => 'network_subscriptions',
+                'foreignKey' => 'identity_id',
+                'associationForeignKey' => 'network_id'
+            )
     );
     
     public $validate = array(
@@ -610,7 +610,7 @@ class Identity extends AppModel {
     /**
      * removes http://, https:// and www. from url
      */
-    public function removeHttpWww($url) {
+    public static function removeHttpWww($url) {
     	App::import('Vendor', 'UrlUtil');
     	$url = UrlUtil::removeHttpAndHttps($url);
         if(stripos($url, 'www.') === 0) {
@@ -631,7 +631,7 @@ class Identity extends AppModel {
      */
     public function splitUsername($username, $assume_local = true) {
         # first, remove http://, https:// and www.
-        $username = $this->removeHttpWww($username);
+        $username = Identity::removeHttpWww($username);
         
         # remove trailing slashes
         $username = trim($username, '/');
@@ -648,7 +648,7 @@ class Identity extends AppModel {
             # be for this server
             $local_username = $splitted[0];
             $servername = FULL_BASE_URL;
-            $servername = $this->removeHttpWww($servername);
+            $servername = Identity::removeHttpWww($servername);
             $username =  $servername . Router::url('/') . $local_username;
         } else {
             $servername = $splitted[0];
@@ -665,7 +665,7 @@ class Identity extends AppModel {
         
         # test, if this is a local contact, or not
         $server_name = FULL_BASE_URL . Router::url('/');
-        $server_name = $this->removeHttpWww($server_name);
+        $server_name = Identity::removeHttpWww($server_name);
         $local = stripos($username, $server_name) === 0;
         $result = array(
             'username'        => $username,
@@ -759,7 +759,7 @@ class Identity extends AppModel {
             unset($vcard[$key]);
         }
         $server = array(
-            'base_url' => trim($this->removeHttpWww(FULL_BASE_URL . Router::url('/')), '/'),
+            'base_url' => trim(Identity::removeHttpWww(FULL_BASE_URL . Router::url('/')), '/'),
             'version'  => 1
         );
         

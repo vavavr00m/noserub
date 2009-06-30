@@ -13,7 +13,7 @@ class Group extends AppModel {
             'foreignKey' => 'group_id',
             'associationForeignKey' => 'identity_id'
         ),
-        'GroupAdmin' => array(
+        'GroupMaintainer' => array(
             'className' => 'Identity',
             'joinTable' => 'group_admins',
             'foreignKey' => 'group_id',
@@ -80,6 +80,26 @@ class Group extends AppModel {
         }
         
         $this->query('INSERT INTO ' . $this->tablePrefix . 'group_subscriptions (group_id, identity_id) VALUES (' . $this->id . ',' . $identity_id . ')');
+    
+        return true;
+    }
+    
+    public function removeSubscriber($identity_id) {
+        if(!$this->exists()) {
+            return false;
+        }
+        $this->GroupSubscriber->id = $identity_id;
+        if(!$this->GroupSubscriber->exists()) {
+            return false;
+        }
+        
+        if($this->isAdmin($identity_id)) {
+            $this->removeAdmin($identity_id);
+        }
+        
+        $data = $this->query('DELETE FROM ' . $this->tablePrefix . 'group_subscriptions WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id) . ' LIMIT 1');
+    
+        return true;
     }
     
     /**
@@ -89,11 +109,71 @@ class Group extends AppModel {
         if(!$this->exists()) {
             return false;
         }
-        $this->GroupAdmin->id = $identity_id;
-        if(!$this->GroupAdmin->exists()) {
+        $this->GroupMaintainer->id = $identity_id;
+        if(!$this->GroupMaintainer->exists()) {
             return false;
         }
         
         $this->query('INSERT INTO ' . $this->tablePrefix . 'group_admins (group_id, identity_id) VALUES (' . $this->id . ',' . $identity_id . ')');
+    
+        return true;
+    }
+    
+    public function removeAdmin($identity_id) {
+        if(!$this->exists()) {
+            return false;
+        }
+        $this->GroupMaintainer->id = $identity_id;
+        if(!$this->GroupMaintainer->exists()) {
+            return false;
+        }
+        
+        $data = $this->query('DELETE FROM ' . $this->tablePrefix . 'group_admins WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id) . ' LIMIT 1');
+    
+        return true;
+    }
+    
+    /**
+     * Returns wether this identity is subscribed to that group
+     *
+     * @param int $identity_id
+     *
+     * @return bool
+     */
+    public function isSubscribed($identity_id) {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        // cant' get to get it work with the CakePHP routines...
+        $data = $this->query('SELECT id FROM ' . $this->tablePrefix . 'group_subscriptions WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id));
+        
+        if(!$data) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Returns wether this identity is admin for that group
+     *
+     * @param int $identity_id
+     *
+     * @return bool
+     */
+    public function isAdmin($identity_id) {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        // cant' get to get it work with the CakePHP routines...
+        $data = $this->query('SELECT id FROM ' . $this->tablePrefix . 'group_admins WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id));
+       
+        if(!$data) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

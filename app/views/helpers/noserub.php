@@ -115,6 +115,9 @@ class NoserubHelper extends AppHelper {
             case '/groups/add/':
                 return $this->linkGroupAdd();
                 
+            case '/groups/manage_subscription/':
+                return $this->linkGroupManageSubscription();
+                
             default:
                 return '';
         }
@@ -140,6 +143,18 @@ class NoserubHelper extends AppHelper {
         }
         
         return $this->html->link(__('Add new group', true), '/groups/add/');
+    }
+    
+    private function linkGroupManageSubscription() {
+        if(!Context::isSubscribed() && Context::groupSlug()) {
+            return $this->html->link(__('Subscribe to this group', true), '/groups/subscribe/' . Context::groupSlug() . '/_t:' . $this->fnSecurityToken());
+        }
+        
+        if(Context::isSubscribed() && Context::groupSlug()) {
+            return $this->html->link(__('Unsubscribe from this group', true), '/groups/unsubscribe/' . Context::groupSlug() . '/_t:' . $this->fnSecurityToken());
+        }
+        
+        return '';
     }
     
     /**

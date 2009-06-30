@@ -214,6 +214,18 @@ class WidgetsController extends AppController {
  	    $this->set('groups', $this->Identity->getSubscribedGroups());
  	}
  	
+ 	public function group_info() {
+ 	    if(Context::groupId()) {
+            $this->loadModel('Group');
+ 	        $this->set('group_info', $this->Group->find('first', array(
+ 	            
+ 	            'conditions' => array(
+ 	                'Group.id' => Context::groupId()
+ 	            )
+ 	        )));
+ 	    }
+ 	}
+ 	
  	public function form_groups_add() {
  	}
  	
