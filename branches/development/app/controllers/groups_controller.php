@@ -23,8 +23,10 @@ class GroupsController extends AppController {
                 'modified', 'created'
             );
             if($this->Group->save($this->data, true, $saveable)) {
-                $this->Group->addSubscriber(Context::loggedInIdentityId());
-                $this->Group->addAdmin(Context::loggedInIdentityId());
+                $identity_id = Context::loggedInIdentityId();
+                $this->Group->addSubscriber($identity_id);
+                $this->Group->addAdmin($identity_id);
+                $this->Group->Entry->addGroup($identity_id, $this->Group->id);
                 
                 $this->redirect('/groups/view/' . $this->Group->field('slug') . '/');
             }
@@ -32,7 +34,6 @@ class GroupsController extends AppController {
     }
     
     public function view($slug) {
-        $this->Group->contain();
         $group = $this->Group->find('first', array(
             'contain' => false,
             'conditions' => array(
@@ -49,6 +50,62 @@ class GroupsController extends AppController {
             'slug' => $slug
         ));
         
+        $this->Group->id = $group['Group']['id'];
+        Context::write(
+            'is_subscribed',
+            $this->Group->isSubscribed(Context::loggedInIdentityId()
+        ));
+        
         $this->set('group', $group);
+    }
+    
+    public function subscribe($slug) {
+        $this->ensureSecurityToken();
+        
+        $group = $this->Group->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'Group.slug' => $slug
+            ),
+            'fields' => 'Group.id'
+        ));
+        
+        if(!$group) {
+            $this->flashMessage('alert', __('Could not subscribe to this group', true));
+        } else {
+            $this->Group->id = $group['Group']['id'];
+            if($this->Group->addSubscriber(Context::loggedInIdentityId())) {
+                $this->flashMessage('success', __('You are now subscribed to this group', true));
+            } else {
+                $this->flashMessage('alert', __('Could not subscribe to this group', true));
+            }
+        }
+    
+        $this->redirect($this->referer());
+    }
+    
+    public function unsubscribe($slug) {
+        $this->ensureSecurityToken();
+        
+        $group = $this->Group->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'Group.slug' => $slug
+            ),
+            'fields' => 'Group.id'
+        ));
+        
+        if(!$group) {
+            $this->flashMessage('alert', __('Could not unsubscribe to this group', true));
+        } else {
+            $this->Group->id = $group['Group']['id'];
+            if($this->Group->removeSubscriber(Context::loggedInIdentityId())) {
+                $this->flashMessage('success', __('You are no longer subscribed to this group', true));
+            } else {
+                $this->flashMessage('alert', __('Could not unsubscribe from this group', true));
+            }
+        }
+    
+        $this->redirect($this->referer());
     }
 }

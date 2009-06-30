@@ -40,6 +40,14 @@ class Context {
         return Context::loggedInIdentityId() > 0;
     }
     
+    /**
+     * wether the logged in user is subscribed to
+     * the group from the URL
+     */
+    public static function isSubscribed() {
+        return Configure::read('context.is_subscribed');
+    }
+    
     public static function loggedInIdentityId() {
         return Configure::read('context.logged_in_identity.id');
     }
@@ -113,6 +121,19 @@ class Context {
         return $modus;
     } 
     
+    public static function entryGroupAddModus($modus = null) {
+        if(is_null($modus)) {
+            $modus = Configure::read('context.entry_group_add_modus');
+            if(!$modus) {
+                $modus = 'text';
+            }
+        } else {
+            Configure::write('context.entry_group_add_modus', $modus);
+        }
+        
+        return $modus;
+    }
+    
     public static function entryId() {
         $entry_id = Configure::read('context.entry.id');
         
@@ -158,6 +179,8 @@ class Context {
         unset($data['identity']['notify_favorite']);
         unset($data['identity']['overview_filters']);
         unset($data['identity']['address']);
+        
+        $data['base_url'] = Router::url('/images/');
         
         return $data;
     }

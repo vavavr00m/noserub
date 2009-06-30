@@ -261,6 +261,7 @@ class AppController extends Controller {
         Context::write('params', $this->params);
         
         Context::entryAddModus($this->Session->read('entry_add_modus'));
+        Context::entryGroupAddModus($this->Session->read('entry_group_add_modus'));
     }
     
 	private function autoLogin() {

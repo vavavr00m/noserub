@@ -9,6 +9,7 @@
 	</div>
 
 	<div id="bd-main-sidebar">
+	    <?php echo $noserub->widgetGroupInfo(); ?>
 		<?php echo $noserub->widgetPopularGroups(); ?>
 		<?php echo $noserub->widgetNewGroups(); ?>
 		<?php echo $noserub->widgetGroups(); ?>

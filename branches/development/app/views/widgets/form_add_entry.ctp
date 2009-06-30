@@ -1,15 +1,25 @@
-<?php if(Context::isLoggedIn()) { ?>
+<?php if(Context::isLoggedIn() && 
+         (!Context::groupId() ||
+          (Context::groupId() && Context::isSubscribed()))) { ?>
     <h2><?php __('Add something new'); ?></h2>
     <?php 
 
-    $entry_add_modus = Context::entryAddModus();
+    if(Context::groupId()) {
+        $entry_add_modus = Context::entryGroupAddModus();
+    } else {
+        $entry_add_modus = Context::entryAddModus();
+    }
 
     $links = array();
     foreach($filters as $key => $value) {
         if($key == $entry_add_modus) {
             $links[] = $value;
         } else {
-            $links[] = $html->link($value, '/entry/add/modus:' . $key);
+            $url = '/entry/add/modus:' . $key;
+            if(Context::groupId()) {
+                $url .= '/is_group:true';
+            }
+            $links[] = $html->link($value, $url);
         }
     }
 
@@ -33,6 +43,10 @@
         case 'text':
             echo $form->input('Entry.title', array('label' => __('Title', true)));
             echo $form->input('Entry.text', array('type' => 'textarea', 'label' => false));
+            break;
+            
+        case 'photo':
+            echo $this->element('webcam_snapshot');
             break;
     }
 

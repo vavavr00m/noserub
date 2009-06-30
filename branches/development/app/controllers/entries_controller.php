@@ -25,8 +25,11 @@ class EntriesController extends AppController {
                 $this->flashMessage('error', __('New entry could not be created.', true));
             }
         } else {
-            if(isset($this->params['named']['modus'])) {
+            $is_group = isset($this->params['named']['is_group']) ? $this->params['named']['is_group'] : false;
+            if(isset($this->params['named']['modus']) && !$is_group) {
                 $this->Session->write('entry_add_modus', $this->params['named']['modus']);
+            } else if(isset($this->params['named']['modus']) && $is_group) {
+                $this->Session->write('entry_group_add_modus', $this->params['named']['modus']);
             }
         }
         
