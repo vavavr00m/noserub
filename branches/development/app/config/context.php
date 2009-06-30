@@ -180,7 +180,7 @@ class Context {
         unset($data['identity']['overview_filters']);
         unset($data['identity']['address']);
         
-        $data['base_url'] = Router::url('/images/');
+        $data['base_url'] = Router::url('/', true);
         
         return $data;
     }

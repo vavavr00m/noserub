@@ -43,6 +43,9 @@ class Entry extends AppModel {
                 
             case 'text':
                 return $this->addText($identity_id, $data['title'], $data['text'], $group_id, $restricted);
+                
+            case 'webcam':
+                return $this->addPhoto($identity_id, $data['title'], $data['filename'], $group_id, $restricted);
         }
         
         return false;
@@ -555,6 +558,36 @@ class Entry extends AppModel {
             'url'             => '',
             'uid'             => '',
             'content'         => $text,
+            'restricted'      => $restricted
+        );
+        
+        $this->create();
+        if($this->save($data)) {    
+            # now set url and uid
+            $url = Router::url('/entry/' . $this->id . '/', true);
+            $this->saveField('url', $url);
+            $this->saveField('uid', md5($url));
+        } else {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function addPhoto($identity_id, $title, $filename, $group_id = 0, $restricted = false) {
+        if(is_null($restricted)) {
+            $restricted = $this->getRestricted($identity_id);
+        }
+        $data = array(
+            'identity_id'     => $identity_id,
+            'account_id'      => 0,
+            'group_id'        => $group_id,
+            'service_type_id' => 1,
+            'published_on'    => date('Y-m-d H:i:s'),
+            'title'           => $title,
+            'url'             => '',
+            'uid'             => '',
+            'content'         => '<img src="' . Router::url('/static/photos/' . $filename) . '" alt="' . $title . '" />',
             'restricted'      => $restricted
         );
         

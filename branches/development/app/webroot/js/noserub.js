@@ -4,6 +4,6 @@ $(document).ready(function() {
     noserub_theme_start(noserub_context);
     
     if(typeof noserub_start_webcam != "undefined") {
-        noserub_start_webcam(noserub_context.base_url);
+        noserub_start_webcam(noserub_context);
     }
 });
