@@ -63,7 +63,8 @@ class Group extends AppModel {
     public function getPopular() {
         $this->contain();
         return $this->find('all', array(
-            'limit' => 5
+            'limit' => 5,
+            'order' => 'entry_count DESC'
         ));
     }
     

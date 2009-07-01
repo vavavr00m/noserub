@@ -2,7 +2,10 @@
 /* SVN FILE: $Id:$ */
  
 class Comment extends AppModel {
-    public $belongsTo = array('Entry', 'Identity');                                                   
+    public $belongsTo = array(
+        'Entry' => array('counterCache' => true),
+        'Identity'
+    );                                                   
 
     /**
      * Creates the given comment and also checks, if other entries
