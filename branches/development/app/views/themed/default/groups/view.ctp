@@ -1,15 +1,20 @@
 <div id="bd-main" class="with-sidebar">
 	<div id="bd-main-hd">
-		<h2><?php echo __('Group') . ': ' . $group['Group']['name']; ?></h2>
+		<h1><?php echo __('Group') ?> <span><?php echo $group['Group']['name']; ?></span></h2>
+		<ul>
+			<li><?php echo $html->link(__('All Groups', true), '#'); ?></li>
+			<li><?php echo $html->link(__('My Groups', true), '#'); ?></li>
+			<li><?php echo $html->link(__('Search A Group', true), '#'); ?></li>
+		</ul>
 	</div>
 	<div id="bd-main-bd">
     	<?php echo $noserub->widgetFlashMessage(); ?>
-    	<?php echo $html->link(__('New Topic', true), '/groups/new_topic/' . $group['Group']['slug']); ?>
+	    <?php echo $noserub->widgetGroupInfo(); ?>
 		<?php echo $noserub->widgetGroupOverview(); ?>
+    	<?php echo $noserub->formAddEntry(); ?>
 	</div>
 
 	<div id="bd-main-sidebar">
-	    <?php echo $noserub->widgetGroupInfo(); ?>
 		<?php echo $noserub->widgetPopularGroups(); ?>
 		<?php echo $noserub->widgetNewGroups(); ?>
 		<?php echo $noserub->widgetGroups(); ?>
