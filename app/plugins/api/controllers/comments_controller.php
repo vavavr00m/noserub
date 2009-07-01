@@ -9,14 +9,13 @@ class CommentsController extends ApiAppController {
 	 *
 	 * todo: make this configurable by date (eg. get all comments since 2008-12-01 12:34:29)
 	 */
-	public function get_comments() {
+	public function recent_comments() {
 		$comments = $this->Comment->getRecent(self::MAX_RECENT_COMMENTS);
 
-		$this->set('data', $this->cleanUpData($comments));
-		$this->Api->render();
+		$this->set('data', $this->formatData($comments));
 	}
 	
-	private function cleanUpData(array $comments) {
+	private function formatData(array $comments) {
 		$data = array();
 		foreach($comments as $comment) {
 			if($comment['Entry']['url']) {
