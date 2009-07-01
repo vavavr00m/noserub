@@ -3,9 +3,9 @@
 		<h2><?php echo __('Group') . ': ' . $group['Group']['name']; ?></h2>
 	</div>
 	<div id="bd-main-bd">
+	    <h2><?php __('New Topic'); ?>
     	<?php echo $noserub->widgetFlashMessage(); ?>
-    	<?php echo $html->link(__('New Topic', true), '/groups/new_topic/' . $group['Group']['slug']); ?>
-		<?php echo $noserub->widgetGroupOverview(); ?>
+    	<?php echo $noserub->formAddEntry(); ?>
 	</div>
 
 	<div id="bd-main-sidebar">
