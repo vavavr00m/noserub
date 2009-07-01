@@ -59,6 +59,32 @@ class GroupsController extends AppController {
         $this->set('group', $group);
     }
     
+    public function new_topic($slug) {
+        $group = $this->Group->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'network_id' => Context::networkId(),
+                'slug' => strtolower($slug)
+            ),
+        ));
+        if(!$group) {
+            $this->redirect('/groups/');
+        }
+        
+        Context::write('group', array(
+            'id' => $group['Group']['id'],
+            'slug' => $slug
+        ));
+        
+        $this->Group->id = $group['Group']['id'];
+        Context::write(
+            'is_subscribed',
+            $this->Group->isSubscribed(Context::loggedInIdentityId()
+        ));
+        
+        $this->set('group', $group);
+    }
+    
     public function subscribe($slug) {
         $this->ensureSecurityToken();
         
