@@ -14,7 +14,7 @@
                         '/groups/entry/' . Context::groupSlug() . '/' . $item['Entry']['id']
                     ); 
                 ?></td>
-                <td>0</td>
+                <td><?php echo $item['Entry']['comment_count']; ?></td>
                 <td><?php echo $item['Entry']['published_on']; ?></td>
                 <td>-</td>
             </tr>

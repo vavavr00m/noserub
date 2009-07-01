@@ -2,7 +2,10 @@
 /* SVN FILE: $Id:$ */
  
 class Favorite extends AppModel {
-    public $belongsTo = array('Identity', 'Entry');
+    public $belongsTo = array(
+        'Identity', 
+        'Entry' => array('counterCache' => true)
+    );
 
     /**
      * poll new favorites from networks

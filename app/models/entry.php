@@ -3,8 +3,10 @@
  
 class Entry extends AppModel {
     public $belongsTo = array(
-        'Identity', 'Account', 
-        'ServiceType', 'Group'
+        'Identity',
+        'Account', 
+        'ServiceType', 
+        'Group' => array('counterCache' => true)
     );
     
     public $hasMany = array(
