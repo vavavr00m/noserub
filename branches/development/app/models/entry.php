@@ -680,7 +680,7 @@ class Entry extends AppModel {
         $this->addNoseRub($identity_id, $message, $restricted);
     }
     
-    public function addGroup($identity_id, $group_id, $restriced = false) {
+    public function addGroup($identity_id, $group_id, $restricted = false) {
         $this->Group->id = $group_id;
         $slug = $this->Group->field('slug');
         $name = $this->Group->field('name');

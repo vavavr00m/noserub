@@ -13,5 +13,5 @@ if(!$data) {
 	if($data['Entry']['account_id'] > 0) {
 		echo $html->link(__('External permalink', true), $data['Entry']['url']);
 	}
-	echo $this->renderElement('entries/row_view', array('item' => $data, 'permalink' => false));
+	echo $this->renderElement('entries/view', array('item' => $data, 'permalink' => false));
 }
