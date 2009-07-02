@@ -11,7 +11,6 @@
     	<?php echo $noserub->widgetFlashMessage(); ?>
 	    <?php echo $noserub->widgetGroupInfo(); ?>
 		<?php echo $noserub->widgetGroupOverview(); ?>
-    	<?php echo $noserub->formAddEntry(); ?>
 	</div>
 
 	<div id="bd-main-sidebar">

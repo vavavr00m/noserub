@@ -3,7 +3,7 @@
 class WidgetsController extends AppController {
     public $components = array('cluster');
     public $helpers = array('nicetime');
-        
+     
     /**
      * Various elements / pages
      */
@@ -23,6 +23,35 @@ class WidgetsController extends AppController {
         $this->render($type . '_navigation');
  	}
  	
+ 	public function search() {
+ 	    $q = isset($this->params['url']['q']) ? $this->params['url']['q'] : '';
+        $q = strtolower(htmlspecialchars(strip_tags($q), ENT_QUOTES, 'UTF-8'));
+        
+        $this->set('q', $q);
+    }
+    
+    public function search_results() {
+        $this->loadModel('Entry');
+ 	    
+        $q = isset($this->params['url']['q']) ? $this->params['url']['q'] : '';
+        $q = strtolower(htmlspecialchars(strip_tags($q), ENT_QUOTES, 'UTF-8'));
+        
+        if($q) {
+            $conditions = array(
+                'search'      => $q
+            );
+            $items = $this->Entry->getForDisplay($conditions, 50);
+            usort($items, 'sort_items');
+            $items = $this->cluster->removeDuplicates($items);
+            $items = $this->cluster->create($items);
+        } else {
+            $items = array();
+        }
+        
+    	$this->set('items', $items);
+    	$this->set('q', $q);
+    }
+    
  	/**
  	 * Admin
  	 */
