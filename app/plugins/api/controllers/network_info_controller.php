@@ -2,7 +2,6 @@
    
 class NetworkInfoController extends ApiAppController {
 	public $uses = array('Identity', 'Migration');
-	public $helpers = array('Xml');
 	
 	/**
      * used to return number of registered, active users, and some other

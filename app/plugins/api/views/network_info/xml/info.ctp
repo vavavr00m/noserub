@@ -1,1 +1,0 @@
-<?php echo $xml->serialize(array('data' => $data), array('format' => 'tags')); ?>
