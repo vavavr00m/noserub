@@ -31,6 +31,9 @@ class EntriesController extends AppController {
                         null
                     );
                     $this->flashMessage('success', __('Photo was uploaded', true));
+                    if($group_id) {
+                        $this->redirect('/entry/' . $this->Entry->id);
+                    }
                 } else {
                     $this->flashMessage('alert', __('Could not upload photo', true));
                 }
@@ -42,6 +45,9 @@ class EntriesController extends AppController {
                 null)) {
                     
                 $this->flashMessage('success', __('New entry was created', true));
+                if($this->data['Entry']['group_id']) {
+                    $this->redirect('/entry/' . $this->Entry->id);
+                }
             } else {
                 $this->flashMessage('alert', __('New entry could not be created', true));
             }

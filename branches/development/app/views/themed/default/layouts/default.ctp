@@ -19,11 +19,7 @@
 		<div id="hd">
 		    <?php echo $html->link($html->image('logo.png', array('alt' => $app_name . ' - Logo')), '/', array('class' => 'logo'), false, false); ?>
 			<?php echo $noserub->widgetNavigation('meta'); ?>
-			<form method="post" action="">
-				<p>
-					<input type="text" name="term" value="" />
-				</p>
-			</form>
+			<?php echo $noserub->widgetSearch(); ?>
 		</div>
 		<div id="bd">
 			<div id="bd-inner">
