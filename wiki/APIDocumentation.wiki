@@ -3,11 +3,11 @@
 =Twitter-compatible API=
 
 ===Help Methods===
-[http://code.google.com/p/noserub/wiki/HelpTest help/test]
+  * [http://code.google.com/p/noserub/wiki/HelpTest help/test]
 
 =NoseRub-specific API=
 
 ===Network Methods===
-[http://code.google.com/p/noserub/wiki/NetworkComments network/comments]
-[http://code.google.com/p/noserub/wiki/NetworkFavorites network/favorites]
-[http://code.google.com/p/noserub/wiki/NetworkInfo network/info]
+  * [http://code.google.com/p/noserub/wiki/NetworkComments network/comments]
+  * [http://code.google.com/p/noserub/wiki/NetworkFavorites network/favorites]
+  * [http://code.google.com/p/noserub/wiki/NetworkInfo network/info]
