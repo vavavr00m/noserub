@@ -1,8 +1,6 @@
 <?php
    
-class NetworkInfoController extends ApiAppController {
-	public $uses = array('Identity', 'Migration');
-	
+class NetworkController extends ApiAppController {	
 	/**
      * used to return number of registered, active users, and some other
      * values.
@@ -11,6 +9,9 @@ class NetworkInfoController extends ApiAppController {
         $data = array();
     	
     	if (Context::read('network.api_info_active')) {
+    		$this->loadModel('Identity');
+    		$this->loadModel('Migration');
+    		
             $restricted_hosts = Context::read('network.registration_restricted_hosts');
             $data = array(
                 'num_users' => $this->Identity->Network->getNumberOfUsers(Context::read('network.id')),
