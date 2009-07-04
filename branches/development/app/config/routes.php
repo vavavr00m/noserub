@@ -30,8 +30,8 @@ Router::connect('/pages/password/set/*', array('controller' => 'identities', 'ac
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
 
 Router::connect('/api/info/', array('plugin' => 'api', 'controller' => 'network', 'action' => 'info'));
-Router::connect('/api/comments/', array('plugin' => 'api', 'controller' => 'comments', 'action' => 'recent_comments'));
-Router::connect('/api/favorites/', array('plugin' => 'api', 'controller' => 'favorites', 'action' => 'recent_favorites'));
+Router::connect('/api/comments/', array('plugin' => 'api', 'controller' => 'network', 'action' => 'comments'));
+Router::connect('/api/favorites/', array('plugin' => 'api', 'controller' => 'network', 'action' => 'favorites'));
 
 // OAuth-enabled API methods
 Router::connect('/api/:result_type/locations/last/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'get_last_location'));
