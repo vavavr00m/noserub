@@ -9,7 +9,7 @@ class FavoritesController extends ApiAppController {
 	 *
 	 * todo: make this configurable by date (eg. get all favorites since 2008-12-01 12:34:29)
 	 */
-	public function get_favorites() {
+	public function recent_favorites() {
 		$this->Favorite->contain();
 		$favorites = $this->Favorite->find(
 			'all',
@@ -26,11 +26,10 @@ class FavoritesController extends ApiAppController {
         usort($items, 'sort_items');
         $items = $this->Cluster->removeDuplicates($items);
 
-		$this->set('data', $this->cleanUpData($items));
-		$this->Api->render();
+		$this->set('data', $this->formatData($items));
 	}
 	
-	private function cleanUpData(array $items) {
+	private function formatData(array $items) {
 		$data = array();
 		foreach($items as $item) {
 			foreach($item['FavoritedBy'] as $favorited_by) {
