@@ -7,8 +7,7 @@
 
 =NoseRub-specific API=
 
-===Comments===
-[http://code.google.com/p/noserub/wiki/Comments comments]
-
-===Info===
-[http://code.google.com/p/noserub/wiki/Info info]
+===Network Methods===
+[http://code.google.com/p/noserub/wiki/NetworkComments network/comments]
+[http://code.google.com/p/noserub/wiki/NetworkFavorites network/favorites]
+[http://code.google.com/p/noserub/wiki/NetworkInfo network/info]

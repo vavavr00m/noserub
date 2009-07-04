@@ -1,5 +1,5 @@
-#summary Documentation of info
-= NoseRub API Method: info =
+#summary Documentation of network/info
+= NoseRub API Method: network info =
 
 Returns some information about a NoseRub network: the number of registered users, the registration type, the restricted hosts, 
 the migration, and whether subscriptions are allowed.
@@ -8,7 +8,7 @@ By default, this API method is disabled and has to be activated by an admin of t
 code is returned in that case. 
 
 ====URL====
-api/info._format_
+api/network/info._format_
 
 ====Formats====
 xml, json

@@ -1,12 +1,12 @@
-#summary Documentation of comments
-= NoseRub API Method: comments =
+#summary Documentation of network/favorites
+= NoseRub API Method: network favorites =
 
-Returns the 100 most recent comments of the respective NoseRub network.
+Returns the 100 most recent favorites of the respective NoseRub network.
 
 Please note that this method is primarily intended to be used for the communication between NoseRub networks. 
 
 ====URL====
-api/comments._format_
+api/network/favorites._format_
 
 ====Formats====
 xml, json
