@@ -24,7 +24,7 @@ class Favorite extends AppModel {
         $polled = array();
         
         foreach($networks as $network) {
-            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/favorites.json');
+            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/network/favorites.json');
             $favorites = Zend_Json::decode($json_data);
             if(!isset($favorites['data']) || !is_array($favorites['data'])) {
                 $favorites = array('data' => array());

@@ -76,7 +76,7 @@ class Comment extends AppModel {
         $polled = array();
         
         foreach($networks as $network) {
-            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/comments.json');
+            $json_data = WebExtractor::fetchUrl($network['Network']['url'] . '/api/network/comments.json');
             $comments = Zend_Json::decode($json_data);
             if(!isset($comments['data']) || !is_array($comments['data'])) {
                 $comments = array('data' => array());
