@@ -14,11 +14,11 @@
 		
     <ul>
         <li>
-            <?php echo $html->link(__('Home', true), '/activities/'); ?>
+            <?php echo $html->link(__('Home', true), '/activities/', array('class' => 'head')); ?>
         </li>
         <li>
 			<a class="toggle" href="#">(-)</a>
-			<a href="#"><?php __('Contacts'); ?></a>
+			<a class="head" href="#"><?php __('Contacts'); ?></a>
 			<ul>
 				<li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
 				<li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
@@ -26,14 +26,14 @@
 		</li>
         <li>
             <a class="toggle" href="#">(-)</a>
-            <?php echo $html->link(__('My Profile', true), $base_url); ?>
+            <?php echo $html->link(__('My Profile', true), $base_url, array('class' => 'head')); ?>
             <ul>
                 <li><?php echo $html->link(__('My Accounts', true), '/settings/accounts/'); ?></li>
             </ul>
         </li>
         <li>
             <a class="toggle" href="#">(-)</a>
-            <?php echo $html->link(__('Groups', true), $base_url . '/groups/'); ?>
+            <?php echo $html->link(__('Groups', true), $base_url . '/groups/', array('class' => 'head')); ?>
             <?php if($groups) { ?>
                 <ul>
                     <?php foreach($groups as $group) { ?>
@@ -44,7 +44,7 @@
         </li>
         <li>
             <a class="toggle" href="#">(-)</a>
-            <?php echo $html->link(__('Networks', true), $base_url . '/networks/'); ?>
+            <?php echo $html->link(__('Networks', true), $base_url . '/networks/', array('class' => 'head')); ?>
             <?php if($networks) { ?>
                 <ul>
                     <?php foreach($networks as $network) { ?>
@@ -62,7 +62,4 @@
     </ul>
 <?php } else { ?>
     <?php echo $this->element('login'); ?>
-    <?php if(Context::read('network.registration_type') == 1) {
-        echo $html->link(__('Register a new account', true), '/pages/register/');
-    } ?>
 <?php } ?>
