@@ -17,7 +17,28 @@ class LocationsController extends ApiAppController {
 		}
 	}
 	
-	public function add_location() {
+	public function index() {
+        $this->Location->contain();
+        $data = $this->Location->findAllByIdentityId($this->identity_id, array('id', 'name'));
+        
+        $this->Location->Identity->recursive = 0;
+        $this->Location->Identity->id = $this->identity_id;
+        $last_location_id = $this->Location->Identity->field('last_location_id');
+        
+        $this->set(
+            'data', 
+            array(
+                'Locations' => $data,
+                'Identity'  => array(
+                    'last_location_id' => $last_location_id
+                )
+            )
+        );
+        
+        $this->Api->render();
+    }
+	
+	public function add() {
         $name    = isset($this->params['url']['name'])    ? $this->params['url']['name']    : '';
         $address = isset($this->params['url']['address']) ? $this->params['url']['address'] : '';
         $set_to  = isset($this->params['url']['set_to'])  ? $this->params['url']['set_to']  :  0;
@@ -60,7 +81,7 @@ class LocationsController extends ApiAppController {
         $this->Api->render();
     }
 	
-	public function get_last_location() {
+	public function last() {
 		$this->Location->Identity->id = $this->identity_id;
 		$this->Location->Identity->contain('Location');
 		
@@ -75,29 +96,9 @@ class LocationsController extends ApiAppController {
         
         $this->Api->render();
 	}
-	
-	public function get_locations() {
-        $this->Location->contain();
-        $data = $this->Location->findAllByIdentityId($this->identity_id, array('id', 'name'));
-        
-        $this->Location->Identity->recursive = 0;
-        $this->Location->Identity->id = $this->identity_id;
-        $last_location_id = $this->Location->Identity->field('last_location_id');
-        
-        $this->set(
-            'data', 
-            array(
-                'Locations' => $data,
-                'Identity'  => array(
-                    'last_location_id' => $last_location_id
-                )
-            )
-        );
-        
-        $this->Api->render();
-    }
     
-	public function set_location($location_id) {
+	// TODO switch this method from GET to POST
+	public function update($location_id) {
         if(!$this->Location->setTo($this->identity_id, $location_id)) {
             $this->set('code', -1);
             $this->set('msg', __('dataset not found', true));
