@@ -1,6 +1,6 @@
 <div id="bd-main" class="with-sidebar">
 	<div id="bd-main-hd">
-		<h2>Startseite des Netzwerkes</h2>
+		<h1>Startseite des Netzwerkes</h1>
 	</div>
 	<div id="bd-main-bd">
 		<?php echo $noserub->widgetFlashMessage(); ?>

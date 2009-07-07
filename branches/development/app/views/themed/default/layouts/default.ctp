@@ -31,7 +31,7 @@
 						<ul>
 							<li>
 								<a class="toggle" href="#">(-)</a>
-								<a href="#">Invite People</a>
+								<a class="head" href="#">Invite People</a>
 								<p>
 									Let's build a better community together!
 									<a href="#">Invite your co-workers, friends and classmates.</a>
