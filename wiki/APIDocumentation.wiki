@@ -11,3 +11,9 @@
   * [http://code.google.com/p/noserub/wiki/NetworkComments network/comments]
   * [http://code.google.com/p/noserub/wiki/NetworkFavorites network/favorites]
   * [http://code.google.com/p/noserub/wiki/NetworkInfo network/info]
+  
+===Location Methods===
+  * [http://code.google.com/p/noserub/wiki/Locations locations]
+  * [http://code.google.com/p/noserub/wiki/LocationsCreate locations/create]
+  * [http://code.google.com/p/noserub/wiki/LocationsLast locations/last]
+  * [http://code.google.com/p/noserub/wiki/LocationsUpdateCurrent locations/update_current]
