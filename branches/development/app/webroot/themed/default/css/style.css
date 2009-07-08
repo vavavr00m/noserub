@@ -80,26 +80,41 @@ input[type="password"]:focus {
 	border-color:#129bc1;
 }
 input[type="submit"],
-input[type="button"] {
+input[type="button"],
+a.button,
+a.button:visited {
 	background:url(../img/btn_grad.png) left top repeat-x;
 	border:1px solid #bbb;
 	-webkit-border-radius:6px;
 	-moz-border-radius:6px;
 	-khtml-border-radius:6px;
 	border-radius:6px;
-	color:#373737;
+	color:#373737 !important;
 	font-family:Arial,sans-serif;
 	font-size:1em;
 	padding:3px 5px;
+	text-decoration:none !important;
+}
+a.button,
+a.button:visited {
+	font-weight:bold;
+	padding:8px 10px;
 }
 input[type="submit"]:focus,
-input[type="button"]:focus {
+input[type="button"]:focus,
+a.button:focus {
 	border-color:#129bc1;
+	outline:0;
+}
+a.button:hover {
+	border-color:#129bc1;
+	background-position:0px -100px;
 }
 input[type="submit"]:active,
-input[type="button"]:active {
+input[type="button"]:active,
+a.button:active {
 	background-position:left bottom;
-	outline:none;
+	outline:0;
 }
 input[type="submit"]::-moz-focus-inner,
 input[type="button"]::-moz-focus-inner {
@@ -536,11 +551,21 @@ input[type="button"]::-moz-focus-inner {
 #bd-main-sidebar .block-contact,
 #bd-main-sidebar .block-friends,
 #bd-main-sidebar .block-groups,
-#bd-main-sidebar .block-links {
+#bd-main-sidebar .block-links,
+#bd-main-sidebar .widget {
 	margin-bottom:2em;
 }
 #bd-main-sidebar p {
 	margin-bottom:1em;
+}
+#bd-main-sidebar a {
+	color:#129bc1;
+	text-decoration:none;
+}
+#bd-main-sidebar a:hover,
+#bd-main-sidebar a:focus,
+#bd-main-sidebar a:active {
+	text-decoration:underline;
 }
 #bd-main-sidebar .block-groups li {
 	border-bottom:1px solid #f6f6f6;
@@ -548,27 +573,11 @@ input[type="button"]::-moz-focus-inner {
 	line-height:2em;
 }
 #bd-main-sidebar .block-groups a {
-	color:#129bc1;
 	font-weight:bold;
-	text-decoration:none;
-}
-#bd-main-sidebar .block-groups a:hover,
-#bd-main-sidebar .block-groups a:focus,
-#bd-main-sidebar .block-groups a:active {
-	text-decoration:underline;
 }
 #bd-main-sidebar .block-links li {
 	border-bottom:1px solid #f6f6f6;
 	line-height:2em;
-}
-#bd-main-sidebar .block-links a {
-	color:#129bc1;
-	text-decoration:none;
-}
-#bd-main-sidebar .block-links a:hover,
-#bd-main-sidebar .block-links a:focus,
-#bd-main-sidebar .block-links a:active {
-	text-decoration:underline;
 }
 #bd-main-sidebar .block-friends ul {
 	margin-right:-10px;
@@ -608,7 +617,6 @@ input[type="button"]::-moz-focus-inner {
 	width:100%;
 }
 #bd-main-sidebar .block-contact a {
-	color:#129bc1;
 	display:block;
 	float:left;
 	font-weight:bold;
@@ -617,12 +625,7 @@ input[type="button"]::-moz-focus-inner {
 	margin-bottom:8px;
 	margin-right:15px;
 	padding-left:44px;
-	text-decoration:none;
 	width:55px;
-}
-#bd-main-sidebar .block-contact a:hover,
-#bd-main-sidebar .block-contact a:focus {
-	text-decoration:underline;
 }
 #bd-main-sidebar .block-contact a[href ^= "mailto:"] {
 	background:url(../img/buttons_grey_small.png) 0px no-repeat;
@@ -647,6 +650,27 @@ input[type="button"]::-moz-focus-inner {
 }
 #bd-main-sidebar .block-contact a[href ^= "xmpp:"]:active {
 	background-position:-1050px;
+}
+#bd-main-sidebar .widget-join-group a {
+	display:block;
+}
+#bd-main-sidebar .widget-join-group a span {
+	background:url(../img/btn_icons.png) 0px 50% no-repeat;
+	padding-left:30px;
+}
+#bd-main-sidebar .widget-group-statistics li {
+	border-top:1px solid #f6f6f6;
+	color:#aaa;
+	line-height:2em;
+}
+#bd-main-sidebar .widget-group-statistics li:first-child {
+	border-top:0;
+}
+#bd-main-sidebar .widget-group-statistics strong {
+	display:block;
+	font-weight:bold;
+	float:left;
+	width:50%;
 }
 
 /**
