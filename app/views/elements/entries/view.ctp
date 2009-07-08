@@ -36,13 +36,13 @@
             echo $intro; 
         ?>
     </span>
-	<?php if($item['Entry']['service_type_id'] == 1 ||
-	    (!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == 3)) { ?>
-		<span>
-			<br />
-        	<?php echo $item['Entry']['content']; ?>
-		</span>
-	<?php } ?>
+    <?php switch($item['Entry']['service_type_id']) {
+        case 1: // photo
+            echo $this->element('entries/photo', array('data' => $item)); break;
+        case 6: // video
+            echo $this->element('entries/video', array('data' => $item)); break;
+        default: echo $item['Entry']['content'];
+    } ?>
     <span>
         <?php echo $this->renderElement('entries/favorited_by', array('data' => $item)); ?>
     </span>

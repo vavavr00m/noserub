@@ -16,7 +16,7 @@ function noserub_start_webcam(context) {
     	id:"WebcamSnaphot",
     	name: "WebcamSnaphot"
     };
-    swfobject.embedSWF(context.base_url + "images/WebcamSnapshot.swf", "webcam_snapshot", "320", "240", "9.0.0", context.base_url + "expressInstall.swf", flashvars, params, attributes);
+    swfobject.embedSWF(context.base_url + "images/WebcamSnapshot.swf", "webcam_snapshot", "400", "400", "9.0.0", context.base_url + "expressInstall.swf", flashvars, params, attributes);
 
     $('#noserub_webcam_snapshot').show();
     $('#noserub_webcam_cancel').hide();
