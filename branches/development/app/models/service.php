@@ -105,15 +105,10 @@ class Service extends AppModel {
         }
 
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
-    		$feeditem = $feed->get_item($i);
+            $feeditem = $feed->get_item($i);
 
-    		# create a NoseRub item out of the feed item
+            # create a NoseRub item out of the feed item
     		$item = array();
-    		$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
-    		if($max_age && $item['datetime'] < $max_age) {
-    		    # we can stop here, as we do not expect any newer items
-    		    break;
-    		}
     		
     		$item['url']       = $feeditem->get_link();
             $item['intro']     = $intro;
@@ -126,12 +121,23 @@ class Service extends AppModel {
 
             if($service) {
             	$item['content'] = $service->getContent($feeditem);
-            	$item['title']   = $service->getTitle($feeditem);            	
+            	if(is_array($item['content'])) {
+            	    $item['content'] = base64_encode(serialize($item['content']));
+            	}
+            	$item['title'] = $service->getTitle($feeditem);    
+            	$item['datetime'] = $service->getDatetime($feeditem);        	
             } else {
                 # when no service was found, this is a simple RSS feed
             	$item['content'] = $feeditem->get_content();
-            	$item['title']   = $feeditem->get_title();
+            	$item['title'] = $feeditem->get_title();
+            	$item['datetime'] = $feeditem->get_date();
             }
+            
+        	if($max_age && $item['datetime'] < $max_age) {
+        	    # we can stop here, as we do not expect any newer items
+        	    break;
+        	}
+        	
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
     	}
@@ -326,6 +332,20 @@ abstract class AbstractService extends Object {
 	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
+	}
+	
+	/**
+	 * Get the create time of that item.
+	 * For some services, get_date() returns
+	 * the published date, therefore we need to
+	 * make it overrideable.
+	 *
+	 * @param object $feeditem
+	 *
+	 * @return string
+	 */
+	public function getDatetime($feeditem) {
+	  return $feeditem->get_date('Y-m-d H:i:s');
 	}
 	
 	public function getTitle($feeditem) {

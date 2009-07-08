@@ -36,8 +36,21 @@
             echo $intro; 
         ?>
     </span>
-	<?php if($item['Entry']['service_type_id'] == 1 ||
-	    (!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == 3)) { ?>
+	<?php if($item['Entry']['service_type_id'] == 1 || $item['Entry']['service_type_id'] == 6) { ?>
+        <span>
+            <br />
+            <?php
+                $content = $item['Entry']['content'];
+                $raw_content = @unserialize(@base64_decode($item['Entry']['content']));
+                if(!empty($raw_content['thumb'])) {
+                    $image = $html->image($raw_content['thumb'], array('height' => 75, 'width' => 75));
+                    echo $html->link($image, '/entry/' . $item['Entry']['id'], array(), false, false);
+                } else {
+                    echo $content;
+                }
+            ?>
+        </span>
+	<?php } else if(!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == 3) { ?>
 		<span>
 			<br />
         	<?php echo $item['Entry']['content']; ?>

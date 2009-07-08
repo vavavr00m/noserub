@@ -470,6 +470,24 @@ class WidgetsController extends AppController {
         $this->set('data', $items);    
     }
     
+    public function videos() {
+        $this->loadModel('Entry');
+    
+        $items = $this->Entry->getForDisplay(
+            array(
+                'filter' => array('video'),
+                'identity_id' => $this->getIdentityId()
+            ),
+            5, 
+            true
+        );
+        if($items) {
+            usort($items, 'sort_items');
+        }
+    
+        $this->set('data', $items);    
+    }
+    
     /**
      * Settings
      */

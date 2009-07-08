@@ -580,6 +580,12 @@ class Entry extends AppModel {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
+        
+        $raw_content = array(
+            'photo' => Router::url('/static/photos/' . $filename, true),
+            'thumb' => Router::url('/static/photos/' . $filename, true) // we currently do not resize
+        );
+        
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
@@ -589,7 +595,7 @@ class Entry extends AppModel {
             'title'           => $title,
             'url'             => '',
             'uid'             => '',
-            'content'         => '<img src="' . Router::url('/static/photos/' . $filename) . '" alt="' . $title . '" />',
+            'content'         => $raw_content,
             'restricted'      => $restricted
         );
         
@@ -757,6 +763,23 @@ class Entry extends AppModel {
     	$this->id = $entry_id;
         
     	return $this->field('uid');
+    }
+    
+    /**
+     * When Entry.content is an array, serialize and encode it
+     */
+    public function beforeSave() {
+        if(isset($this->data['Entry']['content']) && is_array($this->data['Entry']['content'])) {
+            $this->data['Entry']['content'] = $this->serializeAndEncode($this->data['Entry']['content']);
+        } else if(isset($this->data['content']) && is_array($this->data['content'])) {
+            $this->data['content'] = $this->serializeAndEncode($this->data['content']);
+        }
+        
+        return parent::beforeSave();
+    }
+    
+    private function serializeAndEncode($data) {
+        return @base64_encode(@serialize($data));
     }
     
     private function sendToOmb($identity_id, $entry_id, $text) {
