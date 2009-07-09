@@ -10,6 +10,7 @@
 	</div>
 
 	<div id="bd-main-sidebar">
+	    <?php echo $noserub->widgetEntryFilter(); ?>
 		<?php echo $noserub->widgetCommunications(); ?>
 		<?php echo $noserub->widgetContacts(); ?>
 		<?php echo $noserub->widgetAccounts(); ?>

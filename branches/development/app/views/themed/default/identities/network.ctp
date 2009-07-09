@@ -8,6 +8,7 @@
 
 	<div id="bd-main-sidebar">
 		<?php echo $noserub->widgetContactFilter(); ?>
+		<?php echo $noserub->widgetEntryFilter(); ?>
 		<?php echo $noserub->widgetContacts(); ?>
 	</div>
 </div>

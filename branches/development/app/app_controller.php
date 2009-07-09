@@ -264,6 +264,7 @@ class AppController extends Controller {
         Context::entryGroupAddModus($this->Session->read('entry_group_add_modus'));
         
         Context::contactFilter($this->Session->read('contact_filter'));
+        Context::entryFilter($this->Session->read('entry_filter'));
     }
     
 	private function autoLogin() {

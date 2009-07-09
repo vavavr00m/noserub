@@ -210,6 +210,34 @@ class EntriesController extends AppController {
         }
     }
     
+    public function add_filter($to_add) {
+        $filter = Context::entryFilter();
+        $to_add = split(',', $to_add);
+        $filter = array_merge($filter, $to_add);
+
+        Context::entryFilter($filter);
+        $this->Session->write('entry_filter', $filter);
+        
+        $this->redirect($this->referer());
+    }
+    
+    public function remove_filter($to_remove) {
+        $old_filter = Context::entryFilter();
+        $to_remove = split(',', $to_remove);
+        
+        $filter = array();
+        foreach($old_filter as $value) {
+            if(!in_array($value, $to_remove)) {
+                $filter[] = $value;
+            }
+        }
+
+        Context::entryFilter($filter);
+        $this->Session->write('entry_filter', $filter);
+        
+        $this->redirect($this->referer());
+    }
+    
     /**
      * Go through all accounts and update
      * the entries.
