@@ -390,8 +390,8 @@ class PhotoFilter implements IServiceTypeFilter {
 	
 	public function filter($item) {
 		$config = HTMLPurifier_Config::createDefault();
-		$config->set('Cache', 'SerializerPath', CACHE . 'htmlpurifier');
-		$config->set('HTML', 'Allowed', 'img[src|alt]');
+		$config->set('Cache.SerializerPath', CACHE . 'htmlpurifier');
+		$config->set('HTML.Allowed', 'img[src|alt]');
         
 		$purifier = new HTMLPurifier($config);
 		$clean_html = $purifier->purify($item['content']);
