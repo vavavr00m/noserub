@@ -35,7 +35,7 @@
 	</li>
 	<li>
     	<?php if(Context::read('network.registration_type') == 1): ?>
-    	    <?= $html->link(__('Register a new account', true), '/pages/register/') ?>
+    	    <?php echo $html->link(__('Register a new account', true), '/pages/register/') ?>
     	<?php endif; ?>
 	</li>
 </ul>
