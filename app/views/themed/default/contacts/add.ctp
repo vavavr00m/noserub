@@ -1,5 +1,9 @@
-<div id="bd-main">
+<div id="bd-main" class="with-sidebar">
+	<div id="bd-main-hd">
+		<?php echo $noserub->widgetProfile(); ?>
+	</div>
 	<div id="bd-main-bd">
+	    <h2><? __('Add new contact'); ?></h2>
 		<p>
 			<?php __("You can either enter an URL or a NoseRub-ID (noserubserver.com/MyBuddy). Naturally you would want to add a contact's blog as an URL, or his/her FriendFeed-URL."); ?>
 		</p>
@@ -16,5 +20,9 @@
 			echo $form->end(array('label' => __('Add', true)));
 			echo $form->end(); 
 		?>
+	</div>
+
+	<div id="bd-main-sidebar">
+		<?php echo $noserub->widgetContacts(); ?>
 	</div>
 </div>

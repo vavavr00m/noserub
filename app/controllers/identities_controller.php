@@ -30,6 +30,8 @@ class IdentitiesController extends AppController {
     public function social_stream() {
         $this->checkUnsecure();
         $this->grantAccess('self');        
+        
+        Context::setPage('activities');
     }
     
 	/**

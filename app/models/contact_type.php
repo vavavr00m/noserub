@@ -9,7 +9,9 @@ class ContactType extends AppModel {
 	 * return ids of contact types for the tags in
 	 * the string. also removes those tags from the new tags.
 	 *
-	 * @param array $new_tag 
+	 * @param int $identity_id
+	 * @param array $tags
+	 *
 	 * @return array of contact type ids and cleaned up tags
 	 */
 	public function extract($identity_id, $tags) {
@@ -17,20 +19,15 @@ class ContactType extends AppModel {
 	    $remaining_tags = array();
 	    foreach($tags['tags'] as $tag) {
 	        if($tag) {
-	            $this->contain();
-	            
-	            $data = $this->find(
-	                'first',
-	                array(
-	                    'conditions' => array(
-	                        'identity_id' => $identity_id,
-	                        'name'        => $tag,
-	                    ),
-	                    'fields' => array(
-	                        'id', 'name'
-	                    )
-	                )
-	            );
+	            $data = $this->find('first', array(
+	                'contain' => false,
+	                'conditions' => array(
+                        'identity_id' => $identity_id,
+                        'name'        => $tag,
+                    ),
+                    'fields' => array(
+                        'id', 'name'
+                )));
                 if($data) {
                     $ids[$data['ContactType']['id']] = $data['ContactType']['name'];
                 } else {
@@ -42,6 +39,35 @@ class ContactType extends AppModel {
 	    return array('contact_type_ids'         => $ids,
 	                 'noserub_contact_type_ids' => $tags['noserub_contact_type_ids'],
 	                 'tags'                     => $remaining_tags);
+	}
+	
+	/**
+	 * get's the contact_type and noserub_contact_type for
+	 * use in the filter
+	 *
+	 * @param int $identity_id
+	 * @param array $filter
+	 *
+	 * @return array
+	 */
+	public function arrayToFilter($identity_id, $filter) {
+	    $result = array();
+	    foreach($filter as $tag) {
+	        $data = $this->find('first', array(
+	            'contain' => false,
+	            'conditions' => array(
+	                'identity_id' => $identity_id,
+	                'name' => $tag
+	            ),
+	            'fields' => array('id')
+	        ));
+	        
+	        if($data) {
+	            $result[] = 'private.' . $data['ContactType']['id'];
+	        }
+	    }
+	    
+	    return $result;
 	}
 	
 	/**

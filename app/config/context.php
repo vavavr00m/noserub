@@ -134,6 +134,19 @@ class Context {
         return $modus;
     }
     
+    public static function contactFilter($filter = null) {
+        if(is_null($filter)) {
+            $filter = Configure::read('context.contact_filter');
+        } else {
+            Configure::write('context.contact_filter', $filter);
+        }
+    
+        if(!is_array($filter)) {
+            $filter = array();
+        }
+        
+        return $filter;
+    }
     public static function entryId() {
         $entry_id = Configure::read('context.entry.id');
         

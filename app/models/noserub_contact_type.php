@@ -31,6 +31,36 @@ class NoserubContactType extends AppModel {
 	}
 
     /**
+	 * get's the noserub_contact_type for
+	 * use in the filter
+	 *
+	 * @param array $filter
+	 *
+	 * @return array
+	 */
+	public function arrayToFilter($filter) {
+	    $result = array();
+	    if(!is_array($filter)) {
+	        return $result;
+	    }
+	    foreach($filter as $tag) {
+	        $data = $this->find('first', array(
+	            'contain' => false,
+	            'conditions' => array(
+	                'name' => $tag
+	            ),
+	            'fields' => array('id')
+	        ));
+	        
+	        if($data) {
+	            $result[] = 'noserub.' . $data['NoserubContactType']['id'];
+	        }
+	    }
+	    
+	    return $result;
+	}
+	
+    /**
      * merges the array of noserub contact types (id => {0,1}) with
      * the tags in the string $new_tags
      */
