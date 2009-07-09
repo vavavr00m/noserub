@@ -33,7 +33,7 @@
 				<td><?php echo $consumer['Consumer']['consumer_secret']; ?></td>
 				<td>
 					<ul>
-                   		<li class="delete icon"><a href="<?php echo  '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $security_token . '/'; ?>"><?php __('Delete'); ?></a></li>
+                   		<li class="delete icon"><a href="<?php echo  '/settings/oauth/'.  $consumer['Consumer']['id'] . '/delete/' . $noserub->fnSecurityToken() . '/'; ?>"><?php __('Delete'); ?></a></li>
                    		<li class="edit icon"><a href="<?php echo '/settings/oauth/'.  $consumer['Consumer']['id'] . '/edit/'; ?>"><?php __('Edit'); ?></a></li>
                    	</ul>
 				</td>
