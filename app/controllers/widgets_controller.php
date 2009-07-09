@@ -301,6 +301,11 @@ class WidgetsController extends AppController {
         }
  	}
  	
+ 	public function entry_filter() {
+        $this->loadModel('ServiceType');
+        $this->set('service_types', $this->ServiceType->getFilters());
+ 	}
+ 	
     /**
      * Identities / Users
      */
@@ -427,9 +432,11 @@ class WidgetsController extends AppController {
         
         $type = $this->params['type'];
 
-        $show_in_overview = $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
-        $filter = $show_in_overview;
-
+        $filter = Context::entryFilter();
+        if(!$filter) {
+            $filter = $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
+        }
+        
         if($type == 'network') {
             $rel_filter = Context::contactFilter();
             

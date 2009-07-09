@@ -147,6 +147,21 @@ class Context {
         
         return $filter;
     }
+    
+    public static function entryFilter($filter = null) {
+        if(is_null($filter)) {
+            $filter = Configure::read('context.entry_filter');
+        } else {
+            Configure::write('context.entry_filter', $filter);
+        }
+    
+        if(!is_array($filter)) {
+            $filter = array();
+        }
+        
+        return $filter;
+    }
+    
     public static function entryId() {
         $entry_id = Configure::read('context.entry.id');
         
