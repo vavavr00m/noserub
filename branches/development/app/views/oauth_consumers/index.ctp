@@ -1,8 +1,8 @@
 <h3><?php __('OAuth parameters'); ?></h3>
 <ul class="infotext">
-	<li><?php __('Request Token URL'); ?>: <strong><?php echo Router::url('/pages/oauth/request_token', true); ?></strong></li>
-	<li><?php __('User Authorization URL'); ?>: <strong><?php echo Router::url('/pages/oauth/authorize', true); ?></strong></li>
-	<li><?php __('Access Token URL'); ?>: <strong><?php echo Router::url('/pages/oauth/access_token', true); ?></strong></li>
+	<li><?php __('Request Token URL'); ?>: <strong><?php echo Router::url('/oauth/request_token', true); ?></strong></li>
+	<li><?php __('User Authorization URL'); ?>: <strong><?php echo Router::url('/oauth/authorize', true); ?></strong></li>
+	<li><?php __('Access Token URL'); ?>: <strong><?php echo Router::url('/oauth/access_token', true); ?></strong></li>
 	<li><?php __('Signature method'); ?>: HMAC-SHA1</li>
 </ul>
 
