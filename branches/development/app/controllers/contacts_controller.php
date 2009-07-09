@@ -310,4 +310,32 @@ class ContactsController extends AppController {
         
         $this->redirect('/' . $splitted['local_username']);
     }
+    
+    public function add_filter($to_add) {
+        $filter = Context::contactFilter();
+        $to_add = split(',', $to_add);
+        $filter = array_merge($filter, $to_add);
+
+        Context::contactFilter($filter);
+        $this->Session->write('contact_filter', $filter);
+        
+        $this->redirect($this->referer());
+    }
+    
+    public function remove_filter($to_remove) {
+        $old_filter = Context::contactFilter();
+        $to_remove = split(',', $to_remove);
+        
+        $filter = array();
+        foreach($old_filter as $value) {
+            if(!in_array($value, $to_remove)) {
+                $filter[] = $value;
+            }
+        }
+
+        Context::contactFilter($filter);
+        $this->Session->write('contact_filter', $filter);
+        
+        $this->redirect($this->referer());
+    }
 }

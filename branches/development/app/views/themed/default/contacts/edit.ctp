@@ -1,4 +1,7 @@
-<div id="bd-main">
+<div id="bd-main" class="with-sidebar">
+    <div id="bd-main-hd">
+		<?php echo $noserub->widgetProfile(); ?>
+	</div>
 	<div id="bd-main-bd">
 		<dl id="hcard-<?php echo $contact['WithIdentity']['local_username']; ?>" class="vcards contacts <?php echo $contact['WithIdentity']['local']==1 ? '' : 'externalcontact'; ?>">
 			<dt>
@@ -78,5 +81,8 @@
 				<input class="submitbutton" type="submit" name="submit" value="<?php __('Save'); ?>"/>
 			</fieldset>
 		<?php echo $form->end(); ?>
+	</div>
+	<div id="bd-main-sidebar">
+		<?php echo $noserub->widgetContacts(); ?>
 	</div>
 </div>

@@ -19,9 +19,8 @@
             </li>
             <li>
     			<a class="toggle" href="#">(-)</a>
-    			<a class="head" href="#"><?php __('Contacts'); ?></a>
+    			<?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/', array('class' => 'head')); ?>
     			<ul>
-    				<li><?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/'); ?></li>
     				<li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
     			</ul>
     		</li>

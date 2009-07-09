@@ -168,32 +168,36 @@ class Contact extends AppModel {
                 'limit'      => $limit
             )
         );
+
         # extract the kind of tag we need to test here
-        $tagtype_id = split('\.', $filter['tag']);
-        if($tagtype_id[0] == 'all' || $tagtype_id[0] == '0') {
+        if(empty($filter['tag'])) {
             # no filtering
             return $data;
-        } else if($tagtype_id[0] == 'private') {
-            $model  = 'ContactType';
-            $model2 = 'ContactTypesContact';
-            $field  = 'contact_type_id';
-        } else {
-            $model  = 'NoserubContactType';
-            $model2 = 'ContactsNoserubContactType';
-            $field  = 'noserub_contact_type_id';
         }
         
         $return = array();
         foreach($data as $item) {
-            $keep = false;
-            if($item[$model]) {
-                foreach($item[$model] as $item2) {
-                    if($item2[$model2][$field] == $tagtype_id[1]) {
-                        $keep = true;
+            $matches = 0;
+            foreach($filter['tag'] as $tag_filter) {
+                $tagtype_id = split('\.', $tag_filter);
+                if($tagtype_id[0] == 'private') {
+                    $model  = 'ContactType';
+                    $model2 = 'ContactTypesContact';
+                    $field  = 'contact_type_id';
+                } else {
+                    $model  = 'NoserubContactType';
+                    $model2 = 'ContactsNoserubContactType';
+                    $field  = 'noserub_contact_type_id';
+                }
+                if($item[$model]) {
+                    foreach($item[$model] as $item2) {
+                        if($item2[$model2][$field] == $tagtype_id[1]) {
+                            $matches++;
+                        }
                     }
                 }
             }
-            if($keep) {
+            if($matches == count($filter['tag'])) {
                 $return[] = $item;
             }
         }

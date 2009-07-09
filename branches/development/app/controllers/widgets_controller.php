@@ -294,7 +294,7 @@ class WidgetsController extends AppController {
  	public function contact_filter() {
  	    if(Context::isSelf()) {
  	        $this->loadModel('Contact');
- 	    
+ 	        
  	        $this->set('contact_tags', $this->Contact->getTagList(Context::loggedInIdentityId()));
         } else {
             return false;
@@ -340,18 +340,25 @@ class WidgetsController extends AppController {
         $this->Contact->Identity->id = $identity_id;
         $this->set('identity', $this->Contact->Identity->read());
         
-        $tag_filter = $this->Session->read('Filter.Contact.Tag');
-        if(!$tag_filter) {
-            $tag_filter = 'all';
+        $rel_filter = Context::contactFilter();
+        if(!$rel_filter) {
+            $rel_filter = array();
         }
         
         # get (filtered) contacts
         if(Context::isSelf()) {
+            # get contacts of the displayed profile
+            $rel_filter = Context::contactFilter();
+            if($rel_filter) {
+                $rel_filter_private = $this->Contact->ContactType->arrayToFilter($identity_id, $rel_filter);
+                $rel_filter_noserub = $this->Contact->NoserubContactType->arrayToFilter($rel_filter);
+                $rel_filter = array_merge($rel_filter_private, $rel_filter_noserub);
+            }
             # this is my network, so I can show every contact
-            $contact_filter = array('tag' => $tag_filter);
+            $contact_filter = array('tag' => $rel_filter);
         } else {
             # this is someone elses network, so I show only the noserub contacts
-            $contact_filter = array('tag' => $tag_filter, 'type' => 'public');
+            $contact_filter = array('tag' => $rel_filter, 'type' => 'public');
         }
         
         $layout = isset($this->params['layout']) ? $this->params['layout'] : '';
@@ -363,13 +370,7 @@ class WidgetsController extends AppController {
         
         $data = $this->Contact->getForDisplay($identity_id, $contact_filter, $limit);
         $this->set('data', $data);
-        /*
-        $contacts = array();
-        foreach($data as $key => $value) {
-            $contacts[] = $value['WithIdentity'];
-        }
-        $this->set('data', $contacts);
-        */
+        
         if($layout == 'list') {
             $this->render('contacts_list');
         } else {
@@ -393,7 +394,14 @@ class WidgetsController extends AppController {
         }
         
         # get contacts of the displayed profile
-        $all_contacts = $this->Contact->getForIdentity($logged_in_identity_id, array(), $limit);
+        $rel_filter = Context::contactFilter();
+        if($rel_filter) {
+            $rel_filter_private = $this->Contact->ContactType->arrayToFilter($logged_in_identity_id, $rel_filter);
+            $rel_filter_noserub = $this->Contact->NoserubContactType->arrayToFilter($rel_filter);
+            $rel_filter = array_merge($rel_filter_private, $rel_filter_noserub);
+        }
+        
+        $all_contacts = $this->Contact->getForIdentity($logged_in_identity_id, $rel_filter, $limit);
         
         $contacts = array();
         foreach($all_contacts as $contact) {
@@ -423,17 +431,31 @@ class WidgetsController extends AppController {
         $filter = $show_in_overview;
 
         if($type == 'network') {
-            $data = $this->Contact->getForDisplay(Context::loggedInIdentityId(), array('tag' => 'all'));
-        
-            # we need to go through all this now and get Accounts and Services
-            # also save all contacts
-            $contacts = array();
-            foreach($data as $key => $value) {
-                $contacts[] = $value['WithIdentity'];
-            }
+            $rel_filter = Context::contactFilter();
+            
+            if($rel_filter == array('me')) {
+                $contact_ids = array(Context::loggedInIdentityId());
+            } else {
+                if($rel_filter) {
+                    $logged_in_identity_id = Context::loggedInIdentityId();
+                    $rel_filter_private = $this->Contact->ContactType->arrayToFilter($logged_in_identity_id, $rel_filter);
+                    $rel_filter_noserub = $this->Contact->NoserubContactType->arrayToFilter($rel_filter);
+                    $filter = array('tag' => array_merge($rel_filter_private, $rel_filter_noserub));
+                }
+                $data = $this->Contact->getForDisplay(Context::loggedInIdentityId(), $filter);
 
-            $contact_ids = Set::extract($contacts, '{n}.id');
-            $contact_ids[] = Context::loggedInIdentityId();
+                # we need to go through all this now and get Accounts and Services
+                # also save all contacts
+                $contacts = array();
+                foreach($data as $key => $value) {
+                    $contacts[] = $value['WithIdentity'];
+                }
+
+                $contact_ids = Set::extract($contacts, '{n}.id');
+                if(!$rel_filter || in_array('me', $rel_filter)) {
+                    $contact_ids[] = Context::loggedInIdentityId();
+                }
+            }
         } else {
             $contact_ids = array(Context::read('identity.id'));
         }
