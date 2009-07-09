@@ -1,4 +1,4 @@
-<div class="widget-group-overview">
+<div class="widget widget-group-overview">
 	<?php if(!empty($data)): ?>
 		<table>
 			<thead>

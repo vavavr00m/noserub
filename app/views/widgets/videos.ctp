@@ -8,14 +8,16 @@
         }
     }
 ?>
-<?php if($items) { ?>
-    <h2><?php __('Videos'); ?></h2>
-    <ul class="photos">
-        <?php foreach($items as $item) {
-            echo '<li>' . $item . '</li>';
-        } ?>
-    </ul>
-    <p class="more">
-    	<a href="#"><?php __('show more'); ?></a>
-    </p>
-<?php } ?>
+<div class="widget widget-videos">
+    <?php if($items) { ?>
+        <h2><?php __('Videos'); ?></h2>
+        <ul class="photos">
+            <?php foreach($items as $item) {
+                echo '<li>' . $item . '</li>';
+            } ?>
+        </ul>
+        <p class="more">
+        	<a href="#"><?php __('show more'); ?></a>
+        </p>
+    <?php } ?>
+</div>
