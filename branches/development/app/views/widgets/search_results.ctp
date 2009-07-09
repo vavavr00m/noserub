@@ -1,4 +1,4 @@
-<div class="widget widget-search-result">
+<div class="widget widget-search-results">
 	<?php if($items) { ?>
         <h2><?php echo sprintf(__('Search results for %s', true), '<strong>' . $q . '</strong>'); ?></h2>
     <?php } ?>
