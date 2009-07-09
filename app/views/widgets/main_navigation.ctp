@@ -19,7 +19,7 @@
             </li>
             <li>
     			<a class="toggle" href="#">(-)</a>
-    			<?php echo $html->link(__('My Contacts', true), $base_url . 'contacts/', array('class' => 'head')); ?>
+    			<?php echo $html->link(__('My Contacts', true), '/contacts/', array('class' => 'head')); ?>
     			<ul>
     				<li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
     			</ul>
