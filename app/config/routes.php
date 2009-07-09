@@ -26,6 +26,7 @@ Router::connect('/pages/omb/:action', array('controller' => 'omb_local_service')
 Router::connect('/pages/password/recovery/*', array('controller' => 'identities', 'action' => 'password_recovery'));
 Router::connect('/pages/password/set/*', array('controller' => 'identities', 'action' => 'password_recovery_set'));
 
+Router::connect('/oauth/:action', array('controller' => 'oauth'));
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
 
 // OAuth-enabled API methods
