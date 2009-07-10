@@ -1,7 +1,8 @@
 $(document).ready(function() {
     $('div#message').animate({'opacity' : 0.25}, 'medium').animate({'opacity' : 1}, 'medium').animate({'opacity' : 0.5}, 'medium').animate({'opacity' : 1}, 'medium');
     
-    if(typeof navigator.geolocation != "undefined") {
+    if(noserub_context.logged_in_identity != null &&
+       typeof navigator.geolocation != "undefined") {
         navigator.geolocation.getCurrentPosition(function(data){noserub_context.coords = {latitude: data.coords.latitude, longitude: data.coords.longitude};});
     } else {
         noserub_context.coords = {latitude: 0, longitude: 0};
