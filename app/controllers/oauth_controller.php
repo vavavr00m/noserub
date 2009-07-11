@@ -9,9 +9,9 @@ class OauthController extends AppController {
 		Configure::write('debug', 0);
 		$server = $this->getServer();
 		
-		// to avoid an "invalid signature" error we have to unset this param
-		unset($_GET['url']);
-		
+		// to avoid an "invalid signature" error we have to remove the url param
+		$this->removeUrlParamFromQueryString();
+
 		try {
 			$request = OAuthRequest::from_request();
 			$request_token = $server->fetch_request_token($request);
@@ -31,8 +31,8 @@ class OauthController extends AppController {
 		// we do this here so we do not have to set up a cron job
 		$this->RequestToken->deleteExpired();
 		
-		// to avoid an "invalid signature" error we have to unset this param
-		unset($_GET['url']);
+		// to avoid an "invalid signature" error we have to remove the url param
+		$this->removeUrlParamFromQueryString();
 		
 		try {
   			$request = OAuthRequest::from_request();
@@ -93,6 +93,21 @@ class OauthController extends AppController {
 		$server->add_signature_method(new OAuthSignatureMethod_HMAC_SHA1());
 		
 		return $server;
+	}
+	
+	/**
+	 * Removes the url parameter, automatically added by mod_rewrite, from $_SERVER['QUERY_STRING']
+	 */
+	private function removeUrlParamFromQueryString() {
+		$queryString = $_SERVER['QUERY_STRING'];
+		
+		if (strpos($queryString, '&') === false) {
+			$queryString = '';
+		} else {
+			$queryString = substr($queryString, strpos($queryString, '&') + 1);
+		}
+		
+		$_SERVER['QUERY_STRING'] = $queryString;
 	}
 	
 	private function writeToSessionIfParameterIsSet($sessionKey, $paramKey) {
