@@ -70,7 +70,7 @@ $feed->handle_content_type();
 	<?php endif ?>
 
 	<div class="chunk">
-		<h1>Quick-n-Dirty Multifeeds Demo</h1>
+		<h1>Quick-n-Dirty Multifeeds Demo</a></h1>
 	</div>
 
 	<?php
