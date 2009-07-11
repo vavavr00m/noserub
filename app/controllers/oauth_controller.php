@@ -15,7 +15,7 @@ class OauthController extends AppController {
 		try {
 			$request = OAuthRequest::from_request();
 			$request_token = $server->fetch_request_token($request);
-		  	echo $request_token;
+		  	echo $request_token . '&oauth_callback_confirmed=true';
 		} catch (OAuthException $e) {
 			print($e->getMessage() . "\n<hr />\n");
 		  	print_r($request);
