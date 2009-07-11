@@ -24,9 +24,7 @@
 		<div id="bd">
 			<div id="bd-inner">
 				<div id="sidebar">
-				    <div>
-				        <?php echo $noserub->widgetNavigation('main'); ?>
-				    </div>
+					<?php echo $noserub->widgetNavigation('main'); ?>
 				    <div>
 						<ul>
 							<li>
