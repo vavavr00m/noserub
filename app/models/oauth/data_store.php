@@ -9,7 +9,7 @@ class DataStore extends AppModel {
 		$data = $this->get_consumer_data($consumer_key);
 	
 		if (!empty($data)) {
-			return new OAuthConsumer($data['Consumer']['consumer_key'], $data['Consumer']['consumer_secret']);
+			return new OAuthConsumer($data['Consumer']['consumer_key'], $data['Consumer']['consumer_secret'], $data['Consumer']['callback_url']);
 		}
 		
 		return null;
