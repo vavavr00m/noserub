@@ -87,7 +87,7 @@ class DataStore extends AppModel {
   		$data[$token_type]['token_key'] = $key;
   		$data[$token_type]['token_secret'] = $secret;
   		
-  		if ($identity_id != null) {
+  		if ($token_type == 'AccessToken') {
   			$data[$token_type]['identity_id'] = $identity_id;
   		}
   		
@@ -95,6 +95,16 @@ class DataStore extends AppModel {
   		$token = new $token_type();
   		$token->save($data);
   		
-  		return new OAuthToken($key, $secret);
+  		if ($token_type == 'AccessToken') {
+  			return new OAuthToken($key, $secret);
+  		} else {
+  			return new OAuthRequestToken($key, $secret);
+  		}
+	}
+}
+
+class OAuthRequestToken extends OAuthToken {
+	public function to_string() {
+		return parent::to_string() . '&oauth_callback_confirmed=true';
 	}
 }
