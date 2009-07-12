@@ -1,0 +1,10 @@
+#summary Documentation of oauth/access_token
+= NoseRub API Method: oauth access_token =
+
+Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token.
+
+====URL====
+oauth/access_token
+
+====HTTP method(s)====
+GET/POST

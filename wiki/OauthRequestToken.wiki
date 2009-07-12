@@ -1,0 +1,10 @@
+#summary Documentation of oauth/request_token
+= NoseRub API Method: oauth request_token =
+
+Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
+
+====URL====
+oauth/request_token
+
+====HTTP method(s)====
+GET/POST

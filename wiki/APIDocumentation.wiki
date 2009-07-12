@@ -1,5 +1,7 @@
 #summary NoseRub API Documentation
 
+Please note: this documentation is for the upcoming version of NoseRub (0.9)!
+
 =Twitter-compatible API=
 
 ===Help Methods===
@@ -17,3 +19,8 @@
   * [http://code.google.com/p/noserub/wiki/LocationsCreate locations/create]
   * [http://code.google.com/p/noserub/wiki/LocationsCurrent locations/current]
   * [http://code.google.com/p/noserub/wiki/LocationsSetCurrent locations/set_current]
+  
+===OAuth Methods===
+  * [http://code.google.com/p/noserub/wiki/OauthRequestToken oauth/request_token]
+  * [http://code.google.com/p/noserub/wiki/OauthAuthorize oauth/authorize]
+  * [http://code.google.com/p/noserub/wiki/OauthAccessToken oauth/access_token]
