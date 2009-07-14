@@ -233,8 +233,21 @@ class WidgetsController extends AppController {
  	 * Groups
  	 */
 
+    /**
+     * Displays the header for a specific group
+     */
  	public function group_head() {
  	    
+ 	}
+ 	
+ 	/**
+ 	 * Show nine members of the group
+ 	 */
+ 	public function group_members() {
+ 	    if(Context::groupId()) {
+ 	        $this->loadModel('Group');
+ 	        $this->set('data', $this->Group->getMembers(9));
+ 	    }
  	}
  	
  	/**

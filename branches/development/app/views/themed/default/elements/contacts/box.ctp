@@ -38,7 +38,11 @@
                 App::import('Vendor', 'sex');
             	$contact_photo = Sex::getMediumImageUrl($item['sex']);
             } ?>
-            <img src="<?php echo $contact_photo; ?>" width="62" height="62" alt="<?php echo $item['local_username']; ?>'s Picture" class="<?php echo $item['local']==1 ? 'internthumbs' : 'externthumbs'; ?>" />
+            <?php
+                $local_username = isset($item['local_username']) ? $item['local_username'] : $item['username'];
+                $local = isset($item['local']) ? $item['local'] : 1;
+            ?>
+            <img src="<?php echo $contact_photo; ?>" width="62" height="62" alt="<?php echo $local_username; ?>'s Picture" class="<?php echo $local==1 ? 'internthumbs' : 'externthumbs'; ?>" />
         </a>
         </li>
     <?php } ?>
