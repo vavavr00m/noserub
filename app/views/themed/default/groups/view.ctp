@@ -12,22 +12,7 @@
 		<div class="widget widget-join-group">
 		  <?php echo $noserub->link('/groups/manage_subscription/'); ?>
 		</div>
-		<div class="widget widget-group-members">
-			<h2>[GROUP NAME] members</h2>
-			<ul>
-			<!---
-				<li><a href="#"><img src="images/examples/userimage1_medium.jpg" alt="" /></a></li>
-				<li><a href="#"><img src="images/examples/userimage2_medium.jpg" alt="" /></a></li>
-				<li><a href="#"><img src="images/examples/userimage3_medium.jpg" alt="" /></a></li>
-				<li><a href="#"><img src="images/examples/userimage4_medium.jpg" alt="" /></a></li>
-				<li><a href="#"><img src="images/examples/userimage5_medium.jpg" alt="" /></a></li>
-				<li><a href="#"><img src="images/examples/userimage6_medium.jpg" alt="" /></a></li>
-			--->
-			</ul>
-			<p class="more">
-				<a href="#">show more</a>
-			</p>
-		</div>
+		<?php echo $noserub->widgetGroupMembers(); ?>
 		<div class="widget widget-group-statistics">
 			<h2>Statistics</h2>
 			<ul>

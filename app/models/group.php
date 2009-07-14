@@ -48,8 +48,8 @@ class Group extends AppModel {
     }
     
     public function getNew() {
-        $this->contain();
         return $this->find('all', array(
+            'contain' => false,
             'limit' => 5,
             'order' => 'created DESC'
         ));
@@ -61,11 +61,37 @@ class Group extends AppModel {
      * "popularity" measurement.
      */
     public function getPopular() {
-        $this->contain();
         return $this->find('all', array(
+            'contain' => false,
             'limit' => 5,
             'order' => 'entry_count DESC'
         ));
+    }
+    
+    /**
+     * Returns $limit members of this group.
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getMembers($limit = 9) {
+        if(!Context::groupId()) {
+            return false;
+        }
+        $data = $this->find('first', array(
+            'contain' => array(
+                'GroupSubscriber' => array(
+                    'limit' => 9,
+                    'order' => 'last_login DESC'
+                )
+            ),
+            'conditions' => array(
+                'Group.id' => Context::groupId()
+            )
+        ));
+        
+        return $data['GroupSubscriber'];
     }
     
     /**
