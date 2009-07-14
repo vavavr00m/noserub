@@ -45,10 +45,7 @@ class GroupsController extends AppController {
             $this->redirect('/groups/');
         }
         
-        Context::write('group', array(
-            'id' => $group['Group']['id'],
-            'slug' => $slug
-        ));
+        $this->Group->saveInContext($group);
         
         $this->Group->id = $group['Group']['id'];
         Context::write(
@@ -71,10 +68,7 @@ class GroupsController extends AppController {
             $this->redirect('/groups/');
         }
         
-        Context::write('group', array(
-            'id' => $group['Group']['id'],
-            'slug' => $slug
-        ));
+        $this->Group->saveInContext($group);
         
         $this->Group->id = $group['Group']['id'];
         Context::write(

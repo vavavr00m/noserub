@@ -178,6 +178,10 @@ class Context {
         return Configure::read('context.group.slug');
     }
     
+    public static function groupName() {
+        return Configure::read('context.group.name');
+    }
+    
     /*
      * Returns a copy of the whole context for usage in JS.
      * Because of this, some fields like the users hashed password

@@ -146,12 +146,26 @@ class NoserubHelper extends AppHelper {
     }
     
     private function linkGroupManageSubscription() {
-        if(!Context::isSubscribed() && Context::groupSlug()) {
-            return $this->html->link(__('Subscribe to this group', true), '/groups/subscribe/' . Context::groupSlug() . '/_t:' . $this->fnSecurityToken());
+        $label = false; $url = false;
+        
+        if(Context::isLoggedIn() && Context::groupSlug()) {
+            if(!Context::isSubscribed()) {
+                $label = __('Subscribe to this group', true);
+                $url = '/groups/subscribe/';
+            } else {
+                $label = __('Unsubscribe from this group', true);
+                $url = '/groups/unsubscribe/';
+            }
         }
         
-        if(Context::isSubscribed() && Context::groupSlug()) {
-            return $this->html->link(__('Unsubscribe from this group', true), '/groups/unsubscribe/' . Context::groupSlug() . '/_t:' . $this->fnSecurityToken());
+        if($label && $url) {
+            return $this->html->link(
+                '<span></span>' . $label, 
+                $url . Context::groupSlug() . '/_t:' . $this->fnSecurityToken(), 
+                array('class' => 'button'),
+                false,
+                false
+            );
         }
         
         return '';

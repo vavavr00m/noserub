@@ -93,15 +93,14 @@ class EntriesController extends AppController {
         }
         
         if($group_id) {
-            $this->set(
-                'group', 
-                $this->Entry->Group->find('first', array(
-                    'contain' => false,
-                    'conditions' => array(
-                        'Group.id' => $group_id
-                    )
-                ))
-            );
+            $group = $this->Entry->Group->find('first', array(
+                'contain' => false,
+                'conditions' => array(
+                    'Group.id' => $group_id
+                )
+            ));
+            $this->set('group', $group);
+            $this->Entry->Group->saveInContext($group);
             
             $this->render('group_view');
         } else {
