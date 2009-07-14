@@ -177,4 +177,12 @@ class Group extends AppModel {
             return true;
         }
     }
+    
+    public function saveInContext($data) {
+        Context::write('group', array(
+            'id' => $data['Group']['id'],
+            'slug' => $data['Group']['slug'],
+            'name' => $data['Group']['name']
+        ));
+    }
 }

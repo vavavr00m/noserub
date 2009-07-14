@@ -232,6 +232,10 @@ class WidgetsController extends AppController {
  	/**
  	 * Groups
  	 */
+
+ 	public function group_head() {
+ 	    
+ 	}
  	
  	/**
  	 * display groups that this user subscribed to

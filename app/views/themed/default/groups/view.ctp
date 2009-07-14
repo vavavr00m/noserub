@@ -1,6 +1,6 @@
 <div id="bd-main" class="with-sidebar">
 	<div id="bd-main-hd">
-		<h1><?php __('Group') ?> <span><?php echo $group['Group']['name']; ?></span></h2>
+	    <?php echo $noserub->widgetGroupHead(); ?>
 	</div>
 	<div id="bd-main-bd">
     	<?php echo $noserub->widgetFlashMessage(); ?>
@@ -10,17 +10,19 @@
 
 	<div id="bd-main-sidebar">
 		<div class="widget widget-join-group">
-			<a class="button" href="#"><span></span><?php __('Join this group') ?></a>
+		  <?php echo $noserub->link('/groups/manage_subscription/'); ?>
 		</div>
 		<div class="widget widget-group-members">
 			<h2>[GROUP NAME] members</h2>
 			<ul>
+			<!---
 				<li><a href="#"><img src="images/examples/userimage1_medium.jpg" alt="" /></a></li>
 				<li><a href="#"><img src="images/examples/userimage2_medium.jpg" alt="" /></a></li>
 				<li><a href="#"><img src="images/examples/userimage3_medium.jpg" alt="" /></a></li>
 				<li><a href="#"><img src="images/examples/userimage4_medium.jpg" alt="" /></a></li>
 				<li><a href="#"><img src="images/examples/userimage5_medium.jpg" alt="" /></a></li>
 				<li><a href="#"><img src="images/examples/userimage6_medium.jpg" alt="" /></a></li>
+			--->
 			</ul>
 			<p class="more">
 				<a href="#">show more</a>

@@ -1,6 +1,6 @@
 <div id="bd-main" class="with-sidebar">
 	<div id="bd-main-hd">
-		<h2><?php echo __('Group') . ': ' . $group['Group']['name']; ?></h2>
+		<?php echo $noserub->widgetGroupHead(); ?>
 	</div>
 	<div id="bd-main-bd">
 	    <h2><?php __('New Topic'); ?>
