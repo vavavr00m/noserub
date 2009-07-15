@@ -48,12 +48,6 @@ class GroupsController extends AppController {
         
         $this->Group->saveInContext($group);
         
-        $this->Group->id = $group['Group']['id'];
-        Context::write(
-            'is_subscribed',
-            $this->Group->isSubscribed(Context::loggedInIdentityId()
-        ));
-        
         $this->set('group', $group);
     }
     
@@ -70,12 +64,6 @@ class GroupsController extends AppController {
         }
         
         $this->Group->saveInContext($group);
-        
-        $this->Group->id = $group['Group']['id'];
-        Context::write(
-            'is_subscribed',
-            $this->Group->isSubscribed(Context::loggedInIdentityId()
-        ));
         
         $this->set('group', $group);
     }
