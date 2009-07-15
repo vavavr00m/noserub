@@ -121,6 +121,9 @@ input[type="button"]::-moz-focus-inner {
 	outline:none;
 	border:none;
 }
+a.button span {
+	padding:3px 30px 3px 0px;
+}
 
 /**
  * Header
@@ -411,113 +414,98 @@ input[type="button"]::-moz-focus-inner {
 #bd-main-hd h1 span {
 	color:#ccc;
 }
+#bd-main-hd h1 span a,
+#bd-main-hd h1 span a:visited {
+	color:inherit;
+	text-decoration:none;
+}
+#bd-main-hd h1 span a:hover,
+#bd-main-hd h1 span a:focus {
+	text-decoration:underline;
+}
 #bd-main-hd h2 {
 	border:0;
 	color:#fff;
 	font-weight:bold;
 	line-height:1.4em;
 }
-#bd-main-hd .userimage {
+#bd-main-hd .widget-profile .vcard {
+	float:left;
+	padding-right:20px;
+	width:470px;
+}
+#bd-main-hd .widget-profile .vcard .photo {
 	border:#1187a8 5px solid;
 	float:left;
+	margin-right:15px;
 }
-#bd-main-hd .vcard {
-	float:left;
-	margin-left:15px;
-	padding-right:20px;
-	width:305px;
-}
-#bd-main-hd .vcard .fn {
+#bd-main-hd .widget-profile .vcard .fn {
 	font-size:1.9em;
 	font-weight:bold;
 	margin-bottom:0;
 }
-#bd-main-hd .vcard .url {
+#bd-main-hd .widget-profile .vcard .url {
 	color:#fff;
 	font-size:1.4em;
 	text-decoration:none;
 }
-#bd-main-hd .vcard .url:hover,
-#bd-main-hd .vcard .url:focus,
-#bd-main-hd .vcard .url:active {
+#bd-main-hd .widget-profile .vcard .url:hover,
+#bd-main-hd .widget-profile .vcard .url:focus,
+#bd-main-hd .widget-profile .vcard .url:active {
 	text-decoration:underline;
 }
-#bd-main-hd .vcard .url strong {
+#bd-main-hd .widget-profile .vcard .url strong {
 	font-weight:bold;
 }
-#bd-main-hd .vcard .role {
+#bd-main-hd .widget-profile .vcard .role {
 	border-top:1px solid #118db0;
 	font-size:1.4em;
 	line-height:1.4em;
 	margin-top:.5em;
 	padding-top:.5em;
 }
-#bd-main-hd .vcard .adr {
+#bd-main-hd .widget-profile .vcard .adr {
 	font-size:1.05em;
 }
-#bd-main-hd .buttons {
+#bd-main-hd .widget-profile .buttons {
 	background:url(../img/vr_bd_main_hd.png) left center no-repeat;
 	float:left;
 	min-height:150px;
 	padding-left:35px;
 	width:235px;
 }
-#bd-main-hd .buttons .button-add-contact,
-#bd-main-hd .buttons .button-send-message {
-	background-image:url(../img/buttons_grey.png);
-	color:#373737;
+#bd-main-hd .widget-profile .buttons .add-contact,
+#bd-main-hd .widget-profile .buttons .send-message {
 	display:block;
-	font-weight:bold;
-	height:35px;
-	line-height:35px;
 	margin-top:10px;
-	padding-left:35px;
-	text-decoration:none;
-	width:155px;
 }
-#bd-main-hd .buttons .button-add-contact {
-	background-position:0px 0px;
+#bd-main-hd .widget-profile .buttons a.add-contact span {
+	background:url(../img/btn_icons.png) -30px 50% no-repeat;
 }
-#bd-main-hd .buttons .button-send-message {
-	background-position:0px -70px;
+#bd-main-hd .widget-profile .buttons a.send-message span {
+	background:url(../img/btn_icons.png) -60px 50% no-repeat;
 }
-#bd-main-hd .buttons .button-add-contact:hover,
-#bd-main-hd .buttons .button-add-contact:focus {
-	outline:0;
-	text-decoration:underline;
-}
-#bd-main-hd .buttons .button-add-contact:active {
-	background-position:0px -35px;
-}
-#bd-main-hd .buttons .button-send-message:hover,
-#bd-main-hd .buttons .button-send-message:focus {
-	outline:0;
-	text-decoration:underline;
-}
-#bd-main-hd .buttons .button-send-message:active {
-	background-position:0px -105px;
-}
-#bd-main-hd .buttons ul {
+#bd-main-hd .widget-profile .buttons ul {
 	font-size:0.95em;
 	margin-top:10px;
 }
-#bd-main-hd .buttons ul a {
+#bd-main-hd .widget-profile .buttons ul a {
 	color:#0d4555;
 	text-decoration:none;
 }
-#bd-main-hd .buttons ul a:hover,
-#bd-main-hd .buttons ul a:focus,
-#bd-main-hd .buttons ul a:active {
+#bd-main-hd .widget-profile .buttons ul a:hover,
+#bd-main-hd .widget-profile .buttons ul a:focus,
+#bd-main-hd .widget-profile .buttons ul a:active {
 	text-decoration:underline;
 }
-#bd-main-hd > ul {
+#bd-main-hd .widget-profile > ul {
 	clear:both;
 }
-#bd-main-hd > ul li {
+#bd-main-hd .widget-profile > ul li {
 	float:left;
 	margin-right:2px;
 }
-#bd-main-hd > ul a {
+#bd-main-hd .widget-profile > ul a {
 	background-color:#129bc1;
 	color:#a5d9e8;
 	float:left;
@@ -526,10 +514,10 @@ input[type="button"]::-moz-focus-inner {
 	padding:.5em 1.5em;
 	text-decoration:none;
 }
-#bd-main-hd > ul li.active a,
-#bd-main-hd > ul a:hover,
-#bd-main-hd > ul a:focus,
-#bd-main-hd > ul a:active {
+#bd-main-hd .widget-profile > ul li.active a,
+#bd-main-hd .widget-profile > ul a:hover,
+#bd-main-hd .widget-profile > ul a:focus,
+#bd-main-hd .widget-profile > ul a:active {
 	background-color:#fff;
 	color:#129bc1;
 }
@@ -656,7 +644,6 @@ input[type="button"]::-moz-focus-inner {
 }
 #bd-main-sidebar .widget-join-group a span {
 	background:url(../img/btn_icons.png) 0px 50% no-repeat;
-	padding-left:30px;
 }
 #bd-main-sidebar .widget-group-statistics li {
 	border-top:1px solid #f6f6f6;
@@ -772,25 +759,11 @@ input[type="button"]::-moz-focus-inner {
 	width:140px;
 	height:140px;
 }
-#bd-main-bd .widget-group-info div.left a {
-	background-image:url(../img/buttons_grey.png);
-	background-position:0px -140px;
-	color:#373737;
+#bd-main-bd .widget-group-info div.left a.button {
 	display:block;
-	font-weight:bold;
-	height:29px;
-	line-height:29px;
-	padding-left:35px;
-	text-decoration:none;
-	width:115px;
 }
-#bd-main-bd .widget-group-info div.left a:hover,
-#bd-main-bd .widget-group-info div.left a:focus {
-	outline:0;
-	text-decoration:underline;
-}
-#bd-main-bd .widget-group-info div.left a:active {
-	background-position:0px -169px;
+#bd-main-bd .widget-group-info div.left a.button span {
+	background:url(../img/btn_icons.png) -90px 50% no-repeat;
 }
 #bd-main-bd .widget-group-info div.right {
 	float:left;

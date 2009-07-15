@@ -3,8 +3,8 @@ $base_url = '/' . $data['local_username'] . '/';
 $name = $data['name'];
 ?>
 <div class="widget widget-profile">
-    <?php echo $html->image($noserub->fnProfilePhotoUrl(), array('class' => 'userimage', 'alt' => $name, 'width' => 130, 'height' => 130)); ?>
     <div class="vcard">
+    	<?php echo $html->image($noserub->fnProfilePhotoUrl(), array('class' => 'photo', 'alt' => $name, 'width' => 130, 'height' => 130)); ?>
         <h1 class="fn"><?php echo $name; ?></h1>
         <?php echo $html->link($data['username'], 'http://' . $data['username'], array('class' => 'url')); ?>
         <p class="role">
@@ -17,8 +17,12 @@ $name = $data['name'];
         </p>
     </div>
     <div class="buttons">
-        <?php echo $noserub->link('/add/as/contact/'); ?>
-    	<a class="button-send-message" href="#">
+		<a class="button add-contact" href="#">
+			<span></span>
+			Add as contact
+		</a>
+    	<a class="button send-message" href="#">
+			<span></span>
     		Send a message
     	</a>
     	<ul>
