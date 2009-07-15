@@ -787,7 +787,7 @@ class Entry extends AppModel {
             $this->updateLastActivity();
         }
         
-        return true;
+        return parent::afterSave($created);
     }
     
     /**
