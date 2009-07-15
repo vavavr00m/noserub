@@ -7,5 +7,6 @@
 		<?php echo $noserub->widgetSingleLifestream(); ?>
 	</div>
 	<div id="bd-main-sidebar">
+	    <?php echo $noserub->widgetEntryFilter(); ?>
 	</div>
 </div>

@@ -235,5 +235,11 @@ class Group extends AppModel {
             'name' => $data['Group']['name'],
             'last_activity' => $data['Group']['last_activity']
         ));
+        
+        $this->id = $data['Group']['id'];
+        Context::write(
+            'is_subscribed',
+            $this->isSubscribed(Context::loggedInIdentityId()
+        ));
     }
 }

@@ -35,6 +35,13 @@ class Entry extends AppModel {
      * @return bool
      */
     public function add($type, $data, $identity_id, $group_id = 0, $restricted = false) {
+        if($group_id) {
+            $this->Group->id = $group_id;
+            if(!$this->Group->isSubscribed($identity_id)) {
+                // this user is not subscribed to this group
+                return false;
+            }
+        }
         // @todo check that $identity_id is subscribed to $group_id
         switch($type) {
             case 'micropublish':

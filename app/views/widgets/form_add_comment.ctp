@@ -1,5 +1,6 @@
 <div class="widget form-add-comment">
-    <?php if(Context::isLoggedIn() && Context::entryId()) { ?>
+    <?php if(Context::isLoggedIn() && Context::entryId() &&
+        (!Context::groupId() || (Context::groupId() && Context::isSubscribed()))) { ?>
         <h2><?php __('Leave your comment'); ?></h2>
         <?php 
 
