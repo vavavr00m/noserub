@@ -14,7 +14,7 @@
     <h2><?php __('Statistics'); ?></h2>
     <ul>
     	<li><strong><?php __('Created'); ?></strong> <?php echo date('Y-m-d', strtotime($group_statistics['Group']['created'])); ?></li>
-    	<li><strong>Members</strong> 599</li>
+    	<li><strong>Members</strong> <?php echo $group_statistics['Group']['subscriber_count']; ?></li>
     	<li><strong>Posts</strong> <?php echo $group_statistics['Group']['entry_count']; ?></li>
     	<li><strong>Administrator</strong> <?php echo $admins; ?></li>
     </ul>

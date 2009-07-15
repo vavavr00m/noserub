@@ -26,6 +26,7 @@ class GroupsController extends AppController {
                 $identity_id = Context::loggedInIdentityId();
                 $this->Group->addSubscriber($identity_id);
                 $this->Group->addAdmin($identity_id);
+                $this->Group->updateLastActivity();
                 $this->Group->Entry->addGroup($identity_id, $this->Group->id);
                 
                 $this->redirect('/groups/view/' . $this->Group->field('slug') . '/');
