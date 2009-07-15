@@ -1,3 +1,4 @@
+<?php App::import('Vendor', 'UrlUtil'); ?>
 <div class="block-friends">
     <ul>
     <?php foreach($data as $item) { ?>

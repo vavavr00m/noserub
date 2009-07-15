@@ -264,7 +264,19 @@ class WidgetsController extends AppController {
  	    if(Context::groupId()) {
             $this->loadModel('Group');
  	        $this->set('group_info', $this->Group->find('first', array(
- 	            
+ 	            'contain' => false,
+ 	            'conditions' => array(
+ 	                'Group.id' => Context::groupId()
+ 	            )
+ 	        )));
+ 	    }
+ 	}
+ 	
+ 	public function group_statistics() {
+ 	    if(Context::groupId()) {
+            $this->loadModel('Group');
+ 	        $this->set('group_statistics', $this->Group->find('first', array(
+ 	            'contain' => array('GroupMaintainer'),
  	            'conditions' => array(
  	                'Group.id' => Context::groupId()
  	            )
