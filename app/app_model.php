@@ -154,7 +154,8 @@ class AppModel extends Model {
     public function afterSave($created) {
         # reset locale to version from beforeSave()
         if(!is_null($this->old_locale)) {
-            setlocale(LC_NUMERIC, $this->old_locale);
+            $this->old_locale = split(';', $this->old_locale);
+            setlocale(LC_ALL, $this->old_locale);
             $this->old_locale = null;
         }
         return parent::afterSave($created);

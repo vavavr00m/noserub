@@ -182,6 +182,10 @@ class Context {
         return Configure::read('context.group.name');
     }
     
+    public static function groupLastActivity() {
+        return Configure::read('context.group.last_activity');
+    }
+    
     /*
      * Returns a copy of the whole context for usage in JS.
      * Because of this, some fields like the users hashed password

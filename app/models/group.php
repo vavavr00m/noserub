@@ -22,8 +22,10 @@ class Group extends AppModel {
     );
     
     public $actsAs = array(
-        'Sluggable' => array('label' => 'name')
-    );
+        'Sluggable' => array(
+            'label' => 'name', 
+            'translation' => 'utf-8'
+    ));
     
     public $validate = array(
         'name' => array(
@@ -108,6 +110,8 @@ class Group extends AppModel {
         
         $this->query('INSERT INTO ' . $this->tablePrefix . 'group_subscriptions (group_id, identity_id) VALUES (' . $this->id . ',' . $identity_id . ')');
     
+        $this->updateSubscriberCount();
+        
         return true;
     }
     
@@ -124,9 +128,29 @@ class Group extends AppModel {
             $this->removeAdmin($identity_id);
         }
         
-        $data = $this->query('DELETE FROM ' . $this->tablePrefix . 'group_subscriptions WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id) . ' LIMIT 1');
-    
+        $this->query('DELETE FROM ' . $this->tablePrefix . 'group_subscriptions WHERE group_id=' . intval($this->id) . ' AND identity_id=' . intval($identity_id) . ' LIMIT 1');
+        
+        $this->updateSubscriberCount();
+        
         return true;
+    }
+    
+    public function updateSubscriberCount() {
+        if(!$this->exists()) {
+            return false;
+        }
+        
+        $data = $this->query('SELECT COUNT(*) FROM ' . $this->tablePrefix . 'group_subscriptions WHERE group_id=' . intval($this->id));
+        if(isset($data[0][0]['COUNT(*)'])) {
+            $this->saveField('subscriber_count', $data[0][0]['COUNT(*)']);
+        }
+    }
+    
+    public function updateLastActivity() {
+        if(!$this->exists()) {
+            return false;
+        }
+        $this->saveField('last_activity', date('Y-m-d H:i:s'));
     }
     
     /**
@@ -208,7 +232,8 @@ class Group extends AppModel {
         Context::write('group', array(
             'id' => $data['Group']['id'],
             'slug' => $data['Group']['slug'],
-            'name' => $data['Group']['name']
+            'name' => $data['Group']['name'],
+            'last_activity' => $data['Group']['last_activity']
         ));
     }
 }

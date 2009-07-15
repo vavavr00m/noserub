@@ -10,7 +10,7 @@
             }
         ?>
         <li>
-            <?php echo $html->link($group['name'], '/groups/view/' .$group['slug'] . '/'); ?>
+            <?php echo $html->link($group['name'] . ' (' . $group['last_activity'] . ')', '/groups/view/' .$group['slug'] . '/'); ?>
         </li>
     <?php } ?>
 </ul>

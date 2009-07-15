@@ -18,6 +18,8 @@ class Comment extends AppModel {
         $this->create();
         $this->save($data);
         $Mail->notifyComment($data['identity_id'], $data['entry_id'], $data['content']);
+        $this->Entry->id = $data['entry_id'];
+        $this->Entry->updateLastActivity();
         
         $original_entry_id = $data['entry_id'];
         $uid = $this->Entry->getUid($original_entry_id);
@@ -36,6 +38,8 @@ class Comment extends AppModel {
                 $this->save($data);
             
                 $Mail->notifyComment($entry['Entry']['identity_id'], $data['entry_id'], $data['content']);
+                $this->Entry->id = $data['entry_id'];
+                $this->Entry->updateLastActivity();
             }
         }
     }

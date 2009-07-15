@@ -766,7 +766,8 @@ class Entry extends AppModel {
     }
     
     /**
-     * When Entry.content is an array, serialize and encode it
+     * - When Entry.content is an array => serialize and encode it
+     * - When Entry belongs to a group => update group's last activity
      */
     public function beforeSave() {
         if(isset($this->data['Entry']['content']) && is_array($this->data['Entry']['content'])) {
@@ -776,6 +777,34 @@ class Entry extends AppModel {
         }
         
         return parent::beforeSave();
+    }
+    
+    /**
+     * - When created => set last_activity, this also updates group's last activity
+     */
+    public function afterSave($created) {
+        if($created) {
+            $this->updateLastActivity();
+        }
+        
+        return true;
+    }
+    
+    /**
+     * if this entry belongs to a group, also update
+     * this group's last activity.
+     */
+    public function updateLastActivity() {
+        if(!$this->exists()) {
+            return false;
+        }
+        $this->saveField('last_activity', date('Y-m-d H:i:s'));
+        
+        $group_id = $this->field('group_id');
+        if($group_id) {
+            $this->Group->id = $group_id;
+            $this->Group->updateLastActivity();
+        }
     }
     
     private function serializeAndEncode($data) {

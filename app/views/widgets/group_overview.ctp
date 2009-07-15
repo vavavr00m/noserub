@@ -12,13 +12,13 @@
 				<?php foreach($data as $item): ?>
 					<tr>
 						<td class="discussions">
-							<?= $html->link(
-								$item['Entry']['title'], 
+							<?echo $html->link(
+							    $item['Entry']['title'], 
 								'/groups/entry/' . Context::groupSlug() . '/' . $item['Entry']['id']
 							); ?>
 						</td>
-						<td class="replies"><?= $item['Entry']['comment_count']; ?></td>
-						<td class="activity"><?= $item['Entry']['published_on']; ?></td>
+						<td class="replies"><?php echo $item['Entry']['comment_count']; ?></td>
+						<td class="activity"><?php echo date('Y-m-d H:i:s', strtotime($item['Entry']['last_activity'])); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
