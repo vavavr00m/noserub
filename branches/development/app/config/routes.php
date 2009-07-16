@@ -52,6 +52,7 @@ Router::connect('/auth/:action', array('controller' => 'auth'));
 
 Router::connect('/search', array('controller' => 'searches', 'action' => 'index'));
 Router::connect('/entry/add/*', array('controller' => 'entries', 'action' => 'add'));
+Router::connect('/entry/mark/*', array('controller' => 'entries', 'action' => 'mark'));
 Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view'));
 
 Router::connect('/admins/:action', array('controller' => 'admins'));
