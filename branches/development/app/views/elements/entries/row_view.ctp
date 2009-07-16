@@ -57,10 +57,7 @@
 		</span>
 	<?php } ?>
     <span>
-        <?php echo $this->renderElement('entries/favorited_by', array('data' => $item)); ?>
-    </span>
-    <span>
-        <?php echo $this->renderElement('comments/view', array('data' => $item)); ?>
+        <?php echo sprintf(__('%d Favorites, %d Comments', true), count($item['FavoritedBy']), count($item['Comment'])); ?>
     </span>
     </p>
 </li>
