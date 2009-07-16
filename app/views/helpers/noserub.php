@@ -109,14 +109,14 @@ class NoserubHelper extends AppHelper {
     
     public function link($url) {
         switch($url) {
-            case '/add/as/contact/':
-                return $this->linkAddAsContact();
-            
             case '/groups/add/':
                 return $this->linkGroupAdd();
                 
             case '/groups/manage_subscription/':
                 return $this->linkGroupManageSubscription();
+                
+            case '/contact/manage/':
+                return $this->linkContactManage();
                 
             default:
                 return '';
@@ -168,6 +168,33 @@ class NoserubHelper extends AppHelper {
             );
         }
         
+        return '';
+    }
+    
+    private function linkContactManage() {
+        $label = false; $url = false;
+        
+        if(!Context::isSelf() && Context::isLoggedIn() && 
+           Context::read('identity.local_username') && !Context::isGuest()) {
+            if(Context::isContact()) {
+                $label = __('Remove contact', true);
+                $url = $url = '/' . Context::read('identity.local_username') . '/remove/contact/' . $this->fnSecurityToken();
+            } else {
+                $label = __('Add as contact', true);
+                $url = '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken();
+            }
+        }
+        
+        if($label && $url) {
+            return $this->html->link(
+                '<span></span>' . $label,
+                $url,
+                array('class' => 'button add-contact'),
+                false,
+                false
+            );
+        }
+
         return '';
     }
     

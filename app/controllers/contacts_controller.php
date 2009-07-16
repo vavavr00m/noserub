@@ -304,11 +304,44 @@ class ContactsController extends AppController {
         if($this->Contact->add($session_identity['id'], $identity['Identity']['id'])) {
             $this->flashMessage('success', __('New contact added.', true));
 		    $this->Contact->Identity->Entry->addNewContact($session_identity['id'], $identity['Identity']['id'], null);
+		    $this->redirect('/contacts/' . $this->Contact->id . '/edit/');
 	    } else {
 		    $this->flashMessage('error', 'Could not add contact');
+            $this->redirect($this->referer());
+		}
+    }
+    
+    public function remove_contact() {
+        $username         = isset($this->params['username']) ? $this->params['username'] : '';
+        $splitted         = $this->Contact->Identity->splitUsername($username);
+        $session_identity = $this->Session->read('Identity');
+        
+        if(!$session_identity) {
+            # this user is not logged in
+            $this->redirect('/');
+        }
+        
+        # make sure, that the correct security token is set
+        $this->ensureSecurityToken();
+        
+        # get id for this username
+        $this->Contact->Identity->contain();
+        $identity = $this->Contact->Identity->findByUsername($splitted['username'], array('Identity.id'));
+        
+        if($session_identity['id'] == $identity['Identity']['id']) {
+            # this is the logged in user. no reason to allow him to remove
+            # himself as contact.
+            $this->flashMessage('alert', __('You cannot remove yourself as a contact.', true));
+            $this->redirect('/' . $splitted['local_username']);
+        }
+        
+        if($this->Contact->remove($session_identity['id'], $identity['Identity']['id'])) {
+            $this->flashMessage('success', __('Contact removed', true));
+	    } else {
+		    $this->flashMessage('error', __('Could not remove contact', true));
 		}
         
-        $this->redirect('/' . $splitted['local_username']);
+        $this->redirect($this->referer());
     }
     
     public function add_filter($to_add) {
