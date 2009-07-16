@@ -51,7 +51,7 @@ class DataStore extends AppModel {
 		
 		if (!empty($consumerData) && $requestToken->isAuthorized($token->key)) {
 			$identityId = $requestToken->field('identity_id', array('token_key' => $token->key));
-			$accessToken = $this->new_token($consumerData['Consumer']['id'], 'AccessToken', $identityId);
+			$accessToken = new OAuthAccessToken($consumerData['Consumer']['id'], $identityId);
   			$requestToken->delete(array('RequestToken.token_key' => $token->key));
   			
   			return $accessToken;
@@ -62,9 +62,9 @@ class DataStore extends AppModel {
 	
 	public function new_request_token($consumer) {
 		$consumerData = $this->get_consumer_data($consumer->key);
-  		
+		
   		if (!empty($consumerData)) {
-  			return $this->new_token($consumerData['Consumer']['id'], 'RequestToken');
+  			return new OAuthRequestToken($consumerData['Consumer']['id'], $consumer->callback_url);
   		}
   		
   		return null;
@@ -77,33 +77,52 @@ class DataStore extends AppModel {
 		
 		return $consumer->findByConsumerKey($consumer_key);
 	}
-	
-	private function new_token($consumer_id, $token_type, $identity_id = null) {
+}
+
+abstract class AbstractOAuthToken extends OAuthToken {	
+	public function __construct() {
 		App::import('Core', 'Security');
 		$key = md5(time());
     	$secret = Security::hash(time(), null, true);
-  		
-  		$data[$token_type]['consumer_id'] = $consumer_id;
-  		$data[$token_type]['token_key'] = $key;
-  		$data[$token_type]['token_secret'] = $secret;
-  		
-  		if ($token_type == 'AccessToken') {
-  			$data[$token_type]['identity_id'] = $identity_id;
-  		}
-  		
-  		App::import('Model', $token_type);
-  		$token = new $token_type();
-  		$token->save($data);
-  		
-  		if ($token_type == 'AccessToken') {
-  			return new OAuthToken($key, $secret);
-  		} else {
-  			return new OAuthRequestToken($key, $secret);
-  		}
+    	parent::__construct($key, $secret);
 	}
 }
 
-class OAuthRequestToken extends OAuthToken {
+class OAuthAccessToken extends AbstractOAuthToken {
+	public function __construct($consumer_id, $identity_id) {
+		parent::__construct();
+  		$this->save($consumer_id, $identity_id);
+	}
+	
+	private function save($consumer_id, $identity_id) {
+		$data['AccessToken']['consumer_id'] = $consumer_id;
+  		$data['AccessToken']['token_key'] = $this->key;
+  		$data['AccessToken']['token_secret'] = $this->secret;
+  		$data['AccessToken']['identity_id'] = $identity_id;
+		
+  		App::import('Model', 'AccessToken');
+  		$token = new AccessToken();
+  		$token->save($data);
+	}
+}
+
+class OAuthRequestToken extends AbstractOAuthToken {
+	public function __construct($consumer_id, $callback_url) {
+		parent::__construct();
+		$this->save($consumer_id, $callback_url);
+	}
+	
+	private function save($consumer_id, $callback_url) {
+		$data['RequestToken']['consumer_id'] = $consumer_id;
+  		$data['RequestToken']['token_key'] = $this->key;
+  		$data['RequestToken']['token_secret'] = $this->secret;
+  		$data['RequestToken']['callback_url'] = $callback_url;
+		
+  		App::import('Model', 'RequestToken');
+  		$token = new RequestToken();
+  		$token->save($data);
+	}
+	
 	public function to_string() {
 		return parent::to_string() . '&oauth_callback_confirmed=true';
 	}
