@@ -18,16 +18,21 @@ class Contact extends AppModel {
      * creates a contact, when it's not already there
      */
     public function add($identity_id, $with_identity_id) {
-        $this->contain();
-        $conditions = array(
-            'identity_id'      => $identity_id,
-            'with_identity_id' => $with_identity_id
-        );
-        
-        $contact = $this->find($conditions, array('id'));
+        $contact = $this->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'identity_id'      => $identity_id,
+                'with_identity_id' => $with_identity_id
+            ),
+            'fields' => 'id'
+        ));
+
         if(!$contact) {
             $this->create();
-            $data = $conditions;
+            $data = array(
+                'identity_id' => $identity_id,
+                'with_identity_id' => $with_identity_id
+            );
             
             App::import('Model', 'Mail');
 		    $Mail = new Mail();
@@ -38,6 +43,28 @@ class Contact extends AppModel {
         
         # don't return with an error, if we already have the contact
         $this->id = $contact['Contact']['id'];
+        return true;
+    }
+    
+    /**
+     * removes a contact, when it's still there
+     */
+    public function remove($identity_id, $with_identity_id) {
+        $contact = $this->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'identity_id'      => $identity_id,
+                'with_identity_id' => $with_identity_id
+            ),
+            'fields' => 'id'
+        ));
+
+        if($contact) {
+            $this->id = $contact['Contact']['id'];
+            return $this->delete();
+        }
+        
+        // don't return with an error, if the contact is no longer valid
         return true;
     }
     
