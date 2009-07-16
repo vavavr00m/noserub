@@ -2,14 +2,18 @@
     $contact_filter = Context::contactFilter();
     
     $show_filter_tags = array();
-    foreach($contact_tags['noserub_contact_type_ids'] as $tag) {
-        if(!in_array($tag, $contact_filter)) {
-            $show_filter_tags[] = $html->link('(+)', '/contacts/add_filter/' . $tag) . ' ' . $tag;
+    if(isset($contact_tags['noserub_contact_type_ids']) && is_array($contact_tags['noserub_contact_type_ids'])) {
+        foreach($contact_tags['noserub_contact_type_ids'] as $tag) {
+            if(!in_array($tag, $contact_filter)) {
+                $show_filter_tags[] = $html->link('(+)', '/contacts/add_filter/' . $tag) . ' ' . $tag;
+            }
         }
     }
-    foreach($contact_tags['contact_type_ids'] as $tag) {
-        if(!in_array($tag, $contact_filter)) {
-            $show_filter_tags[] = $html->link('(+)', '/contacts/add_filter/' . $tag) . ' ' . $tag;
+    if(isset($contact_tags['contact_type_ids']) && is_array($contact_tags['contact_type_ids'])) {
+        foreach($contact_tags['contact_type_ids'] as $tag) {
+            if(!in_array($tag, $contact_filter)) {
+                $show_filter_tags[] = $html->link('(+)', '/contacts/add_filter/' . $tag) . ' ' . $tag;
+            }
         }
     }
 ?>
