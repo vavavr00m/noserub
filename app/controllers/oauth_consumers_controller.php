@@ -56,17 +56,10 @@ class OauthConsumersController extends AppController {
 		}
 		
 		if ($this->data) {
-			if ($this->data['Consumer']['application_name']) {
-				$this->Consumer->id = $consumer['Consumer']['id'];
-				if ($this->Consumer->saveField('application_name', $this->data['Consumer']['application_name'])) {
-                    $this->flashMessage('success', __('Application updated.', true));
-                } else {
-                    $this->flashMessage('error', __('Application could not be updated.', true));
-                }
+			$this->Consumer->id = $consumer['Consumer']['id'];
+			if ($this->Consumer->save($this->data, true, array('application_name', 'callback_url'))) {
                 $this->redirect($this->getOAuthSettingsUrl());
-			} else {
-				$this->Consumer->invalidate('application_name');
-			}
+            }
 		} else {
 			$this->data = $consumer;
 		}
