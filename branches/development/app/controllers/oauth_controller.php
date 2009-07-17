@@ -14,6 +14,7 @@ class OauthController extends AppController {
 
 		try {
 			$request = OAuthRequest::from_request();
+			$this->DataStore->set_request_token_callback_url($request->get_parameter('oauth_callback'));
 			$request_token = $server->fetch_request_token($request);
 		  	echo $request_token;
 		} catch (OAuthException $e) {
