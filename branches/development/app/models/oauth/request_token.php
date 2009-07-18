@@ -17,10 +17,8 @@ class RequestToken extends AppModel {
 		return $data['Consumer']['application_name'];
 	}
 	
-	public function getCallbackUrl($token_key) {
-		$data = $this->find('first', array('conditions' => array('RequestToken.token_key' => $token_key), 'contain' => false));
-		
-		return $data['RequestToken']['callback_url'];
+	public function getData($token_key) {
+		return $this->find('first', array('conditions' => array('RequestToken.token_key' => $token_key), 'contain' => false));
 	}
 	
 	public function isAuthorized($token_key) {
