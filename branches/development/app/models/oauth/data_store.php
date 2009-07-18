@@ -128,6 +128,7 @@ class OAuthRequestToken extends AbstractOAuthToken {
   		$data['RequestToken']['token_key'] = $this->key;
   		$data['RequestToken']['token_secret'] = $this->secret;
   		$data['RequestToken']['callback_url'] = $callback_url;
+  		$data['RequestToken']['verifier'] = Security::hash(microtime(), null, true);
 		
   		App::import('Model', 'RequestToken');
   		$token = new RequestToken();
