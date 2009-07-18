@@ -37,6 +37,7 @@ class OauthController extends AppController {
 		
 		try {
   			$request = OAuthRequest::from_request();
+  			$this->DataStore->set_verifier($request->get_parameter('oauth_verifier'));
   			$access_token = $server->fetch_access_token($request);
   			echo $access_token;
 		} catch (OAuthException $e) {
