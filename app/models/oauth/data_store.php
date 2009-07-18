@@ -5,6 +5,7 @@ App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
 class DataStore extends AppModel {
 	public $useTable = false;
 	private $request_token_callback_url = null;
+	private $verifier = null;
 	
 	public function lookup_consumer($consumer_key) {
 		$data = $this->get_consumer_data($consumer_key);
@@ -51,7 +52,7 @@ class DataStore extends AppModel {
   		$requestToken = new RequestToken();
 		
 		if (!empty($consumerData) && $requestToken->isAuthorized($token->key)) {
-			$identityId = $requestToken->field('identity_id', array('token_key' => $token->key));
+			$identityId = $requestToken->field('identity_id', array('token_key' => $token->key, 'verifier' => $this->verifier));
 			$accessToken = new OAuthAccessToken($consumerData['Consumer']['id'], $identityId);
   			$requestToken->delete(array('RequestToken.token_key' => $token->key));
   			
@@ -79,6 +80,10 @@ class DataStore extends AppModel {
 	
 	public function set_request_token_callback_url($url) {
 		$this->request_token_callback_url = $url;
+	}
+	
+	public function set_verifier($verifier) {
+		$this->verifier = $verifier;
 	}
 	
 	private function get_consumer_data($consumer_key) {
