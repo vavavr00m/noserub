@@ -49,7 +49,6 @@ class OauthController extends AppController {
 	
 	public function authorize() {
 		$this->writeToSessionIfParameterIsSet('OAuth.request_token', 'oauth_token');
-		$this->writeToSessionIfParameterIsSet('OAuth.callback_url', 'oauth_callback');
 		
 		if (!$this->Session->check('Identity')) {
 			$this->Session->write('Login.success_url', '/oauth/authorize');
@@ -73,17 +72,12 @@ class OauthController extends AppController {
 			if (isset($this->params['form']['allow'])) {
 				$this->RequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
 				
-				if ($this->Session->check('OAuth.callback_url')) {
-					$redirectTo = $this->Session->read('OAuth.callback_url');
-				} else {
-					$redirectTo = $this->RequestToken->getCallbackUrl($this->Session->read('OAuth.request_token'));
-				}
+				$redirectTo = $this->RequestToken->getCallbackUrl($this->Session->read('OAuth.request_token'));
 			} else {
 				$redirectTo = '/';
 			}
 			
 			$this->Session->delete('OAuth.request_token');
-			$this->Session->delete('OAuth.callback_url');
 			
 			$this->redirect($redirectTo);
 		}
