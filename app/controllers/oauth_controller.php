@@ -70,9 +70,19 @@ class OauthController extends AppController {
 			$this->set('headline', __('Authorize access', true));
 		} else {
 			if (isset($this->params['form']['allow'])) {
-				$this->RequestToken->authorize($this->Session->read('OAuth.request_token'), $this->Session->read('Identity.id'));
+				$requestTokenKey = $this->Session->read('OAuth.request_token');
+				$this->RequestToken->authorize($requestTokenKey, $this->Session->read('Identity.id'));
 				
-				$redirectTo = $this->RequestToken->getCallbackUrl($this->Session->read('OAuth.request_token'));
+				$data = $this->RequestToken->getData($requestTokenKey);
+				$redirectTo = $data['RequestToken']['callback_url'];
+				
+				if (strpos($redirectTo, '?') === false) {
+					$redirectTo .= '?';
+				} else {
+					$redirectTo .= '&';
+				}
+				
+				$redirectTo .= 'oauth_token='.$requestTokenKey.'&oauth_verifier='.$data['RequestToken']['verifier'];
 			} else {
 				$redirectTo = '/';
 			}
