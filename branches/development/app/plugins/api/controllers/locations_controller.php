@@ -6,15 +6,9 @@ class LocationsController extends ApiAppController {
 	private $identity_id = null;
 	
 	public function beforeFilter() {
-		if (isset($this->params['username'])) {
-    		$identity = $this->Api->getIdentity();
-        	$this->Api->exitWith404ErrorIfInvalid($identity);
-        	$this->identity_id = $identity['Identity']['id'];
-		} else {
-    		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-			$accessToken = ClassRegistry::init('AccessToken');
-			$this->identity_id = $accessToken->field('identity_id', array('token_key' => $key));
-		}
+    	$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+		$accessToken = ClassRegistry::init('AccessToken');
+		$this->identity_id = $accessToken->field('identity_id', array('token_key' => $key));
 	}
 	
 	public function index() {
@@ -34,14 +28,12 @@ class LocationsController extends ApiAppController {
                 )
             )
         );
-        
-        $this->Api->render();
     }
 	
 	public function add() {
-        $name    = isset($this->params['url']['name'])    ? $this->params['url']['name']    : '';
-        $address = isset($this->params['url']['address']) ? $this->params['url']['address'] : '';
-        $set_to  = isset($this->params['url']['set_to'])  ? $this->params['url']['set_to']  :  0;
+		$name = $this->params['form']['name'];
+		$address = $this->params['form']['address'];
+		$set_to = $this->params['form']['set_to'];
         
         if(!$name) {
             $this->set('code', -2);
@@ -77,11 +69,12 @@ class LocationsController extends ApiAppController {
                 }
             }
         }
-        
-        $this->Api->render();
+
+        // TODO just some fake return, need something better ;-)
+        $this->set('data', array('ok' => 'done'));
     }
 	
-	public function last() {
+	public function current() {
 		$this->Location->Identity->id = $this->identity_id;
 		$this->Location->Identity->contain('Location');
 		
@@ -93,17 +86,15 @@ class LocationsController extends ApiAppController {
                 'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
             )
         );
-        
-        $this->Api->render();
 	}
     
-	// TODO switch this method from GET to POST
-	public function update($location_id) {
+	public function set_current() {
+		$location_id = $this->params['form']['location_id'];
         if(!$this->Location->setTo($this->identity_id, $location_id)) {
             $this->set('code', -1);
             $this->set('msg', __('dataset not found', true));
         }
         
-        $this->Api->render();
+        $this->set('data', array('ok' => 'done'));
     }
 }
