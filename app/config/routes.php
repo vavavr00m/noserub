@@ -29,20 +29,14 @@ Router::connect('/pages/password/set/*', array('controller' => 'identities', 'ac
 Router::connect('/oauth/:action', array('controller' => 'oauth'));
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
 
+Router::connect('/api/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
+
 // OAuth-enabled API methods
-Router::connect('/api/:result_type/locations/last/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'last'));
-Router::connect('/api/:result_type/locations/set/*', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'update'));
-Router::connect('/api/:result_type/locations/add/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'add'));
-Router::connect('/api/:result_type/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
 Router::connect('/api/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
 Router::connect('/api/:result_type/feeds/', array('plugin' => 'api', 'controller' => 'syndications', 'action' => 'get_feeds'));
 Router::connect('/api/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
 Router::connect('/api/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts', 'action' => 'get_accounts'));
 
-Router::connect('/api/:username/:api_hash/:result_type/locations/last/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'last'));
-Router::connect('/api/:username/:api_hash/:result_type/locations/set/*', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'update'));
-Router::connect('/api/:username/:api_hash/:result_type/locations/add/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'add'));
-Router::connect('/api/:username/:api_hash/:result_type/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
 Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
 Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('plugin' => 'api', 'controller' => 'syndications', 'action' => 'get_feeds'));
 Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
