@@ -1,6 +1,14 @@
 <?php
 class CorkdService extends AbstractService {
 	
+	public function init() {
+	    $this->name = "Cork'd";
+        $this->url = 'http://corkd.com/';
+        $this->service_type_id = 3;
+        $this->icon = 'corkd.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#corkd.com/people/(.+)#'));
 	}

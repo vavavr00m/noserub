@@ -1,6 +1,14 @@
 <?php
 class ImthereService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'ImThere';
+        $this->url = 'http://imthere.com/';
+        $this->service_type_id = 4;
+        $this->icon = 'imthere.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#imthere.com/users/(.+)#'));
 	}

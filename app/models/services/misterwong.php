@@ -1,6 +1,14 @@
 <?php
 class MisterwongService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Mister Wong (DE)';
+        $this->url = 'http://www.mister-wong.de/';
+        $this->service_type_id = 2;
+        $this->icon = 'misterwong.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#mister-wong.de/user/(.+)/\?profile#'));
 	}

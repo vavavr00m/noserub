@@ -1,5 +1,14 @@
 <?php
 class GooglecodeService extends AbstractService {
+	
+	public function init() {
+	    $this->name = 'Google Code';
+        $this->url = 'http://code.google.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'google.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 	#http://code.google.com/u/dirk.olbertz/
 		return $this->extractUsername($url, array('#code.google.com/u/(.+)/updates#','#code.google.com/u/(.+)#',));

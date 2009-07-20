@@ -1,6 +1,14 @@
 <?php
 class DisqusService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Disqus';
+        $this->url = 'http://disqus.com/';
+        $this->service_type_id = 3;
+        $this->icon = 'disqus.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#disqus.com/people/(.+)/#'));
 		#http://disqus.com/people/lancew

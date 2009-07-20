@@ -2,6 +2,14 @@
 // class name starts with '_' as it is not allowed to use a number as first character
 class _23hqService extends AbstractService {
 	
+	public function init() {
+	    $this->name = '23hq';
+        $this->url = 'http://23hq.com';
+        $this->service_type_id = 1;
+        $this->icon = '23hq.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#23hq.com/(.+)#'));
 	}

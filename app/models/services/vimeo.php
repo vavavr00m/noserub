@@ -1,6 +1,14 @@
 <?php
 class VimeoService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Vimeo';
+        $this->url = 'http://vimeo.com/';
+        $this->service_type_id = 6;
+        $this->icon = 'vimeo.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#vimeo.com/(.+)#'));
 	}

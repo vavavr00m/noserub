@@ -1,6 +1,14 @@
 <?php
 class OdeoService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Odeo';
+        $this->url = 'http://odeo.com/';
+        $this->service_type_id = 7;
+        $this->icon = 'odeo.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#odeo.com/profile/(.+)#'));
 	}

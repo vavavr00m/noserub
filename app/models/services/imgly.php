@@ -1,6 +1,14 @@
 <?php
 class ImglyService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'img.ly';
+        $this->url = 'http://img.ly/';
+        $this->service_type_id = 1;
+        $this->icon = 'imgly.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#img.ly/images/(.+)#'));
 	}

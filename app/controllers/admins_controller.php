@@ -144,7 +144,7 @@ class AdminsController extends AppController {
         // XXX security_token is set to avoid "undefined variable" error in view
         $this->set('security_token', '');
         $this->set('extensions', ExtensionsChecker::check());
-		    $this->set('random_number_generator', RandomNumberGeneratorChecker::check());
+		$this->set('random_number_generator', RandomNumberGeneratorChecker::check());
         
         $this->layout = 'system_update';
         
@@ -155,6 +155,9 @@ class AdminsController extends AppController {
         }
         
         CacheCleaner::cleanUp();
+        
+        $this->loadModel('Service');
+        $this->Service->createCache();
         
         $this->ConfigurationChecker = new ConfigurationChecker();
         $constants = $this->ConfigurationChecker->check();
@@ -177,9 +180,7 @@ class AdminsController extends AppController {
             
                 $this->set('migrations', $migrations);
             }
-        }
-        
-        $this->set('headline', 'Upgrading your NoseRub installation');
+        }        
     }
     
     /**

@@ -1,6 +1,14 @@
 <?php
 class TwitpicService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Twitpic';
+        $this->url = 'http://twitpic.com/';
+        $this->service_type_id = 1;
+        $this->icon = 'twitpic.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#twitpic.com/photos/(.+)#'));
 	}

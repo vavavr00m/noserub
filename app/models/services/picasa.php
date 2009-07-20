@@ -1,6 +1,14 @@
 <?php
 class PicasaService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Picasa';
+        $this->url = 'http://picasaweb.google.com/home';
+        $this->service_type_id = 1;
+        $this->icon = 'picasa.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#picasaweb.google.com/(.+)#'));
 	}

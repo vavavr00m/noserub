@@ -1,6 +1,14 @@
 <?php
 class StumbleuponService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'StumbleUpon';
+        $this->url = 'http://stumbleupon.com/';
+        $this->service_type_id = 2;
+        $this->icon = 'stumpleupon.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).stumbleupon.com#'));
 	}

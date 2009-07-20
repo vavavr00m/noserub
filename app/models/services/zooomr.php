@@ -1,6 +1,14 @@
 <?php
 class ZooomrService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Zooomr';
+        $this->url = 'http://zooomr.com/';
+        $this->service_type_id = 1;
+        $this->icon = 'zooomr.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#zooomr.com/photos/(.+)#'));
 	}

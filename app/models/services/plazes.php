@@ -1,6 +1,14 @@
 <?php
 class PlazesService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Plazes';
+        $this->url = 'http://plazes.com/';
+        $this->service_type_id = 9;
+        $this->icon = 'plazes.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#plazes.com/users/(.+)#'));
 	}

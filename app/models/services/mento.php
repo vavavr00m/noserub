@@ -1,6 +1,14 @@
 <?php
 class MentoService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Mento';
+        $this->url = 'http://www.mento.info/';
+        $this->service_type_id = 2;
+        $this->icon = 'mento.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#www.mento.info/(.+)#'));
 	}

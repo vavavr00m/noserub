@@ -1,6 +1,14 @@
 <?php
 class GithubService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Github';
+        $this->url = 'http://github.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'github.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#github.com/(.+)#'));
 	}

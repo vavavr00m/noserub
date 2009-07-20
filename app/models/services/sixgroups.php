@@ -1,6 +1,14 @@
 <?php
 class SixgroupsService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Sixgroups';
+        $this->url = 'http://sixgroups.com/';
+        $this->service_type_id = 3;
+        $this->icon = 'sixgroups.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#sixgroups.com/profile/(.+)#'));
 	}

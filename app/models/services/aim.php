@@ -1,6 +1,14 @@
 <?php
 class AimService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'AIM';
+        $this->url = 'http://aim.com';
+        $this->service_type_id = 5;
+        $this->icon = 'aim.gif';
+        $this->is_contact = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('/^aim:goIM\?screenname=(.+)/'));
 	}

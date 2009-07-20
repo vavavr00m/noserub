@@ -1,6 +1,14 @@
 <?php
 class MoodmillService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'MoodMill';
+        $this->url = 'http://moodmill.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'moodmill.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#moodmill.com/citizen/(.+)#'));
 	}

@@ -1,6 +1,14 @@
 <?php
 class ScratchService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Scratch';
+        $this->url = 'http://scratch.mit.edu/';
+        $this->service_type_id = 5;
+        $this->icon = 'scratch.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#scratch.mit.edu/users/(.+)#'));
 	}
