@@ -89,12 +89,18 @@ class LocationsController extends ApiAppController {
 	}
     
 	public function set_current() {
-		$location_id = $this->params['form']['location_id'];
-        if(!$this->Location->setTo($this->identity_id, $location_id)) {
-            $this->set('code', -1);
-            $this->set('msg', __('dataset not found', true));
-        }
-        
-        $this->set('data', array('ok' => 'done'));
+		if (isset($this->params['form']['location_id'])) {
+			$location_id = $this->params['form']['location_id'];
+	        if ($this->Location->setTo($this->identity_id, $location_id)) {
+	        	$location = $this->Location->findById($location_id);
+	        	$this->set('data', array('id' => $location_id, 'name' => $location['Location']['name']));
+	        } else {
+	            header("HTTP/1.1 400 Bad Request");
+	            $this->set('data', array('error' => 'No location with id: ' . $location_id));
+	        }
+		} else {
+			header("HTTP/1.1 400 Bad Request");
+			$this->set('data', array('error' => 'Parameter location_id is missing'));
+		}
     }
 }
