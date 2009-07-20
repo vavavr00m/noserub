@@ -23,7 +23,7 @@ class Service extends AppModel {
     	
     	App::import('Vendor', 'UrlUtil');
     	$url = UrlUtil::removeHttpAndHttps($url);
-    	$services = $this->getAllServices();
+    	$services = $this->getAllServiceObjects();
 
     	foreach($services as $service) {
     		$username = $service->detectService($url);
@@ -224,12 +224,28 @@ class Service extends AppModel {
     }
     
     /*
-     * Loads all services in app/models/services/* and creates an array
-     * out of them at saves them into a cache file.
+     *  Saves array of all services into a cache file.
      *
      * @return bool
      */
     public function createCache() {
+        $services = $this->getAllServices();
+        if(!$services) {
+            return false;
+        }
+        
+        $data = '$cache_services = ' . $services;
+        
+        return @file_put_contents(CACHE . 'models' . DS . 'noserub_services.php', $data);
+    }
+    
+    /**
+     * Loads all services in app/models/services/* and creates an array
+     * out of them
+     * 
+     * @return array
+     */
+    public function getAllServices() {
         $files = @scandir(MODELS . 'services');
         if(!$files) {
             return false;
@@ -245,8 +261,7 @@ class Service extends AppModel {
                 $services[$service_name] = $class->getForCache();
             }
         }
-        $data = '$cache_services = ' . var_export($services, true);
-        return @file_put_contents(CACHE . 'models' . DS . 'noserub_services.php', $data);
+        return var_export($services, true);
     }
     
     private function createService($service_id, $service_name) {
@@ -280,7 +295,7 @@ class Service extends AppModel {
         return $feed;
     }
     
-    private function getAllServices() {
+    private function getAllServiceObjects() {
     	$serviceObjects = array();
 
     	$this->recursive = 0;
