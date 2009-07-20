@@ -14,10 +14,10 @@ Please note: this documentation is for the upcoming version of NoseRub (0.9)!
   * [http://code.google.com/p/noserub/wiki/NetworkFavorites network/favorites]
   * [http://code.google.com/p/noserub/wiki/NetworkInfo network/info]
   
-===Location Methods (not documented/implemented yet)===
-  * [http://code.google.com/p/noserub/wiki/Locations locations]
-  * [http://code.google.com/p/noserub/wiki/LocationsCreate locations/create]
-  * [http://code.google.com/p/noserub/wiki/LocationsCurrent locations/current]
+===Location Methods===
+  * locations
+  * locations/create
+  * locations/current
   * [http://code.google.com/p/noserub/wiki/LocationsSetCurrent locations/set_current]
   
 ===OAuth Methods===
