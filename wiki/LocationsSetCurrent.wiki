@@ -1,0 +1,22 @@
+#summary Documentation of locations/set_current
+= NoseRub API Method: locations set_current =
+
+Sets the location at which the user currently is.
+
+====URL====
+api/locations/set_current._format_
+
+====Formats====
+xml, json
+
+====HTTP method(s)====
+POST
+
+====Requires Authentication====
+true
+
+====Parameters====
+  * location_id. Required. The ID of an existing location.
+  
+====Response====
+{"data":{"id":"2","name":"London"}}
