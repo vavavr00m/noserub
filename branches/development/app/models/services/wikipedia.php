@@ -1,10 +1,17 @@
 <?php
 class WikipediaService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Wikipedia';
+        $this->url = 'http://wikipedia.org/';
+        $this->service_type_id = 3;
+        $this->icon = 'wikipedia.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#en.wikipedia.org/wiki/User:(.+)#'));
 	}
-	
 	
 	public function getAccountUrl($username) {
 		return 'http://en.wikipedia.org/wiki/User:'.$username;

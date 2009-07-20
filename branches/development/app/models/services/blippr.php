@@ -1,6 +1,14 @@
 <?php
 class BlipprService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Blippr';
+        $this->url = 'http://www.blippr.com';
+        $this->service_type_id = 5;
+        $this->icon = 'blippr.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#blippr.com/profiles/(.+)#'));
 	}

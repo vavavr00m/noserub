@@ -1,6 +1,14 @@
 <?php
 class KulandoService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Kulando';
+        $this->url = 'http://www.kulando.com/';
+        $this->service_type_id = 3;
+        $this->icon = 'kulando.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).kulando.de#'));
 	}

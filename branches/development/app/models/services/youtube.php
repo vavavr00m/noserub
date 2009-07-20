@@ -1,6 +1,14 @@
 <?php
 class YoutubeService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'YouTube';
+        $this->url = 'http://youtube.com/';
+        $this->service_type_id = 6;
+        $this->icon = 'youtube.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#youtube.com/user/(.+)#'));
 	}

@@ -1,6 +1,15 @@
 <?php
 class FanfouService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Fanfou';
+        $this->url = 'http://fanfou.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'fanfou.gif';
+        $this->has_feed = true;
+        $this->minutes_between_updates = 5;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#fanfou.com/(.+)#'));
 	}

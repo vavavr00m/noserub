@@ -1,6 +1,14 @@
 <?php
 class ReadernautService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Readernaut';
+        $this->url = 'http://readernaut.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'readernaut.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#readernaut.com/(.+)/profile/#'));
 	}

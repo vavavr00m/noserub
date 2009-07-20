@@ -1,6 +1,14 @@
 <?php
 class FfffoundService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Ffffound!';
+        $this->url = 'http://ffffound.com/';
+        $this->service_type_id = 1;
+        $this->icon = 'ffffound.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#ffffound.com/home/(.+)#'));
 		#http://ffffound.com/home/lancew/found/

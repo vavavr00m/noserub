@@ -1,6 +1,14 @@
 <?php
 class BliptvService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Blip.TV';
+        $this->url = 'http://www.blip.tv/';
+        $this->service_type_id = 6;
+        $this->icon = 'bliptv.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).blip.tv#'));
 	}

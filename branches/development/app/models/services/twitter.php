@@ -1,6 +1,14 @@
 <?php
 class TwitterService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Twitter';
+        $this->url = 'http://twitter.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'twitter.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#twitter.com/(.+)#'));
 	}

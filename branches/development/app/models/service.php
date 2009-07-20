@@ -223,6 +223,32 @@ class Service extends AppModel {
         return $data;
     }
     
+    /*
+     * Loads all services in app/models/services/* and creates an array
+     * out of them at saves them into a cache file.
+     *
+     * @return bool
+     */
+    public function createCache() {
+        $files = @scandir(MODELS . 'services');
+        if(!$files) {
+            return false;
+        }
+        
+        $services = array();
+        foreach($files as $file) {
+            if(preg_match('/(.*)\.php/i', $file, $matches)) {
+                $service_name = ucfirst($matches[1]);
+                $class_name = $service_name . 'Service';
+                require(MODELS . 'services' . DS . $file);
+                $class = new $class_name();
+                $services[$service_name] = $class->getForCache();
+            }
+        }
+        $data = '$cache_services = ' . var_export($services, true);
+        return @file_put_contents(CACHE . 'models' . DS . 'noserub_services.php', $data);
+    }
+    
     private function createService($service_id, $service_name) {
     	$class_name = $service_name . 'Service';
     	
@@ -295,10 +321,30 @@ class Service extends AppModel {
  * Base class for all services.
  */
 abstract class AbstractService extends Object {
-	private $service_id;
+    protected $name;
+    protected $url;
+	protected $service_type_id;
+	protected $icon;
+	protected $has_feed;
+	protected $is_contact;
+	protected $minutes_between_updates;
 	
-	public function __construct($service_id) {
+	private $service_id;	
+	
+	/**
+	 * @todo remove the parameter service_id
+	 */
+	public function __construct($service_id = 0) {
 		$this->service_id = $service_id;
+		$this->name = '';
+		$this->url = '';
+		$this->service_type_id = 0;
+		$this->icon = '';
+		$this->hasFeed = false;
+		$this->isContact = false;
+		$this->minutes_between_updates = 30;
+		
+		$this->init();
 	}
 
 	/**
@@ -306,6 +352,12 @@ abstract class AbstractService extends Object {
 	 * the service couldn't be detected, or a string with the username.
 	 */
 	public abstract function detectService($url);
+	
+	/**
+	 * This method is called during constructing the object.
+	 * Is used in derived classes to set the protected properties.
+	 */
+	public abstract function init();
 	
 	protected function extractUsername($url, $patterns) {
 		foreach ($patterns as $pattern) {
@@ -322,18 +374,48 @@ abstract class AbstractService extends Object {
 		return false;
 	}
 	
-	public function getAccountUrl($username) {
-		return '';
+	public function getUrl() {
+        return $this->url;
 	}
 	
-	public function getContacts($username) {
-		return array();
+	public function getServiceTypeId() {
+	    return $this->service_type_id;
+	}
+	
+	public function getIcon() {
+	    return $this->icon;
+	}
+	
+	public function hasFeed() {
+	    return $this->has_feed;
+	}
+	
+	public function isContact() {
+	    return $this->is_contact;
+	}
+	
+	public function getMinutesBetweenUpdates() {
+	    return $this->minutes_between_updates;
+	}
+	
+	public function getAccountUrl($username) {
+		return '';
 	}
 	
 	public function getContent($feeditem) {
 		return $feeditem->get_content();
 	}
 	
+	public function getForCache() {
+	    return array(
+	        'url' => $this->url,
+	        'service_type_id' => $this->service_type_id,
+	        'icon' => $this->icon,
+	        'has_feed' => $this->has_feed,
+	        'is_contact' => $this->is_contact,
+	        'minutes_between_updates' => $this->minutes_between_updates
+	    );
+	}
 	/**
 	 * Get the create time of that item.
 	 * For some services, get_date() returns

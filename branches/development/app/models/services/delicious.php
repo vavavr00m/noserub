@@ -1,12 +1,20 @@
 <?php
 class DeliciousService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Delicious';
+        $this->url = 'http://delicious.com/';
+        $this->service_type_id = 2;
+        $this->icon = 'delicious.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#del.icio.us/(.+)#', '#delicious.com/(.+)#'));
 	}
 	
 	public function getAccountUrl($username) {
-		return 'http://delicious.com/'.$username;
+		return 'http://delicious.com/' . $username;
 	}
 	
 	public function getContent($feeditem) {
@@ -14,6 +22,6 @@ class DeliciousService extends AbstractService {
 	}
 	
 	public function getFeedUrl($username) {
-		return 'http://feeds.delicious.com/rss/'.$username;
+		return 'http://feeds.delicious.com/rss/' . $username;
 	}
 }

@@ -1,6 +1,14 @@
 <?php
 class QikService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Qik';
+        $this->url = 'http://qik.com/';
+        $this->service_type_id = 6;
+        $this->icon = 'qik.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#qik.com/(.+)#'));
 	}

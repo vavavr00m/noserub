@@ -1,6 +1,14 @@
 <?php
 class JaikuService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Jaiku';
+        $this->url = 'http://jaiku.com/';
+        $this->service_type_id = 5;
+        $this->icon = 'jaiku.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#(.+).jaiku.com#'));
 	}

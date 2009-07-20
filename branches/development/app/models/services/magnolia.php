@@ -1,6 +1,14 @@
 <?php
 class MagnoliaService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Ma.gnolia';
+        $this->url = 'http://ma.gnolia.com/';
+        $this->service_type_id = 2;
+        $this->icon = 'magnolia.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#ma.gnolia.com/people/(.+)#'));
 	}

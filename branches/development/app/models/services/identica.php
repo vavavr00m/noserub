@@ -1,6 +1,14 @@
 <?php
 class IdenticaService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Identi.ca';
+        $this->url = 'http://identi.ca/';
+        $this->service_type_id = 5;
+        $this->icon = 'identica.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#identi.ca/(.+)#'));
 	}

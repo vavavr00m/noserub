@@ -1,6 +1,14 @@
 <?php
 class HemidemiService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'HemiDemi.com';
+        $this->url = 'http://www.hemidemi.com';
+        $this->service_type_id = 2;
+        $this->icon = 'hemidemi.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#hemidemi.com/user/(.+)/home#'));
 	}

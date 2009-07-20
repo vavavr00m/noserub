@@ -1,6 +1,14 @@
 <?php
 class RedditService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Reddit';
+        $this->url = 'http://reddit.com/';
+        $this->service_type_id = 2;
+        $this->icon = 'reddit.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#reddit.com/user/(.+)#'));
 	}

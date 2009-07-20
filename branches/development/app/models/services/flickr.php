@@ -1,6 +1,14 @@
 <?php
 class FlickrService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Flickr';
+        $this->url = 'http://flickr.com/';
+        $this->service_type_id = 1;
+        $this->icon = 'flickr.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#flickr.com/photos/(.+)#'));
 	}

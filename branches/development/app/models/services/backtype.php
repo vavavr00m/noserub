@@ -1,6 +1,14 @@
 <?php
 class BacktypeService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Backtype';
+        $this->url = 'http://www.backtype.com/';
+        $this->service_type_id = 3;
+        $this->icon = 'backtype.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#backtype.com/(.+)#'));
 	}

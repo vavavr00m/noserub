@@ -1,6 +1,14 @@
 <?php
 class UpcomingService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Upcoming';
+        $this->url = 'http://upcoming.yahoo.com/';
+        $this->service_type_id = 4;
+        $this->icon = 'upcoming.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#upcoming.yahoo.com/user/(.+)#'));
 	}

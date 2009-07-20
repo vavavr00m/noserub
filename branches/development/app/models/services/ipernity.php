@@ -1,6 +1,14 @@
 <?php
 class IpernityService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Ipernity';
+        $this->url = 'http://ipernity.com/';
+        $this->service_type_id = 1;
+        $this->icon = 'ipernity.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#ipernity.com/doc/(.+)/home/photo#'));
 	}

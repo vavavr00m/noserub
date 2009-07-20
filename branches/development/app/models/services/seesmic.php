@@ -1,6 +1,14 @@
 <?php
 class SeesmicService extends AbstractService {
 	
+	public function init() {
+	    $this->name = 'Seesmic';
+        $this->url = 'http://seesmic.com/';
+        $this->service_type_id = 6;
+        $this->icon = 'seesmic.gif';
+        $this->has_feed = true;
+	}
+	
 	public function detectService($url) {
 		return $this->extractUsername($url, array('#seesmic.com/(.+)#'));
 	}
