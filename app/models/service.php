@@ -85,11 +85,10 @@ class Service extends AppModel {
      * @param int $service_type of the service, we're about to use
      * @param string$feed_url the url of the feed
      * @param int $items_per_feed maximum number of items that are fetched from the feed
-     * @param int $items_max_age maximum age of any item that is fetched from feed, in days
      *
      * @return 
      */
-    public function feed2array($username, $service_name, $service_type, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
+    public function feed2array($username, $service_name, $service_type, $feed_url, $items_per_feed = 10) {
         if(!$feed_url || strpos($feed_url, '//friendfeed.com/') > 0) {
             return false;
         }
@@ -101,7 +100,6 @@ class Service extends AppModel {
         
 		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type);
         
-        $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
         $items = array();
 
 		$feed = $this->createSimplePie($feed_url);
@@ -138,11 +136,6 @@ class Service extends AppModel {
             	$item['title'] = $feeditem->get_title();
             	$item['datetime'] = $feeditem->get_date();
             }
-            
-        	if($max_age && $item['datetime'] < $max_age) {
-        	    # we can stop here, as we do not expect any newer items
-        	    break;
-        	}
         	
 			$item = $service_type_filter->filter($item);
     		$items[] = $item; 
@@ -197,7 +190,7 @@ class Service extends AppModel {
         $data['username'] = 'RSS-Feed';
         $data['service_type'] = $service_type;
         
-        $items = $this->feed2array($username, 8, $data['service_type'], $data['feed_url'], 5, null);
+        $items = $this->feed2array($username, 8, $data['service_type'], $data['feed_url']);
         
         $data['items'] = $items;
         
@@ -217,7 +210,7 @@ class Service extends AppModel {
         $data['account_url'] = $this->getAccountUrl($service_name, $account_username);
         if($services[$service_name]['has_feed'] == 1) {
             $data['feed_url'] = $this->getFeedUrl($service_name, $account_username);
-            $items = $this->feed2array($username, $service_name, $data['service_type'], $data['feed_url'], 5, null);
+            $items = $this->feed2array($username, $service_name, $data['service_type'], $data['feed_url']);
         } else {
             $data['feed_url'] = '';
             $items = array();
