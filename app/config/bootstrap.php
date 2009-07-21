@@ -62,7 +62,7 @@ $service_types = array(
         'intro' => __('@user@ took a photo called @item@', true) 
     ),
     2 => array(
-        'token' => 'lin',
+        'token' => 'link',
         'name' => __('Links / Bookmarks', true),
         'intro' => __('@user@ bookmarked @item@', true)
     ),
