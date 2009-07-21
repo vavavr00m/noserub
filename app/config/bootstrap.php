@@ -58,48 +58,48 @@ $service_types = array(
     ),
     1 => array(
         'token' => 'photo',
-        'name' => 'Photos',
-        'intro' => '@user@ took a photo called @item@' 
+        'name' => __('Photos', true),
+        'intro' => __('@user@ took a photo called @item@', true) 
     ),
     2 => array(
         'token' => 'lin',
         'name' => __('Links / Bookmarks', true),
-        'intro' => '@user@ bookmarked @item@'
+        'intro' => __('@user@ bookmarked @item@', true)
     ),
     3 => array(
         'token' => 'text',
         'name' => __('Text / Blog', true),
-        'intro' => '@user@ wrote a text about @item@'
+        'intro' => __('@user@ wrote a text about @item@', true)
     ),
     4 => array(
         'token' => 'event',
         'name' => __('Event', true),
-        'intro' => '@user@ plans to attend @item@'
+        'intro' => __('@user@ plans to attend @item@', true)
     ),
     5 => array(
         'token' => 'micropublish',
         'name' => __('Micropublishing', true),
-        'intro' => '@user@ says @item@'
+        'intro' => __('@user@ says @item@', true)
     ),
     6 => array(
         'token' => 'video',
         'name' => __('Videos', true),
-        'intro' => '@user@ made a video called @item@'
+        'intro' => __('@user@ made a video called @item@', true)
     ),
     7 => array(
         'token' => 'audio',
         'name' => __('Audio', true),
-        'intro' => '@user@ listens to @item@'
+        'intro' => __('@user@ listens to @item@', true)
     ),
     8 => array(
         'token' => 'document',
         'name' => __('Documents', true),
-        'intro' => '@user@ uploaded a document called @item@'
+        'intro' => __('@user@ uploaded a document called @item@', true)
     ),
     9 => array(
         'token' => 'location',
         'name' => __('Locations', true),
-        'intro' => '@user@ is currently at @item@'
+        'intro' => __('@user@ is currently at @item@', true)
     )
 );
 
