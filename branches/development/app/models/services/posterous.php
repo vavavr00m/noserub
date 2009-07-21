@@ -4,7 +4,7 @@ class PosterousService extends AbstractService {
 	public function init() {
 	    $this->name = 'Posterous';
         $this->url = 'http://posterous.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'posterous.png';
         $this->has_feed = true;
 	}

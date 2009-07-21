@@ -4,7 +4,7 @@ class DisqusService extends AbstractService {
 	public function init() {
 	    $this->name = 'Disqus';
         $this->url = 'http://disqus.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'disqus.gif';
         $this->has_feed = true;
 	}

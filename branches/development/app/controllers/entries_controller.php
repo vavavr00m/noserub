@@ -173,7 +173,7 @@ class EntriesController extends AppController {
             array(
                 'conditions' => array(
                     'Entry.id' => $entry_id,
-                    'service_type_id >' => 0 # don't allow NoseRub entries to be marked 
+                    'service_type >' => 0 # don't allow NoseRub entries to be marked 
                 )
             )
         );

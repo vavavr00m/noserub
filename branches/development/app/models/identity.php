@@ -423,6 +423,9 @@ class Identity extends AppModel {
             return false;
         }
 
+        App::import('Model', 'Service');
+        $this->Service = new Service();
+        
         $result = array(
             'accounts' => array(),
             'Identity' => array()
@@ -481,21 +484,21 @@ class Identity extends AppModel {
         	$xfn = $xfn->getByUrl($url);
         	$splitted = $this->splitUsername($url, false);
         	foreach($xfn as $xfn_url) {
-        	    $serviceData = $this->Account->Service->detectService($xfn_url);
+        	    $serviceData = $this->Service->detectService($xfn_url);
         	    if(!$serviceData) {
         	        $serviceData = array(
-    		            'service_id' => 8,
-    		            'username'   => $xfn_url
+    		            'service'  => 'RSS-Feed',
+    		            'username' => $xfn_url
     		        );
         	    }
-        	    $account = $this->Account->Service->getInfoFromService(
+        	    $account = $this->Service->getInfoFromService(
         	        $splitted['username'], 
-        	        $serviceData['service_id'], 
+        	        $serviceData['service'], 
         	        $serviceData['username']
         	    );
         	    if(!$account) {
         	        # as we don't know the service type id, we set the id to 3 for Text/Blog 
-        			$account = $this->Account->Service->getInfoFromFeed($splitted['username'], 3, $xfn_url);
+        			$account = $this->Service->getInfoFromFeed($splitted['username'], 3, $xfn_url);
         		}
         		if($account) {	
                     $result['accounts'][] = $account; 
@@ -536,20 +539,20 @@ class Identity extends AppModel {
                     $account = array();
 
                     if(strpos($services[1][$idx], 'NoseRubServiceType:') === 0) {
-                        # this is service_id 8 => any RSS-Feed
+                        # this is service "any RSS-Feed"
                         $account['feed_url']    =  isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
                         $account['account_url'] =  $account_url;
-                        $account['service_id']  = 8;
+                        $account['service'] = 'RSS-Feed';
                         $splitted = split(':', $services[1][$idx]);
-                        $account['service_type_id'] = $splitted[1];
+                        $account['service_type'] = $splitted[1];
                         $account['username'] = 'RSS-Feed';
                     } else {
                         $account['account_url'] = $account_url;
                         $account['service_url'] = isset($services[1][$idx])  ? $services[1][$idx]  : '';
                         $account['username']    = isset($usernames[1][$idx]) ? $usernames[1][$idx] : '';
-                        $info = $this->Account->Service->getInfo($account['service_url'], $account['username']);
-                        $account['service_id']      = isset($info['service_id'])      ? $info['service_id']      : 0;
-                        $account['service_type_id'] = isset($info['service_type_id']) ? $info['service_type_id'] : 0;
+                        $info = $this->Service->getInfo($account['service_url'], $account['username']);
+                        $account['service']      = isset($info['service'])      ? $info['service']      : 0;
+                        $account['service_type'] = isset($info['service_type']) ? $info['service_type'] : 0;
                         $account['feed_url']        = isset($info['feed_url'])        ? $info['feed_url']        : '';
                     }
 

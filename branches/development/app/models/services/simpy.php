@@ -4,7 +4,7 @@ class SimpyService extends AbstractService {
 	public function init() {
 	    $this->name = 'Simpy';
         $this->url = 'http://www.simpy.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'simpy.gif';
         $this->has_feed = true;
 	}

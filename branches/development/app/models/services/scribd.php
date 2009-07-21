@@ -4,7 +4,7 @@ class ScribdService extends AbstractService {
 	public function init() {
 	    $this->name = 'Scribd';
         $this->url = 'http://www.scribd.com/';
-        $this->service_type_id = 8;
+        $this->service_type = 8;
         $this->icon = 'scribd.gif';
         $this->has_feed = true;
 	}

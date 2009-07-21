@@ -1,11 +1,17 @@
+<?php 
+    $services = Configure::read('services.list');
+    $service_data = Configure::read('services.data');
+    $service_types = Configure::read('service_types_list'); 
+    unset($service_types[0]);
+?>
 <div class="widget form-accounts">
     <h2><?php __('Add new account'); ?></h2>
     <?php 
     echo $form->create(array('url' => '/settings/accounts/add/'));
     echo $noserub->fnSecurityTokenInput();
-    echo $form->input('service_id', array('label' => __('Service', true), 'type' => 'select', 'options' => $services));
-    echo $form->input('username', array('label' => __('Username', true)));
-    echo $form->input('label', array('label' => __('Label', true) . ' (' . __('optional', true) . ')'));
+    echo $form->input('Account.service', array('label' => __('Service', true), 'type' => 'select', 'options' => $services));
+    echo $form->input('Account.username', array('label' => __('Username', true)));
+    echo $form->input('Account.label', array('label' => __('Label', true) . ' (' . __('optional', true) . ')'));
     echo $form->end(array('label' => __('Add', true))); 
     ?>
     <h2><?php __('Auto discover Profile URL'); ?></h2>
@@ -13,7 +19,7 @@
     echo $form->create(array('url' => '/settings/accounts/add/'));
     echo $noserub->fnSecurityTokenInput();
     echo $form->input(
-        'url', 
+        'Account.url', 
         array(
             'label' => __('URL', true)
         ));
@@ -36,11 +42,11 @@
             <?php foreach($data as $item) { ?>
                 <tr>
                     <td>
-                        <img class="whoisicon" alt="<?php echo $item['Service']['name']; ?>" src="<?php echo Router::url('/images/icons/services/' . $item['Service']['icon']); ?>"/>
-                        <?php echo $item['Service']['name']; ?>
+                        <img class="whoisicon" alt="<?php echo $service_data[$item['Account']['service']]['name']; ?>" src="<?php echo Router::url('/images/icons/services/' . $service_data[$item['Account']['service']]['icon']); ?>"/>
+                        <?php echo $service_data[$item['Account']['service']]['name']; ?>
                     </td>
                     <td><?php if($item['Account']['account_url']) {
-                        if($item['Account']['service_id'] == 8) {
+                        if($item['Account']['service'] == 'RSS-Feed') {
                             $username = $item['Account']['account_url'];
                         } else {
                             $username = $item['Account']['username'];
@@ -49,10 +55,10 @@
                     } else {
                         echo $item['Account']['username'];
                     } ?></td>
-                    <td><?php if($item['Service']['is_contact']) {
+                    <td><?php if($service_data[$item['Account']['service']]['is_contact']) {
                         __('Communication');
                     } else {
-                        echo $service_types[$item['Account']['service_type_id']]; 
+                        echo $service_types[$item['Account']['service_type']]; 
                     } ?></td>
                     <td><?php if($item['Account']['feed_url']) {
                         echo $html->link(__('RSS', true), $item['Account']['feed_url']);

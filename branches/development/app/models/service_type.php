@@ -2,8 +2,8 @@
 /* SVN FILE: $Id:$ */
  
 class ServiceType extends AppModel {
-    public $hasMany = array('Service');                                                   
-
+    public $useTable = false;
+    
     private $allowedFilters = array(
         'photo'        => 'Photos',
 	    'video'        => 'Videos',
@@ -37,6 +37,7 @@ class ServiceType extends AppModel {
 	public function getDefaultFilters() {
 	    $default_filter = $this->allowedFilters;
 	    unset($default_filter['audio']);
+	    
 	    return array_keys($default_filter);
 	}
 	
@@ -44,13 +45,13 @@ class ServiceType extends AppModel {
 	 * returns array of ids for an array of tokens
 	 */
 	public function getList(array $tokens) {
+	    $service_types = Configure::read('service_types');
 	    $ids = array();
 	    foreach($tokens as $token) {
-	        $this->contain();
-	        $fields = array('id');
-	        $data = $this->findByToken($token, $fields);
-	        if($data) {
-	        	$ids[] = $data['ServiceType']['id'];
+	        foreach($service_types as $id => $service_type) {
+	            if($service_type['token'] == $token) {
+	                $ids[] = $id;
+	            }
 	        }
 	    }
 	    

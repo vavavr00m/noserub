@@ -50,11 +50,64 @@ function sort_items($a, $b) {
 	return $a['Entry']['published_on'] < $b['Entry']['published_on'];
 }
 
-function sort_accounts($a, $b) {
-    $a_title = isset($a['Account']) ? $a['Account']['title'] : $a['title'];
-    $b_title = isset($b['Account']) ? $b['Account']['title'] : $b['title'];
-    
-    $a_val = $a['Service']['id'] == 8 ? $a_title : $a['Service']['name'];
-    $b_val = $b['Service']['id'] == 8 ? $b_title : $b['Service']['name'];
-    return strtolower($a_val) > strtolower($b_val);
+$service_types = array(
+    0 => array(
+        'token' => 'noserub',
+        'name' => __('NoseRub', true),
+        'intro' => '@user@ @item@'
+    ),
+    1 => array(
+        'token' => 'photo',
+        'name' => 'Photos',
+        'intro' => '@user@ took a photo called @item@' 
+    ),
+    2 => array(
+        'token' => 'lin',
+        'name' => __('Links / Bookmarks', true),
+        'intro' => '@user@ bookmarked @item@'
+    ),
+    3 => array(
+        'token' => 'text',
+        'name' => __('Text / Blog', true),
+        'intro' => '@user@ wrote a text about @item@'
+    ),
+    4 => array(
+        'token' => 'event',
+        'name' => __('Event', true),
+        'intro' => '@user@ plans to attend @item@'
+    ),
+    5 => array(
+        'token' => 'micropublish',
+        'name' => __('Micropublishing', true),
+        'intro' => '@user@ says @item@'
+    ),
+    6 => array(
+        'token' => 'video',
+        'name' => __('Videos', true),
+        'intro' => '@user@ made a video called @item@'
+    ),
+    7 => array(
+        'token' => 'audio',
+        'name' => __('Audio', true),
+        'intro' => '@user@ listens to @item@'
+    ),
+    8 => array(
+        'token' => 'document',
+        'name' => __('Documents', true),
+        'intro' => '@user@ uploaded a document called @item@'
+    ),
+    9 => array(
+        'token' => 'location',
+        'name' => __('Locations', true),
+        'intro' => '@user@ is currently at @item@'
+    )
+);
+
+$service_types_list = array();
+foreach($service_types as $id => $service_type) {
+    $service_types_list[$id] = $service_type['name'];
 }
+
+Configure::write('service_types', $service_types);
+Configure::write('service_types_list', $service_types_list);
+    

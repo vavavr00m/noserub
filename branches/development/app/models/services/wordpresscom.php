@@ -4,7 +4,7 @@ class WordpresscomService extends AbstractService {
 	public function init() {
 	    $this->name = 'WordPress.com';
         $this->url = 'http://wordpress.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'wordpresscom.gif';
         $this->has_feed = true;
 	}

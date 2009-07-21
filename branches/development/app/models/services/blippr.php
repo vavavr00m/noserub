@@ -4,7 +4,7 @@ class BlipprService extends AbstractService {
 	public function init() {
 	    $this->name = 'Blippr';
         $this->url = 'http://www.blippr.com';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'blippr.gif';
         $this->has_feed = true;
 	}

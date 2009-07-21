@@ -1,6 +1,6 @@
 <?php
     # this is probably no valid FOAF!
-    # in order to be able to just store simple RSS-Feeds (service_id = 8),
+    # in order to be able to just store simple RSS-Feeds (service = 'RSS-Feed'),
     # I just leave empty foaf:accountName and use foaf:OnlineAccount and
     # foaf:accountServiceHomepage to store feed_url and account_url    
 ?>
@@ -40,7 +40,7 @@
 <?php } ?>
 <?php foreach($data['Account'] as $account) { ?>
     <foaf:holdsAccount>
-        <?php if($account['service_id'] == 8) { ?>
+        <?php if($account['service'] == 'RSS-Feed') { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
             <foaf:accountServiceHomepage rdf:resource="NoseRubServiceType:<?php echo $account['service_type_id']; ?>"/>
             <foaf:accountName><?php echo $account['feed_url']; ?></foaf:accountName>

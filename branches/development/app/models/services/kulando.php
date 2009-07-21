@@ -4,7 +4,7 @@ class KulandoService extends AbstractService {
 	public function init() {
 	    $this->name = 'Kulando';
         $this->url = 'http://www.kulando.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'kulando.gif';
         $this->has_feed = true;
 	}

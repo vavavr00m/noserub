@@ -4,7 +4,7 @@ class FanfouService extends AbstractService {
 	public function init() {
 	    $this->name = 'Fanfou';
         $this->url = 'http://fanfou.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'fanfou.gif';
         $this->has_feed = true;
         $this->minutes_between_updates = 5;

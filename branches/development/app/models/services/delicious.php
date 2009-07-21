@@ -4,7 +4,7 @@ class DeliciousService extends AbstractService {
 	public function init() {
 	    $this->name = 'Delicious';
         $this->url = 'http://delicious.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'delicious.gif';
         $this->has_feed = true;
 	}

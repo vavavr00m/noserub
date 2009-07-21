@@ -1,3 +1,4 @@
+<?php $services = Configure::read('services.list'); ?>
 <div class="widget widget-accounts">
     <h2><?php __('On the web'); ?></h2>
     <?php if($accounts) { ?>
@@ -5,10 +6,10 @@
             <?php foreach($accounts as $account) { ?>
                 <li>
                     <?php
-                        if($account['Account']['service_id'] == 8) {
+                        if($account['Account']['service'] == 'RSS-Feed') {
                             $label = $account['Account']['title'];
                         } else {
-                            $label = $account['Service']['name'];
+                            $label = $services[$account['Account']['service']];
                         }
                         echo $html->link($label, $account['Account']['account_url'], array('rel' => 'me')); 
                     ?>

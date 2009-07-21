@@ -4,7 +4,7 @@ class ImglyService extends AbstractService {
 	public function init() {
 	    $this->name = 'img.ly';
         $this->url = 'http://img.ly/';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'imgly.gif';
         $this->has_feed = true;
 	}

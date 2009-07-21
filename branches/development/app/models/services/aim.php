@@ -4,7 +4,7 @@ class AimService extends AbstractService {
 	public function init() {
 	    $this->name = 'AIM';
         $this->url = 'http://aim.com';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'aim.gif';
         $this->is_contact = true;
 	}

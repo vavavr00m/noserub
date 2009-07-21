@@ -4,7 +4,7 @@ class FotologService extends AbstractService {
 	public function init() {
 	    $this->name = 'Fotolog';
         $this->url = 'http://www.fotolog.com/';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'fotolog.gif';
         $this->has_feed = true;
 	}

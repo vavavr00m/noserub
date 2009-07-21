@@ -4,7 +4,7 @@ class CorkdService extends AbstractService {
 	public function init() {
 	    $this->name = "Cork'd";
         $this->url = 'http://corkd.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'corkd.gif';
         $this->has_feed = true;
 	}

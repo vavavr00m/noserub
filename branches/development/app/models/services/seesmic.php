@@ -4,7 +4,7 @@ class SeesmicService extends AbstractService {
 	public function init() {
 	    $this->name = 'Seesmic';
         $this->url = 'http://seesmic.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'seesmic.gif';
         $this->has_feed = true;
 	}

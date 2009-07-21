@@ -120,6 +120,13 @@ class AppController extends Controller {
         }
         
         $this->updateContext();
+        
+        // make sure the cache is loaded
+        $this->loadModel('Service');
+        $this->Service->getAllServices();
+        
+        // load this model always, as we cannot do chaining any more...
+        $this->loadModel('ServiceType');
     }
     
     public function ensureSecurityToken() {

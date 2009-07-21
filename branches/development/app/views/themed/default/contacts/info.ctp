@@ -1,3 +1,4 @@
+<?php $services = Configure::read('services.data'); ?>
 <div id="bd-main" class="with-sidebar">
     <div id="bd-main-hd">
 		<?php echo $noserub->widgetProfile(); ?>
@@ -28,11 +29,11 @@
 			<ul class="whoissidebar">
 				<?php foreach($accounts as $item) { ?>
 					<li>
-						<?php if(!$item['Account']['service_id']) { ?>
+						<?php if(!$item['Account']['service']) { ?>
 							<?php echo $item['Account']['account_url']; ?>
 						<?php } else { ?>
-							<img src="<?php echo Router::url('/images/icons/services/') . $item['Service']['icon']; ?>" height="16" width="16" alt="<?php echo $item['Service']['name']; ?>" class="whoisicon" />
-							<a rel="me" class="taggedlink" href="<?php echo $item['Account']['account_url']; ?>"><?php echo isset($item['Account']['title']) ? $item['Account']['title'] : $item['Service']['name']; ?></a>
+							<img src="<?php echo Router::url('/images/icons/services/') . $services[$item['Account']['service']]['icon']; ?>" height="16" width="16" alt="<?php echo $services[$item['Account']['service']]['name']; ?>" class="whoisicon" />
+							<a rel="me" class="taggedlink" href="<?php echo $item['Account']['account_url']; ?>"><?php echo isset($item['Account']['title']) ? $item['Account']['title'] : $services[$item['Account']['service']]['name']; ?></a>
 							<?php if($item['Account']['feed_url']) { ?>
 								<a rel="me" class="taggedlink" href="<?php echo $item['Account']['feed_url']; ?>">
 									<img src="<?php echo Router::url('/images/icons/services/rss.gif') ?>" height="16" width="16" alt="RSS-Feed" class="whoisicon" />

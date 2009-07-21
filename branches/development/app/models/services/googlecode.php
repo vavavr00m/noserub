@@ -4,7 +4,7 @@ class GooglecodeService extends AbstractService {
 	public function init() {
 	    $this->name = 'Google Code';
         $this->url = 'http://code.google.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'google.gif';
         $this->has_feed = true;
 	}

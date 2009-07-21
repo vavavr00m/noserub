@@ -4,7 +4,7 @@ class SnipplrService extends AbstractService {
 	public function init() {
 	    $this->name = 'Snipplr';
         $this->url = 'http://snipplr.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'snipplr.gif';
         $this->has_feed = true;
 	}

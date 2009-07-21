@@ -4,7 +4,7 @@ class IpernityService extends AbstractService {
 	public function init() {
 	    $this->name = 'Ipernity';
         $this->url = 'http://ipernity.com/';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'ipernity.gif';
         $this->has_feed = true;
 	}

@@ -4,7 +4,7 @@ class DiggService extends AbstractService {
 	public function init() {
 	    $this->name = 'Digg';
         $this->url = 'http://digg.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'digg.gif';
         $this->has_feed = true;
 	}

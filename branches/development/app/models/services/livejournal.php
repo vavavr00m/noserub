@@ -4,7 +4,7 @@ class LivejournalService extends AbstractService {
 	public function init() {
 	    $this->name = 'LiveJournal';
         $this->url = 'http://www.livejournal.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'livejorunal.gif';
         $this->has_feed = true;
 	}

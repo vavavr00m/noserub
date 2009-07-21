@@ -5,8 +5,10 @@
     if(!isset($permalink)) {
         $permalink = true;
     }
+    
+    $service_types = Configure::read('service_types');
 ?>
-<li class="<?php echo $item['ServiceType']['token'] == 'photo' ? 'photos' : $item['ServiceType']['token']; ?> icon">
+<li class="<?php echo $service_types[$item['Entry']['service_type']]['token']; ?> icon">
     <p>
     <span class="date">
         <?php
@@ -27,8 +29,8 @@
             $splitted = split('/', $item['Identity']['username']);
             $splitted2 = split('@', $splitted[count($splitted)-1]);
             $username = $splitted2[0];
-            $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $item['ServiceType']['intro']);
-            if($item['Entry']['service_type_id'] != 5 && $item['Entry']['url']) {
+            $intro = str_replace('@user@', '<a href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $service_types[$item['Entry']['service_type']]['intro']);
+            if($item['Entry']['service_type'] != 5 && $item['Entry']['url']) {
                 $intro = str_replace('@item@', '»<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>«', $intro);
             } else {
                 $intro = str_replace('@item@', '»'.$item['Entry']['title'].'«', $intro);
@@ -36,7 +38,7 @@
             echo $intro; 
         ?>
     </span>
-	<?php if($item['Entry']['service_type_id'] == 1 || $item['Entry']['service_type_id'] == 6) { ?>
+	<?php if($item['Entry']['service_type'] == 1 || $item['Entry']['service_type'] == 6) { ?>
         <span>
             <br />
             <?php

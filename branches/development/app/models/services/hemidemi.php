@@ -4,7 +4,7 @@ class HemidemiService extends AbstractService {
 	public function init() {
 	    $this->name = 'HemiDemi.com';
         $this->url = 'http://www.hemidemi.com';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'hemidemi.gif';
         $this->has_feed = true;
 	}

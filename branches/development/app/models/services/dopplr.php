@@ -4,7 +4,7 @@ class DopplrService extends AbstractService {
 	public function init() {
 	    $this->name = 'Dopplr';
         $this->url = 'http://www.dopplr.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'dopplr.gif';
         $this->has_feed = true;
 	}

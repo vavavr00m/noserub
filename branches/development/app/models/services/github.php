@@ -4,7 +4,7 @@ class GithubService extends AbstractService {
 	public function init() {
 	    $this->name = 'Github';
         $this->url = 'http://github.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'github.gif';
         $this->has_feed = true;
 	}

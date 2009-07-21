@@ -4,7 +4,7 @@ class ImthereService extends AbstractService {
 	public function init() {
 	    $this->name = 'ImThere';
         $this->url = 'http://imthere.com/';
-        $this->service_type_id = 4;
+        $this->service_type = 4;
         $this->icon = 'imthere.gif';
         $this->has_feed = true;
 	}

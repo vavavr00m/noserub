@@ -4,7 +4,7 @@ class IcqService extends AbstractService {
 	public function init() {
 	    $this->name = 'ICQ';
         $this->url = 'http://icq.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'icq.gif';
         $this->is_contact = true;
 	}

@@ -4,7 +4,7 @@ class DailymotionService extends AbstractService {
 	public function init() {
 	    $this->name = 'Dailymotion';
         $this->url = 'http://dailymotion.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'dailymotion.gif';
         $this->has_feed = true;
 	}
