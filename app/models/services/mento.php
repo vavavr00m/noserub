@@ -4,7 +4,7 @@ class MentoService extends AbstractService {
 	public function init() {
 	    $this->name = 'Mento';
         $this->url = 'http://www.mento.info/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'mento.gif';
         $this->has_feed = true;
 	}

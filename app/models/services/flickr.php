@@ -4,7 +4,7 @@ class FlickrService extends AbstractService {
 	public function init() {
 	    $this->name = 'Flickr';
         $this->url = 'http://flickr.com/';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'flickr.gif';
         $this->has_feed = true;
 	}

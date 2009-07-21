@@ -4,7 +4,7 @@ class BlipfmService extends AbstractService {
 	public function init() {
 	    $this->name = 'Blip.fm';
         $this->url = 'http://blip.fm/';
-        $this->service_type_id = 7;
+        $this->service_type = 7;
         $this->icon = 'blipfm.gif';
         $this->has_feed = true;
 	}

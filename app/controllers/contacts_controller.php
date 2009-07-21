@@ -137,8 +137,13 @@ class ContactsController extends AppController {
         $this->set('contact_photo', $this->Contact->Identity->getPhotoUrl($contact, 'WithIdentity'));
         
         # get contact's accounts
-        $this->Contact->Identity->Account->contain('Service');
-        $this->set('accounts', $this->Contact->Identity->Account->findAllByIdentityId($contact['WithIdentity']['id']));
+        $this->set(
+            'accounts', 
+            $this->Contact->Identity->Account->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'identity_id' => $contact['WithIdentity']['id']
+        ))));
         
         $this->set('headline', sprintf('Info about %s', $contact['WithIdentity']['username']));
     }

@@ -4,7 +4,7 @@ class JoostService extends AbstractService {
 	public function init() {
 	    $this->name = 'Joost';
         $this->url = 'http://www.joost.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'joost.gif';
         $this->has_feed = true;
 	}

@@ -4,7 +4,7 @@ class LinkedinService extends AbstractService {
 	public function init() {
 	    $this->name = 'LinkedIn';
         $this->url = 'http://linkedin.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'linkedin.gif';
         $this->has_feed = false;
 	}

@@ -4,7 +4,7 @@ class MoodmillService extends AbstractService {
 	public function init() {
 	    $this->name = 'MoodMill';
         $this->url = 'http://moodmill.com/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'moodmill.gif';
         $this->has_feed = true;
 	}

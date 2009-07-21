@@ -4,7 +4,7 @@ class WikipediaService extends AbstractService {
 	public function init() {
 	    $this->name = 'Wikipedia';
         $this->url = 'http://wikipedia.org/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'wikipedia.gif';
         $this->has_feed = true;
 	}

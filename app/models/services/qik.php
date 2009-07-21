@@ -4,7 +4,7 @@ class QikService extends AbstractService {
 	public function init() {
 	    $this->name = 'Qik';
         $this->url = 'http://qik.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'qik.gif';
         $this->has_feed = true;
 	}

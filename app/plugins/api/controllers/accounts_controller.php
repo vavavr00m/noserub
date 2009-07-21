@@ -18,16 +18,23 @@ class AccountsController extends ApiAppController {
 	}
 	
 	public function get_accounts() {
-        $this->Account->contain(array('ServiceType', 'Service'));
-        $accounts = $this->Account->findAllByIdentityId($this->identity_id);
+	    $accounts = $this->Account->find('all', array(
+	        'contain' => false,
+	        'conditions' => array(
+	            'Account.identity_id' => $this->identity_id
+	        )
+	    ));
 
+        $services = Configure::read('services.data');
+        $service_types = Configure::read('service_types');
+        
         $data = array();
         foreach($accounts as $item) {
             $data[] = array(
                 'title' => $item['Account']['title'],
                 'url'   => $item['Account']['account_url'],
-                'icon'  => $item['Service']['icon'],
-                'type'  => $item['ServiceType']['name']
+                'icon'  => $services[$item['Account']['service']]['icon'],
+                'type'  => $service_types[$item['Account']['service_type']]['name'],
             );
         }
         $this->set('data', $data);

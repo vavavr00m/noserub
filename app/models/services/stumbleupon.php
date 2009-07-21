@@ -4,7 +4,7 @@ class StumbleuponService extends AbstractService {
 	public function init() {
 	    $this->name = 'StumbleUpon';
         $this->url = 'http://stumbleupon.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'stumpleupon.gif';
         $this->has_feed = true;
 	}

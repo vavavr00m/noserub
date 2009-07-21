@@ -9,7 +9,7 @@
 <table>
     <tr>
         <td><?php echo $this->element('identities/mini_profile'); ?></td>
-        <td><?php switch($data['Entry']['service_type_id']) {
+        <td><?php switch($data['Entry']['service_type']) {
                 case 1: // photo
                     echo $this->element('entries/photo'); break;
                 case 6: // video
@@ -22,7 +22,7 @@
     if($data['Entry']['account_id'] > 0) {
     	echo $html->link(__('External permalink', true), $data['Entry']['url']);
     }
-    if(Context::isLoggedIn() && $data['Entry']['service_type_id'] != 0) {
+    if(Context::isLoggedIn() && $data['Entry']['service_type'] != 0) {
         $label = isset($already_marked) ? __('Unmark Entry as favorite', true) : __('Mark Entry as favorite', true);
         echo '<br />' . $html->link($label, '/entry/mark/' . $data['Entry']['id'] .  '/_t:' . $noserub->fnSecurityToken());
     }

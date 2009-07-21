@@ -128,7 +128,6 @@ class WidgetsController extends AppController {
  	 * Form to add an entry
  	 */ 
  	public function form_add_entry() {
- 	    $this->loadModel('ServiceType');
 	    $filters = $this->ServiceType->getFilters();
  	    unset($filters['audio']);
  	    unset($filters['noserub']);
@@ -145,7 +144,7 @@ class WidgetsController extends AppController {
  	    
         $data = $this->Entry->find('first', array(
             'contain' => array(
-                'Identity', 'Account', 'ServiceType',
+                'Identity', 'Account',
                 'FavoritedBy', 'Comment'
             ),
             'conditions' => array(
@@ -331,7 +330,6 @@ class WidgetsController extends AppController {
  	}
  	
  	public function entry_filter() {
-        $this->loadModel('ServiceType');
         $this->set('service_types', $this->ServiceType->getFilters());
  	}
  	
@@ -463,7 +461,7 @@ class WidgetsController extends AppController {
 
         $filter = Context::entryFilter();
         if(!$filter) {
-            $filter = $this->Contact->Identity->Account->ServiceType->getDefaultFilters();
+            $filter = $this->ServiceType->getDefaultFilters();
         }
         
         if($type == 'network') {
@@ -554,10 +552,6 @@ class WidgetsController extends AppController {
         $this->loadModel('Account');
         $this->retrieveFormErrors('Account');
         $this->set('data', $this->Account->get(Context::loggedInIdentityId()));
-        $services = $this->Account->Service->find('list', array('order' => 'name'));
-        unset($services[8]);
-        $this->set('services', $services);
-        $this->set('service_types', $this->Account->ServiceType->find('list'));
     }
     
     public function form_account_edit() {
@@ -568,15 +562,13 @@ class WidgetsController extends AppController {
         $this->data = $this->Account->find(
             'first',
             array(
+                'contain' => false,
                 'conditions' => array(
                     'Account.id' => $account_id,
                     'Account.identity_id' => Context::loggedInIdentityId()
                 )
             )
         );
-        $services = $this->Account->Service->find('list', array('order' => 'name'));
-        $this->set('services', $services);
-        $this->set('service_types', $this->Account->ServiceType->find('list'));
     }
     
     public function account_settings_twitter() {

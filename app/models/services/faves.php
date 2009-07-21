@@ -4,7 +4,7 @@ class FavesService extends AbstractService {
 	public function init() {
 	    $this->name = 'Faves';
         $this->url = 'http://faves.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'faves.gif';
         $this->has_feed = true;
 	}

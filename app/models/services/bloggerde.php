@@ -4,7 +4,7 @@ class BloggerdeService extends AbstractService {
 	public function init() {
 	    $this->name = 'Blogger.de';
         $this->url = 'http://www.blogger.de/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'bloggerde.gif';
         $this->has_feed = true;
 	}

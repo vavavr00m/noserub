@@ -4,7 +4,7 @@ class ViddyouService extends AbstractService {
 	public function init() {
 	    $this->name = 'Viddyou';
         $this->url = 'http://viddyou.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'viddyou.gif';
         $this->has_feed = true;
 	}

@@ -4,7 +4,7 @@ class BrightkiteService extends AbstractService {
 	public function init() {
 	    $this->name = 'Brightkite';
         $this->url = 'http://brightkite.com/';
-        $this->service_type_id = 9;
+        $this->service_type = 9;
         $this->icon = 'brightkite.gif';
         $this->has_feed = true;
 	}

@@ -5,7 +5,7 @@ class _23hqService extends AbstractService {
 	public function init() {
 	    $this->name = '23hq';
         $this->url = 'http://23hq.com';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = '23hq.gif';
         $this->has_feed = true;
 	}

@@ -3,8 +3,8 @@
  
 class Service extends AppModel {
     public $hasMany = array('Account');
-    public $belongsTo = array('ServiceType');
-
+    public $useTable = false;
+    
     /**
      * returns all accounts with is_contact=1
      *
@@ -23,13 +23,18 @@ class Service extends AppModel {
     	
     	App::import('Vendor', 'UrlUtil');
     	$url = UrlUtil::removeHttpAndHttps($url);
-    	$services = $this->getAllServiceObjects();
+    	$this->getAllServices();
 
-    	foreach($services as $service) {
+        $services = Configure::read('services');
+    	foreach($services['list'] as $service_name => $value) {
+    	    $service = $this->createService($service_name);
     		$username = $service->detectService($url);
     		
     		if($username) {
-    			return array('service_id' => $service->getServiceId(), 'username' => $username);
+    			return array(
+    			    'service' => $service_name, 
+    			    'username' => $username
+    			);
     		}
     	}
     	
@@ -39,8 +44,9 @@ class Service extends AppModel {
     /**
      * Used by Identity::parseNoseRubPage()
      *
-     * @return array with feed_url, service_id and service_type_id 
+     * @return array with feed_url, service and service_type 
      */
+     /*
     public function getInfo($service_url, $username) {
         # get service
         $this->contain();
@@ -48,23 +54,21 @@ class Service extends AppModel {
         
         $result = array();
         if($service) {
-            $service_id = $service['Service']['id'];
-            $result['service_id']      = $service_id;
-            $result['service_type_id'] = $service['Service']['service_type_id'];
-            $result['feed_url']        = $this->getFeedUrl($service_id, $username); 
+            $result['service_type'] = $service['Service']['service_type'];
+            $result['feed_url'] = $this->getFeedUrl($service, $username); 
         }
         
         return $result;
     }
-    
-    public function getServiceTypeId($service_id) {
-        $this->contain();
-        $service = $this->findById($service_id);
-        return isset($service['Service']['service_type_id']) ? $service['Service']['service_type_id']: 0;
+    */
+    public function getServiceTypeId($service_name) {
+        $service = $this->getService($service_name);
+        
+        return $service['service_type'];
     }
     
-    public function getFeedUrl($service_id, $username) {
-    	$service = $this->getService($service_id);
+    public function getFeedUrl($service_name, $username) {
+    	$service = $this->getService($service_name);
 		
     	if($service) {
     		return $service->getFeedUrl($username);
@@ -76,24 +80,26 @@ class Service extends AppModel {
     /**
      * Method description
      *
-     * @param  $service_id id of the service, we're about to use
-     * @param  $service_type_id of the service, we're about to use
-     * @param  $feed_url the url of the feed
-     * @param  $items_per_feed maximum number of items that are fetched from the feed
-     * @param  $items_max_age maximum age of any item that is fetched from feed, in days
+     * @param string $username
+     * @param string $service_name name of the service, we're about to use
+     * @param int $service_type of the service, we're about to use
+     * @param string$feed_url the url of the feed
+     * @param int $items_per_feed maximum number of items that are fetched from the feed
+     * @param int $items_max_age maximum age of any item that is fetched from feed, in days
+     *
      * @return 
-     * @access 
      */
-    public function feed2array($username, $service_id, $service_type_id, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
+    public function feed2array($username, $service_name, $service_type, $feed_url, $items_per_feed = 5, $items_max_age = '-21 days') {
         if(!$feed_url || strpos($feed_url, '//friendfeed.com/') > 0) {
             return false;
         }
         
         # get info about service type
-        $this->ServiceType->id = $service_type_id;
-        $intro = $this->ServiceType->field('intro');
-        $token = $this->ServiceType->field('token');
-		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type_id);
+        $service_types = Configure::read('service_types');
+        $intro = $service_types[$service_type]['intro'];
+        $token = $service_types[$service_type]['token'];
+        
+		$service_type_filter = ServiceTypeFilterFactory::getFilter($service_type);
         
         $max_age = $items_max_age ? date('Y-m-d H:i:s', strtotime($items_max_age)) : null;
         $items = array();
@@ -117,7 +123,7 @@ class Service extends AppModel {
             $item['latitude']  = $feeditem->get_latitude();
             $item['longitude'] = $feeditem->get_longitude();
 
-            $service = $this->getService($service_id);
+            $service = $this->getService($service_name);
 
             if($service) {
             	$item['content'] = $service->getContent($feeditem);
@@ -147,10 +153,10 @@ class Service extends AppModel {
         return $items;
     }
 
-    public function getAccountUrl($service_id, $username) {
-    	$service = $this->getService($service_id);
+    public function getAccountUrl($service_name, $username) {
+    	$service = $this->getService($service_name);
 
-    	if ($service) {
+    	if($service) {
     		return $service->getAccountUrl($username);
         }
     	
@@ -165,7 +171,7 @@ class Service extends AppModel {
      * @return array
      * @access 
      */
-    public function getInfoFromFeed($username, $service_type_id, $feed_url, $max_items = 5) {
+    public function getInfoFromFeed($username, $service_type, $feed_url, $max_items = 5) {
         # needed for autodiscovery of feed
     	$feed = $this->createSimplePie($feed_url, true);
         $feed->init();
@@ -187,11 +193,11 @@ class Service extends AppModel {
             $data['account_url'] = $data['feed_url'];
         }
         
-        $data['service_id']      = 8; # any RSS-Feed
-        $data['username']        = 'RSS-Feed';
-        $data['service_type_id'] = $service_type_id;
+        $data['service'] = 'RSS-Feed';
+        $data['username'] = 'RSS-Feed';
+        $data['service_type'] = $service_type;
         
-        $items = $this->feed2array($username, 8, $data['service_type_id'], $data['feed_url'], 5, null);
+        $items = $this->feed2array($username, 8, $data['service_type'], $data['feed_url'], 5, null);
         
         $data['items'] = $items;
         
@@ -199,20 +205,19 @@ class Service extends AppModel {
     }
     
     /**
-     * get service_type_id, feed_url and preview
+     * get service_type, feed_url and preview
      */
-    public function getInfoFromService($username, $service_id, $account_username) {
-        $this->contain();
-        $service = $this->findById($service_id);
+    public function getInfoFromService($username, $service_name, $account_username) {
+        $services = Configure::read('services.data');
         $data = array();
-        $data['service_id']      = $service_id;
-        $data['username']        = $account_username;
-        $data['service_type_id'] = $service['Service']['service_type_id'];
+        $data['service'] = $service_name;
+        $data['username'] = $account_username;
+        $data['service_type'] = $services[$service_name]['service_type'];
         
-        $data['account_url'] = $this->getAccountUrl($service_id, $account_username);
-        if($service['Service']['has_feed'] == 1) {
-            $data['feed_url'] = $this->getFeedUrl($service_id, $account_username);
-            $items            = $this->feed2array($username, $service_id, $data['service_type_id'], $data['feed_url'], 5, null);
+        $data['account_url'] = $this->getAccountUrl($service_name, $account_username);
+        if($services[$service_name]['has_feed'] == 1) {
+            $data['feed_url'] = $this->getFeedUrl($service_name, $account_username);
+            $items = $this->feed2array($username, $service_name, $data['service_type'], $data['feed_url'], 5, null);
         } else {
             $data['feed_url'] = '';
             $items = array();
@@ -223,20 +228,30 @@ class Service extends AppModel {
         return $data;
     }
     
+    public function getAllServices() {
+        if(file_exists(CACHE . 'models' . DS . 'noserub_services.php')) {
+            eval(file_get_contents(CACHE . 'models' . DS . 'noserub_services.php'));
+        } else {
+            $cache_services = $this->createCache();
+        }
+    }
+    
     /*
      *  Saves array of all services into a cache file.
      *
-     * @return bool
+     * @return array
      */
     public function createCache() {
-        $services = $this->getAllServices();
+        $services = $this->getAllServicesForCache();
         if(!$services) {
             return false;
         }
         
-        $data = '$cache_services = ' . $services;
+        $data = "Configure::write('services', $services);";
         
-        return @file_put_contents(CACHE . 'models' . DS . 'noserub_services.php', $data);
+        @file_put_contents(CACHE . 'models' . DS . 'noserub_services.php', $data);
+        
+        return $data;
     }
     
     /**
@@ -245,33 +260,49 @@ class Service extends AppModel {
      * 
      * @return array
      */
-    public function getAllServices() {
+    public function getAllServicesForCache() {
         $files = @scandir(MODELS . 'services');
         if(!$files) {
             return false;
         }
         
-        $services = array();
+        $data = array();
+        $list = array();
         foreach($files as $file) {
             if(preg_match('/(.*)\.php/i', $file, $matches)) {
                 $service_name = ucfirst($matches[1]);
-                $class_name = $service_name . 'Service';
-                require(MODELS . 'services' . DS . $file);
-                $class = new $class_name();
-                $services[$service_name] = $class->getForCache();
+                $class = $this->createService($service_name);
+                $data[$service_name] = $class->getForCache();
+                $list[$service_name] = $data[$service_name]['name'];
             }
         }
+        
+        $data['RSS-Feed'] = array(
+            'name' => __('Any Site', true),
+            'url' => '',
+            'service_type' => 3,
+            'icon' => 'rss.gif',
+            'is_contact' => false,
+            'has_feed' => true,
+            'minutes_between_updates' => 30
+        );
+    	
+        $services = array(
+            'data' => $data,
+            'list' => $list
+        );
+        
         return var_export($services, true);
     }
     
-    private function createService($service_id, $service_name) {
+    private function createService($service_name) {
     	$class_name = $service_name . 'Service';
     	
     	if(!class_exists($class_name)) {
-    		require(MODELS.'services'.DS.strtolower($service_name).'.php');
+    		require_once(MODELS.'services'.DS.strtolower($service_name).'.php');
     	}
     	
-    	return new $class_name($service_id);
+    	return new $class_name();
     }
     
     private function createSimplePie($feed_url, $autodiscovery = false) {
@@ -295,40 +326,16 @@ class Service extends AppModel {
         return $feed;
     }
     
-    private function getAllServiceObjects() {
-    	$serviceObjects = array();
-
-    	$this->recursive = 0;
-    	$services = $this->find('all', array('conditions' => array('service_type_id >' => 0), 'fields' => array('id', 'internal_name')));
-    	
-    	foreach($services as $service) {
-    		$serviceObjects[] = $this->createService($service['Service']['id'], $service['Service']['internal_name']);
-    	}
-    	
-    	return $serviceObjects;
-    }
-    
     /**
      * Factory method to create services
      */
-    private function getService($service_id) {
+    private function getService($service_name) {
     	// RSS feeds are not handled by this method, so we simply return false
-    	if($service_id == 8) {
+    	if($service_name == 'RSS-Feed') {
     		return false;
     	}
     	
-    	$this->recursive = 0;
-    	$service = $this->find('first', array(
-    	    'contain' => false,
-    	    'conditions' => array('Service.id' => $service_id),
-    	    'fields' => array('Service.internal_name')
-    	));
-    	
-    	if(!$service) {
-    		return false;
-    	}
-    	
-    	return $this->createService($service_id, $service['Service']['internal_name']);
+    	return $this->createService($service_name);
     }
 }
 
@@ -338,22 +345,16 @@ class Service extends AppModel {
 abstract class AbstractService extends Object {
     protected $name;
     protected $url;
-	protected $service_type_id;
+	protected $service_type;
 	protected $icon;
 	protected $has_feed;
 	protected $is_contact;
 	protected $minutes_between_updates;
 	
-	private $service_id;	
-	
-	/**
-	 * @todo remove the parameter service_id
-	 */
-	public function __construct($service_id = 0) {
-		$this->service_id = $service_id;
+	public function __construct() {
 		$this->name = '';
 		$this->url = '';
-		$this->service_type_id = 0;
+		$this->service_type = 0;
 		$this->icon = '';
 		$this->hasFeed = false;
 		$this->isContact = false;
@@ -389,12 +390,28 @@ abstract class AbstractService extends Object {
 		return false;
 	}
 	
+	public function getForCache() {
+	    return array(
+	        'name' => $this->name,
+	        'url' => $this->url,
+	        'service_type' => $this->service_type,
+	        'icon' => $this->icon,
+	        'has_feed' => $this->has_feed,
+	        'is_contact' => $this->is_contact,
+	        'minutes_between_updates' => $this->minutes_between_updates
+	    );
+	}
+	
+	public function getName() {
+        return $this->name;
+	}
+	
 	public function getUrl() {
         return $this->url;
 	}
 	
-	public function getServiceTypeId() {
-	    return $this->service_type_id;
+	public function getServiceType() {
+	    return $this->service_type;
 	}
 	
 	public function getIcon() {
@@ -421,16 +438,6 @@ abstract class AbstractService extends Object {
 		return $feeditem->get_content();
 	}
 	
-	public function getForCache() {
-	    return array(
-	        'url' => $this->url,
-	        'service_type_id' => $this->service_type_id,
-	        'icon' => $this->icon,
-	        'has_feed' => $this->has_feed,
-	        'is_contact' => $this->is_contact,
-	        'minutes_between_updates' => $this->minutes_between_updates
-	    );
-	}
 	/**
 	 * Get the create time of that item.
 	 * For some services, get_date() returns
@@ -453,16 +460,12 @@ abstract class AbstractService extends Object {
 	
 	public function getFeedUrl($username) {
 		return false;
-	}
-	
-	public final function getServiceId() {
-		return $this->service_id; 
-	}
+	}	
 }
 
 class ServiceTypeFilterFactory {
-	public static function getFilter($service_type_id) {
-		if($service_type_id == 1) {
+	public static function getFilter($service_type) {
+		if($service_type == 1) {
 			return new PhotoFilter();
 		}
 		

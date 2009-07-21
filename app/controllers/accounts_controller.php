@@ -16,18 +16,18 @@ class AccountsController extends AppController {
             $autodetect = false;
             if(isset($this->data['Account']['url'])) {
                 $autodetect = true;
-    		    $serviceData = $this->Account->Service->detectService($this->data['Account']['url']);
+    		    $serviceData = $this->Service->detectService($this->data['Account']['url']);
 		    } else {
 		        $serviceData = array(
-		            'service_id' => $this->data['Account']['service_id'],
-		            'username'   => $this->data['Account']['username']
+		            'service' => $this->data['Account']['service'],
+		            'username' => $this->data['Account']['username']
 		        );
 		    }
 		    
 		    if($serviceData) {
-	    		$info = $this->Account->Service->getInfoFromService(
-	    		    Context::read('logged_in_identity.username'), 
-	    		    $serviceData['service_id'], 
+	    		$info = $this->Service->getInfoFromService(
+	    		    Context::read('logged_in_identity.username'),
+	    		    $serviceData['service'],
 	    		    $serviceData['username']
 	    		);    
 
@@ -42,7 +42,7 @@ class AccountsController extends AppController {
 	            } 
     		} else {
     			// as we don't know the service type id yet we set the id to 3 for Text/Blog 
-    			$info = $this->Account->Service->getInfoFromFeed(
+    			$info = $this->Service->getInfoFromFeed(
     			    Context::read('logged_in_identity.username'), 
     			    3, // Text/Blog
     			    $this->data['Account']['url']
@@ -61,12 +61,12 @@ class AccountsController extends AppController {
 					$info['title'] = $this->data['Account']['label'];
 				}
                 
-				if(isset($this->data['Account']['service_type_id'])) {
-					$info['service_type_id'] = $this->data['Account']['service_type_id'];
+				if(isset($this->data['Account']['service_type'])) {
+					$info['service_type'] = $this->data['Account']['service_type'];
 				}
 				
 				$saveable = array(
-				    'identity_id', 'service_id', 'service_type_id', 
+				    'identity_id', 'service', 'service_type', 
                     'username', 'account_url', 'feed_url', 'created', 
                     'modified', 'title'
                 );
@@ -78,10 +78,10 @@ class AccountsController extends AppController {
                     // save feed information to entry table
                     $this->Account->Entry->updateByAccountId($this->Account->id);
                 }
-                
+
                 $this->Account->Entry->addNewService(
                     $info['identity_id'], 
-                    $info['service_id'], 
+                    $info['service'], 
                     null
                 );
     		}
@@ -93,13 +93,12 @@ class AccountsController extends AppController {
     public function edit() {
         $this->grantAccess('self');
         
-        if($this->RequestHandler->isPut()) {
+        if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
             
             $account = $this->Account->find(
                 'first',
                 array(
-                    'contain' => 'Service',
                     'conditions' => array(
                         'Account.id' => $this->data['Account']['id'],
                         'Account.identity_id' => Context::loggedInIdentityId()
@@ -107,15 +106,22 @@ class AccountsController extends AppController {
                 )
             );
             if($account) {
-                if($account['Service']['is_contact']) {
+                $services = Configure::read('services.data');
+                
+                if($services[$account['Account']['service']]['is_contact']) {
                     $saveable = array(
                         'username', 'title', 'account_url'
                     );
                 } else {
                     $saveable = array(
-                        'service_type_id', 'username', 'title',
+                        'service_type', 'username', 'title',
                         'account_url', 'feed_url'
                     );
+                }
+                
+                if($account['Account']['service'] == 'RSS-Feed') {
+                    // the username is just a dummy for generic RSS-Feeds
+                    unset($saveable['username']);
                 }
                 
                 $this->Account->id = $account['Account']['id'];
@@ -130,7 +136,7 @@ class AccountsController extends AppController {
     public function delete() {
         $this->grantAccess('self');
         
-        if($this->RequestHandler->isPut()) {
+        if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
             
             $account = $this->Account->find(
@@ -143,8 +149,11 @@ class AccountsController extends AppController {
                 )
             );
             if($account) {
+                // delete all entries, comments and favorites
+                $this->Account->Entry->deleteByAccountId($this->data['Account']['id']);
+                // delete the account itself
                 $this->Account->id = $this->data['Account']['id'];
-                $this->Account->deleteWithAssociated();
+                $this->Account->delete();
                 $this->flashMessage('success', __('Account has been deleted', true));
                 $this->redirect('/settings/accounts/');
             }

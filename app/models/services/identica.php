@@ -4,7 +4,7 @@ class IdenticaService extends AbstractService {
 	public function init() {
 	    $this->name = 'Identi.ca';
         $this->url = 'http://identi.ca/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'identica.gif';
         $this->has_feed = true;
 	}

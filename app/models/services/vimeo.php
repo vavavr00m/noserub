@@ -4,7 +4,7 @@ class VimeoService extends AbstractService {
 	public function init() {
 	    $this->name = 'Vimeo';
         $this->url = 'http://vimeo.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'vimeo.gif';
         $this->has_feed = true;
 	}

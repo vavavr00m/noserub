@@ -5,7 +5,6 @@ class Entry extends AppModel {
     public $belongsTo = array(
         'Identity',
         'Account', 
-        'ServiceType', 
         'Group' => array('counterCache' => true)
     );
     
@@ -69,7 +68,7 @@ class Entry extends AppModel {
      */
     public function updateByAccountId($account_id, $check_next_update = false) {
         $this->Account->id = $account_id;
-        $this->Account->contain(array('Service.minutes_between_updates'));
+        $this->Account->contain();
         $account = $this->Account->read();
 
         if($check_next_update &&
@@ -78,8 +77,8 @@ class Entry extends AppModel {
             return array();
         }
         
-        $identity_id     = $account['Account']['identity_id'];
-        $service_type_id = $account['Account']['service_type_id'];
+        $identity_id = $account['Account']['identity_id'];
+        $service_type = $account['Account']['service_type'];
         
         $account_data = $this->Account->getData();
         $entries = array();
@@ -113,7 +112,7 @@ class Entry extends AppModel {
             # get the new items
             foreach($account_data as $item) {
                 if($item['datetime'] >= $date_newest_item) {
-                    $entry = $this->update($identity_id, $account_id, $service_type_id, $item);
+                    $entry = $this->update($identity_id, $account_id, $service_type, $item);
                     if($entry) {
                         $entries[] = $entry; 
                    }
@@ -122,7 +121,8 @@ class Entry extends AppModel {
         }
 
         # update account
-        $minutes_between_updates = $account['Service']['minutes_between_updates'];
+        $services = Configure::read('services.data');
+        $minutes_between_updates = $services[$account['Account']['service']]['minutes_between_updates'];
         if(!$minutes_between_updates) {
             # this account is not properly attached to a service
             $minutes_between_updates = 360; 
@@ -137,7 +137,7 @@ class Entry extends AppModel {
     /**
      * updates/creates one single entry
      */
-    public function update($identity_id, $account_id, $service_type_id, $item) {
+    public function update($identity_id, $account_id, $service_type, $item) {
         # search, if there is an entry with the same url
         $this->contain();
         $this->cacheQueries = false;
@@ -184,7 +184,7 @@ class Entry extends AppModel {
             $entry = array(
                 'identity_id'     => $identity_id,
                 'account_id'      => $account_id,
-                'service_type_id' => $service_type_id,
+                'service_type' => $service_type,
                 'published_on'    => $item['datetime'],
                 'title'           => $item['title'] ? $item['title'] : '',
                 'url'             => $item['url'] ? $item['url'] : '',
@@ -228,8 +228,6 @@ class Entry extends AppModel {
                         
         $this->Identity->Entry->contain(
             array(
-                'ServiceType.token',
-                'ServiceType.intro',
                 'Identity.firstname',
                 'Identity.lastname',
                 'Identity.username',
@@ -238,6 +236,9 @@ class Entry extends AppModel {
             )
         );
         
+        App::import('Model', 'ServiceType');
+        $this->ServiceType = new ServiceType();
+        
         $conditions = array();
         if(isset($filter['account_id'])) {            
             $conditions['account_id'] = $filter['account_id'];
@@ -245,7 +246,7 @@ class Entry extends AppModel {
         if(isset($filter['filter'])) {
             $ids = $this->ServiceType->getList($filter['filter']);
             if($ids) {
-                $conditions['service_type_id'] = $ids;
+                $conditions['service_type'] = $ids;
             }
         }
         if(isset($filter['identity_id'])) {
@@ -322,7 +323,7 @@ class Entry extends AppModel {
             $data = $this->Identity->addIdentity('FavoritedBy', $data);
             $data = $this->Identity->addIdentity('Comment', $data);
             
-            if($data['Entry']['service_type_id'] == 5 && $data['Entry']['account_id'] > 0) {
+            if($data['Entry']['service_type'] == 5 && $data['Entry']['account_id'] > 0) {
                 $data['Entry']['title'] = $data['Entry']['content'] = $this->micropublishMarkup($data['Entry']['title']);
             }
             
@@ -373,15 +374,15 @@ class Entry extends AppModel {
            isset($location['Location']['name']) && 
            $location['Location']['name'] != '') {
             $data = array(
-                'identity_id'     => $identity_id,
-                'account_id'      => 0,
-                'service_type_id' => 9,
-                'published_on'    => date('Y-m-d H:i:s'),
-                'title'           => $location['Location']['name'],
-                'url'             => '',
-                'uid'             => '',
-                'content'         => $location['Location']['name'],
-                'restricted'      => $restricted
+                'identity_id'  => $identity_id,
+                'account_id'   => 0,
+                'service_type' => 9,
+                'published_on' => date('Y-m-d H:i:s'),
+                'title'        => $location['Location']['name'],
+                'url'          => '',
+                'uid'          => '',
+                'content'      => $location['Location']['name'],
+                'restricted'   => $restricted
             );
                       
             $this->create();
@@ -416,16 +417,16 @@ class Entry extends AppModel {
         $with_markup = $this->micropublishMarkup($text);
         
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
-            'group_id'        => $group_id,
-            'service_type_id' => 5,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $with_markup,
-            'url'             => '',
-            'uid'             => '',
-            'content'         => $text,
-            'restricted'      => $restricted
+            'identity_id' => $identity_id,
+            'account_id' => 0,
+            'group_id' => $group_id,
+            'service_type' => 5,
+            'published_on' => date('Y-m-d H:i:s'),
+            'title' => $with_markup,
+            'url' => '',
+            'uid' => '',
+            'content' => $text,
+            'restricted' => $restricted
         );
         
         $this->create();
@@ -453,15 +454,15 @@ class Entry extends AppModel {
         $with_markup = $this->micropublishMarkup($text);
         
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
-            'service_type_id' => 5,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $with_markup,
-            'url'             => $notice_url,
-            'uid'             => md5($notice_url),
-            'content'         => $text,
-            'restricted'      => $restricted
+            'identity_id' => $identity_id,
+            'account_id' => 0,
+            'service_type' => 5,
+            'published_on'  => date('Y-m-d H:i:s'),
+            'title' => $with_markup,
+            'url' => $notice_url,
+            'uid' => md5($notice_url),
+            'content' => $text,
+            'restricted' => $restricted
         );
         
         $this->create();
@@ -540,7 +541,7 @@ class Entry extends AppModel {
             'identity_id'     => $identity_id,
             'account_id'      => 0,
             'group_id'        => $group_id,
-            'service_type_id' => 2,
+            'service_type' => 2,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $description,
             'url'             => $url,
@@ -561,7 +562,7 @@ class Entry extends AppModel {
             'identity_id'     => $identity_id,
             'account_id'      => 0,
             'group_id'        => $group_id,
-            'service_type_id' => 3,
+            'service_type' => 3,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $title,
             'url'             => '',
@@ -597,7 +598,7 @@ class Entry extends AppModel {
             'identity_id'     => $identity_id,
             'account_id'      => 0,
             'group_id'        => $group_id,
-            'service_type_id' => 1,
+            'service_type' => 1,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $title,
             'url'             => '',
@@ -626,7 +627,7 @@ class Entry extends AppModel {
         $data = array(
             'identity_id'     => $identity_id,
             'account_id'      => 0,
-            'service_type_id' => 0,
+            'service_type' => 0,
             'published_on'    => date('Y-m-d H:i:s'),
             'title'           => $value,
             'url'             => '',
@@ -659,10 +660,8 @@ class Entry extends AppModel {
     /**
      * Add a NoseRub message, that someone added a new service
      */
-    public function addNewService($identity_id, $service_id, $restricted = false) {
-        $this->Account->Service->contain();
-        $this->Account->Service->id = $service_id;
-        $service_name = $this->Account->Service->field('name');
+    public function addNewService($identity_id, $service_name, $restricted = false) {
+        $service_name = Configure::read('services.list.' . $service_name);
         
         $message = 'added a new service: ' . $service_name;
         $this->addNoseRub($identity_id, $message, $restricted);
@@ -711,17 +710,13 @@ class Entry extends AppModel {
         );
         $identity = $this->Identity->findById($entry['identity_id'], $fields);
         
-        $this->ServiceType->contain();
-        $fields = array(
-            'ServiceType.token',
-            'ServiceType.intro'
-        );
-        $service_type = $this->ServiceType->findById($entry['service_type_id'], $fields);
+        $service_types = Configure::read('service_types');
+        $service_type = $service_types[$entry['service_type']];
         
         $splitted = split('/', $identity['Identity']['username']);
         $splitted2 = split('@', $splitted[count($splitted)-1]);
         $username = $splitted2[0];
-        $intro = str_replace('@user@', 'http://'.$identity['Identity']['username'], $service_type['ServiceType']['intro']);
+        $intro = str_replace('@user@', 'http://'.$identity['Identity']['username'], $service_type['intro']);
         $intro = str_replace('@item@', '» '.$entry['title'].' «', $intro);
         
         return $intro;

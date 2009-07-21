@@ -4,7 +4,7 @@ class twelvesecondsService extends AbstractService {
 	public function init() {
 	    $this->name = '12Seconds';
         $this->url = 'http://12seconds.tv/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = '12seconds.gif';
         $this->has_feed = true;
 	}

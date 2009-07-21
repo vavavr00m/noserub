@@ -4,7 +4,7 @@ class FolkdService extends AbstractService {
 	public function init() {
 	    $this->name = 'Folkd';
         $this->url = 'http://www.folkd.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'folkd.gif';
         $this->has_feed = true;
 	}

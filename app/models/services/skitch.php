@@ -4,7 +4,7 @@ class SkitchService extends AbstractService {
 	public function init() {
 	    $this->name = 'Skitch';
         $this->url = 'http://skitch.com/';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'skitch.gif';
         $this->has_feed = true;
 	}

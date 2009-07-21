@@ -4,7 +4,7 @@ class DeviantartService extends AbstractService {
 	public function init() {
 	    $this->name = 'deviantART';
         $this->url = 'http://deviantart.com/';
-        $this->service_type_id = 3;
+        $this->service_type = 3;
         $this->icon = 'deviantart.gif';
         $this->has_feed = true;
 	}

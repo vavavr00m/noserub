@@ -267,7 +267,7 @@ class IdentitiesController extends AppController {
             # sanitize all the filters
             $sanitized_filters = array();
             foreach($this->data['Identity']['overview_filters'] as $filter) {
-                if($this->Identity->Account->ServiceType->sanitizeFilter($filter)) {
+                if($this->ServiceType->sanitizeFilter($filter)) {
                     $sanitized_filters[] = $filter;
                 }
             }
@@ -284,7 +284,7 @@ class IdentitiesController extends AppController {
             $this->data['Identity']['overview_filters'] = explode(',', $this->Identity->field('overview_filters'));
         }
         
-        $this->set('filters', $this->Identity->Account->ServiceType->getFilters());
+        $this->set('filters', $this->ServiceType->getFilters());
         $this->set('headline', __('Configure your display options', true));
     }
     
@@ -655,10 +655,10 @@ class IdentitiesController extends AppController {
     
     private function getFilter($session_identity) {
     	$filter = isset($this->params['filter']) ? $this->params['filter'] : '';
-    	$filter = $this->Identity->Account->ServiceType->sanitizeFilter($filter);
+    	$filter = $this->ServiceType->sanitizeFilter($filter);
     	
     	if($filter == '') {
-        	$filter = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->Identity->Account->ServiceType->getDefaultFilters();
+        	$filter = isset($session_identity['overview_filters']) ? explode(',', $session_identity['overview_filters']) : $this->ServiceType->getDefaultFilters();
         } else {
             $filter = array($filter);
         }

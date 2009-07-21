@@ -2,7 +2,7 @@
 /* SVN FILE: $Id:$ */
  
 class Account extends AppModel {
-    public $belongsTo = array('Identity', 'Service', 'ServiceType');
+    public $belongsTo = array('Identity');
     public $hasMany = array('Entry');
     public $hasAndBelongsToMany = array('Syndication');
     
@@ -27,16 +27,16 @@ class Account extends AppModel {
         );
         switch($type) {
             case 'web':
-                $conditions['Service.is_contact'] = 0;
+                $conditions['Account.is_contact'] = 0;
                 break;
                 
             case 'communication':
-                $conditions['Service.is_contact'] = 1;
+                $conditions['Account.is_contact'] = 1;
                 break;
         }
         
         return $this->find('all', array(
-            'contain' => array('Service'),
+            'contain' => false,
             'conditions' => $conditions
         ));
     }
@@ -52,10 +52,13 @@ class Account extends AppModel {
         $account = $this->read();
         $account = $account['Account'];
         
+        App::import('Model', 'Service');
+        $this->Service = new Service();
+        
         return $this->Service->feed2array(
             $account['username'],
-            $account['service_id'],
-            $account['service_type_id'],
+            $account['service'],
+            $account['service_type'],
             $account['feed_url'],
             50, # number of items
             false # no maximum time period
@@ -111,7 +114,7 @@ class Account extends AppModel {
                 $this->log('new account: ' . $item['account_url'], LOG_DEBUG);
                 $item['identity_id'] = $identity_id;
                 $saveable = array(
-                    'identity_id', 'service_id', 'service_type_id', 'title',
+                    'identity_id', 'service', 'service_type', 'title',
                     'username', 'account_url', 'feed_url', 'created', 'modified'
                 );
                 $this->create();
@@ -119,7 +122,7 @@ class Account extends AppModel {
             } else {
                 $this->log('existing account: ' . $item['account_url'], LOG_DEBUG);
                 $saveable = array(
-                    'identity_id', 'service_id', 'service_type_id', 'title',
+                    'identity_id', 'service', 'service_type', 'title',
                     'username', 'account_url', 'feed_url', 'modified'
                 );
                 $item['identity_id'] = $identity_id;

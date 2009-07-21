@@ -4,7 +4,7 @@ class ZootoolService extends AbstractService {
 	public function init() {
 	    $this->name = 'Zootool';
         $this->url = 'http://zootool.com/';
-        $this->service_type_id = 2;
+        $this->service_type = 2;
         $this->icon = 'zootool.gif';
         $this->has_feed = true;
 	}

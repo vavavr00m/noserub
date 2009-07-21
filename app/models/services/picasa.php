@@ -4,7 +4,7 @@ class PicasaService extends AbstractService {
 	public function init() {
 	    $this->name = 'Picasa';
         $this->url = 'http://picasaweb.google.com/home';
-        $this->service_type_id = 1;
+        $this->service_type = 1;
         $this->icon = 'picasa.gif';
         $this->has_feed = true;
 	}

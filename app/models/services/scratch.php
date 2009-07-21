@@ -4,7 +4,7 @@ class ScratchService extends AbstractService {
 	public function init() {
 	    $this->name = 'Scratch';
         $this->url = 'http://scratch.mit.edu/';
-        $this->service_type_id = 5;
+        $this->service_type = 5;
         $this->icon = 'scratch.gif';
         $this->has_feed = true;
 	}

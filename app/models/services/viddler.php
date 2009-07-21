@@ -4,7 +4,7 @@ class ViddlerService extends AbstractService {
 	public function init() {
 	    $this->name = 'Viddler';
         $this->url = 'http://www.viddler.com/';
-        $this->service_type_id = 6;
+        $this->service_type = 6;
         $this->icon = 'viddler.gif';
         $this->has_feed = true;
 	}
