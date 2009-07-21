@@ -17,7 +17,7 @@ Please note: this documentation is for the upcoming version of NoseRub (0.9)!
 ===Location Methods===
   * locations
   * locations/create
-  * locations/current
+  * [http://code.google.com/p/noserub/wiki/LocationsCurrent locations/current]
   * [http://code.google.com/p/noserub/wiki/LocationsSetCurrent locations/set_current]
   
 ===OAuth Methods===
