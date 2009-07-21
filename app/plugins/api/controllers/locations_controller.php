@@ -79,13 +79,12 @@ class LocationsController extends ApiAppController {
 		$this->Location->Identity->contain('Location');
 		
 		$data = $this->Location->Identity->read();
-        $this->set(
-            'data', 
-            array(
-                'id'   => isset($data['Location']['id'])   ? $data['Location']['id']   : 0,
-                'name' => isset($data['Location']['name']) ? $data['Location']['name'] : 0
-            )
-        );
+		
+		if ($data['Location']['id'] != null) {
+			$this->set('data', array('id' => $data['Location']['id'], 'name' => $data['Location']['name']));
+		} else {
+			$this->set('data', array());
+		}
 	}
     
 	public function set_current() {
