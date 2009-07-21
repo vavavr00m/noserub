@@ -156,9 +156,6 @@ class AdminsController extends AppController {
         
         CacheCleaner::cleanUp();
         
-        $this->loadModel('Service');
-        $this->Service->createCache();
-        
         $this->ConfigurationChecker = new ConfigurationChecker();
         $constants = $this->ConfigurationChecker->check();
         $this->set('constants', $constants);
