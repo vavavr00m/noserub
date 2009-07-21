@@ -823,28 +823,24 @@ a.button span {
 }
 
 #message.alert {
-	background: #ffe8e5 url(../images/icons/messages/exclamation.gif) center no-repeat;
 	border-top: 2px solid #f7aea5;
 	border-bottom: 2px solid #f7aea5;
 	background-position: 15px 50%;
 }
 
 #message.info {
-	background: #eff7ff url(../images/icons/messages/information.gif) center no-repeat;
 	border-top: 2px solid #bfdaff;
 	border-bottom: 2px solid #bfdaff;
 	background-position: 15px 50%;
 }
 
 #message.warning {
-	background: #fff6bf url(../images/icons/messages/error.gif) center no-repeat;
 	border-top: 2px solid #f8dd70;
 	border-bottom: 2px solid #f8dd70;
 	background-position: 15px 50%;
 }
 
 #message.success {
-	background: #e3fce3 url(../images/icons/messages/success.gif) center no-repeat;
 	border-top: 2px solid #9fe8b8;
 	border-bottom: 2px solid #9fe8b8;
 	background-position: 15px 50%;
