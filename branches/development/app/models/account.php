@@ -60,8 +60,7 @@ class Account extends AppModel {
             $account['service'],
             $account['service_type'],
             $account['feed_url'],
-            50, # number of items
-            false # no maximum time period
+            50 // number of items
         );
     }
     
