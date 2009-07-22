@@ -61,6 +61,7 @@ class MessagesController extends AppController {
             $data['identity_id'] = Context::loggedInIdentityId();
             $data['folder'] = 'sent';
             $data['read'] = 1;
+            $data['to_from'] = $this->data['Message']['to_from'];
             $this->Message->create();
             $this->Message->save($data);
             $this->flashMessage('success', __('Message sent', true));
