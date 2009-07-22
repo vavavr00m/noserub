@@ -34,12 +34,10 @@ Router::connect('/api/locations/', array('plugin' => 'api', 'controller' => 'loc
 
 // OAuth-enabled API methods
 Router::connect('/api/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
-Router::connect('/api/:result_type/feeds/', array('plugin' => 'api', 'controller' => 'syndications', 'action' => 'get_feeds'));
 Router::connect('/api/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
 Router::connect('/api/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts', 'action' => 'get_accounts'));
 
 Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
-Router::connect('/api/:username/:api_hash/:result_type/feeds/', array('plugin' => 'api', 'controller' => 'syndications', 'action' => 'get_feeds'));
 Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
 Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts', 'action' => 'get_accounts'));
 
@@ -66,10 +64,6 @@ Router::connect('/settings/account/redirect/', array('controller' => 'account_se
 Router::connect('/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 Router::connect('/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
 Router::connect('/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
-
-Router::connect('/settings/feeds/add/', array('controller' => 'syndications', 'action' => 'add'));
-Router::connect('/settings/feeds/:syndication_id/delete/:security_token/', array('controller' => 'syndications', 'action' => 'delete'));
-Router::connect('/settings/feeds/', array('controller' => 'syndications', 'action' => 'index'));
 
 Router::connect('/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
 Router::connect('/settings/locations/delete/', array('controller' => 'locations', 'action' => 'delete'));
@@ -108,7 +102,6 @@ Router::connect('/jobs/shell/system/update/', array('controller' => 'admins', 'a
 Router::connect('/jobs/shell/identities/sync/all/', array('controller' => 'identities', 'action' => 'shell_sync_all'));
 Router::connect('/jobs/shell/feeds/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
 Router::connect('/jobs/shell/cache/feed/refresh/', array('controller' => 'entries', 'action' => 'shell_update'));
-Router::connect('/jobs/shell/cache/feed/upload/', array('controller' => 'syndications', 'action' => 'shell_upload'));
 Router::connect('/jobs/shell/peers/sync/', array('controller' => 'networks', 'action' => 'shell_sync')); # deprecated
 Router::connect('/jobs/shell/peers/poll/', array('controller' => 'networks', 'action' => 'shell_poll')); # deprecated
 Router::connect('/jobs/shell/networks/sync/', array('controller' => 'networks', 'action' => 'shell_sync'));
@@ -129,7 +122,6 @@ Router::connect('/:username/contacts/', array('controller' => 'contacts', 'actio
 Router::connect('/:username/add/as/contact/:security_token/', array('controller' => 'contacts', 'action' => 'add_as_contact'));
 Router::connect('/:username/remove/contact/:security_token/', array('controller' => 'contacts', 'action' => 'remove_contact'));
 Router::connect('/:username/xrds', array('controller' => 'identities', 'action' => 'xrds'));
-Router::connect('/:username/feeds/*', array('controller' => 'syndications', 'action' => 'feed'));
 Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
 Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
 Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));

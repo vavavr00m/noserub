@@ -4,7 +4,6 @@
 class Account extends AppModel {
     public $belongsTo = array('Identity');
     public $hasMany = array('Entry');
-    public $hasAndBelongsToMany = array('Syndication');
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),

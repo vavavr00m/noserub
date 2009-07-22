@@ -5,7 +5,7 @@ class Identity extends AppModel {
 	public $hasOne = array('TwitterAccount');
     public $hasMany = array(
         'Account', 'Contact', 'ContactType', 'Consumer', 
-        'OpenidSite', 'Location', 'Syndication', 'Entry'
+        'OpenidSite', 'Location', 'Entry'
     );
     
     public $belongsTo = array(
