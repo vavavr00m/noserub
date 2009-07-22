@@ -40,6 +40,16 @@ class Context {
         return Context::loggedInIdentityId() > 0;
     }
     
+    public static function unreadMessages() {
+        if(Context::isSelf()) {
+            return Configure::read('context.logged_in_identity.message_count');
+        }
+    }
+    
+    public static function messageId() {
+        return Configure::read('context.message_id');
+    }
+    
     /**
      * wether the logged in user is subscribed to
      * the group from the URL

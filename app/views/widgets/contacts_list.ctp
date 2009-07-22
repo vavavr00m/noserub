@@ -60,7 +60,7 @@ foreach($data as $item) {
 		<!-- send e-Mail -->
 		<?php if($show_photo && $item['WithIdentity']['local'] == 1 && $item['WithIdentity']['allow_emails'] != 0) { ?>
 			    <dd class="sendmail">
-			        <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <a href="http://<?php echo $item['WithIdentity']['username']; ?>/messages/new/"><?php __('Send e-Mail'); ?></a>
+			        <img src="<?php echo Router::url('/images/icons/services/email.gif'); ?>" height="16" width="16" alt="e-Mail" class="sendmail_icon" /> <?php echo $html->link(__('Send message', true),  '/messages/add/to:' . $item['WithIdentity']['id']); ?>
 			    </dd>
 			<?php } ?>
 

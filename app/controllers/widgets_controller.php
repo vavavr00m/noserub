@@ -121,6 +121,92 @@ class WidgetsController extends AppController {
  	} 
  	
  	/**
+ 	 * Messages
+ 	 */
+ 	
+ 	public function messages_navigation() {
+ 	    
+ 	}
+ 	 
+ 	public function unread_messages() {
+ 	    
+ 	}
+
+ 	public function messages() {
+ 	    if(Context::isLoggedIn()) {
+ 	        $this->loadModel('Message');
+     	    $folder = isset($this->params[0]) ? strtolower($this->params[0]) : 'inbox';
+            if(!$this->Message->isValidFolder($folder)) {
+                $folder = 'inbox';
+            }
+        
+            $this->set('folder', $folder);
+        
+            $this->set('data', $this->Message->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'identity_id' => Context::loggedInIdentityId(),
+                    'folder' => $folder
+                ),
+                'order' => 'created DESC'
+            )));
+        }
+ 	}
+ 	
+ 	public function view_message() {
+ 	    $message_id = Context::messageId();
+ 	    
+ 	    if(Context::isLoggedIn() && $message_id) {
+ 	        $this->loadModel('Message');
+ 	        $data = $this->Message->find('first', array(
+ 	            'contain' => false,
+ 	            'conditions' => array(
+ 	                'id' => $message_id,
+ 	                'identity_id' => Context::loggedInIdentityId()
+ 	            )
+ 	        ));
+ 	        if($data && !$data['Message']['read']) {
+ 	            $this->Message->id = $message_id;
+ 	            $this->Message->saveField('read', 1);
+ 	        }
+ 	        $this->set('data', $data); 
+ 	    }
+ 	}
+ 	
+ 	public function form_reply_message() {
+ 	    $message_id = Context::messageId();
+ 	    
+ 	    if(Context::isLoggedIn() && $message_id) {
+ 	        $this->loadModel('Message');
+ 	        $data = $this->Message->find('first', array(
+ 	            'contain' => false,
+ 	            'conditions' => array(
+ 	                'id' => $message_id,
+ 	                'identity_id' => Context::loggedInIdentityId()
+ 	            )
+ 	        ));
+ 	        $this->data = $this->Message->reply($data, Context::loggedInIdentityId());
+ 	        
+ 	        $this->render('form_add_message');
+ 	    }
+ 	}
+ 	
+ 	public function form_add_message() {
+ 	    if(Context::isLoggedIn()) {
+ 	        $to_identity_id = Context::read('message_to_identity_id');
+            if($to_identity_id) {
+                $this->loadModel('Identity');
+                $this->Identity->id = $to_identity_id;
+                $this->data = array(
+                    'Message' => array(
+                        'to_from' => $this->Identity->field('username')
+                ));
+            }
+ 	        $this->render('form_add_message');
+ 	    }
+ 	}
+
+ 	/**
  	 * Entries
  	 */
  	

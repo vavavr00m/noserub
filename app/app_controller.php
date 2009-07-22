@@ -201,8 +201,16 @@ class AppController extends Controller {
         # set the user agent here, as we didn't know about the network.url before
         Configure::write('noserub.user_agent', 'NoseRub bot from ' . Context::read('network.url') . ' (http://noserub.com/)');
         ini_set('user_agent', Configure::read('noserub.user_agent'));
-        
-        Context::write('logged_in_identity', $this->Session->read('Identity'));
+
+        $logged_in_identity = $this->Session->read('Identity');
+        Context::write('logged_in_identity', $logged_in_identity);
+        if($logged_in_identity) {
+            if(!isset($this->Identity)) {
+                $this->loadModel('Identity');
+            }
+            $this->Identity->id = $logged_in_identity['id'];
+            Context::write('logged_in_identity.message_count', $this->Identity->field('message_count'));
+        }
         
         if($this->Session->read('Admin.id')) {
             Context::write('admin_id', $this->Session->read('Admin.id'));

@@ -28,6 +28,7 @@ Router::connect('/pages/password/set/*', array('controller' => 'identities', 'ac
 
 Router::connect('/oauth/:action', array('controller' => 'oauth'));
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
+Router::connect('/messages/:action', array('controller' => 'messages'));
 
 Router::connect('/api/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
 

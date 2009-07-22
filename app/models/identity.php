@@ -121,13 +121,17 @@ class Identity extends AppModel {
                     foreach($checkModels as $modelName) {
                         if(isset($item[$modelName]['username'])) {
                             $username = Identity::splitUsername($item[$modelName]['username'], false);
-                            $item[$modelName]['local_username']  = $username['local_username'];
+                            $item[$modelName]['local_username'] = $username['local_username'];
                             $item[$modelName]['single_username'] = $username['single_username'];
-                            $item[$modelName]['username']        = $username['username'];
-                            $item[$modelName]['namespace']       = $username['namespace'];
-                            $item[$modelName]['local']           = $username['local'];
-                            $item[$modelName]['servername']      = $username['servername'];
-                            $item[$modelName]['name']            = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                            $item[$modelName]['username'] = $username['username'];
+                            $item[$modelName]['namespace'] = $username['namespace'];
+                            $item[$modelName]['local'] = $username['local'];
+                            $item[$modelName]['servername'] = $username['servername'];
+                            if(isset($item[$modelName]['firstname']) && isset($item[$modelName]['lastname'])) {
+                                $item[$modelName]['name'] = trim($item[$modelName]['firstname'] . ' ' . $item[$modelName]['lastname']);
+                            } else {
+                                $item[$modelName]['name'] = '';
+                            }
                             if(!$item[$modelName]['name']) {
                                 $item[$modelName]['name'] = $username['local_username'];
                             }
@@ -286,6 +290,21 @@ class Identity extends AppModel {
 		$identity = $this->findByUsername($splitted['username']);
 		
         return $identity;
+    }
+    
+    public function username2IdentityId($username) {
+        $identity = $this->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'username' => $username
+            )
+        ));
+        
+        if($identity) {
+            return $identity['Identity']['id'];
+        } else {
+            return false;
+        }
     }
     
     /**
