@@ -15,7 +15,7 @@ define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 # to exclude pages, tests and jobs is essential here, because else, 
 # the routes would not be working. excluding the others is
 # just a precaution for avoiding confusions.
-define('NOSERUB_RESERVED_USERNAMES', 'auth,api,comments,contacts,entry,groups,jobs,login,networks,noserub,oauth,pages,register,search,settings,social_stream,tests');
+define('NOSERUB_RESERVED_USERNAMES', 'auth,api,comments,contacts,entry,groups,jobs,login,networks,noserub,messages,oauth,pages,register,search,settings,social_stream,tests');
 
 # in a cli environment FULL_BASE_URL is not defined, so we have to do it manually
 if(!defined('FULL_BASE_URL')) {

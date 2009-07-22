@@ -8,10 +8,7 @@
     		<?php echo sprintf(__('Hi %s!', true), Context::read('logged_in_identity.name')); ?>
     	</h4>
 	
-        <p class="notifications">
-    		3 new notifications<br />
-    		<a href="#">check them out</a>
-    	</p>
+	    <?php echo $noserub->widgetUnreadMessages(); ?>
 		
         <ul>
             <li>
@@ -29,6 +26,7 @@
                 <?php echo $html->link(__('My Profile', true), $base_url, array('class' => 'head')); ?>
                 <ul>
                     <li><?php echo $html->link(__('My Accounts', true), '/settings/accounts/'); ?></li>
+                    <li><?php echo $html->link(__('My Messages', true), '/messages/inbox/'); ?></li>
                 </ul>
             </li>
             <li>
