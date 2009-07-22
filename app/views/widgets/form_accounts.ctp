@@ -4,7 +4,7 @@
     $service_types = Configure::read('service_types_list'); 
     unset($service_types[0]);
 ?>
-<div class="widget form-accounts">
+<div class="widget widget-form-accounts">
     <h2><?php __('Add new account'); ?></h2>
     <?php 
     echo $form->create(array('url' => '/settings/accounts/add/'));

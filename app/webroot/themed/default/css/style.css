@@ -92,6 +92,7 @@ a.button:visited {
 	color:#373737 !important;
 	font-family:Arial,sans-serif;
 	font-size:1em;
+	min-width:100px;
 	padding:3px 5px;
 	text-decoration:none !important;
 }
@@ -429,6 +430,9 @@ a.button span {
 	font-weight:bold;
 	line-height:1.4em;
 }
+#bd-main-hd > p {
+	margin-bottom:10px;
+}
 #bd-main-hd .widget-profile .vcard {
 	float:left;
 	padding-right:20px;
@@ -674,8 +678,23 @@ a.button span {
 	float:left;
 	width:470px;
 }
+#bd-main-bd a {
+	color:#129bc1;
+	text-decoration:none;
+}
+#bd-main-bd a:hover,
+#bd-main-bd a:focus,
+#bd-main-bd a:active {
+	text-decoration:underline;
+}
+#bd-main-bd strong {
+	font-weight:bold;
+}
+#bd-main-bd em {
+	font-style:italic;
+}
 #bd-main-bd p {
-	margin-bottom:0.5em;
+	margin-bottom:1.4em;
 }
 #bd-main-bd p.more {
 	font-size:0.9em;
@@ -810,6 +829,45 @@ a.button span {
 #bd-main-bd .widget-group-overview td.activity {
 	color:#888;
 }
+#bd-main-bd .widget-form-accounts table {
+	margin-bottom:1.4em;
+}
+
+/**
+ * Main Forms
+ */
+#bd-main-bd .widget-form-accounts form,
+#bd-main-bd .widget-account-settings-twitter form,
+#bd-main-bd .widget-contact-add form {
+	line-height:2.3em;
+	margin-bottom:1.4em;
+}
+#bd-main-bd .widget-form-accounts label,
+#bd-main-bd .widget-account-settings-twitter label,
+#bd-main-bd .widget-contact-add label {
+	display:block;
+	float:left;
+	width:180px;
+}
+#bd-main-bd .widget-form-accounts div.submit,
+#bd-main-bd .widget-account-settings-twitter div.submit,
+#bd-main-bd .widget-contact-add div.submit {
+	padding-left:180px;
+}
+#bd-main-bd .widget-form-accounts div.input.text.error input,
+#bd-main-bd .widget-form-accounts div.input.password.error input,
+#bd-main-bd .widget-account-settings-twitter div.input.text.error input,
+#bd-main-bd .widget-account-settings-twitter div.input.password.error input,
+#bd-main-bd .widget-contact-add div.input.text.error input,
+#bd-main-bd .widget-contact-add div.input.password.error input {
+	border-color:#a41900;
+}
+#bd-main-bd .widget-form-accounts div.error-message,
+#bd-main-bd .widget-account-settings-twitter div.error-message,
+#bd-main-bd .widget-contact-add div.error-message {
+	color:#a41900;
+	padding-left:180px;
+}
 
 /**
  * messages
@@ -821,25 +879,24 @@ a.button span {
 	margin-bottom: 10px;
 	text-align: left;
 }
-
+#message p {
+	margin-bottom:0;
+}
 #message.alert {
 	border-top: 2px solid #f7aea5;
 	border-bottom: 2px solid #f7aea5;
 	background-position: 15px 50%;
 }
-
 #message.info {
 	border-top: 2px solid #bfdaff;
 	border-bottom: 2px solid #bfdaff;
 	background-position: 15px 50%;
 }
-
 #message.warning {
 	border-top: 2px solid #f8dd70;
 	border-bottom: 2px solid #f8dd70;
 	background-position: 15px 50%;
 }
-
 #message.success {
 	border-top: 2px solid #9fe8b8;
 	border-bottom: 2px solid #9fe8b8;
