@@ -31,23 +31,17 @@ class LocationsController extends ApiAppController {
     }
 	
 	public function add() {
-		$name = $this->params['form']['name'];
-		$address = $this->params['form']['address'];
-		$set_to = $this->params['form']['set_to'];
-        
-        if(!$name) {
-            $this->set('code', -2);
-            $this->set('msg', __('parameter wrong', true));
-        } else {
+		if (isset($this->params['form']['name']) && trim($this->params['form']['name']) != '') {
+			$name = $this->params['form']['name'];
+			$address = isset($this->params['form']['address']) ? $this->params['form']['address'] : '';
+			$set_as_current = isset($this->params['form']['set_as_current']) ? $this->params['form']['set_as_current'] : false;
+	        	        
             # test, whether we already have this location
             $conditions = array(
                 'identity_id' => $this->identity_id,
                 'name'        => $name
             );
-            if($this->Location->hasAny($conditions)) {
-                $this->set('code', -3);
-                $this->set('msg', __('duplicate dataset', true));
-            } else {
+            if (!$this->Location->hasAny($conditions)) {
                 $data = array(
                     'identity_id' => $this->identity_id,
                     'name'        => $name,
@@ -63,15 +57,19 @@ class LocationsController extends ApiAppController {
                 $this->Location->create();
                 $this->Location->save($data, true, array_keys($data));
                 
-                if($set_to == 1) {
+                if($set_as_current == 1) {
                     $this->Location->cacheQueries = false;
                     $this->Location->setTo($identity_id, $this->Location->id);
                 }
+                $this->set('data', array('id' => $this->Location->id, 'name' => $name));
+            } else {
+            	header("HTTP/1.1 400 Bad Request");
+				$this->set('data', array('error' => 'Duplicate dataset'));
             }
-        }
-
-        // TODO just some fake return, need something better ;-)
-        $this->set('data', array('ok' => 'done'));
+		} else {
+			header("HTTP/1.1 400 Bad Request");
+			$this->set('data', array('error' => 'Parameter name is missing'));
+		}
     }
 	
 	public function current() {
