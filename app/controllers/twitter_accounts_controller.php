@@ -8,18 +8,10 @@ class TwitterAccountsController extends AppController {
 	const ACCESS_TOKEN_URL = 'http://twitter.com/oauth/access_token';
 	const REQUEST_TOKEN_URL = 'http://twitter.com/oauth/request_token';
 	const AUTHORIZE_URL = 'http://twitter.com/oauth/authorize';
-	private $consumerKey = '';
-	private $consumerSecret = '';
-
-	public function beforeFilter() {
-		parent::beforeFilter();
-		$this->consumerKey = Context::read('network.twitter_consumer_key');
-		$this->consumerSecret = Context::read('network.twitter_consumer_secret');
-	}
 
 	public function index() {
 		if ($this->RequestHandler->isGet()) {
-			if ($this->isTwitterFeatureEnabled()) {
+			if (Context::isTwitterFeatureEnabled()) {
 				if (isset($this->params['url']['oauth_token'])) {
 					$requestToken = $this->Session->read('twitter_request_token');
 					$consumer = $this->createConsumer();
@@ -51,10 +43,6 @@ class TwitterAccountsController extends AppController {
 	}
 
 	private function createConsumer() {
-		return new OAuth_Consumer($this->consumerKey, $this->consumerSecret);
-	}
-
-	private function isTwitterFeatureEnabled() {
-		return ($this->consumerKey != '' && $this->consumerSecret != '');
+		return new OAuth_Consumer(Context::read('network.twitter_consumer_key'), Context::read('network.twitter_consumer_secret'));
 	}
 }

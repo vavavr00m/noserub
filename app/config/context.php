@@ -40,6 +40,10 @@ class Context {
         return Context::loggedInIdentityId() > 0;
     }
     
+    public static function isTwitterFeatureEnabled() {
+    	return (Context::read('network.twitter_consumer_key') != '' && Context::read('network.twitter_consumer_secret') != '');
+    }
+    
     public static function unreadMessages() {
         if(Context::isSelf()) {
             return Configure::read('context.logged_in_identity.message_count');
