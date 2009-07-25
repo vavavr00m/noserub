@@ -19,6 +19,7 @@ class OAuth_Consumer {
 	private $url = null;
 	private $consumerKey = null;
 	private $consumerSecret = null;
+	private $fullResponse = null;
 	
 	public function __construct($consumerKey, $consumerSecret = '') {
 		$this->consumerKey = $consumerKey;
@@ -42,8 +43,25 @@ class OAuth_Consumer {
 		return $this->doRequest($request);
 	}
 	
-	public function getRequestToken($requestTokenURL, $httpMethod = 'POST', $parameters = array()) {
+	/**
+	 * Useful for debugging purposes to see what is returned when requesting a request/access token.
+	 */
+	public function getFullResponse() {
+		return $this->fullResponse;
+	}
+	
+	/**
+	 * @param $requestTokenURL
+	 * @param $callback An absolute URL to which the Service Provider will redirect the User back when the Obtaining User 
+	 * 					Authorization step is completed. If the Consumer is unable to receive callbacks or a callback URL 
+	 * 					has been established via other means, the parameter value MUST be set to oob (case sensitive), to 
+	 * 					indicate an out-of-band configuration. Section 6.1.1 from http://oauth.net/core/1.0a
+	 * @param $httpMethod 'POST' or 'GET'
+	 * @param $parameters
+	 */
+	public function getRequestToken($requestTokenURL, $callback = 'oob', $httpMethod = 'POST', $parameters = array()) {
 		$this->url = $requestTokenURL;
+		$parameters['oauth_callback'] = $callback;
 		$request = $this->createRequest($httpMethod, $requestTokenURL, null, $parameters);
 		
 		return $this->doRequest($request);
@@ -96,6 +114,7 @@ class OAuth_Consumer {
 			$data = $this->doGet($request->to_url());
 		}
 
+		$this->fullResponse = $data;
 		$response = array();
 		parse_str($data, $response);
 
