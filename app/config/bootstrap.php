@@ -49,5 +49,3 @@ define('PHOTO_DIR', STATIC_DIR . 'photos' . DS);
 function sort_items($a, $b) {
 	return $a['Entry']['published_on'] < $b['Entry']['published_on'];
 }
-
-require_once('service_type.php');
