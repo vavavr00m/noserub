@@ -69,12 +69,6 @@ class OpenidHelperTest extends CakeTestCase {
 		require_once(TESTS.'util'.DS.'helper_factory.php');
 		$view->set('form', HelperFactory::createFormHelper());
 		
-		App::import('Model', 'Menu');
-        $view->set('mainMenu', new Menu(array()));
-        $view->set('subMenu', new Menu(array()));
-		$view->set('menu', array('main' => '',
-                       			 'logged_in' => ''));
-		
 		return $view;
 	}
 	
