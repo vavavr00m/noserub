@@ -48,10 +48,12 @@
             
             case 'photo':
                 echo $this->element('webcam_snapshot');
-                echo '<h3>' . __('Upload Photo', true) . '</h3>';
+                echo '<p />';
                 break;
         }
 
-        echo $form->end(array('label' => __('Send', true))); 
+		if ($entry_add_modus != 'photo') {
+        	echo $form->end(array('label' => __('Send', true))); 
+        }
     } ?> 
 </div>
