@@ -13,6 +13,6 @@
 <span>
     <?php echo $html->link( __('Snapshot', true), '#', array('id' => 'noserub_webcam_snapshot')); ?>
     <?php echo $html->link( __('Cancel', true), '#', array('id' => 'noserub_webcam_cancel')); ?>
-    <?php echo $html->link( __('Upload', true), '#', array('id' => 'noserub_webcam_upload')); ?>
+    <?php echo $html->link( __('Send', true), '#', array('id' => 'noserub_webcam_upload')); ?>
 </span>
 <?php echo $javascript->link('webcam.js'); ?>
