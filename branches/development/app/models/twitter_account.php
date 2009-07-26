@@ -37,6 +37,11 @@ class TwitterAccount extends AppModel {
 
         $this->contain();
         $data = $this->findByIdentityId($identity_id);
+        
+        if (empty($data)) {
+        	return false;
+        }
+        
         $key = $data['TwitterAccount']['access_token_key'];
         $secret = $data['TwitterAccount']['access_token_secret'];
         $url = 'http://www.twitter.com/statuses/update.json';
