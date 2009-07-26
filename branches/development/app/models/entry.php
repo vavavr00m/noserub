@@ -4,8 +4,23 @@
 class Entry extends AppModel {
     public $belongsTo = array(
         'Identity',
-        'Account', 
-        'Group' => array('counterCache' => true)
+        'Account' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array('Entry.model' => 'account')
+        ),
+        'Group' => array(
+            'counterCache' => true,
+            'foreignKey' => 'foreign_key',
+            'conditions' => array('Entry.model' => 'group')
+        ),
+        'Location' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array('Entry.model' => 'location')
+        ),
+        'Event' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array('Entry.model' => 'event')
+        )
     );
     
     public $hasMany = array(
@@ -29,31 +44,39 @@ class Entry extends AppModel {
      *
      * @param string $type of the entry
      * @param int $identity_id of the owner
+     * @param int foreignKey
+     * @param string $model
      * @param int $restricted
      *
      * @return bool
      */
-    public function add($type, $data, $identity_id, $group_id = 0, $restricted = false) {
-        if($group_id) {
-            $this->Group->id = $group_id;
+    public function add($type, $data, $identity_id, $foreignKey = 0, $model = '', $restricted = false) {
+        if($model != '' && $model != 'account' && 
+           $model != 'group' && $model != 'location' && 
+           $model != 'event') {
+            return false;
+        }
+        
+        if($model == 'group') {
+            $this->Group->id = $foreignKey;
             if(!$this->Group->isSubscribed($identity_id)) {
                 // this user is not subscribed to this group
                 return false;
             }
         }
-        // @todo check that $identity_id is subscribed to $group_id
+
         switch($type) {
             case 'micropublish':
-                return $this->addMicropublish($identity_id, $data['text'], $group_id, $restricted);
+                return $this->addMicropublish($identity_id, $data['text'], $foreignKey, $model, $restricted);
             
             case 'link':
-                return $this->addLink($identity_id, $data['description'], $data['url'], $group_id, $restricted);
+                return $this->addLink($identity_id, $data['description'], $data['url'], $foreignKey, $model, $restricted);
                 
             case 'text':
-                return $this->addText($identity_id, $data['title'], $data['text'], $group_id, $restricted);
+                return $this->addText($identity_id, $data['title'], $data['text'], $foreignKey, $model, $restricted);
                 
             case 'webcam':
-                return $this->addPhoto($identity_id, $data['title'], $data['filename'], $group_id, $restricted);
+                return $this->addPhoto($identity_id, $data['title'], $data['filename'], $foreignKey, $model, $restricted);
         }
         
         return false;
@@ -84,24 +107,17 @@ class Entry extends AppModel {
         $entries = array();
         if($account_data) {
             # get date of newest item in db
-            $this->contain();
-            $conditions = array(
-                'identity_id' => $identity_id,
-                'account_id'  => $account_id
-            );
-            $fields = array('MAX(published_on)');
-            $entry_data = $this->find(
-                'all',
-                array(
-                    'conditions' => array(
-                        'identity_id' => $identity_id,
-                        'account_id'  => $account_id
-                    ),
-                    'fields' => array(
-                        'MAX(published_on)'
-                    )
+            $entry_data = $this->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'identity_id' => $identity_id,
+                    'foreign_key' => $account_id,
+                    'model' => 'account'
+                ),
+                'fields' => array(
+                    'MAX(published_on)'
                 )
-            ); 
+            )); 
 
             if(!$entry_data[0][0]['MAX(published_on)']) {
                 $date_newest_item = '2000-01-01 00:00:00';
@@ -146,8 +162,9 @@ class Entry extends AppModel {
             array(
                 'conditions' => array(
                     'identity_id' => $identity_id,
-                    'account_id'  => $account_id,
-                    'url'         => $item['url']
+                    'foreign_key' => $account_id,
+                    'model' => 'account',
+                    'url' => $item['url']
                 )
             )
         );
@@ -158,10 +175,10 @@ class Entry extends AppModel {
             if($entry['published_on'] < $item['datetime']) {
                 # update
                 $entry['published_on'] = $item['datetime'];
-                $entry['title']        = $item['title'];
-                $entry['content']      = $item['content'];
-                $entry['latitude']     = $item['latitude'];
-                $entry['longitude']    = $item['longitude'];
+                $entry['title'] = $item['title'];
+                $entry['content'] = $item['content'];
+                $entry['latitude'] = $item['latitude'];
+                $entry['longitude'] = $item['longitude'];
                 $this->id = $entry['id'];
                 $saveable = array(
                     'published_on', 'title', 'content',
@@ -182,17 +199,18 @@ class Entry extends AppModel {
             $frontpage_updates = $this->Identity->field('frontpage_updates');
             
             $entry = array(
-                'identity_id'     => $identity_id,
-                'account_id'      => $account_id,
+                'identity_id' => $identity_id,
+                'foreign_key' => $account_id,
+                'model' => 'account',
                 'service_type' => $service_type,
-                'published_on'    => $item['datetime'],
-                'title'           => $item['title'] ? $item['title'] : '',
-                'url'             => $item['url'] ? $item['url'] : '',
-                'uid'             => $item['url'] ? md5($item['url']) : '',
-                'content'         => $item['content'] ? $item['content'] : '',
-                'latitude'        => $item['latitude'],
-                'longitude'       => $item['longitude'],
-                'restricted'      => !$frontpage_updates
+                'published_on' => $item['datetime'],
+                'title' => $item['title'] ? $item['title'] : '',
+                'url' => $item['url'] ? $item['url'] : '',
+                'uid' => $item['url'] ? md5($item['url']) : '',
+                'content' => $item['content'] ? $item['content'] : '',
+                'latitude' => $item['latitude'],
+                'longitude' => $item['longitude'],
+                'restricted' => !$frontpage_updates
             );
             $saveable = array_keys($entry);
             $this->save($entry, $saveable, true);
@@ -238,10 +256,22 @@ class Entry extends AppModel {
         
         App::import('Model', 'ServiceType');
         $this->ServiceType = new ServiceType();
-        
         $conditions = array();
         if(isset($filter['account_id'])) {            
-            $conditions['account_id'] = $filter['account_id'];
+            $conditions['foreign_key'] = $filter['account_id'];
+            $conditions['model'] = 'account';
+        }
+        if(isset($filter['group_id'])) {            
+            $conditions['foreign_key'] = $filter['group_id'];
+            $conditions['model'] = 'group';
+        }
+        if(isset($filter['location_id'])) {            
+            $conditions['foreign_key'] = $filter['location_id'];
+            $conditions['model'] = 'location';
+        }
+        if(isset($filter['event_id'])) {            
+            $conditions['foreign_key'] = $filter['event_id'];
+            $conditions['model'] = 'event';
         }
         if(isset($filter['filter'])) {
             $ids = $this->ServiceType->getList($filter['filter']);
@@ -323,7 +353,9 @@ class Entry extends AppModel {
             $data = $this->Identity->addIdentity('FavoritedBy', $data);
             $data = $this->Identity->addIdentity('Comment', $data);
             
-            if($data['Entry']['service_type'] == 5 && $data['Entry']['account_id'] > 0) {
+            if($data['Entry']['service_type'] == ServiceType::MICROPUBLISH && 
+               $data['Entry']['model'] == 'account' && 
+               $data['Entry']['foreign_key'] > 0) {
                 $data['Entry']['title'] = $data['Entry']['content'] = $this->micropublishMarkup($data['Entry']['title']);
             }
             
@@ -346,7 +378,8 @@ class Entry extends AppModel {
             array(
                 'contain' => false,
                 'conditions' => array(
-                    'Entry.account_id' => $account_id
+                    'Entry.foreign_key' => $account_id,
+                    'Entry.model' => 'account'
                 ),
                 'fields' => 'Entry.id'
         ));
@@ -374,15 +407,16 @@ class Entry extends AppModel {
            isset($location['Location']['name']) && 
            $location['Location']['name'] != '') {
             $data = array(
-                'identity_id'  => $identity_id,
-                'account_id'   => 0,
-                'service_type' => 9,
+                'identity_id' => $identity_id,
+                'foreign_key' => 0,
+                'model' => '',
+                'service_type' => ServiceType::LOCATION,
                 'published_on' => date('Y-m-d H:i:s'),
-                'title'        => $location['Location']['name'],
-                'url'          => '',
-                'uid'          => '',
-                'content'      => $location['Location']['name'],
-                'restricted'   => $restricted
+                'title' => $location['Location']['name'],
+                'url' => '',
+                'uid' => '',
+                'content' => $location['Location']['name'],
+                'restricted' => $restricted
             );
                       
             $this->create();
@@ -407,7 +441,7 @@ class Entry extends AppModel {
         }
     }
     
-    public function addMicropublish($identity_id, $text, $group_id = 0, $restricted = false) {
+    public function addMicropublish($identity_id, $text, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
@@ -418,8 +452,8 @@ class Entry extends AppModel {
         
         $data = array(
             'identity_id' => $identity_id,
-            'account_id' => 0,
-            'group_id' => $group_id,
+            'foreign_key' => $foreignKey,
+            'model' => $model,
             'service_type' => 5,
             'published_on' => date('Y-m-d H:i:s'),
             'title' => $with_markup,
@@ -455,7 +489,8 @@ class Entry extends AppModel {
         
         $data = array(
             'identity_id' => $identity_id,
-            'account_id' => 0,
+            'foreign_key' => 0,
+            'model' => '',
             'service_type' => 5,
             'published_on'  => date('Y-m-d H:i:s'),
             'title' => $with_markup,
@@ -533,42 +568,42 @@ class Entry extends AppModel {
         return $text;
     }
     
-    public function addLink($identity_id, $description, $url, $group_id = 0, $restricted = false) {
+    public function addLink($identity_id, $description, $url, $foreign_key = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
-            'group_id'        => $group_id,
+            'identity_id' => $identity_id,
+            'foreign_key' => $foreignKey,
+            'model' => $model,
             'service_type' => 2,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $description,
-            'url'             => $url,
-            'uid'             => md5($url),
-            'content'         => '<a href="' . $url . '">' . $description . '</a>',
-            'restricted'      => $restricted
+            'published_on' => date('Y-m-d H:i:s'),
+            'title' => $description,
+            'url' => $url,
+            'uid' => md5($url),
+            'content' => '<a href="' . $url . '">' . $description . '</a>',
+            'restricted' => $restricted
         );
         
         $this->create();
         return $this->save($data);
     }
     
-    public function addText($identity_id, $title, $text, $group_id = 0, $restricted = false) {
+    public function addText($identity_id, $title, $text, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
-            'group_id'        => $group_id,
+            'identity_id' => $identity_id,
+            'foreign_key' => $foreignKey,
+            'model' => $model,
             'service_type' => 3,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $title,
-            'url'             => '',
-            'uid'             => '',
-            'content'         => $text,
-            'restricted'      => $restricted
+            'published_on' => date('Y-m-d H:i:s'),
+            'title' => $title,
+            'url' => '',
+            'uid' => '',
+            'content' => $text,
+            'restricted' => $restricted
         );
         
         $this->create();
@@ -584,7 +619,7 @@ class Entry extends AppModel {
         return true;
     }
     
-    public function addPhoto($identity_id, $title, $filename, $group_id = 0, $restricted = false) {
+    public function addPhoto($identity_id, $title, $filename, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
@@ -595,16 +630,16 @@ class Entry extends AppModel {
         );
         
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
-            'group_id'        => $group_id,
+            'identity_id' => $identity_id,
+            'foreign_key' => $foreignKey,
+            'model' => $model,
             'service_type' => 1,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $title,
-            'url'             => '',
-            'uid'             => '',
-            'content'         => $raw_content,
-            'restricted'      => $restricted
+            'published_on' => date('Y-m-d H:i:s'),
+            'title' => $title,
+            'url' => '',
+            'uid' => '',
+            'content' => $raw_content,
+            'restricted' => $restricted
         );
         
         $this->create();
@@ -625,15 +660,16 @@ class Entry extends AppModel {
             $restricted = $this->getRestricted($identity_id);
         }
         $data = array(
-            'identity_id'     => $identity_id,
-            'account_id'      => 0,
+            'identity_id' => $identity_id,
+            'foreign_key' => 0,
+            'model' => '',
             'service_type' => 0,
-            'published_on'    => date('Y-m-d H:i:s'),
-            'title'           => $value,
-            'url'             => '',
-            'uid'             => '',
-            'content'         => $value,
-            'restricted'      => $restricted
+            'published_on' => date('Y-m-d H:i:s'),
+            'title' => $value,
+            'url' => '',
+            'uid' => '',
+            'content' => $value,
+            'restricted' => $restricted
         );
         
         $this->create();
@@ -698,6 +734,24 @@ class Entry extends AppModel {
         $name = $this->Group->field('name');
         
         $message = sprintf(__('created a new group: %s', true), '<a href="' . Router::url('/groups/view/' . $slug) . '">' . $name . '</a>');
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
+    public function addLocation($identity_id, $location_id, $restricted = false) {
+        $this->Location->id = $location_id;
+        $slug = $this->Location->field('slug');
+        $name = $this->Location->field('name');
+        
+        $message = sprintf(__('created a new location: %s', true), '<a href="' . Router::url('/locations/view/' . $location_id . '/' . $slug) . '">' . $name . '</a>');
+        $this->addNoseRub($identity_id, $message, $restricted);
+    }
+    
+    public function addEvent($identity_id, $event_id, $restricted = false) {
+        $this->Event->id = $event_id;
+        $slug = $this->Event->field('slug');
+        $name = $this->Event->field('name');
+        
+        $message = sprintf(__('created a new event: %s', true), '<a href="' . Router::url('/events/view/' . $event_id . '/' . $slug) . '">' . $name . '</a>');
         $this->addNoseRub($identity_id, $message, $restricted);
     }
     
@@ -802,9 +856,9 @@ class Entry extends AppModel {
         }
         $this->saveField('last_activity', date('Y-m-d H:i:s'));
         
-        $group_id = $this->field('group_id');
-        if($group_id) {
-            $this->Group->id = $group_id;
+        $model = $this->field('model');
+        if($model == 'group') {
+            $this->Group->id = $this->field('foreign_key');
             $this->Group->updateLastActivity();
         }
     }

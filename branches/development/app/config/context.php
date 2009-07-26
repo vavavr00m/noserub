@@ -122,6 +122,28 @@ class Context {
         return '';
     }
     
+    public static function showMap() {
+        if(Configure::read('context.location') && 
+           round(Configure::read('context.location.latitude'), 0) != 0 &&
+           round(Configure::read('context.location.longitude'), 0) != 0) {
+            return true;
+        }
+        
+        if(Configure::read('context.event') && 
+           round(Configure::read('context.event.latitude'), 0) != 0 &&
+           round(Configure::read('context.event.longitude'), 0) != 0) {
+            return true;
+        }
+        
+        if(Configure::read('context.identity') &&
+           round(Configure::read('context.identity.latitude'), 0) != 0 &&
+           round(Configure::read('context.identity.longitude'), 0) != 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     public static function entryAddModus($modus = null) {
         if(is_null($modus)) {
             $modus = Configure::read('context.entry_add_modus');
@@ -200,7 +222,43 @@ class Context {
         return Configure::read('context.group.last_activity');
     }
     
-    /*
+    public static function locationId() {
+        $location_id = Configure::read('context.location.id');
+        
+        return $location_id ? $location_id : 0;
+    }
+    
+    public static function locationSlug() {
+        return Configure::read('context.location.slug');
+    }
+    
+    public static function locationName() {
+        return Configure::read('context.location.name');
+    }
+    
+    public static function locationLastActivity() {
+        return Configure::read('context.location.last_activity');
+    }
+    
+    public static function eventId() {
+        $event_id = Configure::read('context.event.id');
+        
+        return $event_id ? $event_id : 0;
+    }
+    
+    public static function eventSlug() {
+        return Configure::read('context.event.slug');
+    }
+    
+    public static function eventName() {
+        return Configure::read('context.event.name');
+    }
+    
+    public static function googleMapsKey() {
+        return Configure::read('context.network.google_maps_key');
+    }
+    
+     /*
      * Returns a copy of the whole context for usage in JS.
      * Because of this, some fields like the users hashed password
      * will be removed from the context.

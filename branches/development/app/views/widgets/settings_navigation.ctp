@@ -1,7 +1,6 @@
 <div class="widget widget-settings-navigation">
     <ul>	
         <li><?php echo $html->link(__('Profile', true), '/settings/profile/') ?></li>
-        <li><?php echo $html->link(__('Locations', true), '/settings/locations/') ?></li>
     	<li><?php echo $html->link(__('Display', true), '/settings/display/') ?></li>
     	<li><?php echo $html->link(__('Privacy', true), '/settings/privacy/') ?></li>
     	<?php if (Context::isTwitterFeatureEnabled()): ?>

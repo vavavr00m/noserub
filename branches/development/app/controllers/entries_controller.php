@@ -12,14 +12,15 @@ class EntriesController extends AppController {
         if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
             if(!$this->data) {
+                $this->log(print_r($this->params, 1), LOG_DEBUG);
                 // this is probably a webcam upload
                 $data = $GLOBALS["HTTP_RAW_POST_DATA"];
                 $title = urldecode($this->params['named']['title']);
                 $filename = md5(uniqid()) . '.jpg';
                 $path = PHOTO_DIR . $filename;
-                $group_id = isset($this->params['named']['group_id']) ? $this->params['named']['group_id'] : 0;
+                $foreignKey = isset($this->params['named']['foreign_key']) ? $this->params['named']['foreign_key'] : 0;
+                $model = isset($this->params['named']['model']) ? strtolower($this->params['named']['model']) : '';
                 if(file_put_contents($path, $data)) {
-                    $this->log('after put', LOG_DEBUG);
                     $this->Entry->add(
                         'webcam',
                         array(
@@ -27,11 +28,12 @@ class EntriesController extends AppController {
                             'title' => $title
                         ),
                         Context::loggedInIdentityId(),
-                        $group_id,
+                        $foreignKey,
+                        $model,
                         null
                     );
                     $this->flashMessage('success', __('Photo was uploaded', true));
-                    if($group_id) {
+                    if($model == 'group') {
                         $this->redirect('/entry/' . $this->Entry->id);
                     }
                 } else {
@@ -41,11 +43,12 @@ class EntriesController extends AppController {
                 $this->data['Entry']['service_type'], 
                 $this->data['Entry'], 
                 Context::loggedInIdentityId(),
-                $this->data['Entry']['group_id'], 
+                $this->data['Entry']['foreign_key'],
+                $this->data['Entry']['model'],
                 null)) {
                     
                 $this->flashMessage('success', __('New entry was created', true));
-                if($this->data['Entry']['group_id']) {
+                if($this->data['Entry']['model'] == 'group') {
                     $this->redirect('/entry/' . $this->Entry->id);
                 }
             } else {
@@ -82,27 +85,50 @@ class EntriesController extends AppController {
 
         // check, if this belongs to a group
         $this->Entry->id = $entry_id;
-        $group_id = $this->Entry->field('group_id');    
+        $model = $this->Entry->field('model');    
+        $foreignKey = $this->Entry->field('foreign_key');
         
-        if($group_id && empty($this->params['slug'])) {
+        if($model == 'group' && empty($this->params['slug'])) {
             // this entry belongs to a group, but
             // the URL has no group slug
-            $this->Entry->Group->id = $group_id;
+            $this->Entry->Group->id = $foreignKey;
             $slug = $this->Entry->Group->field('slug');
             $this->redirect('/groups/entry/' . $slug . '/' . $entry_id);
         }
         
-        if($group_id) {
+        if($model == 'group') {
             $group = $this->Entry->Group->find('first', array(
                 'contain' => false,
                 'conditions' => array(
-                    'Group.id' => $group_id
+                    'Group.id' => $foreignKey
                 )
             ));
             $this->set('group', $group);
             $this->Entry->Group->saveInContext($group);
             
             $this->render('group_view');
+        } else if($model == 'location') {
+                $location = $this->Entry->Location->find('first', array(
+                'contain' => false,
+                'conditions' => array(
+                    'Location.id' => $foreignKey
+                )
+            ));
+            $this->set('location', $location);
+            $this->Entry->Location->saveInContext($location);
+
+            $this->render('location_view');
+        } else if($model == 'event') {
+            $event = $this->Entry->Event->find('first', array(
+                'contain' => array('Location'),
+                'conditions' => array(
+                    'Event.id' => $foreignKey
+                )
+            ));
+            $this->set('event', $event);
+            $this->Entry->Event->saveInContext($event);
+
+            $this->render('event_view');
         } else {
             $this->render('view');
         }
