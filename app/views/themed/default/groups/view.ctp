@@ -5,6 +5,7 @@
 	<div id="bd-main-bd">
     	<?php echo $noserub->widgetFlashMessage(); ?>
 	    <?php echo $noserub->widgetGroupInfo(); ?>
+	    <?php echo $noserub->widgetPhotos(); ?>
 		<?php echo $noserub->widgetGroupOverview(); ?>
 	</div>
 

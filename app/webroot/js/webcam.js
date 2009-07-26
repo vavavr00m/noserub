@@ -43,13 +43,17 @@ function noserub_start_webcam(context) {
         $('#noserub_webcam_snapshot').hide();
         $('#noserub_webcam_cancel').hide();
         $('#noserub_webcam_upload').hide();
+        var entry_data = '';
         if(typeof context.group != "undefined" && typeof context.group.id != "undefined") {
-            var group_id = '/group_id:'+context.group.id;
-        } else {
-            var group_id = '';
+            entry_data = '/model:group/foreign_key:'+context.group.id;
+        } else if(typeof context.location != "undefined" && typeof context.location.id != "undefined") {
+            entry_data = '/model:location/foreign_key:'+context.location.id;
+        } else if(typeof context.event != "undefined" && typeof context.event.id != "undefined") {
+            entry_data = '/model:event/foreign_key:'+context.event.id;
         }
+        
         var title = $('#EntryWebcamTitle').attr('value');
-        var url = context.base_url+'entry/add/_t:'+context.security_token + '/title:'+encodeURIComponent(title)+group_id;        
+        var url = context.base_url+'entry/add/_t:'+context.security_token + '/title:'+encodeURIComponent(title)+entry_data;  
         wcs_saveImage(url, 'snapshot.jpg', 80);
     });
 }

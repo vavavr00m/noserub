@@ -32,6 +32,8 @@ $name = $data['name'];
         <li<?php echo Context::isPage('profile.activities') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Activities', true), $base_url . 'activities/'); ?></li>
         <li<?php echo Context::isPage('profile.contacts') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Contacts', true), $base_url . 'contacts/'); ?></li>
         <li<?php echo Context::isPage('profile.groups') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Groups', true), $base_url . 'groups/'); ?></li>
+        <li<?php echo Context::isPage('profile.locations') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Locations', true), $base_url . 'locations/'); ?></li>
+        <li<?php echo Context::isPage('profile.events') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Events', true), $base_url . 'events/'); ?></li>
         <li<?php echo Context::isPage('profile.networks') ? ' class="active"' : ''; ?>><?php echo $html->link(__('Networks', true), $base_url . 'networks/'); ?></li>
     </ul>
 </div>

@@ -10,6 +10,10 @@ Router::connect('/groups/entry/:slug/*', array('controller' => 'entries', 'actio
 Router::connect('/groups/:action', array('controller' => 'groups'));
 Router::connect('/comments/:action', array('controller' => 'comments'));
 Router::connect('/pages/switch/language/*', array('controller' => 'identities', 'action' => 'switch_language'));
+Router::connect('/events/entry/:slug/*', array('controller' => 'entries', 'action' => 'view'));
+Router::connect('/events/:action', array('controller' => 'events'));
+Router::connect('/locations/entry/:slug/*', array('controller' => 'entries', 'action' => 'view'));
+Router::connect('/locations/:action', array('controller' => 'locations'));
 
 Router::connect('/pages/login/', array('controller' => 'identities', 'action' => 'login'));
 Router::connect('/pages/login/openid', array('controller' => 'identities', 'action' => 'login_with_openid'));
@@ -65,11 +69,6 @@ Router::connect('/settings/openid/', array('controller' => 'openid_sites', 'acti
 Router::connect('/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
 Router::connect('/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
 
-Router::connect('/settings/locations/add/', array('controller' => 'locations', 'action' => 'add'));
-Router::connect('/settings/locations/delete/', array('controller' => 'locations', 'action' => 'delete'));
-Router::connect('/settings/locations/edit/*', array('controller' => 'locations', 'action' => 'edit'));
-Router::connect('/settings/locations/', array('controller' => 'locations', 'action' => 'settings'));
-
 Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/settings/accounts/edit/*', array('controller' => 'accounts', 'action' => 'edit'));
 Router::connect('/settings/accounts/delete/', array('controller' => 'accounts', 'action' => 'delete'));
@@ -112,6 +111,8 @@ Router::connect('/jobs/shell/networks/poll/', array('controller' => 'networks', 
  */
 Router::connect('/:username/activities/', array('controller' => 'entries', 'action' => 'profile'));
 Router::connect('/:username/groups/', array('controller' => 'groups', 'action' => 'profile'));
+Router::connect('/:username/locations/', array('controller' => 'locations', 'action' => 'profile'));
+Router::connect('/:username/events/', array('controller' => 'events', 'action' => 'profile'));
 Router::connect('/:username/networks/', array('controller' => 'networks', 'action' => 'profile'));
 Router::connect('/:username/contacts/add/', array('controller' => 'contacts', 'action' => 'add'));
 Router::connect('/:username/contacts/:contact_id/edit/', array('controller' => 'contacts', 'action' => 'edit'));

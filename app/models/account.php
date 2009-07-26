@@ -3,7 +3,14 @@
  
 class Account extends AppModel {
     public $belongsTo = array('Identity');
-    public $hasMany = array('Entry');
+    public $hasMany = array(
+        'Entry' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array(
+                'Entry.model' => 'account'
+            )
+        )
+    );
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
@@ -143,7 +150,8 @@ class Account extends AppModel {
             $this->delete($item['Account']['id'], false);
             $this->Entry->deleteAll(
                 array(
-                    'account_id' => $item['Account']['id']
+                    'foreign_key' => $item['Account']['id'],
+                    'model' => 'account'
                 ), 
                 false
             );
@@ -160,15 +168,19 @@ class Account extends AppModel {
      * @access 
      */
     public function deleteByIdentityId($identity_id) {
-        $this->contain();
-        $data = $this->findAllByIdentityId($identity_id);
+        $data = $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'identity_id' => $identity_id
+        )));
         foreach($data as $item) {
             # delete account and feed cache
             $account_id = $item['Account']['id'];
             $this->delete($account_id, false);
             $this->Entry->deleteAll(
                 array(
-                    'account_id' => $item['Account']['id']
+                    'foreign_key' => $item['Account']['id'],
+                    'model' => 'account'
                 ), 
                 false
             );

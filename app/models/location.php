@@ -3,7 +3,59 @@
  
 class Location extends AppModel {
     public $belongsTo = array('Identity');                                                   
-
+    public $hasMany = array(
+        'Entry' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array(
+                'Entry.model' => 'location'
+            )
+        ),
+        'Event'
+    );
+    
+    public $actsAs = array(
+        'Sluggable' => array(
+            'label' => 'name', 
+            'translation' => 'utf-8'
+    ));
+    
+    public function getTypes() {
+        return array(
+            0 => __('Unknown', true),
+            1 => __('Art & Entertainment', true),
+            2 => __('Education', true),
+            3 => __('Eating & Drinking', true),
+            4 => __('Events', true),
+            5 => __('Health & Beauty', true),
+            6 => __('Hotel & Holidays', true),
+            7 => __('Nightlife', true),
+            8 => __('Services', true),
+            9 => __('Shopping', true),
+            10 => __('Sports', true),
+            11 => __('Transportation', true),
+            12 => __('Other', true)
+        );
+    }
+    
+    /**
+     * Returns the last $limit locations this user created
+     *
+     * @param int $identity_id
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getNew($identity_id, $limit = 5, $type = 'all') {
+        return $this->find($type, array(
+            'contain' => false,
+            'conditions' => array(
+                'identity_id' => $identity_id
+            ),
+            'limit' => $limit,
+            'order' => 'created DESC'
+        ));
+    }
+    
     /**
      * get all locations for the logged in identity
      *
@@ -12,16 +64,13 @@ class Location extends AppModel {
      * @return array
      */
     public function get($identity_id) {
-        return $this->find(
-            'all',
-            array(
-                'contain' => false,
-                'conditions' => array(
-                    'Location.identity_id' => $identity_id
-                ),
-                'order' => 'Location.name'
-            )
-        );
+        return $this->find('all', array(
+            'contain' => false,
+            'conditions' => array(
+                'Location.identity_id' => $identity_id
+            ),
+            'order' => 'Location.name'
+        ));
     }
     
     public function setTo($identity_id, $location_id) {
@@ -74,5 +123,23 @@ class Location extends AppModel {
             }
         }
         return true;
+    }
+    
+    public function updateLastActivity() {
+        if(!$this->exists()) {
+            return false;
+        }
+        $this->saveField('last_activity', date('Y-m-d H:i:s'));
+    }
+    
+    public function saveInContext($data) {
+        Context::write('location', array(
+            'id' => $data['Location']['id'],
+            'slug' => $data['Location']['slug'],
+            'name' => $data['Location']['name'],
+            'latitude' => $data['Location']['latitude'],
+            'longitude' => $data['Location']['longitude'],
+            'last_activity' => $data['Location']['last_activity']
+        ));
     }
 }

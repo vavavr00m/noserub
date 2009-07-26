@@ -1,10 +1,10 @@
-<div class="widget widget-group-overview">
+<div class="widget widget-location-overview">
 	<?php if(!empty($data)): ?>
 		<table>
 			<thead>
 				<tr>
-					<th class="discussions"><?php __('Discussions'); ?></th>
-					<th class="replies"><?php __('Replies'); ?></th>
+					<th class="discussions"><?php __('Entries'); ?></th>
+					<th class="replies"><?php __('Comments'); ?></th>
 					<th class="activity"><?php __('Activity'); ?></th>
 				</tr>
 			</thead>
@@ -14,7 +14,7 @@
 						<td class="discussions">
 							<?echo $html->link(
 							    $item['Entry']['title'], 
-								'/groups/entry/' . Context::groupSlug() . '/' . $item['Entry']['id']
+								'/locations/entry/' . Context::locationSlug() . '/' . $item['Entry']['id']
 							); ?>
 						</td>
 						<td class="replies"><?php echo $item['Entry']['comment_count']; ?></td>
@@ -24,6 +24,6 @@
 			</tbody>
 		</table>
 	<?php else: ?>
-		<?php __('There is currently no entry in this group') ?>
+		<?php __('There is currently no entry for this location') ?>
 	<?php endif; ?>
 </div>

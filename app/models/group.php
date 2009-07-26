@@ -4,7 +4,14 @@
 class Group extends AppModel {
     public $belongsTo = array('Network');
     
-    public $hasMany = array('Entry');
+    public $hasMany = array(
+        'Entry' => array(
+            'foreignKey' => 'foreign_key',
+            'conditions' => array(
+                'Entry.model' => 'group'
+            )
+        )
+    );
     
     public $hasAndBelongsToMany = array(
         'GroupSubscriber' => array(

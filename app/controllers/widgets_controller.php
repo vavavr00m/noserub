@@ -18,6 +18,8 @@ class WidgetsController extends AppController {
         }
         $this->set('groups', $this->Identity->getSubscribedGroups());
         $this->set('networks', $this->Identity->getSubscribedNetworks());
+        $this->set('locations', $this->Identity->Location->getNew($this->Identity->id));
+        $this->set('events', $this->Identity->Event->getNew($this->Identity->id));
         
         $type = isset($this->params['type']) ? $this->params['type'] : 'main';
         $this->render($type . '_navigation');
@@ -50,6 +52,14 @@ class WidgetsController extends AppController {
         
     	$this->set('items', $items);
     	$this->set('q', $q);
+    }
+    
+    public function map() {
+        
+    }
+    
+    public function logged_in_user() {
+        
     }
     
  	/**
@@ -219,6 +229,8 @@ class WidgetsController extends AppController {
  	    unset($filters['noserub']);
  	    unset($filters['video']);
  	    unset($filters['document']);
+ 	    unset($filters['event']);
+ 	    unset($filters['location']);
  	    $this->set('filters', $filters);
  	}
  	
@@ -378,7 +390,8 @@ class WidgetsController extends AppController {
      	    $this->set('data', $this->Entry->find('all', array(
                 'contain' => false,
                 'conditions' => array(
-                    'Entry.group_id' => Context::groupId()
+                    'Entry.foreign_key' => Context::groupId(),
+                    'Entry.model' => 'group'
                 ),
                 'order' => 'Entry.published_on DESC',
                 'limit' => 10
@@ -401,6 +414,102 @@ class WidgetsController extends AppController {
  	    $this->set('groups', $this->Group->getPopular());
  	}
  	
+ 	/**
+ 	 * Locations
+ 	 */
+ 	
+ 	/**
+     * Displays the header for a specific location
+     */
+ 	public function location_head() {
+ 	    
+ 	}
+ 	
+ 	public function form_add_location() {
+ 	    $this->loadModel('Location');
+ 	    $this->set('types', $this->Location->getTypes());
+ 	} 
+ 	
+ 	public function location_info() {
+ 	    if(Context::locationId()) {
+            $this->loadModel('Location');
+ 	        $this->set('location_info', $this->Location->find('first', array(
+ 	            'contain' => array('Identity'),
+ 	            'conditions' => array(
+ 	                'Location.id' => Context::locationId()
+ 	            )
+ 	        )));
+ 	        $this->set('types', $this->Location->getTypes());
+ 	    }
+ 	}
+ 	
+ 	public function location_overview() {
+ 	    if(Context::locationId()) {
+ 	        $this->loadModel('Entry');
+     	    $this->set('data', $this->Entry->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'Entry.foreign_key' => Context::locationId(),
+                    'Entry.model' => 'location'
+                ),
+                'order' => 'Entry.published_on DESC',
+                'limit' => 10
+            )));
+        }
+ 	}
+ 	
+ 	/**
+ 	 * Events
+ 	 */
+ 	
+ 	/**
+     * Displays the header for a specific event
+     */
+ 	public function event_head() {
+ 	    
+ 	}
+ 	
+ 	public function form_add_event() {
+ 	    if(Context::isLoggedIn()) {
+     	    $this->loadModel('Event');
+     	    $this->set('types', $this->Event->getTypes());
+     	    $locations = $this->Event->Location->getNew(Context::loggedInIdentityId(), 5, 'list');
+     	    $locations[0] = __('Will specify location later', true);
+     	    $this->set('locations', $locations);
+ 	    }
+ 	}
+ 	
+ 	public function event_info() {
+ 	    if(Context::eventId()) {
+            $this->loadModel('Event');
+ 	        $this->set('event_info', $this->Event->find('first', array(
+ 	            'contain' => array(
+ 	                'Identity', 
+ 	                'Location'
+ 	            ),
+ 	            'conditions' => array(
+ 	                'Event.id' => Context::eventId()
+ 	            )
+ 	        )));
+ 	        $this->set('types', $this->Event->getTypes());
+ 	    }
+ 	}
+ 	
+ 	public function event_overview() {
+ 	    if(Context::eventId()) {
+ 	        $this->loadModel('Entry');
+     	    $this->set('data', $this->Entry->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'Entry.foreign_key' => Context::eventId(),
+                    'Entry.model' => 'event'
+                ),
+                'order' => 'Entry.published_on DESC',
+                'limit' => 10
+            )));
+        }
+ 	}
+ 	  
  	/**
  	 * Filters
  	 */
@@ -597,11 +706,27 @@ class WidgetsController extends AppController {
     public function photos() {
         $this->loadModel('Entry');
     
+        $filter = array(
+            'filter' => array('photo'),
+            'identity_id' => $this->getIdentityId()
+        );
+        if(Context::groupId()) {
+            // we are on a group page, so just show photos
+            // for this group
+            $filter['group_id'] = Context::groupId();
+        }
+        if(Context::locationId()) {
+            // we are on a location page, so just show photos
+            // for this location
+            $filter['location_id'] = Context::locationId();
+        }
+        if(Context::eventId()) {
+            // we are on an event page, so just show photos
+            // for this event
+            $filter['event_id'] = Context::eventId();
+        }
         $items = $this->Entry->getForDisplay(
-            array(
-                'filter' => array('photo'),
-                'identity_id' => $this->getIdentityId()
-            ),
+            $filter,
             5, 
             true
         );

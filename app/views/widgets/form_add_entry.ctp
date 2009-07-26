@@ -29,8 +29,22 @@
         echo $form->create(array('url' => '/entry/add/'));
         echo $noserub->fnSecurityTokenInput();
         echo $form->input('Entry.service_type', array('value' => $entry_add_modus, 'type' => 'hidden'));
-        echo $form->input('Entry.group_id', array('value' => Context::groupId(), 'type' => 'hidden'));
-    
+        $foreign_key = 0;
+        $model = '';
+        if(Context::groupId()) {     
+            $foreign_key = Context::groupId();
+            $model = 'group';
+        } else if(Context::locationId()) {
+            $foreign_key = Context::locationId();
+            $model = 'location';
+        } else if(Context::eventId()) {
+            $foreign_key = Context::eventId();
+            $model = 'event';
+        }
+        
+        echo $form->input('Entry.foreign_key', array('value' => $foreign_key, 'type' => 'hidden'));
+        echo $form->input('Entry.model', array('value' => $model, 'type' => 'hidden'));
+        
         switch($entry_add_modus) {
             case 'micropublish':
                 echo $form->input('Entry.text', array('type' => 'textarea', 'label' => false));

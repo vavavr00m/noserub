@@ -19,7 +19,7 @@
     </tr>
 </table>
 <?php
-    if($data['Entry']['account_id'] > 0) {
+    if($data['Entry']['model'] == 'account' && $data['Entry']['foreign_key'] > 0) {
     	echo $html->link(__('External permalink', true), $data['Entry']['url']);
     }
     if(Context::isLoggedIn() && $data['Entry']['service_type'] != 0) {

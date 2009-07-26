@@ -3,10 +3,14 @@ class LocationsController extends AppController {
     public $uses = array('Location');
     public $components = array('url', 'geocoder');
     
-    public function settings() {
-        $this->grantAccess('self');
-        
-        Context::setPage('settings.location');
+    public function index() {
+    }
+    
+    /**
+     * This is the page /:username/locations
+     */
+    public function profile() {
+        Context::setPage('profile.locations');
     }
         
     public function add() {
@@ -17,9 +21,13 @@ class LocationsController extends AppController {
             
             if($this->data['Location']['name']) {
                 if($this->saveData($this->data)) {
+                    $this->Location->updateLastActivity();
+                    $this->Location->Entry->addLocation(Context::loggedInIdentityId(), $this->Location->id);
                     $this->flashMessage('success', __('Location added.', true));
+                    $this->redirect('/locations/view/' . $this->Location->id);
                 } else {
                     $this->flashMessage('error', __('Location could not be created.', true));
+                    $this->redirect($this->referer());
                 }
             } else {
                 $this->Location->invalidate('name', __('You need to specify a name.', true));
@@ -27,7 +35,21 @@ class LocationsController extends AppController {
             }
         }
         
-        $this->redirect($this->referer());
+        Context::setPage('profile.locations');
+    }
+    
+    public function view($id) {
+        $location = $this->Location->find('first', array(
+            'contain' => false,
+            'conditions' => array(
+                'id' => $id
+            ),
+        ));
+        if(!$location) {
+            $this->redirect('/locations/');
+        }
+        
+        $this->Location->saveInContext($location);
     }
     
     protected function saveData($data) {
@@ -48,7 +70,8 @@ class LocationsController extends AppController {
         
         $saveable = array(
             'latitude', 'longitude', 'address', 
-            'identity_id', 'name', 'modified', 'created'
+            'type', 'description', 'url',
+            'identity_id', 'name', 'created'
         );
         
         return $this->Location->save($data, true, $saveable);

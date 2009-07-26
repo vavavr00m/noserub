@@ -3,10 +3,7 @@
         <?php
             $base_url = '/' . Context::read('logged_in_identity.local_username') . '/';
         ?>
-        <h4>
-            <?php echo $html->image($noserub->fnProfilePhotoUrl('small'), array('class' => 'userimage', 'alt' => Context::read('logged_in_identity.name'))); ?>
-    		<?php echo sprintf(__('Hi %s!', true), Context::read('logged_in_identity.name')); ?>
-    	</h4>
+        <?php echo $noserub->widgetLoggedInUser(); ?>
 	
 	    <?php echo $noserub->widgetUnreadMessages(); ?>
 		
@@ -40,6 +37,28 @@
                     </ul>
                 <?php } ?>
             </li>
+            <li>
+                <a class="toggle" href="#">(-)</a>
+                <?php echo $html->link(__('Locations', true), $base_url . '/locations/', array('class' => 'head')); ?>
+                <?php if($locations) { ?>
+                    <ul>
+                        <?php foreach($locations as $location) { ?>
+                            <li><?php echo $html->link($location['Location']['name'], '/locations/view/' . $location['Location']['id'] . '/' . $location['Location']['slug']); ?></li>
+                        <?php } ?>
+                    </ul>
+                <?php } ?>
+            </li>
+            <li>
+                <a class="toggle" href="#">(-)</a>
+                <?php echo $html->link(__('Events', true), $base_url . '/events/', array('class' => 'head')); ?>
+                <?php if($events) { ?>
+                    <ul>
+                        <?php foreach($events as $event) { ?>
+                            <li><?php echo $html->link($event['Event']['name'], '/events/view/' . $event['Event']['id'] . '/' . $event['Event']['slug']); ?></li>
+                        <?php } ?>
+                    </ul>
+                <?php } ?>
+            </li>    
             <li>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('Networks', true), $base_url . '/networks/', array('class' => 'head')); ?>
