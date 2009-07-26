@@ -1,4 +1,4 @@
-ALTER TABLE  `entries` ADD  `model` VARCHAR( 32 ) NOT NULL AFTER  `identity_id` , ADD  `foreign_key` INT( 11 ) UNSIGNED NOT NULL AFTER  `name` ;
+ALTER TABLE  `entries` ADD  `model` VARCHAR( 32 ) NOT NULL AFTER  `identity_id` , ADD  `foreign_key` INT( 11 ) UNSIGNED NOT NULL AFTER  `identity_id` ;
 ALTER TABLE  `entries` ADD INDEX (  `model` ,  `foreign_key` ) ;
 UPDATE `entries` SET model='', foreign_key=0 WHERE account_id=0 AND group_id=0;
 UPDATE `entries` SET model='account', foreign_key=account_id WHERE account_id>0;
