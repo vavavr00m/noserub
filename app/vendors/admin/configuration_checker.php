@@ -15,7 +15,8 @@ class ConfigurationChecker {
 	    'NoseRub.google_maps_key' => 129,
 	    'NoseRub.registration_restricted_hosts' => 129,
 	    'NoseRub.registration_type' => 129,
-	    'NoseRub.use_ssl' => 129
+	    'NoseRub.use_ssl' => 129,
+		'NoseRub.allow_twitter_bridge' => 159
 	);
 	
 	protected $obsoleteConstants = array('NOSERUB_ADMIN_HASH',
@@ -51,21 +52,13 @@ class ConfigurationChecker {
 	    
 		$this->configDefinitions = array(
 			new ConfigDefinition('NoseRub.admin_hash'),
-			new ConfigDefinition('NoseRub.allow_twitter_bridge', new BooleanValidator()),
-			#new ConfigDefinition('NoseRub.api_info_active', new BooleanValidator()),
 			new ConfigDefinition('NoseRub.cdn_s3_access_key'),
 			new ConfigDefinition('NoseRub.cdn_s3_secret_key'),
 			new ConfigDefinition('NoseRub.cdn_s3_bucket'),
 			new ConfigDefinition('NoseRub.cron_hash'),
-			#new ConfigDefinition('NoseRub.default_language'),
 			new ConfigDefinition('NoseRub.email_from'),
-			#new ConfigDefinition('NoseRub.full_base_url', new FullBaseUrlValidator()),
-			#new ConfigDefinition('NoseRub.google_maps_key', new FalseOrNonEmptyStringValidator()),
 			new ConfigDefinition('NoseRub.manual_feeds_update', new BooleanValidator()),
-			#new ConfigDefinition('NoseRub.registration_restricted_hosts', new FalseOrNonEmptyStringValidator()),
-			#new ConfigDefinition('NoseRub.registration_type', new RegistrationTypeValidator()),
 			new ConfigDefinition('NoseRub.use_cdn', new BooleanValidator()),
-			#new ConfigDefinition('NoseRub.use_ssl', new BooleanValidator()),
 			new ConfigDefinition('NoseRub.xmpp_full_feed_user'),
 			new ConfigDefinition('NoseRub.xmpp_full_feed_password'),
 			new ConfigDefinition('NoseRub.xmpp_full_feed_server'),

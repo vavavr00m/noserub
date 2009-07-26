@@ -837,33 +837,27 @@ a.button span {
  * Main Forms
  */
 #bd-main-bd .widget-form-accounts form,
-#bd-main-bd .widget-account-settings-twitter form,
 #bd-main-bd .widget-contact-add form {
 	line-height:2.3em;
 	margin-bottom:1.4em;
 }
 #bd-main-bd .widget-form-accounts label,
-#bd-main-bd .widget-account-settings-twitter label,
 #bd-main-bd .widget-contact-add label {
 	display:block;
 	float:left;
 	width:180px;
 }
 #bd-main-bd .widget-form-accounts div.submit,
-#bd-main-bd .widget-account-settings-twitter div.submit,
 #bd-main-bd .widget-contact-add div.submit {
 	padding-left:180px;
 }
 #bd-main-bd .widget-form-accounts div.input.text.error input,
 #bd-main-bd .widget-form-accounts div.input.password.error input,
-#bd-main-bd .widget-account-settings-twitter div.input.text.error input,
-#bd-main-bd .widget-account-settings-twitter div.input.password.error input,
 #bd-main-bd .widget-contact-add div.input.text.error input,
 #bd-main-bd .widget-contact-add div.input.password.error input {
 	border-color:#a41900;
 }
 #bd-main-bd .widget-form-accounts div.error-message,
-#bd-main-bd .widget-account-settings-twitter div.error-message,
 #bd-main-bd .widget-contact-add div.error-message {
 	color:#a41900;
 	padding-left:180px;

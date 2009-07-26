@@ -657,10 +657,6 @@ class WidgetsController extends AppController {
         );
     }
     
-    public function account_settings_twitter() {
-        
-    }
-    
     public function form_locations() {
         $this->loadModel('Location');
         $this->retrieveFormErrors('Location');

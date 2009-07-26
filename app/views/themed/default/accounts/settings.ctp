@@ -8,7 +8,5 @@
 	<div id="bd-main-bd">
 		<?php echo $noserub->widgetFlashMessage(); ?>
 		<?php echo $noserub->formAccounts(); ?>
-		
-		<?php echo $noserub->accountSettingsTwitter(); ?> 
 	</div>
 </div>

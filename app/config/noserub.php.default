@@ -78,15 +78,6 @@ Configure::write('NoseRub.xmpp_full_feed_server', 'jabber.identoo.com');
 Configure::write('NoseRub.xmpp_full_feed_port', 5222);
 
 /**
- * If you, as the admin of this NoseRub installation do not feel
- * comfortable with the Twitter Bridge, you can deactivate it here
- * for every user on your site.
- */ 
-// TODO: remove this setting when the Twitter handling has been
-// switched to OAuth 
-Configure::write('NoseRub.allow_twitter_bridge', true);
-
-/**
  * Uncomment this line if you get the following error when you try 
  * to authenticate your OpenID: "Fatal error: Define 
  * Auth_OpenID_RAND_SOURCE as null to continue with an insecure 
