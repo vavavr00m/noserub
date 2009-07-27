@@ -62,6 +62,10 @@ class WidgetsController extends AppController {
         
     }
     
+    public function ad() {
+        
+    }
+    
  	/**
  	 * Admin
  	 */
