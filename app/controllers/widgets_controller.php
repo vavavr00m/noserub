@@ -519,6 +519,18 @@ class WidgetsController extends AppController {
         }
  	}
  	  
+ 	public function last_events() {
+ 	    $this->loadModel('Event');
+ 	    $this->set('data', $this->Event->find('all', array(
+ 	        'contain' => false,
+ 	        'conditions' => array(
+ 	            'Event.to_datetime < NOW()'
+ 	        ),
+ 	        'order to_datetime DESC',
+ 	        'limit 5'
+ 	    )));
+ 	}
+ 	
  	/**
  	 * Filters
  	 */
