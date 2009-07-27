@@ -6,9 +6,7 @@
 		<?php echo $noserub->widgetFlashMessage(); ?>
 	</div>
 	<div id="bd-main-sidebar">
-		<?php echo $noserub->widgetNewUsers(); ?>
-		<?php echo $noserub->widgetPopularUsers(); ?>
+        <?php echo $noserub->widgetLastEvents(); ?>
 		<?php echo $noserub->widgetLastActiveUsers(); ?>
-		<?php echo $noserub->widgetLastLoggedInUsers(); ?>
 	</div>
 </div>
