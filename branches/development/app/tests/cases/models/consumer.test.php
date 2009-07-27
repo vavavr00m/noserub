@@ -5,6 +5,7 @@ class ConsumerTest extends CakeTestCase {
 	private $consumer = null;
 	
 	public function setUp() {
+		Configure::write('debug', 0);
 		$this->consumer = new Consumer();
 	}
 	
