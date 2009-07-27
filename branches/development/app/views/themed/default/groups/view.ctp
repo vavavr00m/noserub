@@ -13,10 +13,8 @@
 		<div class="widget widget-join-group">
 		  <?php echo $noserub->link('/groups/manage_subscription/'); ?>
 		</div>
-		<?php echo $noserub->widgetGroupMembers(); ?>
 		<?php echo $noserub->widgetGroupStatistics(); ?>
-		<?php echo $noserub->widgetPopularGroups(); ?>
-		<?php echo $noserub->widgetNewGroups(); ?>
-		<?php echo $noserub->widgetGroups(); ?>
+		<?php echo $noserub->widgetAd('200x200'); ?>
+		<?php echo $noserub->widgetGroupMembers(); ?>
 	</div>
 </div>
