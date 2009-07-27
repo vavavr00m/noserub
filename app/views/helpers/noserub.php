@@ -118,23 +118,30 @@ class NoserubHelper extends AppHelper {
             case '/contact/manage/':
                 return $this->linkContactManage();
                 
+            case '/message/send/':
+                return $this->linkSendMessage();
+            
             default:
                 return '';
         }
     }
     
-    private function linkAddAsContact() {
-        if(Context::read('is_self') || 
-           !Context::read('logged_in_identity') ||
-           Context::read('is_guest')) {
+    private function linkSendMessage() {
+        if(!Context::isLoggedIn()) {
             return '';
         }
-        
-        if(Context::read('is_contact')) {
-            return __('This is one of your contacts.', true);
+                
+        if(Context::allowedSending()) {
+            return $this->html->link(
+                '<span></span>' . __('Send a message', true), 
+                '/messages/add/to:' . Context::read('identity.id'), 
+                array('class' => 'button send-message'),
+                false,
+                false
+            );
         }
         
-        return $this->html->link(__('Add as contact', true), '/' . Context::read('identity.local_username') . '/add/as/contact/' . $this->fnSecurityToken(), array('class' => 'button-add-contact'));
+        return '';
     }
     
     private function linkGroupAdd() {
