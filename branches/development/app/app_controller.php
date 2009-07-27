@@ -218,7 +218,7 @@ class AppController extends Controller {
             Context::write('admin_id', 0);
         }
         
-        # if we're looking on the page of someone else, get the identity
+        // if we're looking on the page of someone else, get the identity
         $username = isset($this->params['username']) ? $this->params['username'] : '';
         if($username) {
             if(!isset($this->Identity)) {
@@ -232,16 +232,31 @@ class AppController extends Controller {
             $data = $this->Identity->findByUsername($username);
             Context::write('identity', $data['Identity']);
             
-            # check, if logged_in_identity is contact
+            // check, if logged_in_identity is contact
             Context::write('is_contact', false);
             if(Context::isLoggedInIdentity()) {
                 if($this->Identity->Contact->find('first', array(
+                    'contain' => false,
                     'conditions' => array(
                         'identity_id' => Context::loggedInIdentityId(),
                         'with_identity_id' => $data['Identity']['id']
                     )
                    ))) {
                     Context::write('is_contact', true);
+                };
+            }
+            
+            // check, if the other one has me as contact
+            Context::write('allowed_sending', false);
+            if(Context::isLoggedInIdentity()) {
+                if($this->Identity->Contact->find('first', array(
+                    'contain' => false,
+                    'conditions' => array(
+                        'with_identity_id' => Context::loggedInIdentityId(),
+                        'identity_id' => $data['Identity']['id']
+                    )
+                   ))) {
+                    Context::write('allowed_sending', true);
                 };
             }
         } else {

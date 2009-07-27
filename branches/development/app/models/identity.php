@@ -8,11 +8,7 @@ class Identity extends AppModel {
         'OpenidSite', 'Location', 'Entry', 'Event'
     );
     
-    public $belongsTo = array(
-        'Location' => array('className'  => 'Location',
-                            'foreignKey' => 'last_location_id'),
-        'Network'
-    );
+    public $belongsTo = array('Network');
     
     public $hasAndBelongsToMany = array(
             'FavoriteEntries' => array(
@@ -770,7 +766,7 @@ class Identity extends AppModel {
         $vcard['username'] = $vcard['local_username'];      
         $to_remove = array(
             'id', 'network_id', 'password', 'openid', 'openid_identity', 
-            'openid_server_url', 'email', 'last_location_id', 
+            'openid_server_url', 'email', 
             'api_hash', 'api_active', 'hash', 'security_token',
             'last_generic_feed_upload', 'last_sync', 'created', 'modified',
             'local_username', 'single_username', 'namespace',

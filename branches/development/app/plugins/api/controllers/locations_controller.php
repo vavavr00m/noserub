@@ -15,17 +15,10 @@ class LocationsController extends ApiAppController {
         $this->Location->contain();
         $data = $this->Location->findAllByIdentityId($this->identity_id, array('id', 'name'));
         
-        $this->Location->Identity->recursive = 0;
-        $this->Location->Identity->id = $this->identity_id;
-        $last_location_id = $this->Location->Identity->field('last_location_id');
-        
         $this->set(
             'data', 
             array(
                 'Locations' => $data,
-                'Identity'  => array(
-                    'last_location_id' => $last_location_id
-                )
             )
         );
     }

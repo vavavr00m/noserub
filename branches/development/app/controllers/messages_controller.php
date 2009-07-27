@@ -42,6 +42,12 @@ class MessagesController extends AppController {
                 $this->redirect($this->referer());
             }
             
+            if(trim($this->data['Message']['subject']) == '' &&
+               trim($this->data['Message']['text']) == '') {
+                $this->flashMessage('alert', __('At least subject or message must be given', true));
+                $this->redirect($this->referer());
+            }
+            
             // create message for recipient
             $data = array(
                 'identity_id' => $identity_id,

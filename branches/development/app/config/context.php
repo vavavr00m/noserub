@@ -28,6 +28,14 @@ class Context {
         return Configure::read('context.is_contact');
     }
     
+    /**
+     * Wether the logged in user may send the profile
+     * we look at send a message, or not.
+     */
+    public static function allowedSending() {
+        return Configure::read('context.allowed_sending');
+    }
+    
     public static function isGuest() {
         return Configure::read('context.is_guest');
     }

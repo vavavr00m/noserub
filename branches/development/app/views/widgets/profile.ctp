@@ -18,10 +18,7 @@ $name = $data['name'];
     </div>
     <div class="buttons">
         <?php echo $noserub->link('/contact/manage/'); ?>
-    	<a class="button send-message" href="#">
-			<span></span>
-    		Send a message
-    	</a>
+        <?php echo $noserub->link('/message/send/'); ?>
     	<ul>
     		<li><a href="#">Download vCard</a></li>
     		<li><a href="#">RSS-Feed</a></li>
