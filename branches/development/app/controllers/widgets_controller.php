@@ -122,7 +122,16 @@ class WidgetsController extends AppController {
  	public function profile() {
  	    $identity_id = $this->getIdentityId();
  	    if($identity_id == Context::loggedInIdentityId()) {
- 	        $data = Context::isLoggedInIdentity();
+ 	        // load the identity from the database, so that
+ 	        // we get all the latest changes
+ 	        $this->loadModel('Identity');
+ 	        $data = $this->Identity->find('first', array(
+ 	            'contain' => false,
+ 	            'conditions' => array(
+ 	                'Identity.id' => Context::loggedInIdentityId()
+ 	            )
+ 	        ));
+ 	        $data = $data['Identity'];
  	    } else {
  	        $data = Context::read('identity');
  	    }

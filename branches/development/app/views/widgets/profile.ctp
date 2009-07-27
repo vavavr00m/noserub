@@ -10,11 +10,11 @@ $name = $data['name'];
         <p class="role">
             Art Director &amp; Designer
         </p>
-        <p class="adr">
-            <span class="street-address">Wesselinger Straße 22-30</span>,
-    		<span class="postal-code">50999</span>
-    	    <span class="locality">Köln</span>
-        </p>
+        <?php if($data['address_shown']) { ?>
+            <p class="adr">
+                <span class="address"><?php echo $data['address_shown']; ?></span>
+            </p>
+        <?php } ?>
     </div>
     <div class="buttons">
         <?php echo $noserub->link('/contact/manage/'); ?>
