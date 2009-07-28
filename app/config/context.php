@@ -15,7 +15,7 @@ class Context {
     public static function write($key, $value) {
         return Configure::write('context.' . $key, $value);
     }
-    
+
     public static function isLoggedInIdentity() {
         return Configure::read('context.logged_in_identity');
     }
@@ -77,7 +77,6 @@ class Context {
     public static function networkId() {
         return Configure::read('context.network.id');
     }
-    
     
     public static function setPage($page) {
         $split = explode('.', $page);

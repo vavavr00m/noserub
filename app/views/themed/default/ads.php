@@ -1,11 +1,11 @@
-<?php
-
 /**
  * Definition file for the ad spots of this theme.
  *
+ * make sure not to start this file with <?php !!!!
  * The pattern is like this:
  * $theme_ad_spots = array(
- *     '<ad spot name>' => array(
+ *     <index> => array(
+ *         'name' => '<ad spot name>',
  *         'size' => '<width>x<height>',
  *         'info' => '<some text to describe the ad spot>'
  *     )
@@ -16,7 +16,8 @@
  */
  
 $theme_ad_spots = array(
-    '200x200' => array(
+    1 => array(
+        'name' => 'sidebar',
         'size' => '200x200',
         'info' => 'Used in the right sidebar'
     )
