@@ -853,6 +853,18 @@ class WidgetsController extends AppController {
             )
         );
     }
+    
+    public function form_user_management() {
+       $this->loadModel('Identity'); 
+       $this->retrieveFormErrors('Identity');
+        $this->set('data', $this->Identity->find('list', array('fields' => array('Identity.username'))));
+    }
+    
+        
+    
+    
+    
+    
 
     /**
      * private methods

@@ -133,6 +133,12 @@ class AdminsController extends AppController {
         $this->redirect('/admins/ad_management/');
  	}
  	
+ 	public function user_management() {
+        if(!Context::isAdmin()) {
+            $this->redirect('/admins/');
+        }
+    }
+ 	
     public function login() {
         if(!Context::isLoggedInIdentity()) {
             # you need to be logged in as identity,

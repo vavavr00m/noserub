@@ -4,6 +4,7 @@
         <ul>
             <li><?php echo $html->link(__('Network Settings', true), '/admins/network_settings/'); ?></li>
             <li><?php echo $html->link(__('Ad Management', true), '/admins/ad_management/'); ?></li>
+            <li><?php echo $html->link(__('User Management', true), '/admins/user_management/'); ?></li>
             <li><?php echo $html->link(__('Change password', true), '/admins/password/'); ?></li>
             <li><?php echo $html->link(__('Admin logout', true), '/admins/logout/'); ?></li>
         </ul>
