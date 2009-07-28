@@ -19,10 +19,9 @@ class Network extends AppModel {
         )
     );
     
-    public function beforeValidate($options = array()) {
+    public function __construct() {
+        parent::__construct();
         $this->validate['url']['message'] = __('The URL must start with http:// or https://', true);
-        
-        return parent::beforeValidate($options);
     }
     
 	public function getEnabled() {
@@ -69,15 +68,15 @@ class Network extends AppModel {
 	public function validateUrl($data) {
 	    $url = strtolower($data['url']);
 	    
-	    return (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) &&
-	           strpos(strrev($url), '/') === 0;
+	    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
 	}
 	
 	public function save($data = null, $validate = true, $fieldList = array()) {
-		if (isset($data['Network']['url'])) {
+		if(isset($data['Network']['url'])) {
 			$data['Network']['url'] = $this->ensureUrlEndsWithSlash($data['Network']['url']);
 		}
-		parent::save($data, $validate, $fieldList);
+		
+		return parent::save($data, $validate, $fieldList);
 	}
 	
 	/**

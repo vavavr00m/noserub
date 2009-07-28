@@ -39,16 +39,17 @@ class AdminsController extends AppController {
             }
             $this->redirect('/admins/password/');
         } else if($this->data) {
-            $this->redirect('/admins/password/');
+            $this->redirect('/admins/');
         }
     }
     
-    public function settings() {
+    public function network_settings() {
         $this->checkSecure();
         if(!Context::isAdmin()) {
             $this->redirect('/admins/');
         }
-        if(empty($this->params['form']['cancel'])) {
+        
+        if(!empty($this->data) && empty($this->params['form']['cancel'])) {
             $this->loadModel('Network');
         
             $this->Network->set($this->data);
@@ -62,9 +63,19 @@ class AdminsController extends AppController {
             );
             if(!$this->Network->save($this->data, true, $saveable)) {
                 $this->storeFormErrors('Network', $this->data, $this->Network->validationErrors);
-            } 
+            } else {
+                $this->flashMessage('success', __('Network settings saved', true));
+                $this->redirect('/admins/');
+            }
+        } else if($this->data){
+            $this->redirect('/admins/');
         }
-        $this->redirect('/admins/');
+    }
+    
+    public function ad_management() {
+        if(!Context::isAdmin()) {
+            $this->redirect('/admins/');
+        }
     }
     
     public function login() {

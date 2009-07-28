@@ -1,6 +1,6 @@
-<div class="widget form-admin-settings">
+<div class="widget form-network-settings">
     <?php if($this->data) {
-        echo $form->create(array('url' => '/admins/settings/'));
+        echo $form->create(array('url' => '/admins/network_settings/'));
 
         echo '<fieldset><legend>' . __('Network', true) . '</legend>';
         echo $form->input('Network.url');
@@ -33,7 +33,7 @@
         echo $form->input('Network.latitude');
         echo $form->input('Network.longitude');
     
-        # echo $form->input('Network.google_maps_key');
+        echo $form->input('Network.google_maps_key');
         echo '</fieldset>';
     
         echo '<fieldset><legend>' . __('Registration', true) . '</legend>';
