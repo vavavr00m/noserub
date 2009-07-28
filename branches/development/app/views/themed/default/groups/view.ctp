@@ -14,7 +14,7 @@
 		  <?php echo $noserub->link('/groups/manage_subscription/'); ?>
 		</div>
 		<?php echo $noserub->widgetGroupStatistics(); ?>
-		<?php echo $noserub->widgetAd('200x200'); ?>
+		<?php echo $noserub->widgetAd('sidebar'); ?>
 		<?php echo $noserub->widgetGroupMembers(); ?>
 	</div>
 </div>

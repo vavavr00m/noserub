@@ -78,6 +78,61 @@ class AdminsController extends AppController {
         }
     }
     
+    public function ad_add() {
+ 	    if(Context::isAdmin()) {
+            if($this->RequestHandler->isPost()) {
+                $this->loadModel('Ad');
+                $this->data['Ad']['network_id'] = Context::networkId();
+                $saveable = array(
+                    'name', 'width', 'height', 'network_id',
+                    'content', 'allow_php', 'created'
+                );
+                $this->Ad->create();
+                if($this->Ad->save($this->data, true, $saveable)) {
+                    $this->flashMessage('success', __('Ad created', true));
+                } else {
+                    $this->storeFormErrors('Ad', $this->data, $this->Ad->validationErrors);
+                }
+                $this->redirect('/admins/ad_management/');
+            }
+ 	    }
+ 	}
+ 	
+ 	public function ad_edit() {
+ 	    if(Context::isAdmin()) {
+            if($this->RequestHandler->isPost()) {
+                $this->loadModel('Ad');
+                // test, that this ad belongs to the current network
+                $this->Ad->id = $this->data['Ad']['id'];
+                if($this->Ad->field('network_id') != Context::networkId()) {
+                    $this->flashMessage('alert', __('The Ad does not belong to this network', true));
+                    $this->redirect('/admins/ad_management/');
+                }
+                $saveable = array(
+                    'name', 'width', 'height',
+                    'content', 'allow_php'
+                );
+                if($this->Ad->save($this->data, true, $saveable)) {
+                    $this->flashMessage('success', __('Ad saved', true));
+                } else {
+                    $this->storeFormErrors('Ad', $this->data, $this->Ad->validationErrors);
+                }
+                $this->redirect('/admins/ad_management/');
+            }
+ 	    }
+ 	}
+ 	
+ 	public function ad_assign() {
+ 	    if(Context::isAdmin()) {
+            if($this->RequestHandler->isPost()) {
+                $this->loadModel('Ad');
+                $this->Ad->saveAssignment($this->data['Assignment']);
+                $this->flashMessage('success', __('Assignment saved', true));
+            }
+        }
+        $this->redirect('/admins/ad_management/');
+ 	}
+ 	
     public function login() {
         if(!Context::isLoggedInIdentity()) {
             # you need to be logged in as identity,

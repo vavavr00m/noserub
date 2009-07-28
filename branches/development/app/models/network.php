@@ -2,7 +2,11 @@
 /* SVN FILE: $Id:$ */
  
 class Network extends AppModel {
-    public $hasMany = array('Identity', 'Group', 'Admin');
+    public $hasMany = array(
+        'Identity', 'Group',
+        'Admin', 'Ad'
+    );
+    
     public $hasAndBelongsToMany = array(
             'NetworkSubscriber' => array(
                 'className'  => 'Identity',

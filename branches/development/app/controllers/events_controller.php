@@ -23,7 +23,7 @@ class EventsController extends AppController {
             $this->data['Event']['identity_id'] = $identity_id;
             if($this->Event->save($this->data)) {
                 $this->Event->Entry->addEvent($identity_id, $this->Event->id);
-                $this->flashMessage('success', __('Event added.', true));
+                $this->flashMessage('success', __('Event added', true));
                 $this->redirect('/events/view/' . $this->Event->id);
             } else {
                 $this->storeFormErrors('Event', $this->data, $this->Event->validationErrors);

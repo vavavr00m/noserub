@@ -8,7 +8,7 @@
 	</div>
 
 	<div id="bd-main-sidebar">
-	    <?php echo $noserub->widgetAd('200x200'); ?>
+	    <?php echo $noserub->widgetAd('sidebar'); ?>
 		<?php echo $noserub->widgetGroups(); ?>
 	</div>
 </div>

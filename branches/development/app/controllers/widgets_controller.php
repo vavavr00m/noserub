@@ -63,7 +63,11 @@ class WidgetsController extends AppController {
     }
     
     public function ad() {
-        
+        $this->loadModel('Ad');
+        $name = isset($this->params[0]) ? $this->params[0] : '';
+        if($name) {
+            $this->set('ad_content', $this->Ad->getAd($name));
+        }
     }
     
  	/**
@@ -121,11 +125,26 @@ class WidgetsController extends AppController {
  	
  	public function form_ad_management() {
  	    if(Context::isAdmin()) {
- 	        
+ 	        $this->loadModel('Ad');
+ 	        $this->retrieveFormErrors('Ad');
+            $this->set('adspots', $this->Ad->getForTheme());
+            $ads = $this->Ad->find('all', array(
+                'contain' => false,
+                'conditions' => array(
+                    'network_id' => Context::networkId()
+            )));
+            $this->set('ads', $ads);
+            $ad_list = array();
+            foreach($ads as $item) {
+                $ad_list[$item['Ad']['id']] = $item['Ad']['name'] . ' (' . $item['Ad']['width'] . 'x' . $item['Ad']['height'] . ')';
+            }
+            $ad_list[0] = __('No Ad', true);
+            $this->set('ad_list', $ad_list);
+            $this->set('assignments', $this->Ad->getAssignmentsForTheme());
  	    }
  	}
  	
- 	/**
+  	/**
  	 * Profiles
  	 */
  	
