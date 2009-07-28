@@ -4,6 +4,7 @@
 	</div>
 	<div id="bd-main-bd">
 		<?php echo $noserub->widgetFlashMessage(); ?>
+		<?php echo $noserub->formNetworkSettings(); ?>
 	</div>
 
 	<div id="bd-main-sidebar">

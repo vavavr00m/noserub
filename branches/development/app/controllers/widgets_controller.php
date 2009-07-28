@@ -85,7 +85,7 @@ class WidgetsController extends AppController {
         }
  	}
  	
- 	public function form_admin_settings() {
+ 	public function form_network_settings() {
  	    if(Context::isAdmin()) {
  	        $this->loadModel('Network');
  	        $this->retrieveFormErrors('Network');
@@ -117,6 +117,12 @@ class WidgetsController extends AppController {
  	        # in the form (the MD5 version)
  	        $this->data['Admin']['password'] = '';
         }
+ 	}
+ 	
+ 	public function form_ad_management() {
+ 	    if(Context::isAdmin()) {
+ 	        
+ 	    }
  	}
  	
  	/**
