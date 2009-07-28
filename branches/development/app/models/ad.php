@@ -144,6 +144,15 @@ class Ad extends AppModel {
         }
         
         $path = CACHE . Context::networkId() . '_theme_' . $theme . '_ads.php';
+        if(!file_exists($path)) {
+            // see, if there is a default ad...
+            $adspots = $this->getForTheme($theme);
+            foreach($adspots as $item) {
+                if($item['name'] == $name && !empty($item['default'])) {
+                    return $item['default'];
+                }
+            }
+        }
         @eval(file_get_contents($path));
         if(isset($ad_data[$name])) {
             return $ad_data[$name];
