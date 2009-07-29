@@ -732,6 +732,7 @@ a.button span {
 }
 #bd-main-bd .lifestream li {
 	border-top:1px dashed #ddd;
+	overflow:auto;
 	padding:1em 0 0 26px;
 }
 #bd-main-bd .lifestream li:first-child {
@@ -740,7 +741,6 @@ a.button span {
 }
 #bd-main-bd .lifestream p {
 	margin-bottom:1em;
-	overflow:auto;
 }
 #bd-main-bd .lifestream strong {
 	color:#129bc1;
@@ -764,12 +764,16 @@ a.button span {
 #bd-main-bd .lifestream span.comments {
 	color:#ccc;
 	float:right;
-	margin-left:2em;
+	margin-left:1em;
 }
 #bd-main-bd .lifestream span.favorites,
 #bd-main-bd .lifestream span.comments {
+	padding-bottom:1em;
+}
+#bd-main-bd .lifestream span.favorites {
+}
+#bd-main-bd .lifestream span.comments {
 	clear:right;
-	width:30px;
 }
 #bd-main-bd .lifestream span.favorites a,
 #bd-main-bd .lifestream span.comments a {
