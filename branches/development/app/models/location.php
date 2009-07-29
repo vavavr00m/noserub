@@ -37,6 +37,17 @@ class Location extends AppModel {
         );
     }
     
+    public function add($data) {
+        $this->create();
+        if($this->save($data)) {
+            // now set UID
+            $url = Router::url('/locations/view/' . $this->id . '/', true);
+            $this->saveField('uid', md5($url));
+            
+            return true;
+        }
+    }
+    
     /**
      * Returns the last $limit locations this user created
      *

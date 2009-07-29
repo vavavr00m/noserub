@@ -57,6 +57,17 @@ class Event extends AppModel {
         );
     }
     
+    public function add($data) {
+        $this->create();
+        if($this->save($data)) {
+            // now set UID
+            $url = Router::url('/events/view/' . $this->id . '/', true);
+            $this->saveField('uid', md5($url));
+            
+            return true;
+        }
+    }
+    
     /**
      * Returns the last $limit events this user created
      *
