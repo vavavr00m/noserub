@@ -9,7 +9,6 @@
     $service_types = Configure::read('service_types');
 ?>
 <li class="<?php echo $service_types[$item['Entry']['service_type']]['token']; ?> icon">
-    <p>
     <span class="date">
         <?php
             if(!$with_date) {
@@ -20,14 +19,6 @@
             echo $label;
         ?>
     </span>
-    <span class="favorites">
-		<a href="#"></a>
-		<?php 
-			if(count($item['FavoritedBy'])) {
-				echo sprintf('&nbsp;(%d)', count($item['FavoritedBy']));
-			}
-		?>
-    </span>
 	<span class="comments">
 		<a href="#"></a>
 		<?php 
@@ -36,6 +27,15 @@
 			}
 		?>
 	</span>
+    <span class="favorites">
+		<a href="#"></a>
+		<?php 
+			if(count($item['FavoritedBy'])) {
+				echo sprintf('&nbsp;(%d)', count($item['FavoritedBy']));
+			}
+		?>
+    </span>
+    <p>
     <?php
         $splitted = split('/', $item['Identity']['username']);
         $splitted2 = split('@', $splitted[count($splitted)-1]);
