@@ -52,6 +52,7 @@ Router::connect('/entry/add/*', array('controller' => 'entries', 'action' => 'ad
 Router::connect('/entry/mark/*', array('controller' => 'entries', 'action' => 'mark'));
 Router::connect('/entry/*', array('controller' => 'entries', 'action' => 'view'));
 
+Router::connect('/admins/ads/:action', array('controller' => 'ads'));
 Router::connect('/admins/:action', array('controller' => 'admins'));
 Router::connect('/networks/:action', array('controller' => 'networks'));
 
