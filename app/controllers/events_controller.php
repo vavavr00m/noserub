@@ -21,7 +21,7 @@ class EventsController extends AppController {
             $this->data['Event']['to_datetime'] = $this->Event->deconstruct('to_datetime', $this->data['Event']['to_datetime']);
             $identity_id = Context::loggedInIdentityId();
             $this->data['Event']['identity_id'] = $identity_id;
-            if($this->Event->save($this->data)) {
+            if($this->Event->add($this->data)) {
                 $this->Event->Entry->addEvent($identity_id, $this->Event->id);
                 $this->flashMessage('success', __('Event added', true));
                 $this->redirect('/events/view/' . $this->Event->id);

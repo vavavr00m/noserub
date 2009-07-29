@@ -64,9 +64,6 @@ class LocationsController extends AppController {
             }
         }
         $data['Location']['identity_id'] = Context::loggedInIdentityId();
-        if(!@$data['Location']['id']) {
-            $this->Location->create();
-        }
         
         $saveable = array(
             'latitude', 'longitude', 'address', 
@@ -74,7 +71,11 @@ class LocationsController extends AppController {
             'identity_id', 'name', 'created'
         );
         
-        return $this->Location->save($data, true, $saveable);
+        if(!@$data['Location']['id']) {
+            return $this->Location->add($data, true, $saveable);
+        } else {
+            return $this->Location->save($data, true, $saveable);
+        }
     }
     
     public function edit() {

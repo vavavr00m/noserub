@@ -8,6 +8,6 @@
         echo $form->input('Location.type', array('label' => __('Type', true), 'type' => 'select', 'options' => $types));
         echo $form->input('Location.description', array('type' => 'textarea', 'label' => false, 'escape' => false));
         echo $form->input('Location.url', array('label' => __('URL', true)));
-        echo $form->end(array('label' => __('Send', true))); 
+        echo $form->end(array('label' => __('Create', true))); 
     } ?> 
 </div>
