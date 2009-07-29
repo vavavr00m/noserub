@@ -15,12 +15,7 @@ class LocationsController extends ApiAppController {
         $this->Location->contain();
         $data = $this->Location->findAllByIdentityId($this->identity_id, array('id', 'name'));
         
-        $this->set(
-            'data', 
-            array(
-                'Locations' => $data,
-            )
-        );
+        $this->set('data', array('data' => array('Locations' => $data)));
     }
 	
 	public function add() {
@@ -54,14 +49,14 @@ class LocationsController extends ApiAppController {
                     $this->Location->cacheQueries = false;
                     $this->Location->setTo($identity_id, $this->Location->id);
                 }
-                $this->set('data', array('id' => $this->Location->id, 'name' => $name));
+                $this->set('data', array('data' => array('id' => $this->Location->id, 'name' => $name)));
             } else {
             	header("HTTP/1.1 400 Bad Request");
-				$this->set('data', array('error' => 'Duplicate dataset'));
+				$this->set('data', array('data' => array('error' => 'Duplicate dataset')));
             }
 		} else {
 			header("HTTP/1.1 400 Bad Request");
-			$this->set('data', array('error' => 'Parameter name is missing'));
+			$this->set('data', array('data' => array('error' => 'Parameter name is missing')));
 		}
     }
 	
@@ -72,9 +67,9 @@ class LocationsController extends ApiAppController {
 		$data = $this->Location->Identity->read();
 		
 		if ($data['Location']['id'] != null) {
-			$this->set('data', array('id' => $data['Location']['id'], 'name' => $data['Location']['name']));
+			$this->set('data', array('data' => array('id' => $data['Location']['id'], 'name' => $data['Location']['name'])));
 		} else {
-			$this->set('data', array());
+			$this->set('data', array('data' => array()));
 		}
 	}
     
@@ -83,14 +78,14 @@ class LocationsController extends ApiAppController {
 			$location_id = $this->params['form']['location_id'];
 	        if ($this->Location->setTo($this->identity_id, $location_id)) {
 	        	$location = $this->Location->findById($location_id);
-	        	$this->set('data', array('id' => $location_id, 'name' => $location['Location']['name']));
+	        	$this->set('data', array('data' => array('id' => $location_id, 'name' => $location['Location']['name'])));
 	        } else {
 	            header("HTTP/1.1 400 Bad Request");
-	            $this->set('data', array('error' => 'No location with id: ' . $location_id));
+	            $this->set('data', array('data' => array('error' => 'No location with id: ' . $location_id)));
 	        }
 		} else {
 			header("HTTP/1.1 400 Bad Request");
-			$this->set('data', array('error' => 'Parameter location_id is missing'));
+			$this->set('data', array('data' => array('error' => 'Parameter location_id is missing')));
 		}
     }
 }
