@@ -1,6 +1,6 @@
 <?php 
 App::import('Vendor', 'json', array('file' => 'Zend'.DS.'Json.php'));
-$json = Zend_Json::encode(array('data' => $data));
+$json = Zend_Json::encode($data);
 
 if (!isset($this->params['url']['callback'])) {
 	echo $json;

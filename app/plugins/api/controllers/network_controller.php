@@ -13,7 +13,7 @@ class NetworkController extends ApiAppController {
 		$this->loadModel('Comment');
 		$comments = $this->Comment->getRecent(self::MAX_RECENT_COMMENTS);
 
-		$this->set('data', $this->formatComments($comments));
+		$this->set('data', array('data' => $this->formatComments($comments)));
 	}
 		
 	/**
@@ -41,7 +41,7 @@ class NetworkController extends ApiAppController {
         usort($items, 'sort_items');
         $items = $this->Cluster->removeDuplicates($items);
 
-		$this->set('data', $this->formatFavorites($items));
+		$this->set('data', array('data' => $this->formatFavorites($items)));
 	}
 	
 	/**
@@ -64,11 +64,11 @@ class NetworkController extends ApiAppController {
                 'allow_subscriptions' => Context::read('network.allow_subscriptions') ? true : false
             );
         } else {
-        	$data = array('error' => 'Info-API is disabled');
+        	$data = array('data' => array('error' => 'Info-API is disabled'));
         	header("HTTP/1.0 503 Service Unavailable");
         }
         
-        $this->set('data', $data);
+        $this->set('data', array('data' => $data));
     }
     
 	private function formatComments(array $comments) {
