@@ -11,7 +11,7 @@
  */
 class AppController extends Controller {
     public $helpers = array('noserub', 'javascript', 'html', 'form');
-    public $components = array('Cookie', 'RequestHandler');
+    public $components = array('Cookie', 'RequestHandler', 'ContentNegotiation');
     public $view = 'Theme';
     public $theme = 'default';
     
@@ -160,6 +160,10 @@ class AppController extends Controller {
     	        }
     	        # update security_token
     	        $this->Identity->updateSecurityToken();
+    	        
+    	        if(Context::isPage('profile.home') && $this->ContentNegotiation->isApplicationRdfXml()) {
+    	            $this->layout = 'rdf_xml';
+                }
             }
         }
     }

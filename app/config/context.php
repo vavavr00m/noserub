@@ -99,6 +99,10 @@ class Context {
         return strtolower($pageStructure) == $contextPageStructure;
     }
     
+    public static function isProfile() {
+        return Configure::read('context.page_structure.0') == 'profile';
+    }
+    
     /**
      * Returns the currently selected language
      * 
