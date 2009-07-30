@@ -237,7 +237,11 @@ class IdentitiesController extends AppController {
                 }
             }   
              
-            $saveable = array('firstname', 'lastname', 'about', 'sex', 'photo', 'address', 'address_shown', 'latitude', 'longitude', 'modified');
+            $saveable = array(
+                'firstname', 'lastname', 'about', 'sex',
+                'title', 'keyword', 'photo', 'address', 
+                'address_shown', 'latitude', 'longitude', 'modified'
+            );
             
             $this->Identity->id = $session_identity['id'];
             $this->Identity->save($this->data, false, $saveable);

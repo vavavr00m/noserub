@@ -54,6 +54,8 @@
 				<input type="radio" name="data[Identity][sex]" value="0"<?php echo $this->data['Identity']['sex'] == 0 ? ' checked="checked"' : ''; ?>> <span><?php __('rather not say'); ?></span>
 				<input type="radio" name="data[Identity][sex]" value="1"<?php echo $this->data['Identity']['sex'] == 1 ? ' checked="checked"' : ''; ?>> <span><?php __('female'); ?></span>
 				<input type="radio" name="data[Identity][sex]" value="2"<?php echo $this->data['Identity']['sex'] == 2 ? ' checked="checked"' : ''; ?>> <span><?php __('male'); ?></span>
+			    <?php echo $form->input('Identity.title', array('label' => 'Title (for profile)')); ?>
+			    <?php echo $form->input('Identity.keywords', array('label' => 'Keywords (for META Tag)')); ?>
 			</fieldset>
 		
 			<fieldset>
