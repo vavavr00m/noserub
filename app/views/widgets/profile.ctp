@@ -7,9 +7,9 @@ $name = $data['name'];
     	<?php echo $html->image($noserub->fnProfilePhotoUrl(), array('class' => 'photo', 'alt' => $name, 'width' => 130, 'height' => 130)); ?>
         <h1 class="fn"><?php echo $name; ?></h1>
         <?php echo $html->link($data['username'], 'http://' . $data['username'], array('class' => 'url')); ?>
-        <p class="role">
-            Art Director &amp; Designer
-        </p>
+        <?php if($data['title']) { ?>
+            <p class="role"><?php echo $data['title']; ?></p>
+        <?php } ?>
         <?php if($data['address_shown']) { ?>
             <p class="adr">
                 <span class="address"><?php echo $data['address_shown']; ?></span>
