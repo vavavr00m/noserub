@@ -16,8 +16,5 @@
                 echo '<li>' . $item . '</li>';
             } ?>
         </ul>
-        <p class="more">
-        	<a href="#"><?php __('show more'); ?></a>
-        </p>
     <?php } ?>
 </div>
