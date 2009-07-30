@@ -239,7 +239,7 @@ class IdentitiesController extends AppController {
              
             $saveable = array(
                 'firstname', 'lastname', 'about', 'sex',
-                'title', 'keyword', 'photo', 'address', 
+                'title', 'keywords', 'photo', 'address', 
                 'address_shown', 'latitude', 'longitude', 'modified'
             );
             

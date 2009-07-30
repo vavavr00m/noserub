@@ -25,6 +25,12 @@ class WidgetsController extends AppController {
         $this->render($type . '_navigation');
  	}
  	
+ 	public function meta_keywords() {
+ 	    if(Context::isPage('profile.home')) {
+ 	        $this->set('keywords', Context::read('identity.keywords'));
+ 	    } 
+ 	}
+ 	
  	public function search() {
  	    $q = isset($this->params['url']['q']) ? $this->params['url']['q'] : '';
         $q = strtolower(htmlspecialchars(strip_tags($q), ENT_QUOTES, 'UTF-8'));
