@@ -20,7 +20,7 @@
         ?>
     </span>
 	<span class="comments">
-		<a href="#"></a>
+	    <?php echo $html->link('', '/entry/' . $item['Entry']['id']); ?>
 		<?php 
 			if(count($item['Comment'])) {
 				echo sprintf('&nbsp;(%d)', count($item['Comment']));
@@ -28,7 +28,9 @@
 		?>
 	</span>
     <span class="favorites">
-		<a href="#"></a>
+        <?php if($item['Entry']['service_type'] != 0) {
+            echo $noserub->link('/entry/toggle/mark/', $item['Entry']['id']); 
+        } ?>
 		<?php 
 			if(count($item['FavoritedBy'])) {
 				echo sprintf('&nbsp;(%d)', count($item['FavoritedBy']));

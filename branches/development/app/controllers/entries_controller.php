@@ -215,7 +215,7 @@ class EntriesController extends AppController {
             $this->Entry->FavoritedBy->delete();
             # todo: remove the NoseRub social stream entry for this
             $this->flashMessage('success', __('Unmarked the entry.', true));
-            $this->redirect('/entry/' . $entry_id . '/');
+            $this->redirect($this->referer());
         } else {
             # mark the item
             $data = array(
@@ -231,7 +231,7 @@ class EntriesController extends AppController {
             $Mail = new Mail();
             $Mail->notifyFavorite($session_identity['id'], $entry_id);
             
-            $this->redirect('/entry/' . $entry_id . '/');
+            $this->redirect($this->referer());
         }
     }
     

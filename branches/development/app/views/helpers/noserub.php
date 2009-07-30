@@ -107,7 +107,7 @@ class NoserubHelper extends AppHelper {
         return '<input type="hidden" name="security_token" value="' . $this->fnSecurityToken() . '" />';
     }
     
-    public function link($url) {
+    public function link($url, $data = null) {
         switch($url) {
             case '/groups/add/':
                 return $this->linkGroupAdd();
@@ -121,8 +121,22 @@ class NoserubHelper extends AppHelper {
             case '/message/send/':
                 return $this->linkSendMessage();
             
+            case '/entry/toggle/mark/':
+                return $this->linkEntryToggleMark($data);
+                
             default:
                 return '';
+        }
+    }
+    
+    private function linkEntryToggleMark($entry_id) {
+        if(Context::isLoggedIn()) {
+            return $this->html->link(
+                '',
+                '/entry/mark/' . $entry_id . '/_t:' . $this->fnSecurityToken()
+            );
+        } else {
+            return '';
         }
     }
     
