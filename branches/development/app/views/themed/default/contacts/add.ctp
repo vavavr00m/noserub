@@ -9,7 +9,7 @@
 				<?php __("You can either enter an URL or a NoseRub-ID (noserubserver.com/MyBuddy). Naturally you would want to add a contact's blog as an URL, or his/her FriendFeed-URL."); ?>
 			</p>
 			<?php 
-				echo $form->create('Contact', array('add'));
+				echo $form->create('Contact');
 				echo $form->input('Contact.noserub_id', 
 								  array('label' => __('NoseRub-ID / URL', true),
 										'size'  => 32,
