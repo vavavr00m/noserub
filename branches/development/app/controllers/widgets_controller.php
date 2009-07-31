@@ -662,7 +662,7 @@ class WidgetsController extends AppController {
         
         if($layout == 'rdf') {
             $this->render('contacts_rdf');
-        } else if($ayout == 'list') {
+        } else if($layout == 'list') {
             $this->render('contacts_list');
         } else {
             $this->render('contacts_box');
