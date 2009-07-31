@@ -3,7 +3,7 @@ class TwitterService extends AbstractService {
 	
 	public function init() {
 	    $this->name = 'Twitter';
-        $this->url = 'http://twitter.com/';
+        $this->url = 'http://twitter.com';
         $this->service_type = 5;
         $this->icon = 'twitter.gif';
         $this->has_feed = true;
