@@ -11,6 +11,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<meta http-equiv="Content-Language" content="<?php echo Context::language(); ?>" />
+		<?php echo $noserub->widgetMetaDescription(); ?>
 		<?php echo $noserub->widgetMetaKeywords(); ?>
 		<title><?php echo $title; ?></title>
 

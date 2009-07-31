@@ -31,6 +31,12 @@ class WidgetsController extends AppController {
  	    } 
  	}
  	
+ 	public function meta_description() {
+ 	    if(Context::isPage('profile.home')) {
+ 	        $this->set('description', Context::read('identity.about'));
+ 	    } 
+ 	}
+ 	
  	public function search() {
  	    $q = isset($this->params['url']['q']) ? $this->params['url']['q'] : '';
         $q = strtolower(htmlspecialchars(strip_tags($q), ENT_QUOTES, 'UTF-8'));
