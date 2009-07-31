@@ -660,7 +660,9 @@ class WidgetsController extends AppController {
         $data = $this->Contact->getForDisplay($identity_id, $contact_filter, $limit);
         $this->set('data', $data);
         
-        if($layout == 'list') {
+        if($layout == 'rdf') {
+            $this->render('contacts_rdf');
+        } else if($ayout == 'list') {
             $this->render('contacts_list');
         } else {
             $this->render('contacts_box');
