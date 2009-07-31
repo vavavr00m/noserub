@@ -46,21 +46,29 @@ class Service extends AppModel {
      *
      * @return array with feed_url, service and service_type 
      */
-     /*
     public function getInfo($service_url, $username) {
         # get service
-        $this->contain();
-        $service = $this->findByUrl($service_url);
+        $service = false;
+        $service_name = '';
+        $services = Configure::read('services.data');
+        foreach($services as $key => $item) {
+            if($item['url'] == $service_url) {
+                $service_name = $key;
+                $service = $item;
+                break;
+            }
+        }
         
         $result = array();
         if($service) {
-            $result['service_type'] = $service['Service']['service_type'];
-            $result['feed_url'] = $this->getFeedUrl($service, $username); 
+            $result['service'] = $service_name;
+            $result['service_type'] = $service['service_type'];
+            $result['feed_url'] = $this->getFeedUrl($service_name, $username); 
         }
         
         return $result;
     }
-    */
+
     public function getServiceTypeId($service_name) {
         $service = $this->getService($service_name);
         
