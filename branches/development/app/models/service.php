@@ -47,15 +47,32 @@ class Service extends AppModel {
      * @return array with feed_url, service and service_type 
      */
     public function getInfo($service_url, $username) {
+        App::import('Vendor', 'UrlUtil');
+    	$service_url = UrlUtil::unify($service_url);
+    	
         # get service
         $service = false;
         $service_name = '';
         $services = Configure::read('services.data');
         foreach($services as $key => $item) {
-            if($item['url'] == $service_url) {
-                $service_name = $key;
-                $service = $item;
-                break;
+            // $item['url'] is normally no arary,
+            // but for delicious.com and del.icio.us we
+            // need them. So here we treat the field,
+            // as if it is always an arary.
+            $urls = $item['url'];
+            if(!is_array($urls)) {
+                $urls = array($item['url']);
+            }
+            foreach($urls as $raw_url) {
+                $url = UrlUtil::unify($raw_url);
+                if($url == $service_url) {
+                    $service_name = $key;
+                    $service = $item;
+                    break;
+                }
+                if($service) {
+                    break;
+                }
             }
         }
         
@@ -64,6 +81,7 @@ class Service extends AppModel {
             $result['service'] = $service_name;
             $result['service_type'] = $service['service_type'];
             $result['feed_url'] = $this->getFeedUrl($service_name, $username); 
+            $result['username'] = $username;
         }
         
         return $result;
@@ -408,6 +426,10 @@ abstract class AbstractService extends Object {
 	}
 	
 	public function getUrl() {
+	    if(is_array($this->url)) {
+	        // used for example in delicious.com / del.icio.us
+	        return $this->url[0];
+	    }
         return $this->url;
 	}
 	
