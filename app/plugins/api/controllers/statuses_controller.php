@@ -1,6 +1,26 @@
 <?php
 /* Part of the twitter-compatible API */
 class StatusesController extends ApiAppController {
+	public $components = array('OauthServiceProvider');
+	
+	public function friends_timeline() {
+		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+		$accessToken = ClassRegistry::init('AccessToken');
+		$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		
+		$this->loadModel('Contact');
+
+        $data = $this->Contact->getForDisplay($identity_id, array());
+		$contacts = array();
+        foreach($data as $key => $value) {
+        	$contacts[] = $value['WithIdentity'];
+        }
+        $contact_ids = Set::extract($contacts, '{n}.id');
+        $contact_ids[] = $identity_id;
+
+        $conditions = array('identity_id' => $contact_ids);
+        $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, 20, true))));		
+	}
 	
 	public function public_timeline() {
 		$this->loadModel('Entry');
