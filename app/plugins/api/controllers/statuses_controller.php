@@ -28,6 +28,18 @@ class StatusesController extends ApiAppController {
 		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), self::DEFAULT_LIMIT, false))));
 	}
 	
+	public function user_timeline() {
+		if (isset($this->params['pass'][0])) {
+			if (is_numeric($this->params['pass'][0])) {
+				$identity_id = $this->params['pass'][0];
+			}
+		}
+		
+		$this->loadModel('Entry');
+		$conditions = array('identity_id' => $identity_id);
+		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, false))));
+	}
+	
 	private function formatStatuses(array $statuses) {
 		$data = array();
 		
