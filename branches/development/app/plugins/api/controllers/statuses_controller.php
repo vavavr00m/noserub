@@ -2,6 +2,7 @@
 /* Part of the twitter-compatible API */
 class StatusesController extends ApiAppController {
 	public $components = array('OauthServiceProvider');
+	const DEFAULT_LIMIT = 20;
 	
 	public function friends_timeline() {
 		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
@@ -19,12 +20,12 @@ class StatusesController extends ApiAppController {
         $contact_ids[] = $identity_id;
 
         $conditions = array('identity_id' => $contact_ids);
-        $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, 20, true))));		
+        $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, true))));		
 	}
 	
 	public function public_timeline() {
 		$this->loadModel('Entry');
-		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), 20, false))));
+		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), self::DEFAULT_LIMIT, false))));
 	}
 	
 	private function formatStatuses(array $statuses) {
