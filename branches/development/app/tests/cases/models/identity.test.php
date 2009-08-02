@@ -7,19 +7,6 @@ class IdentityModelTestCase extends CakeTestCase {
 		$this->model = new Identity();
 	}
 	
-	# removeHttpWww($url)
-	public function testRemoveHttpWww() {
-	    $tests = array('http://identoo.com/dirk.olbertz'      => 'identoo.com/dirk.olbertz',
-	                   'https://identoo.com/dirk.olbertz'     => 'identoo.com/dirk.olbertz',
-	                   'http://www.identoo.com/dirk.olbertz'  => 'identoo.com/dirk.olbertz',
-	                   'https://www.identoo.com/dirk.olbertz' => 'identoo.com/dirk.olbertz',
-	                   'http://www.www.test.com/www.olbertz'  => 'www.test.com/www.olbertz');
-	
-	    foreach($tests as $before => $after) {
-	        $this->assertEqual($after, $this->model->removeHttpWww($before));
-	    }
-	}
-	
 	# splitUsername($username)
 	public function testSplitUsernameLocal() {
 		$server_base = $this->getServerBase();

@@ -10,6 +10,18 @@ class UrlUtilTest extends CakeTestCase {
 		$this->assertEqual('', UrlUtil::addHttpIfNoProtocolSpecified(''));
 	}
 
+	public function testRemoveHttpWww() {
+	    $tests = array('http://identoo.com/dirk.olbertz'      => 'identoo.com/dirk.olbertz',
+	                   'https://identoo.com/dirk.olbertz'     => 'identoo.com/dirk.olbertz',
+	                   'http://www.identoo.com/dirk.olbertz'  => 'identoo.com/dirk.olbertz',
+	                   'https://www.identoo.com/dirk.olbertz' => 'identoo.com/dirk.olbertz',
+	                   'http://www.www.test.com/www.olbertz'  => 'www.test.com/www.olbertz');
+	
+	    foreach($tests as $before => $after) {
+	        $this->assertEqual($after, UrlUtil::removeHttpWww($before));
+	    }
+	}
+	
 	public function testRemoveHttpAndHttps() {
 		$this->assertEqual('example.com', UrlUtil::removeHttpAndHttps('example.com'));
 		$this->assertEqual('example.com', UrlUtil::removeHttpAndHttps('http://example.com'));
