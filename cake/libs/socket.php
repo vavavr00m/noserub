@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: socket.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: socket.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Cake Socket connection class.
  *
@@ -120,7 +120,11 @@ class CakeSocket extends Object {
 			$this->setLastError($errStr, $errNum);
 		}
 
-		return $this->connected = is_resource($this->connection);
+		$this->connected = is_resource($this->connection);
+		if ($this->connected) {
+			stream_set_timeout($this->connection, $this->config['timeout']);
+		}
+		return $this->connected;
 	}
 
 /**
@@ -218,7 +222,13 @@ class CakeSocket extends Object {
 		}
 
 		if (!feof($this->connection)) {
-			return fread($this->connection, $length);
+			$buffer = fread($this->connection, $length);
+			$info = stream_get_meta_data($this->connection);
+			if ($info['timed_out']) {
+				$this->setLastError(E_WARNING, __('Connection timed out', true));
+				return false;
+			}
+			return $buffer;
 		} else {
 			return false;
 		}

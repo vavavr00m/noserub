@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: file.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -366,12 +366,13 @@ class File extends Object {
 	function md5($maxsize = 5) {
 		if ($maxsize === true) {
 			return md5_file($this->path);
-		} else {
-			$size = $this->size();
-			if ($size && $size < ($maxsize * 1024) * 1024) {
-				return md5_file($this->path);
-			}
 		}
+
+		$size = $this->size();
+		if ($size && $size < ($maxsize * 1024) * 1024) {
+			return md5_file($this->path);
+		}
+
 		return false;
 	}
 /**

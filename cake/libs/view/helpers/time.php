@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: time.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: time.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Time Helper class file.
  *
@@ -481,7 +481,7 @@ class TimeHelper extends AppHelper {
  * @return bool
  */
 	function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
-		$tmp = r(' ', '', $timeInterval);
+		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
 			$timeInterval = $tmp . ' ' . __('days', true);
 		}

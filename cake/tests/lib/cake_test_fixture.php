@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_fixture.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: cake_test_fixture.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -32,6 +32,12 @@
  */
 class CakeTestFixture extends Object {
 /**
+ * Name of the object
+ *
+ * @var string
+ **/
+	var $name = null;
+/**
  * Cake's DBO driver (e.g: DboMysql).
  *
  * @access public
@@ -43,7 +49,6 @@ class CakeTestFixture extends Object {
  * @access public
  */
 	var $table = null;
-
 /**
  * Instantiate the fixture.
  *

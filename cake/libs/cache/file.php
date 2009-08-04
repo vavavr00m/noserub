@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: file.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * File Storage engine for cache
  *
@@ -168,7 +168,6 @@ class FileEngine extends CacheEngine {
 
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			$this->__File->close();
-			$this->__File->delete();
 			return false;
 		}
 		$data = $this->__File->read(true);

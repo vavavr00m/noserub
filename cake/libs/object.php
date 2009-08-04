@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: object.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -77,9 +77,10 @@ class Object {
 /**
  * Calls a controller's method from any location.
  *
- * @param string $url URL in the form of Cake URL ("/controller/method/parameter")
+ * @param mixed $url String or array-based url.
  * @param array $extra if array includes the key "return" it sets the AutoRender to true.
- * @return mixed Success (true/false) or contents if 'return' is set in $extra
+ * @return mixed Boolean true or false on success/failure, or contents
+ *               of rendered action if 'return' is set in $extra.
  * @access public
  */
 	function requestAction($url, $extra = array()) {

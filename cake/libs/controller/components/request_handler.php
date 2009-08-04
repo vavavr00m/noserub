@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: request_handler.php 8166 2009-05-04 21:17:19Z gwoo $ */
+/* SVN FILE: $Id: request_handler.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -585,7 +585,7 @@ class RequestHandlerComponent extends Object {
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
 		} else {
-			$remove = preg_replace("/(?:\/{$type})$/", '/' . $type, $controller->viewPath);
+			$remove = preg_replace("/(?:\/{$this->__renderType})$/", '/' . $type, $controller->viewPath);
 			$controller->viewPath = $remove;
 		}
 		$this->__renderType = $type;

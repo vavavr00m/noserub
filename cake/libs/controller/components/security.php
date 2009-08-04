@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: security.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: security.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -323,7 +323,7 @@ class SecurityComponent extends Object {
 
 		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
-			$out[] = 'nonce="' . uniqid() . '"';
+			$out[] = 'nonce="' . uniqid("") . '"';
 			$out[] = 'opaque="' . md5($options['realm']).'"';
 		}
 

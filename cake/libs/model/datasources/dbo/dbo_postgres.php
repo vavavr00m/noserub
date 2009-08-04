@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_postgres.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dbo_postgres.php 8283 2009-08-03 20:49:17Z gwoo $ */
 
 /**
  * PostgreSQL layer for DBO.
@@ -275,6 +275,9 @@ class DboPostgres extends DboSource {
 			case 'inet':
 			case 'float':
 			case 'integer':
+			case 'date':
+			case 'datetime':
+			case 'timestamp':
 				if ($data === '') {
 					return $read ? 'NULL' : 'DEFAULT';
 				}

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: tree.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: tree.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Tree behavior class.
  *
@@ -877,9 +877,10 @@ class TreeBehavior extends ModelBehavior {
 				$scope['NOT'][$Model->alias . '.' . $Model->primaryKey] = $Model->id;
 			}
 		}
+		$name = $Model->alias . '.' . $right;
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
-			'fields' => $db->calculate($Model, 'max', array($right)),
+			'fields' => $db->calculate($Model, 'max', array($name, $right)),
 			'recursive' => $recursive
 		)));
 		return (empty($edge[$right])) ? 0 : $edge[$right];
@@ -895,9 +896,10 @@ class TreeBehavior extends ModelBehavior {
  */
 	function __getMin($Model, $scope, $left, $recursive = -1) {
 		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+		$name = $Model->alias . '.' . $left;
 		list($edge) = array_values($Model->find('first', array(
 			'conditions' => $scope,
-			'fields' => $db->calculate($Model, 'min', array($left)),
+			'fields' => $db->calculate($Model, 'min', array($name, $left)),
 			'recursive' => $recursive
 		)));
 		return (empty($edge[$left])) ? 0 : $edge[$left];

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_reporter.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: cake_reporter.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -91,7 +91,6 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<strong>" . $this->getFailCount() . "</strong> fails and ";
 		echo "<strong>" . $this->getExceptionCount() . "</strong> exceptions.";
 		echo "</div>\n";
-		echo "</body>\n</html>\n";
 	}
 /**
  * Paints the test failure with a breadcrumbs
