@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: text.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: text.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Text Helper
  *
@@ -277,17 +277,20 @@ class TextHelper extends AppHelper {
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
+
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
+
 		$textLen = strlen($text);
+
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
+		$excerpt = substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}

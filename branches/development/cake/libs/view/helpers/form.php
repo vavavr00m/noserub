@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: form.php 8166 2009-05-04 21:17:19Z gwoo $ */
+/* SVN FILE: $Id: form.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -853,7 +853,7 @@ class FormHelper extends AppHelper {
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
 		);
-		if (isset($options['disabled'])) {
+		if (isset($options['disabled']) && $options['disabled'] == true) {
 			$hiddenOptions['disabled'] = 'disabled';
 		}
 		$output = $this->hidden($fieldName, $hiddenOptions);

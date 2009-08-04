@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_config.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: db_config.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * The DbConfig Task handles creating and updating the database.php
  *
@@ -240,7 +240,7 @@ class DbConfigTask extends Shell {
 		$this->hr();
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
 			return $config;
 		}
 		return false;
@@ -281,7 +281,7 @@ class DbConfigTask extends Shell {
 				if ($info['persistent'] === false) {
 					$info['persistent'] = 'false';
 				} else {
-					$info['persistent'] = 'false';
+					$info['persistent'] = ($info['persistent'] == true) ? 'true' : 'false';
 				}
 
 				$oldConfigs[] = array(

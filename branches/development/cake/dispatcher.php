@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dispatcher.php 8166 2009-05-04 21:17:19Z gwoo $ */
+/* SVN FILE: $Id: dispatcher.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.
@@ -515,10 +515,10 @@ class Dispatcher extends Object {
 				parse_str($uri[1], $_GET);
 			}
 			$uri = $uri[0];
-		} elseif (empty($uri) && is_string(env('QUERY_STRING'))) {
+		} else {
 			$uri = env('QUERY_STRING');
 		}
-		if (strpos($uri, 'index.php') !== false) {
+		if (is_string($uri) && strpos($uri, 'index.php') !== false) {
 			list(, $uri) = explode('index.php', $uri, 2);
 		}
 		if (empty($uri) || $uri == '/' || $uri == '//') {

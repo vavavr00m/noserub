@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: dbo_mysql.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * MySQL layer for DBO
  *
@@ -481,9 +481,11 @@ class DboMysql extends DboMysqlBase {
 
 		if ($parent != null) {
 			return $parent;
-		} elseif ($data === null || (is_array($data) && empty($data))) {
+		}
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
-		} elseif ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
+		}
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		if (empty($column)) {

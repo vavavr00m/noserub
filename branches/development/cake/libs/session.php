@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: session.php 8166 2009-05-04 21:17:19Z gwoo $ */
+/* SVN FILE: $Id: session.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Session class for Cake.
  *
@@ -137,22 +137,23 @@ class CakeSession extends Object {
 		$this->time = time();
 
 		if ($start === true) {
-			$this->host = env('HTTP_HOST');
-
-			if (empty($base) || strpos($base, '?') === 0 || strpos($base, 'index.php') === 0) {
-				$this->path = '/';
-			} else {
+			if (!empty($base)) {
 				$this->path = $base;
+				if (strpos($base, 'index.php') !== false) {
+				   $this->path = str_replace('index.php', '', $base);
+				}
+				if (strpos($base, '?') !== false) {
+				   $this->path = str_replace('?', '', $base);
+				}
 			}
+			$this->host = env('HTTP_HOST');
 
 			if (strpos($this->host, ':') !== false) {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
-
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
-
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
 		}

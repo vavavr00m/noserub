@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cake_test_case.php 8166 2009-05-04 21:17:19Z gwoo $ */
+/* SVN FILE: $Id: cake_test_case.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * CakeTestCase file
  *
@@ -425,10 +425,11 @@ class CakeTestCase extends UnitTestCase {
 				return;
 			}
 			foreach ($this->_fixtures as $fixture) {
-				if (in_array($fixture->table, $sources)) {
+				$table = $this->db->config['prefix'] . $fixture->table;
+				if (in_array($table, $sources)) {
 					$fixture->drop($this->db);
 					$fixture->create($this->db);
-				} elseif (!in_array($fixture->table, $sources)) {
+				} elseif (!in_array($table, $sources)) {
 					$fixture->create($this->db);
 				}
 			}
