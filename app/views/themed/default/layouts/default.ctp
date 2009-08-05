@@ -29,8 +29,8 @@
 					<?php echo $noserub->widgetNavigation('main'); ?>
 				    <div>
 						<ul>
-							<li>
-								<a class="toggle" href="#">(-)</a>
+							<li class="invite">
+								<span class="icon"></span>
 								<a class="head" href="#">Invite People</a>
 								<p>
 									Let's build a better community together!

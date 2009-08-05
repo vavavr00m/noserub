@@ -8,17 +8,20 @@
 	    <?php echo $noserub->widgetUnreadMessages(); ?>
 		
         <ul>
-            <li>
+            <li class="home">
+				<span class="icon"></span>
                 <?php echo $html->link(__('Home', true), '/activities/', array('class' => 'head')); ?>
             </li>
-            <li>
+            <li class="contacts">
+				<span class="icon"></span>
     			<a class="toggle" href="#">(-)</a>
     			<?php echo $html->link(__('My Contacts', true), '/contacts/', array('class' => 'head')); ?>
     			<ul>
     				<li><?php echo $html->link(__('Add new contact', true), $base_url . 'contacts/add/'); ?></li>
     			</ul>
     		</li>
-            <li>
+            <li class="profile">
+				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('My Profile', true), $base_url, array('class' => 'head')); ?>
                 <ul>
@@ -26,7 +29,8 @@
                     <li><?php echo $html->link(__('My Messages', true), '/messages/inbox/'); ?></li>
                 </ul>
             </li>
-            <li>
+            <li class="groups">
+				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('Groups', true), $base_url . '/groups/', array('class' => 'head')); ?>
                 <?php if($groups) { ?>
@@ -37,7 +41,8 @@
                     </ul>
                 <?php } ?>
             </li>
-            <li>
+            <li class="locations">
+				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('Locations', true), $base_url . '/locations/', array('class' => 'head')); ?>
                 <?php if($locations) { ?>
@@ -48,7 +53,8 @@
                     </ul>
                 <?php } ?>
             </li>
-            <li>
+            <li class="events">
+				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('Events', true), $base_url . '/events/', array('class' => 'head')); ?>
                 <?php if($events) { ?>
@@ -59,7 +65,8 @@
                     </ul>
                 <?php } ?>
             </li>    
-            <li>
+            <li class="networks">
+				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
                 <?php echo $html->link(__('Networks', true), $base_url . '/networks/', array('class' => 'head')); ?>
                 <?php if($networks) { ?>

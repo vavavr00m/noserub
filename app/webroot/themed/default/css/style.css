@@ -363,11 +363,49 @@ a.button span {
 	display:block;
 	margin-top:15px;
 	padding-top:15px;
+	position:relative;
 }
 #sidebar > div > ul > li:first-child {
 	border-top:none;
 	margin-top:0;
 	padding-top:0;
+}
+#sidebar > div > ul > li span.icon {
+	background-image:url(../img/icon_nav.png);
+	background-repeat:no-repeat;
+	display:block;
+	height:1.4em;
+	left:0;
+	position:absolute;
+	top:15px;
+	width:12px;
+}
+#sidebar > div > ul > li:first-child span.icon {
+	top:0;
+}
+#sidebar > div > ul > li.home span.icon {
+	background-position:0px 50%;
+}
+#sidebar > div > ul > li.contacts span.icon {
+	background-position:-12px 50%;
+}
+#sidebar > div > ul > li.profile span.icon {
+	background-position:-24px 50%;
+}
+#sidebar > div > ul > li.groups span.icon {
+	background-position:-36px 50%;
+}
+#sidebar > div > ul > li.locations span.icon {
+	background-position:-48px 50%;
+}
+#sidebar > div > ul > li.events span.icon {
+	background-position:-48px 50%;
+}
+#sidebar > div > ul > li.networks span.icon {
+	background-position:-48px 50%;
+}
+#sidebar > div > ul > li.invite span.icon {
+	background-position:-72px 50%;
 }
 #sidebar ul a.head {
 	font-weight:bold;
@@ -744,7 +782,7 @@ a.button span {
 	background-image:url(../img/icon_service_type.png);
 	background-repeat:no-repeat;
 	display:block;
-	height:16px;
+	height:1.4em;
 	left:0;
 	position:absolute;
 	top:1em;
