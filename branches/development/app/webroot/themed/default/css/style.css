@@ -734,10 +734,54 @@ a.button span {
 	border-top:1px dashed #ddd;
 	overflow:auto;
 	padding:1em 0 0 26px;
+	position:relative;
 }
 #bd-main-bd .lifestream li:first-child {
 	border:none;
 	padding-top:0;
+}
+#bd-main-bd .lifestream li span.icon {
+	background-image:url(../img/icon_service_type.png);
+	background-repeat:no-repeat;
+	display:block;
+	height:16px;
+	left:0;
+	position:absolute;
+	top:1em;
+	width:16px;
+}
+#bd-main-bd .lifestream li:first-child span.icon {
+	top:0;
+}
+#bd-main-bd .lifestream li.noserub span.icon {
+	background-position:0px 50%;
+}
+#bd-main-bd .lifestream li.photo span.icon {
+	background-position:-16px 50%;
+}
+#bd-main-bd .lifestream li.link span.icon {
+	background-position:-32px 50%;
+}
+#bd-main-bd .lifestream li.text span.icon {
+	background-position:-48px 50%;
+}
+#bd-main-bd .lifestream li.event span.icon {
+	background-position:-64px 50%;
+}
+#bd-main-bd .lifestream li.micropublish span.icon {
+	background-position:-80px 50%;
+}
+#bd-main-bd .lifestream li.video span.icon {
+	background-position:-96px 50%;
+}
+#bd-main-bd .lifestream li.audio span.icon {
+	background-position:-112px 50%;
+}
+#bd-main-bd .lifestream li.document span.icon {
+	background-position:-128px 50%;
+}
+#bd-main-bd .lifestream li.location span.icon {
+	background-position:-144px 50%;
 }
 #bd-main-bd .lifestream p {
 	margin-bottom:1em;
