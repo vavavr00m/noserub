@@ -8,7 +8,8 @@
     
     $service_types = Configure::read('service_types');
 ?>
-<li class="<?php echo $service_types[$item['Entry']['service_type']]['token']; ?> icon">
+<li class="<?php echo $service_types[$item['Entry']['service_type']]['token']; ?>">
+	<span class="icon"></span>
     <span class="date">
         <?php
             if(!$with_date) {
