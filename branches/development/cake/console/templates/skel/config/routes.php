@@ -1,10 +1,12 @@
 <?php
 /* SVN FILE: $Id$ */
-/*Sessions schema generated on: 2007-11-25 07:11:54 : 1196004714*/
+
 /**
- * This is Sessions Schema file
+ * Short description for file.
  *
- * Use it to configure database for Sessions
+ * In this file, you set up routes to your controllers and their actions.
+ * Routes are very important mechanism that allows you to freely connect
+ * different urls to chosen controllers and their actions (functions).
  *
  * PHP versions 4 and 5
  *
@@ -18,36 +20,23 @@
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
- * @subpackage    cake.app.config.sql
+ * @subpackage    cake.app.config
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/*
- *
- * Using the Schema command line utility
- * cake schema run create Sessions
- *
+
+/**
+ * Here, we are connecting '/' (base path) to controller called 'Pages',
+ * its action called 'display', and we pass a param to select the view file
+ * to use (in this case, /app/views/pages/home.ctp)...
  */
-class SessionsSchema extends CakeSchema {
+	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 
-	var $name = 'Sessions';
-
-	function before($event = array()) {
-		return true;
-	}
-
-	function after($event = array()) {
-	}
-
-	var $cake_sessions = array(
-			'id' => array('type'=>'string', 'null' => false, 'key' => 'primary'),
-			'data' => array('type'=>'text', 'null' => true, 'default' => NULL),
-			'expires' => array('type'=>'integer', 'null' => true, 'default' => NULL),
-			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
-		);
-
-}
+/**
+ * ...and connect the rest of 'Pages' controller's urls.
+ */
+	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 ?>

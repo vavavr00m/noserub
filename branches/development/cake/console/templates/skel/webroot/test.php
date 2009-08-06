@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: test.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -20,20 +21,29 @@
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4433
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-error_reporting(E_ALL);
+/**
+ * PHP 5.3 raises many notices in bootstrap.
+ */
+if (!defined('E_DEPRECATED')) {
+   define('E_DEPRECATED', 8192);
+}
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 set_time_limit(0);
 ini_set('memory_limit','128M');
 ini_set('display_errors', 1);
+
 /**
  * Use the DS to separate the directories in other defines
  */
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -47,6 +57,7 @@ ini_set('display_errors', 1);
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The actual directory name for the "app".
  *
@@ -54,6 +65,7 @@ ini_set('display_errors', 1);
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
@@ -86,7 +98,7 @@ if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
-$corePath = Configure::corePaths('cake');
+$corePath = App::core('cake');
 if (isset($corePath[0])) {
 	define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
 } else {
@@ -105,6 +117,7 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 if (empty( $_GET['output'])) {
 	$_GET['output'] = 'html';
 }
+
 /**
  *
  * Used to determine output to display

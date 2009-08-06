@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: index.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -20,16 +21,18 @@
  * @subpackage    cake.app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Use the DS to separate the directories in other defines
  */
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -43,6 +46,7 @@
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The actual directory name for the "app".
  *
@@ -50,6 +54,7 @@
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
@@ -85,7 +90,7 @@
 		return;
 	} else {
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch($url);
+		$Dispatcher->dispatch();
 	}
 	if (Configure::read() > 0) {
 		echo "<!-- " . round(getMicrotime() - $TIME_START, 4) . "s -->";
