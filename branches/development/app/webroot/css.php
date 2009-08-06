@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: css.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -20,7 +20,7 @@
  * @subpackage    cake.app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
