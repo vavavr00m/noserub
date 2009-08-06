@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: object.php 8283 2009-08-03 20:49:17Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -21,10 +22,11 @@
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
@@ -35,6 +37,7 @@
  * @subpackage    cake.cake.libs
  */
 class Object {
+
 /**
  * Log object
  *
@@ -42,6 +45,7 @@ class Object {
  * @access protected
  */
 	var $_log = null;
+
 /**
  * A hack to support __construct() on PHP 4
  * Hint: descendant classes have no PHP4 class_name() constructors,
@@ -57,6 +61,7 @@ class Object {
 		}
 		call_user_func_array(array(&$this, '__construct'), $args);
 	}
+
 /**
  * Class constructor, overridden in descendant classes.
  */
@@ -74,6 +79,7 @@ class Object {
 		$class = get_class($this);
 		return $class;
 	}
+
 /**
  * Calls a controller's method from any location.
  *
@@ -100,6 +106,7 @@ class Object {
 		$dispatcher = new Dispatcher;
 		return $dispatcher->dispatch($url, $params);
 	}
+
 /**
  * Calls a method on this object with the given parameters. Provides an OO wrapper
  * for call_user_func_array, and improves performance by using straight method calls
@@ -129,6 +136,7 @@ class Object {
 			break;
 		}
 	}
+
 /**
  * Stop execution of the current script
  *
@@ -139,6 +147,7 @@ class Object {
 	function _stop($status = 0) {
 		exit($status);
 	}
+
 /**
  * API for logging events.
  *
@@ -149,7 +158,7 @@ class Object {
  */
 	function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
-			uses('cake_log');
+			require LIBS . 'cake_log.php';
 		}
 		if (is_null($this->_log)) {
 			$this->_log = new CakeLog();
@@ -159,6 +168,7 @@ class Object {
 		}
 		return $this->_log->write($type, $msg);
 	}
+
 /**
  * Allows setting of multiple properties of the object in a single line of code.
  *
@@ -176,6 +186,7 @@ class Object {
 			}
 		}
 	}
+
 /**
  * Used to report user friendly errors.
  * If there is a file app/error.php or app/app_error.php this file will be loaded
@@ -204,6 +215,7 @@ class Object {
 		}
 		return $error;
 	}
+
 /**
  * Checks for a persistent class file, if found file is opened and true returned
  * If file is not found a file is created and false returned
@@ -234,6 +246,7 @@ class Object {
 			return true;
 		}
 	}
+
 /**
  * You should choose a unique name for the persistent file
  *
@@ -255,6 +268,7 @@ class Object {
 		}
 		cache($file, $data, $duration);
 	}
+
 /**
  * Open the persistent class file for reading
  * Used by Object::_persist()

@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: cake_log.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Logging.
  *
@@ -20,10 +21,11 @@
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Included libraries.
  *
@@ -31,6 +33,7 @@
 	if (!class_exists('File')) {
 		require LIBS . 'file.php';
 	}
+
 /**
  * Set up error level constants to be used within the framework if they are not defined within the
  * system.
@@ -48,6 +51,7 @@
 	if (!defined('LOG_INFO')) {
 		define('LOG_INFO', 6);
 	}
+
 /**
  * Logs messages to text files
  *
@@ -55,6 +59,7 @@
  * @subpackage    cake.cake.libs
  */
 class CakeLog {
+
 /**
  * Writes given message to a log file in the logs directory.
  *

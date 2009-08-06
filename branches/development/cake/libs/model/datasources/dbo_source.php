@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: dbo_source.php 8283 2009-08-03 20:49:17Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -20,7 +21,7 @@
  * @subpackage    cake.cake.libs.model.datasources
  * @since         CakePHP(tm) v 0.10.0.1076
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -35,42 +36,49 @@ App::import('Core', array('Set', 'String'));
  * @subpackage    cake.cake.libs.model.datasources
  */
 class DboSource extends DataSource {
+
 /**
  * Description string for this Database Data Source.
  *
  * @var unknown_type
  */
 	var $description = "Database Data Source";
+
 /**
  * index definition, standard cake, primary, index, unique
  *
  * @var array
  */
 	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
+
 /**
  * Database keyword used to assign aliases to identifiers.
  *
  * @var string
  */
 	var $alias = 'AS ';
+
 /**
  * Caches fields quoted in DboSource::name()
  *
  * @var array
  */
 	var $fieldCache = array();
+
 /**
  * Bypass automatic adding of joined fields/associations.
  *
  * @var boolean
  */
 	var $__bypass = false;
+
 /**
  * The set of valid SQL operations usable in a WHERE statement
  *
  * @var array
  */
 	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
+
 /**
  * Index of basic SQL commands
  *
@@ -82,6 +90,7 @@ class DboSource extends DataSource {
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
+
 /**
  * Constructor
  */
@@ -98,6 +107,7 @@ class DboSource extends DataSource {
 			return true;
 		}
 	}
+
 /**
  * Reconnects to database server with optional new settings
  *
@@ -111,6 +121,7 @@ class DboSource extends DataSource {
 
 		return $this->connect();
 	}
+
 /**
  * Prepares a value, or an array of values for database queries by quoting and escaping them.
  *
@@ -137,6 +148,7 @@ class DboSource extends DataSource {
 			return null;
 		}
 	}
+
 /**
  * Returns an object to represent a database identifier in a query
  *
@@ -149,6 +161,7 @@ class DboSource extends DataSource {
 		$obj->value = $identifier;
 		return $obj;
 	}
+
 /**
  * Returns an object to represent a database expression in a query
  *
@@ -161,6 +174,7 @@ class DboSource extends DataSource {
 		$obj->value = $expression;
 		return $obj;
 	}
+
 /**
  * Executes given SQL statement.
  *
@@ -171,6 +185,7 @@ class DboSource extends DataSource {
 		$this->took = $this->error = $this->numRows = false;
 		return $this->execute($sql);
 	}
+
 /**
  * Queries the database with given SQL statement, and obtains some metadata about the result
  * (rows affected, timing, any errors, number of rows in resultset). The query is also logged.
@@ -203,6 +218,7 @@ class DboSource extends DataSource {
 		}
 		return $this->_result;
 	}
+
 /**
  * DataSource Query abstraction
  *
@@ -298,6 +314,7 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
 /**
  * Returns a row from current resultset as an array
  *
@@ -318,6 +335,7 @@ class DboSource extends DataSource {
 			return null;
 		}
 	}
+
 /**
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
@@ -355,6 +373,7 @@ class DboSource extends DataSource {
 			return false;
 		}
 	}
+
 /**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
  *
@@ -371,6 +390,7 @@ class DboSource extends DataSource {
 			return $data[$name];
 		}
 	}
+
 /**
  * Returns a quoted name of $data for use in an SQL statement.
  * Strips fields out of SQL functions before quoting.
@@ -436,6 +456,7 @@ class DboSource extends DataSource {
 		}
 		return (!$array) ? $data[0] : $data;
 	}
+
 /**
  * Checks if it's connected to the database
  *
@@ -444,6 +465,7 @@ class DboSource extends DataSource {
 	function isConnected() {
 		return $this->connected;
 	}
+
 /**
  * Checks if the result is valid
  *
@@ -452,6 +474,7 @@ class DboSource extends DataSource {
 	function hasResult() {
 		return is_resource($this->_result);
 	}
+
 /**
  * Outputs the contents of the queries log.
  *
@@ -484,6 +507,7 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
 /**
  * Log given SQL query.
  *
@@ -507,6 +531,7 @@ class DboSource extends DataSource {
 			return false;
 		}
 	}
+
 /**
  * Output information about an SQL query. The SQL statement, number of rows in resultset,
  * and execution time in microseconds. If the query fails, an error is output instead.
@@ -528,6 +553,7 @@ class DboSource extends DataSource {
 			pr(sprintf("<p style = \"text-align:left\"><b>Query:</b> %s %s</p>", $sql, $out));
 		}
 	}
+
 /**
  * Gets full table name including prefix
  *
@@ -548,6 +574,7 @@ class DboSource extends DataSource {
 		}
 		return $table;
 	}
+
 /**
  * The "C" in CRUD
  *
@@ -593,6 +620,7 @@ class DboSource extends DataSource {
 			return false;
 		}
 	}
+
 /**
  * The "R" in CRUD
  *
@@ -688,6 +716,7 @@ class DboSource extends DataSource {
 		}
 		return $resultSet;
 	}
+
 /**
  * Private method.	Passes association results thru afterFind filters of corresponding model
  *
@@ -724,6 +753,7 @@ class DboSource extends DataSource {
 		}
 		return $filtering;
 	}
+
 /**
  * Enter description here...
  *
@@ -883,6 +913,7 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
 /**
  * A more efficient way to fetch associations.	Woohoo!
  *
@@ -899,6 +930,7 @@ class DboSource extends DataSource {
 		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
+
 /**
  * mergeHasMany - Merge the results of hasMany relations.
  *
@@ -938,6 +970,7 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
 /**
  * Enter description here...
  *
@@ -1016,6 +1049,7 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
 /**
  * Generates an array representing a query or part of a query from a single model or two associated models
  *
@@ -1185,6 +1219,7 @@ class DboSource extends DataSource {
 		}
 		return null;
 	}
+
 /**
  * Returns a conditions array for the constraint between two models
  *
@@ -1225,6 +1260,7 @@ class DboSource extends DataSource {
 		}
 		return array();
 	}
+
 /**
  * Builds and generates a JOIN statement from an array.	 Handles final clean-up before conversion.
  *
@@ -1249,6 +1285,7 @@ class DboSource extends DataSource {
 		}
 		return $this->renderJoinStatement($data);
 	}
+
 /**
  * Builds and generates an SQL statement from an array.	 Handles final clean-up before conversion.
  *
@@ -1278,6 +1315,7 @@ class DboSource extends DataSource {
 			'group' => $this->group($query['group'])
 		));
 	}
+
 /**
  * Renders a final SQL JOIN statement
  *
@@ -1288,6 +1326,7 @@ class DboSource extends DataSource {
 		extract($data);
 		return trim("{$type} JOIN {$table} {$alias} ON ({$conditions})");
 	}
+
 /**
  * Renders a final SQL statement by putting together the component parts in the correct order
  *
@@ -1333,6 +1372,7 @@ class DboSource extends DataSource {
 			break;
 		}
 	}
+
 /**
  * Merges a mixed set of string/array conditions
  *
@@ -1359,6 +1399,7 @@ class DboSource extends DataSource {
 
 		return $assoc;
 	}
+
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  * For databases that do not support aliases in UPDATE queries.
@@ -1392,6 +1433,7 @@ class DboSource extends DataSource {
 		}
 		return true;
 	}
+
 /**
  * Quotes and prepares fields and values for an SQL UPDATE statement
  *
@@ -1436,6 +1478,7 @@ class DboSource extends DataSource {
 		}
 		return $updates;
 	}
+
 /**
  * Generates and executes an SQL DELETE statement.
  * For databases that do not support aliases in UPDATE queries.
@@ -1459,6 +1502,7 @@ class DboSource extends DataSource {
 		}
 		return true;
 	}
+
 /**
  * Gets a list of record IDs for the given conditions.	Used for multi-record updates and deletes
  * in databases that do not support aliases in UPDATE/DELETE queries.
@@ -1488,6 +1532,7 @@ class DboSource extends DataSource {
 		}
 		return $conditions;
 	}
+
 /**
  * Returns an array of SQL JOIN fragments from a model's associations
  *
@@ -1514,6 +1559,7 @@ class DboSource extends DataSource {
 		}
 		return $join;
 	}
+
 /**
  * Returns an SQL calculation, i.e. COUNT() or MAX()
  *
@@ -1544,6 +1590,7 @@ class DboSource extends DataSource {
 			break;
 		}
 	}
+
 /**
  * Deletes all the records in a table and resets the count of the auto-incrementing
  * primary key, where applicable.
@@ -1555,6 +1602,7 @@ class DboSource extends DataSource {
 	function truncate($table) {
 		return $this->execute('TRUNCATE TABLE ' . $this->fullTableName($table));
 	}
+
 /**
  * Begin a transaction
  *
@@ -1570,6 +1618,7 @@ class DboSource extends DataSource {
 		}
 		return false;
 	}
+
 /**
  * Commit a transaction
  *
@@ -1585,6 +1634,7 @@ class DboSource extends DataSource {
 		}
 		return false;
 	}
+
 /**
  * Rollback a transaction
  *
@@ -1600,6 +1650,7 @@ class DboSource extends DataSource {
 		}
 		return false;
 	}
+
 /**
  * Creates a default set of conditions from the model if $conditions is null/empty.
  *
@@ -1622,6 +1673,7 @@ class DboSource extends DataSource {
 		}
 		return array("{$alias}.{$model->primaryKey}" => $model->getID());
 	}
+
 /**
  * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)
  *
@@ -1639,6 +1691,7 @@ class DboSource extends DataSource {
 		}
 		return $key;
 	}
+
 /**
  * Private helper method to remove query metadata in given data array.
  *
@@ -1653,6 +1706,7 @@ class DboSource extends DataSource {
 		}
 		return $data;
 	}
+
 /**
  * Generates the fields list of an SQL query.
  *
@@ -1733,6 +1787,7 @@ class DboSource extends DataSource {
 		}
 		return array_unique($fields);
 	}
+
 /**
  * Creates a WHERE clause by parsing given conditions data.
  *
@@ -1773,6 +1828,7 @@ class DboSource extends DataSource {
 		}
 		return $clause . $conditions;
 	}
+
 /**
  * Creates a WHERE clause by parsing given conditions array.  Used by DboSource::conditions().
  *
@@ -1880,6 +1936,7 @@ class DboSource extends DataSource {
 		}
 		return $out;
 	}
+
 /**
  * Extracts a Model.field identifier and an SQL condition operator from a string, formats
  * and inserts values, and composes them into an SQL snippet.
@@ -1963,6 +2020,7 @@ class DboSource extends DataSource {
 
 		return "{$key} {$operator} {$value}";
 	}
+
 /**
  * Quotes Model.fields
  *
@@ -1995,6 +2053,7 @@ class DboSource extends DataSource {
 		}
 		return $original;
 	}
+
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
@@ -2018,6 +2077,7 @@ class DboSource extends DataSource {
 		}
 		return null;
 	}
+
 /**
  * Returns an ORDER BY clause as a string.
  *
@@ -2086,6 +2146,7 @@ class DboSource extends DataSource {
 		}
 		return ' ORDER BY ' . $keys . ' ' . $direction;
 	}
+
 /**
  * Create a GROUP BY SQL clause
  *
@@ -2101,6 +2162,7 @@ class DboSource extends DataSource {
 		}
 		return null;
 	}
+
 /**
  * Disconnects database, kills the connection and says the connection is closed,
  * and if DEBUG is turned on, the log for this object is shown.
@@ -2112,6 +2174,7 @@ class DboSource extends DataSource {
 		}
 		$this->disconnect();
 	}
+
 /**
  * Checks if the specified table contains any record matching specified SQL
  *
@@ -2133,6 +2196,7 @@ class DboSource extends DataSource {
 		}
 		return false;
 	}
+
 /**
  * Gets the length of a database-native column description, or null if no length
  *
@@ -2192,6 +2256,7 @@ class DboSource extends DataSource {
 		}
 		return intval($length);
 	}
+
 /**
  * Translates between PHP boolean values and Database (faked) boolean values
  *
@@ -2208,6 +2273,7 @@ class DboSource extends DataSource {
 			return !empty($data);
 		}
 	}
+
 /**
  * Inserts multiple values into a table
  *
@@ -2226,6 +2292,7 @@ class DboSource extends DataSource {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
 	}
+
 /**
  * Returns an array of the indexes in given datasource name.
  *
@@ -2235,6 +2302,7 @@ class DboSource extends DataSource {
 	function index($model) {
 		return false;
 	}
+
 /**
  * Generate a database-native schema for the given Schema object
  *
@@ -2283,6 +2351,7 @@ class DboSource extends DataSource {
 		}
 		return $out;
 	}
+
 /**
  * Generate a alter syntax from	 CakeSchema::compare()
  *
@@ -2292,6 +2361,7 @@ class DboSource extends DataSource {
 	function alterSchema($compare, $table = null) {
 		return false;
 	}
+
 /**
  * Generate a "drop table" statement for the given Schema object
  *
@@ -2314,6 +2384,7 @@ class DboSource extends DataSource {
 		}
 		return $out;
 	}
+
 /**
  * Generate a database-native column schema string
  *
@@ -2370,6 +2441,7 @@ class DboSource extends DataSource {
 		}
 		return $out;
 	}
+
 /**
  * Format indexes for create table
  *
@@ -2399,6 +2471,7 @@ class DboSource extends DataSource {
 		}
 		return $join;
 	}
+
 /**
  * Guesses the data type of an array
  *
