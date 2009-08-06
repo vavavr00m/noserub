@@ -28,7 +28,7 @@ Configure::write('Languages', array(
     'fr-fr' => 'Français',
     #'es-es' => 'Español',
     'ko-kr' => '한국어', # Korean
-    'nn'    => 'Norsk',
+    'nn'    => 'Norsk (nynorsk)',
     'fi'    => 'Suomi',
     'sv'    => 'Svenska',
     'tr'    => 'Turkish'
