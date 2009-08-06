@@ -1,29 +1,22 @@
 <?php
-/* SVN FILE: $Id: index.php 6311 2008-01-02 06:33:52Z phpnut $ */
 /**
- * Short description for file.
+ * Index
  *
- * Long description for file
+ * The Front Controller for handling every request
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright		Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link			http://cakephp.org
  * @package			cake
  * @subpackage		cake.app.webroot
  * @since			CakePHP(tm) v 0.2.9
- * @version			$Revision$
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -59,9 +52,11 @@
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 		define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
-///////////////////////////////
-//DO NOT EDIT BELOW THIS LINE//
-///////////////////////////////
+/**
+ * Editing below this line should NOT be necessary.
+ * Change at your own risk.
+ * 
+ */
 	if (!defined('WEBROOT_DIR')) {
 		define('WEBROOT_DIR', basename(dirname(__FILE__)));
 	}
@@ -78,12 +73,12 @@
 		}
 	}
 	if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
-		trigger_error("Can't find CakePHP core.  Check the value of CAKE_CORE_INCLUDE_PATH in app/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
+		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 		return;
 	} else {
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch($url);
+		$Dispatcher->dispatch();
 	}
 ?>
