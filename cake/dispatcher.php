@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: dispatcher.php 8283 2009-08-03 20:49:17Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.
@@ -21,14 +22,17 @@
  * @subpackage    cake.cake
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * List of helpers to include
  */
-App::import('Core', array('Router', 'Controller'));
+App::import('Core', 'Router');
+App::import('Controller', 'Controller', false);
+
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
  *
@@ -38,6 +42,7 @@ App::import('Core', array('Router', 'Controller'));
  * @subpackage    cake.cake
  */
 class Dispatcher extends Object {
+
 /**
  * Base URL
  *
@@ -45,6 +50,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $base = false;
+
 /**
  * webroot path
  *
@@ -52,6 +58,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $webroot = '/';
+
 /**
  * Current URL
  *
@@ -59,6 +66,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $here = false;
+
 /**
  * Admin route (if on it)
  *
@@ -66,6 +74,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $admin = false;
+
 /**
  * Plugin being served (if any)
  *
@@ -73,6 +82,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * the params for this request
  *
@@ -80,6 +90,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $params = null;
+
 /**
  * Constructor.
  */
@@ -91,6 +102,7 @@ class Dispatcher extends Object {
 			return $this->dispatch($url);
 		}
 	}
+
 /**
  * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the results (if autoRender is set).
  *
@@ -193,6 +205,7 @@ class Dispatcher extends Object {
 		}
 		return $this->_invoke($controller, $this->params);
 	}
+
 /**
  * Invokes given controller's render action if autoRender option is set. Otherwise the
  * contents of the operation are returned as a string.
@@ -213,7 +226,7 @@ class Dispatcher extends Object {
 
 		if (!isset($methods[strtolower($params['action'])])) {
 			if ($controller->scaffold !== false) {
-				App::import('Core', 'Scaffold');
+				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $params);
 			}
 			return $this->cakeError('missingAction', array(array(
@@ -239,6 +252,7 @@ class Dispatcher extends Object {
 		}
 		echo($controller->output);
 	}
+
 /**
  * Sets the params when $url is passed as an array to Object::requestAction();
  *
@@ -252,6 +266,7 @@ class Dispatcher extends Object {
 		$this->params = array_merge($defaults, $url, $additionalParams);
 		return Router::url($url);
 	}
+
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
@@ -325,6 +340,7 @@ class Dispatcher extends Object {
 		}
 		return $params;
 	}
+
 /**
  * Returns a base URL and sets the proper webroot
  *
@@ -382,6 +398,7 @@ class Dispatcher extends Object {
 		}
 		return false;
 	}
+
 /**
  * Restructure params in case we're serving a plugin.
  *
@@ -412,6 +429,7 @@ class Dispatcher extends Object {
 		}
 		return $params;
 	}
+
 /**
  * Get controller to use, either plugin controller or application controller
  *
@@ -454,6 +472,7 @@ class Dispatcher extends Object {
 		}
 		return $controller;
 	}
+
 /**
  * Load controller and return controller class
  *
@@ -481,6 +500,7 @@ class Dispatcher extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the REQUEST_URI from the server environment, or, failing that,
  * constructs a new one, using the PHP_SELF constant and other variables.
@@ -526,6 +546,7 @@ class Dispatcher extends Object {
 		}
 		return str_replace('//', '/', '/' . $uri);
 	}
+
 /**
  * Returns and sets the $_GET[url] derived from the REQUEST_URI
  *
@@ -576,6 +597,7 @@ class Dispatcher extends Object {
 		}
 		return $url;
 	}
+
 /**
  * Outputs cached dispatch for js, css, img, view cache
  *
@@ -620,13 +642,13 @@ class Dispatcher extends Object {
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos - 1);
 					$url = str_replace($plugin . '/', '', $url);
-					$pluginPaths = Configure::read('pluginPaths');
+					$pluginPaths = App::path('plugins');
 					$count = count($pluginPaths);
 					for ($i = 0; $i < $count; $i++) {
 						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
 					}
 				}
-				$paths = array_merge($paths, Configure::read('vendorPaths'));
+				$paths = array_merge($paths, App::path('vendors'));
 
 				foreach ($paths as $path) {
 					if (is_file($path . $url) && file_exists($path . $url)) {
@@ -671,7 +693,7 @@ class Dispatcher extends Object {
 
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
-					App::import('Core', 'View');
+					App::import('View', 'View', false);
 				}
 				$controller = null;
 				$view =& new View($controller, false);

@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: session.php 8283 2009-08-03 20:49:17Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Session class for Cake.
  *
@@ -23,20 +24,11 @@
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v .0.10.0.1222
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/**
- * Database name for cake sessions.
- *
- */
-if (!class_exists('Set')) {
-	require LIBS . 'set.php';
-}
-if (!class_exists('Security')) {
-	require LIBS . 'security.php';
-}
+
 /**
  * Session class for Cake.
  *
@@ -47,6 +39,7 @@ if (!class_exists('Security')) {
  * @subpackage    cake.cake.libs
  */
 class CakeSession extends Object {
+
 /**
  * True if the Session is still valid
  *
@@ -54,6 +47,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $valid = false;
+
 /**
  * Error messages for this session
  *
@@ -61,6 +55,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $error = false;
+
 /**
  * User agent string
  *
@@ -68,6 +63,7 @@ class CakeSession extends Object {
  * @access protected
  */
 	var $_userAgent = '';
+
 /**
  * Path to where the session is active.
  *
@@ -75,6 +71,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $path = '/';
+
 /**
  * Error number of last occurred error
  *
@@ -82,6 +79,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $lastError = null;
+
 /**
  * 'Security.level' setting, "high", "medium", or "low".
  *
@@ -89,6 +87,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $security = null;
+
 /**
  * Start time for this session.
  *
@@ -96,6 +95,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $time = false;
+
 /**
  * Time when this session becomes invalid.
  *
@@ -103,6 +103,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $sessionTime = false;
+
 /**
  * Keeps track of keys to watch for writes on
  *
@@ -110,6 +111,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $watchKeys = array();
+
 /**
  * Current Session id
  *
@@ -117,6 +119,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $id = null;
+
 /**
  * Constructor.
  *
@@ -125,17 +128,34 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-		if (Configure::read('Session.save') === 'database' && !class_exists('ConnectionManager')) {
-			App::import('Core', 'ConnectionManager');
-		}
+		App::import('Core', 'Set', 'Security');
+		$this->time = time();
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
 			if (env('HTTP_USER_AGENT') != null) {
 				$this->_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 			}
 		}
-		$this->time = time();
+		if (Configure::read('Session.save') === 'database') {
+			$modelName = Configure::read('Session.model');
+			$database = Configure::read('Session.database');
+			$table = Configure::read('Session.table');
 
+			if (empty($database)) {
+				$database = 'default';
+			}
+			if (empty($modelName)) {
+				ClassRegistry::init(array(
+					'class' => Inflector::classify($table),
+					'alias' => 'Session'
+				));
+			} else {
+				ClassRegistry::init(array(
+					'class' => $modelName,
+					'alias' => 'Session'
+				));
+			}
+		}
 		if ($start === true) {
 			if (!empty($base)) {
 				$this->path = $base;
@@ -159,6 +179,7 @@ class CakeSession extends Object {
 		}
 		parent::__construct();
 	}
+
 /**
  * Starts the Session.
  *
@@ -173,6 +194,7 @@ class CakeSession extends Object {
 		$this->__initSession();
 		return $this->__startSession();
 	}
+
 /**
  * Determine if Session has been started.
  *
@@ -185,6 +207,7 @@ class CakeSession extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns true if given variable is set in session.
  *
@@ -200,6 +223,7 @@ class CakeSession extends Object {
 		$result = Set::extract($_SESSION, $var);
 		return isset($result);
 	}
+
 /**
  * Returns the Session id
  *
@@ -218,6 +242,7 @@ class CakeSession extends Object {
 			return $this->id;
 		}
 	}
+
 /**
  * Removes a variable from session.
  *
@@ -238,6 +263,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "$name doesn't exist");
 		return false;
 	}
+
 /**
  * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself
  *
@@ -257,6 +283,7 @@ class CakeSession extends Object {
 			$old[$key] = $var;
 		}
 	}
+
 /**
  * Return error description for given error number.
  *
@@ -271,6 +298,7 @@ class CakeSession extends Object {
 			return $this->error[$errorNumber];
 		}
 	}
+
 /**
  * Returns last occurred error as a string, if any.
  *
@@ -284,6 +312,7 @@ class CakeSession extends Object {
 			return false;
 		}
 	}
+
 /**
  * Returns true if session is valid.
  *
@@ -303,6 +332,7 @@ class CakeSession extends Object {
 		}
 		return $this->valid;
 	}
+
 /**
  * Returns given session variable, or all of them, if no parameters given.
  *
@@ -325,6 +355,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "$name doesn't exist");
 		return null;
 	}
+
 /**
  * Returns all session variables.
  *
@@ -338,6 +369,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "No Session vars set");
 		return false;
 	}
+
 /**
  * Tells Session to write a notification when a certain session path or subpath is written to
  *
@@ -354,6 +386,7 @@ class CakeSession extends Object {
 			$this->watchKeys[] = $var;
 		}
 	}
+
 /**
  * Tells Session to stop watching a given key path
  *
@@ -374,6 +407,7 @@ class CakeSession extends Object {
 			}
 		}
 	}
+
 /**
  * Writes value to given session variable name.
  *
@@ -394,6 +428,7 @@ class CakeSession extends Object {
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
 		return (Set::extract($_SESSION, $var) === $value);
 	}
+
 /**
  * Helper method to destroy invalid sessions.
  *
@@ -407,6 +442,7 @@ class CakeSession extends Object {
 		$this->renew();
 		$this->_checkValid();
 	}
+
 /**
  * Helper method to initialize a session, based on Cake core settings.
  *
@@ -494,7 +530,7 @@ class CakeSession extends Object {
 			case 'cache':
 				if (empty($_SESSION)) {
 					if (!class_exists('Cache')) {
-						uses('Cache');
+						require LIBS . 'cache.php';
 					}
 					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
@@ -524,6 +560,7 @@ class CakeSession extends Object {
 			break;
 		}
 	}
+
 /**
  * Helper method to start a session
  *
@@ -545,6 +582,7 @@ class CakeSession extends Object {
 			return true;
 		}
 	}
+
 /**
  * Helper method to create a new session.
  *
@@ -581,6 +619,7 @@ class CakeSession extends Object {
 			$this->__setError(1, 'Session is valid');
 		}
 	}
+
 /**
  * Helper method to restart a session.
  *
@@ -616,6 +655,7 @@ class CakeSession extends Object {
 			}
 		}
 	}
+
 /**
  * Restarts this session.
  *
@@ -624,6 +664,7 @@ class CakeSession extends Object {
 	function renew() {
 		$this->__regenerateId();
 	}
+
 /**
  * Validate that the $name is in correct dot notation
  * example: $name = 'ControllerName.key';
@@ -639,6 +680,7 @@ class CakeSession extends Object {
 		$this->__setError(3, "$name is not a string");
 		return false;
 	}
+
 /**
  * Helper method to set an internal error message.
  *
@@ -654,6 +696,7 @@ class CakeSession extends Object {
 		$this->error[$errorNumber] = $errorMessage;
 		$this->lastError = $errorNumber;
 	}
+
 /**
  * Method called on open of a database session.
  *
@@ -663,6 +706,7 @@ class CakeSession extends Object {
 	function __open() {
 		return true;
 	}
+
 /**
  * Method called on close of a database session.
  *
@@ -683,85 +727,72 @@ class CakeSession extends Object {
 		}
 		return true;
 	}
+
 /**
  * Method used to read from a database session.
  *
- * @param mixed $key The key of the value to read
+ * @param mixed $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	function __read($key) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'), false);
-		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
+	function __read($id) {
+		$model =& ClassRegistry::getObject('Session');
 
-		if ($row && !isset($row[0][$table]) && isset($row[0][0])) {
-			$table = 0;
-		}
+		$row = $model->find('first', array(
+			'conditions' => array($model->primaryKey => $id)
+		));
 
-		if ($row && $row[0][$table]['data']) {
-			return $row[0][$table]['data'];
-		} else {
+		if (empty($row[$model->alias]['data'])) {
 			return false;
 		}
+
+		return $row[$model->alias]['data'];
 	}
+
 /**
  * Helper function called on write for database sessions.
  *
- * @param mixed $key The name of the var
- * @param mixed $value The value of the var
- * @return boolean Success
+ * @param integer $id ID that uniquely identifies session in database
+ * @param mixed $data The value of the the data to be saved.
+ * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	function __write($key, $value) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-
+	function __write($id, $data) {
 		switch (Configure::read('Security.level')) {
-			case 'high':
-				$factor = 10;
-			break;
 			case 'medium':
 				$factor = 100;
 			break;
 			case 'low':
 				$factor = 300;
 			break;
+			case 'high':
 			default:
 				$factor = 10;
 			break;
 		}
-		$expires = time() +  Configure::read('Session.timeout') * $factor;
-		$row = $db->query("SELECT COUNT(id) AS count FROM " . $db->name($table) . " WHERE "
-								 . $db->name('id') . " = "
-								 . $db->value($key), false);
 
-		if ($row[0][0]['count'] > 0) {
-			$db->execute("UPDATE " . $db->name($table) . " SET " . $db->name('data') . " = "
-								. $db->value($value) . ", " . $db->name('expires') . " = "
-								. $db->value($expires) . " WHERE " . $db->name('id') . " = "
-								. $db->value($key));
-		} else {
-			$db->execute("INSERT INTO " . $db->name($table) . " (" . $db->name('data') . ","
-							  	. $db->name('expires') . "," . $db->name('id')
-							  	. ") VALUES (" . $db->value($value) . ", " . $db->value($expires) . ", "
-							  	. $db->value($key) . ")");
-		}
-		return true;
+		$expires = time() + Configure::read('Session.timeout') * $factor;
+
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->save(compact('id', 'data', 'expires'));
+
+		return $return;
 	}
+
 /**
  * Method called on the destruction of a database session.
  *
- * @param integer $key Key that uniquely identifies session in database
- * @return boolean Success
+ * @param integer $id ID that uniquely identifies session in database
+ * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	function __destroy($key) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key));
-		return true;
+	function __destroy($id) {
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->delete($id);
+
+		return $return;
 	}
+
 /**
  * Helper function called on gc for database sessions.
  *
@@ -770,10 +801,14 @@ class CakeSession extends Object {
  * @access private
  */
 	function __gc($expires = null) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
-		return true;
+		$model =& ClassRegistry::getObject('Session');
+
+		if (!$expires) {
+			$expires = time();
+		}
+
+		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
+		return $return;
 	 }
 }
 ?>

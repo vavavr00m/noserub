@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: acl.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * ACL behavior class.
  *
@@ -20,10 +21,11 @@
  * @subpackage    cake.cake.libs.model.behaviors
  * @since         CakePHP v 1.2.0.4487
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Short description for file
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.cake.libs.model.behaviors
  */
 class AclBehavior extends ModelBehavior {
+
 /**
  * Maps ACL type options to ACL models
  *
@@ -40,6 +43,7 @@ class AclBehavior extends ModelBehavior {
  * @access protected
  */
 	var $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco');
+
 /**
  * Sets up the configuation for the model, and loads ACL models if they haven't been already
  *
@@ -55,13 +59,14 @@ class AclBehavior extends ModelBehavior {
 
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
-			uses('model' . DS . 'db_acl');
+			require LIBS . 'model' . DS . 'db_acl.php';
 		}
 		$model->{$type} =& ClassRegistry::init($type);
 		if (!method_exists($model, 'parentNode')) {
 			trigger_error("Callback parentNode() not defined in {$model->alias}", E_USER_WARNING);
 		}
 	}
+
 /**
  * Retrieves the Aro/Aco node for this model
  *
@@ -76,6 +81,7 @@ class AclBehavior extends ModelBehavior {
 		}
 		return $model->{$type}->node($ref);
 	}
+
 /**
  * Creates a new ARO/ACO node bound to this record
  *
@@ -101,6 +107,7 @@ class AclBehavior extends ModelBehavior {
 			));
 		}
 	}
+
 /**
  * Destroys the ARO/ACO node bound to the deleted record
  *

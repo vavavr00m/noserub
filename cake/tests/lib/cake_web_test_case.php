@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: cake_web_test_case.php 8283 2009-08-03 20:49:17Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * CakeWebTestCase a simple wrapper around WebTestCase
  *
@@ -18,14 +19,16 @@
  * @subpackage    cake.cake.tests.lib
  * @since         CakePHP(tm) v 1.2.0.4433
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Ignore base class.
  */
 	SimpleTest::ignore('CakeWebTestCase');
+
 /**
  * Simple wrapper for the WebTestCase provided by SimpleTest
  *

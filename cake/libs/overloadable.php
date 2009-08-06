@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: overloadable.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Overload abstraction interface.  Merges differences between PHP4 and 5.
  *
@@ -18,10 +19,11 @@
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Overloadable class selector
  *
