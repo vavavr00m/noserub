@@ -1,5 +1,6 @@
 <?php
-/* SVN FILE: $Id: css.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -20,7 +21,7 @@
  * @subpackage    cake.app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @version       $Revision$
- * @modifiedby    $LastChangedBy: gwoo $
+ * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -28,12 +29,14 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	header('HTTP/1.1 404 Not Found');
 	exit('File Not Found');
 }
+
 /**
  * Enter description here...
  */
 if (!class_exists('File')) {
-	uses('file');
+	require LIBS . 'file.php';
 }
+
 /**
  * Enter description here...
  *
@@ -50,6 +53,7 @@ if (!class_exists('File')) {
 		$output = " /* file: $name, ratio: $ratio% */ " . $output;
 		return $output;
 	}
+
 /**
  * Enter description here...
  *
