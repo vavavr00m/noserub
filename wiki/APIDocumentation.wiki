@@ -4,6 +4,12 @@ Please note: this documentation is for the upcoming version of NoseRub (0.9)!
 
 =Twitter-compatible API=
 
+===Timeline Methods===
+  * [http://code.google.com/p/noserub/wiki/StatusesPublicTimeline statuses/public_timeline]
+  * statuses/friends_timeline
+  * statuses/user_timeline
+  * statuses/mentions
+
 ===Help Methods===
   * [http://code.google.com/p/noserub/wiki/HelpTest help/test]
 

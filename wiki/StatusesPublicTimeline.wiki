@@ -1,0 +1,16 @@
+#summary Documentation of statuses/public_timeline
+= NoseRub API Method: statuses public_timeline =
+
+Returns the 20 most recent statuses from non-protected users.
+
+====URL====
+api/statuses/public_timeline._format_
+
+====Formats====
+xml, json (rss and atom are not supported currently)
+
+====HTTP method(s)====
+GET
+
+====Requires Authentication====
+false
