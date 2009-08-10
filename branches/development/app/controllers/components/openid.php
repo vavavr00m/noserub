@@ -25,16 +25,26 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-$pathExtra = APP.'vendors'.DS.PATH_SEPARATOR.APP.'vendors'.DS.'pear'.DS.PATH_SEPARATOR.VENDORS.PATH_SEPARATOR.VENDORS.'pear';
-$path = ini_get('include_path');
-$path = $pathExtra . PATH_SEPARATOR . $path;
-ini_set('include_path', $path);
-
-App::import('Vendor', 'consumer', array('file' => 'Auth'.DS.'OpenID'.DS.'Consumer.php'));
-App::import('Vendor', 'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'));
-
 class OpenidComponent extends Object {
 	private $controller = null;
+	private $importPrefix = '';
+	
+	public function __construct() {
+		parent::__construct();
+
+		$pathToVendorsFolder = $this->getPathToVendorsFolderWithOpenIDLibrary();
+		
+		if ($pathToVendorsFolder == '') {
+			exit('Unable to find the PHP OpenID library');
+		}
+		
+		if ($this->isPathWithinPlugin($pathToVendorsFolder)) {
+			$this->importPrefix = $this->getPluginName() . '.';
+		}
+		
+		$this->addToIncludePath($pathToVendorsFolder);
+		$this->importCoreFilesFromOpenIDLibrary();
+	}
 	
 	public function startUp($controller) {
 		$this->controller = $controller;
@@ -113,12 +123,19 @@ class OpenidComponent extends Object {
 		return false;
 	}
 	
+	private function addToIncludePath($pathToVendorsFolder) {
+		$pathExtra = $pathToVendorsFolder . PATH_SEPARATOR . $pathToVendorsFolder . 'pear' . DS;
+		$path = ini_get('include_path');
+		$path = $pathExtra . PATH_SEPARATOR . $path;
+		ini_set('include_path', $path);
+	}
+	
 	private function getConsumer() {
 		return new Auth_OpenID_Consumer($this->getStore());
 	}
 
 	private function getFileStore() {
-		App::import('Vendor', 'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
+		App::import('Vendor', $this->importPrefix.'filestore', array('file' => 'Auth'.DS.'OpenID'.DS.'FileStore.php'));
 		$storePath = TMP.'openid';
 
 		if (!file_exists($storePath) && !mkdir($storePath)) {
@@ -129,7 +146,7 @@ class OpenidComponent extends Object {
 	}
 	
 	private function getMySQLStore() {
-		App::import('Vendor', 'mysqlstore', array('file' => 'Auth'.DS.'OpenID'.DS.'MySQLStore.php'));
+		App::import('Vendor', $this->importPrefix.'mysqlstore', array('file' => 'Auth'.DS.'OpenID'.DS.'MySQLStore.php'));
 		
 		$databaseConfig = Configure::read('Openid.database_config');
 		$databaseConfig = ($databaseConfig == null) ? 'default' : $databaseConfig;
@@ -150,6 +167,37 @@ class OpenidComponent extends Object {
 		}
 
 		return new Auth_OpenID_MySQLStore($db);
+	}
+	
+	private function getPathToVendorsFolderWithOpenIDLibrary() {
+		$pathToVendorsFolder = '';
+		
+		if ($this->isPathWithinPlugin(__FILE__)) {
+			$pluginName = $this->getPluginName();
+			
+			if (file_exists(APP.'plugins'.DS.$pluginName.DS.'vendors'.DS.'Auth')) {
+				$pathToVendorsFolder = APP.'plugins'.DS.$pluginName.DS.'vendors'.DS;
+			}
+		}
+
+		if ($pathToVendorsFolder == '') {
+			if (file_exists(APP.'vendors'.DS.'Auth')) {
+				$pathToVendorsFolder = APP.'vendors'.DS;
+			} elseif (file_exists(VENDORS.'Auth')) {
+				$pathToVendorsFolder = VENDORS;
+			}
+		}
+		
+		return $pathToVendorsFolder;
+	}
+	
+	private function getPluginName() {
+		$result = array();
+		if (preg_match('#'.DS.'plugins'.DS.'(.*)'.DS.'controllers#', __FILE__, $result)) { 
+			return $result[1];
+		}
+		
+		return false;
 	}
 	
 	private function getQuery() {
@@ -174,12 +222,21 @@ class OpenidComponent extends Object {
 		return $store;
 	}
 	
+	private function importCoreFilesFromOpenIDLibrary() {
+		App::import('Vendor', $this->importPrefix.'consumer', array('file' => 'Auth'.DS.'OpenID'.DS.'Consumer.php'));
+		App::import('Vendor', $this->importPrefix.'sreg', array('file' => 'Auth'.DS.'OpenID'.DS.'SReg.php'));
+	}
+	
 	private function isEmail($string) {
 		return strpos($string, '@');
 	}
 	
+	private function isPathWithinPlugin($path) {
+		return strpos($path, DS.'plugins'.DS) ? true : false;
+	}
+	
 	private function transformEmailToOpenID($email) {
-		if (App::import('Vendor', 'emailtoid', array('file' => 'Auth'.DS.'Yadis'.DS.'Email.php'))) {
+		if (App::import('Vendor', $this->importPrefix.'emailtoid', array('file' => 'Auth'.DS.'Yadis'.DS.'Email.php'))) {
 			return Auth_Yadis_Email_getID($email);
 		}
 		
