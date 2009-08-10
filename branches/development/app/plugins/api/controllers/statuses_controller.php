@@ -4,6 +4,18 @@ class StatusesController extends ApiAppController {
 	public $components = array('OauthServiceProvider');
 	const DEFAULT_LIMIT = 20;
 	
+	public function destroy() {
+		// TODO implement
+	}
+	
+	public function followers() {
+		// TODO implement
+	}
+	
+	public function friends() {
+		// TODO implement
+	}
+	
 	public function friends_timeline() {
 		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
 		$accessToken = ClassRegistry::init('AccessToken');
@@ -23,9 +35,29 @@ class StatusesController extends ApiAppController {
         $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, true))));		
 	}
 	
+	public function mentions() {
+		// TODO implement
+	}
+	
 	public function public_timeline() {
 		$this->loadModel('Entry');
 		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), self::DEFAULT_LIMIT, false))));
+	}
+	
+	public function show() {
+		if (isset($this->params['pass'][0])) {
+			if (is_numeric($this->params['pass'][0])) {
+				$entry_id = $this->params['pass'][0];
+			}
+		}
+		
+		$this->loadModel('Entry');
+		$conditions = array('id' => $entry_id);
+		$this->set('data', $this->formatStatuses($this->Entry->getForDisplay($conditions, 1)));
+	}
+	
+	public function update() {
+		// TODO implement
 	}
 	
 	public function user_timeline() {
