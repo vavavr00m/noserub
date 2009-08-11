@@ -45,15 +45,21 @@ class StatusesController extends ApiAppController {
 	}
 	
 	public function show() {
-		if (isset($this->params['pass'][0])) {
-			if (is_numeric($this->params['pass'][0])) {
-				$entry_id = $this->params['pass'][0];
-			}
+		if (!isset($this->params['pass'][0])) {
+			$this->respondWithNoStatusFound();
+	        return;
 		}
 		
+		$entry_id = $this->params['pass'][0];
+		
 		$this->loadModel('Entry');
-		$conditions = array('id' => $entry_id);
-		$this->set('data', $this->formatStatuses($this->Entry->getForDisplay($conditions, 1)));
+		$status = $this->Entry->getForDisplay(array('entry_id' => $entry_id), 1);
+
+		if ($status) {
+			$this->set('data', $this->formatStatuses($status));
+		} else {
+			$this->respondWithNoStatusFound();
+		}
 	}
 	
 	public function update() {
@@ -113,5 +119,12 @@ class StatusesController extends ApiAppController {
 		}
 		
 		return $data;
+	}
+	
+	private function respondWithNoStatusFound() {
+		header("HTTP/1.1 404 Not Found");
+	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
+	        									 'error' => 'No status found with that ID.')));
+		
 	}
 }
