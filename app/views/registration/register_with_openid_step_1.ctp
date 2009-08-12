@@ -1,4 +1,8 @@
-<div id="inhalt">
-    <h2><?php __('Register a new account'); ?></h2>
-    <?php echo $this->element('identities/openid_login_form'); ?>
+<div id="bd-main">
+	<div id="bd-main-hd">
+    	<h1><?php __('Register a new account'); ?></h1>
+	</div>
+	<div id="bd-main-bd">
+    	<?php echo $this->element('identities/openid_login_form'); ?>
+	</div>
 </div>
