@@ -964,57 +964,102 @@ a.button span {
 /**
  * Main Forms
  */
+#bd-main-bd fieldset {
+	margin-bottom:1.4em;
+}
 #bd-main-bd .widget-form-accounts form,
 #bd-main-bd .widget-contact-add form {
-	line-height:2.3em;
 	margin-bottom:1.4em;
 }
 #bd-main-bd .widget-form-accounts label,
-#bd-main-bd .widget-contact-add label {
+#bd-main-bd .widget-contact-add label,
+#OpenIDLoginForm label,
+#PasswordRecoveryForm label {
 	display:block;
 	float:left;
 	width:180px;
 }
+#IdentityRegisterForm label {
+	display:block;
+	float:left;
+	width:250px;
+}
+#bd-main-bd .widget-form-accounts div.input,
 #bd-main-bd .widget-form-accounts div.submit,
-#bd-main-bd .widget-contact-add div.submit {
+#bd-main-bd .widget-contact-add div.input,
+#bd-main-bd .widget-contact-add div.submit,
+#talkbackForm div.input,
+#IdentityRegisterForm div.input,
+#PasswordRecoveryForm div.input,
+#PasswordRecoveryForm div.submit {
+	padding:3px 0;
+}
+#bd-main-bd .widget-form-accounts div.submit,
+#bd-main-bd .widget-contact-add div.submit,
+#OpenIDLoginForm div.submit,
+#PasswordRecoveryForm div.submit {
 	padding-left:180px;
 }
 #bd-main-bd .widget-form-accounts div.input.text.error input,
 #bd-main-bd .widget-form-accounts div.input.password.error input,
 #bd-main-bd .widget-contact-add div.input.text.error input,
-#bd-main-bd .widget-contact-add div.input.password.error input {
+#bd-main-bd .widget-contact-add div.input.password.error input,
+#IdentityRegisterForm div.input.text.error input,
+#IdentityRegisterForm div.input.password.error input,
+#OpenIDLoginForm div.input.text.error input,
+#PasswordForm div.input.text.error input {
 	border-color:#a41900;
 }
 #bd-main-bd .widget-form-accounts div.error-message,
-#bd-main-bd .widget-contact-add div.error-message {
+#bd-main-bd .widget-contact-add div.error-message,
+#OpenIDLoginForm div.error-message,
+#PasswordRecoveryForm div.error-message {
 	color:#a41900;
 	padding-left:180px;
+}
+#IdentityRegisterForm div.error-message {
+	color:#a41900;
+	padding-left:250px;
+}
+#OpenIDLoginForm div.note {
+	padding:3px 0 3px 180px;
 }
 
 /**
  * messages
  */
-
-#message {
+#bd-main-bd .message {
     color: #363636;
 	padding: 5px 20px 5px 45px;
 	margin-bottom: 10px;
 	text-align: left;
 }
-#message p {
+#bd-main-bd .message p {
 	margin-bottom:0;
 }
-#message.alert {
+#bd-main-bd .message.alert {
 	border-top: 2px solid #f7aea5;
 	border-bottom: 2px solid #f7aea5;
 	background-position: 15px 50%;
 }
-#message.info {
+#bd-main-bd .message.info {
 	border-top: 2px solid #bfdaff;
 	border-bottom: 2px solid #bfdaff;
 	background-position: 15px 50%;
 }
-#noserub_webcam_snapshot,#noserub_webcam_upload,#noserub_webcam_cancel {
+#bd-main-bd .message.warning {
+	border-top: 2px solid #f8dd70;
+	border-bottom: 2px solid #f8dd70;
+	background-position: 15px 50%;
+}
+#bd-main-bd .message.success {
+	border-top: 2px solid #9fe8b8;
+	border-bottom: 2px solid #9fe8b8;
+	background-position: 15px 50%;
+}
+#noserub_webcam_snapshot,
+#noserub_webcam_upload,
+#noserub_webcam_cancel {
 	background:url(../img/btn_grad.png) left top repeat-x;
 	border:1px solid #bbb;
 	-webkit-border-radius:6px;
@@ -1027,14 +1072,4 @@ a.button span {
 	min-width:100px;
 	padding:3px 5px;
 	text-decoration:none !important;
-}
-#message.warning {
-	border-top: 2px solid #f8dd70;
-	border-bottom: 2px solid #f8dd70;
-	background-position: 15px 50%;
-}
-#message.success {
-	border-top: 2px solid #9fe8b8;
-	border-bottom: 2px solid #9fe8b8;
-	background-position: 15px 50%;
 }
