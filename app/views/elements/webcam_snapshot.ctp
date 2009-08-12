@@ -15,4 +15,4 @@
     <?php echo $html->link( __('Cancel', true), '#', array('id' => 'noserub_webcam_cancel')); ?>
     <?php echo $html->link( __('Send', true), '#', array('id' => 'noserub_webcam_upload')); ?>
 </span>
-<?php echo $javascript->link('webcam.js'); ?>
+<?php echo $html->script('webcam.js'); ?>
