@@ -11,17 +11,24 @@ class UsersController extends ApiAppController {
 	        return;
 		}
 		
+		$status = array();
+		
 		if ($user_id) {
-			// TODO find_by_user_id
+			$this->loadModel('Entry');
+			$status = $this->Entry->getForDisplay(array('identity_id' => $user_id), 1);
 		} else {
 			// TODO find_by_screen_name
 		}
 		
-		$this->set('data', array('user' => $this->formatData()));
+		if ($status) {
+			$this->set('data', array('user' => $this->formatData($status[0])));
+		} else {
+			$this->respondWithUserNotFound();
+		}
 	}
 	
-	private function formatData() {
-		/*return array('id' => $status['Entry']['identity_id'],
+	private function formatData($status) {
+		return array('id' => $status['Entry']['identity_id'],
 					  'name' => $status['Identity']['firstname'] . ' ' . $status['Identity']['lastname'], // TODO
 					  'screen_name' => $status['Identity']['single_username'],
 				      'location' => null, // TODO
@@ -55,7 +62,6 @@ class UsersController extends ApiAppController {
   									  'in_reply_to_user_id' => null, // TODO
   									  'favorited' => 'false', // TODO
   									  'in_reply_to_screen_name' => null)); // TODO
-  		*/
 	}
 	
 	private function getScreenNameParameter() {

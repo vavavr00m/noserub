@@ -12,6 +12,11 @@ class UsersControllerTest extends CakeWebTestCase {
 		$this->assertUserNotFound();
 	}
 	
+	public function testShowWithNonExistingId() {
+		$this->get($this->baseUrl.'show/999999999999999999.xml');
+		$this->assertUserNotFound();
+	}
+	
 	private function assertUserNotFound() {
 		$this->assertResponse(404);
 		$this->assertPattern('#Not found#');		
