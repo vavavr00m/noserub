@@ -11,20 +11,26 @@ class UsersController extends ApiAppController {
 	        return;
 		}
 		
-		$status = array();
-		
-		if ($user_id) {
-			$this->loadModel('Entry');
-			$status = $this->Entry->getForDisplay(array('identity_id' => $user_id), 1);
-		} else {
-			// TODO find_by_screen_name
+		if ($screen_name) {
+			$user_id = ClassRegistry::init('Identity')->username2IdentityId($this->buildUsername($screen_name));
 		}
 		
-		if ($status) {
-			$this->set('data', array('user' => $this->formatData($status[0])));
+		$data = array();
+		
+		if ($user_id) {
+			$data = ClassRegistry::init('Entry')->getForDisplay(array('identity_id' => $user_id), 1);
+		}
+		
+		if ($data) {
+			$this->set('data', array('user' => $this->formatData($data[0])));
 		} else {
 			$this->respondWithUserNotFound();
 		}
+	}
+	
+	private function buildUsername($screen_name) {
+		App::import('Vendor', 'UrlUtil');
+		return UrlUtil::removeHttpAndHttps(Context::read('network.url')).$screen_name;
 	}
 	
 	private function formatData($status) {

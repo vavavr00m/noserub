@@ -17,6 +17,11 @@ class UsersControllerTest extends CakeWebTestCase {
 		$this->assertUserNotFound();
 	}
 	
+	public function testShowWithNonExistingScreenName() {
+		$this->get($this->baseUrl.'show/notexisting.xml');
+		$this->assertUserNotFound();
+	}
+	
 	private function assertUserNotFound() {
 		$this->assertResponse(404);
 		$this->assertPattern('#Not found#');		
