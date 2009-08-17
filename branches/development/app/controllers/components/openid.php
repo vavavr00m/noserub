@@ -10,10 +10,10 @@
  * To use the MySQLStore, the following steps are required:
  * - get PEAR DB: http://pear.php.net/package/DB
  * - run the openid.sql script to create the required tables 
- * - add Configure::write('Openid.use_database', true); to the file which uses
- *   the OpenID component (e.g. users_controller.php) or to app/config/bootstrap.php
- * - if you want to use a database configuration other than "default", also add
- *   Configure::write('Openid.database_config', 'name_of_database_config');
+ * - use one of the following config settings when adding the component to the $components array of 
+ * 	 your controller(s):
+ *     public $components = array('Openid' => array('use_database' => true)); // uses the "default" database configuration
+ *     public $components = array('Openid' => array('database_config' => 'name_of_database_config'));
  * 
  * Copyright (c) by Daniel Hofstetter (http://cakebaker.42dh.com)
  *
@@ -28,6 +28,8 @@
 class OpenidComponent extends Object {
 	private $controller = null;
 	private $importPrefix = '';
+	private $useDatabase = false;
+	private $databaseConfig = 'default';
 	
 	public function __construct() {
 		parent::__construct();
@@ -44,6 +46,17 @@ class OpenidComponent extends Object {
 		
 		$this->addToIncludePath($pathToVendorsFolder);
 		$this->importCoreFilesFromOpenIDLibrary();
+	}
+	
+	public function initialize($controller, $settings) {
+		if (isset($settings['use_database'])) {
+			$this->useDatabase = $settings['use_database'];
+		}
+		
+		if (isset($settings['database_config'])) {
+			$this->databaseConfig = $settings['database_config'];
+			$this->useDatabase = true;
+		}
 	}
 	
 	public function startUp($controller) {
@@ -147,10 +160,7 @@ class OpenidComponent extends Object {
 	
 	private function getMySQLStore() {
 		App::import('Vendor', $this->importPrefix.'mysqlstore', array('file' => 'Auth'.DS.'OpenID'.DS.'MySQLStore.php'));
-		
-		$databaseConfig = Configure::read('Openid.database_config');
-		$databaseConfig = ($databaseConfig == null) ? 'default' : $databaseConfig;
-		$dataSource = ConnectionManager::getDataSource($databaseConfig);
+		$dataSource = ConnectionManager::getDataSource($this->databaseConfig);
 			
 		$dsn = array(
 	    	'phptype'  => 'mysql',
@@ -213,7 +223,7 @@ class OpenidComponent extends Object {
 	private function getStore() {
 		$store = null;
 		
-		if (Configure::read('Openid.use_database') === true) { 
+		if ($this->useDatabase) { 
 			$store = $this->getMySQLStore();
 		} else {	
 			$store = $this->getFileStore();
