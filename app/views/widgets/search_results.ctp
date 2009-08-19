@@ -7,8 +7,6 @@
         <?php echo $this->element('identities/items', array('data' => $items, 'filter' => array())); ?>
     <?php } ?>
     <?php if ($q && empty($items)) { ?>
-    	<div>
-    		<h4><?php echo __('No results found.', true); ?></h4>
-    	</div>
+    	<p><?php echo __('No results found.', true); ?></p>
     <?php }?>
 </div>
