@@ -8,7 +8,6 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
     $filter = '';
 }
 ?>
-<div id="network">
  <?php if(empty($data)) { ?>
     <p>
     	<?php __("There are no updates from your social network or own activity yet.<br />Why don't you add some friends or some more of your own accounts?"); ?>
@@ -27,7 +26,7 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
             
             if($filter != 'photo') {
                 $num_of_activities = count($cluster);
-                echo '<span class="more">';
+                echo '<p class="more">';
                 $label = sprintf(__('%d activities', true), $num_of_activities);
                 if($num_of_activities > $max_num_items_per_day &&
                    $display_more_link) {
@@ -37,13 +36,13 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 } else {
                     echo $label;
                 }
-                echo '</span>';
+                echo '</p>';
             }
         
             if($date == $today) { 
-                echo '<h2>' . __('Today', true) . '</h2>'; 
+                echo '<h3>' . __('Today', true) . '</h3>'; 
             } else if($date == $yesterday) {
-                echo '<h2>' . __('Yesterday', true) . '</h2>';
+                echo '<h3>' . __('Yesterday', true) . '</h3>';
             } else {
                 echo '<h3>' . date('F jS, Y', strtotime($date)) . '</h3>';
             }
@@ -66,7 +65,7 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
                 $num_displayed = 0;
                 ?>
                 
-                <ul class="networklist">
+                <ul class="lifestream">
                     <?php foreach($cluster as $item) { ?>
                         <?php
                             if($num_displayed == $max_num_items_per_day &&
@@ -86,4 +85,3 @@ if(isset($filter) && is_array($filter) && count($filter) == 1 && in_array('photo
             <?php } ?>
         <?php } ?>
 <?php } ?>
-</div>
