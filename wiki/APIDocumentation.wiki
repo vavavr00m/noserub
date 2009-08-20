@@ -10,6 +10,11 @@ Please note: this documentation is for the upcoming version of NoseRub (0.9)!
   * statuses/user_timeline
   * statuses/mentions
 
+===User Methods===
+  * [http://code.google.com/p/noserub/wiki/UsersShow users/show]
+  * statuses/friends
+  * statuses/followers
+
 ===Help Methods===
   * [http://code.google.com/p/noserub/wiki/HelpTest help/test]
 
