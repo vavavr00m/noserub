@@ -35,6 +35,10 @@ class StatusesController extends ApiAppController {
         $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, true))));		
 	}
 	
+	public function home_timeline() {
+		// TODO implement (upcoming feature of twitter)
+	}
+	
 	public function mentions() {
 		// TODO implement
 	}
@@ -42,6 +46,22 @@ class StatusesController extends ApiAppController {
 	public function public_timeline() {
 		$this->loadModel('Entry');
 		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), self::DEFAULT_LIMIT, false))));
+	}
+	
+	public function retweet() {
+		// TODO implement (upcoming feature of twitter)
+	}
+	
+	public function retweeted_by_me() {
+		// TODO implement (upcoming feature of twitter)
+	}
+	
+	public function retweeted_to_me() {
+		// TODO implement (upcoming feature of twitter)
+	}
+	
+	public function retweets_of_me() {
+		// TODO implement (upcoming feature of twitter)
 	}
 	
 	public function show() {
