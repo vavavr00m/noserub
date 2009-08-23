@@ -16,6 +16,5 @@
 		<?php echo $noserub->widgetContacts(); ?>
 		<?php echo $noserub->widgetAccounts(); ?>
 		<?php echo $noserub->widgetGroups(); ?>
-		<?php echo $noserub->widgetNetworks(); ?>
 	</div>
 </div>
