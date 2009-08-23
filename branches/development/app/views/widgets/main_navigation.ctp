@@ -41,6 +41,8 @@
                     </ul>
                 <?php } ?>
             </li>
+<?php 
+/*
             <li class="locations">
 				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
@@ -83,6 +85,8 @@
                     </ul>
                 <?php } ?>
             </li>
+*/
+?>
         </ul>
     <?php } else { ?>
         <?php echo $this->element('login'); ?>
