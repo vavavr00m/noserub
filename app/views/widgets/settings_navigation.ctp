@@ -8,7 +8,7 @@
     	<?php endif; ?>
     	<li><?php echo $html->link(__('OpenID', true), '/settings/openid/') ?></li>
     	<li><?php echo $html->link(__('OAuth', true), '/settings/oauth/') ?></li>
-    	<li><?php echo $html->link(__('Password & API', true), '/settings/password/') ?></li>
+    	<li><?php echo $html->link(__('Password', true), '/settings/password/') ?></li>
     	<li><?php echo $html->link(__('Manage', true), '/settings/account/') ?></li>
     </ul>
 </div>
