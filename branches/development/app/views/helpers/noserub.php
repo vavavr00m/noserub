@@ -39,7 +39,7 @@ class NoserubHelper extends AppHelper {
         $out = '';
         if($flash_messages) {
             foreach($flash_messages as $type => $messages) {
-                $out .= '<div id="message" class="' . $type . '">';
+                $out .= '<div class="message ' . $type . '">';
                 foreach($messages as $message) {
                     $out .= '<p>' . $message . '</p>';
                 }

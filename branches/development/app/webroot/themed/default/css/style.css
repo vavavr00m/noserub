@@ -34,21 +34,21 @@ html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pr
 html, body { 
 	background-color:#fff;
 	font-family:Arial,sans-serif;
-	height:100%; 
+	height:100%;
 }
 
 
 /** 
- * Clearing floats without extra markup
- * Based on How To Clear Floats Without Structural Markup by PiE
+ * Clearing floaithout extra markup
+ * Based on How lear Floats Without Structural Markup by PiE
  * 
- * @section clearing
- * @see http://www.positioniseverything.net/easyclearing.html
+ * @section clea
+ * @see http://wositioniseverything.net/easyclearing.html
  */
-.clearfix:after {
+.clearfix:after 
 	clear:both;
 	content:".";
-	display:block;
+	display:bloc
 	height:0;
 	visibility:hidden;
 }
@@ -60,6 +60,9 @@ html, body {
 }
 .clearfix {
 	display:block;
+}
+.clear {
+	clear:both;
 }
 
 /**
@@ -107,9 +110,11 @@ a.button:focus {
 	border-color:#129bc1;
 	outline:0;
 }
+a.button:focus,
 a.button:hover {
 	border-color:#129bc1;
 	background-position:0px -100px;
+	color:#129bc1 !important;
 }
 input[type="submit"]:active,
 input[type="button"]:active,
@@ -472,42 +477,42 @@ a.button span {
 #bd-main-hd > p {
 	margin-bottom:10px;
 }
-#bd-main-hd .widget-profile .vcard {
+#bd-main-hd .widget-profile > .vcard {
 	float:left;
 	padding-right:20px;
 	width:470px;
 }
-#bd-main-hd .widget-profile .vcard .photo {
+#bd-main-hd .widget-profile > .vcard .photo {
 	border:#1187a8 5px solid;
 	float:left;
 	margin-right:15px;
 }
-#bd-main-hd .widget-profile .vcard .fn {
+#bd-main-hd .widget-profile > .vcard .fn {
 	font-size:1.9em;
 	font-weight:bold;
 	margin-bottom:0;
 }
-#bd-main-hd .widget-profile .vcard .url {
+#bd-main-hd .widget-profile > .vcard .url {
 	color:#fff;
 	font-size:1.4em;
 	text-decoration:none;
 }
-#bd-main-hd .widget-profile .vcard .url:hover,
-#bd-main-hd .widget-profile .vcard .url:focus,
-#bd-main-hd .widget-profile .vcard .url:active {
+#bd-main-hd .widget-profile > .vcard .url:hover,
+#bd-main-hd .widget-profile > .vcard .url:focus,
+#bd-main-hd .widget-profile > .vcard .url:active {
 	text-decoration:underline;
 }
-#bd-main-hd .widget-profile .vcard .url strong {
+#bd-main-hd .widget-profile > .vcard .url strong {
 	font-weight:bold;
 }
-#bd-main-hd .widget-profile .vcard .role {
+#bd-main-hd .widget-profile > .vcard .role {
 	border-top:1px solid #118db0;
 	font-size:1.4em;
 	line-height:1.4em;
 	margin-top:.5em;
 	padding-top:.5em;
 }
-#bd-main-hd .widget-profile .vcard .adr {
+#bd-main-hd .widget-profile > .vcard .adr {
 	font-size:1.05em;
 }
 #bd-main-hd .widget-profile .buttons {
@@ -534,12 +539,23 @@ a.button span {
 }
 #bd-main-hd .widget-profile .buttons ul a {
 	color:#0d4555;
+	padding-left:8px;
 	text-decoration:none;
 }
 #bd-main-hd .widget-profile .buttons ul a:hover,
 #bd-main-hd .widget-profile .buttons ul a:focus,
 #bd-main-hd .widget-profile .buttons ul a:active {
 	text-decoration:underline;
+}
+#bd-main-hd .widget-profile .buttons span.icon {
+	background:url(../img/icon_nav.png) 0px 50% no-repeat;
+	padding:3px 12px 3px 0px;
+}
+#bd-main-hd .widget-profile .buttons li.vcard span.icon {
+	background-position:-84px 50%;
+}
+#bd-main-hd .widget-profile .buttons li.feed span.icon {
+	background-position:-96px 50%;
 }
 #bd-main-hd .widget-profile > ul {
 	clear:both;
@@ -627,6 +643,19 @@ a.button span {
 #bd-main-sidebar .block-friends a:active img {
 	border-color:#129bc1;
 }
+#bd-main-sidebar h2 a.more {
+	color:#aaa;
+	font-size:0.95em;
+	float:right;
+	font-weight:normal;
+	text-decoration:none;
+	text-transform:none;
+}
+#bd-main-sidebar h2 a.more:hover,
+#bd-main-sidebar h2 a.more:focus,
+#bd-main-sidebar h2 a.more:active {
+	color:#129bc1;
+}
 #bd-main-sidebar p.more {
 	font-size:0.9em;
 	margin-bottom:3em;
@@ -641,7 +670,7 @@ a.button span {
 #bd-main-sidebar p.more a:hover,
 #bd-main-sidebar p.more a:focus,
 #bd-main-sidebar p.more a:active {
-	text-decoration:underline;
+	color:#129bc1;
 }
 #bd-main-sidebar .block-contact {
 	margin-right:-15px;
@@ -737,9 +766,13 @@ a.button span {
 	margin-bottom:1.4em;
 }
 #bd-main-bd p.more {
+	color:#aaa;
 	font-size:0.9em;
+	font-weight:bold;
 	margin-bottom:3em;
 	text-align:right;
+	text-decoration:none;
+	text-transform:uppercase;
 }
 #bd-main-bd p.more a {
 	color:#aaa;
@@ -750,7 +783,10 @@ a.button span {
 #bd-main-bd p.more a:hover,
 #bd-main-bd p.more a:focus,
 #bd-main-bd p.more a:active {
-	text-decoration:underline;
+	color:#129bc1;
+}
+#bd-main-bd .widget-search-results p.more {
+	margin:1.4em 0 0;
 }
 #bd-main-bd .photos {
 	margin-right:-10px;
@@ -984,6 +1020,12 @@ a.button span {
 	float:left;
 	width:250px;
 }
+#IdentityPagesLoginOpenIDForm label,
+#IdentityPagesLoginForm label {
+	display:block;
+	float:left;
+	width:130px;
+}
 #bd-main-bd .widget-form-accounts div.input,
 #bd-main-bd .widget-form-accounts div.submit,
 #bd-main-bd .widget-contact-add div.input,
@@ -991,7 +1033,11 @@ a.button span {
 #talkbackForm div.input,
 #IdentityRegisterForm div.input,
 #PasswordRecoveryForm div.input,
-#PasswordRecoveryForm div.submit {
+#PasswordRecoveryForm div.submit,
+#IdentityPagesLoginForm div.input,
+#IdentityPagesLoginForm div.submit,
+#IdentityPagesLoginOpenIDForm div.input,
+#IdentityPagesLoginOpenIDForm div.submit {
 	padding:3px 0;
 }
 #bd-main-bd .widget-form-accounts div.submit,
@@ -1007,7 +1053,9 @@ a.button span {
 #IdentityRegisterForm div.input.text.error input,
 #IdentityRegisterForm div.input.password.error input,
 #OpenIDLoginForm div.input.text.error input,
-#PasswordForm div.input.text.error input {
+#PasswordForm div.input.text.error input,
+#IdentityPagesLoginForm div.input.text.error input,
+#IdentityPagesLoginOpenIDForm div.input.text.error input {
 	border-color:#a41900;
 }
 #bd-main-bd .widget-form-accounts div.error-message,
@@ -1021,8 +1069,19 @@ a.button span {
 	color:#a41900;
 	padding-left:250px;
 }
+#IdentityPagesLoginForm div.error-message,
+#IdentityPagesLoginOpenIDForm div.error-message {
+	color:#a41900;
+	padding-left:130px;
+}
 #OpenIDLoginForm div.note {
 	padding:3px 0 3px 180px;
+}
+#IdentityPagesLoginOpenIDForm {
+	border-right:2px solid #eee;
+	float:left;
+	margin-right:20px;
+	width:330px;
 }
 
 /**
