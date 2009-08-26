@@ -18,7 +18,7 @@
 				<fieldset>
 					<legend><?php __('API Settings'); ?></legend>
 					<p class="infotext">
-						<?php echo sprintf(__('For more information, please check out our API-Documentation: %s', true), '<a href="http://noserub.com/documentation/archives/API-Application-Programming-Interface.html">noserub.com/documentation</a>'); ?>
+						<?php echo sprintf(__('For more information, please check out our API-Documentation: %s', true), '<a href="http://code.google.com/p/noserub/wiki/APIDocumentation">http://code.google.com/p/noserub/wiki/APIDocumentation</a>'); ?>
 					</p>
 					<input type="checkbox" name="data[Identity][api_active]" 
 						<?php if ($session_identity['api_active'] == 1) { ?>
