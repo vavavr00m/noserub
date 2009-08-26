@@ -36,15 +36,6 @@ Router::connect('/messages/:action', array('controller' => 'messages'));
 
 Router::connect('/api/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
 
-// OAuth-enabled API methods
-Router::connect('/api/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
-Router::connect('/api/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
-Router::connect('/api/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts', 'action' => 'get_accounts'));
-
-Router::connect('/api/:username/:api_hash/:result_type/vcard/', array('plugin' => 'api', 'controller' => 'identities', 'action' => 'get_vcard'));
-Router::connect('/api/:username/:api_hash/:result_type/contacts/', array('plugin' => 'api', 'controller' => 'contacts', 'action' => 'get_contacts'));
-Router::connect('/api/:username/:api_hash/:result_type/accounts/', array('plugin' => 'api', 'controller' => 'accounts', 'action' => 'get_accounts'));
-
 Router::connect('/auth/:action', array('controller' => 'auth'));
 
 Router::connect('/search', array('controller' => 'searches', 'action' => 'index'));
