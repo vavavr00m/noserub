@@ -355,39 +355,24 @@ class IdentitiesController extends AppController {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
 
-            # test, if this is about changing password, or api setting
-            if(isset($this->params['form']['api'])) {
-                 $this->data['Identity']['id'] = $session_identity['id'];
-
-              	if(!isset($this->data['Identity']['api_active'])) {
-              		$this->data['Identity']['api_active'] = false;
-              	}
-
-              	$this->Identity->save($this->data, false, array('api_hash', 'api_active'));
-              	$this->Session->write('Identity.api_hash', $this->data['Identity']['api_hash']);
-              	$this->Session->write('Identity.api_active', $this->data['Identity']['api_active']);
-              	$session_identity = $this->Session->read('Identity');
-              	$this->flashMessage('success', __('API options have been saved.', true));
-            } else {
-                $data = $this->data;
-                $data['Identity']['username'] = $splitted['username'];
-                $data['Identity']['password'] = $data['Identity']['old_passwd'];
-                if($this->Identity->check($data)) {
-                    # old password is ok, now check the new
-                    if(!$data['Identity']['passwd']) {
-                        $this->flashMessage('alert', __('You need to specify a new password.', true));
-                    } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
-                        $this->flashMessage('alert', __('The new password was not entered twice the same.', true));
-                    } else {
-                        $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
-                        $this->Identity->id = $session_identity['id'];
-                        $this->Identity->save($this->data, true, array('password'));
-                
-                        $this->flashMessage('success', __('The new password has been saved.', true));
-                    }
+            $data = $this->data;
+            $data['Identity']['username'] = $splitted['username'];
+            $data['Identity']['password'] = $data['Identity']['old_passwd'];
+            if($this->Identity->check($data)) {
+                # old password is ok, now check the new
+                if(!$data['Identity']['passwd']) {
+                    $this->flashMessage('alert', __('You need to specify a new password.', true));
+                } else if($data['Identity']['passwd'] != $data['Identity']['passwd2']) {
+                    $this->flashMessage('alert', __('The new password was not entered twice the same.', true));
                 } else {
-                    $this->flashMessage('alert', __('The old password was not correct.', true));
+                    $this->data['Identity']['password'] = md5($this->data['Identity']['passwd']);
+                    $this->Identity->id = $session_identity['id'];
+                    $this->Identity->save($this->data, true, array('password'));
+                
+                    $this->flashMessage('success', __('The new password has been saved.', true));
                 }
+            } else {
+                $this->flashMessage('alert', __('The old password was not correct.', true));
             }
         }
         
