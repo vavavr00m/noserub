@@ -10,5 +10,6 @@
     	<li><?php echo $html->link(__('OAuth', true), '/settings/oauth/') ?></li>
     	<li><?php echo $html->link(__('Password', true), '/settings/password/') ?></li>
     	<li><?php echo $html->link(__('Manage', true), '/settings/account/') ?></li>
+    	<li><?php echo $html->link(__('API', true), '/settings/api/') ?></li>
     </ul>
 </div>

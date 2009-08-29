@@ -60,6 +60,7 @@ Router::connect('/settings/account/redirect/', array('controller' => 'account_se
 Router::connect('/settings/openid/', array('controller' => 'openid_sites', 'action' => 'index'));
 Router::connect('/settings/twitter/', array('controller' => 'twitter_accounts', 'action' => 'index'));
 Router::connect('/settings/twitter/delete/:security_token/', array('controller' => 'twitter_accounts', 'action' => 'delete'));
+Router::connect('/settings/api', array('controller' => 'api_users', 'action' => 'index'));
 
 Router::connect('/settings/accounts/add/', array('controller' => 'accounts', 'action' => 'add'));
 Router::connect('/settings/accounts/edit/*', array('controller' => 'accounts', 'action' => 'edit'));
