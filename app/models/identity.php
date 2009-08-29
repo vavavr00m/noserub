@@ -757,8 +757,7 @@ class Identity extends AppModel {
         $vcard['username'] = $vcard['local_username'];      
         $to_remove = array(
             'id', 'network_id', 'password', 'openid', 'openid_identity', 
-            'openid_server_url', 'email', 
-            'api_hash', 'api_active', 'hash', 'security_token',
+            'openid_server_url', 'email', 'hash', 'security_token',
             'last_generic_feed_upload', 'last_sync', 'created', 'modified',
             'local_username', 'single_username', 'namespace',
             'local', 'servername', 'name', 'overview_filters',
