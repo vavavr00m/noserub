@@ -1,8 +1,7 @@
 <?php
-/* SVN FILE: $Id:$ */
  
 class Identity extends AppModel {
-	public $hasOne = array('TwitterAccount');
+	public $hasOne = array('ApiUser', 'TwitterAccount');
     public $hasMany = array(
         'Account', 'Contact', 'ContactType', 'Consumer', 
         'OpenidSite', 'Location', 'Entry', 'Event'
