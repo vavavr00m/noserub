@@ -2,6 +2,7 @@
 	<div id="bd-main-hd">
 	</div>
 	<div id="bd-main-bd">
+		<?php echo $noserub->widgetFlashMessage(); ?>
 		<p class="infotext">
 			<?php __('In order to use the API, you have to define username/password or use <a href="../oauth">OAuth</a> for this purpose.'); ?>
 		</p>
@@ -11,13 +12,10 @@
 				<fieldset>
 					<?php 
 						echo $form->input('ApiUser.username', array('label' => __('Username', true), 
-																	'error' => __('Password is not correct', true))); 
+																	'error' => __('Username is already used', true))); 
 						echo $form->input('ApiUser.password', array('type'  => 'password',
 																	'label' => __('Password', true), 
-																	'error' => __('Passwords must be at least 6 characters in length', true))); 
-						echo $form->input('ApiUser.password2', array('type' => 'password', 
-																	 'label' => __('Password repeated', true), 
-																	 'error' => __('Passwords must match', true)));
+																	'error' => __('Passwords must be at least 6 characters in length', true)));
 						echo $noserub->fnSecurityTokenInput(); 
 					?>
 				</fieldset>
