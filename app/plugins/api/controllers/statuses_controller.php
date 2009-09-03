@@ -3,6 +3,7 @@
 class StatusesController extends ApiAppController {
 	public $components = array('OauthServiceProvider');
 	const DEFAULT_LIMIT = 20;
+	const MAX_LIMIT = 200;
 	
 	public function destroy() {
 		// TODO implement
@@ -87,15 +88,70 @@ class StatusesController extends ApiAppController {
 	}
 	
 	public function user_timeline() {
-		if (isset($this->params['pass'][0])) {
-			if (is_numeric($this->params['pass'][0])) {
-				$identity_id = $this->params['pass'][0];
+		$user_id = $this->getUserIdParameter();
+		$screen_name = $this->getScreenNameParameter();
+		
+		if (!$user_id && !$screen_name) {
+			$this->respondWithUserNotFound();
+	        return;
+		}
+		
+		if ($screen_name) {
+			$user_id = ClassRegistry::init('Identity')->username2IdentityId($this->buildUsername($screen_name));
+		}
+		
+		if ($user_id) {
+			$this->loadModel('Entry');
+			$conditions = array('identity_id' => $user_id);
+			$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay($conditions, $this->getCount(), false))));
+		} else {
+			$this->respondWithUserNotFound();
+		}
+	}
+	
+	private function buildUsername($screen_name) {
+		App::import('Vendor', 'UrlUtil');
+		return UrlUtil::removeHttpAndHttps(Context::read('network.url')).$screen_name;
+	}
+	
+	private function getCount() {
+		if (isset($this->params['url']['count'])) {
+			$count = $this->params['url']['count'];
+			
+			if (is_numeric($count)) {
+				if ($count > self::MAX_LIMIT) {
+					return self::MAX_LIMIT;
+				}
+				
+				return $count;
 			}
 		}
 		
-		$this->loadModel('Entry');
-		$conditions = array('identity_id' => $identity_id);
-		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, false))));
+		return self::DEFAULT_LIMIT;
+	}
+	
+	private function getScreenNameParameter() {
+		if (isset($this->params['url']['screen_name'])) {
+			return $this->params['url']['screen_name'];
+		}
+		
+		if (isset($this->params['pass'][0]) && !is_numeric($this->params['pass'][0])) {
+			return $this->params['pass'][0];
+		}
+		
+		return false;
+	}
+	
+	private function getUserIdParameter() {
+		if (isset($this->params['url']['user_id'])) {
+			return $this->params['url']['user_id'];
+		}
+		
+		if (isset($this->params['pass'][0]) && is_numeric($this->params['pass'][0])) {
+			return $this->params['pass'][0];
+		}
+		
+		return false;
 	}
 	
 	private function formatStatuses(array $statuses) {
@@ -113,6 +169,13 @@ class StatusesController extends ApiAppController {
 		header("HTTP/1.1 404 Not Found");
 	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
 	        									 'error' => 'No status found with that ID.')));
+		
+	}
+	
+	private function respondWithUserNotFound() {
+		header("HTTP/1.1 404 Not Found");
+	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
+	        									 'error' => 'Not found')));
 		
 	}
 }
