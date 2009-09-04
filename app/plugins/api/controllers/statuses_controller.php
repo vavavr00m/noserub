@@ -1,7 +1,7 @@
 <?php
 /* Part of the twitter-compatible API */
 class StatusesController extends ApiAppController {
-	public $components = array('OauthServiceProvider');
+	public $components = array('OauthServiceProvider', 'Responder');
 	const DEFAULT_LIMIT = 20;
 	const MAX_LIMIT = 200;
 	
@@ -67,7 +67,7 @@ class StatusesController extends ApiAppController {
 	
 	public function show() {
 		if (!isset($this->params['pass'][0])) {
-			$this->respondWithNoStatusFound();
+			$this->Responder->respondWithNoStatusFound();
 	        return;
 		}
 		
@@ -79,7 +79,7 @@ class StatusesController extends ApiAppController {
 		if ($status) {
 			$this->set('data', $this->formatStatuses($status));
 		} else {
-			$this->respondWithNoStatusFound();
+			$this->Responder->respondWithNoStatusFound();
 		}
 	}
 	
@@ -92,7 +92,7 @@ class StatusesController extends ApiAppController {
 		$screen_name = $this->getScreenNameParameter();
 		
 		if (!$user_id && !$screen_name) {
-			$this->respondWithUserNotFound();
+			$this->Responder->respondWithUserNotFound();
 	        return;
 		}
 		
@@ -105,7 +105,7 @@ class StatusesController extends ApiAppController {
 			$conditions = array('identity_id' => $user_id);
 			$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay($conditions, $this->getCount(), false))));
 		} else {
-			$this->respondWithUserNotFound();
+			$this->Responder->respondWithUserNotFound();
 		}
 	}
 	
@@ -165,19 +165,5 @@ class StatusesController extends ApiAppController {
 		}
 		
 		return $data;
-	}
-	
-	private function respondWithNoStatusFound() {
-		header("HTTP/1.1 404 Not Found");
-	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
-	        									 'error' => 'No status found with that ID.')));
-		
-	}
-	
-	private function respondWithUserNotFound() {
-		header("HTTP/1.1 404 Not Found");
-	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
-	        									 'error' => 'Not found')));
-		
 	}
 }
