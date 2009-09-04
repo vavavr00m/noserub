@@ -121,6 +121,8 @@ class StatusesController extends ApiAppController {
 			if (is_numeric($count)) {
 				if ($count > self::MAX_LIMIT) {
 					return self::MAX_LIMIT;
+				} elseif ($count <= 0) {
+					return self::DEFAULT_LIMIT;
 				}
 				
 				return $count;
