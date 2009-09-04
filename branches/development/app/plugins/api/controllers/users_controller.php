@@ -1,13 +1,14 @@
 <?php
 /* Part of the twitter-compatible API */
 class UsersController extends ApiAppController {
+	public $components = array('Responder');
 	
 	public function show() {
 		$user_id = $this->getUserIdParameter();
 		$screen_name = $this->getScreenNameParameter();
 		
 		if (!$user_id && !$screen_name) {
-			$this->respondWithUserNotFound();
+			$this->Responder->respondWithUserNotFound();
 	        return;
 		}
 		
@@ -25,7 +26,7 @@ class UsersController extends ApiAppController {
 			App::import('Vendor', 'Api.ArrayFactory');
 			$this->set('data', ArrayFactory::user_with_status($data[0]));
 		} else {
-			$this->respondWithUserNotFound();
+			$this->Responder->respondWithUserNotFound();
 		}
 	}
 	
@@ -56,12 +57,5 @@ class UsersController extends ApiAppController {
 		}
 		
 		return false;
-	}
-	
-	private function respondWithUserNotFound() {
-		header("HTTP/1.1 404 Not Found");
-	    $this->set('data', array('hash' => array('request' => $this->params['url']['url'], 
-	        									 'error' => 'Not found')));
-		
 	}
 }
