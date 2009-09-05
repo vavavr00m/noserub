@@ -8,14 +8,16 @@ class ResponderComponent extends Object {
 	}
 	
 	public function respondWithNoStatusFound() {
-		header("HTTP/1.1 404 Not Found");
-	    $this->controller->set('data', array('hash' => array('request' => $this->controller->params['url']['url'], 
-	        												 'error' => 'No status found with that ID.')));
+		$this->respondWith404('No status found with that ID.');
 	}
 	
 	public function respondWithUserNotFound() {
+		$this->respondWith404('Not found');
+	}
+	
+	private function respondWith404($error_message) {
 		header("HTTP/1.1 404 Not Found");
 	    $this->controller->set('data', array('hash' => array('request' => $this->controller->params['url']['url'], 
-	        												 'error' => 'Not found')));
+	        												 'error' => $error_message)));
 	}
 }
