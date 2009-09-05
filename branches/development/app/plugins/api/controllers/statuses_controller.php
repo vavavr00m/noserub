@@ -33,7 +33,7 @@ class StatusesController extends ApiAppController {
         $contact_ids[] = $identity_id;
 
         $conditions = array('identity_id' => $contact_ids);
-        $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, self::DEFAULT_LIMIT, true))));		
+        $this->set('data', array('statuses' => $this->formatStatuses($this->Contact->Identity->Entry->getForDisplay($conditions, $this->getCount(), true))));		
 	}
 	
 	public function home_timeline() {
