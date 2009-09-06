@@ -9,10 +9,10 @@ class PsnService extends AbstractService {
 	}
 	
 	public function detectService($url) {
-		return $this->extractUsername($url, array('/^psn:(.+)/'));
+		return $this->extractUsername($url, array('/^http://profiles.us.playstation.com/playstation/psn/visit/profiles/(.+)/'));
 	}
 	
 	public function getAccountUrl($username) {
-		return 'psn:' . $username;
+		return 'http://profiles.us.playstation.com/playstation/psn/visit/profiles/' . $username . '/';
 	}
 }
