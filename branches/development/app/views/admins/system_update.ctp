@@ -40,7 +40,7 @@
 		<h2><?php __('Directories'); ?></h2>
 		<?php if(empty($directories)) { ?>
 			<p class="message success">
-				<?php __('Status'); ?>: <strong><?__('OK'); ?></strong>
+				<?php __('Status'); ?>: <strong><?php __('OK'); ?></strong>
 			</p>
 		<?php } else { ?>
 			<?php $no_error = false; ?>
