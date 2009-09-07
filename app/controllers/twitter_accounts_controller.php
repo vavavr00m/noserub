@@ -1,6 +1,6 @@
 <?php
 
-App::import('Vendor', 'oauth-consumer'.DS.'oauth_consumer');
+App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'oauth_consumer.php'));
 App::import('Vendor', 'constants'.DS.'twitter');
 
 class TwitterAccountsController extends AppController {

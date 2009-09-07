@@ -46,7 +46,7 @@ class TwitterAccount extends AppModel {
         $secret = $data['TwitterAccount']['access_token_secret'];
         $url = 'http://www.twitter.com/statuses/update.json';
         
-        App::import('Vendor', 'oauth-consumer'.DS.'oauth_consumer');
+        App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'oauth_consumer.php'));
         $consumer = new OAuth_Consumer(Context::read('network.twitter_consumer_key'), Context::read('network.twitter_consumer_secret'));
         $result = $consumer->post($key, $secret, $url, array('status' => $text));
         
