@@ -11,7 +11,7 @@
  *
  */
 
-App::import('Vendor', 'oauth', array('file' => 'OAuth'.DS.'OAuth.php'));
+require('OAuth.php');
 App::import('Core', 'http_socket');
 
 // using an underscore in the class name to avoid a naming conflict with the OAuth library
