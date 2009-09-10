@@ -10,7 +10,10 @@ class ApiUsersController extends AppController {
 			}
 		} else {
 			$this->data = $this->ApiUser->findByIdentityId(Context::loggedInIdentityId());
-			unset($this->data['ApiUser']['password']);
+			
+			if (isset($this->data['ApiUser']['password'])) {
+				unset($this->data['ApiUser']['password']);
+			}
 		}
 	}
 }
