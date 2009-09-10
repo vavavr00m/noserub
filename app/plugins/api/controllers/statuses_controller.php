@@ -1,7 +1,7 @@
 <?php
 /* Part of the twitter-compatible API */
 class StatusesController extends ApiAppController {
-	public $components = array('OauthServiceProvider', 'Responder');
+	public $components = array('OauthServiceProvider', 'Responder', 'Security');
 	const DEFAULT_LIMIT = 20;
 	const MAX_LIMIT = 200;
 	
@@ -18,9 +18,21 @@ class StatusesController extends ApiAppController {
 	}
 	
 	public function friends_timeline() {
-		$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
-		$accessToken = ClassRegistry::init('AccessToken');
-		$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		$credentials = $this->Security->loginCredentials('basic');
+		
+		if ($credentials) {
+			$this->loadModel('ApiUser');
+			$identity_id = $this->ApiUser->getIdentityId($credentials['username'], $credentials['password']);
+			
+			if (!$identity_id) {
+				$this->Responder->respondWithNotAuthorized();
+				return;
+			}
+		} else {
+			$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$accessToken = ClassRegistry::init('AccessToken');
+			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
+		}
 		
 		$this->loadModel('Contact');
 
