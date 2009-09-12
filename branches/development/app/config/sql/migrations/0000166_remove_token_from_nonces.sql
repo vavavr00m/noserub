@@ -1,0 +1,1 @@
+ALTER TABLE `nonces` DROP `token`;
