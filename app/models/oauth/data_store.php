@@ -24,8 +24,8 @@ class DataStore extends AppModel {
 		// XXX if the API becomes popular we probably have to move this clean up to a cron job
 		$theNonce->deleteExpired();
 		
-		if (!$theNonce->hasBeenUsed($consumer, $token, $nonce)) {
-			$theNonce->add($consumer, $token, $nonce);
+		if (!$theNonce->hasBeenUsed($consumer, $nonce)) {
+			$theNonce->add($consumer, $nonce);
 			return null;
 		}
 		
