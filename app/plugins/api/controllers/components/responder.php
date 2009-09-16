@@ -20,6 +20,7 @@ class ResponderComponent extends Object {
 	}
 	
 	private function respondWith401($error_message) {
+		header('WWW-Authenticate: Basic realm="NoseRub API"');
 		$this->respondWithStatus('401 Unauthorized', $error_message);
 	}
 	
