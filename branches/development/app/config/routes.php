@@ -34,6 +34,7 @@ Router::connect('/oauth/:action', array('controller' => 'oauth'));
 Router::connect('/contacts/:action', array('controller' => 'contacts'));
 Router::connect('/messages/:action', array('controller' => 'messages'));
 
+Router::connect('/api/direct_messages', array('plugin' => 'api', 'controller' => 'direct_messages', 'action' => 'index'));
 Router::connect('/api/locations/', array('plugin' => 'api', 'controller' => 'locations', 'action' => 'index'));
 
 Router::connect('/auth/:action', array('controller' => 'auth'));
