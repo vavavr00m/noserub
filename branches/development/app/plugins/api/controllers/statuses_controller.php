@@ -61,6 +61,11 @@ class StatusesController extends ApiAppController {
 		$this->set('data', array('statuses' => $this->formatStatuses($this->Entry->getForDisplay(array(), self::DEFAULT_LIMIT, false))));
 	}
 	
+	public function replies() {
+		// TODO this is a dummy implementation
+		$this->set('data', array('statuses' => array()));
+	}
+	
 	public function retweet() {
 		// TODO implement (upcoming feature of twitter)
 	}
