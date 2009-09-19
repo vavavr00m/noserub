@@ -29,7 +29,13 @@ class StatusesController extends ApiAppController {
 				return;
 			}
 		} else {
-			$key = $this->OauthServiceProvider->getAccessTokenKeyOrDie();
+			$key = $this->OauthServiceProvider->getAccessTokenKey();
+			
+			if (!$key) {
+				$this->Responder->respondWithNotAuthorized();
+				return;
+			}
+
 			$accessToken = ClassRegistry::init('AccessToken');
 			$identity_id = $accessToken->field('identity_id', array('token_key' => $key));
 		}
