@@ -14,7 +14,8 @@ class StatusesController extends ApiAppController {
 	}
 	
 	public function friends() {
-		// TODO implement
+		// TODO this is a dummy implementation
+		$this->set('data', array('users' => array()));
 	}
 	
 	public function friends_timeline() {
