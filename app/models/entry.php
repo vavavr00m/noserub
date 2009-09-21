@@ -249,6 +249,7 @@ class Entry extends AppModel {
                 'Identity.firstname',
                 'Identity.lastname',
                 'Identity.username',
+            	'Identity.photo',
                 'FavoritedBy',
                 'Comment'
             )
