@@ -250,6 +250,7 @@ class Entry extends AppModel {
                 'Identity.lastname',
                 'Identity.username',
             	'Identity.photo',
+            	'Identity.sex',
                 'FavoritedBy',
                 'Comment'
             )
@@ -359,6 +360,7 @@ class Entry extends AppModel {
                $data['Entry']['foreign_key'] > 0) {
                 $data['Entry']['title'] = $data['Entry']['content'] = $this->micropublishMarkup($data['Entry']['title']);
             }
+            $data['Identity']['photo'] = $this->Identity->getPhotoUrl($data, 'Identity', true);
             
             $new_items[$idx] = $data;
         }

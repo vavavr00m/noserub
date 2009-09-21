@@ -34,7 +34,7 @@ class ArrayFactory {
 					 'screen_name' => $data['Identity']['single_username'],
 				     'location' => null, // TODO
 				     'description' => null, // TODO
-				     'profile_image_url' => null, // TODO
+				     'profile_image_url' => $data['Identity']['photo'],
 				     'url' => null, // TODO
 				     'protected' => 'false',
 				     'followers_count' => null, // TODO
