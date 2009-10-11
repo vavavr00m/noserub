@@ -78,6 +78,10 @@ class Context {
         return Configure::read('context.network.id');
     }
     
+    public static function networkName() {
+        return Configure::read('context.network.name');
+    }
+    
     public static function setPage($page) {
         $split = explode('.', $page);
         $pageStructure = array();

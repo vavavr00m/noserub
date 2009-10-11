@@ -103,6 +103,9 @@ class AppController extends Controller {
          */
         $this->here = preg_replace('/("|\')/', '”', addslashes(strip_tags($this->here)));
         
+        header('X-FRAME-OPTIONS: SAMEORIGIN');
+        header('X-XSS-Protection: 0');
+        
         if(defined('SHELL_DISPATCHER')) {
             $this->layout = 'shell';
             if($this->action != '' &&

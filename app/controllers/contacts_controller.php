@@ -268,20 +268,7 @@ class ContactsController extends AppController {
 	    $this->Contact->ContactType->contain();
 	    $this->set('contact_types', $this->Contact->ContactType->findAllByIdentityId(Context::loggedInIdentityId()));
     }
-    
-    /**
-     * Displays the social stream of one identity. That means all his/her contact's activities.
-     *
-     * @param  
-     * @return 
-     * @access 
-     */
-    public function network() {
-        $this->checkUnsecure();
-        
-        $this->render('../identities/network');
-    }
-    
+      
     public function add_as_contact() {
         $username         = isset($this->params['username']) ? $this->params['username'] : '';
         $splitted         = $this->Contact->Identity->splitUsername($username);
