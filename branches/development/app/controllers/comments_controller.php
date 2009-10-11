@@ -26,7 +26,7 @@ class CommentsController extends AppController {
                     'entry_id'     => $entry_id,
                     'identity_id'  => $identity_id,
                     'content'      => $this->data['Comment']['text'],
-                    'published_on' => date('Y-m-d H:m:i')
+                    'published_on' => date('Y-m-d H:i:s')
                 );
                 $this->Comment->createForAll($data);
                 $this->data = array();
