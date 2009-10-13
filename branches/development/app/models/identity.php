@@ -149,7 +149,7 @@ class Identity extends AppModel {
         $data = $this->find('first', array(
             'contain' => array('SubscribedGroup')
         ));
-        if($data) {
+        if($data && isset($data['SubscribedGroup'])) {
             $data = $data['SubscribedGroup'];
         }
 
