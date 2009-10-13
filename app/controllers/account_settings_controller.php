@@ -5,23 +5,10 @@ class AccountSettingsController extends AppController {
 	public $components = array('url');
 	private $session_identity = null;
 
-	public function beforeFilter() {
-		parent::beforeFilter();
-
-		$username = isset($this->params['username']) ? $this->params['username'] : '';
-        $splitted = $this->Identity->splitUsername($username);
-        $this->session_identity = $this->Session->read('Identity');
-        
-        if(!$this->session_identity || $this->session_identity['username'] != $splitted['username']) {
-            # this is not the logged in user
-            $url = $this->url->http('/');
-            $this->redirect($url);
-        }
-	}
-	
 	public function index() {
         $this->checkSecure();
-
+        $this->grantAccess('self');
+        
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -35,6 +22,7 @@ class AccountSettingsController extends AppController {
     }
     
 	public function export() {
+	    $this->grantAccess('self');
         # make sure, that the correct security token is set
         $this->ensureSecurityToken();
             
@@ -45,6 +33,7 @@ class AccountSettingsController extends AppController {
     }
     
 	public function import() {
+	    $this->grantAccess('self');
         $this->Session->delete('Import.data');
         
         if($this->data) {
@@ -72,6 +61,7 @@ class AccountSettingsController extends AppController {
     }
     
 	public function import_data() {
+	    $this->grantAccess('self');
         $data = $this->Session->read('Import.data');
         if(!$data) {
             $this->flashMessage('alert', __("Couldn't import the data!", true));
@@ -88,6 +78,7 @@ class AccountSettingsController extends AppController {
     }
     
 	public function redirect_url() {
+	    $this->grantAccess('self');
         if($this->data) {
             # make sure, that the correct security token is set
             $this->ensureSecurityToken();
@@ -106,6 +97,7 @@ class AccountSettingsController extends AppController {
     }
     
 	private function deleteAccount($identity, $confirm) {
+	    $this->grantAccess('self');
     	if($confirm == 0) {
 			$this->set('confirm_error', __('In order to delete your account, please check the check box.', true));
 		} else if($confirm == 1) {
