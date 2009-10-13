@@ -107,6 +107,10 @@ class Context {
         return Configure::read('context.page_structure.0') == 'profile';
     }
     
+    public static function isHome() {
+        return Configure::read('context.page_structure.0') == 'home';
+    }
+    
     /**
      * Returns the currently selected language
      * 

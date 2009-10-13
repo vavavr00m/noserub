@@ -723,9 +723,13 @@ class WidgetsController extends AppController {
             $filter = $this->ServiceType->getDefaultFilters();
         }
         
-        if($type == 'network') {
+        $with_restricted = true;
+        if(Context::isHome()) {
+            # type will then always be network
+            $contact_ids = false;
+            $with_restricted = false;
+        } else if($type == 'network') {
             $rel_filter = Context::contactFilter();
-            
             if($rel_filter == array('me')) {
                 $contact_ids = array(Context::loggedInIdentityId());
             } else {
@@ -753,11 +757,11 @@ class WidgetsController extends AppController {
             $contact_ids = array(Context::read('identity.id'));
         }
         # get last 50 items
-        $conditions = array(
-            'filter'      => $filter,
-            'identity_id' => $contact_ids
-        );
-        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 50, true);
+        $conditions = array('filter' => $filter);
+        if($contact_ids) {
+            $conditions['identity_id'] = $contact_ids;
+        }
+        $items = $this->Contact->Identity->Entry->getForDisplay($conditions, 50, $with_restricted);
         if($items) {
             usort($items, 'sort_items');
             $items = $this->cluster->removeDuplicates($items);
@@ -771,9 +775,13 @@ class WidgetsController extends AppController {
         $this->loadModel('Entry');
     
         $filter = array(
-            'filter' => array('photo'),
-            'identity_id' => $this->getIdentityId()
+            'filter' => array('photo')
         );
+        $identity_id = $this->getIdentityId();
+        if($this->getIdentityId()) {
+            $filter['identity_id'] = $identity_id;
+        }
+        
         if(Context::groupId()) {
             // we are on a group page, so just show photos
             // for this group
@@ -789,10 +797,16 @@ class WidgetsController extends AppController {
             // for this event
             $filter['event_id'] = Context::eventId();
         }
+        if(Context::isHome()) {
+            $with_restricted = false;
+        } else {
+            $with_restricted = true;
+        }
+        
         $items = $this->Entry->getForDisplay(
             $filter,
             5, 
-            true
+            $with_restricted
         );
         if($items) {
             usort($items, 'sort_items');
@@ -804,13 +818,24 @@ class WidgetsController extends AppController {
     public function videos() {
         $this->loadModel('Entry');
     
+        $filter = array(
+            'filter' => array('video')
+        );
+        $identity_id = $this->getIdentityId();
+        if($this->getIdentityId()) {
+            $filter['identity_id'] = $identity_id;
+        }
+        
+        if(Context::isHome()) {
+            $with_restricted = false;
+        } else {
+            $with_restricted = true;
+        }
+        
         $items = $this->Entry->getForDisplay(
-            array(
-                'filter' => array('video'),
-                'identity_id' => $this->getIdentityId()
-            ),
+            $filter,
             5, 
-            true
+            $with_restricted
         );
         if($items) {
             usort($items, 'sort_items');
