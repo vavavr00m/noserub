@@ -3,6 +3,8 @@
     # in order to be able to just store simple RSS-Feeds (service = 'RSS-Feed'),
     # I just leave empty foaf:accountName and use foaf:OnlineAccount and
     # foaf:accountServiceHomepage to store feed_url and account_url    
+    
+$services = Configure::read('services.data');
 ?>
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -22,7 +24,7 @@
     <foaf:gender><?php echo $data['Identity']['sex'] == 1 ? 'female' : 'male'; ?></foaf:gender>
 <?php } ?>
 <?php if($data['Identity']['photo'] != '') { ?>
-    <foaf:img><?php echo $base_url_for_avatars . $data['Identity']['photo']; ?>.jpg</foaf:img>
+    <foaf:img><?php echo $noserub->fnAvatarBaseUrl() . $data['Identity']['photo']; ?>.jpg</foaf:img>
 <?php } ?>
 <?php if($data['Identity']['latitude'] != 0 && $data['Identity']['longitude']) { ?>
     <foaf:based_near>
@@ -46,19 +48,10 @@
             <foaf:accountName><?php echo $account['feed_url']; ?></foaf:accountName>
         <?php } else { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
-            <foaf:accountServiceHomepage rdf:resource="<?php echo $account['Service']['url']; ?>"/>
+            <foaf:accountServiceHomepage rdf:resource="<?php echo $services[$account['service']]['url']; ?>"/>
             <foaf:accountName><?php echo $account['username']; ?></foaf:accountName>
         <?php } ?>
     </foaf:holdsAccount>
-<?php } ?>
-<?php foreach($contacts as $contact) {
-    if(strpos($contact['WithIdentity']['username'], '@') === false) { ?>
-        <foaf:knows>
-            <foaf:Person>
-                <rdfs:seeAlso rdf:resource="http://<?php echo $contact['WithIdentity']['username']; ?>"/>
-            </foaf:Person>
-        </foaf:knows>
-    <?php } ?>
 <?php } ?>
 </foaf:Person>
 </rdf:RDF>	
