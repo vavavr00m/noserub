@@ -806,8 +806,9 @@ a.button span {
 }
 #bd-main-bd .halfwidth {
 	margin-right:-10px;
+	padding-right:15px;
 	overflow:auto;
-	width: 235px;
+	width: 215px;
 	float:left;
 }
 #bd-main-bd .lifestream li {
