@@ -20,8 +20,14 @@ $name = $data['name'];
         <?php echo $noserub->link('/contact/manage/'); ?>
         <?php echo $noserub->link('/message/send/'); ?>
     	<ul>
-    		<li class="vcard"><span class="icon"></span><a href="#">Download vCard</a></li>
-    		<li class="feed"><span class="icon"></span><a href="#">RSS-Feed</a></li>
+    		<li class="vcard">
+    		    <span class="icon"></span>
+    		    <?php echo $html->link(__('Download vCard', true), $base_url . 'vcard'); ?>
+    		</li>
+    		<li class="feed">
+    		    <span class="icon"></span>
+    		    <a href="#">RSS-Feed</a>
+    		</li>
     	</ul>
     </div>
     <ul>
