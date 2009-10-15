@@ -14,4 +14,8 @@ class PagesController extends AppController {
     public function security_check() {
         $this->set('headline', __('There was a security problem', true));
     }
+    
+    public function not_found() {
+        $this->render('errors/not_found');
+    }
 }
