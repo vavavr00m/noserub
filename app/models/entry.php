@@ -571,12 +571,12 @@ class Entry extends AppModel {
         return $text;
     }
     
-    public function addLink($identity_id, $description, $url, $foreign_key = 0, $model = '', $restricted = false) {
+    public function addLink($identityId, $description, $url, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
-            $restricted = $this->getRestricted($identity_id);
+            $restricted = $this->getRestricted($identityId);
         }
         $data = array(
-            'identity_id' => $identity_id,
+            'identity_id' => $identityId,
             'foreign_key' => $foreignKey,
             'model' => $model,
             'service_type' => 2,

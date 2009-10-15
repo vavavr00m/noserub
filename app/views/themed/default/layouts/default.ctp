@@ -27,6 +27,7 @@
 			<div id="bd-inner">
 				<div id="sidebar">
 					<?php echo $noserub->widgetNavigation('main'); ?>
+					<!---
 				    <div>
 						<ul>
 							<li class="invite">
@@ -39,6 +40,7 @@
 							</li>
 						</ul>
 					</div>
+					--->
 				</div>
                 
 				<?php echo $content_for_layout; ?>
