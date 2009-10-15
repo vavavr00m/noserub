@@ -13,7 +13,7 @@
 	</li>
 	<?php if(!$session->check('Noserub.lastOpenIDRequest')): ?>
 		<li>
-			<form id="formLoginOpenId" method="post" action="/pages/login/">
+		    <?php echo $form->create(array('id' => 'formLoginOpenId', 'url' => '/pages/login/')); ?>
 				<fieldset>
 					<label>
 						<?php echo sprintf(__('Your %s OpenID', true), '<img src="' . Router::url('/images/openid_small.gif') . '" alt="OpenID logo" /> '); ?>
@@ -27,7 +27,7 @@
 					<br />
 					<input type="submit" value="<?php __('Login'); ?>"/>
 				</fieldset>
-			</form>
+			<?php echo $form->end(); ?>
 		</li>
 	<?php endif; ?>
 	<li>
