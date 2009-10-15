@@ -181,6 +181,25 @@ class WidgetsController extends AppController {
  	} 
  	
  	/**
+ 	 * Display the FOAF information for an identity.
+ 	 * Not real FOAF right now, but we need it for synchronizing.
+ 	 */
+ 	public function foaf() {
+ 	    $identity_id = $this->getIdentityId(false);
+ 	    
+ 	    $data = array();
+ 	    if($identity_id) {
+ 	        $this->loadModel('Identity');
+ 	        $data = $this->Identity->find('first', array(
+ 	            'contain' => 'Account',
+ 	            'conditions' => array(
+ 	                'Identity.id' => $identity_id
+ 	        )));
+ 	    }
+ 	    $this->set('data', $data);
+ 	}
+ 	
+ 	/**
  	 * Messages
  	 */
  	
@@ -970,16 +989,20 @@ class WidgetsController extends AppController {
      * for the identity we currently look at. if none
      * is found, the logged in identity is used
      *
+     * @param boolean $fallback_to_login if false, we only look for
+     *                identity_id in the params and for the identity
+     *                on which page we're looking at.
+     *
      * @return $int
      */
-    private function getIdentityId() {
+    private function getIdentityId($fallback_to_login = true) {
         $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
         if(!$identity_id) {
             # if no identity_id was given in the params, use the one
             # from the current page
             if(Context::read('identity')) {
                 $identity_id = Context::read('identity.id');
-            } else if(Context::isLoggedInIdentity()) {
+            } else if($fallback_to_login && Context::isLoggedInIdentity()) {
                 # if not, use the logged in identity
                 $identity_id = Context::loggedInIdentityId();
             }
