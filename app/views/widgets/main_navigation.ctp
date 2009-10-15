@@ -26,6 +26,8 @@
                 <?php echo $html->link(__('My Profile', true), $base_url, array('class' => 'head')); ?>
                 <ul>
                     <li><?php echo $html->link(__('My Accounts', true), '/settings/accounts/'); ?></li>
+                    <li><?php echo $html->link(__('My Comments', true), $base_url . 'comments/'); ?></li>
+                    <li><?php echo $html->link(__('My Favorites', true), $base_url . 'favorites/'); ?></li>
                     <li><?php echo $html->link(__('My Messages', true), '/messages/inbox/'); ?></li>
                 </ul>
             </li>

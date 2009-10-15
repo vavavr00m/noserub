@@ -317,7 +317,33 @@ class WidgetsController extends AppController {
  	/**
  	 * Comments
  	 */
- 	 
+ 	
+ 	/**
+ 	 * Get's all comments for identity
+ 	 */
+ 	public function comments() {
+ 	    $identity_id = $this->getIdentityId();
+ 	    
+ 	    $conditions = false;
+        if($identity_id) {
+            $with_restricted = true;
+            $conditions = array(
+                'commented_by' => $identity_id
+            );
+        }
+        
+        $with_restricted = Context::loggedInIdentityId() == $identity_id;
+        
+        $this->loadModel('Entry');
+        $items = $this->Entry->getForDisplay($conditions, 50, $with_restricted);
+        
+        usort($items, 'sort_items');
+        $items = $this->cluster->removeDuplicates($items, false);
+        $items = $this->cluster->create($items);
+
+        $this->set('items', $items);
+ 	}
+
  	/**
  	 * form to add a comment to an entry
  	 */
@@ -325,6 +351,36 @@ class WidgetsController extends AppController {
  	    
  	}
  	
+ 	/**
+ 	 * Favorites
+ 	 */
+ 	 
+ 	/**
+ 	 * Get's all favorites for identity
+ 	 */
+ 	public function favorites() {
+ 	    $identity_id = $this->getIdentityId();
+ 	    
+ 	    $conditions = false;
+        if($identity_id) {
+            $with_restricted = true;
+            $conditions = array(
+                'favorited_by' => $identity_id
+            );
+        }
+        
+        $with_restricted = Context::loggedInIdentityId() == $identity_id;
+        
+        $this->loadModel('Entry');
+        $items = $this->Entry->getForDisplay($conditions, 50, $with_restricted);
+        
+        usort($items, 'sort_items');
+        $items = $this->cluster->removeDuplicates($items, false);
+        $items = $this->cluster->create($items);
+
+        $this->set('items', $items);
+ 	}
+ 	 
  	/**
  	 * User Settings
  	 */

@@ -120,8 +120,8 @@ Router::connect('/:username/xrds', array('controller' => 'identities', 'action' 
 Router::connect('/:username/messages/new/*', array('controller' => 'identities', 'action' => 'send_message'));
 Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions', 'action' => 'subscribe'));
 Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
-
 Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
+Router::connect('/:username/', array('controller' => 'identities', 'action' => 'profile'));
 
 Router::parseExtensions('json', 'xml');
