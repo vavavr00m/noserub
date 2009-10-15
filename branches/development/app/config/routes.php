@@ -122,6 +122,7 @@ Router::connect('/:username/subscribe', array('controller' => 'omb_subscriptions
 Router::connect('/:username/callback', array('controller' => 'omb_subscriptions', 'action' => 'callback'));
 Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
+Router::connect('/:username/vcard/', array('controller' => 'identities', 'action' => 'vcard'));
 Router::connect('/:username/', array('controller' => 'identities', 'action' => 'profile'));
 
 Router::parseExtensions('json', 'xml');

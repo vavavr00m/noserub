@@ -46,6 +46,11 @@ class IdentitiesController extends AppController {
 	public function comments() {
     }
 
+    public function vcard() {
+        $this->RequestHandler->setContent('vcf', 'text/x-vcard');
+        $this->layout = 'empty';
+    }
+    
     public function send_message() {
         $this->grantAccess('user');
         $username = isset($this->params['username']) ? $this->params['username'] : '';
