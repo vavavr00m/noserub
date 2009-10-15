@@ -14,7 +14,7 @@ class IdentitiesController extends AppController {
     /**
      * Displays profile page of an identity 
      */
-    public function index() {
+    public function profile() {
         $this->checkUnsecure();
         $this->grantAccess('all');
         
@@ -38,68 +38,12 @@ class IdentitiesController extends AppController {
      * Displays favorite items of a user 
  	 */
     public function favorites() {
-        $this->checkUnsecure();
-        $this->grantAccess('all');
-        
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-        
-        if($username) {
-            $identity = $this->Identity->getIdentityByLocalUsername($username);
-        } else {
-            $identity = Context::isLoggedInIdentity();
-            if(!$identity) {
-                $this->redirect('/');
-            }
-            $identity = array('Identity' => $identity);
-        }
-        
-        $conditions = array(
-            'favorited_by' => $identity['Identity']['id']
-        );
-        
-        $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
-        
-        usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items);        
-        $items = $this->cluster->create($items);
-
-        $this->set('items', $items);
-        $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's favorites", true), $identity['Identity']['username']));
     }
     
 	/**
 	 * Displays comments of a user
 	 */
 	public function comments() {
-        $this->checkUnsecure();
-        $this->grantAccess('all');
-        
-        $username = isset($this->params['username']) ? $this->params['username'] : '';
-
-        if($username) {
-            $identity = $this->Identity->getIdentityByLocalUsername($username);
-        } else {
-            $identity = Context::isLoggedInIdentity();
-            if(!$identity) {
-                $this->redirect('/');
-            }
-            $identity = array('Identity' => $identity);
-        }
-        
-        $conditions = array(
-            'commented_by' => $identity['Identity']['id']
-        );
-        
-        $items = $this->Identity->Entry->getForDisplay($conditions, 50, true);
-        
-        usort($items, 'sort_items');
-        $items = $this->cluster->removeDuplicates($items, false);
-        $items = $this->cluster->create($items);
-
-        $this->set('items', $items);
-        $this->set('identity', $identity);
-        $this->set('headline', sprintf(__("%s's comments", true), $identity['Identity']['username']));
     }
 
     public function send_message() {
