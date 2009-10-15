@@ -4,7 +4,7 @@
 	</div>
 	<div id="bd-main-bd">
     	<?php echo $noserub->widgetFlashMessage(); ?>
-    	<?php echo $noserub->widgetPhotos(); ?>
+    	<?php echo $noserub->widgetRecentPhotos(); ?>
 	    <?php echo $noserub->widgetEventOverview(); ?>
 	    <?php echo $noserub->formAddEntry(); ?>
 	</div>

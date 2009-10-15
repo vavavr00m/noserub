@@ -846,11 +846,59 @@ class WidgetsController extends AppController {
         $this->set('data', $items);
     }
     
-    public function photos() {
+    public function recent_photos() {
+        $this->set('data', $this->getRecentForDisplay('photo'));    
+    }
+    
+    public function recent_videos() {
+        $this->set('data', $this->getRecentForDisplay('video'));    
+    }
+    
+    public function recent_micropublish() {
+        $this->set('data', $this->getRecentForDisplay('micropublish'));    
+    }
+    
+    public function recent_links() {
+        $this->set('data', $this->getRecentForDisplay('link'));    
+    }
+    
+    public function recent_texts() {
+        $this->set('data', $this->getRecentForDisplay('text'));
+    }
+    
+    public function recent_audio() {
+        $this->set('data', $this->getRecentForDisplay('audio'));
+    }
+    
+    public function recent_locations() {
+        $this->set('data', $this->getRecentForDisplay('location'));
+    }
+    
+    public function recent_events() {
+        $this->set('data', $this->getRecentForDisplay('event'));
+    }
+    
+    public function recent_documents() {
+        $this->set('data', $this->getRecentForDisplay('document'));
+    }
+    
+    public function recent_noserub_events() {
+        $this->set('data', $this->getRecentForDisplay('noserub'));
+    }
+    
+    /**
+     * Returns the items for either photo, video, micropublish, etc.
+     *
+     * @param string $type
+     * @param int $limit
+     *
+     * @return array
+     */
+    private function getRecentForDisplay($type, $limit = 5) {
         $this->loadModel('Entry');
     
         $filter = array(
-            'filter' => array('photo')
+            'filter' => array($type)
         );
         $identity_id = $this->getIdentityId();
         if($this->getIdentityId()) {
@@ -880,43 +928,14 @@ class WidgetsController extends AppController {
         
         $items = $this->Entry->getForDisplay(
             $filter,
-            5, 
+            $limit, 
             $with_restricted
         );
         if($items) {
             usort($items, 'sort_items');
         }
-    
-        $this->set('data', $items);    
-    }
-    
-    public function videos() {
-        $this->loadModel('Entry');
-    
-        $filter = array(
-            'filter' => array('video')
-        );
-        $identity_id = $this->getIdentityId();
-        if($this->getIdentityId()) {
-            $filter['identity_id'] = $identity_id;
-        }
         
-        if(Context::isHome()) {
-            $with_restricted = false;
-        } else {
-            $with_restricted = true;
-        }
-        
-        $items = $this->Entry->getForDisplay(
-            $filter,
-            5, 
-            $with_restricted
-        );
-        if($items) {
-            usort($items, 'sort_items');
-        }
-    
-        $this->set('data', $items);    
+        return $items;
     }
     
     /**
@@ -973,12 +992,6 @@ class WidgetsController extends AppController {
        $this->retrieveFormErrors('Identity');
         $this->set('data', $this->Identity->find('list', array('fields' => array('Identity.username'))));
     }
-    
-        
-    
-    
-    
-    
 
     /**
      * private methods

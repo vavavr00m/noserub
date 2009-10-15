@@ -804,6 +804,12 @@ a.button span {
 #bd-main-bd .photos a:active img {
 	border-color:#129bc1;
 }
+#bd-main-bd .halfwidth {
+	margin-right:-10px;
+	overflow:auto;
+	width: 235px;
+	float:left;
+}
 #bd-main-bd .lifestream li {
 	border-top:1px dashed #ddd;
 	overflow:auto;
