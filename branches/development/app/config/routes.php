@@ -123,6 +123,5 @@ Router::connect('/:username/callback', array('controller' => 'omb_subscriptions'
 
 Router::connect('/:username/favorites/', array('controller' => 'identities', 'action' => 'favorites'));
 Router::connect('/:username/comments/', array('controller' => 'identities', 'action' => 'comments'));
-Router::connect('/:username/:filter', array('controller' => 'identities', 'action' => 'index'));
 
 Router::parseExtensions('json', 'xml');
