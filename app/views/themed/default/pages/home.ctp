@@ -4,13 +4,20 @@
 	</div>
 	<div id="bd-main-bd">
 		<?php echo $noserub->widgetFlashMessage(); ?>
-		<?php echo $noserub->widgetPhotos(); ?>
-		<?php echo $noserub->widgetVideos(); ?>
-		<?php echo $noserub->widgetNetworkLifestream(); ?>
+		<?php echo $noserub->widgetRecentPhotos(); ?>
+		<?php echo $noserub->widgetRecentVideos(); ?>
+		<?php echo $noserub->widgetRecentMicropublish(); ?>
+		<?php echo $noserub->widgetRecentLinks(); ?>
+		<?php echo $noserub->widgetRecentTexts(); ?>
+		<?php echo $noserub->widgetRecentAudio(); ?>
+		<?php echo $noserub->widgetRecentLocations(); ?>
+		<?php echo $noserub->widgetRecentEvents(); ?>
+		<?php echo $noserub->widgetRecentDocuments(); ?>
+		<?php echo $noserub->widgetRecentNoserubEvents(); ?>
 	</div>
 	<div id="bd-main-sidebar">
-	    <?php echo $noserub->widgetEntryFilter(); ?>
         <?php echo $noserub->widgetAd('sidebar'); ?>
 		<?php echo $noserub->widgetLastActiveUsers(); ?>
+		<?php echo $noserub->widgetNewUsers(); ?>
 	</div>
 </div>
