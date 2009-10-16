@@ -23,8 +23,14 @@ class TwitterAccountsController extends AppController {
 		} else {
 			$consumer = $this->createConsumer();
 			$requestToken = $consumer->getRequestToken(Twitter::REQUEST_TOKEN_URL, FULL_BASE_URL . $this->here);
-			$this->Session->write('twitter_request_token', $requestToken);
-			$this->redirect(Twitter::AUTHORIZE_URL . '?oauth_token=' . $requestToken->key);
+			
+			if ($requestToken) {
+				$this->Session->write('twitter_request_token', $requestToken);
+				$this->redirect(Twitter::AUTHORIZE_URL . '?oauth_token=' . $requestToken->key);
+			} else {
+				$this->flashMessage('alert', __('Couldn\'t get a request token'));
+				$this->set('hasTwitterAccount', false);
+			}
 		}
 	}
 
