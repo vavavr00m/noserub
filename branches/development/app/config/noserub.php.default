@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * A random string that is used to generat better security hashes.
+ *
+ * You need to change this to your own value!
+ */
+Configure::write('Security.salt', 'dsds93b0qy37dhsa67823WwvniR2G0FgaC9mi');
+
+/**
  * A hash value to protect some admin routes from execution by
  * non-authorized users. Such routes are eg the one for 
  * synchronizing accounts from external identities
