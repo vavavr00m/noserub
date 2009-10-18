@@ -1,5 +1,5 @@
 <div class="widget widget-group-overview">
-	<?php if(!empty($data)): ?>
+	<?php if(!empty($data)) { ?>
 		<table>
 			<thead>
 				<tr>
@@ -9,21 +9,21 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach($data as $item): ?>
+				<?php foreach($data as $item) { ?>
 					<tr>
 						<td class="discussions">
 							<?echo $html->link(
 							    $item['Entry']['title'], 
-								'/groups/entry/' . Context::groupSlug() . '/' . $item['Entry']['id']
+								'/groups/entry/' . $noserub->groupSlug($item['Entry']) . '/' . $item['Entry']['id']
 							); ?>
 						</td>
 						<td class="replies"><?php echo $item['Entry']['comment_count']; ?></td>
 						<td class="activity"><?php echo date('Y-m-d H:i:s', strtotime($item['Entry']['last_activity'])); ?></td>
 					</tr>
-				<?php endforeach; ?>
+				<?php } ?>
 			</tbody>
 		</table>
-	<?php else: ?>
+	<?php } else { ?>
 		<?php __('There is currently no entry in this group') ?>
-	<?php endif; ?>
+	<?php } ?>
 </div>

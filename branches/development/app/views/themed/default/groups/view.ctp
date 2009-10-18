@@ -5,8 +5,8 @@
 	<div id="bd-main-bd">
     	<?php echo $noserub->widgetFlashMessage(); ?>
 	    <?php echo $noserub->widgetGroupInfo(); ?>
+	    <?php echo $noserub->widgetGroupOverview(); ?>
 	    <?php echo $noserub->widgetRecentPhotos(); ?>
-		<?php echo $noserub->widgetGroupOverview(); ?>
 	</div>
 
 	<div id="bd-main-sidebar">

@@ -47,12 +47,27 @@ class Group extends AppModel {
     }
     
     /**
-     * get overview of all groups
+     * Get overview of groups with new
+     * activities.
      */
-    public function getOverview() {
-        $this->contain();
+    public function getOverview($options) {
+        $limit = $this->getValue($options, 'limit', 10);
+        $identity_id = $this->getValue($options, 'identity_id');
+        if($identity_id) {
+            # this is displayed in a context of an identity, so we only
+            # get those groups where the user is subscribed to.
+            $this->GroupSubscriber->id = $identity_id;
+            $subscribed_groups = $this->GroupSubscriber->getSubscribedGroups();
+            $subscribed_groups_id = Set::extract($subscribed_groups, '{n}.id');
+            $conditions = array('Group.id' => $subscribed_groups_id);
+        } else {
+            $conditions = false;
+        }
         return $this->find('all', array(
-            'limit' => 10
+            'contain' => false,
+            'conditions' => $conditions,
+            'limit' => $limit,
+            'order' => 'last_activity DESC'
         ));
     }
     
