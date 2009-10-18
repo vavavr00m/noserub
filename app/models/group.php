@@ -80,9 +80,6 @@ class Group extends AppModel {
     }
     
     /**
-     * fake! TODO: look into how to get the number
-     * of subscribers or number of entries into the
-     * "popularity" measurement.
      */
     public function getPopular() {
         return $this->find('all', array(

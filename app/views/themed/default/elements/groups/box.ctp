@@ -8,3 +8,8 @@
         </li>
     <?php } ?>
 </ul>
+<?php if(isset($more)) { ?>
+    <p class="more">
+        <?php echo $html->link(__('show more', true), $more); ?>
+	</p>
+<?php } ?>
