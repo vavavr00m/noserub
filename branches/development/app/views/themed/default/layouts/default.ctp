@@ -13,6 +13,9 @@
 		<meta http-equiv="Content-Language" content="<?php echo Context::language(); ?>" />
 		<?php echo $noserub->widgetMetaDescription(); ?>
 		<?php echo $noserub->widgetMetaKeywords(); ?>
+		<?php if(Context::isProfile()) { ?>
+				<link rel="alternate" type="application/rss+xml" href="http://<?php echo Context::read('identity.username') . '/feed'; ?>" />
+		<?php } ?>
 		<title><?php echo $title; ?></title>
 
         <?php echo $this->element('css'); ?>

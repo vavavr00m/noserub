@@ -26,7 +26,7 @@ $name = $data['name'];
     		</li>
     		<li class="feed">
     		    <span class="icon"></span>
-    		    <a href="#">RSS-Feed</a>
+    		    <?php echo $html->link(__('RSS-Feed', true), $base_url . 'feed'); ?>
     		</li>
     	</ul>
     </div>

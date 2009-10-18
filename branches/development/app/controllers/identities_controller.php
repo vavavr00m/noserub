@@ -51,6 +51,26 @@ class IdentitiesController extends AppController {
         $this->layout = 'empty';
     }
     
+    public function feed() {
+        $identity_id = Context::read('identity.id');
+        $items = array();
+        if($identity_id) {
+            $items = $this->Identity->Entry->getForDisplay(
+                array(
+                    'identity_id' => $identity_id
+                    ),
+                20, 
+                false
+            );
+            if($items) {
+                usort($items, 'sort_items');
+                $items = $this->cluster->removeDuplicates($items);
+            }
+        }
+        $this->set('items', $items);
+        $this->layout = 'feed_rss';
+    }
+    
     public function send_message() {
         $this->grantAccess('user');
         $username = isset($this->params['username']) ? $this->params['username'] : '';
