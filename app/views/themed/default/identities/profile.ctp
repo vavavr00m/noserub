@@ -19,9 +19,9 @@
 
 	<div id="bd-main-sidebar">
 	    <?php echo $noserub->widgetMap(); ?>
+	    <?php echo $noserub->widgetGroups(); ?>
 		<?php echo $noserub->widgetCommunications(); ?>
 		<?php echo $noserub->widgetContacts(); ?>
 		<?php echo $noserub->widgetAccounts(); ?>
-		<?php echo $noserub->widgetGroups(); ?>
 	</div>
 </div>

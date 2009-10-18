@@ -189,4 +189,16 @@ class AppModel extends Model {
 		
 		return preg_replace($patterns, $replacements, $field);
     }    
+    
+    /**
+     * Helper methods for getting data out of a options array
+     */
+    protected function getValue($options, $key, $default = false) {
+        $value = $default;
+        if(is_array($options) && isset($options[$key])) {
+            $value = $options[$key];
+        }
+        
+        return $value;
+    }
 }

@@ -17,6 +17,7 @@
 	</div>
 	<div id="bd-main-sidebar">
         <?php echo $noserub->widgetAd('sidebar'); ?>
+        <?php echo $noserub->widgetGroups(); ?>
 		<?php echo $noserub->widgetLastActiveUsers(); ?>
 		<?php echo $noserub->widgetNewUsers(); ?>
 	</div>

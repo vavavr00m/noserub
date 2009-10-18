@@ -51,6 +51,31 @@ class NoserubHelper extends AppHelper {
     }
     
     /**
+     * Get group slug by given group_id or
+     * model and foreign_key
+     */
+    public function groupSlug($options) {
+        $group_id = false;
+        if(isset($options['group_id'])) {
+            $group_id = $options['group_id'];
+        } else if(isset($options['model']) && 
+                  isset($options['foreign_key']) &&
+                  $options['model'] == 'group') {
+            $group_id = $options['foreign_key'];
+        }
+        if($group_id) {
+            if(!isset($this->Group)) {
+                App::import('Model', 'Group');
+                $this->Group = new Group();
+            }
+            $this->Group->id = $group_id;
+            return $this->Group->field('slug');
+        } else {
+            return '';
+        }
+    }
+    
+    /**
      * generic method for the more simple widgets
      * 
      * TODO: think about adding a whitelist

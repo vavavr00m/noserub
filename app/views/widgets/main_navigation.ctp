@@ -34,14 +34,13 @@
             <li class="groups">
 				<span class="icon"></span>
                 <a class="toggle" href="#">(-)</a>
-                <?php echo $html->link(__('Groups', true), $base_url . '/groups/', array('class' => 'head')); ?>
-                <?php if($groups) { ?>
-                    <ul>
-                        <?php foreach($groups as $group) { ?>
-                            <li><?php echo $html->link($group['name'], '/groups/view/' . $group['slug']); ?></li>
-                        <?php } ?>
-                    </ul>
-                <?php } ?>
+                <?php echo $html->link(__('Groups', true), '/groups/', array('class' => 'head')); ?>
+                <ul>
+                    <li><?php echo $html->link(__('My Groups', true), $base_url . '/groups/'); ?></li>
+                    <?php foreach($groups as $group) { ?>
+                        <li><?php echo $html->link($group['name'], '/groups/view/' . $group['slug']); ?></li>
+                    <?php } ?>
+                </ul>
             </li>
 <?php 
 /*

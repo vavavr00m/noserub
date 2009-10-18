@@ -495,12 +495,13 @@ class WidgetsController extends AppController {
  	}
  	
  	public function group_statistics() {
- 	    if(Context::groupId()) {
+ 	    $groupId = $this->getGroupId();
+ 	    if($groupId) {
             $this->loadModel('Group');
  	        $this->set('group_statistics', $this->Group->find('first', array(
  	            'contain' => array('GroupMaintainer'),
  	            'conditions' => array(
- 	                'Group.id' => Context::groupId()
+ 	                'Group.id' => $groupId
  	            )
  	        )));
  	    }
@@ -510,23 +511,29 @@ class WidgetsController extends AppController {
  	}
  	
  	public function group_overview() {
- 	    if(Context::groupId()) {
+ 	    $groupId = $this->getGroupId();
+ 	    if($groupId) {
+            $limit = $this->getArg('num');
+            if(!$limit) {
+                $limit = 10;
+            }
  	        $this->loadModel('Entry');
      	    $this->set('data', $this->Entry->find('all', array(
                 'contain' => false,
                 'conditions' => array(
-                    'Entry.foreign_key' => Context::groupId(),
+                    'Entry.foreign_key' => $groupId,
                     'Entry.model' => 'group'
                 ),
                 'order' => 'Entry.published_on DESC',
-                'limit' => 10
+                'limit' => $limit
             )));
         }
  	}
  	
  	public function groups_overview() {
+ 	    $identity_id = $this->getIdentityId(false);
  	    $this->loadModel('Group');
- 	    $this->set('groups', $this->Group->getOverview());
+ 	    $this->set('groups', $this->Group->getOverview(array('identity_id' => $identity_id)));
  	}
  	
  	public function new_groups() {
@@ -905,10 +912,11 @@ class WidgetsController extends AppController {
             $filter['identity_id'] = $identity_id;
         }
         
-        if(Context::groupId()) {
+        $group_id = $this->getGroupId();
+        if($group_id) {
             // we are on a group page, so just show photos
             // for this group
-            $filter['group_id'] = Context::groupId();
+            $filter['group_id'] = $group_id;
         }
         if(Context::locationId()) {
             // we are on a location page, so just show photos
@@ -1009,18 +1017,41 @@ class WidgetsController extends AppController {
      * @return $int
      */
     private function getIdentityId($fallback_to_login = true) {
-        $identity_id = isset($this->params['identity_id']) ? $this->params['identity_id'] : 0;
-        if(!$identity_id) {
+        $identityId = $this->getArg('identity_id');
+        if(!$identityId) {
             # if no identity_id was given in the params, use the one
             # from the current page
             if(Context::read('identity')) {
-                $identity_id = Context::read('identity.id');
+                $identityId = Context::read('identity.id');
             } else if($fallback_to_login && Context::isLoggedInIdentity()) {
                 # if not, use the logged in identity
-                $identity_id = Context::loggedInIdentityId();
+                $identityId = Context::loggedInIdentityId();
             }
          }
      
-        return $identity_id;
+        return $identityId;
+     }
+     
+     /**
+      * Returns either the groupId given as param or
+      * the one that is currently displayed.
+      */
+     private function getGroupId() {
+          $groupId = $this->getArg('group_id');
+          if(!$groupId) {
+              $groupId = Context::groupId();
+          }
+          
+          return $groupId;
+     }
+     
+     private function getArg($key) {
+         if(is_array($this->params) && 
+            is_array($this->params[0]) &&
+            isset($this->params[0][$key])) {
+             return $this->params[0][$key];
+         } else {
+             return false;
+         }
      }
 }
