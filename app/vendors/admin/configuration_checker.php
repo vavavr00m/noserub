@@ -122,7 +122,7 @@ class ConfigurationChecker {
 		$out = array();
 		
 		if (Configure::read('Security.salt') == self::DEFAULT_SECURITY_SALT) {
-			$out['Security.salt'] = __('contains default value. Please change its value in core.php', true);
+			$out['Security.salt'] = __('contains default value. Please change its value in noserub.php', true);
 		}
 		
 		return $out;
