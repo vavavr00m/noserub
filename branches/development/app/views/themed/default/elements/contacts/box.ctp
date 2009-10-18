@@ -48,7 +48,9 @@
         </li>
     <?php } ?>
     </ul>
-    <p class="more">
-		<a href="#"><?php __('show more'); ?></a>
-	</p>
+    <?php if(isset($more)) { ?>
+        <p class="more">
+            <?php echo $html->link(__('show more', true), $more); ?>
+    	</p>
+    <?php } ?>
 </div>
