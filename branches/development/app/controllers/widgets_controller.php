@@ -524,7 +524,7 @@ class WidgetsController extends AppController {
                     'Entry.foreign_key' => $groupId,
                     'Entry.model' => 'group'
                 ),
-                'order' => 'Entry.published_on DESC',
+                'order' => 'Entry.last_activity DESC',
                 'limit' => $limit
             )));
         }
