@@ -13,7 +13,6 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testGet1() {
-	    $address = 'Kölnstraße 129, 53111 Bonn, Deutschland';
 	    $address = 'Eupener Straße, Köln';
 	    
 	    $result = $this->component->get($address);
@@ -31,7 +30,7 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	    $this->assertEqual(round($result['longitude'], 3), 7.095);
 	}
 	
-	public function testGet3() {
+	public function testGetLocationOfNotExistingAddress() {
 	    $address = 'an unknown stadt';
 	    
 	    $result = $this->component->get($address);
