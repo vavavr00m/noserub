@@ -10,8 +10,8 @@
  * @subpackage controllers
  */
 class AppController extends Controller {
-    public $helpers = array('noserub', 'javascript', 'html', 'form', 'vcf');
-    public $components = array('Cookie', 'RequestHandler', 'ContentNegotiation');
+    public $helpers = array('noserub', 'javascript', 'html', 'form', 'vcf', 'htmlpurifier');
+    public $components = array('Cookie', 'RequestHandler', 'ContentNegotiation', 'Htmlpurifier');
     public $view = 'Theme';
     public $theme = 'default';
     
