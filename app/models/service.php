@@ -508,7 +508,7 @@ class DummyFilter implements IServiceTypeFilter {
 
 class PhotoFilter implements IServiceTypeFilter {
 	public function __construct() {
-		App::import('Vendor', 'htmlpurifier', array('file' => 'htmlpurifier'.DS.'HTMLPurifier.auto.php'));		
+		App::import('Vendor', 'htmlpurifier', array('file' => 'htmlpurifier'.DS.'HTMLPurifier.standalone.php'));		
 	}
 	
 	public function filter($item) {
