@@ -57,7 +57,7 @@
         
             case 'text':
                 echo $form->input('Entry.title', array('label' => __('Title', true)));
-                echo $form->input('Entry.text', array('type' => 'textarea', 'label' => false));
+                echo $form->input('Entry.text', array('type' => 'textarea', 'label' => false, 'class' => 'wysiwyg'));
                 break;
             
             case 'photo':

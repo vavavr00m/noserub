@@ -8,5 +8,5 @@ echo $javascript->object(Context::forJs(), array('prefix' => 'var noserub_contex
 
 echo $html->script('theme.js');
 echo $html->script('noserub.js');
-
+echo $html->script('uEditor.js');
 ?>

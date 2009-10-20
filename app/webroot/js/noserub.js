@@ -36,4 +36,6 @@ $(document).ready(function() {
             map.addOverlay(new GMarker(point));
         }
      }
+     
+     $('.wysiwyg').uEditor({toolbarItems: ['htmlsource', 'bold', 'italic', 'link', 'unorderedlist', 'orderedlist']});
 });

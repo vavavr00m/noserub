@@ -3,3 +3,5 @@
 <!--[if IE]>
 	<?php echo $html->css('ie.css', null, array('media' => 'all')); ?>
 <![endif]-->
+
+<?php echo $html->css('uEditor.css', null, array('media' => 'all')); ?>
