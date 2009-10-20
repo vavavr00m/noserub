@@ -8,8 +8,16 @@ App::import('Component', 'Geocoder');
 class GeocoderComponentTestCase extends CakeTestCase {
     private $component = null;
     
+    public function __construct() {
+    	$this->initializeContext();
+    }
+    
 	public function setUp() {
 		$this->component = new GeocoderComponent();
+	}
+	
+	public function skip() {
+		$this->skipif(!Context::googleMapsKey(), 'No Google Maps key specified');
 	}
 	
 	public function testGet1() {
@@ -44,4 +52,10 @@ class GeocoderComponentTestCase extends CakeTestCase {
 	public function tearDown() {
 	    unset($this->component);
 	}
-}	
+	
+	private function initializeContext() {
+		$appController = new AppController();
+		$appController->constructClasses();
+		$appController->beforeFilter();
+	}
+}
