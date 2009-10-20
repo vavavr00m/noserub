@@ -5,14 +5,17 @@ class GeocoderComponent extends Object {
     /**
      * returns an array with latitude and longitude
      * for the given address or false, when no result
-     * was found
+     * was found - or no API key is given. 
      *
      * @param  string $address
      * @return array with keys 'longitude', 'latitude'
      * @access 
      */
     public function get($address) {
-        $url = 'http://maps.google.com/maps/geo?output=csv&q='. urlencode($address);
+        if (Context::googleMapsKey() === false) {
+            return false;
+        }
+        $url = 'http://maps.google.com/maps/geo?output=csv&sensor=false&q='. urlencode($address) . '&key=' . Context::googleMapsKey();
         
         App::import('Vendor', 'WebExtractor');
 		$response = WebExtractor::fetchUrl($url);
