@@ -10,7 +10,7 @@
  */
 class AppModel extends Model {
 	public $actsAs = array('Containable');
-	private $sanitizeExclusion = array('Ad', 'Entry');
+	private $sanitizeExclusion = array('Ad', 'Entry', 'Comment');
     private $old_locale = null;
     
     /**

@@ -3,7 +3,7 @@
 		<?php echo $noserub->widgetGroupHead(); ?>
 	</div>
 	<div id="bd-main-bd">
-	    <h2><?php __('New Topic'); ?>
+	    <h2><?php __('New Topic'); ?></h2>
     	<?php echo $noserub->widgetFlashMessage(); ?>
     	<?php echo $noserub->formAddEntry(); ?>
 	</div>

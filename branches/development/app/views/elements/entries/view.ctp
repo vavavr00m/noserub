@@ -14,7 +14,7 @@
                     echo $this->element('entries/photo'); break;
                 case 6: // video
                     echo $this->element('entries/video'); break;
-                default: echo $data['Entry']['content'];
+                default: echo $htmlpurifier->clean($data['Entry']['content']);
         } ?></td>
     </tr>
 </table>

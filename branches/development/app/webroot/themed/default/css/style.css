@@ -130,7 +130,10 @@ input[type="button"]::-moz-focus-inner {
 a.button span {
 	padding:3px 30px 3px 0px;
 }
-
+textarea.wysiwyg {
+    width: 450px;
+    height: 200px;
+}
 /**
  * Header
  *
