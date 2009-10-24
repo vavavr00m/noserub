@@ -572,7 +572,9 @@ class Entry extends AppModel {
     }
     
     public function addLink($identityId, $description, $url, $foreignKey = 0, $model = '', $restricted = false) {
-        if(is_null($restricted)) {
+        App::import('Vendor', 'UrlUtil');
+    	
+    	if(is_null($restricted)) {
             $restricted = $this->getRestricted($identityId);
         }
         $data = array(
@@ -582,9 +584,9 @@ class Entry extends AppModel {
             'service_type' => 2,
             'published_on' => date('Y-m-d H:i:s'),
             'title' => $description,
-            'url' => $url,
+            'url' => UrlUtil::addHttpIfNoProtocolSpecified($url),
             'uid' => md5($url),
-            'content' => '<a href="' . $url . '">' . $description . '</a>',
+            'content' => '<a href="' . UrlUtil::addHttpIfNoProtocolSpecified($url) . '">' . $description . '</a>',
             'restricted' => $restricted
         );
         
