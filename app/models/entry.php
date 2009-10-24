@@ -577,7 +577,7 @@ class Entry extends AppModel {
     	if(is_null($restricted)) {
             $restricted = $this->getRestricted($identityId);
         }
-        $url = UrlUtil::addHttpIfNoProtocolSpecified($url),
+        $url = UrlUtil::addHttpIfNoProtocolSpecified($url);
         $data = array(
             'identity_id' => $identityId,
             'foreign_key' => $foreignKey,
