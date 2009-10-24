@@ -577,6 +577,7 @@ class Entry extends AppModel {
     	if(is_null($restricted)) {
             $restricted = $this->getRestricted($identityId);
         }
+        $url = UrlUtil::addHttpIfNoProtocolSpecified($url),
         $data = array(
             'identity_id' => $identityId,
             'foreign_key' => $foreignKey,
@@ -584,9 +585,9 @@ class Entry extends AppModel {
             'service_type' => 2,
             'published_on' => date('Y-m-d H:i:s'),
             'title' => $description,
-            'url' => UrlUtil::addHttpIfNoProtocolSpecified($url),
+            'url' => $url,
             'uid' => md5($url),
-            'content' => '<a href="' . UrlUtil::addHttpIfNoProtocolSpecified($url) . '">' . $description . '</a>',
+            'content' => '<a href="' . $url . '">' . $description . '</a>',
             'restricted' => $restricted
         );
         
