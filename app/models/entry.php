@@ -444,7 +444,7 @@ class Entry extends AppModel {
         }
     }
     
-    public function addMicropublish($identity_id, $text, $foreignKey = 0, $model = '', $restricted = false) {
+    private function addMicropublish($identity_id, $text, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
@@ -570,7 +570,7 @@ class Entry extends AppModel {
         return $text;
     }
     
-    public function addLink($identityId, $description, $url, $foreignKey = 0, $model = '', $restricted = false) {
+    private function addLink($identityId, $description, $url, $foreignKey = 0, $model = '', $restricted = false) {
         App::import('Vendor', 'UrlUtil');
     	
     	if(is_null($restricted)) {
@@ -594,7 +594,7 @@ class Entry extends AppModel {
         return $this->save($data);
     }
     
-    public function addText($identity_id, $title, $text, $foreignKey = 0, $model = '', $restricted = false) {
+    private function addText($identity_id, $title, $text, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
@@ -624,7 +624,7 @@ class Entry extends AppModel {
         return true;
     }
     
-    public function addPhoto($identity_id, $title, $filename, $foreignKey = 0, $model = '', $restricted = false) {
+    private function addPhoto($identity_id, $title, $filename, $foreignKey = 0, $model = '', $restricted = false) {
         if(is_null($restricted)) {
             $restricted = $this->getRestricted($identity_id);
         }
