@@ -552,11 +552,10 @@ class Entry extends AppModel {
      * shortens all urls in a given text
      *
      * @param string $text
-     * @param int $max_length
      *
      * @return string
      */
-    public function shortenUrlInText($text) {
+    private function shortenUrlInText($text) {
         $pattern = '/((?:https?:\/\/|ftp:\/\/|mailto:|news:)[^\s]+)/i';
         if(preg_match_all($pattern, $text, $matches)) {
             App::import('Vendor', 'WebExtractor');
