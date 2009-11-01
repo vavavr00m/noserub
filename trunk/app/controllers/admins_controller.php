@@ -142,6 +142,7 @@ class AdminsController extends AppController {
         
         if($admin_hash != Configure::read('NoseRub.admin_hash') || $admin_hash == '') {
             # there is nothing to do for us here
+            $this->layout = 'system_update';
             echo $this->render('/elements/hash_not_valid');
 			exit;
         }

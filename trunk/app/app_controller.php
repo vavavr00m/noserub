@@ -68,13 +68,12 @@ class AppController extends Controller {
     }
 
     public function beforeFilter() {
-        if(!$this->isSystemUpdatePage()) {
+        if(!$this->isSystemUpdatePage() && !$this->isWidget()) {
             # check for auto-login
             if(!$this->Session->check('Identity.id')) {
                 $this->autoLogin();
             }
         }
-        
         # Localization
         App::import('Core', 'l10n');
         $this->L10n = new L10n();
@@ -314,8 +313,10 @@ class AppController extends Controller {
                 $this->loadModel('Identity');
             }
             
-            $this->Identity->contain();
-            $identity = $this->Identity->findById($login_id);
+            $identity = $this->Identity->find('first', array(
+                'contain' => false,
+                'conditions' => array('id' => $login_id)
+            ));
 
             if(!$identity) {
                 # not found. delete the cookie.
@@ -479,7 +480,11 @@ class AppController extends Controller {
     protected function info_route($action) {
         $this->redirect('/pages/info/' . $action);
     }
-    
+   
+    private function isWidget() {
+        return (strpos($this->here, '/widgets/') === 0) ? true : false;
+    }
+ 
     private function isSystemUpdatePage() {
     	return (strpos($this->here, '/system/update') !== false) ? true : false;
     }
