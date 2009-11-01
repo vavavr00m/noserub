@@ -1,1 +1,0 @@
-INSERT INTO  `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`) VALUES (79 ,  'Skitch',  'Skitch',  'http://skitch.com/',  '1',  '',  'skitch.gif',  '1',  '0',  '30', NOW( ) , NOW( ));

@@ -1,4 +1,0 @@
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('40', 'folkd.com', 'http://www.folkd.com/', '2', '', 'folkd.gif', '1', '0', NOW(), NOW());
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('41', 'reddit', 'http://reddit.com/', '2', '', 'reddit.gif', '1', '0', NOW(), NOW());
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('42', 'Blue Dot', 'http://bluedot.us/', '2', '', 'bluedot.gif', '1', '0', NOW(), NOW());
-INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('43', 'Simpy', 'http://www.simpy.com/', '2', '', 'simpy.gif', '1', '0', NOW(), NOW());

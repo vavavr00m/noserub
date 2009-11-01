@@ -1,3 +1,0 @@
-ALTER TABLE `identities` ADD `twitter_bridge_active` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `openid_server_url` , ADD `twitter_username` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `twitter_bridge_active` , ADD `twitter_password` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `twitter_username` ;
-ALTER TABLE `identities` CHANGE `overview_filters` `overview_filters` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL  
-UPDATE `identities` SET overview_filters = CONCAT(overview_filters, ',noserub') WHERE overview_filters <> '';

@@ -1,1 +1,0 @@
-CREATE TABLE  `omb_listenee_identifiers` ( `id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `identity_id` INT( 11 ) NOT NULL, `identifier` VARCHAR( 255 ) NOT NULL, `created` DATETIME NOT NULL , `modified` DATETIME NOT NULL) ENGINE = MYISAM DEFAULT CHARSET=utf8;

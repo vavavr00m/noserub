@@ -1,1 +1,0 @@
-<?php echo $this->element('identities/items', array('data' => $data, 'filter' => $filter)); ?>

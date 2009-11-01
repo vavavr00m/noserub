@@ -1,1 +1,0 @@
-ALTER TABLE  `identities` ADD  `redirect_url` VARCHAR( 255 ) NOT NULL AFTER  `allow_emails` ;

@@ -1,1 +1,0 @@
-ALTER TABLE `identities` ADD `openid_identity` VARCHAR(255) AFTER `openid` ;

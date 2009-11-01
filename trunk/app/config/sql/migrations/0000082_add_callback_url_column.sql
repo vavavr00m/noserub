@@ -1,1 +1,0 @@
-ALTER TABLE `consumers` ADD `callback_url` VARCHAR (255) AFTER `application_name` ;
