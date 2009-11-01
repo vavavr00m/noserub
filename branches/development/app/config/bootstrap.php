@@ -8,7 +8,7 @@ if(file_exists(APP . '/config/noserub.php')) {
 
 require_once('context.php');
 
-Configure::write('NoseRub.version', '0.9a');
+Configure::write('NoseRub.version', '0.8.5a');
 
 define('NOSERUB_VALID_USERNAME', '/^[\w.-_]+$/ism');
 
