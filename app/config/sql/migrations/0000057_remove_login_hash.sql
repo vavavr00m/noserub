@@ -1,1 +1,0 @@
-ALTER TABLE `identities` DROP `login_hash`;

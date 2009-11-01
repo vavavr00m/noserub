@@ -1,1 +1,0 @@
-CREATE TABLE `openid_sites` (`id` int(11) unsigned NOT NULL auto_increment,`identity_id` int(11) unsigned NOT NULL,`url` varchar(255) NOT NULL,`allowed` BOOLEAN DEFAULT FALSE,`created` datetime NOT NULL,`modified` datetime NOT NULL,PRIMARY KEY  (`id`),KEY `identity_id` (`identity_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;

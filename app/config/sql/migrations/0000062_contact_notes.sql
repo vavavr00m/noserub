@@ -1,1 +1,0 @@
-ALTER TABLE  `contacts` ADD  `note` TEXT NOT NULL AFTER  `with_identity_id` ;

@@ -1,1 +1,0 @@
-RENAME TABLE `omb_access_tokens` TO `omb_service_access_tokens`;

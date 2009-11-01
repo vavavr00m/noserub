@@ -1,1 +1,0 @@
- ALTER TABLE `identities` CHANGE `last_activity` `last_generic_feed_upload` DATETIME NOT NULL

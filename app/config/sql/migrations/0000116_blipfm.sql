@@ -1,1 +1,0 @@
-INSERT INTO `services` ( `id` , `internal_name`, `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('71', 'Blipfm', 'Blip.fm', 'http://blip.fm/', '7', '', 'blipfm.gif', '1', '0', NOW(), NOW());

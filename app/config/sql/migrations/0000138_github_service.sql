@@ -1,1 +1,0 @@
-INSERT INTO  `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`) VALUES (80 ,  'Github',  'Github',  'http://github.com',  '5',  '',  'github.gif',  '1',  '0',  '30', NOW( ) , NOW( ));
