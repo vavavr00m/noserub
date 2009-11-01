@@ -1,0 +1,51 @@
+/** 
+ * NoseRub 
+ * special stylesheet for IE 7/8
+ * 
+ * We no longer support IE versions lower than 7.
+ * 
+ * @project   NoseRub 
+ * @version   0.9
+ * @author    Mario Volke 
+ * @copyright 2009 by the author 
+ * @cssdoc    version 1.0-pre 
+ * @license   MIT license
+ */
+ 
+ 
+/**
+ * Header
+ *
+ * @section header
+ */
+ 
+/**
+  * overflow:auto Bug
+  * 
+  * @bugfix
+  * @affected 	IE8
+  * @valid	 	no  
+*/
+#hd li.lang {
+	float:left;
+	*float:right;
+}
+
+/**
+ * Body main sidebar
+ * This is the sidebar on the right.
+ *
+ * @section body-main-sidebar
+ */
+ 
+ /**
+  * Floating Bug
+  * 
+  * @bugfix
+  * @affected 	IE7
+  * @valid	 	no  
+  */     
+#bd-main-sidebar .block-contact li {
+	*float:left;
+	*margin-bottom:8px;
+}

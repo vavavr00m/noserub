@@ -1,0 +1,1 @@
+ ALTER TABLE `locations` CHANGE `longitude` `longitude` FLOAT NOT NULL;

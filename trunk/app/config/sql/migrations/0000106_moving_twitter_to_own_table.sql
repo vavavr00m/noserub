@@ -1,0 +1,3 @@
+CREATE TABLE  `twitter_accounts` ( `id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `identity_id` INT( 11 ) NOT NULL, `bridge_active` BOOLEAN DEFAULT FALSE, `username` VARCHAR( 64 ) NOT NULL, `password` VARCHAR( 64 ) NOT NULL, `created` DATETIME NOT NULL , `modified` DATETIME NOT NULL) ENGINE = MYISAM DEFAULT CHARSET=utf8;
+INSERT INTO `twitter_accounts` (`identity_id`, `bridge_active`, `username`, `password`, `created`, `modified`) SELECT `id`, `twitter_bridge_active`, `twitter_username`, `twitter_password`, NOW(), NOW() FROM `identities` WHERE `twitter_username` <> '';
+ALTER TABLE `identities` DROP COLUMN `twitter_bridge_active`, DROP COLUMN `twitter_username`, DROP COLUMN `twitter_password` ;

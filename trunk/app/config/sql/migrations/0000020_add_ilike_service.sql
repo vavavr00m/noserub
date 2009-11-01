@@ -1,0 +1,1 @@
+INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `created` , `modified` ) VALUES ('19', 'iLike', 'http://ilike.com', '7', NOW(), NOW());

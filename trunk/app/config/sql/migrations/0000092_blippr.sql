@@ -1,0 +1,1 @@
+INSERT INTO `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`)VALUES ('65' , 'Blippr', 'Blippr', 'http://www.blippr.com', '5', '', 'blippr.gif', '1', '0', '30', NOW( ) , NOW( ));

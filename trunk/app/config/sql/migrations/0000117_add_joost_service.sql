@@ -1,0 +1,1 @@
+INSERT INTO `services` ( `id` , `internal_name`, `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('72', 'Joost', 'Joost', 'http://www.joost.com/', '6', '', 'joost.gif', '1', '0', NOW(), NOW());
