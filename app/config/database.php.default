@@ -1,0 +1,14 @@
+<?php
+
+class DATABASE_CONFIG {
+
+	var $default = array(
+		'driver' => 'mysql',
+		'persistent' => false,
+		'host' => 'localhost',
+		'login' => 'user',
+		'password' => 'password',
+		'database' => 'noserub',
+		'prefix' => '', // leave the prefix empty, as it is currently not supported by NoseRub
+	);
+}

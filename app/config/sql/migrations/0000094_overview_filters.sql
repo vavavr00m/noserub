@@ -1,0 +1,1 @@
+UPDATE identities SET overview_filters='photo,video,link,text,micropublish,event,document,location' WHERE overview_filters='' AND is_local=1 AND email <> '';

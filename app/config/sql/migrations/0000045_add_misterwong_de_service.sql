@@ -1,0 +1,1 @@
+INSERT INTO `services` ( `id` , `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('39', 'Mister Wong (DE)', 'http://www.mister-wong.de/', '2', '', 'misterwong.gif', '1', '0', NOW(), NOW());

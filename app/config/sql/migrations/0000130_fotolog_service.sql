@@ -1,0 +1,1 @@
+INSERT INTO `services` (`id` , `internal_name`, `name` , `url` , `service_type_id` , `help` , `icon` , `has_feed` , `is_contact` , `created` , `modified` ) VALUES ('75', 'Fotolog', 'Fotolog', 'http://www.fotolog.com/', '1', '', 'fotolog.gif', '1', '0', NOW(), NOW());

@@ -1,0 +1,1 @@
+INSERT INTO  `services` (`id` ,`internal_name` ,`name` ,`url` ,`service_type_id` ,`help` ,`icon` ,`has_feed` ,`is_contact` ,`minutes_between_updates` ,`created` ,`modified`) VALUES (68 ,  'Jaiku',  'Jaiku.com',  'http://jaiku.com',  '5',  '',  'jaiku.gif',  '1',  '0',  '5', NOW( ) , NOW( ));

@@ -1,0 +1,2 @@
+ALTER TABLE `identities` ADD `api_hash` CHAR( 32 ) NOT NULL AFTER `sex` ,ADD `api_active` TINYINT UNSIGNED NOT NULL AFTER `api_hash` ,ADD `overview_filters` VARCHAR( 64 ) NOT NULL AFTER `api_active` ;
+UPDATE identities SET overview_filters='photo,video,link,text,micropublish,event,document,location' WHERE is_local=1;

@@ -1,0 +1,144 @@
+These are the installation instructions for NoseRub for PHP.
+
+
+UPDATE
+======
+If you update from a previous release, jump directly to step 4 of the
+installation process.
+
+
+INSTALL
+=======
+
+0. What do I need?
+------------------
+You need MySQL and PHP 5. MySQL 5 is strongly advised. PHP 5 must have 
+enabled either the GMP extension or the Bcmath extension plus the GD, curl, dom, 
+and SPL (Standard PHP Library) extensions. Also make sure that the value for 
+"memory_limit" in your php.ini is higher than 8MB. 
+
+Your webserver (I assume Apache, never tried something else) should 
+have mod_rewrite installed and made available for the directory, NoseRub is
+installed at. This is important, so that the URLs are the same on all
+servers in the NoseRub "universe".
+
+
+
+1. Download NoseRub
+-------------------
+You obviously already did that, because this file is included in the package...
+If due strange circumstances you need to know where to download NoseRub for 
+PHP, please look here:
+    http://noserub.com/code/
+
+
+
+2. Install NoseRub on your webserver
+------------------------------------
+Therefore you should just extract the archive to the document root of your
+webserver:
+    tar -zxf noserub_<version>.tar.gz
+
+Make sure that /noserub/app/tmp, /noserub/app/webroot/static/avatars and 
+/noserub/app/webroot/static/photos are writeable by the webserver. If you don't 
+want to have your NoseRub installation under http://<server_name>/noserub/, 
+but rather directly under http://<server_name>/, just point the document root 
+of the webserver to /noserub/app/webroot/.
+
+
+
+3. Create database.php and noserub.php
+-------------------------------------- 
+Under noserub/app/config/ you find default files you can use as templates for 
+your own settings:
+  cd noserub/app/config
+  cp database.php.default database.php
+  cp noserub.php.default noserub.php
+
+In database.php, please enter information to contact your database server. You
+should create a new database for NoseRub, as there are no prefixes available
+for the table names and you don't want to overwrite existing tables.
+
+In noserub.php, make sure you enter a value for 
+	NoseRub.admin_hash
+	
+If you are using PHP 5.3, uncomment the following line in app/config/core.php:
+  // date_default_timezone_set('UTC');
+
+
+
+4. Call the update url
+----------------------
+You should now be able to call the following url:
+    http://<server_name>/noserub/jobs/<NoseRub.admin_hash>/system/update
+or
+    http://<server_name>/jobs/<NoseRub.admin_hash>/system/update
+depending on how you set it up in step #2.
+
+If neccessary, this page will show you settings you need to make, or it will
+display database updates. Even when installing NoseRub for the first time, it
+is normal to see database updates.
+
+If you get a OK for Settings and the Database, you now can call
+    http://<server_name>/noserub/
+or
+    http://<server_name>/
+depending on how you set it up in step #2.
+
+
+
+5. Log in to the admin area
+---------------------------
+Call
+    http://<server_name>/noserub/admins/
+or
+    http://<server_name>/admins/
+depending on how you set it up in step #2.
+
+If you're updating your NoseRub installation, you need to log in as a user in
+order to be able to log in as an admin. This is done for security reasons.
+
+You log in to the admin area with "admin" as username (without the ", of course)
+and the NoseRub.admin_hash as your password. You're advised to change the admin
+password after first log in.
+
+Please note, that the admin password is not bound to NoseRub.admin_hash, but only
+set to it on the first /system/update you call. So, if you change the NoseRub.admin_hash
+later on, the admin password would not change.
+
+
+
+6. Set up cron job
+------------------
+If you set the value for NoseRub.manual_feeds_update in noserub.php to "true", 
+you have to run the following command via cron to update the feed cache:
+
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/cache/feed/refresh/ 
+
+In order to sync comments and favorites from NoseRub installations, you need to add
+the following cron jobs:
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/peers/poll/
+and
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/peers/sync/
+
+The cron job "/peers/poll/" polls comments and favorites from all NoseRub installations
+that are listed on http://noserub.com/sites. If you want your installation to appear there,
+enable the appropriate checkbox at the bottom of /system/update/ and send the information
+to NoseRub.com
+
+The cron job "/peers/sync/" gets all sites from http://noserub.com/sites/ and stores the list
+in your database for faster access. It is sufficient to call this cron job only once a day.
+
+In order to update information about contacts from other NoseRub sites, you would need to add
+the following cron job:
+    php noserub/app/webroot/shell_dispatcher.php /jobs/shell/identities/sync/all/
+    
+    
+
+7. What now?
+------------
+Do you have questions, or just want to know more about NoseRub? Just visit the
+following sites:
+  http://noserub.com/        - The NoseRub Overview page
+  http://noserub.com/blog    - The NoseRub Blog
+  http://noserub.com/discuss - The NoseRub Google Group

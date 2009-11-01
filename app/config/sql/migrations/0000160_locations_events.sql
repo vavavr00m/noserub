@@ -1,0 +1,24 @@
+ALTER TABLE  `entries` ADD  `model` VARCHAR( 32 ) NOT NULL AFTER  `identity_id` , ADD  `foreign_key` INT( 11 ) UNSIGNED NOT NULL AFTER  `model` ;
+ALTER TABLE  `entries` ADD INDEX (  `model` ,  `foreign_key` ) ;
+UPDATE `entries` SET model='', foreign_key=0 WHERE account_id=0 AND group_id=0;
+UPDATE `entries` SET model='account', foreign_key=account_id WHERE account_id>0;
+UPDATE `entries` SET model='group', foreign_key=group_id WHERE group_id>0;
+ALTER TABLE `entries` DROP `group_id`, DROP `account_id`;
+TRUNCATE TABLE `locations`;
+ALTER TABLE  `locations` CHANGE  `identity_id`  `identity_id` INT( 11 ) UNSIGNED NOT NULL COMMENT  'created by';
+ALTER TABLE `locations` DROP `modified`;
+ALTER TABLE  `locations` CHANGE  `name`  `name` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE  `locations` ADD  `slug` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER  `name` ;
+ALTER TABLE  `locations` ADD  `type` SMALLINT UNSIGNED NOT NULL AFTER  `longitude` , ADD  `description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER  `type` , ADD  `url` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER  `description` ;
+ALTER TABLE  `locations` ADD INDEX (  `type` ) ;
+ALTER TABLE  `locations` ADD INDEX (  `created` );
+ALTER TABLE  `locations` ADD INDEX (  `latitude` ,  `longitude` );
+CREATE TABLE  `events` (`id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,`identity_id` INT( 11 ) UNSIGNED NOT NULL COMMENT  'created by',`location_id` INT( 11 ) UNSIGNED NOT NULL ,`name` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,`slug` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,`from_datetime` DATETIME NOT NULL ,`to_datetime` DATETIME NOT NULL ,`all_day` TINYINT UNSIGNED NOT NULL ,`type` SMALLINT UNSIGNED NOT NULL ,`description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,`url` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL , `created` DATETIME NOT NULL) ENGINE = MYISAM;
+ALTER TABLE  `events` ADD INDEX (  `identity_id` );
+ALTER TABLE  `events` ADD INDEX (  `location_id` );
+ALTER TABLE  `events` ADD INDEX (  `from_datetime` ,  `to_datetime` )
+ALTER TABLE  `events` ADD INDEX (  `created` );
+ALTER TABLE  `events` ADD INDEX (  `type` );
+ALTER TABLE `identities` DROP `last_location_id`;
+ALTER TABLE  `locations` ADD  `last_activity` DATETIME NOT NULL AFTER  `url` ;
+ALTER TABLE  `locations` ADD INDEX (  `last_activity` ) ;
