@@ -12,7 +12,6 @@ class EntriesController extends AppController {
         if($this->RequestHandler->isPost()) {
             $this->ensureSecurityToken();
             if(!$this->data) {
-                $this->log(print_r($this->params, 1), LOG_DEBUG);
                 // this is probably a webcam upload
                 $data = $GLOBALS["HTTP_RAW_POST_DATA"];
                 $title = urldecode($this->params['named']['title']);
