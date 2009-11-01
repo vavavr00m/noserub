@@ -907,31 +907,33 @@ class WidgetsController extends AppController {
         $filter = array(
             'filter' => array($type)
         );
-        $identity_id = $this->getIdentityId();
-        if($this->getIdentityId()) {
-            $filter['identity_id'] = $identity_id;
-        }
         
-        $group_id = $this->getGroupId();
-        if($group_id) {
-            // we are on a group page, so just show photos
-            // for this group
-            $filter['group_id'] = $group_id;
-        }
-        if(Context::locationId()) {
-            // we are on a location page, so just show photos
-            // for this location
-            $filter['location_id'] = Context::locationId();
-        }
-        if(Context::eventId()) {
-            // we are on an event page, so just show photos
-            // for this event
-            $filter['event_id'] = Context::eventId();
-        }
         if(Context::isHome()) {
             $with_restricted = false;
         } else {
             $with_restricted = true;
+        
+            $identity_id = $this->getIdentityId();
+            if($this->getIdentityId()) {
+                $filter['identity_id'] = $identity_id;
+            }
+        
+            $group_id = $this->getGroupId();
+            if($group_id) {
+                // we are on a group page, so just show photos
+                // for this group
+                $filter['group_id'] = $group_id;
+            }
+            if(Context::locationId()) {
+                // we are on a location page, so just show photos
+                // for this location
+                $filter['location_id'] = Context::locationId();
+            }
+            if(Context::eventId()) {
+                // we are on an event page, so just show photos
+                // for this event
+                $filter['event_id'] = Context::eventId();
+            }
         }
         
         $items = $this->Entry->getForDisplay(
