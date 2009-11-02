@@ -78,7 +78,7 @@ class Ad extends AppModel {
             return array();
         }
         
-        $path = CACHE . Context::networkId() . '_theme_' . $name . '_ad_assignment.php';
+        $path = CACHE . 'ads' . DS . Context::networkId() . '_theme_' . $name . '_ad_assignment.php';
         if(!file_exists($path)) {
             return array();
         }
@@ -104,7 +104,7 @@ class Ad extends AppModel {
         }
         
         // save the assignment array
-        $path = CACHE . Context::networkId() . '_theme_' . $name . '_ad_assignment.php';
+        $path = CACHE . 'ads' . DS . Context::networkId() . '_theme_' . $name . '_ad_assignment.php';
         @file_put_contents($path, '$ad_assignments=' . var_export($data, 1) . ';');
         
         // save the actual ads for faster delivery
@@ -119,7 +119,7 @@ class Ad extends AppModel {
         ));
         
         $adspots = $this->getForTheme($name);
-        $path = CACHE . Context::networkId() . '_theme_' . $name . '_ads.php';
+        $path = CACHE . 'ads' . DS . Context::networkId() . '_theme_' . $name . '_ads.php';
         $ad_data = array();
         foreach($data as $ad_spot_id => $ad_id) {
             foreach($ads as $item) {
@@ -143,7 +143,7 @@ class Ad extends AppModel {
             return '';
         }
         
-        $path = CACHE . Context::networkId() . '_theme_' . $theme . '_ads.php';
+        $path = CACHE . 'ads' . DS . Context::networkId() . '_theme_' . $theme . '_ads.php';
         if(!file_exists($path)) {
             // see, if there is a default ad...
             $adspots = $this->getForTheme($theme);
