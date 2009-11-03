@@ -17,7 +17,7 @@
 				<link rel="alternate" type="application/rss+xml" href="http://<?php echo Context::read('identity.username') . '/feed'; ?>" />
 		<?php } ?>
 		<title><?php echo $title; ?></title>
-
+		<?php echo $scripts_for_layout; ?>
         <?php echo $this->element('css'); ?>
 	</head>
 	<body id="top">
