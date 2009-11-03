@@ -51,7 +51,7 @@
 			</div>
 		</div>
 		<div id="ft">
-			<div>
+			<!-- <div>
 				<h5>ThisNetworksName</h5>
 				<ul>
 					<li><a href="#">My Homepage</a></li>
@@ -74,7 +74,7 @@
 					<li><a href="#">Privacy Policy</a></li>
 					<li><a href="#">Copyright Policy</a></li>
 				</ul>
-			</div>
+			</div>-->
 		</div>
         <?php echo $this->element('javascript'); ?>
 	</body>
