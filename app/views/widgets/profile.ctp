@@ -1,6 +1,17 @@
 <?php
 $base_url = '/' . $data['local_username'] . '/';
 $name = $data['name'];
+
+if(isset($data['openid'])) {
+	# We delegate to the OpenID identity instead of the OpenID as the OpenID itself may be 
+	# delegated and because OpenID delegation chaining is not possible our delegation 
+	# wouldn't work.
+	$openid->delegate($data['openid_identity'], false);
+	$openid->serverLink($data['openid_server_url'], false);
+} else {
+	$openid->xrdsLocation($base_url . '/xrds', false);
+	$openid->serverLink('/auth', false);
+}
 ?>
 <div class="widget widget-profile">
     <div class="vcard">

@@ -2,7 +2,7 @@
 
 class WidgetsController extends AppController {
     public $components = array('cluster');
-    public $helpers = array('nicetime');
+    public $helpers = array('nicetime', 'Openid');
      
     /**
      * Various elements / pages
