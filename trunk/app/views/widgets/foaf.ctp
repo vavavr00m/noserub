@@ -44,7 +44,7 @@ $services = Configure::read('services.data');
     <foaf:holdsAccount>
         <?php if($account['service'] == 'RSS-Feed') { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
-            <foaf:accountServiceHomepage rdf:resource="NoseRubServiceType:<?php echo $account['service_type_id']; ?>"/>
+            <foaf:accountServiceHomepage rdf:resource="NoseRubServiceType:<?php echo $account['service_type']; ?>"/>
             <foaf:accountName><?php echo $account['feed_url']; ?></foaf:accountName>
         <?php } else { ?>
             <foaf:OnlineAccount rdf:about="<?php echo $account['account_url']; ?>" />
