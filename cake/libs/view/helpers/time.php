@@ -315,8 +315,8 @@ class TimeHelper extends AppHelper {
  * Relative dates look something like this:
  *	3 weeks, 4 days ago
  *	15 seconds ago
- * Formatted dates look like this:
- *	on 02/18/2004
+ *
+ * Default date formatting is d/m/yy e.g: on 18/2/09
  *
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
@@ -543,7 +543,7 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
  *
  * @param string $format date format string. defaults to 'd-m-Y'
  * @param string $dateString Datetime string

@@ -32,7 +32,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Set extends Object {
+class Set {
 
 /**
  * Deprecated
@@ -351,9 +351,11 @@ class Set extends Object {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call is delegated to Set::classicExtract.
+ * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call 
+ * is delegated to Set::classicExtract.
  *
- * Currently implemented selectors:
+ * #### Currently implemented selectors:
+ *
  * - /User/id (similar to the classic {n}.User.id)
  * - /User[2]/name (selects the name of the second User)
  * - /User[id>2] (selects all Users with an id > 2)
@@ -366,15 +368,17 @@ class Set extends Object {
  * - /Comment[text=/cakephp/i] (Selects the all comments that have a text matching the regex /cakephp/i)
  * - /Comment/@* (Selects the all key names of all comments)
  *
- * Other limitations:
+ * #### Other limitations:
+ *
  * - Only absolute paths starting with a single '/' are supported right now
  *
- * Warning: Even so it has plenty of unit tests the XPath support has not gone through a lot of real-world testing. Please report
- * Bugs as you find them. Suggestions for additional features to imlement are also very welcome!
+ * **Warning**: Even so it has plenty of unit tests the XPath support has not gone through a lot of 
+ * real-world testing. Please report Bugs as you find them. Suggestions for additional features to 
+ * implement are also very welcome!
  *
  * @param string $path An absolute XPath 2.0 path
- * @param string $data An array of data to extract from
- * @param string $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
+ * @param array $data An array of data to extract from
+ * @param array $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
  * @return array An array of matched items
  * @access public
  * @static
@@ -397,7 +401,10 @@ class Set extends Object {
 		$contexts = $data;
 		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
-			$contexts = array($data);
+			$current = current($data);
+			if ((is_array($current) && count($data) <= 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
+				$contexts = array($data);
+			}
 		}
 		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-]*\])/', $path), 1);
 
@@ -817,14 +824,17 @@ class Set extends Object {
 
 /**
  * Determines if two Sets or arrays are equal
+ * This method is deprecated, and will be removed in a future release.
  *
  * @param array $val1 First value
  * @param array $val2 Second value
  * @return boolean true if they are equal, false otherwise
  * @access public
  * @static
+ * @deprecated
  */
 	function isEqual($val1, $val2 = null) {
+		trigger_error('Set::isEqual() is deprecated. Please use standard comparison operators instead.', E_USER_WARNING);
 		return ($val1 == $val2);
 	}
 
@@ -999,11 +1009,10 @@ class Set extends Object {
 	}
 
 /**
- * Converts an object into an array. If $object is no object, reverse
- * will return the same value.
- *
+ * Converts an object into an array.
  * @param object $object Object to reverse
- * @return array
+ * @return array Array representation of given object
+ * @public
  * @static
  */
 	function reverse($object) {
@@ -1095,7 +1104,7 @@ class Set extends Object {
 			if (!is_null($key)) {
 				$id = $key;
 			}
-			if (is_array($r)) {
+			if (is_array($r) && count($r)) {
 				$stack = array_merge($stack, Set::__flatten($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);
@@ -1107,10 +1116,10 @@ class Set extends Object {
 /**
  * Sorts an array by any value, determined by a Set-compatible path
  *
- * @param array $data
+ * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
- * @param string $dir asc/desc
- * @return array
+ * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
+ * @return array Sorted array of data
  * @static
  */
 	function sort($data, $path, $dir) {
@@ -1135,11 +1144,41 @@ class Set extends Object {
 	}
 
 /**
- * Deprecated, Set class should be called statically
+ * Allows the application of a callback method to elements of an
+ * array extracted by a Set::extract() compatible path.
  *
+ * @param mixed $path Set-compatible path to the array value
+ * @param array $data An array of data to extract from & then process with the $callback.
+ * @param mixed $callback Callback method to be applied to extracted data.
+ * See http://ca2.php.net/manual/en/language.pseudo-types.php#language.types.callback for examples
+ * of callback formats.
+ * @param array $options Options are:
+ *                       - type : can be pass, map, or reduce. Map will handoff the given callback
+ *                                to array_map, reduce will handoff to array_reduce, and pass will
+ *                                use call_user_func_array().
+ * @return mixed Result of the callback when applied to extracted data
+ * @access public
+ * @static
  */
-	function &get() {
-		trigger_error('get() is deprecated. Set class should be called statically', E_USER_WARNING);
+	function apply($path, $data, $callback, $options = array()) {
+		$defaults = array('type' => 'pass');
+		$options = array_merge($defaults, $options);
+
+		$extracted = Set::extract($path, $data);
+
+		if ($options['type'] === 'map') {
+			$result = array_map($callback, $extracted);
+
+		} elseif ($options['type'] === 'reduce') {
+			$result = array_reduce($extracted, $callback);
+
+		} elseif ($options['type'] === 'pass') {
+			$result = call_user_func_array($callback, array($extracted));
+		} else {
+			return null;
+		}
+
+		return  $result;
 	}
 }
 ?>

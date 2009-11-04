@@ -229,6 +229,7 @@ class EmailComponent extends Object{
  * - timeout
  * - username
  * - password
+ * - client
  *
  * @var array
  * @access public
@@ -725,10 +726,14 @@ class EmailComponent extends Object{
 			return false;
 		}
 
+		$httpHost = env('HTTP_HOST');
+
 		if (isset($this->smtpOptions['client'])) {
 			$host = $this->smtpOptions['client'];
+		} elseif (!empty($httpHost)) {
+			$host = $httpHost;
 		} else {
-			$host = env('HTTP_HOST');
+			$host = 'localhost';
 		}
 
 		if (!$this->__smtpSend("HELO {$host}", '250')) {

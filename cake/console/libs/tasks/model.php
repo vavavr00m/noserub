@@ -220,7 +220,7 @@ class ModelTask extends Shell {
 			$associations = $this->doAssociations($tempModel);
 		}
 
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following Model will be created:', true));
 		$this->hr();
@@ -351,7 +351,8 @@ class ModelTask extends Shell {
 		$options = $choices = array();
 		if (class_exists('Validation')) {
 			$parent = get_class_methods(get_parent_class('Validation'));
-			$options = array_diff(get_class_methods('Validation'), $parent);
+			$options = get_class_methods('Validation');
+			$options = array_diff($options, $parent);
 		}
 		sort($options);
 		$default = 1;
@@ -379,7 +380,7 @@ class ModelTask extends Shell {
 		$anotherValidator = 'y';
 		while ($anotherValidator == 'y') {
 			if ($this->interactive) {
-				$this->out('');
+				$this->out();
 				$this->out(sprintf(__('Field: %s', true), $fieldName));
 				$this->out(sprintf(__('Type: %s', true), $metaData['type']));
 				$this->hr();
@@ -405,7 +406,7 @@ class ModelTask extends Shell {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] == 'boolean') {
 					$guess = $methods['boolean'];
-				} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
+				} elseif ($metaData['type'] == 'date') {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {
 					$guess = $methods['time'];
@@ -614,7 +615,7 @@ class ModelTask extends Shell {
 					$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
 					$response = $this->in("{$prompt}?", array('y','n'), 'y');
 
-					if ('n' == low($response)) {
+					if ('n' == strtolower($response)) {
 						unset($associations[$type][$i]);
 					} elseif ($type == 'hasMany') {
 						unset($associations['hasOne'][$i]);
@@ -637,7 +638,7 @@ class ModelTask extends Shell {
 		$prompt = __('Would you like to define some additional model associations?', true);
 		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
-		while (low($wannaDoMoreAssoc) == 'y') {
+		while (strtolower($wannaDoMoreAssoc) == 'y') {
 			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			$this->out(__('What is the association type?', true));
 			$assocType = intval($this->inOptions($assocs, __('Enter a number',true)));
@@ -801,7 +802,7 @@ class ModelTask extends Shell {
 		$tableIsGood = false;
 
 		if (array_search($useTable, $this->__tables) === false) {
-			$this->out('');
+			$this->out();
 			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'", true), $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
@@ -882,17 +883,23 @@ class ModelTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake model <arg1>");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<name>");
+		$this->out("\tName of the model to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("model");
 		$this->out("\tbakes model in interactive mode.");
-		$this->out('');
+		$this->out();
 		$this->out("model <name>");
 		$this->out("\tbakes model file with no associations or validation");
-		$this->out('');
+		$this->out();
 		$this->out("model all");
 		$this->out("\tbakes all model files with associations and validation");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 

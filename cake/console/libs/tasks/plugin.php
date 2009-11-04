@@ -145,6 +145,7 @@ class PluginTask extends Shell {
 				'models' . DS . 'behaviors',
 				'models' . DS . 'datasources',
 				'controllers' . DS . 'components',
+				'libs',
 				'views' . DS . 'helpers',
 				'tests' . DS . 'cases' . DS . 'components',
 				'tests' . DS . 'cases' . DS . 'helpers',
@@ -232,19 +233,19 @@ class PluginTask extends Shell {
 		$this->out("Usage: cake bake plugin <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name>");
 		$this->out("\tbakes plugin directory structure");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> model");
 		$this->out("\tbakes model. Run 'cake bake model help' for more info.");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> controller");
 		$this->out("\tbakes controller. Run 'cake bake controller help' for more info.");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> view");
 		$this->out("\tbakes view. Run 'cake bake view help' for more info.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

@@ -191,7 +191,7 @@ class TestTask extends Shell {
  * @return string Class name the user chose.
  **/
 	function getClassName($objectType) {
-		$options = Configure::listObjects(strtolower($objectType));
+		$options = App::objects(strtolower($objectType));
 		$this->out(sprintf(__('Choose a %s class', true), $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {
@@ -391,7 +391,8 @@ class TestTask extends Shell {
 			return "ClassRegistry::init('$fullClassName');\n";
 		}
 		if ($type == 'controller') {
-			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();\n";
+			$className = substr($fullClassName, 0, strlen($fullClassName) - 10);
+			return "new Test$fullClassName();\n\t\t\$this->{$className}->constructClasses();\n";
 		}
 		return "new $fullClassName()\n";
 	}
@@ -412,6 +413,31 @@ class TestTask extends Shell {
 			$className = $this->getRealClassName($type, $className);
 		}
 		return $path . Inflector::underscore($className) . '.test.php';
+	}
+
+/**
+ * Show help file.
+ *
+ * @return void
+ **/
+	function help() {
+		$this->hr();
+		$this->out("Usage: cake bake test <type> <class>");
+		$this->hr();
+		$this->out('Commands:');
+		$this->out("");
+		$this->out("test model post\n\tbakes a test case for the post model.");
+		$this->out("");
+		$this->out("test controller comments\n\tbakes a test case for the comments controller.");
+		$this->out("");
+		$this->out('Arguments:');
+		$this->out("\t<type>   Can be any of the following 'controller', 'model', 'helper',\n\t'component', 'behavior'.");
+		$this->out("\t<class>  Any existing class for the chosen type.");
+		$this->out("");
+		$this->out("Parameters:");
+		$this->out("\t-plugin  CamelCased name of plugin to bake tests for.");
+		$this->out("");
+		$this->_stop();
 	}
 }
 ?>

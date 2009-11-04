@@ -229,16 +229,8 @@ class Debugger extends Object {
  */
 	function log($var, $level = LOG_DEBUG) {
 		$_this = Debugger::getInstance();
-		$trace = $_this->trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-		$source = null;
-
-		if (is_object($trace[0]['object']) && isset($trace[0]['object']->_reporter->_test_stack)) {
-			$stack = $trace[0]['object']->_reporter->_test_stack;
-			$source = sprintf('[%1$s, %3$s::%2$s()]' . "\n",
-								array_shift($stack), array_pop($stack), array_pop($stack));
-		}
-
-		CakeLog::write($level, $source . $_this->exportVar($var));
+		$source = $_this->trace(array('start' => 1)) . "\n";
+		CakeLog::write($level, "\n" . $source . $_this->exportVar($var));
 	}
 
 /**
@@ -274,7 +266,6 @@ class Debugger extends Object {
 			return;
 		}
 
-		$level = LOG_DEBUG;
 		switch ($code) {
 			case E_PARSE:
 			case E_ERROR:
@@ -297,7 +288,7 @@ class Debugger extends Object {
 				$level = LOG_NOTICE;
 			break;
 			default:
-				return false;
+				return;
 			break;
 		}
 
@@ -426,7 +417,8 @@ class Debugger extends Object {
 		} elseif (strpos($path, ROOT) === 0) {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
-		$corePaths = Configure::corePaths('cake');
+		$corePaths = App::core('cake');
+
 		foreach ($corePaths as $corePath) {
 			if (strpos($path, $corePath) === 0) {
 				return str_replace($corePath, 'CORE' .DS . 'cake' .DS, $path);

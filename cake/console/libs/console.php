@@ -68,7 +68,7 @@ class ConsoleShell extends Shell {
 		App::import('Model', $this->models);
 
 		foreach ($this->models as $model) {
-			$class = Inflector::camelize(r('.php', '', $model));
+			$class = Inflector::camelize(str_replace('.php', '', $model));
 			$this->models[$model] = $class;
 			$this->{$class} =& new $class();
 		}
@@ -238,7 +238,7 @@ class ConsoleShell extends Shell {
 													$this->out("\t$field2: $value2");
 												}
 
-												$this->out("");
+												$this->out();
 											} else {
 												$this->out("\t$field: $value");
 											}
@@ -253,7 +253,7 @@ class ConsoleShell extends Shell {
 												$this->out("\t$field2: $value2");
 											}
 
-											$this->out("");
+											$this->out();
 										} else {
 											$this->out("\t$field: $value");
 										}
