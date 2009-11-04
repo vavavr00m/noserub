@@ -11,7 +11,7 @@ class Contact extends AppModel {
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
-                                'required' => VALID_NOT_EMPTY)
+                                'required' => array('rule' => 'notEmpty'))
         );
 
     /**

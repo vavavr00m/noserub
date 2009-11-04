@@ -36,7 +36,7 @@ class Entry extends AppModel {
     
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', '/^[\da-zA-Z-\.@\_ ]+$/')),
-                                'required' => VALID_NOT_EMPTY));
+                                'required' => array('rule' => 'notEmpty')));
 
     
     /**
