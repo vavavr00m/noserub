@@ -498,7 +498,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
-		$table = $model->fullTableName($model, false);
+		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
 			$this->_sequenceMap[$table] = $model->sequence;
@@ -952,7 +952,7 @@ class DboOracle extends DboSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order} {$limit}";
+				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
 			break;
 			case 'create':
 				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";

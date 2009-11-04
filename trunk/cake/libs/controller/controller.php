@@ -33,7 +33,6 @@ App::import('View', 'View', false);
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  * @link          http://book.cakephp.org/view/49/Controllers
- *
  */
 class Controller extends Object {
 
@@ -74,6 +73,9 @@ class Controller extends Object {
  * An array containing the class names of models this controller uses.
  *
  * Example: var $uses = array('Product', 'Post', 'Comment');
+ *
+ * Can be set to array() to use no models.  Can be set to false to 
+ * use no models and prevent the merging of $uses with AppController
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
@@ -713,14 +715,7 @@ class Controller extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-
-		foreach ($data as $name => $value) {
-			if ($name === 'title') {
-				$this->pageTitle = $value;
-			} else {
-				$this->viewVars[$name] = $value;
-			}
-		}
+		$this->viewVars = array_merge($this->viewVars, $data);
 	}
 
 /**
@@ -917,17 +912,18 @@ class Controller extends Object {
  * @param string $message Message to display to the user
  * @param mixed $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
+ * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
  * @access public
  * @link http://book.cakephp.org/view/426/flash
  */
-	function flash($message, $url, $pause = 1) {
+	function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->render(false, 'flash');
+		$this->render(false, $layout);
 	}
 
 /**

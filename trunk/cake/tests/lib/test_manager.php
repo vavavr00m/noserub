@@ -86,11 +86,11 @@ class TestManager {
 
 		$testCases =& $manager->_getTestFileList($manager->_getTestsPath());
 		if ($manager->appTest) {
-			$test =& new GroupTest('All App Tests');
+			$test =& new TestSuite('All App Tests');
 		} else if ($manager->pluginTest) {
-			$test =& new GroupTest('All ' . Inflector::humanize($manager->pluginTest) . ' Plugin Tests');
+			$test =& new TestSuite('All ' . Inflector::humanize($manager->pluginTest) . ' Plugin Tests');
 		} else {
-			$test =& new GroupTest('All Core Tests');
+			$test =& new TestSuite('All Core Tests');
 		}
 
 		if ($testing) {
@@ -126,7 +126,7 @@ class TestManager {
 			return true;
 		}
 
-		$test =& new GroupTest("Individual test case: " . $testCaseFile);
+		$test =& new TestSuite("Individual test case: " . $testCaseFile);
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
@@ -148,7 +148,7 @@ class TestManager {
 		}
 
 		require_once $filePath;
-		$test =& new GroupTest($groupTestName . ' group test');
+		$test =& new TestSuite($groupTestName . ' group test');
 		foreach ($manager->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
@@ -273,12 +273,13 @@ class TestManager {
  */
 	function &_getGroupTestClassNames($groupTestFile) {
 		$file = implode("\n", file($groupTestFile));
-		preg_match("~lass\s+?(.*)\s+?extends GroupTest~", $file, $matches);
+		preg_match("~lass\s+?(.*)\s+?extends TestSuite~", $file, $matches);
 		if (!empty($matches)) {
 			unset($matches[0]);
 			return $matches;
 		}
-		return array();
+		$matches = array();
+		return $matches;
 	}
 
 /**
@@ -356,12 +357,9 @@ class TestManager {
 			}
 		} else if (!empty($this->pluginTest)) {
 			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
-			$pluginPaths = App::path('plugins');
-			foreach ($pluginPaths as $path) {
-				if (file_exists($path . $this->pluginTest . DS . 'tests')) {
-					$_pluginBasePath = $path . $this->pluginTest . DS . 'tests';
-					break;
-				}
+			$pluginPath = App::pluginPath($this->pluginTest);
+			if (file_exists($pluginPath . DS . 'tests')) {
+				$_pluginBasePath = $pluginPath . DS . 'tests';
 			}
 			$result = $_pluginBasePath . DS . $type;
 		} else {
@@ -618,6 +616,7 @@ class HtmlTestManager extends TestManager {
 		return $buffer;
 	}
 }
+
 if (function_exists('caketestsgetreporter')) {
 	echo "You need a new test.php. \n";
 	echo "Try this one: " . dirname(CONSOLE_LIBS) . "templates" . DS . "skel" . DS . "webroot" . DS . "test.php";
@@ -638,7 +637,8 @@ if (function_exists('caketestsgetreporter')) {
 					$Reporter =& new CakeHtmlReporter();
 					break;
 				default:
-					$Reporter =& new TextReporter();
+					require_once CAKE_TESTS_LIB . 'cake_text_reporter.php';
+					$Reporter =& new CakeTextReporter();
 					break;
 			}
 		}

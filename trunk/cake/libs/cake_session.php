@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Session class for Cake.
  *
@@ -12,20 +10,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v .0.10.0.1222
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -171,6 +166,8 @@ class CakeSession extends Object {
 			if (strpos($this->host, ':') !== false) {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
+		}
+		if (isset($_SESSION) || $start === true) {
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
@@ -244,13 +241,24 @@ class CakeSession extends Object {
 	}
 
 /**
+ * Remove a variable from the session
+ *
+ * @return boolean
+ * @deprecated Use CakeSession::delete instead
+ **/
+	function del($name) {
+		trigger_error('CakeSession::del() is deprecated, use CakeSession::delete() instead.', E_USER_WARNING);
+		return $this->delete($name);
+	}
+
+/**
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove
  * @return boolean Success
  * @access public
  */
-	function del($name) {
+	function delete($name) {
 		if ($this->check($name)) {
 			if ($var = $this->__validateKeys($name)) {
 				if (in_array($var, $this->watchKeys)) {
@@ -510,12 +518,14 @@ class CakeSession extends Object {
 						ini_set('session.auto_start', 0);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('CakeSession', '__read'),
-													array('CakeSession', '__write'),
-													array('CakeSession', '__destroy'),
-													array('CakeSession', '__gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('CakeSession', '__read'),
+					array('CakeSession', '__write'),
+					array('CakeSession', '__destroy'),
+					array('CakeSession', '__gc')
+				);
 			break;
 			case 'php':
 				if (empty($_SESSION)) {
@@ -542,12 +552,14 @@ class CakeSession extends Object {
 						ini_set('session.cookie_path', $this->path);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('Cache', 'read'),
-													array('Cache', 'write'),
-													array('Cache', 'delete'),
-													array('Cache', 'gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('Cache', 'read'),
+					array('Cache', 'write'),
+					array('Cache', 'delete'),
+					array('Cache', 'gc')
+				);
 			break;
 			default:
 				if (empty($_SESSION)) {
@@ -629,15 +641,15 @@ class CakeSession extends Object {
 	function __regenerateId() {
 		$oldSessionId = session_id();
 		if ($oldSessionId) {
-			$sessionpath = session_save_path();
-			if (empty($sessionpath)) {
-				$sessionpath = "/tmp";
-			}
-			if (session_id() != "" || isset($_COOKIE[session_name()])) {
+			if (session_id() != ''|| isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
 			}
 			session_regenerate_id(true);
 			if (PHP_VERSION < 5.1) {
+				$sessionPath = session_save_path();
+				if (empty($sessionPath)) {
+					$sessionPath = '/tmp';
+				}
 				$newSessid = session_id();
 
 				if (function_exists('session_write_close')) {
@@ -647,7 +659,7 @@ class CakeSession extends Object {
 				session_id($oldSessionId);
 				session_start();
 				session_destroy();
-				$file = $sessionpath . DS . "sess_$oldSessionId";
+				$file = $sessionPath . DS . 'sess_' . $oldSessionId;
 				@unlink($file);
 				$this->__initSession();
 				session_id($newSessid);

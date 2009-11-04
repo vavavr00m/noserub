@@ -81,6 +81,8 @@ class BakeShell extends Shell {
 		if (!is_dir($this->DbConfig->path)) {
 			if ($this->Project->execute()) {
 				$this->DbConfig->path = $this->params['working'] . DS . 'config' . DS;
+			} else {
+				return false;
 			}
 		}
 
@@ -97,9 +99,10 @@ class BakeShell extends Shell {
 		$this->out('[C]ontroller');
 		$this->out('[P]roject');
 		$this->out('[F]ixture');
+		$this->out('[T]est case');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
+		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -119,11 +122,14 @@ class BakeShell extends Shell {
 			case 'F':
 				$this->Fixture->execute();
 				break;
+			case 'T':
+				$this->Test->execute();
+				break;
 			case 'Q':
 				exit(0);
 				break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.', true));
+				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.', true));
 		}
 		$this->hr();
 		$this->main();
@@ -225,7 +231,7 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
 		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
-		$this->out("");
+		$this->out();
 
 	}
 }

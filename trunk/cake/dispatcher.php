@@ -318,22 +318,28 @@ class Dispatcher extends Object {
 				$params['url'] = $url;
 			}
 		}
+
 		foreach ($_FILES as $name => $data) {
 			if ($name != 'data') {
 				$params['form'][$name] = $data;
 			}
 		}
+
 		if (isset($_FILES['data'])) {
 			foreach ($_FILES['data'] as $key => $data) {
 				foreach ($data as $model => $fields) {
-					foreach ($fields as $field => $value) {
-						if (is_array($value)) {
-							foreach ($value as $k => $v) {
-								$params['data'][$model][$field][$k][$key] = $v;
+					if (is_array($fields)) {
+						foreach ($fields as $field => $value) {
+							if (is_array($value)) {
+								foreach ($value as $k => $v) {
+									$params['data'][$model][$field][$k][$key] = $v;
+								}
+							} else {
+								$params['data'][$model][$field][$key] = $value;
 							}
-						} else {
-							$params['data'][$model][$field][$key] = $value;
 						}
+					} else {
+						$params['data'][$model][$key] = $fields;
 					}
 				}
 			}
@@ -641,12 +647,8 @@ class Dispatcher extends Object {
 
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos - 1);
-					$url = str_replace($plugin . '/', '', $url);
-					$pluginPaths = App::path('plugins');
-					$count = count($pluginPaths);
-					for ($i = 0; $i < $count; $i++) {
-						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
-					}
+					$url = preg_replace('/^' . preg_quote($plugin, '/') . '\//i', '', $url);
+					$paths[] = App::pluginPath($plugin) . 'vendors' . DS;
 				}
 				$paths = array_merge($paths, App::path('vendors'));
 

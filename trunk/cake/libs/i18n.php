@@ -272,26 +272,25 @@ class I18n extends Object {
 		$plugins = App::objects('plugin');
 
 		if (!empty($plugins)) {
-			$pluginPaths = App::path('plugins');
-
 			foreach ($plugins as $plugin) {
 				$plugin = Inflector::underscore($plugin);
 				if ($plugin === $domain) {
-					foreach ($pluginPaths as $pluginPath) {
-						$searchPaths[] = $pluginPath . DS . $plugin . DS . 'locale';
-					}
+					$searchPaths[] = App::pluginPath($plugin) . DS . 'locale' . DS;
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}
 			}
 		}
 
+
 		foreach ($searchPaths as $directory) {
+
 			foreach ($this->l10n->languagePath as $lang) {
-				$file = $directory . DS . $lang . DS . $this->category . DS . $domain;
+				$file = $directory . $lang . DS . $this->category . DS . $domain;
 
 				if ($core) {
-					$app = $directory . DS . $lang . DS . $this->category . DS . 'core';
+					$app = $directory . $lang . DS . $this->category . DS . 'core';
+
 					if (file_exists($fn = "$app.mo")) {
 						$this->__loadMo($fn, $domain);
 						$this->__noLocale = false;

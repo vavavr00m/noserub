@@ -165,6 +165,14 @@ class DboMssql extends DboSource {
 	}
 
 /**
+ * Check that MsSQL is installed/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('mssql');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
@@ -273,6 +281,9 @@ class DboMssql extends DboSource {
 			return $parent;
 		}
 		if ($data === null) {
+			return 'NULL';
+		}
+		if (in_array($column, array('integer', 'float', 'binary')) && $data === '') {
 			return 'NULL';
 		}
 		if ($data === '') {
@@ -737,8 +748,8 @@ class DboMssql extends DboSource {
 
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
-				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
-			} else {
+				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
+			} else if (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
@@ -747,8 +758,8 @@ class DboMssql extends DboSource {
 					$value['column'] = $this->name($value['column']);
 				}
 				$out .= "({$value['column']});";
+				$join[] = $out;
 			}
-			$join[] = $out;
 		}
 		return $join;
 	}

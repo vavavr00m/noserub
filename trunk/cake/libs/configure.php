@@ -42,7 +42,7 @@ class Configure extends Object {
  * @var integer
  * @access public
  */
-	var $debug = null;
+	var $debug = 0;
 
 /**
  * Returns a singleton instance of the Configure class.
@@ -106,24 +106,30 @@ class Configure extends Object {
 		}
 
 		if (isset($config['debug'])) {
+			$reporting = 0;
 			if ($_this->debug) {
-				error_reporting(E_ALL & ~E_DEPRECATED);
-
-				if (function_exists('ini_set')) {
-					ini_set('display_errors', 1);
-				}
-
 				if (!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
+				$reporting = E_ALL & ~E_DEPRECATED;
+				if (function_exists('ini_set')) {
+					ini_set('display_errors', 1);
+				}
+			} elseif (function_exists('ini_set')) {
+				ini_set('display_errors', 0);
+			}
+
+			if (isset($_this->log) && $_this->log) {
 				if (!class_exists('CakeLog')) {
 					require LIBS . 'cake_log.php';
 				}
-				Configure::write('log', LOG_NOTICE);
-			} else {
-				error_reporting(0);
-				Configure::write('log', LOG_NOTICE);
+				if (is_integer($_this->log) && !$_this->debug) {
+					$reporting = $_this->log;
+				} else {
+					$reporting = E_ALL & ~E_DEPRECATED;
+				}
 			}
+			error_reporting($reporting);
 		}
 	}
 
@@ -143,13 +149,6 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 
 		if ($var === 'debug') {
-			if (!isset($_this->debug)) {
-				if (defined('DEBUG')) {
-					$_this->debug = DEBUG;
-				} else {
-					$_this->debug = 0;
-				}
-			}
 			return $_this->debug;
 		}
 
@@ -365,7 +364,7 @@ class Configure extends Object {
  * @access private
  */
 	function __loadBootstrap($boot) {
-		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
+		$libPaths = $modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
 
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -419,7 +418,7 @@ class Configure extends Object {
 					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
 					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
 					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
-					'shells' => $shellPaths
+					'shells' => $shellPaths, 'libs' => $libPaths
 				));
 			}
 		}
@@ -449,6 +448,7 @@ class App extends Object {
 		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior', 'core' => true),
 		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController', 'core' => true),
 		'component' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'lib' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'view' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper', 'core' => true),
 		'vendor' => array('suffix' => '', 'extends' => null, 'core' => true),
@@ -488,6 +488,21 @@ class App extends Object {
  */
 	var $components = array();
 
+/**
+ * List of additional path(s) where datasource files reside.
+ *
+ * @var array
+ * @access public
+ */
+	var $datasources = array();
+
+/**
+ * List of additional path(s) where libs files reside.
+ *
+ * @var array
+ * @access public
+ */
+	var $libs = array();
 /**
  * List of additional path(s) where view files reside.
  *
@@ -627,12 +642,13 @@ class App extends Object {
 			'datasources' => array(MODELS . 'datasources'),
 			'controllers' => array(CONTROLLERS),
 			'components' => array(COMPONENTS),
+			'libs' => array(APPLIBS),
 			'views' => array(VIEWS),
 			'helpers' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
 			'shells' => array(APP . 'vendors' . DS . 'shells' . DS, VENDORS . 'shells' . DS),
 			'vendors' => array(APP . 'vendors' . DS, VENDORS),
-			'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS),
+			'plugins' => array(APP . 'plugins' . DS)
 		);
 
 		if ($reset == true) {
@@ -667,6 +683,23 @@ class App extends Object {
 				$_this->{$type} = array_values($path);
 			}
 		}
+	}
+
+/**
+ * Get the path that a plugin is on.  Searches through the defined plugin paths.
+ *
+ * @param string $plugin CamelCased plugin name to find the path of.
+ * @return string full path to the plugin.
+ **/
+	function pluginPath($plugin) {
+		$_this =& App::getInstance();
+		$pluginDir = Inflector::underscore($plugin);
+		for ($i = 0, $length = count($_this->plugins); $i < $length; $i++) {
+			if (is_dir($_this->plugins[$i] . $pluginDir)) {
+				return $_this->plugins[$i] . $pluginDir . DS ;
+			}
+		}
+		return $_this->plugins[0] . $pluginDir . DS;
 	}
 
 /**
@@ -709,6 +742,7 @@ class App extends Object {
 					$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
 					$paths['views'][] = $libs . 'view' . DS;
 					$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
+					$paths['plugins'][] = $path . DS . 'plugins' . DS;
 					$paths['vendors'][] = $path . DS . 'vendors' . DS;
 					$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
 					break;
@@ -862,7 +896,6 @@ class App extends Object {
 			$file = Inflector::underscore($name) . ".{$ext}";
 		}
 		$ext = $_this->__settings($type, $plugin, $parent);
-
 		if ($name != null && !class_exists($name . $ext['class'])) {
 			if ($load = $_this->__mapped($name . $ext['class'], $type, $plugin)) {
 				if ($_this->__load($load)) {
@@ -1120,6 +1153,12 @@ class App extends Object {
 					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
+			case 'lib':
+				if ($plugin) {
+					$path = $pluginPath . DS . 'libs' . DS;
+				}
+				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
 				if ($plugin) {
