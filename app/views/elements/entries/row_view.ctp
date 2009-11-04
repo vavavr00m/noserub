@@ -59,7 +59,7 @@
                 $raw_content = @unserialize(@base64_decode($item['Entry']['content']));
                 if(!empty($raw_content['thumb'])) {
                     $image = $html->image($raw_content['thumb'], array('height' => 75, 'width' => 75));
-                    echo $html->link($image, '/entry/' . $item['Entry']['id'], array('class' => 'photo'), false, false);
+                    echo $html->link($image, '/entry/' . $item['Entry']['id'], array('class' => 'photo', 'escape' => false));
                 } else {
                     echo $content;
                 }

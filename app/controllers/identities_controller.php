@@ -464,7 +464,7 @@ class IdentitiesController extends AppController {
         $this->ensureSecurityToken();
         
         # delete login cookie
-        $this->Cookie->del('li');
+        $this->Cookie->delete('li');
         
         $this->Session->delete('Login');
         $this->Session->delete('Identity');

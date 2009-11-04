@@ -4,7 +4,7 @@
         $raw_content = @unserialize(@base64_decode($item['Entry']['content']));
         if(!empty($raw_content['thumb'])) {
             $image = $html->image($raw_content['thumb'], array('width' => 75, 'height' => 75));
-            $items[] = $html->link($image, '/entry/' . $item['Entry']['id'], array(), false, false);
+            $items[] = $html->link($image, '/entry/' . $item['Entry']['id'], array('escape' => false));
         }
     }
 ?>

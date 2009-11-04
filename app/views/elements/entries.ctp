@@ -19,7 +19,7 @@ foreach($data as $date => $cluster) {
     echo '<ul class="lifestream">';
 
     foreach($cluster as $item) {
-        echo $this->renderElement('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));    
+        echo $this->element('entries/row_view', array('item' => $item, 'with_date' => ($date != $today)));    
     }                    
     echo '</ul>';
 }

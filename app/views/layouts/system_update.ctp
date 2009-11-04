@@ -11,7 +11,7 @@
 	</head>
 	<body id="top">
 		<div id="hd">
-	    <?php echo $html->link($html->image('logo.png', array('alt' => 'Logo')), '/', array('class' => 'logo'), false, false); ?>
+	    <?php echo $html->link($html->image('logo.png', array('alt' => 'Logo')), '/', array('class' => 'logo', 'escape' => false)); ?>
 		</div>
 		<div id="bd">
 			<div id="bd-inner">
