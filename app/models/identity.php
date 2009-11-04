@@ -40,7 +40,7 @@ class Identity extends AppModel {
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
                                 'required' => VALID_NOT_EMPTY),
-            'email'    => array('mail'       => VALID_EMAIL,
+            'email'    => array('mail'       => array('rule' => 'email'),
                                 'required'   => VALID_NOT_EMPTY,
                                 'restricted' => array('rule' => 'validateRestrictedEmail')),
             'passwd'   => array('rule' => array('minLength', 6)),
