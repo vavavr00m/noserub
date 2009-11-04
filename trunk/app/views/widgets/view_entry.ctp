@@ -3,8 +3,8 @@
         __('There is no such entry available.');
     } else { 
         echo $this->element('entries/view');
-        echo $this->renderElement('entries/favorited_by');
+        echo $this->element('entries/favorited_by');
         echo '<hr />';
-        echo $this->renderElement('comments/view');
+        echo $this->element('comments/view');
     } ?>
 </div>

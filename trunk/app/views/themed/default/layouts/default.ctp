@@ -22,7 +22,7 @@
 	</head>
 	<body id="top">
 		<div id="hd">
-		    <?php echo $html->link($html->image('logo.png', array('alt' => $app_name . ' - Logo')), '/', array('class' => 'logo'), false, false); ?>
+		    <?php echo $html->link($html->image('logo.png', array('alt' => $app_name . ' - Logo')), '/', array('class' => 'logo', 'escape' => false)); ?>
 			<?php echo $noserub->widgetNavigation('meta'); ?>
 			<?php echo $noserub->widgetSearch(); ?>
 		</div>
