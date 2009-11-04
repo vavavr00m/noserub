@@ -39,9 +39,9 @@ class Identity extends AppModel {
     public $validate = array(
             'username' => array('content'  => array('rule' => array('custom', NOSERUB_VALID_USERNAME)),
                                 'unique'   => array('rule' => 'validateUniqueUsername'),
-                                'required' => VALID_NOT_EMPTY),
+                                'required' => array('rule' => 'notEmpty')),
             'email'    => array('mail'       => array('rule' => 'email'),
-                                'required'   => VALID_NOT_EMPTY,
+                                'required'   => array('rule' => 'notEmpty'),
                                 'restricted' => array('rule' => 'validateRestrictedEmail')),
             'passwd'   => array('rule' => array('minLength', 6)),
             'passwd2'  => array('rule' => 'validatePasswd2'),
