@@ -320,7 +320,7 @@ class AppController extends Controller {
 
             if(!$identity) {
                 # not found. delete the cookie.
-                $this->Cookie->del('li');
+                $this->Cookie->delete('li');
             } else {
                 $this->Identity->id = $identity['Identity']['id'];
                 $this->Identity->saveField('last_login', date('Y-m-d H:i:s'));
