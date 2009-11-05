@@ -235,9 +235,10 @@ class NoserubHelper extends AppHelper {
             return $this->html->link(
                 '<span></span>' . $label,
                 $url,
-                array('class' => 'button add-contact'),
-                false,
-                false
+                array(
+                    'class' => 'button add-contact',
+                    'escape' => false
+                )
             );
         }
 
