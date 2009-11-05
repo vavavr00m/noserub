@@ -174,9 +174,7 @@ class NoserubHelper extends AppHelper {
             return $this->html->link(
                 '<span></span>' . __('Send a message', true), 
                 '/messages/add/to:' . Context::read('identity.id'), 
-                array('class' => 'button send-message'),
-                false,
-                false
+                array('class' => 'button send-message', 'escape' => false)
             );
         }
         
@@ -208,9 +206,7 @@ class NoserubHelper extends AppHelper {
             return $this->html->link(
                 '<span></span>' . $label, 
                 $url . Context::groupSlug() . '/_t:' . $this->fnSecurityToken(), 
-                array('class' => 'button'),
-                false,
-                false
+                array('class' => 'button', 'escape' => false)
             );
         }
         
