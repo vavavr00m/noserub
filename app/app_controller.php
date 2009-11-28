@@ -175,13 +175,9 @@ class AppController extends Controller {
     }
     
     protected function updateContext() {
-        if($this->name == 'Widgets') {
+        if($this->name == 'Widgets' || $this->isSystemUpdatePage()) {
             # don't update the context for the requestActions
-            # of the widgets
-            return;
-        }
-        
-        if($this->isSystemUpdatePage()) {
+            # of the widgets and for the /system/update page
             return;
         }
         
