@@ -8,7 +8,7 @@
 			echo '<p>'. $form_error . '</p>';
 		} ?>
 		<?php if (!$session->check('Noserub.lastOpenIDRequest')): ?>
-			<?php echo $form->create('Identity', array('url' => $this->here, 'id' => 'IdentityPagesLoginOpenIDForm')); ?>
+			<?php echo $form->create('Identity', array('url' => '/pages/login', 'id' => 'IdentityPagesLoginOpenIDForm')); ?>
 			<?php echo $form->input('Identity.openid', array('label' => sprintf(__('Your %s OpenID', true), '<img src="' . Router::url('/images/openid_small.gif') . '" alt="OpenID logo" /> '), 
 										'error' => array('invalid_openid'         => __('Invalid OpenID', true),
 														 'verification_cancelled' => __('Verification cancelled', true),
@@ -19,7 +19,7 @@
 			<?php echo $form->end(__('Login', true)); ?>
 		<?php endif; ?>
 
-		<?php echo $form->create('Identity', array('url' => $this->here, 'id' => 'IdentityPagesLoginForm')); ?>
+		<?php echo $form->create('Identity', array('url' => '/pages/login', 'id' => 'IdentityPagesLoginForm')); ?>
 		<?php echo $form->input('Identity.username'); ?>
 		<?php echo $form->input('Identity.password', array('type' => 'password')); ?>
 		<br />
