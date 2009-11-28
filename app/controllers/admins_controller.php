@@ -153,6 +153,9 @@ class AdminsController extends AppController {
      * and possible new constants. 
      */
     public function system_update() {
+		$http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+        $this->set('network_url', 'http://' . $http_host . $this->webroot);
+        
         // XXX security_token is set to avoid "undefined variable" error in view
         $this->set('security_token', '');
         $this->set('extensions', ExtensionsChecker::check());
