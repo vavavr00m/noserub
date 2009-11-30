@@ -48,6 +48,7 @@ class IdentitiesController extends AppController {
 
     public function vcard() {
         $this->RequestHandler->setContent('vcf', 'text/x-vcard');
+        $this->RequestHandler->respondAs('vcf');
         $this->layout = 'empty';
     }
     
