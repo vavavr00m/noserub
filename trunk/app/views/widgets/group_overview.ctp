@@ -12,7 +12,8 @@
 				<?php foreach($data as $item) { ?>
 					<tr>
 						<td class="discussions">
-							<?echo $html->link(
+							<?php 
+							  echo $html->link(
 							    $item['Entry']['title'], 
 								'/groups/entry/' . $noserub->groupSlug($item['Entry']) . '/' . $item['Entry']['id']
 							); ?>
