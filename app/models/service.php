@@ -251,7 +251,7 @@ class Service extends AppModel {
         if(file_exists(CACHE . 'models' . DS . 'noserub_services.php')) {
             eval(file_get_contents(CACHE . 'models' . DS . 'noserub_services.php'));
         } else {
-            $cache_services = $this->createCache();
+            $this->createCache();
         }
     }
     
@@ -260,7 +260,7 @@ class Service extends AppModel {
      *
      * @return array
      */
-    public function createCache() {
+    private function createCache() {
         $services = $this->getAllServicesForCache();
         if(!$services) {
             return false;
@@ -279,7 +279,7 @@ class Service extends AppModel {
      * 
      * @return array
      */
-    public function getAllServicesForCache() {
+    private function getAllServicesForCache() {
         $files = @scandir(MODELS . 'services');
         if(!$files) {
             return false;
