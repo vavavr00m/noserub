@@ -201,6 +201,12 @@ class AuthController extends AppController {
 		$server = $this->getOpenIDServer();
 		$webResponse = $server->encodeResponse($response);
 
+		if (is_a($webResponse, 'Auth_OpenID_EncodingError')) {
+			// XXX not sure whether this makes sense
+			echo $webResponse->response;
+			exit;
+		}
+		
 		if ($webResponse->code == 200) {
 			echo $webResponse->body;
 			exit;
