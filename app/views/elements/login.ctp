@@ -1,3 +1,8 @@
+<?php 
+if (!isset($errorMessage)) {
+	$errorMessage = '';
+} 
+?>
 <ul>
 	<li>
 		<?php echo $form->create(array('id' => 'formLogin', 'url' => '/pages/login/')); ?>
@@ -21,7 +26,7 @@
 					<?php echo $form->input('Identity.openid', array('label' => false, 
 										'error' => array('invalid_openid'         => __('Invalid OpenID', true),
 														 'verification_cancelled' => __('Verification cancelled', true),
-														 'openid_failure'         => sprintf(__('OpenID authentication failed: %s',true), @$errorMessage)))); ?>
+														 'openid_failure'         => sprintf(__('OpenID authentication failed: %s',true), $errorMessage)))); ?>
 					<br />
 					<?php echo $form->checkbox('Identity.remember', array('id' => 'IdentityRememberOpenID')); ?>&nbsp;<?php __('Remember me'); ?>
 					<br />
