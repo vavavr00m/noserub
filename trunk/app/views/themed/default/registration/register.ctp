@@ -12,7 +12,7 @@
 				<?php 
 					echo $form->input('Identity.username', 
 									  array('error' => array(
-											'required' => __('You need to enter something here. Valid characters: letters ,numbers, underscores, dashes and dots', true),
+											'required' => __('You need to enter something here. Valid characters: letters, numbers, underscores, dashes and dots', true),
 											'content'  => __('Valid characters: letters, numbers, underscores, dashes and dots only', true),
 											'unique'   => __('The username is already taken', true)))); 
 				?>
