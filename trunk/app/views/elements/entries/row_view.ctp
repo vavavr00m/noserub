@@ -29,7 +29,7 @@
 		?>
 	</span>
     <span class="favorites">
-        <?php if($item['Entry']['service_type'] != 0) {
+        <?php if($item['Entry']['service_type'] != ServiceType::NOSERUB) {
             echo $noserub->link('/entry/toggle/mark/', $item['Entry']['id']); 
         } ?>
 		<?php 
@@ -44,7 +44,7 @@
         $splitted2 = split('@', $splitted[count($splitted)-1]);
         $username = $splitted2[0];
         $intro = str_replace('@user@', '<a class="user" href="http://'.$item['Identity']['username'].'">'.$username.'</a>', $service_types[$item['Entry']['service_type']]['intro']);
-        if($item['Entry']['service_type'] != 5 && $item['Entry']['url']) {
+        if($item['Entry']['service_type'] != ServiceType::MICROPUBLISH && $item['Entry']['url']) {
             $intro = str_replace('@item@', '<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>', $intro);
         } else {
             $intro = str_replace('@item@', $item['Entry']['title'], $intro);
@@ -52,7 +52,7 @@
         echo $intro; 
     ?>
     </p>
-	<?php if($item['Entry']['service_type'] == 1 || $item['Entry']['service_type'] == 6) { ?>
+	<?php if($item['Entry']['service_type'] == ServiceType::PHOTO || $item['Entry']['service_type'] == ServiceType::VIDEO) { ?>
         <p>
             <?php
                 $content = $item['Entry']['content'];
@@ -65,7 +65,7 @@
                 }
             ?>
         </p>
-	<?php } else if(!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == 3) { ?>
+	<?php } else if(!$permalink && $item['Entry']['account_id'] == 0 && $item['Entry']['service_type_id'] == ServiceType::TEXT) { ?>
 		<p>
         	<?php echo $item['Entry']['content']; ?>
 		</p>
