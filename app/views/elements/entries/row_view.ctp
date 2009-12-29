@@ -47,7 +47,7 @@
         if($item['Entry']['service_type'] != ServiceType::MICROPUBLISH && $item['Entry']['url']) {
             $intro = str_replace('@item@', '<a class="external" href="'.$item['Entry']['url'].'">'.$item['Entry']['title'].'</a>', $intro);
         } else {
-            $intro = str_replace('@item@', $item['Entry']['title'], $intro);
+            $intro = str_replace('@item@', htmlspecialchars_decode(strip_tags($item['Entry']['title']), ENT_QUOTES), $intro);
         }
         echo $intro; 
     ?>
