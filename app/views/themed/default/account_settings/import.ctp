@@ -17,7 +17,7 @@
             <?php echo $html->link(__('No, take me back', true), '/settings/account/'); ?>
         </p>
         <p>
-            <?php echo $html->link(__('Yes, import the data', true), '/settings/account/import_data/' . $security_token . '/'); ?>
+            <?php echo $html->link(__('Yes, import the data', true), '/settings/account/import_data/' . $noserub->fnSecurityToken() . '/'); ?>
         </p>
     </div>
     <div id="bd-main-sidebar">
