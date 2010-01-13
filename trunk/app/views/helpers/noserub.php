@@ -95,10 +95,10 @@ class NoserubHelper extends AppHelper {
     }
 
     public function fnProfilePhotoUrl($size = 'default') {
-        if(Context::read('identity')) {
-            $identity = Context::read('identity');
-        } else {
+        if(Context::read('logged_in_identity')) {
             $identity = Context::read('logged_in_identity');
+        } else {
+            $identity = Context::read('identity');
         }
         $photo = $identity['photo'];
         if($photo) {
