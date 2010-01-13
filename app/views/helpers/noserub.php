@@ -94,12 +94,17 @@ class NoserubHelper extends AppHelper {
         return Context::read('avatar_base_url');
     }
 
+    
+    public function fnLoggedInIdentityPhotoUrl($size = 'default') {
+        return $this->fnMetaPhotoUrl('logged_in_identity', $size);
+    }
+    
     public function fnProfilePhotoUrl($size = 'default') {
-        if(Context::read('logged_in_identity')) {
-            $identity = Context::read('logged_in_identity');
-        } else {
-            $identity = Context::read('identity');
-        }
+        return $this->fnMetaPhotoUrl('identity', $size);
+    }
+    
+    private function fnMetaPhotoUrl($which, $size = 'default') {
+        $identity = Context::read($which);
         $photo = $identity['photo'];
         if($photo) {
             if(strpos($photo, 'http://') === 0 ||
