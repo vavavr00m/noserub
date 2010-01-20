@@ -27,7 +27,7 @@ class YoutubeService extends AbstractService {
 	public function getContent($feeditem) {
 	    $content = array();
 	    $raw_content = $feeditem->get_content();
-	    if(preg_match('/watch\?v=(.*)"/iU', $raw_content, $matches)) {
+	    if(preg_match('/watch\?v=(.*)[&"]/iU', $raw_content, $matches)) {
 	        $content['id'] = $matches[1];
 	        $content['url'] = 'http://www.youtube.com/watch?v=' . $content['id'];
 	        $content['thumb'] = 'http://i.ytimg.com/vi/' . $content['id'] . '/default.jpg';

@@ -118,7 +118,6 @@ class Entry extends AppModel {
                     'MAX(published_on)'
                 )
             )); 
-
             if(!$entry_data[0][0]['MAX(published_on)']) {
                 $date_newest_item = '2000-01-01 00:00:00';
             } else {
@@ -168,7 +167,6 @@ class Entry extends AppModel {
                 )
             )
         );
-        
         if($entry) {
             # check for update
             $entry = $entry['Entry'];
@@ -191,7 +189,6 @@ class Entry extends AppModel {
         } else {
             # create
             $this->create();
-            
             # find out, wether we need to restrict this entry.
             # right now, we only look for the general setting
             # in the identity.
@@ -212,8 +209,7 @@ class Entry extends AppModel {
                 'longitude' => $item['longitude'],
                 'restricted' => !$frontpage_updates
             );
-            $saveable = array_keys($entry);
-            $this->save($entry, $saveable, true);
+            $this->save($entry);
             $entry['id'] = $this->id;
             if(!$entry['uid']) {
                 # now set url and uid
@@ -429,7 +425,6 @@ class Entry extends AppModel {
                 $this->saveField('url', $url);
                 $this->saveField('uid', md5($url));
             } else {
-                $this->log('could not save entry (setLocation):', LOG_ERROR);
                 $this->log(print_r($data, true), LOG_ERROR);
             }
             

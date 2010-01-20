@@ -116,7 +116,6 @@ class Account extends AppModel {
             $this->contain();
             $account = $this->find('first', array('conditions' => $conditions));
             if(!$account) {
-                $this->log('new account: ' . $item['account_url'], LOG_DEBUG);
                 $item['identity_id'] = $identity_id;
                 $saveable = array(
                     'identity_id', 'service', 'service_type', 'title',
@@ -125,7 +124,6 @@ class Account extends AppModel {
                 $this->create();
                 $this->save($item, true, $saveable);
             } else {
-                $this->log('existing account: ' . $item['account_url'], LOG_DEBUG);
                 $saveable = array(
                     'identity_id', 'service', 'service_type', 'title',
                     'username', 'account_url', 'feed_url', 'modified'
@@ -146,7 +144,6 @@ class Account extends AppModel {
         
         # delete all accounts that were not found
         foreach($accounts as $item) {
-            $this->log('delete account: ' . $item['Account']['account_url'], LOG_DEBUG);
             $this->delete($item['Account']['id'], false);
             $this->Entry->deleteAll(
                 array(
