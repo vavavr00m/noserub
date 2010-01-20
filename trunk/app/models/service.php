@@ -134,6 +134,8 @@ class Service extends AppModel {
             return false;
         }
 
+        $service = $this->getService($service_name);
+        
         for($i=0; $i < $feed->get_item_quantity($items_per_feed); $i++) {
             $feeditem = $feed->get_item($i);
 
@@ -147,8 +149,6 @@ class Service extends AppModel {
             $item['latitude']  = $feeditem->get_latitude();
             $item['longitude'] = $feeditem->get_longitude();
 
-            $service = $this->getService($service_name);
-
             if($service) {
             	$item['content'] = $service->getContent($feeditem);
             	if(is_array($item['content'])) {
@@ -160,7 +160,7 @@ class Service extends AppModel {
                 # when no service was found, this is a simple RSS feed
             	$item['content'] = $feeditem->get_content();
             	$item['title'] = $feeditem->get_title();
-            	$item['datetime'] = $feeditem->get_date();
+            	$item['datetime'] = $feeditem->get_date('Y-m-d H:i:s');
             }
         	
 			$item = $service_type_filter->filter($item);
@@ -216,7 +216,7 @@ class Service extends AppModel {
         $data['username'] = 'RSS-Feed';
         $data['service_type'] = $service_type;
         
-        $items = $this->feed2array($username, 8, $data['service_type'], $data['feed_url']);
+        $items = $this->feed2array($username, $data['service'], $data['service_type'], $data['feed_url']);
         
         $data['items'] = $items;
         
@@ -488,7 +488,7 @@ abstract class AbstractService extends Object {
 
 class ServiceTypeFilterFactory {
 	public static function getFilter($service_type) {
-		if($service_type == 1) {
+		if($service_type == 'photo') {
 			return new PhotoFilter();
 		}
 		
